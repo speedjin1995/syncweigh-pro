@@ -34,11 +34,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate credentials
     if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
-        $sql = "SELECT users.id, users.username, users.password, Roles.Role_Name FROM users, Roles WHERE users.username = ? AND Roles.Role_Code = users.roles";
-
+        $sql = "SELECT employee_code, username, password, role FROM Users WHERE username = ?";
+        
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "s", $param_username);
+            echo "<script>alert('I am in 2');</script>";
 
             // Set parameters
             $param_username = $username;
