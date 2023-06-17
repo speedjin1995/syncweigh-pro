@@ -445,7 +445,7 @@
                                                                         <div class="row mb-3">
                                                                             <label for="vehiclePlateNo2" class="col-sm-4 col-form-label">Vehicle Plate No 2</label>
                                                                             <div class="col-sm-8">
-                                                                                <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 1">
+                                                                                <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 2">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
@@ -466,13 +466,13 @@
                                                                         <div class="row mb-3">
                                                                             <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
                                                                             <div class="col-sm-8">
-                                                                                <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing2">
+                                                                                <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
                                                                             <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
                                                                             <div class="col-sm-8">
-                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate2">
+                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="Tare Outgoing Date">
                                                                             </div>
                                                                         </div>                                                                        
                                                                         <div class="row mb-3">
