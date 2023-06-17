@@ -180,7 +180,7 @@
 
                                     <!-- /.modal-dialog -->
                                     <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-scrollable<div modal-xl">
+                                        <div class="modal-dialog modal-dialog-scrollable<div custom-xxl">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Entry</h5>
@@ -189,174 +189,308 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <form action="javascript:void(0);">
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="transactionId" placeholder="Transaction ID">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+
+                                                        <div class='text-center'>
+                                                            <div class="col-xl-5 col-md-6 col-md-6">
+                                                                <div class="card bg-primary">
+                                                                    <div class="card-body">
+                                                                        <div class="d-flex justify-content-between">
+                                                                            <div>
+                                                                                <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value"
+                                                                                        data-target="0">0</span> Kg</h2>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div class="avatar-sm flex-shrink-0">
+                                                                                    <span class="avatar-title bg-soft-light rounded-circle fs-2">
+                                                                                        <i class="mdi mdi-weight-kilogram"></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div><!-- end card body -->
+                                                                </div> <!-- end card-->
+                                                            </div> <!-- end col-->
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="invoiceNo" placeholder="Invoice No">
+
+                                                        <div class="col-12">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="transactionId" placeholder="Transaction ID">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
-                                                                    <div class="col-sm-8">
-                                                                        <select id="weightType" class="form-select" data-choices data-choices-sorting="true" >
-                                                                            <option selected>Normal</option>
-                                                                            <option>Container</option>
-                                                                        </select>
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="invoiceNo" placeholder="Invoice No">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <select id="weightType" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <option selected>Normal</option>
+                                                                                        <option>Container</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="deliveryNo" placeholder="Delivery No">
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="deliveryNo" placeholder="Delivery No">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <option selected>Sales</option>
+                                                                                        <option>Purchase</option>
+                                                                                        <option>Local</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
-                                                                    <div class="col-sm-8">
-                                                                         <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
-                                                                            <option selected>Sales</option>
-                                                                            <option>Purchase</option>
-                                                                            <option>Local</option>
-                                                                        </select>
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="purchaseOrder" placeholder="Purchase Order">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="weighbridge" class="col-sm-4 col-form-label">Weighbridge</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="weighbridge" placeholder="Weigh1" disabled>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="purchaseOrder" placeholder="Purchase Order">
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="containerNo" placeholder="Container No">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <option selected>ind12345</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="weighbridge" class="col-sm-4 col-form-label">Weighbridge</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="weighbridge" placeholder="Weigh1" disabled>
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="customerName" placeholder="Customer Name">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="manualWeight" placeholder="No" disabled>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="containerNo" placeholder="Container No">
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="productName" placeholder="Product Name">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
-                                                                    <div class="col-sm-8">
-                                                                        <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
-                                                                            <option selected>ind12345</option>
-                                                                        </select>
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="transporter" placeholder="col-form-label-sm">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="customerName" placeholder="Customer Name">
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="destination" class="col-sm-4 col-form-label">Destination</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="destination" placeholder="Destination">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <div class="input-group">
+                                                                                        <input type="email" class="form-control" id="reduceWeight" placeholder="0">
+                                                                                        <div class="input-group-text">Kg</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="manualWeight" placeholder="No" disabled>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="productName" placeholder="Product Name">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="transporter" placeholder="col-form-label-sm">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
-                                                                    <div class="col-sm-8">
-                                                                        <input type="email" class="form-control" id="destination" placeholder="Destination">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 mb-3">
-                                                                <div class="row">
-                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
-                                                                    <div class="col-sm-8">
-                                                                        <div class="input-group">
-                                                                            <input type="email" class="form-control" id="reduceWeight" placeholder="0">
-                                                                            <div class="input-group-text">Kg</div>
+                                                                    <div class="row">
+                                                                        <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="row">
+                                                                                <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
+                                                                                <div class="col-sm-10">
+                                                                                    <textarea class="form-control" id="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        
                                                         <div class="row">
-                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                <div class="row">
-                                                                    <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
-                                                                    <div class="col-sm-10">
-                                                                        <textarea class="form-control" id="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+                                                            <div class="col-xxl-6 col-lg-6 ">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row mb-3">
+                                                                            <label for="vehiclePlateNo1" class="col-sm-4 col-form-label">Vehicle Plate No 1</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 1">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="grossIncoming" class="col-sm-4 col-form-label">1.Gross Incoming</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="email" class="form-control" id="grossIncoming" placeholder="0">
+                                                                                    <div class="input-group-text">Kg</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="grossIncomingDate" class="col-sm-4 col-form-label">Gross Incoming Date</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="tareOutgoing" class="col-sm-4 col-form-label">2.Tare Outgoing</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate">
+                                                                            </div>
+                                                                        </div>                                                                        
+                                                                        <div class="row mb-3">
+                                                                            <label for="nettWeight" class="col-sm-4 col-form-label">Nett Weight</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="email" class="form-control" id="nettWeight" placeholder="0">
+                                                                                    <div class="input-group-text">Kg</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="d-grid" >
+                                                                            <button class="btn btn-primary" type="button">Button</button>
+                                                                        </div>
+                                                                    </div>                                                                                                                                  
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xxl-6 col-lg-6 ">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row mb-3">
+                                                                            <label for="vehiclePlateNo2" class="col-sm-4 col-form-label">Vehicle Plate No 2</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 1">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">3.Gross Incoming</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="email" class="form-control" id="grossIncoming2" placeholder="0">
+                                                                                    <div class="input-group-text">Kg</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Gross Incoming Date</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate2">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing2">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate2">
+                                                                            </div>
+                                                                        </div>                                                                        
+                                                                        <div class="row mb-3">
+                                                                            <label for="nettWeight2" class="col-sm-4 col-form-label">Nett Weight</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="email" class="form-control" id="nettWeight2" placeholder="0">
+                                                                                    <div class="input-group-text">Kg</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="d-grid">
+                                                                            <button class="btn btn-primary" type="button">Button</button>
+                                                                        </div>                                                                        
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                                        </div>           
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->

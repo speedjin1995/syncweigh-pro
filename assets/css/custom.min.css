@@ -5,3 +5,10 @@
     align-self: flex-end;
     margin-bottom: 25px;
 }
+
+@media (min-width: 1200px) {
+    .custom-xxl
+    {
+        --vz-modal-width: 1600px;
+    }
+  }
