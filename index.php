@@ -180,7 +180,7 @@
 
                                     <!-- /.modal-dialog -->
                                     <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Entry</h5>
@@ -191,7 +191,7 @@
                                                     <form action="javascript:void(0);">
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-center">
-                                                                <div class="col-xl-5 col-md-6 col-md-6">
+                                                                <div class="col-xl-12 col-md-12 col-md-12">
                                                                     <div class="card bg-primary">
                                                                         <div class="card-body">
                                                                             <div class="d-flex justify-content-between">
@@ -213,7 +213,9 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-12">
+                                                        <div class=" row col-12">
+                                                            
+                                                        <div class="col-xxl-8 col-lg-8">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                     <div class="row">
@@ -387,110 +389,115 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-xxl-6 col-lg-6 ">
-                                                                <div class="card bg-light">
-                                                                    <div class="card-body">
-                                                                        <div class="row mb-3">
-                                                                            <label for="vehiclePlateNo1" class="col-sm-4 col-form-label">Vehicle Plate No 1</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 1">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="grossIncoming" class="col-sm-4 col-form-label">1.Gross Incoming</label>
-                                                                            <div class="col-sm-8">
-                                                                                <div class="input-group">
-                                                                                    <input type="email" class="form-control" id="grossIncoming" placeholder="0">
-                                                                                    <div class="input-group-text">Kg</div>
+
+                                                        <div class="col-xxl-4 col-lg-4">
+                                                            <div class="column">
+                                                                <div class="col-xxl-12 col-lg-12">
+                                                                    <div class="card bg-light">
+                                                                        <div class="card-body">
+                                                                            <div class="row mb-3">
+                                                                                <label for="vehiclePlateNo1" class="col-sm-4 col-form-label">Vehicle Plate No 1</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 1">
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="grossIncomingDate" class="col-sm-4 col-form-label">Gross Incoming Date</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="tareOutgoing" class="col-sm-4 col-form-label">2.Tare Outgoing</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate">
-                                                                            </div>
-                                                                        </div>                                                                        
-                                                                        <div class="row mb-3">
-                                                                            <label for="nettWeight" class="col-sm-4 col-form-label">Nett Weight</label>
-                                                                            <div class="col-sm-8">
-                                                                                <div class="input-group">
-                                                                                    <input type="email" class="form-control" id="nettWeight" placeholder="0">
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                            <div class="row mb-3">
+                                                                                <label for="grossIncoming" class="col-sm-4 col-form-label">1.Gross Incoming</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <div class="input-group">
+                                                                                        <input type="email" class="form-control" id="grossIncoming" placeholder="0">
+                                                                                        <div class="input-group-text">Kg</div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="d-grid" >
-                                                                            <button class="btn btn-primary" type="button">Button</button>
-                                                                        </div>
-                                                                    </div>                                                                                                                                  
+                                                                            <div class="row mb-3">
+                                                                                <label for="grossIncomingDate" class="col-sm-4 col-form-label">Gross Incoming Date</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mb-3">
+                                                                                <label for="tareOutgoing" class="col-sm-4 col-form-label">2.Tare Outgoing</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mb-3">
+                                                                                <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate">
+                                                                                </div>
+                                                                            </div>                                                                        
+                                                                            <div class="row mb-3">
+                                                                                <label for="nettWeight" class="col-sm-4 col-form-label">Nett Weight</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <div class="input-group">
+                                                                                        <input type="email" class="form-control" id="nettWeight" placeholder="0">
+                                                                                        <div class="input-group-text">Kg</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="d-grid" >
+                                                                                <button class="btn btn-primary" type="button">Button</button>
+                                                                            </div>
+                                                                        </div>                                                                                                                                  
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="col-xxl-6 col-lg-6 ">
-                                                                <div class="card bg-light">
-                                                                    <div class="card-body">
-                                                                        <div class="row mb-3">
-                                                                            <label for="vehiclePlateNo2" class="col-sm-4 col-form-label">Vehicle Plate No 2</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 2">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">3.Gross Incoming</label>
-                                                                            <div class="col-sm-8">
-                                                                                <div class="input-group">
-                                                                                    <input type="email" class="form-control" id="grossIncoming2" placeholder="0">
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                <div class="col-xxl-12 col-lg-12">
+                                                                    <div class="card bg-light">
+                                                                        <div class="card-body">
+                                                                            <div class="row mb-3">
+                                                                                <label for="vehiclePlateNo2" class="col-sm-4 col-form-label">Vehicle Plate No 2</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 2">
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Gross Incoming Date</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate2">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
-                                                                            <div class="col-sm-8">
-                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="Tare Outgoing Date">
-                                                                            </div>
-                                                                        </div>                                                                        
-                                                                        <div class="row mb-3">
-                                                                            <label for="nettWeight2" class="col-sm-4 col-form-label">Nett Weight</label>
-                                                                            <div class="col-sm-8">
-                                                                                <div class="input-group">
-                                                                                    <input type="email" class="form-control" id="nettWeight2" placeholder="0">
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                            <div class="row mb-3">
+                                                                                <label for="grossIncoming2" class="col-sm-4 col-form-label">3.Gross Incoming</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <div class="input-group">
+                                                                                        <input type="email" class="form-control" id="grossIncoming2" placeholder="0">
+                                                                                        <div class="input-group-text">Kg</div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="row mb-3">
+                                                                                <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Gross Incoming Date</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate2">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mb-3">
+                                                                                <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="email" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mb-3">
+                                                                                <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <input type="date" class="form-control" data-provider="flatpickr" id="Tare Outgoing Date">
+                                                                                </div>
+                                                                            </div>                                                                        
+                                                                            <div class="row mb-3">
+                                                                                <label for="nettWeight2" class="col-sm-4 col-form-label">Nett Weight</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <div class="input-group">
+                                                                                        <input type="email" class="form-control" id="nettWeight2" placeholder="0">
+                                                                                        <div class="input-group-text">Kg</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="d-grid">
+                                                                                <button class="btn btn-primary" type="button">Button</button>
+                                                                            </div>                                                                        
                                                                         </div>
-                                                                        <div class="d-grid">
-                                                                            <button class="btn btn-primary" type="button">Button</button>
-                                                                        </div>                                                                        
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        </div>
+                                                        
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
