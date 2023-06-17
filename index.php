@@ -180,7 +180,7 @@
 
                                     <!-- /.modal-dialog -->
                                     <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-scrollable<div custom-xxl">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-xl">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Entry</h5>
@@ -189,27 +189,28 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <form action="javascript:void(0);">
-
-                                                        <div class='text-center'>
-                                                            <div class="col-xl-5 col-md-6 col-md-6">
-                                                                <div class="card bg-primary">
-                                                                    <div class="card-body">
-                                                                        <div class="d-flex justify-content-between">
-                                                                            <div>
-                                                                                <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value"
-                                                                                        data-target="0">0</span> Kg</h2>
-                                                                            </div>
-                                                                            <div>
-                                                                                <div class="avatar-sm flex-shrink-0">
-                                                                                    <span class="avatar-title bg-soft-light rounded-circle fs-2">
-                                                                                        <i class="mdi mdi-weight-kilogram"></i>
-                                                                                    </span>
+                                                        <div class="col-lg-12">
+                                                            <div class="hstack gap-2 justify-content-center">
+                                                                <div class="col-xl-5 col-md-6 col-md-6">
+                                                                    <div class="card bg-primary">
+                                                                        <div class="card-body">
+                                                                            <div class="d-flex justify-content-between">
+                                                                                <div>
+                                                                                    <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value"
+                                                                                            data-target="0">0</span> Kg</h2>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <div class="avatar-sm flex-shrink-0">
+                                                                                        <span class="avatar-title bg-soft-light rounded-circle fs-2">
+                                                                                            <i class="mdi mdi-weight-kilogram"></i>
+                                                                                        </span>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </div><!-- end card body -->
-                                                                </div> <!-- end card-->
-                                                            </div> <!-- end col-->
+                                                                        </div><!-- end card body -->
+                                                                    </div> <!-- end card-->
+                                                                </div> <!-- end col-->
+                                                            </div>
                                                         </div>
 
                                                         <div class="col-12">
@@ -386,7 +387,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        
                                                         <div class="row">
                                                             <div class="col-xxl-6 col-lg-6 ">
                                                                 <div class="card bg-light">
@@ -490,7 +490,13 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>           
+                                                        </div>
+                                                        <div class="col-lg-12">
+                                                            <div class="hstack gap-2 justify-content-end">
+                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                                            </div>
+                                                        </div><!--end col-->                                                               
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
