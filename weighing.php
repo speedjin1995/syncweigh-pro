@@ -151,7 +151,9 @@
                                                 </div><!--end col-->
                                                 <div class="col-lg-12">
                                                     <div class="text-end">
-                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="bx bx-search-alt"></i>
+                                                            Search</button>
                                                     </div>
                                                 </div><!--end col-->
                                             </div><!--end row-->
@@ -263,7 +265,7 @@
                                                 </div>
                                                 <div class="flex-shrink-0">
                                                     <button type="button" class="btn btn-primary waves-effect waves-light" id="excelSearch">
-                                                    <i class="fas fa-file-excel"></i>
+                                                    <i class="mdi mdi-file-excel-outline"></i>
                                                     Export Excel
                                                     </button>
                                                 </div> 
