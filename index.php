@@ -199,6 +199,10 @@
                                                                                     <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value"
                                                                                             data-target="0">0</span> Kg</h2>
                                                                                 </div>
+                                                                                <div class="connected-align">
+                                                                                    <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
+                                                                                    <div class="input-group-text bg-danger color-palette" id="checkingConnection"><i>Checking Connection</i></div>
+                                                                                </div>
                                                                                 <div>
                                                                                     <div class="avatar-sm flex-shrink-0">
                                                                                         <span class="avatar-title bg-soft-light rounded-circle fs-2">
@@ -437,7 +441,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-grid" >
-                                                                                    <button class="btn btn-primary" type="button">Button</button>
+                                                                                    <button class="btn btn-primary" type="button">Accepted Indicator Weight Reading Value</button>
                                                                                 </div>
                                                                             </div>                                                                                                                                  
                                                                         </div>
@@ -488,7 +492,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="d-grid">
-                                                                                    <button class="btn btn-primary" type="button">Button</button>
+                                                                                    <button class="btn btn-primary" type="button">Accepted Indicator Weight Reading Value</button>
                                                                                 </div>                                                                        
                                                                             </div>
                                                                         </div>
