@@ -124,7 +124,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="logout.php" class="nav-link"><i class="mdi mdi-logout-variant"></i> <span><?=$lang['t-logout']?></span></a>
+                    <a href="php/logout.php" class="nav-link"><i class="mdi mdi-logout-variant"></i> <span><?=$lang['t-logout']?></span></a>
                 </li>                 
             </ul>
         </div>

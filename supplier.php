@@ -217,7 +217,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="row col-12">
+                                                        <div class=" row col-12">
                                                             <div class="col-xxl-8 col-lg-8">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
