@@ -2,6 +2,25 @@
     $lang["t-menu"]="Menu";
     $lang["t-weightweighing"]="Weight Weighing";
     $lang["t-analytics"]="Analytics";
+
+    $lang["t-companyProfile"]="Company Profile";
+    $lang["t-portSetup"]="Port Setup";
+    $lang["t-myProfile"]="My Profile";
+    $lang["t-changePassword"]="Change Password";
+
+    $lang["t-masterdata"]="Master Data";
+    $lang["t-customer"]="Customer";
+    $lang["t-supplier"]="Supplier";
+    $lang["t-product"]="Product";
+    $lang["t-destination"]="Destination";
+    $lang["t-transporter"]="Transporter";
+    $lang["t-user"]="User";
+
+    $lang["t-report"]="Report";
+    $lang["t-weighingReport"]="Weighing Report";
+    $lang["t-auditLog"]="Audit Log";
+    $lang["t-logout"]="Log out";
+
     $lang["t-crm"]="CRM";
     $lang["t-billboard"]="Billboard";
     $lang["t-weighing"]="Weighing";
