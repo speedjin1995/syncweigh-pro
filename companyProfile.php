@@ -7,16 +7,21 @@
 require_once "layouts/config.php";
 
 // Check if the user is already logged in, if yes then redirect him to index page
-$id = $_SESSION['id'];
-$stmt2 = $link->prepare("SELECT username, useremail from Users where employee_code = ?");
+$id = '1';
+$stmt2 = $link->prepare("SELECT company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no from Company where id = ?");
 mysqli_stmt_bind_param($stmt2, "s", $id);
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
-mysqli_stmt_bind_result($stmt2, $name, $email);
+mysqli_stmt_bind_result($stmt2, $company_reg_no, $name, $address_line_1, $address_line_2, $address_line_3, $phone_no, $fax_no);
 
 if (mysqli_stmt_fetch($stmt2)) {
-    $useremail = $email;
+    $usercompany_reg_no = $company_reg_no;
     $username = $name;
+    $useraddress_line_1 = $address_line_1;
+    $useraddress_line_2 = $address_line_2;
+    $useraddress_line_3 = $address_line_3;
+    $userphone_no = $phone_no;
+    $userfax_no = $fax_no;
 }
 ?>
 
@@ -49,21 +54,61 @@ if (mysqli_stmt_fetch($stmt2)) {
                         <div class="row col-12">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <form action="php/updateProfile.php" method="post">
+                                    <form action="php/updateCompany.php" method="post">
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <label for="transactionId" class="col-sm-4 col-form-label">Email</label>
-                                                    <div class="col-sm-8 ">
-                                                        <input type="email" class="form-control" id="email" name="userEmail" placeholder="Transaction ID" value="<?=$useremail ?>">
+                                                    <label for="companyRegNo" class="col-sm-4 col-form-label">Company Reg No. *</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" placeholder="Company Reg No" value="<?=$usercompany_reg_no ?>" required>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Username</label>
+                                                    <label for="companyName" class="col-sm-4 col-form-label">Company Name *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="username" name="userName" placeholder="Transaction ID" value="<?=$username ?>" readonly>
+                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Company Name" value="<?=$username ?>" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="companyAddress" class="col-sm-4 col-form-label">Company Address 1 *</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyAddress" name="companyAddress" placeholder="Company Address 1" value="<?=$useraddress_line_1 ?>" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="companyAddress2" class="col-sm-4 col-form-label">Company Address 2</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyAddress2" name="companyAddress2" placeholder="Company Address 2" value="<?=$useraddress_line_2 ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="companyAddress3" class="col-sm-4 col-form-label">Company Address 3</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyAddress3" name="companyAddress3" placeholder="Company Address 3" value="<?=$useraddress_line_3 ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="companyPhone" class="col-sm-4 col-form-label">Company Phone</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyPhone" name="companyPhone" placeholder="Company Phone" value="<?=$userphone_no ?>" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="companyFax" class="col-sm-4 col-form-label">Fax No.</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyFax" name="companyFax" placeholder="Company Fax" value="<?=$userfax_no ?>">
                                                     </div>
                                                 </div>
                                             </div>
