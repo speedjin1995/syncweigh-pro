@@ -8,10 +8,143 @@ require_once "layouts/config.php";
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
+$name = $_SESSION["username"];
 $stmt2 = $link->prepare("SELECT role_code, role_name from roles");
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
 mysqli_stmt_bind_result($stmt2, $code, $name);
+
+$employeeCode = $username = $useremail = $roles = "";
+$employeeCode_err = $username_err = $useremail_err = $roles_err = "";
+
+// Processing form data when form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty(trim($_POST["employeeCode"]))) {
+        $employeeCode_err = "Please enter employee code.";
+    } else {
+        $employeeCode = trim($_POST["employeeCode"]);
+    }
+
+    if (empty(trim($_POST["username"]))) {
+        $username_err = "Please enter your username.";
+    } else {
+        $username = trim($_POST["username"]);
+    }
+
+    if (empty(trim($_POST["useremail"]))) {
+        $useremail_err = "Please enter email.";
+    } else {
+        $useremail = trim($_POST["useremail"]);
+    }
+
+    if (empty(trim($_POST["roles"]))) {
+        $roles_err = "Please enter your roles.";
+    } else {
+        $roles = trim($_POST["roles"]);
+    }
+
+    if (empty($employeeCode_err) && empty($username_err) && empty($useremail_err) && empty($roles_err)) {
+        $sql2 = "SELECT * from Users WHERE employee_code = ?";
+        $action = "1";
+
+        if ($stmt = mysqli_prepare($link, $sql2)) {
+            mysqli_stmt_bind_param($stmt, "s", $param_employeeCode);
+            $param_employeeCode = $employeeCode;
+
+            if (mysqli_stmt_execute($stmt)) {
+                mysqli_stmt_store_result($stmt);
+
+                if (mysqli_stmt_num_rows($stmt) == 1) {
+                    $sql = "UPDATE Users SET username=?, useremail=?, role=?, modified_by=? WHERE employee_code=?";
+                    $action = "2";
+
+                    if ($stmt = mysqli_prepare($link, $sql)) {
+                        // Bind variables to the prepared statement as parameters
+                        mysqli_stmt_bind_param($stmt, "sssss", $param_username, $param_useremail, $param_role, $param_modified_by, $param_code);
+
+                        // Set parameters
+                        $param_code = $employeeCode;
+                        $param_useremail = $useremail;
+                        $param_username = $username;
+                        $param_role = $roles;
+                        $param_modified_by = $name;
+
+                        // Attempt to execute the prepared statement
+                        if (mysqli_stmt_execute($stmt)) {
+                            echo "Updated";
+                        } else {
+                            echo "Something went wrong. Please try again later.";
+                        }
+
+                        // Close statement
+                        mysqli_stmt_close($stmt);
+                    }
+                }
+                else{
+                    $action = "1";
+                    $sql = "INSERT INTO Users (employee_code, useremail, username, password, token, role, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+                    if ($stmt = mysqli_prepare($link, $sql)) {
+                        // Bind variables to the prepared statement as parameters
+                        mysqli_stmt_bind_param($stmt, "ssssssss", $param_code, $param_useremail, $param_username, $param_password, $param_token, $param_role, $param_created_by, $param_modified_by);
+
+                        // Set parameters
+                        $param_code = $employeeCode;
+                        $password = "123456";
+                        $param_useremail = $useremail;
+                        $param_username = $username;
+                        $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+                        $param_token = bin2hex(random_bytes(50)); // generate unique token
+                        $param_role = $roles;
+                        $param_created_by = $name;
+                        $param_modified_by = $name;
+
+                        // Attempt to execute the prepared statement
+                        if (mysqli_stmt_execute($stmt)) {
+                            echo "Added";
+                        } else {
+                            echo "Something went wrong. Please try again later.";
+                        }
+
+                        // Close statement
+                        mysqli_stmt_close($stmt);
+                    }
+                }
+
+                if($action == "1"){
+                    $sql3 = "INSERT INTO Users_Log (employee_code, username, user_department, status, password, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+                    if ($stmt3 = mysqli_prepare($link, $sql3)) {
+                        // Bind variables to the prepared statement as parameters
+                        mysqli_stmt_bind_param($stmt3, "sssssss", $param_code, $param_username, $param_role, $param_status, $param_password, $param_action, $param_actionBy);
+
+                        // Set parameters
+                        $param_code = $employeeCode;
+                        $param_username = $username;
+                        $param_password = "123456"; // Creates a password hash
+                        $param_role = $roles;
+                        $param_status = "0";
+                        $param_action = $action;
+                        $param_actionBy = $name;
+
+                        // Attempt to execute the prepared statement
+                        if (mysqli_stmt_execute($stmt3)) {
+                            echo "Added";
+                        } else {
+                            echo "Something went wrong. Please try again later.";
+                        }
+
+                        // Close statement
+                        mysqli_stmt_close($stmt3);
+                    }
+                }
+                else{
+
+                }
+            }
+        }
+    }
+}
 ?>
 
 <head>
@@ -94,7 +227,7 @@ mysqli_stmt_bind_result($stmt2, $code, $name);
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="javascript:void(0);">
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="row col-12">
                             <div class="col-12">
                                 <div class="card bg-light">
