@@ -19,3 +19,12 @@
     margin-right: 40px;
     align-self: center;
 }
+
+.form-control.is-valid, .was-validated .form-control:valid {
+    border-color: unset;
+    padding-right: unset;
+    background-image: unset;
+    background-repeat: unset;
+    background-position: unset;
+    background-size: unset;
+}
