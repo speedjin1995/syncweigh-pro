@@ -16,13 +16,22 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery Validate plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     
     <?php include 'layouts/head-css.php'; ?>
 
 </head>
 
 <?php include 'layouts/body.php'; ?>
+
+<div class="loading" id="spinnerLoading" style="display:none">
+  <div class='mdi mdi-loading' style='transform:scale(0.79);'>
+    <div></div>
+  </div>
+</div>
 
 <!-- Begin page -->
 <div id="layout-wrapper">
@@ -207,7 +216,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addCustomers" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Customer
                                                                 </button>
@@ -282,9 +291,14 @@
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
 
-    <script type="text/javascript">
+
+
+<script type="text/javascript">
+
+var table;
+
 $(function () {
-    $("#customerTable").DataTable({
+    table = $("#customerTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
@@ -315,24 +329,34 @@ $(function () {
         ]       
     });
     
+    // $.validator.setDefaults({
+    //     submitHandler: function() {
     $('#submitCustomer').on('click', function(){
-        $.post('php/customers.php', $('#customerForm').serialize(), function(data){
-            var obj = JSON.parse(data); 
-            if(obj.status === 'success'){
-                $('#addModal').modal('hide');
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed')
-            {
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else
-            {
+        if($('#customerForm').valid()){
+            $('#spinnerLoading').show();
+            $.post('php/customers.php', $('#customerForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success')
+                {
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed')
+                {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else
+                {
 
-            }
-        });
+                }
+            });
+        }
+        // }
     });
 
     $('#addCustomers').on('click', function(){
@@ -363,66 +387,74 @@ $(function () {
     });
 });
 
-function edit(id){
-    $.post('php/getCustomer.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            $('#addModal').find('#id').val(obj.message.id);
-            $('#addModal').find('#customerCode').val(obj.message.customer_code);
-            $('#addModal').find('#companyName').val(obj.message.name);
-            $('#addModal').find('#companyRegNo').val(obj.message.company_reg_no);
-            $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
-            $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
-            $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
-            $('#addModal').find('#phoneNo').val(obj.message.phone_no);
-            $('#addModal').find('#faxNo').val(obj.message.fax_no);
-            $('#addModal').modal('show');
-            
-            // $('#customerForm').validate({
-            //     errorElement: 'span',
-            //     errorPlacement: function (error, element) {
-            //         error.addClass('invalid-feedback');
-            //         element.closest('.form-group').append(error);
-            //     },
-            //     highlight: function (element, errorClass, validClass) {
-            //         $(element).addClass('is-invalid');
-            //     },
-            //     unhighlight: function (element, errorClass, validClass) {
-            //         $(element).removeClass('is-invalid');
-            //     }
-            // });
-        }
-        else if(obj.status === 'failed'){
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-        else{
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-        $('#spinnerLoading').hide();
-    });
-}
+    function edit(id){
+        $('#spinnerLoading').show();
+        $.post('php/getCustomer.php', {userID: id}, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#customerCode').val(obj.message.customer_code);
+                $('#addModal').find('#companyName').val(obj.message.name);
+                $('#addModal').find('#companyRegNo').val(obj.message.company_reg_no);
+                $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
+                $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
+                $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
+                $('#addModal').find('#phoneNo').val(obj.message.phone_no);
+                $('#addModal').find('#faxNo').val(obj.message.fax_no);
+                $('#addModal').modal('show');
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
+    }
 
-function deactivate(id){
-    $.post('php/deleteCustomer.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            $("#successBtn").attr('data-toast-text', obj.message);
-            $("#successBtn").click();
-        }
-        else if(obj.status === 'failed'){
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-        else{
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-    });
-}
+    function deactivate(id){
+        $('#spinnerLoading').show();
+        $.post('php/deleteCustomer.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                table.ajax.reload();
+                $('#spinnerLoading').hide();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+        });
+    }
+
+$('#customerForm').validate({
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
 </script>
     </body>
 
