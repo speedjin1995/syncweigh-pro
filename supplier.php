@@ -24,6 +24,12 @@
 
 <?php include 'layouts/body.php'; ?>
 
+<div class="loading" id="spinnerLoading" style="display:none">
+  <div class='mdi mdi-loading' style='transform:scale(0.79);'>
+    <div></div>
+  </div>
+</div>
+
 <!-- Begin page -->
 <div id="layout-wrapper">
 
@@ -207,7 +213,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addSupplier" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Supplier
                                                                 </button>
@@ -285,10 +291,13 @@
 
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 
-    <script type="text/javascript">
+<script type="text/javascript">
+
+var table;
+
 $(function () {
 
-    $("#supplierTable").DataTable({
+    table = $("#supplierTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
@@ -322,16 +331,20 @@ $(function () {
     // $.validator.setDefaults({
     //     submitHandler: function () {
         $('#submitCustomer').on('click', function(){
-            debugger;
+            if($('#supplierForm').valid()){
+            $('#spinnerLoading').show();
             $.post('php/supplier.php', $('#supplierForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
                     $('#addModal').modal('hide');
                     $("#successBtn").attr('data-toast-text', obj.message);
                     $("#successBtn").click();
                 }
                 else if(obj.status === 'failed')
                 {
+                    $('#spinnerLoading').hide();
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 }
@@ -340,6 +353,7 @@ $(function () {
 
                 }
             });
+        }
     });
 
     $('#addSupplier').on('click', function(){
@@ -385,6 +399,7 @@ $('#supplierForm').validate({
   });
 
 function edit(id){
+    $('#spinnerLoading').show();
     $.post('php/getSupplier.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
@@ -415,10 +430,12 @@ function edit(id){
             // });
         }
         else if(obj.status === 'failed'){
+            $('#spinnerLoading').hide();
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
         else{
+            $('#spinnerLoading').hide();
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
@@ -427,18 +444,23 @@ function edit(id){
 }
 
 function deactivate(id){
+    $('#spinnerLoading').show();
     $.post('php/deleteSupplier.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
+            table.ajax.reload();
+            $('#spinnerLoading').hide();
             $("#successBtn").attr('data-toast-text', obj.message);
             $("#successBtn").click();
         }
         else if(obj.status === 'failed'){
+            $('#spinnerLoading').hide();
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
         else{
+            $('#spinnerLoading').hide();
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
