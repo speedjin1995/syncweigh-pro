@@ -34,7 +34,7 @@ $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
-      "id"=>$row['product_code'],
+      "id"=>$row['id'],
       "product_code"=>$row['product_code'],
       "name"=>$row['name'],
       "description"=>$row['description']

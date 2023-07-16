@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -22,7 +22,7 @@ if(isset($_POST['userID'])){
             $message = array();
             
             while ($row = $result->fetch_assoc()) {
-                $message['id'] = $row['customer_code'];
+                $message['id'] = $row['id'];
                 $message['customer_code'] = $row['customer_code'];
                 $message['company_reg_no'] = $row['company_reg_no'];
                 $message['name'] = $row['name'];

@@ -61,26 +61,83 @@
                             </div>
                             <!--end row-->
 
-                            <!-- <div class="col-xxl-12 col-lg-12">
+                            <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
                                     <div class="card-body">
                                         <form action="javascript:void(0);">
                                             <div class="row">
                                                 <div class="col-3">
                                                     <div class="mb-3">
-                                                        <label for="customerCode" class="form-label">Customer Code</label>
-                                                        <input type="text" class="form-control" placeholder="Customer Code" id="customerCode">
+                                                        <label for="fromDateSearch" class="form-label">From Date</label>
+                                                        <input type="date" class="form-control flatpickrStart" data-provider="flatpickr" id="fromDateSearch">
                                                     </div>
                                                 </div>
                                                 <div class="col-3">
-
+                                                    <div class="mb-3">
+                                                        <label for="toDateSearch" class="form-label">To Date</label>
+                                                        <input type="date" class="form-control flatpickrEnd" data-provider="flatpickr" id="toDateSearch">
+                                                    </div>
                                                 </div>
                                                 <div class="col-3">
-  
+                                                    <div class="mb-3">
+                                                        <label for="reportType" class="form-label">Status</label>
+                                                        <select id="reportType" name="reportType" class="form-select" data-choices data-choices-sorting="true" >
+                                                            <option value="Customer" selected>Customer</option>
+                                                            <option value="Destination">Destination</option>
+                                                            <option value="Product">Product</option>
+                                                            <option value="Supplier">Supplier</option>
+                                                            <option value="Transporter">Transporter</option>
+                                                            <option value="User">User</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
+                                                <div class="col-3 inputCode customerInput">
+                                                    <div class="mb-3">
+                                                        <label for="customerCode" class="form-label">Customer Code</label>
+                                                        <input type="text" class="form-control" placeholder="Customer Code" name="customerCode" id="customerCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode destinationInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="destinationCode" class="form-label">Destination Code</label>
+                                                        <input type="text" class="form-control" placeholder="Destination Code" name="destinationCode" id="destinationCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode productInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="productCode" class="form-label">Product Code</label>
+                                                        <input type="text" class="form-control" placeholder="Product Code" name="productCode" id="productCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode supplierInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="supplierCode" class="form-label">Supplier Code</label>
+                                                        <input type="text" class="form-control" placeholder="Supplier Code" name="supplierCode" id="supplierCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode transporterInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="transporterCode" class="form-label">Transporter Code</label>
+                                                        <input type="text" class="form-control" placeholder="Transporter Code" name="transporterCode" id="transporterCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode userInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="userCode" class="form-label">User Code</label>
+                                                        <input type="text" class="form-control" placeholder="User Code" name="userCode" id="userCode">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">  
+                                                <div class="col-3">
+                                                </div>
+                                                <div class="col-3">
+                                                </div>
+                                                <div class="col-3">
+                                                </div>                                                                                                                                                                                                                                                                                                                                        
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="submit" class="btn btn-primary">
+                                                        <button type="button" class="btn btn-primary" id="searchLog">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -89,7 +146,7 @@
                                         </form>                                                                        
                                     </div>
                                 </div>
-                            </div> -->
+                            </div>
                             
                             <button type="button" hidden id="successBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
                             <button type="button" hidden id="failBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
@@ -215,29 +272,24 @@
                                                             <div>
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
-                                                            <div class="flex-shrink-0">
+                                                            <!-- <div class="flex-shrink-0">
                                                                 <button type="button" id="addTransporter" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Transporter
                                                                 </button>
-                                                            </div> 
+                                                            </div>  -->
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="transporterTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="dataTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
-                                                                <tr>
-                                                                    <th>Transporter Code</th>
-                                                                    <th>Company Reg No</th>
-                                                                    <th>Company Name</th>
-                                                                    <th>Address Line 1</th>
-                                                                    <th>Address Line 2</th>
-                                                                    <th>Address Line 3</th>
-                                                                    <th>Phone No</th>
-                                                                    <th>Fax No</th>
-                                                                    <th>Action</th>
+                                                                <tr id="headerRow">
+                                                                <!-- Column names will be dynamically updated here -->
                                                                 </tr>
                                                             </thead>
+                                                            <tbody>
+                                                                <!-- Table rows will be dynamically updated here -->
+                                                            </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -298,93 +350,208 @@
 var table;
 
 $(function () {
-    table = $("#transporterTable").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        'processing': true,
-        'serverSide': true,
-        'serverMethod': 'post',
-        'ajax': {
-            'url':'php/loadTransporter.php'
-        },
-        'columns': [
-            { data: 'transporter_code' },
-            { data: 'company_reg_no' },
-            { data: 'name' },
-            { data: 'address_line_1' },
-            { data: 'address_line_2' },
-            { data: 'address_line_3' },
-            { data: 'phone_no' },
-            { data: 'fax_no' },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
-                }
-            }
-        ]       
-    });
+    // table = $("#dataTable").DataTable({
+    //     "responsive": true,
+    //     "autoWidth": false,
+    //     'processing': true,
+    //     'serverSide': true,
+    //     'serverMethod': 'post',
+    //                         data: { 
+    //                     selectedValue: selectedValue,
+    //                     fromDateSearch: $('#fromDateSearch').val(),
+    //                     toDateSearch: $('#toDateSearch').val(),
+    //                     customerCode: $('#customerCode').val(),
+    //                     destinationCode: $('#destinationCode').val(),
+    //                     supplierCode: $('#supplierCode').val(),
+    //                     userCode: $('#userCode').val(),
+    //                     productCode: $('#productCode').val(),
+    //                     transporterCode: $('#transporterCode').val()
+    //                 },
+    //     'ajax': {
+    //         'url':'php/filterAuditLog.php'
+    //     },
+    //     'columns': [
+    //         { data: 'customer_code' },
+    //         { data: 'company_reg_no' },
+    //         { data: 'name' },
+    //         { data: 'address_line_1' },
+    //         { data: 'address_line_2' },
+    //         { data: 'address_line_3' },
+    //         { data: 'phone_no' },
+    //         { data: 'fax_no' },
+    //         { 
+    //             data: 'id',
+    //             render: function ( data, type, row ) {
+    //                 // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+    //                 return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+    //                 '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+    //                 '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+    //                 '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+    //             }
+    //         }
+    //     ]       
+    // });
+
+    // var table = $("#dataTable").DataTable({
+    //     // Additional configuration options for 
+    //     columns: [
+    //         { data: "", title: "" },
+    //         // { data: "", title: "Column 2" },
+    //         // Add more column definitions as needed
+    //     ]
+    // });
     
-    // $.validator.setDefaults({
-    //     submitHandler: function() {
-    $('#submitTransporter').on('click', function(){
-        if($('#transporterForm').valid()){
-            $('#spinnerLoading').show();
-            $.post('php/transporter.php', $('#transporterForm').serialize(), function(data){
-                var obj = JSON.parse(data); 
-                if(obj.status === 'success')
-                {
-                    table.ajax.reload();
-                    $('#spinnerLoading').hide();
-                    $('#addModal').modal('hide');
-                    $("#successBtn").attr('data-toast-text', obj.message);
-                    $("#successBtn").click();
-                }
-                else if(obj.status === 'failed')
-                {
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                }
-                else
-                {
-
-                }
-            });
+    $('#reportType').on('change', function(){
+        if($(this).val() == "Customer")
+        {
+            $('.inputCode').hide();
+            $('.customerInput').show();
         }
-        // }
+        else if($(this).val() == "Destination")
+        {
+            $('.inputCode').hide();
+            $('.destinationInput').show();
+        }
+        else if($(this).val() == "Product")
+        {
+            $('.inputCode').hide();
+            $('.productInput').show();
+        }
     });
 
-    $('#addTransporter').on('click', function(){
-        $('#addModal').find('#id').val("");
-        $('#addModal').find('#transporterCode').val("");
-        $('#addModal').find('#companyName').val("");
-        $('#addModal').find('#companyRegNo').val("");
-        $('#addModal').find('#addressLine1').val("");
-        $('#addModal').find('#addressLine2').val("");
-        $('#addModal').find('#addressLine3').val("");
-        $('#addModal').find('#phoneNo').val("");
-        $('#addModal').find('#faxNo').val("");
-        $('#addModal').modal('show');
-        
-        $('#transporterForm').validate({
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
+    var startDate = new Date();
+    startDate.setDate(startDate.getDate() - 1);
+
+    $(".flatpickrStart").flatpickr({
+        defaultDate: new Date(startDate), 
+        dateFormat: "y-m-d"
     });
+
+    $(".flatpickrEnd").flatpickr({
+        defaultDate: new Date(), 
+        dateFormat: "y-m-d"
+    });
+
+    // $('#submitTransporter').on('click', function(){
+    //     if($('#transporterForm').valid()){
+    //         $('#spinnerLoading').show();
+    //         $.post('php/transporter.php', $('#transporterForm').serialize(), function(data){
+    //             var obj = JSON.parse(data); 
+    //             if(obj.status === 'success')
+    //             {
+    //                 table.ajax.reload();
+    //                 $('#spinnerLoading').hide();
+    //                 $('#addModal').modal('hide');
+    //                 $("#successBtn").attr('data-toast-text', obj.message);
+    //                 $("#successBtn").click();
+    //             }
+    //             else if(obj.status === 'failed')
+    //             {
+    //                 $('#spinnerLoading').hide();
+    //                 $("#failBtn").attr('data-toast-text', obj.message );
+    //                 $("#failBtn").click();
+    //             }
+    //             else
+    //             {
+
+    //             }
+    //         });
+    //     }
+    // });
+
+    // $('#addTransporter').on('click', function(){
+    //     $('#addModal').find('#id').val("");
+    //     $('#addModal').find('#transporterCode').val("");
+    //     $('#addModal').find('#companyName').val("");
+    //     $('#addModal').find('#companyRegNo').val("");
+    //     $('#addModal').find('#addressLine1').val("");
+    //     $('#addModal').find('#addressLine2').val("");
+    //     $('#addModal').find('#addressLine3').val("");
+    //     $('#addModal').find('#phoneNo').val("");
+    //     $('#addModal').find('#faxNo').val("");
+    //     $('#addModal').modal('show');
+        
+    //     $('#transporterForm').validate({
+    //         errorElement: 'span',
+    //         errorPlacement: function (error, element) {
+    //             error.addClass('invalid-feedback');
+    //             element.closest('.form-group').append(error);
+    //         },
+    //         highlight: function (element, errorClass, validClass) {
+    //             $(element).addClass('is-invalid');
+    //         },
+    //         unhighlight: function (element, errorClass, validClass) {
+    //             $(element).removeClass('is-invalid');
+    //         }
+    //     });
+    // });
+
+    
+
+        // Handle change event of the dropdown list
+        $('#searchLog').click(function() {
+            var selectedValue = $('#reportType').val();
+            // Call a function to update the DataTable based on the selected value
+            updateDataTable(selectedValue);
+        });
+
+        // Function to update the DataTable
+        function updateDataTable(selectedValue) {
+
+                $.ajax({
+                    url: "php/filterAuditLog.php",
+                    type: "POST",
+                    data: { 
+                        selectedValue: selectedValue,
+                        fromDateSearch: $('#fromDateSearch').val(),
+                        toDateSearch: $('#toDateSearch').val(),
+                        customerCode: $('#customerCode').val(),
+                        destinationCode: $('#destinationCode').val(),
+                        supplierCode: $('#supplierCode').val(),
+                        userCode: $('#userCode').val(),
+                        productCode: $('#productCode').val(),
+                        transporterCode: $('#transporterCode').val()
+                    },
+                    success: function(data) {
+
+                        if (table) {
+                            table.destroy();
+                        }
+                        // Once you receive the updated DataTable from the server, update the HTML table
+                        var dataTable = data.dataTable;
+                        var columnNames = data.columnNames;
+
+                        var headerRow = $("#headerRow");
+                        headerRow.empty();
+
+                        // Update the column names
+                        $.each(columnNames, function(index, columnName) {
+                        var th = $("<th>").text(columnName);
+                        headerRow.append(th);
+                        });
+
+                        var tableBody = $("#dataTable tbody");
+                        tableBody.empty();
+
+                        $.each(dataTable, function(index, item) {
+                        var row = $("<tr>");
+                        $.each(columnNames, function(index, columnName) {
+                            var cell = $("<td>").text(item[columnName]);
+                            row.append(cell);
+                        });
+                        tableBody.append(row);
+                        });
+
+                        // table.draw();
+                        table = $("#dataTable").DataTable();
+                    },
+                    error: function(error) {
+                        console.log("Error occurred while fetching the updated DataTable.");
+                    }
+                });
+            
+        }
+
 });
 
     function edit(id){
@@ -442,19 +609,19 @@ $(function () {
         });
     }
 
-$('#customerForm').validate({
-    errorElement: 'span',
-    errorPlacement: function (error, element) {
-      error.addClass('invalid-feedback');
-      element.closest('.form-group').append(error);
-    },
-    highlight: function (element, errorClass, validClass) {
-      $(element).addClass('is-invalid');
-    },
-    unhighlight: function (element, errorClass, validClass) {
-      $(element).removeClass('is-invalid');
-    }
-  });
+// $('#customerForm').validate({
+//     errorElement: 'span',
+//     errorPlacement: function (error, element) {
+//       error.addClass('invalid-feedback');
+//       element.closest('.form-group').append(error);
+//     },
+//     highlight: function (element, errorClass, validClass) {
+//       $(element).addClass('is-invalid');
+//     },
+//     unhighlight: function (element, errorClass, validClass) {
+//       $(element).removeClass('is-invalid');
+//     }
+//   });
 </script>
     </body>
 

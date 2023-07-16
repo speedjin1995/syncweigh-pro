@@ -37,7 +37,7 @@ $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
-      "id"=>$row['employee_code'],
+      "id"=>$row['id'],
       "employee_code"=>$row['employee_code'],
       "username"=>$row['username'],
       "useremail"=>$row['useremail'],

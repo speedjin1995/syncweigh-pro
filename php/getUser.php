@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM users WHERE id=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM Users WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -23,7 +23,11 @@ if(isset($_POST['userID'])){
             
             while ($row = $result->fetch_assoc()) {
                 $message['id'] = $row['id'];
+                $message['employee_code'] = $row['employee_code'];
                 $message['username'] = $row['username'];
+                $message['useremail'] = $row['useremail'];
+                $message['name'] = $row['name'];
+                $message['name'] = $row['name'];
                 $message['name'] = $row['name'];
                 $message['role_code'] = $row['role_code'];
             }

@@ -3,26 +3,42 @@ require_once 'db_connect.php';
 
 session_start();
 
-if(!isset($_SESSION['userID'])){
-	echo '<script type="text/javascript">location.href = "../login.html";</script>'; 
-}
+$username = $_SESSION["username"];
 
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 	$del = "1";
-	if ($stmt2 = $db->prepare("UPDATE Supplier SET status=? WHERE supplier_code=?")) {
+	$action = "3";
+
+	if ($stmt2 = $db->prepare("UPDATE Supplier SET status=? WHERE id=?")) {
 		$stmt2->bind_param('ss', $del , $id);
 		
 		if($stmt2->execute()){
+			if ($insert_stmt = $db->prepare("INSERT INTO Supplier_Log (supplier_id, action_id, action_by) VALUES (?, ?, ?)")) {
+				$insert_stmt->bind_param('sss', $id, $action, $username);
+	
+				// Execute the prepared query.
+				if (! $insert_stmt->execute()) {
+					echo json_encode(
+					    array(
+					        "status"=> "failed", 
+					        "message"=> $insert_stmt->error
+					    )
+					);
+				}
+				else{
+					$insert_stmt->close();
+					echo json_encode(
+						array(
+							"status"=> "success", 
+							"message"=> "Deleted"
+						)
+					);
+				}
+			}
+
 			$stmt2->close();
 			$db->close();
-			
-			echo json_encode(
-    	        array(
-    	            "status"=> "success", 
-    	            "message"=> "Deleted"
-    	        )
-    	    );
 		} else{
 		    echo json_encode(
     	        array(
