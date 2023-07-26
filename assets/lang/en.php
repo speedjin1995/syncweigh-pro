@@ -15,6 +15,9 @@
     $lang["t-destination"]="Destination";
     $lang["t-transporter"]="Transporter";
     $lang["t-user"]="User";
+    $lang["t-unit"]="Unit";
+    $lang["t-vehicle"]="Vehicle";
+
 
     $lang["t-report"]="Report";
     $lang["t-weighingReport"]="Weighing Report";

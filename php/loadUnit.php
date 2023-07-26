@@ -14,31 +14,28 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-  $searchQuery = " and (name like '%".$searchValue."%' or description like '%".$searchValue."%' or product_code like '%".$searchValue."%')";
+  $searchQuery = " and (name like '%".$searchValue."%' or company_reg_no like '%".$searchValue."%' or customer_code like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Product");
+$sel = mysqli_query($db,"select count(*) as allcount from Unit");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Product WHERE status = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from Unit WHERE status = '0'".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Product WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Unit WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
       "id"=>$row['id'],
-      "product_code"=>$row['product_code'],
-      "name"=>$row['name'],
-      "price"=>$row['price'],
-      "description"=>$row['description']
+      "unit"=>$row['unit']
     );
 }
 

@@ -102,12 +102,12 @@
                                         <div class="modal-dialog modal-dialog-scrollable modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Product</h5>
+                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Unit</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form role="form" id="productForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <form role="form" id="unitForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class=" row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
                                                                 <div class="card bg-light">
@@ -115,45 +115,16 @@
                                                                         <div class="row">
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="productCode" class="col-sm-4 col-form-label">Product Code</label>
+                                                                                    <label for="unit" class="col-sm-4 col-form-label">Unit</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="productCode" name="productCode" placeholder="Product Code" required>
+                                                                                        <input type="text" class="form-control" id="unit" name="unit" placeholder="Unit" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="productName" name="productName" placeholder="Product Name" required>
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="productPrice" class="col-sm-4 col-form-label">Product Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="productPrice" name="productPrice" placeholder="Product Price" required>
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>                                                                           
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="description" class="col-sm-4 col-form-label">Description</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="description" name="description" placeholder="Description">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                            
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -165,7 +136,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitProduct">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitUnit">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -190,21 +161,18 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addProduct" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addUnit" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Product
+                                                                Add New Customer
                                                                 </button>
                                                             </div> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="productTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="unitTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Product Code</th>
-                                                                    <th>Product Name</th>
-                                                                    <th>Product Price</th>
-                                                                    <th>Description</th>
+                                                                    <th>Unit</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -268,20 +236,18 @@
 var table;
 
 $(function () {
-    table = $("#productTable").DataTable({
+    table = $("#unitTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'php/loadProducts.php'
+            'url':'php/loadUnit.php'
         },
         'columns': [
-            { data: 'product_code' },
-            { data: 'name' },
-            { data: 'price' },
-            { data: 'description' },
+            { data: 'unit' },
+
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -297,11 +263,10 @@ $(function () {
     
     // $.validator.setDefaults({
     //     submitHandler: function() {
-    $('#submitProduct').on('click', function(){
-        if($('#productForm').valid()){
+    $('#submitUnit').on('click', function(){
+        if($('#unitForm').valid()){
             $('#spinnerLoading').show();
-            $.post('php/products.php', $('#productForm').serialize(), function(data){
-                debugger;
+            $.post('php/unit.php', $('#unitForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success')
                 {
@@ -326,15 +291,12 @@ $(function () {
         // }
     });
 
-    $('#addProduct').on('click', function(){
+    $('#addUnit').on('click', function(){
         $('#addModal').find('#id').val("");
-        $('#addModal').find('#productCode').val("");
-        $('#addModal').find('#productName').val("");
-        $('#addModal').find('#productPrice').val("");
-        $('#addModal').find('#description').val("");
+        $('#addModal').find('#unit').val("");
         $('#addModal').modal('show');
         
-        $('#productForm').validate({
+        $('#unitForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -352,15 +314,12 @@ $(function () {
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getProduct.php', {userID: id}, function(data)
+        $.post('php/getUnit.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#productCode').val(obj.message.product_code);
-                $('#addModal').find('#productName').val(obj.message.name);
-                $('#addModal').find('#productPrice').val(obj.message.price);
-                $('#addModal').find('#description').val(obj.message.description);
+                $('#addModal').find('#unit').val(obj.message.unit);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
@@ -379,7 +338,7 @@ $(function () {
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteProduct.php', {userID: id}, function(data){
+        $.post('php/deleteUnit.php', {userID: id}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
@@ -401,7 +360,7 @@ $(function () {
         });
     }
 
-$('#productForm').validate({
+$('#unitForm').validate({
     errorElement: 'span',
     errorPlacement: function (error, element) {
       error.addClass('invalid-feedback');

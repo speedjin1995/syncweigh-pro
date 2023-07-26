@@ -12,45 +12,27 @@ if(!isset($_SESSION['id'])){
 $id = $_SESSION['id'];
 
 // Processing form data when form is submitted
-if (isset($_POST['productCode'])) {
+if (isset($_POST['unit'])) {
 
     if (empty($_POST["id"])) {
-        $productId = null;
+        $unitId = null;
     } else {
-        $productId = trim($_POST["id"]);
+        $unitId = trim($_POST["id"]);
     }
 
-    if (empty($_POST["productCode"])) {
-        $productCode = null;
+    if (empty($_POST["unit"])) {
+        $unit = null;
     } else {
-        $productCode = trim($_POST["productCode"]);
+        $unit = trim($_POST["unit"]);
     }
-
-    if (empty($_POST["description"])) {
-        $description = null;
-    } else {
-        $description = trim($_POST["description"]);
-    }
-
-    if (empty($_POST["productName"])) {
-        $productName = null;
-    } else {
-        $productName = trim($_POST["productName"]);
-    }
-
-    if (empty($_POST["productPrice"])) {
-        $productPrice = null;
-    } else {
-        $productPrice = trim($_POST["productPrice"]);
-    }
-
-    if(! empty($productId))
+    
+    if(! empty($unitId))
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Product SET product_code=?, name=?, price=?, description=? , created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Unit SET unit=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssss', $productCode, $productName, $productPrice, $description, $username, $username, $productId);
+            $update_stmt->bind_param('ssss', $unit, $username, $username, $unitId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -62,8 +44,8 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssss', $productId, $productCode, $productName, $productPrice, $description, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Unit_Log (unit_id, unit, action_id, action_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssss', $unitId, $unit, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -101,8 +83,8 @@ if (isset($_POST['productCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Product (product_code, name, price, description, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssss', $productCode, $productName,  $productPrice, $description, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Unit (unit, created_by, modified_by) VALUES (?, ?, ?)")) {
+            $insert_stmt->bind_param('sss', $unit, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -121,12 +103,12 @@ if (isset($_POST['productCode'])) {
                     )
                 );
 
-                $sel = mysqli_query($db,"select count(*) as allcount from Product");
+                $sel = mysqli_query($db,"select count(*) as allcount from Unit");
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssssss', $totalRecords, $productCode, $productName,  $productPrice, $description, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Unit_Log (unit_id, unit, action_id, action_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_log->bind_param('ssss', $totalRecords, $unit, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {

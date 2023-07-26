@@ -61,20 +61,26 @@
                                 <a href="customer.php" class="nav-link"><?=$lang['t-customer']?></a>
                             </li>
                             <li class="nav-item">
-                                <a href="supplier.php" class="nav-link"><?=$lang['t-supplier']?></a>
+                                <a href="destination.php" class="nav-link"><?=$lang['t-destination']?></a>
                             </li>
                             <li class="nav-item">
                                 <a href="product.php" class="nav-link"><?=$lang['t-product']?></a>
                             </li>
                             <li class="nav-item">
-                                <a href="destination.php" class="nav-link"><?=$lang['t-destination']?></a>
-                            </li>
+                                <a href="supplier.php" class="nav-link"><?=$lang['t-supplier']?></a>
+                            </li>                            
                             <li class="nav-item">
                                 <a href="transporter.php" class="nav-link"><?=$lang['t-transporter']?></a>
                             </li>
                             <li class="nav-item">
+                                <a href="unit.php" class="nav-link"><?=$lang['t-unit']?></a>
+                            </li>                           
+                            <li class="nav-item">
                                 <a href="user.php" class="nav-link"><?=$lang['t-user']?></a>
                             </li>
+                            <li class="nav-item">
+                                <a href="vehicle.php" class="nav-link"><?=$lang['t-vehicle']?></a>
+                            </li>                           
                         </ul>
                     </div>
                 </li>
