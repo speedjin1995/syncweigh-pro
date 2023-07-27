@@ -102,12 +102,12 @@
                                         <div class="modal-dialog modal-dialog-scrollable modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Unit</h5>
+                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Vehicle</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form role="form" id="unitForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <form role="form" id="vehicleForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class=" row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
                                                                 <div class="card bg-light">
@@ -115,16 +115,28 @@
                                                                         <div class="row">
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="unit" class="col-sm-4 col-form-label">Unit</label>
+                                                                                    <label for="vehicleNo" class="col-sm-4 col-form-label">Vehicle No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="unit" name="unit" placeholder="Unit" required>
+                                                                                        <input type="text" class="form-control" id="vehicleNo" name="vehicleNo" placeholder="Vehicle No" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            
+
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="vehicleWeight" class="col-sm-4 col-form-label">Vehicle Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="vehicleWeight" name="vehicleWeight" placeholder="Vehicle Weight" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -136,7 +148,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitCustomer">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitVehicle">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -161,18 +173,19 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addUnit" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addVehicle" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Customer
+                                                                Add New Vehicle
                                                                 </button>
                                                             </div> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="unitTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="vehicleTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Unit</th>
+                                                                    <th>Vehicle No</th>
+                                                                    <th>Vehicle Weight</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -236,18 +249,18 @@
 var table;
 
 $(function () {
-    table = $("#unitTable").DataTable({
+    table = $("#vehicleTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'php/loadUnit.php'
+            'url':'php/loadVehicle.php'
         },
         'columns': [
-            { data: 'unit' },
-
+            { data: 'veh_number' },
+            { data: 'vehicle_weight' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -263,10 +276,10 @@ $(function () {
     
     // $.validator.setDefaults({
     //     submitHandler: function() {
-    $('#submitUnit').on('click', function(){
-        if($('#unitForm').valid()){
+    $('#submitVehicle').on('click', function(){
+        if($('#vehicleForm').valid()){
             $('#spinnerLoading').show();
-            $.post('php/unit.php', $('#unitForm').serialize(), function(data){
+            $.post('php/vehicle.php', $('#vehicleForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success')
                 {
@@ -291,12 +304,13 @@ $(function () {
         // }
     });
 
-    $('#addUnit').on('click', function(){
+    $('#addVehicle').on('click', function(){
         $('#addModal').find('#id').val("");
-        $('#addModal').find('#unit').val("");
+        $('#addModal').find('#vehicleNo').val("");
+        $('#addModal').find('#vehicleWeight').val("");
         $('#addModal').modal('show');
         
-        $('#unitForm').validate({
+        $('#vehicleForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -314,12 +328,13 @@ $(function () {
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getUnit.php', {userID: id}, function(data)
+        $.post('php/getVehicle.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#unit').val(obj.message.unit);
+                $('#addModal').find('#vehicleNo').val(obj.message.veh_number);
+                $('#addModal').find('#vehicleWeight').val(obj.message.vehicle_weight);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
@@ -338,7 +353,7 @@ $(function () {
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteUnit.php', {userID: id}, function(data){
+        $.post('php/deleteVehicle.php', {userID: id}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
@@ -360,7 +375,7 @@ $(function () {
         });
     }
 
-$('#unitForm').validate({
+$('#vehicleForm').validate({
     errorElement: 'span',
     errorPlacement: function (error, element) {
       error.addClass('invalid-feedback');

@@ -29,6 +29,27 @@
     background-size: unset;
 }
 
+.card-header .mdi {
+  transition: .3s transform ease-in-out;
+}
+.card-header.collapsed .mdi {
+  transform: rotate(90deg);
+}
+
+.mdi.pull-right {
+  margin-left: 0.3em;
+}
+.pull-right {
+  float: right;
+  font-size: 20px;
+}
+.card-header .mdi {
+  transition: .3s transform ease-in-out;
+}
+#heading-example {
+  cursor: pointer;
+}
+
 div.loading{
     position: fixed;
     top: 0;

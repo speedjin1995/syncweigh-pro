@@ -34,15 +34,15 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span><?=$lang['t-menu']?></span></li>
                 <li class="nav-item">
+                    <a href="index.php" class="nav-link"><?=$lang['t-billboard']?></a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                         aria-expanded="true" aria-controls="sidebarDashboards">
                         <i class="ri-dashboard-2-line"></i> <span><?=$lang['t-weightweighing']?></span>
                     </a>
-                    <div class="collapse menu-dropdown" id="sidebarDashboards">
+                    <div class="collapse show menu-dropdown" id="sidebarDashboards">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="index.php" class="nav-link"><?=$lang['t-billboard']?></a>
-                            </li>
                             <li class="nav-item">
                                 <a href="weighing.php" class="nav-link"><?=$lang['t-weighing']?></a>
                             </li>
@@ -52,7 +52,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
-                        aria-expanded="true" aria-controls="sidebarMasterdata">
+                        aria-expanded="false" aria-controls="sidebarMasterdata">
                         <i class="ri-pages-line"></i> <span><?=$lang['t-masterdata']?></span>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarMasterdata">
