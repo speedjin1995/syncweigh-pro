@@ -28,7 +28,9 @@
     background-position: unset;
     background-size: unset;
 }
-
+.index-vehicle{
+  z-index: 3;
+}
 .card-header .mdi {
   transition: .3s transform ease-in-out;
 }
