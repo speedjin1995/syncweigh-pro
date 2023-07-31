@@ -68,6 +68,20 @@ if($_POST['selectedValue'] == "Transporter")
     }
 }
 
+if($_POST['selectedValue'] == "Unit")
+{
+    if($_POST['unit'] != null && $_POST['unit'] != '' && $_POST['unit'] != '-'){
+    $searchQuery .= " and unit = '".$_POST['unit']."'";
+    }
+}
+
+if($_POST['selectedValue'] == "Vehicle")
+{
+    if($_POST['vehicleNo'] != null && $_POST['vehicleNo'] != '' && $_POST['vehicleNo'] != '-'){
+    $searchQuery .= " and veh_number = '".$_POST['vehicleNo']."'";
+    }
+}
+
 ## Total number of records without filtering
 // $sel = mysqli_query($db,"select count(*) as allcount from Customer_Log");
 // $records = mysqli_fetch_assoc($sel);
@@ -229,6 +243,49 @@ if($_POST['selectedValue'] == "User")
     }
 
     $columnNames = ["User Id", "User Code", "Name", "User Department", "Action Id", "Action By", "Event Date"];
+}
+
+if($_POST['selectedValue'] == "Unit")
+{
+    ## Fetch records
+    $empQuery = "select * from Unit_Log".$searchQuery;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Unit Id"=>$row['unit_id'],
+        "Unit"=>$row['unit'],
+        "Action Id"=>$row['action_id'],
+        "Action By"=>$row['action_by'],
+        "Event Date"=>$row['event_date'],
+        );
+    }
+
+    $columnNames = ["Unit Id", "Unit", "Action Id", "Action By", "Event Date"];
+}
+
+if($_POST['selectedValue'] == "Vehicle")
+{
+    ## Fetch records
+    $empQuery = "select * from Vehicle_Log".$searchQuery;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Vehicle Id"=>$row['vehicle_id'],
+        "Vehicle No"=>$row['veh_number'],
+        "Vehicle Weight"=>$row['vehicle_weight'],
+        "Action Id"=>$row['action_id'],
+        "Action By"=>$row['action_by'],
+        "Event Date"=>$row['event_date'],
+        );
+    }
+
+    $columnNames = ["Vehicle Id", "Vehicle No", "Vehicle Weight", "Action Id", "Action By", "Event Date"];
 }
 
 ## Response

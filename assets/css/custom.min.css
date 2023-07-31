@@ -31,6 +31,12 @@
 .index-vehicle{
   z-index: 3;
 }
+
+input.input-readonly.form-control[readonly] {
+  background-color: #eff2f7;
+  opacity: 1;
+}
+
 .card-header .mdi {
   transition: .3s transform ease-in-out;
 }

@@ -87,7 +87,9 @@
                                                             <option value="Product">Product</option>
                                                             <option value="Supplier">Supplier</option>
                                                             <option value="Transporter">Transporter</option>
+                                                            <option value="Unit">Unit</option>
                                                             <option value="User">User</option>
+                                                            <option value="Vehicle">Vehicle</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -125,6 +127,18 @@
                                                     <div class="mb-3">
                                                         <label for="userCode" class="form-label">User Code</label>
                                                         <input type="text" class="form-control" placeholder="User Code" name="userCode" id="userCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode unitInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="unit" class="form-label">Unit</label>
+                                                        <input type="text" class="form-control" placeholder="Unit Code" name="unit" id="unit">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode vehicleInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="vehicleNo" class="form-label">Vehicle No</label>
+                                                        <input type="text" class="form-control" placeholder="Vehicle No" name="vehicleNo" id="vehicleNo">
                                                     </div>
                                                 </div>
                                             </div>
@@ -350,56 +364,6 @@
 var table;
 
 $(function () {
-    // table = $("#dataTable").DataTable({
-    //     "responsive": true,
-    //     "autoWidth": false,
-    //     'processing': true,
-    //     'serverSide': true,
-    //     'serverMethod': 'post',
-    //                         data: { 
-    //                     selectedValue: selectedValue,
-    //                     fromDateSearch: $('#fromDateSearch').val(),
-    //                     toDateSearch: $('#toDateSearch').val(),
-    //                     customerCode: $('#customerCode').val(),
-    //                     destinationCode: $('#destinationCode').val(),
-    //                     supplierCode: $('#supplierCode').val(),
-    //                     userCode: $('#userCode').val(),
-    //                     productCode: $('#productCode').val(),
-    //                     transporterCode: $('#transporterCode').val()
-    //                 },
-    //     'ajax': {
-    //         'url':'php/filterAuditLog.php'
-    //     },
-    //     'columns': [
-    //         { data: 'customer_code' },
-    //         { data: 'company_reg_no' },
-    //         { data: 'name' },
-    //         { data: 'address_line_1' },
-    //         { data: 'address_line_2' },
-    //         { data: 'address_line_3' },
-    //         { data: 'phone_no' },
-    //         { data: 'fax_no' },
-    //         { 
-    //             data: 'id',
-    //             render: function ( data, type, row ) {
-    //                 // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-    //                 return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-    //                 '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-    //                 '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-    //                 '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
-    //             }
-    //         }
-    //     ]       
-    // });
-
-    // var table = $("#dataTable").DataTable({
-    //     // Additional configuration options for 
-    //     columns: [
-    //         { data: "", title: "" },
-    //         // { data: "", title: "Column 2" },
-    //         // Add more column definitions as needed
-    //     ]
-    // });
     
     $('#reportType').on('change', function(){
         if($(this).val() == "Customer")
@@ -417,6 +381,31 @@ $(function () {
             $('.inputCode').hide();
             $('.productInput').show();
         }
+        else if($(this).val() == "Supplier")
+        {
+            $('.inputCode').hide();
+            $('.productInput').show();
+        }
+        else if($(this).val() == "Transporter")
+        {
+            $('.inputCode').hide();
+            $('.transporterInput').show();
+        }
+        else if($(this).val() == "Unit")
+        {
+            $('.inputCode').hide();
+            $('.unitInput').show();
+        }
+        else if($(this).val() == "User")
+        {
+            $('.inputCode').hide();
+            $('.userInput').show();
+        }
+        else if($(this).val() == "Vehicle")
+        {
+            $('.inputCode').hide();
+            $('.vehicleInput').show();
+        }
     });
 
     var startDate = new Date();
@@ -431,61 +420,6 @@ $(function () {
         defaultDate: new Date(), 
         dateFormat: "y-m-d"
     });
-
-    // $('#submitTransporter').on('click', function(){
-    //     if($('#transporterForm').valid()){
-    //         $('#spinnerLoading').show();
-    //         $.post('php/transporter.php', $('#transporterForm').serialize(), function(data){
-    //             var obj = JSON.parse(data); 
-    //             if(obj.status === 'success')
-    //             {
-    //                 table.ajax.reload();
-    //                 $('#spinnerLoading').hide();
-    //                 $('#addModal').modal('hide');
-    //                 $("#successBtn").attr('data-toast-text', obj.message);
-    //                 $("#successBtn").click();
-    //             }
-    //             else if(obj.status === 'failed')
-    //             {
-    //                 $('#spinnerLoading').hide();
-    //                 $("#failBtn").attr('data-toast-text', obj.message );
-    //                 $("#failBtn").click();
-    //             }
-    //             else
-    //             {
-
-    //             }
-    //         });
-    //     }
-    // });
-
-    // $('#addTransporter').on('click', function(){
-    //     $('#addModal').find('#id').val("");
-    //     $('#addModal').find('#transporterCode').val("");
-    //     $('#addModal').find('#companyName').val("");
-    //     $('#addModal').find('#companyRegNo').val("");
-    //     $('#addModal').find('#addressLine1').val("");
-    //     $('#addModal').find('#addressLine2').val("");
-    //     $('#addModal').find('#addressLine3').val("");
-    //     $('#addModal').find('#phoneNo').val("");
-    //     $('#addModal').find('#faxNo').val("");
-    //     $('#addModal').modal('show');
-        
-    //     $('#transporterForm').validate({
-    //         errorElement: 'span',
-    //         errorPlacement: function (error, element) {
-    //             error.addClass('invalid-feedback');
-    //             element.closest('.form-group').append(error);
-    //         },
-    //         highlight: function (element, errorClass, validClass) {
-    //             $(element).addClass('is-invalid');
-    //         },
-    //         unhighlight: function (element, errorClass, validClass) {
-    //             $(element).removeClass('is-invalid');
-    //         }
-    //     });
-    // });
-
     
 
         // Handle change event of the dropdown list
@@ -510,7 +444,9 @@ $(function () {
                         supplierCode: $('#supplierCode').val(),
                         userCode: $('#userCode').val(),
                         productCode: $('#productCode').val(),
-                        transporterCode: $('#transporterCode').val()
+                        transporterCode: $('#transporterCode').val(),
+                        unit: $('#unit').val(),
+                        vehicleNo: $('#vehicleNo').val(),
                     },
                     success: function(data) {
 
@@ -554,74 +490,6 @@ $(function () {
 
 });
 
-    function edit(id){
-        $('#spinnerLoading').show();
-        $.post('php/getTransporter.php', {userID: id}, function(data)
-        {
-            var obj = JSON.parse(data);
-            if(obj.status === 'success'){
-                $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
-                $('#addModal').find('#companyName').val(obj.message.name);
-                $('#addModal').find('#companyRegNo').val(obj.message.company_reg_no);
-                $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
-                $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
-                $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
-                $('#addModal').find('#phoneNo').val(obj.message.phone_no);
-                $('#addModal').find('#faxNo').val(obj.message.fax_no);
-                $('#addModal').modal('show');
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            $('#spinnerLoading').hide();
-        });
-    }
-
-    function deactivate(id){
-        // $('#spinnerLoading').show();
-        $.post('php/deleteTransporter.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
-    }
-
-// $('#customerForm').validate({
-//     errorElement: 'span',
-//     errorPlacement: function (error, element) {
-//       error.addClass('invalid-feedback');
-//       element.closest('.form-group').append(error);
-//     },
-//     highlight: function (element, errorClass, validClass) {
-//       $(element).addClass('is-invalid');
-//     },
-//     unhighlight: function (element, errorClass, validClass) {
-//       $(element).removeClass('is-invalid');
-//     }
-//   });
 </script>
     </body>
 

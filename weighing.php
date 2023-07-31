@@ -280,7 +280,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="weighbridge" class="col-sm-4 col-form-label">Weighbridge</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="weighbridge" placeholder="Weigh1" disabled>
+                                                                                        <input type="number" class="form-control input-readonly" id="weighbridge" placeholder="Weigh1" readonly>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -323,7 +323,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="manualWeight" placeholder="No" disabled>
+                                                                                        <input type="number" class="form-control input-readonly" id="manualWeight" placeholder="No" readonly>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -428,23 +428,31 @@ require_once "layouts/config.php";
                                                                                     <label for="grossIncoming" class="col-sm-4 col-form-label">1.Gross Incoming</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="grossIncoming" placeholder="0">
+                                                                                            <div class="input-group-text">
+                                                                                                <input class="form-check-input mt-0" id="manual" name="manual" type="checkbox" value="0" aria-label="Checkbox for following text input">
+                                                                                            </div>                                                                                            
+                                                                                            <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0.00" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
+
                                                                                 <div class="row mb-3">
                                                                                     <label for="grossIncomingDate" class="col-sm-4 col-form-label">Gross Incoming Date</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate">
                                                                                     </div>
                                                                                 </div>
+
                                                                                 <div class="row mb-3">
                                                                                     <label for="tareOutgoing" class="col-sm-4 col-form-label">2.Tare Outgoing</label>
-                                                                                    <div class="col-sm-8">
+                                                                                    <div class="col-sm-8">                                                                                     
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
+                                                                                            <div class="input-group-text">
+                                                                                                <input class="form-check-input mt-0" id="manualOutgoing" name="manualOutgoing" type="checkbox" value="0" aria-label="Checkbox for following text input">
+                                                                                            </div>                                                                                               
+                                                                                            <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0.00" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>                                                                                       
@@ -660,6 +668,28 @@ require_once "layouts/config.php";
                     $(this).val(0);
                     $('#vehicleNoTxt').hide();
                     $('.index-vehicle').show();
+                }
+            });
+
+            $('#manual').on('click', function(){
+                if($(this).is(':checked')){
+                    $(this).val(1);
+                    $('#grossIncoming').removeAttr('readonly');
+                }
+                else{
+                    $(this).val(0);
+                    $('#grossIncoming').attr('readonly', 'readonly');
+                }
+            });
+
+            $('#manualOutgoing').on('click', function(){
+                if($(this).is(':checked')){
+                    $(this).val(1);
+                    $('#tareOutgoing').removeAttr('readonly');
+                }
+                else{
+                    $(this).val(0);
+                    $('#tareOutgoing').attr('readonly', 'readonly');
                 }
             });
         });
