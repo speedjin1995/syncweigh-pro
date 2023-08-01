@@ -32,6 +32,14 @@
   z-index: 3;
 }
 
+.align-radio {
+  display: inline-block;
+  padding-top: 10px;
+}
+.mr-2{
+  margin-right:2.5rem;
+}
+
 input.input-readonly.form-control[readonly] {
   background-color: #eff2f7;
   opacity: 1;

@@ -34,9 +34,12 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span><?=$lang['t-menu']?></span></li>
                 <li class="nav-item">
-                    <a href="index.php" class="nav-link"><?=$lang['t-billboard']?></a>
+                    <a href="index.php" class="nav-link"><i class="mdi mdi-billboard"></i><?=$lang['t-billboard']?></a>
                 </li>
                 <li class="nav-item">
+                    <a href="weighing.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
+                </li>                
+                <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                         aria-expanded="true" aria-controls="sidebarDashboards">
                         <i class="ri-dashboard-2-line"></i> <span><?=$lang['t-weightweighing']?></span>
@@ -48,7 +51,7 @@
                             </li>
                         </ul>
                     </div>
-                </li> <!-- end WeightWeighing Menu -->
+                </li> -->
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"

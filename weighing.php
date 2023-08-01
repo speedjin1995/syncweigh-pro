@@ -69,6 +69,90 @@ require_once "layouts/config.php";
                             </div>
                             <!--end row-->
 
+                            <div class="col-xxl-12 col-lg-12">
+                                <div class="card">
+                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
+                                        <i class="mdi mdi-chevron-down pull-right"></i>
+                                        Search Records
+                                    </div>
+                                    <div id="collapseSearch" class="collapse" aria-labelledby="collapseSearch">                                    
+                                        <div class="card-body">
+                                            <form action="javascript:void(0);">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="fromDateSearch" class="form-label">First Name</label>
+                                                            <input type="date" class="form-control" data-provider="flatpickr" id="fromDateSearch">
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="toDateSearch" class="form-label">Last Name</label>
+                                                            <input type="date" class="form-control" data-provider="flatpickr" id="toDateSearch">
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="statusSearch" class="form-label">Status</label>
+                                                            <select id="statusSearch" class="form-select" data-choices data-choices-sorting="true" >
+                                                                <option selected>Sales</option>
+                                                                <option>Purchase</option>
+                                                                <option>Local</option>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
+                                                            <select id="customerNoSearch" class="form-select" data-choices data-choices-sorting="true" >
+                                                                <option selected>...</option>
+                                                                <!-- <option>Purchase</option>
+                                                                <option>Local</option> -->
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="vehicleNo" class="form-label">Vehicle No</label>
+                                                            <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="invoiceNoSearch" class="form-label">Invoice No</label>
+                                                            <input type="text" class="form-control" placeholder="Invoice No" id="invoiceNoSearch">
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="batchNoSearch" class="form-label">Batch No</label>
+                                                            <input type="text" class="form-control" placeholder="Batch No" id="batchNoSearch">
+                                                        </div>
+                                                    </div><!--end col-->                                                
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="ForminputState" class="form-label">Product</label>
+                                                            <select id="transactionStatusSearch" class="form-select" data-choices data-choices-sorting="true" >
+                                                                <option selected>...</option>
+                                                                <!-- <option>Purchase</option>
+                                                                <option>Local</option> -->
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-lg-12">
+                                                        <div class="text-end">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="bx bx-search-alt"></i>
+                                                                Search</button>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                </div><!--end row-->
+                                            </form>                                                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="row">
                                 <div class="col-xl-3 col-md-6">
                                     <!-- card -->
@@ -259,9 +343,10 @@ require_once "layouts/config.php";
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
-                                                                                            <option selected>Sales</option>
-                                                                                            <option>Purchase</option>
-                                                                                            <option>Local</option>
+                                                                                            <option value="Sales" selected>Sales</option>
+                                                                                            <option value="Purchase">Purchase</option>
+                                                                                            <option value="Local">Local</option>
+                                                                                            <option value="MISC">MISC</option>
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
@@ -298,7 +383,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <select id="indicatorId" class="form-select" data-choices data-choices-sorting="true" >
                                                                                             <option selected>ind12345</option>
                                                                                         </select>
                                                                                     </div>
@@ -323,7 +408,19 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control input-readonly" id="manualWeight" placeholder="No" readonly>
+                                                                                        <div class="form-check align-radio mr-2">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="manualWeight" id="manualWeightYes" value="true">
+                                                                                            <label class="form-check-label" for="manualWeightYes">
+                                                                                               Yes
+                                                                                            </label>
+                                                                                        </div>
+
+                                                                                        <div class="form-check align-radio">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="manualWeight" id="manualWeightNo" value="false" checked>
+                                                                                            <label class="form-check-label" for="manualWeightNo">
+                                                                                               No
+                                                                                            </label>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -342,6 +439,17 @@ require_once "layouts/config.php";
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divSupplierWeight" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="supplierWeight" placeholder="Supplier Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                            
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-6 col-lg-6 mb-3">
@@ -357,6 +465,17 @@ require_once "layouts/config.php";
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divWeightDifference"  style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="weightDifference" placeholder="Weight Difference">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                            
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-6 col-lg-6 mb-3">
@@ -384,6 +503,21 @@ require_once "layouts/config.php";
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            </div>
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="totalPrice" name="totalPrice" placeholder="0">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>                                                                        
                                                                         <div class="row">
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
@@ -428,9 +562,9 @@ require_once "layouts/config.php";
                                                                                     <label for="grossIncoming" class="col-sm-4 col-form-label">1.Gross Incoming</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <div class="input-group-text">
+                                                                                            <!-- <div class="input-group-text">
                                                                                                 <input class="form-check-input mt-0" id="manual" name="manual" type="checkbox" value="0" aria-label="Checkbox for following text input">
-                                                                                            </div>                                                                                            
+                                                                                            </div>                                                                                             -->
                                                                                             <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0.00" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5"><i class="mdi mdi-sync"></i></button>
@@ -449,9 +583,9 @@ require_once "layouts/config.php";
                                                                                     <label for="tareOutgoing" class="col-sm-4 col-form-label">2.Tare Outgoing</label>
                                                                                     <div class="col-sm-8">                                                                                     
                                                                                         <div class="input-group">
-                                                                                            <div class="input-group-text">
+                                                                                            <!-- <div class="input-group-text">
                                                                                                 <input class="form-check-input mt-0" id="manualOutgoing" name="manualOutgoing" type="checkbox" value="0" aria-label="Checkbox for following text input">
-                                                                                            </div>                                                                                               
+                                                                                            </div>                                                                                                -->
                                                                                             <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0.00" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5"><i class="mdi mdi-sync"></i></button>
@@ -671,25 +805,39 @@ require_once "layouts/config.php";
                 }
             });
 
-            $('#manual').on('click', function(){
-                if($(this).is(':checked')){
-                    $(this).val(1);
+            $('.radio-manual-weight').on('click', function(){
+                if($('input[name="manualWeight"]:checked').val() == "true"){
+                    // $(this).val(1);
+                    $('#tareOutgoing').removeAttr('readonly');
                     $('#grossIncoming').removeAttr('readonly');
                 }
                 else{
-                    $(this).val(0);
+                    // $(this).val(0);
                     $('#grossIncoming').attr('readonly', 'readonly');
+                    $('#tareOutgoing').attr('readonly', 'readonly');
                 }
             });
 
-            $('#manualOutgoing').on('click', function(){
-                if($(this).is(':checked')){
-                    $(this).val(1);
-                    $('#tareOutgoing').removeAttr('readonly');
+            // $('#manualOutgoing').on('click', function(){
+            //     if($(this).is(':checked')){
+            //         $(this).val(1);
+            //         $('#tareOutgoing').removeAttr('readonly');
+            //     }
+            //     else{
+            //         $(this).val(0);
+            //         $('#tareOutgoing').attr('readonly', 'readonly');
+            //     }
+            // });
+
+            $('#transactionStatus').on('change', function(){
+                if($(this).val() == "Purchase" || $(this).val() == "Local")
+                {
+                    $('#divWeightDifference').show();
+                    $('#divSupplierWeight').show();
                 }
                 else{
-                    $(this).val(0);
-                    $('#tareOutgoing').attr('readonly', 'readonly');
+                    $('#divWeightDifference').hide();
+                    $('#divSupplierWeight').hide();
                 }
             });
         });
