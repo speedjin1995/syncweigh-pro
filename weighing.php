@@ -10,6 +10,7 @@ require_once "layouts/config.php";
   $product = $db->query("SELECT * FROM Product WHERE status = '0'");
   $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
   $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
+  $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
   $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 ?>
 
@@ -29,11 +30,22 @@ require_once "layouts/config.php";
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery Validate plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
     <?php include 'layouts/head-css.php'; ?>
 
 </head>
 
 <?php include 'layouts/body.php'; ?>
+
+<!-- <div class="loading" id="spinnerLoading" style="display:none">
+  <div class='mdi mdi-loading' style='transform:scale(0.79);'>
+    <div></div>
+  </div>
+</div> -->
 
 <!-- Begin page -->
 <div id="layout-wrapper">
@@ -242,6 +254,39 @@ require_once "layouts/config.php";
                                         </div><!-- end card body -->
                                     </div><!-- end card -->
                                 </div><!-- end col -->
+
+                                <div class="col-xl-3 col-md-6">
+                                    <!-- card -->
+                                    <div class="card card-animate">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1 overflow-hidden">
+                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
+                                                    Local</p>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <h5 class="text-success fs-14 mb-0">
+                                                        <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
+                                                        +29.08 %
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-end justify-content-between mt-4">
+                                                <div>
+                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                            class="counter-value" data-target="183.35">0</span>
+                                                    </h4>
+                                                </div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-soft-warning rounded fs-3">
+                                                        <i class="bx bx-user-circle text-warning"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div><!-- end card body -->
+                                    </div><!-- end card -->
+                                </div><!-- end col -->
+
                                 <div class="col-xl-3 col-md-6 add-new-weight">
                                     <!-- <button type="button" class="btn btn-lg btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i
                                             class="ri-add-circle-line align-middle me-1"></i>
@@ -257,7 +302,7 @@ require_once "layouts/config.php";
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="javascript:void(0);">
+                                                    <form role="form" id="weightForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-center">
                                                                 <div class="col-xl-12 col-md-12 col-md-12">
@@ -295,7 +340,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="transactionId" placeholder="Transaction ID">
+                                                                                        <input type="text" class="form-control" id="transactionId" name="transactionId" placeholder="Transaction ID" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div>                                                                                       
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -303,7 +351,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div>    
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -313,7 +364,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="invoiceNo" placeholder="Invoice No">
+                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -321,10 +372,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="weightType" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <select id="weightType" name="weightType" class="form-select" data-choices data-choices-sorting="true">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
-                                                                                        </select>
+                                                                                        </select>   
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -334,7 +385,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="deliveryNo" placeholder="Delivery No">
+                                                                                        <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -342,12 +393,12 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select" data-choices data-choices-sorting="true">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
                                                                                             <option value="Local">Local</option>
                                                                                             <option value="MISC">MISC</option>
-                                                                                        </select>
+                                                                                        </select>  
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -357,7 +408,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="purchaseOrder" placeholder="Purchase Order">
+                                                                                        <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -365,7 +416,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="weighbridge" class="col-sm-4 col-form-label">Weighbridge</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control input-readonly" id="weighbridge" placeholder="Weigh1" readonly>
+                                                                                        <input type="text" class="form-control input-readonly" id="weighbridge" name="weighbridge" placeholder="Weigh1" value="Weigh1" readonly>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -375,7 +426,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="containerNo" placeholder="Container No">
+                                                                                        <input type="text" class="form-control" id="containerNo" name="containerNo" placeholder="Container No">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -383,7 +434,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="indicatorId" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <select id="indicatorId" name="indicatorId" class="form-select" data-choices data-choices-sorting="true" >
                                                                                             <option selected>ind12345</option>
                                                                                         </select>
                                                                                     </div>
@@ -391,19 +442,32 @@ require_once "layouts/config.php";
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divCustomerName">
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="customerName" name="customerName" data-choices data-choices-sorting="true">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                                <option value="<?=$rowCustomer['id'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divSupplierName" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select" id="supplierName" name="supplierName" data-choices data-choices-sorting="true">
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                <option value="<?=$rowProduct['id'] ?>" data-code="<?=$rowCustomer['supplier_code'] ?>"><?=$rowProduct['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                            
                                                                             <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
@@ -433,18 +497,18 @@ require_once "layouts/config.php";
                                                                                         <select class="form-select" id="productName" name="productName" data-choices data-choices-sorting="true">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                                                                                                <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['name'] ?></option>
+                                                                                                <option value="<?=$rowProduct['id'] ?>" data-code="<?=$rowCustomer['product_code'] ?>" data-description="<?=$rowCustomer['description'] ?>"><?=$rowProduct['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div>                                                                         
                                                                             <div class="col-xxl-6 col-lg-6 mb-3" id="divSupplierWeight" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplierWeight" placeholder="Supplier Weight">
+                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div>
@@ -459,7 +523,7 @@ require_once "layouts/config.php";
                                                                                         <select class="form-select" id="transporter" name="transporter" data-choices data-choices-sorting="true">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['id'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                                <option value="<?=$rowTransporter['id'] ?>" data-code="<?=$rowCustomer['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                          
                                                                                     </div>
@@ -470,7 +534,7 @@ require_once "layouts/config.php";
                                                                                     <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="weightDifference" placeholder="Weight Difference">
+                                                                                            <input type="number" class="form-control" id="weightDifference" name="weightDifference" placeholder="Weight Difference">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div>
@@ -485,7 +549,7 @@ require_once "layouts/config.php";
                                                                                         <select class="form-select" id="destination" name="destination" data-choices data-choices-sorting="true">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['id'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                                <option value="<?=$rowDestination['id'] ?>" data-code="<?=$rowCustomer['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                         
                                                                                     </div>
@@ -496,7 +560,7 @@ require_once "layouts/config.php";
                                                                                     <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" placeholder="0">
+                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div>
@@ -523,7 +587,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
                                                                                     <div class="col-sm-10">
-                                                                                        <textarea class="form-control" id="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+                                                                                        <textarea class="form-control" id="otherRemarks" name="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -546,14 +610,17 @@ require_once "layouts/config.php";
                                                                                             <div class="input-group-text">
                                                                                                 <input class="form-check-input mt-0" id="manualVehicle" name="manualVehicle" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                             </div>
-                                                                                            <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none">
+                                                                                            <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
                                                                                             <div class="col-10 index-vehicle">
-                                                                                                <select class="form-select" id="vehiclePlateNo1" name="vehiclePlateNo1" data-choices data-choices-sorting="true">
+                                                                                                <select class="form-select" id="vehiclePlateNo1" name="vehiclePlateNo1" data-choices data-choices-sorting="true" required>
                                                                                                     <option selected="-">-</option>
                                                                                                     <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                                                                                                         <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
                                                                                                     <?php } ?>
                                                                                                 </select>
+                                                                                            </div>
+                                                                                            <div class="invalid-feedback">
+                                                                                                Please fill in the field.
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -565,7 +632,7 @@ require_once "layouts/config.php";
                                                                                             <!-- <div class="input-group-text">
                                                                                                 <input class="form-check-input mt-0" id="manual" name="manual" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                             </div>                                                                                             -->
-                                                                                            <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0.00" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0.00" value="234" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>
@@ -575,7 +642,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row mb-3">
                                                                                     <label for="grossIncomingDate" class="col-sm-4 col-form-label">Gross Incoming Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate" name="grossIncomingDate" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the date.
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
 
@@ -586,7 +656,7 @@ require_once "layouts/config.php";
                                                                                             <!-- <div class="input-group-text">
                                                                                                 <input class="form-check-input mt-0" id="manualOutgoing" name="manualOutgoing" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                             </div>                                                                                                -->
-                                                                                            <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0.00" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0.00" value="234" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>                                                                                       
@@ -595,15 +665,21 @@ require_once "layouts/config.php";
                                                                                 <div class="row mb-3">
                                                                                     <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate" name="tareOutgoingDate" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                                Please fill in the date.
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>                                                                        
                                                                                 <div class="row mb-3">
                                                                                     <label for="nettWeight" class="col-sm-4 col-form-label">Nett Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="nettWeight" placeholder="0">
+                                                                                            <input type="number" class="form-control" id="nettWeight" name="nettWeight" placeholder="0" required>
                                                                                             <div class="input-group-text">Kg</div>
+                                                                                            <div class="invalid-feedback">
+                                                                                                Please fill in the field.
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -619,14 +695,14 @@ require_once "layouts/config.php";
                                                                                 <div class="row mb-3">
                                                                                     <label for="vehiclePlateNo2" class="col-sm-4 col-form-label">Vehicle Plate No 2</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="vehiclePlateNo1" placeholder="Vehicle Plate No 2">
+                                                                                        <input type="text" class="form-control" id="vehiclePlateNo2" name="vehiclePlateNo2" placeholder="Vehicle Plate No 2">
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mb-3">
                                                                                     <label for="grossIncoming2" class="col-sm-4 col-form-label">3.Gross Incoming</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="grossIncoming2" placeholder="0">
+                                                                                            <input type="number" class="form-control" id="grossIncoming2" name="grossIncoming2" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div>
@@ -634,26 +710,26 @@ require_once "layouts/config.php";
                                                                                 <div class="row mb-3">
                                                                                     <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Gross Incoming Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate2">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate2" name="grossIncomingDate2">
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mb-3">
                                                                                     <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="tareOutgoing" placeholder="Tare Outgoing">
+                                                                                        <input type="number" class="form-control" id="tareOutgoing2" name="tareOutgoing2" placeholder="Tare Outgoing">
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mb-3">
                                                                                     <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="Tare Outgoing Date">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" placeholder="Tare Outgoing Date" id="tareOutgoingDate2" name="tareOutgoingDate2">
                                                                                     </div>
                                                                                 </div>                                                                        
                                                                                 <div class="row mb-3">
                                                                                     <label for="nettWeight2" class="col-sm-4 col-form-label">Nett Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="nettWeight2" placeholder="0">
+                                                                                            <input type="number" class="form-control" id="nettWeight2" name="nettWeight2" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div>
@@ -671,9 +747,17 @@ require_once "layouts/config.php";
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
                                                             </div>
-                                                        </div><!--end col-->                                                               
+                                                        </div><!--end col-->   
+                                                        
+                                                        <input type="hidden" id="customerCode" name="customerCode">
+                                                        <input type="hidden" id="destinationCode" name="destinationCode">
+                                                        <input type="hidden" id="productCode" name="productCode">
+                                                        <input type="hidden" id="productDescription" name="productDescription">
+                                                        <input type="hidden" id="transporterCode" name="transporterCode">
+                                                        <input type="hidden" id="supplierCode" name="supplierCode">
+                                                        <input type="hidden" id="id" name="id">  
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -697,7 +781,7 @@ require_once "layouts/config.php";
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addVehicle" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Weight
                                                                 </button>
@@ -705,13 +789,13 @@ require_once "layouts/config.php";
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="vehicleTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
                                                                     <th>No</th>
                                                                     <th>Status</th>
                                                                     <th>Weight Status</th>
-                                                                    <th>Serial No</th>
+                                                                    <th>Transaction Id</th>
                                                                     <th>Vehicle No</th>
                                                                     <th>Product Description Detail</th>
                                                                     <th>Incoming(Gross Weight)</th>
@@ -770,7 +854,12 @@ require_once "layouts/config.php";
     <!-- App js -->
     <script src="assets/js/app.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- prismjs plugin -->
+    <script src="assets/libs/prismjs/prism.js"></script>
+
+    <!-- notifications init -->
+    <script src="assets/js/pages/notifications.init.js"></script>
+
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
@@ -781,6 +870,101 @@ require_once "layouts/config.php";
 
     <script type="text/javascript">
         $(function () {
+
+            table = $("#weightTable").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url':'php/loadWeight.php'
+                },
+                'columns': [
+                    { data: 'id' },
+                    { data: 'transaction_status' },
+                    { data: 'weight_type' },
+                    { data: 'transaction_id' },
+                    { data: 'lorry_plate_no1' },
+                    { data: 'product_description' },
+                    { data: 'gross_weight1' },
+                    { data: 'gross_weight1_date' },
+                    { data: 'tare_weight1' },
+                    { data: 'tare_weight1_date' },
+                    { data: 'nett_weight1' },
+                    { 
+                        data: 'id',
+                        render: function ( data, type, row ) {
+                            // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                            '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                        }
+                    }
+                ]       
+            });
+
+            $('#submitWeight').on('click', function(){
+                if($('#weightForm').valid()){
+                    $('#spinnerLoading').show();
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        debugger;
+                        var obj = JSON.parse(data); 
+                        if(obj.status === 'success')
+                        {
+                            table.ajax.reload();
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed')
+                        {
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else
+                        {
+
+                        }
+                    });
+                }
+                // }
+            });
+
+            $('#addWeight').on('click', function(){
+                // $('#addModal').find('#id').val("");
+                // $('#addModal').find('#customerCode').val("");
+                // $('#addModal').find('#companyName').val("");
+                // $('#addModal').find('#companyRegNo').val("");
+                // $('#addModal').find('#addressLine1').val("");
+                // $('#addModal').find('#addressLine2').val("");
+                // $('#addModal').find('#addressLine3').val("");
+                // $('#addModal').find('#phoneNo').val("");
+                // $('#addModal').find('#faxNo').val("");
+                // $('#addModal').modal('show');
+                
+                $('#weightForm').validate({
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
+
+            $(':input[type="number"]').change(function(){
+                this.value = parseFloat(this.value).toFixed(2);
+            });
+
             $('#weightType').on('change', function(){
                 if($(this).val() == "Container")
                 {
@@ -818,29 +1002,119 @@ require_once "layouts/config.php";
                 }
             });
 
-            // $('#manualOutgoing').on('click', function(){
-            //     if($(this).is(':checked')){
-            //         $(this).val(1);
-            //         $('#tareOutgoing').removeAttr('readonly');
-            //     }
-            //     else{
-            //         $(this).val(0);
-            //         $('#tareOutgoing').attr('readonly', 'readonly');
-            //     }
-            // });
-
             $('#transactionStatus').on('change', function(){
                 if($(this).val() == "Purchase" || $(this).val() == "Local")
                 {
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').show();
+                    $('#divSupplierName').show();
+                    $('#divCustomerName').hide();
                 }
                 else{
                     $('#divWeightDifference').hide();
                     $('#divSupplierWeight').hide();
+                    $('#divSupplierName').hide();
+                    $('#divCustomerName').show();
                 }
             });
         });
+
+    function edit(id){
+        $('#spinnerLoading').show();
+        $.post('php/getWeight.php', {userID: id}, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#transactionId').val(obj.message.transaction_id);
+                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
+                $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#transactionDate').val(obj.message.transaction_date);
+                $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
+
+                // if(obj.message.vehicleNoTxt != null)
+                // {
+                //     $('#addModal').find('#vehicleNoTxt').val(obj.message.lorry_plate_no1);
+                // }
+
+                $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
+                $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
+                $('#addModal').find('#customerCode').val(obj.message.customer_code);
+                $('#addModal').find('#customerName').val(obj.message.customer_name);
+                $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
+                $('#addModal').find('#supplierName').val(obj.message.supplier_name);
+                $('#addModal').find('#productCode').val(obj.message.product_code);
+                $('#addModal').find('#productName').val(obj.message.product_name);
+                $('#addModal').find('#containerNo').val(obj.message.container_no);
+                $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
+                $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
+                $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
+                $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
+                $('#addModal').find('#transporter').val(obj.message.transporter);
+                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                $('#addModal').find('#destination').val(obj.message.destination);
+                $('#addModal').find('#otherRemarks').val(obj.message.remarks);
+                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
+                $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
+                $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
+                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
+                $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
+                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date);
+                $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
+                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date);
+                $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
+                $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
+                // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
+                $('#addModal').find('#weightDifference').val(obj.message.weight_different);
+                // $('#addModal').find('#id').val(obj.message.is_complete);
+                // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
+                $('#addModal').find('#manualWeight').val(obj.message.manual_weight);
+                $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
+                $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
+                $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
+                $('#addModal').find('#productDescription').val(obj.message.product_description);
+
+
+                $('#addModal').modal('show');
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
+    }
+
+    function deactivate(id){
+        $('#spinnerLoading').show();
+        $.post('php/deleteWeight.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                table.ajax.reload();
+                $('#spinnerLoading').hide();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+        });
+    }
     </script>
 
     </body>
