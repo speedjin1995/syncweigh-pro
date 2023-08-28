@@ -106,7 +106,7 @@ require_once "layouts/config.php";
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select" data-choices data-choices-sorting="true" >
+                                                            <select id="statusSearch" class="form-select"  >
                                                                 <option selected>Sales</option>
                                                                 <option>Purchase</option>
                                                                 <option>Local</option>
@@ -116,7 +116,7 @@ require_once "layouts/config.php";
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" data-choices data-choices-sorting="true" >
+                                                            <select id="customerNoSearch" class="form-select" >
                                                                 <option selected>...</option>
                                                                 <!-- <option>Purchase</option>
                                                                 <option>Local</option> -->
@@ -144,7 +144,7 @@ require_once "layouts/config.php";
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatusSearch" class="form-select" data-choices data-choices-sorting="true" >
+                                                            <select id="transactionStatusSearch" class="form-select" >
                                                                 <option selected>...</option>
                                                                 <!-- <option>Purchase</option>
                                                                 <option>Local</option> -->
@@ -372,7 +372,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="weightType" name="weightType" class="form-select" data-choices data-choices-sorting="true">
+                                                                                        <select id="weightType" name="weightType" class="form-select">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
                                                                                         </select>   
@@ -393,7 +393,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select" data-choices data-choices-sorting="true">
+                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
                                                                                             <option value="Local">Local</option>
@@ -434,7 +434,7 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="indicatorId" name="indicatorId" class="form-select" data-choices data-choices-sorting="true" >
+                                                                                        <select id="indicatorId" name="indicatorId" class="form-select" >
                                                                                             <option selected>ind12345</option>
                                                                                         </select>
                                                                                     </div>
@@ -446,10 +446,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="customerName" name="customerName" data-choices data-choices-sorting="true">
+                                                                                        <select class="form-select js-choice" id="customerName" name="customerName">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['id'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -459,10 +459,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="supplierName" name="supplierName" data-choices data-choices-sorting="true">
+                                                                                        <select class="form-select" id="supplierName" name="supplierName">
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($supplier)){ ?>
-                                                                                                <option value="<?=$rowProduct['id'] ?>" data-code="<?=$rowCustomer['supplier_code'] ?>"><?=$rowProduct['name'] ?></option>
+                                                                                            <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
                                                                                     </div>
@@ -494,10 +494,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="productName" name="productName" data-choices data-choices-sorting="true">
+                                                                                        <select class="form-select" id="productName" name="productName" >
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                                                                                                <option value="<?=$rowProduct['id'] ?>" data-code="<?=$rowCustomer['product_code'] ?>" data-description="<?=$rowCustomer['description'] ?>"><?=$rowProduct['name'] ?></option>
+                                                                                                <option value="<?=$rowProduct['name'] ?>" data-code="<?=$rowProduct['product_code'] ?>" data-description="<?=$rowProduct['description'] ?>"><?=$rowProduct['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
                                                                                     </div>
@@ -520,10 +520,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="transporter" name="transporter" data-choices data-choices-sorting="true">
+                                                                                        <select class="form-select" id="transporter" name="transporter" >
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['id'] ?>" data-code="<?=$rowCustomer['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                          
                                                                                     </div>
@@ -546,10 +546,10 @@ require_once "layouts/config.php";
                                                                                 <div class="row">
                                                                                     <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="destination" name="destination" data-choices data-choices-sorting="true">
+                                                                                        <select class="form-select" id="destination" name="destination">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['id'] ?>" data-code="<?=$rowCustomer['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                         
                                                                                     </div>
@@ -612,7 +612,7 @@ require_once "layouts/config.php";
                                                                                             </div>
                                                                                             <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
                                                                                             <div class="col-10 index-vehicle">
-                                                                                                <select class="form-select" id="vehiclePlateNo1" name="vehiclePlateNo1" data-choices data-choices-sorting="true" required>
+                                                                                                <select class="form-select" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
                                                                                                     <option selected="-">-</option>
                                                                                                     <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                                                                                                         <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
@@ -909,7 +909,6 @@ require_once "layouts/config.php";
                 if($('#weightForm').valid()){
                     $('#spinnerLoading').show();
                     $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                        debugger;
                         var obj = JSON.parse(data); 
                         if(obj.status === 'success')
                         {
@@ -935,16 +934,56 @@ require_once "layouts/config.php";
             });
 
             $('#addWeight').on('click', function(){
-                // $('#addModal').find('#id').val("");
-                // $('#addModal').find('#customerCode').val("");
-                // $('#addModal').find('#companyName').val("");
-                // $('#addModal').find('#companyRegNo').val("");
-                // $('#addModal').find('#addressLine1').val("");
-                // $('#addModal').find('#addressLine2').val("");
-                // $('#addModal').find('#addressLine3').val("");
-                // $('#addModal').find('#phoneNo').val("");
-                // $('#addModal').find('#faxNo').val("");
-                // $('#addModal').modal('show');
+                $('#addModal').find('#id').val("");
+                $('#addModal').find('#transactionId').val("");
+                $('#addModal').find('#transactionStatus').val("");
+                $('#addModal').find('#weightType').val("");
+                $('#addModal').find('#transactionDate').val("");
+                $('#addModal').find('#vehiclePlateNo1').val("");
+
+                // if(obj.message.vehicleNoTxt != null)
+                // {
+                //     $('#addModal').find('#vehicleNoTxt').val(obj.message.lorry_plate_no1);
+                // }
+
+                $('#addModal').find('#vehiclePlateNo2').val("");
+                $('#addModal').find('#supplierWeight').val("");
+                $('#addModal').find('#customerCode').val("");
+                $('#addModal').find('#customerName').val("");
+                $('#addModal').find('#supplierCode').val("");
+                $('#addModal').find('#supplierName').val("");
+                $('#addModal').find('#productCode').val("");
+                $('#addModal').find('#productName').val("");
+                $('#addModal').find('#containerNo').val("");
+                $('#addModal').find('#invoiceNo').val("");
+                $('#addModal').find('#purchaseOrder').val("");
+                $('#addModal').find('#deliveryNo').val("");
+                $('#addModal').find('#transporterCode').val("");
+                $('#addModal').find('#transporter').val("");
+                $('#addModal').find('#destinationCode').val("");
+                $('#addModal').find('#destination').val("");
+                $('#addModal').find('#otherRemarks').val("");
+                $('#addModal').find('#grossIncoming').val("");
+                $('#addModal').find('#grossIncomingDate').val("");
+                $('#addModal').find('#tareOutgoing').val("");
+                $('#addModal').find('#tareOutgoingDate').val("");
+                $('#addModal').find('#nettWeight').val("");
+                $('#addModal').find('#grossIncoming2').val("");
+                $('#addModal').find('#grossIncomingDate2').val("");
+                $('#addModal').find('#tareOutgoing2').val("");
+                $('#addModal').find('#tareOutgoingDate2').val("");
+                $('#addModal').find('#nettWeight2').val("");
+                $('#addModal').find('#reduceWeight').val("");
+                // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
+                $('#addModal').find('#weightDifference').val("");
+                // $('#addModal').find('#id').val(obj.message.is_complete);
+                // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
+                $('#addModal').find('#manualWeight').val("");
+                $('#addModal').find('#indicatorId').val("");
+                $('#addModal').find('#weighbridge').val("");
+                $('#addModal').find('#indicatorId2').val("");
+                $('#addModal').find('#productDescription').val("");
+                $('#addModal').modal('show');
                 
                 $('#weightForm').validate({
                     errorElement: 'span',
@@ -1017,6 +1056,29 @@ require_once "layouts/config.php";
                     $('#divCustomerName').show();
                 }
             });
+
+            //productName
+            $('#productName').on('change', function(){
+                $('#productCode').val($('#productName :selected').data('code'));
+                $('#productDescription').val($('#productName :selected').data('description'));
+            });
+            //supplierName
+            $('#supplierName').on('change', function(){
+                $('#supplierCode').val($('#supplierName :selected').data('code'));
+            });
+            //transporter
+            $('#transporter').on('change', function(){
+                $('#transporterCode').val($('#transporter :selected').data('code'));
+            });
+             //destination
+            $('#destination').on('change', function(){
+                $('#destinationCode').val($('#destination :selected').data('code'));
+            });
+             //customerName
+            $('#customerName').on('change', function(){
+                $('#customerCode').val($('#customerName :selected').data('code'));
+            });
+
         });
 
     function edit(id){
@@ -1032,10 +1094,10 @@ require_once "layouts/config.php";
                 $('#addModal').find('#transactionDate').val(obj.message.transaction_date);
                 $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
 
-                // if(obj.message.vehicleNoTxt != null)
-                // {
-                //     $('#addModal').find('#vehicleNoTxt').val(obj.message.lorry_plate_no1);
-                // }
+                if(obj.message.vehicleNoTxt != null)
+                {
+                    $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
+                }
 
                 $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
                 $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
@@ -1074,8 +1136,6 @@ require_once "layouts/config.php";
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
-
-
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

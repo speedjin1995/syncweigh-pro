@@ -27,17 +27,25 @@ if(isset($_POST['userID'])){
 			// 		);
 			// 	}
 			// 	else{
-			// 		$insert_stmt->close();
-			// 		echo json_encode(
-			// 			array(
-			// 				"status"=> "success", 
-			// 				"message"=> "Deleted"
-			// 			)
-			// 		);
+					// $insert_stmt->close();
+					// echo json_encode(
+					// 	array(
+					// 		"status"=> "success", 
+					// 		"message"=> "Deleted"
+					// 	)
+					// );
 			// 	}
 			// }
 
 			$stmt2->close();
+			echo json_encode(
+				array(
+					"status"=> "success", 
+					"message"=> "Deleted"
+				)
+			);
+
+			// $stmt2->close();
 			$db->close();
 		} else{
 		    echo json_encode(
