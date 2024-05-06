@@ -148,5 +148,70 @@ if(($row = $result->fetch_assoc()) !== null){
         
         <!-- App js -->
         <script src="assets/js/app.js"></script>
+        <script>
+            $(function () {
+                $.post('http://127.0.0.1:5002/getcomport', function(data){
+                    var decoded = JSON.parse(data);
+                    var options = '';
+
+                    for (var i = 0; i < decoded.length; i++) {
+                        options += '<option value="' + decoded[i] + '">' + decoded[i] + '</option>';
+                    }
+
+                    $('#serialPort').html(options);
+                    $('#serialPort').val(<?=$port ?>);
+                });
+
+                $.validator.setDefaults({
+                    submitHandler: function () {
+                        $('#spinnerLoading').show();
+                        $.post('php/updatePort.php', $('#profileForm').serialize(), function(data){
+                            var obj = JSON.parse(data); 
+                            
+                            if(obj.status === 'success'){
+                                toastr["success"](obj.message, "Success:");
+                                
+                                $.get('setup.php', function(data) {
+                                    $('#mainContents').html(data);
+                                    $('#spinnerLoading').hide();
+                                });
+                            }
+                            else if(obj.status === 'failed'){
+                                toastr["error"](obj.message, "Failed:");
+                                $('#spinnerLoading').hide();
+                            }
+                            else{
+                                toastr["error"]("Failed to update ports", "Failed:");
+                                $('#spinnerLoading').hide();
+                            }
+                        });
+                    }
+                });
+                
+                $('#profileForm').validate({
+                    rules: {
+                        text: {
+                            required: true
+                        }
+                    },
+                    messages: {
+                        text: {
+                            required: "Please fill in this field"
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

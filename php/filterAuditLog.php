@@ -157,13 +157,16 @@ if($_POST['selectedValue'] == "Product")
         "Product Code"=>$row['product_code'],
         "Name"=>$row['name'],
         "Description"=>$row['description'],
+        "Variance Type"=>$row['variance'],
+        "High"=>$row['high'],
+        "Low"=>$row['low'],
         "Action Id"=>$row['action_id'],
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
     }
 
-    $columnNames = ["Product Id", "Product Code", "Name", "Description", "Action Id", "Action By", "Event Date"];
+    $columnNames = ["Product Id", "Product Code", "Name", "Description", "Variance Type", "High", "Low", "Action Id", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "Supplier")

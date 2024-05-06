@@ -2,7 +2,7 @@
 <?php include 'layouts/head-main.php'; ?>
 
 <?php
-require_once "layouts/config.php";
+require_once "php/db_connect.php";
 
 //   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
   $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
@@ -36,7 +36,15 @@ require_once "layouts/config.php";
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
     <?php include 'layouts/head-css.php'; ?>
+    <style>
+        .mb-3 {
+            margin-bottom: 0.5rem !important;
+        }
 
+        .modal-header {
+            padding: var(1rem, 1rem) !important;
+        }
+    </style>
 </head>
 
 <?php include 'layouts/body.php'; ?>
@@ -166,7 +174,7 @@ require_once "layouts/config.php";
                             </div>
                             
                             <div class="row">
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-4 col-md-6">
                                     <!-- card -->
                                     <div class="card card-animate">
                                         <div class="card-body">
@@ -178,8 +186,8 @@ require_once "layouts/config.php";
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
                                                 <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span
-                                                            class="counter-value" data-target="559.25">0</span>k
+                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                            class="counter-value" data-target="0">0</span>
                                                     </h4>
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
@@ -192,7 +200,7 @@ require_once "layouts/config.php";
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-4 col-md-6">
                                     <!-- card -->
                                     <div class="card card-animate">
                                         <div class="card-body">
@@ -200,12 +208,6 @@ require_once "layouts/config.php";
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
                                                         Purchase</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <h5 class="text-danger fs-14 mb-0">
-                                                        <i class="ri-arrow-right-down-line fs-13 align-middle"></i>
-                                                        -3.57 %
-                                                    </h5>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -223,39 +225,7 @@ require_once "layouts/config.php";
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
-                                    <div class="card card-animate">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Miscellaneous</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <h5 class="text-success fs-14 mb-0">
-                                                        <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-                                                        +29.08 %
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" data-target="183.35">0</span>M
-                                                    </h4>
-                                                </div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-warning rounded fs-3">
-                                                        <i class="bx bx-user-circle text-warning"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-4 col-md-6">
                                     <!-- card -->
                                     <div class="card card-animate">
                                         <div class="card-body">
@@ -263,12 +233,6 @@ require_once "layouts/config.php";
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
                                                     Local</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <h5 class="text-success fs-14 mb-0">
-                                                        <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-                                                        +29.08 %
-                                                    </h5>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -397,7 +361,6 @@ require_once "layouts/config.php";
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
                                                                                             <option value="Local">Local</option>
-                                                                                            <option value="MISC">MISC</option>
                                                                                         </select>  
                                                                                     </div>
                                                                                 </div>
@@ -513,7 +476,18 @@ require_once "layouts/config.php";
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>                                                                            
+                                                                            </div>    
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divOrderWeight">
+                                                                                <div class="row">
+                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Order Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                         
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-6 col-lg-6 mb-3">
@@ -529,7 +503,7 @@ require_once "layouts/config.php";
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divWeightDifference"  style="display:none;">
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" id="divWeightDifference">
                                                                                 <div class="row">
                                                                                     <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
                                                                                     <div class="col-sm-8">
@@ -640,7 +614,7 @@ require_once "layouts/config.php";
                                                                                 </div>
 
                                                                                 <div class="row mb-3">
-                                                                                    <label for="grossIncomingDate" class="col-sm-4 col-form-label">Gross Incoming Date</label>
+                                                                                    <label for="grossIncomingDate" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate" name="grossIncomingDate" required>
                                                                                         <div class="invalid-feedback">
@@ -663,7 +637,7 @@ require_once "layouts/config.php";
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mb-3">
-                                                                                    <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
+                                                                                    <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Outgoing Date</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="date" class="form-control" data-provider="flatpickr" id="tareOutgoingDate" name="tareOutgoingDate" required>
                                                                                         <div class="invalid-feedback">
@@ -708,7 +682,7 @@ require_once "layouts/config.php";
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mb-3">
-                                                                                    <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Gross Incoming Date</label>
+                                                                                    <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="date" class="form-control" data-provider="flatpickr" id="grossIncomingDate2" name="grossIncomingDate2">
                                                                                     </div>
@@ -720,7 +694,7 @@ require_once "layouts/config.php";
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mb-3">
-                                                                                    <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Tare Outgoing Date</label>
+                                                                                    <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Outgoing Date</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="date" class="form-control" data-provider="flatpickr" placeholder="Tare Outgoing Date" id="tareOutgoingDate2" name="tareOutgoingDate2">
                                                                                     </div>
@@ -1047,10 +1021,12 @@ require_once "layouts/config.php";
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').show();
                     $('#divSupplierName').show();
+                    $('#divOrderWeight').hide();
                     $('#divCustomerName').hide();
                 }
                 else{
-                    $('#divWeightDifference').hide();
+                    $('#divOrderWeight').show();
+                    $('#divWeightDifference').show();
                     $('#divSupplierWeight').hide();
                     $('#divSupplierName').hide();
                     $('#divCustomerName').show();

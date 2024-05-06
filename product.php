@@ -154,6 +154,34 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="description" class="col-sm-4 col-form-label">Variance Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control" style="width: 100%;" id="varianceType" name="varianceType">
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
+                                                                                            <option value="W">kg</option>
+                                                                                            <option value="P">%</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="description" class="col-sm-4 col-form-label">High (+)</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="high" name="high" placeholder="High" value="0">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="description" class="col-sm-4 col-form-label">Low (-)</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="low" name="low" placeholder="Low" value="0">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -332,6 +360,9 @@ $(function () {
         $('#addModal').find('#productName').val("");
         $('#addModal').find('#productPrice').val("");
         $('#addModal').find('#description').val("");
+        $('#addModal').find('#varianceType').val("");
+        $('#addModal').find('#high').val("0");
+        $('#addModal').find('#low').val("0");
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -361,6 +392,9 @@ $(function () {
                 $('#addModal').find('#productName').val(obj.message.name);
                 $('#addModal').find('#productPrice').val(obj.message.price);
                 $('#addModal').find('#description').val(obj.message.description);
+                $('#addModal').find('#varianceType').val(obj.message.variance);
+                $('#addModal').find('#high').val(obj.message.high);
+                $('#addModal').find('#low').val(obj.message.low);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

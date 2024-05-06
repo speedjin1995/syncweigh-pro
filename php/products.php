@@ -44,13 +44,31 @@ if (isset($_POST['productCode'])) {
         $productPrice = trim($_POST["productPrice"]);
     }
 
+    if (empty($_POST["varianceType"])) {
+        $varianceType = null;
+    } else {
+        $varianceType = trim($_POST["varianceType"]);
+    }
+
+    if (empty($_POST["high"])) {
+        $high = null;
+    } else {
+        $high = trim($_POST["high"]);
+    }
+
+    if (empty($_POST["low"])) {
+        $low = null;
+    } else {
+        $low = trim($_POST["low"]);
+    }
+
     if(! empty($productId))
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Product SET product_code=?, name=?, price=?, description=? , created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Product SET product_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssss', $productCode, $productName, $productPrice, $description, $username, $username, $productId);
+            $update_stmt->bind_param('ssssssssss', $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $username, $username, $productId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -62,8 +80,8 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssss', $productId, $productCode, $productName, $productPrice, $description, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssss', $productId, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -101,8 +119,8 @@ if (isset($_POST['productCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Product (product_code, name, price, description, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssss', $productCode, $productName,  $productPrice, $description, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Product (product_code, name, price, description, variance, high, low, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssss', $productCode, $productName,  $productPrice, $description, $varianceType, $high, $low, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -125,8 +143,8 @@ if (isset($_POST['productCode'])) {
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssssss', $totalRecords, $productCode, $productName,  $productPrice, $description, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('ssssssssss', $totalRecords, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {
