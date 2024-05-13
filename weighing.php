@@ -4,45 +4,37 @@
 <?php
 require_once "php/db_connect.php";
 
-if(!isset($_SESSION['userID'])){
-    echo '<script type="text/javascript">';
-    echo 'window.location.href = "login.php";</script>';
-}
-else{
-    $user = $_SESSION['userID'];
-    $stmt = $db->prepare("SELECT * from Port");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $role = 'NORMAL';
-    $port = 'COM5';
-    $baudrate = 9600;
-    $databits = "8";
-    $parity = "N";
-    $stopbits = '1';
-        
-    if(($row = $result->fetch_assoc()) !== null){
-        $role = $row['role_code'];
-        $port = $row['port'];
-        $baudrate = $row['baudrate'];
-        $databits = $row['databits'];
-        $parity = $row['parity'];
-        $stopbits = $row['stopbits'];
-    }
-
-    //   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-    $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
-    $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-    $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-    $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$user = $_SESSION['userID'];
+$stmt = $db->prepare("SELECT * from Port");
+$stmt->execute();
+$result = $stmt->get_result();
+$role = 'NORMAL';
+$port = 'COM5';
+$baudrate = 9600;
+$databits = "8";
+$parity = "N";
+$stopbits = '1';
+    
+if(($row = $result->fetch_assoc()) !== null){
+    $role = $row['role_code'];
+    $port = $row['port'];
+    $baudrate = $row['baudrate'];
+    $databits = $row['databits'];
+    $parity = $row['parity'];
+    $stopbits = $row['stopbits'];
 }
 
-
+//   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$product = $db->query("SELECT * FROM Product WHERE status = '0'");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 ?>
 
 <head>
