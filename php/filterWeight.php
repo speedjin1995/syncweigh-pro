@@ -13,6 +13,43 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 
 ## Search 
 $searchQuery = " ";
+
+if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
+  $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
+  $fromDateTime = $dateTime->format('Y-m-d 00:00:00');
+  $searchQuery = " and transaction_date >= '".$fromDateTime."'";
+}
+
+if($_POST['toDate'] != null && $_POST['toDate'] != ''){
+  $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['toDate']);
+  $toDateTime = $dateTime->format('Y-m-d 23:59:59');
+	$searchQuery .= " and transaction_date <= '".$toDateTime."'";
+}
+
+if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
+	$searchQuery .= " and transaction_status = '".$_POST['status']."'";
+}
+
+if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
+	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+}
+
+if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
+	$searchQuery .= " and lorry_plate_no1 like '%".$_POST['vehicle']."%'";
+}
+
+if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != '-'){
+	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
+}
+
+if($_POST['batch'] != null && $_POST['batch'] != '' && $_POST['batch'] != '-'){
+	$searchQuery .= " and is_complete = '".$_POST['batch']."'";
+}
+
+if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
+	$searchQuery .= " and product_code = '".$_POST['product']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
@@ -31,8 +68,21 @@ $totalRecordwithFilter = $records['allcount'];
 $empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
+$salesCount = 0;
+$purchaseCount = 0;
+$localCount = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
+  if($row['transaction_status'] == 'Sales'){
+    $salesCount++;
+  }
+  else if($row['transaction_status'] == 'Purchase'){
+    $purchaseCount++;
+  }
+  else{
+    $localCount++;
+  }
+
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
@@ -88,7 +138,10 @@ $response = array(
   "draw" => intval($draw),
   "iTotalRecords" => $totalRecords,
   "iTotalDisplayRecords" => $totalRecordwithFilter,
-  "aaData" => $data
+  "aaData" => $data,
+  "salesTotal" => $salesCount,
+  "purchaseTotal" => $purchaseCount,
+  "localTotal" => $localCount
 );
 
 echo json_encode($response);
