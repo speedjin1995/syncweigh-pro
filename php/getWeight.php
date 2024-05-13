@@ -69,6 +69,9 @@ if(isset($_POST['userID'])){
                 $message['modified_by'] = $row['modified_by'];
                 $message['indicator_id_2'] = $row['indicator_id_2'];
                 $message['product_description'] = $row['product_description'];
+                $message['sub_total'] = $row['sub_total'];
+                $message['sst'] = $row['sst'];
+                $message['total_price'] = $row['total_price'];
             }
             
             echo json_encode(

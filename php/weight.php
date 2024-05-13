@@ -451,6 +451,45 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 );
             }
             else{
+                $misValue++;
+                
+                ///insert miscellaneous
+                if ($update_stmt = $db->prepare("UPDATE miscellaneous SET value=? WHERE id=?")){
+                    $update_stmt->bind_param('ss', $misValue, $id);
+                    
+                    // Execute the prepared query.
+                    if (! $update_stmt->execute()){
+        
+                        echo json_encode(
+                            array(
+                                "status"=> "failed", 
+                                "message"=> $update_stmt->error
+                            )
+                        );
+                    } 
+                    else{
+                        $update_stmt->close();
+                        $db->close();
+                        
+                        echo json_encode(
+                            array(
+                                "status"=> "success", 
+                                "message"=> "Added Successfully!!" 
+                            )
+                        );
+        
+                    }
+                } 
+                else{
+        
+                    echo json_encode(
+                        array(
+                            "status"=> "failed", 
+                            "message"=> $update_stmt->error
+                        )
+                    );
+                }
+
                 echo json_encode(
                     array(
                         "status"=> "success", 

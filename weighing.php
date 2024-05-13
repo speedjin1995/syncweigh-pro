@@ -1223,7 +1223,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#productHigh').val("");
             $('#addModal').find('#productLow').val("");
             $('#addModal').find('#productVariance').val("");
+            $('#addModal').find('#subTotalPrice').val("0.00");
+            $('#addModal').find('#sstPrice').val("0.00");
             $('#addModal').find('#productPrice').val("0.00");
+            $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -1480,7 +1483,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
-                $('#addModal').find('#transactionDate').val(obj.message.transaction_date);
+                $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
                 $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
 
                 if(obj.message.vehicleNoTxt != null)
@@ -1495,7 +1498,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
                 $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
-                $('#addModal').find('#productName').val(obj.message.product_name);
+                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
@@ -1506,14 +1509,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
+                $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
-                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
+                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
-                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date);
+                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
-                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date);
+                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate2(new Date(obj.message.tare_weight2_date)) : '');
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
@@ -1525,7 +1528,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
-                $('#addModal').modal('show');
+                $('#addModal').find('#subTotalPrice').val(obj.message.product_description);
+                $('#addModal').find('#sstPrice').val(obj.message.product_description);
+                $('#addModal').find('#totalPrice').val(obj.message.total_price);
             }
             else if(obj.status === 'failed'){
                 $('#spinnerLoading').hide();
