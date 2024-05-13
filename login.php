@@ -62,6 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
                             $_SESSION["roles"] = $roles;
+                            $_SESSION['userID']=$id;
 
                             // Redirect user to welcome page
                             header("location: index.php");
