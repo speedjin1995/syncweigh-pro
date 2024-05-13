@@ -4,8 +4,9 @@
 <?php
 require_once "php/db_connect.php";
 
-$user = $_SESSION['userID'];
-$stmt = $db->prepare("SELECT * from Port");
+$user = '1';
+$stmt = $db->prepare("SELECT * from Port WHERE id = ?");
+$stmt->bind_param('s', $user);
 $stmt->execute();
 $result = $stmt->get_result();
 $role = 'NORMAL';
@@ -16,12 +17,12 @@ $parity = "N";
 $stopbits = '1';
     
 if(($row = $result->fetch_assoc()) !== null){
-    $role = $row['role_code'];
-    $port = $row['port'];
-    $baudrate = $row['baudrate'];
-    $databits = $row['databits'];
+    //$role = $row['role_code'];
+    $port = $row['com_port'];
+    $baudrate = $row['bits_per_second'];
+    $databits = $row['data_bits'];
     $parity = $row['parity'];
-    $stopbits = $row['stopbits'];
+    $stopbits = $row['stop_bits'];
 }
 
 //   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");

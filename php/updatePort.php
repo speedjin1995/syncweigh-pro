@@ -3,11 +3,11 @@ require_once 'db_connect.php';
 
 session_start();
 
-if(!isset($_SESSION['uidserID'])){
+/*if(!isset($_SESSION['uidserID'])){
 	echo '<script type="text/javascript">location.href = "../login.html";</script>'; 
 } else{
 	$id = $_SESSION['id'];
-}
+}*/
 
 if(isset($_POST['serialPort'], $_POST['serialPortBaudRate'], $_POST['serialPortDataBits'], $_POST['serialPortParity'], $_POST['serialPortStopBits'])){
 	$serialPort = filter_input(INPUT_POST, 'serialPort', FILTER_SANITIZE_STRING);
@@ -15,44 +15,30 @@ if(isset($_POST['serialPort'], $_POST['serialPortBaudRate'], $_POST['serialPortD
 	$serialPortDataBits = filter_input(INPUT_POST, 'serialPortDataBits', FILTER_SANITIZE_STRING);
 	$serialPortParity = filter_input(INPUT_POST, 'serialPortParity', FILTER_SANITIZE_STRING);
 	$serialPortStopBits = filter_input(INPUT_POST, 'serialPortStopBits', FILTER_SANITIZE_STRING);
+	$id = '1';
 	
-	if ($stmt2 = $db->prepare("UPDATE users SET port=?, baudrate=?, databits=?, parity=?, stopbits=? WHERE id=?")) {
+	if ($stmt2 = $db->prepare("UPDATE Port SET com_port=?, bits_per_second=?, data_bits=?, parity=?, stop_bits=? WHERE id=?")) {
 		$stmt2->bind_param('ssssss', $serialPort, $serialPortBaudRate, $serialPortDataBits, $serialPortParity, $serialPortStopBits, $id);
 		
 		if($stmt2->execute()){
 			$stmt2->close();
 			$db->close();
-			
-			echo json_encode(
-				array(
-					"status"=> "success", 
-					"message"=> "Your port setup is updated successfully!" 
-				)
-			);
-		} else{
-			echo json_encode(
-				array(
-					"status"=> "failed", 
-					"message"=> $stmt->error
-				)
-			);
+
+			echo '<script type="text/javascript">alert("Your port setup is updated successfully!");</script>'; 
+			header("location: ../portSetup.php");
+		} 
+		else{
+			echo '<script type="text/javascript">alert("'.$stmt->error.'");</script>'; 
+			header("location: ../portSetup.php");
 		}
 	} 
 	else{
-		echo json_encode(
-			array(
-				"status"=> "failed", 
-				"message"=> "Something went wrong!"
-			)
-		);
+		echo '<script type="text/javascript">alert("Something went wrong!");</script>'; 
+		header("location: ../portSetup.php");
 	}
 } 
 else{
-	echo json_encode(
-        array(
-            "status"=> "failed", 
-            "message"=> "Please fill in all fields"
-        )
-    ); 
+	echo '<script type="text/javascript">alert("Something went wrong!");</script>'; 
+	header("location: ../portSetup.php");
 }
 ?>

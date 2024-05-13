@@ -3,9 +3,9 @@
 <?php
 require_once 'php/db_connect.php';
 
-$id = $_SESSION['userID'];
-$stmt = $db->prepare("SELECT * from Port");
-//$stmt->bind_param('s', $id);
+$id = '1';
+$stmt = $db->prepare("SELECT * from Port WHERE id = ?");
+$stmt->bind_param('s', $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $port = '';
@@ -14,7 +14,7 @@ $databits = '';
 $parity = '';
 $stopbits = '';
 
-if(($row = $result->fetch_assoc()) !== null){
+if($row = $result->fetch_assoc()){
     $port = $row['com_port'];
     $baudrate = $row['bits_per_second'];
     $databits = $row['data_bits'];
@@ -51,7 +51,7 @@ if(($row = $result->fetch_assoc()) !== null){
                         <div class="row col-12">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <form action="php/changepassword.php" method="post">
+                                    <form action="php/updatePort.php" method="post">
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">
@@ -137,18 +137,19 @@ if(($row = $result->fetch_assoc()) !== null){
         
 
         <?php include 'layouts/customizer.php'; ?>
-
         <?php include 'layouts/vendor-scripts.php'; ?>
 
         <!-- swiper js -->
         <script src="assets/libs/swiper/swiper-bundle.min.js"></script>
-
         <!-- profile init js -->
         <script src="assets/js/pages/profile.init.js"></script>
-        
         <!-- App js -->
         <script src="assets/js/app.js"></script>
-        <script>
+        <!-- Include jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Include jQuery Validate plugin -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+        <script type="text/javascript">
             $(function () {
                 $.post('http://127.0.0.1:5002/getcomport', function(data){
                     var decoded = JSON.parse(data);
@@ -159,7 +160,7 @@ if(($row = $result->fetch_assoc()) !== null){
                     }
 
                     $('#serialPort').html(options);
-                    $('#serialPort').val(<?=$port ?>);
+                    $('#serialPort').val('<?=$port ?>');
                 });
 
                 $.validator.setDefaults({
@@ -170,11 +171,7 @@ if(($row = $result->fetch_assoc()) !== null){
                             
                             if(obj.status === 'success'){
                                 toastr["success"](obj.message, "Success:");
-                                
-                                $.get('setup.php', function(data) {
-                                    $('#mainContents').html(data);
-                                    $('#spinnerLoading').hide();
-                                });
+                                window.location.reload();
                             }
                             else if(obj.status === 'failed'){
                                 toastr["error"](obj.message, "Failed:");
