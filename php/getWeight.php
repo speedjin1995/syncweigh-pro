@@ -72,6 +72,7 @@ if(isset($_POST['userID'])){
                 $message['sub_total'] = $row['sub_total'];
                 $message['sst'] = $row['sst'];
                 $message['total_price'] = $row['total_price'];
+                $message['final_weight'] = $row['final_weight'];
             }
             
             echo json_encode(

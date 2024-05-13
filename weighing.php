@@ -1227,6 +1227,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#sstPrice').val("0.00");
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
+            $('#addModal').find('#finalWeight').val("");
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -1498,7 +1499,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
                 $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
-                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
@@ -1523,14 +1523,40 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
                 // $('#addModal').find('#id').val(obj.message.is_complete);
                 // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-                $('#addModal').find('#manualWeight').val(obj.message.manual_weight);
+                //$('#addModal').find('#manualWeight').val(obj.message.manual_weight);
+                if(obj.message.manual_weight == 'true'){
+                    $("#manualWeightYes").prop("checked", true);
+                    $("#manualWeightNo").prop("checked", false);
+                }
+                else{
+                    $("#manualWeightYes").prop("checked", false);
+                    $("#manualWeightNo").prop("checked", true);
+                }
+
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
+                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
                 $('#addModal').find('#subTotalPrice').val(obj.message.product_description);
                 $('#addModal').find('#sstPrice').val(obj.message.product_description);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
+                $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+                $('#addModal').modal('show');
+            
+                $('#weightForm').validate({
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
             }
             else if(obj.status === 'failed'){
                 $('#spinnerLoading').hide();
