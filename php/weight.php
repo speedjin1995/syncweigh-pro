@@ -469,7 +469,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     } 
                     else{
                         $update_stmt->close();
-                        $db->close();
+                        //$db->close();
                         
                         echo json_encode(
                             array(
@@ -481,7 +481,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     }
                 } 
                 else{
-        
                     echo json_encode(
                         array(
                             "status"=> "failed", 
@@ -489,13 +488,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         )
                     );
                 }
-
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
-                    )
-                );
 
                 // $sel = mysqli_query($db,"select count(*) as allcount from Vehicle");
                 // $records = mysqli_fetch_assoc($sel);
