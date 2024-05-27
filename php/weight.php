@@ -477,7 +477,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 "message"=> "Added Successfully!!" 
                             )
                         );
-        
                     }
                 } 
                 else{
