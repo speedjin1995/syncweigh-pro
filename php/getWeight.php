@@ -73,6 +73,41 @@ if(isset($_POST['userID'])){
                 $message['sst'] = $row['sst'];
                 $message['total_price'] = $row['total_price'];
                 $message['final_weight'] = $row['final_weight'];
+
+                if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
+                    $update_stmt2->bind_param('s', $row['lorry_plate_no1']);
+                    $update_stmt2->execute();
+                    $result2 = $update_stmt2->get_result();
+                    
+                    if ($row2 = $result2->fetch_assoc()) {
+                        $message['vehicleNoTxt'] = null; // Replace "123" with the actual value if needed
+                    } 
+                    else {
+                        $message['vehicleNoTxt'] = $row['lorry_plate_no1']; // Debugging line
+                    }
+                } 
+                else {
+                    // Log error if the statement couldn't be prepared
+                    $message['vehicleNoTxt'] = $db->error;
+                }
+            
+                // Check and retrieve vehicle details for lorry_plate_no2
+                if ($update_stmt3 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
+                    $update_stmt3->bind_param('s', $row['lorry_plate_no2']);
+                    $update_stmt3->execute();
+                    $result3 = $update_stmt3->get_result();
+                    
+                    if ($row3 = $result3->fetch_assoc()) {
+                        $message['vehicleNoTxt2'] = null; // Replace "123" with the actual value if needed
+                    } 
+                    else {
+                        $message['vehicleNoTxt2'] = $row['lorry_plate_no2']; // Debugging line
+                    }
+                } 
+                else {
+                    // Log error if the statement couldn't be prepared
+                    $message['vehicleNoTxt2'] = $db->error;
+                }
             }
             
             echo json_encode(

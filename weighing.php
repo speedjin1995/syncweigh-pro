@@ -1249,7 +1249,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         });
 
-        /*$.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
+        $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
             if(data == "true"){
                 $('#indicatorConnected').addClass('bg-primary');
                 $('#checkingConnection').removeClass('bg-danger');
@@ -1276,7 +1276,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     $('#checkingConnection').addClass('bg-danger');
             }
             });
-        }, 500);*/
+        }, 500);
 
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
@@ -1385,7 +1385,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find('#manualWeight').val("");
+            $('#addModal').find("#manualWeightNo").prop("checked", true);
+            $('#addModal').find("#manualWeightYes").prop("checked", false);
+            //$('#addModal').find('input[name="manualWeight"]').val("false");
             //$('#addModal').find('#indicatorId').val("");
             $('#addModal').find('#weighbridge').val("");
             //$('#addModal').find('#indicatorId2').val("");
@@ -1694,14 +1696,33 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
-                $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
 
-                if(obj.message.vehicleNoTxt != null)
-                {
+                if(obj.message.vehicleNoTxt != null){
                     $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
+                    $('#manualVehicle').val(1);
+                    $('.index-vehicle').hide();
+                    $('#vehicleNoTxt').show();
+                }
+                else{
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
+                    $('#manualVehicle').val(0);
+                    $('.index-vehicle').show();
+                    $('#vehicleNoTxt').hide();
                 }
 
-                $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
+                if(obj.message.vehicleNoTxt2 != null){
+                    $('#addModal').find('#vehicleNoTxt2').val(obj.message.vehicleNoTxt2);
+                    $('#manualVehicle2').val(1);
+                    $('.index-vehicle2').hide();
+                    $('#vehicleNoTxt2').show();
+                }
+                else{
+                    $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
+                    $('#manualVehicle2').val(0);
+                    $('.index-vehicle2').show();
+                    $('#vehicleNoTxt2').hide();
+                }
+                
                 $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
                 $('#addModal').find('#customerName').val(obj.message.customer_name);
@@ -1728,18 +1749,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate2(new Date(obj.message.tare_weight2_date)) : '');
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
-                // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
-                // $('#addModal').find('#id').val(obj.message.is_complete);
-                // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-                //$('#addModal').find('#manualWeight').val(obj.message.manual_weight);
+
                 if(obj.message.manual_weight == 'true'){
                     $("#manualWeightYes").prop("checked", true);
                     $("#manualWeightNo").prop("checked", false);
+                    $('#manualWeightYes').trigger('click');
                 }
                 else{
                     $("#manualWeightYes").prop("checked", false);
                     $("#manualWeightNo").prop("checked", true);
+                    $('#manualWeightNo').trigger('click');
                 }
 
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
@@ -1801,6 +1821,28 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#spinnerLoading').hide();
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
+            }
+        });
+    }
+
+    function print(id) {
+        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+            var obj = JSON.parse(data);
+
+            if(obj.status === 'success'){
+                var printWindow = window.open('', '', 'height=400,width=800');
+                printWindow.document.write(obj.message);
+                printWindow.document.close();
+                setTimeout(function(){
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            }
+            else if(obj.status === 'failed'){
+                toastr["error"](obj.message, "Failed:");
+            }
+            else{
+                toastr["error"]("Something wrong when activate", "Failed:");
             }
         });
     }
