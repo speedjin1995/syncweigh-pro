@@ -1051,7 +1051,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     var obj = JSON.parse(data); 
                     if(obj.status === 'success')
                     {
+                        <?php
+                            if(isset($_GET['weight'])){
+                                echo "window.location = 'weighing.php';";
+                            }
+                        ?>
                         table.ajax.reload();
+                        window.location = 'weighing.php';
                         $('#spinnerLoading').hide();
                         $('#addModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);
@@ -1462,6 +1468,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         $('#customerName').on('change', function(){
             $('#customerCode').val($('#customerName :selected').data('code'));
         });
+
+        <?php
+            if(isset($_GET['weight'])){
+                echo 'edit('.$_GET['weight'].');';
+            }
+        ?>
     });
 
     function edit(id){
