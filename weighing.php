@@ -1071,7 +1071,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     }
                     else
                     {
-
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
                     }
                 });
             }
