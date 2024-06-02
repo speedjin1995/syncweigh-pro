@@ -357,6 +357,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $isComplete = 'N';
     }
 
+    if(isset($_POST['status']) && $_POST['status'] != null && $_POST['status'] != ''){
+        if($_POST['status'] == 'pending'){
+            $isComplete = 'N';
+        }
+    }
+
     /*if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){
         // $inDate = new DateTime($_POST['grossIncomingDate']);
         // $inCDateTime = date_format($inDate,"Y-m-d H:i:s");

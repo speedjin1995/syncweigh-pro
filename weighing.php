@@ -792,9 +792,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             </div>
                                                         </div><!--end col-->   
                                                         
+                                                        <input type="hidden" id="bypassReason" name="bypassReason">
                                                         <input type="hidden" id="finalWeight" name="finalWeight">
                                                         <input type="hidden" id="customerCode" name="customerCode">
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
+                                                        <input type="hidden" id="status" name="status">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
                                                         <input type="hidden" id="productPrice" name="productPrice">
@@ -811,6 +813,42 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                         </div><!-- /.modal-dialog -->
                                     </div><!-- /.modal -->
 
+                                    <div class="modal fade" id="bypassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+                                            <div class="modal-content">
+                                                <form role="form" id="bypassForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalScrollableTitle">Key in reasons</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mb-12">
+                                                            <label for="nettWeight" class="col-sm-4 col-form-label">Password</label>
+                                                            <div class="col-sm-8">
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" id="passcode" name="passcode" placeholder="0" required>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row col-xxl-12 col-lg-12 mb-12">
+                                                            <div class="row">
+                                                                <label for="reason" class="col-sm-2 col-form-label">Reasons *</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Reasons" required></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12">
+                                                            <div class="hstack gap-2 justify-content-end">
+                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary" id="submitBypass">Submit</button>
+                                                            </div>
+                                                        </div><!--end col-->   
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div> <!-- end row-->
 
@@ -1033,6 +1071,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                         '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                        '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
                         '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
                     }
                 }
@@ -1045,12 +1084,60 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
 
         $('#submitWeight').on('click', function(){
-            if($('#weightForm').valid()){
+            // Check weight
+            var trueWeight = 0;
+            var variance = $('#productVariance').val() || '';
+            var high = $('#productHigh').val() || '';
+            var low = $('#productLow').val() || '';
+            var final = $('#finalWeight').val() || '0';
+            var completed = 'N';
+            var pass = true;
+
+            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+                trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
+            }
+            else{
+                trueWeight = parseFloat($('#addModal').find('#orderWeight').val());
+            }
+
+            if($('#weightType').val() == 'Normal' && ($('#grossIncoming').val() && $('#tareOutgoing').val())){
+                isComplete = 'Y';
+            }
+            else if($('#weightType').val() == 'Container' && ($('#grossIncoming').val() && $('#tareOutgoing').val() && $('#grossIncoming2').val() && $('#tareOutgoing2').val())){
+                isComplete = 'Y';
+            }
+            else{
+                isComplete = 'N';
+            }
+
+            if (isComplete == 'Y' && variance != '') {
+                final = parseFloat(final);
+                low = low != '' ? parseFloat(low) : null;
+                high = high != '' ? parseFloat(high) : null;
+                
+                if (variance == 'W') {
+                    if (low !== null && (final < trueWeight - low)) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight + high)) {
+                        pass = false;
+                    }
+                } 
+                else if (variance == 'P') {
+                    if (low !== null && (final < trueWeight * (1 - low / 100))) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight * (1 + high / 100))) {
+                        pass = false;
+                    }
+                }
+            }
+
+            if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
                     var obj = JSON.parse(data); 
-                    if(obj.status === 'success')
-                    {
+                    if(obj.status === 'success'){
                         <?php
                             if(isset($_GET['weight'])){
                                 echo "window.location = 'weighing.php';";
@@ -1063,21 +1150,103 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
                     }
-                    else if(obj.status === 'failed')
-                    {
+                    else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
                         $("#failBtn").attr('data-toast-text', obj.message );
                         $("#failBtn").click();
                     }
-                    else
-                    {
+                    else{
                         $('#spinnerLoading').hide();
                         $("#failBtn").attr('data-toast-text', 'Failed to save');
                         $("#failBtn").click();
                     }
                 });
             }
-            // }
+            else{
+                let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
+                if (userChoice) {
+                    $('#addModal').find('#status').val("pending");
+                    $('#spinnerLoading').show();
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        var obj = JSON.parse(data); 
+                        if(obj.status === 'success'){
+                            <?php
+                                if(isset($_GET['weight'])){
+                                    echo "window.location = 'weighing.php';";
+                                }
+                            ?>
+                            table.ajax.reload();
+                            window.location = 'weighing.php';
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
+                        }
+                    });
+                } 
+                else {
+                    $('#bypassModal').find('#passcode').val("");
+                    $('#bypassModal').find('#reason').val("");
+                    $('#bypassModal').modal('show');
+            
+                    $('#bypassForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+            }
+        });
+
+        $('#submitBypass').on('click', function(){
+            if($('#bypassForm').valid()){
+                $('#addModal').find('#bypassReason').val($('#bypassModal').find('#reason').val());
+                $('#spinnerLoading').show();
+                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        <?php
+                            if(isset($_GET['weight'])){
+                                echo "window.location = 'weighing.php';";
+                            }
+                        ?>
+                        table.ajax.reload();
+                        window.location = 'weighing.php';
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                });
+            }
         });
 
         /*$.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
@@ -1162,6 +1331,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                             return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                             '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
                             '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
                         }
                     }
@@ -1183,6 +1353,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#vehiclePlateNo1').val("");
             $('#addModal').find('#vehiclePlateNo2').val("");
             $('#addModal').find('#supplierWeight').val("");
+            $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
             $('#addModal').find('#customerName').val("");
             $('#addModal').find('#supplierCode').val("");
@@ -1204,6 +1375,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#tareOutgoingDate').val("");
             $('#addModal').find('#nettWeight').val("");
             $('#addModal').find('#grossIncoming2').val("");
+            $('#addModal').find('#status').val("");
             $('#addModal').find('#grossIncomingDate2').val("");
             $('#addModal').find('#tareOutgoing2').val("");
             $('#addModal').find('#tareOutgoingDate2').val("");
@@ -1221,6 +1393,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#productHigh').val("");
             $('#addModal').find('#productLow').val("");
             $('#addModal').find('#productVariance').val("");
+            $('#addModal').find('#orderWeight').val("0");
             $('#addModal').find('#subTotalPrice').val("0.00");
             $('#addModal').find('#sstPrice').val("0.00");
             $('#addModal').find('#productPrice').val("0.00");
@@ -1242,10 +1415,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 }
             });
         });
-
-        /*$(':input[type="number"]').change(function(){
-            this.value = parseFloat(this.value).toFixed(0);
-        });*/
 
         $('#weightType').on('change', function(){
             if($(this).val() == "Container")
@@ -1362,6 +1531,37 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
+            $('#finalWeight').trigger('change');
+        });
+
+        $('#finalWeight').on('change', function(){
+            debugger;
+            var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
+            var nett2 = 0;
+
+            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+                nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
+            }
+            else{
+                nett2 = parseFloat($('#addModal').find('#orderWeight').val());
+            }
+            
+            var current = nett1 - nett2;
+            $('#weightDifference').val(current.toFixed(0));
+        });
+
+        $('#orderWeight').on('change', function(){
+            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
+            var current = nett1 - nett2;
+            $('#weightDifference').val(current.toFixed(0));
+        });
+
+        $('#supplierWeight').on('change', function(){
+            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
+            var current = nett1 - nett2;
+            $('#weightDifference').val(current.toFixed(0));
         });
 
         $('#grossIncoming2').on('keyup', function(){
@@ -1401,6 +1601,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
+            $('#finalWeight').trigger('change');
         });
 
         $('#currentWeight').on('change', function(){
@@ -1419,12 +1620,16 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             {
                 $('#divWeightDifference').show();
                 $('#divSupplierWeight').show();
+                $('#addModal').find('#orderWeight').val("");
+                $('#addModal').find('#supplierWeight').val("0");
                 $('#divSupplierName').show();
                 $('#divOrderWeight').hide();
                 $('#divCustomerName').hide();
             }
             else{
                 $('#divOrderWeight').show();
+                $('#addModal').find('#orderWeight').val("0");
+                $('#addModal').find('#supplierWeight').val("");
                 $('#divWeightDifference').show();
                 $('#divSupplierWeight').hide();
                 $('#divSupplierName').hide();
@@ -1461,12 +1666,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#transporterCode').val($('#transporter :selected').data('code'));
         });
 
-            //destination
+        //destination
         $('#destination').on('change', function(){
             $('#destinationCode').val($('#destination :selected').data('code'));
         });
 
-            //customerName
+        //customerName
         $('#customerName').on('change', function(){
             $('#customerCode').val($('#customerName :selected').data('code'));
         });
