@@ -2,10 +2,16 @@
 require_once "php/db_connect.php";
 
 $weighing = $db->query("SELECT * FROM Weight WHERE is_complete = 'N'");
+$weighing2 = $db->query("SELECT * FROM Weight WHERE is_approved = 'N'");
 $salesList = array();
 $purchaseList = array();
 $localList = array();
 $count = 0;
+
+$salesList2 = array();
+$purchaseList2 = array();
+$localList2 = array();
+$count2 = 0;
 
 while($row=mysqli_fetch_assoc($weighing)){
     if($row['transaction_status'] == 'Sales'){
@@ -31,7 +37,32 @@ while($row=mysqli_fetch_assoc($weighing)){
     }
 }
 
+while($row2=mysqli_fetch_assoc($weighing2)){
+    if($row2['transaction_status'] == 'Sales'){
+        $salesList2[] = array(
+            "id" => $row2['id'],
+            "transaction_id" => $row2['transaction_id'],
+            "weight_type" => $row2['weight_type']
+        );
+    }
+    else if($row2['transaction_status'] == 'Purchase'){
+        $purchaseList2[] = array(
+            "id" => $row2['id'],
+            "transaction_id" => $row2['transaction_id'],
+            "weight_type" => $row2['weight_type']
+        );
+    }
+    else{
+        $localList2[] = array(
+            "id" => $row2['id'],
+            "transaction_id" => $row2['transaction_id'],
+            "weight_type" => $row2['weight_type']
+        );
+    }
+}
+
 $count = count($salesList) + count($purchaseList) + count($localList);
+$count2 = count($salesList2) + count($purchaseList2) + count($localList2);
 ?>
 <header id="page-topbar">
     <div class="layout-width">
@@ -496,6 +527,121 @@ $count = count($salesList) + count($purchaseList) + count($localList);
                         <i class='bx bx-moon fs-22'></i>
                     </button>
                 </div-->
+
+                <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationsDropdown">
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
+                        id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class='bx bx-bookmarks fs-22'></i>
+                        <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger"><?=$count2 ?>
+                        <span class="visually-hidden">unread messages</span></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                        aria-labelledby="page-header-notifications-dropdown">
+
+                        <div class="dropdown-head bg-primary bg-pattern rounded-top">
+                            <div class="p-3">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h6 class="m-0 fs-16 fw-semibold text-white"> Pending Approval </h6>
+                                    </div>
+                                    <div class="col-auto dropdown-tabs">
+                                        <span class="badge badge-soft-light fs-13"> <?=$count2 ?> New</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="px-2 pt-2">
+                                <ul class="nav nav-tabs dropdown-tabs nav-tabs-custom" data-dropdown-tabs="true"
+                                    id="notificationItemsTab" role="tablist">
+                                    <li class="nav-item waves-effect waves-light">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#all-noti2-tab" role="tab"
+                                            aria-selected="true">
+                                            Sales <?php echo (count($salesList2) == 0 ? '' : '('.count($salesList2).')'); ?>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item waves-effect waves-light">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#messages2-tab" role="tab"
+                                            aria-selected="false">
+                                            Purchase <?php echo (count($purchaseList2) == 0 ? '' : '('.count($purchaseList2).')'); ?>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item waves-effect waves-light">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#alerts2-tab" role="tab"
+                                            aria-selected="false">
+                                            Local <?php echo (count($localList2) == 0 ? '' : '('.count($localList2).')'); ?>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-content position-relative" id="notificationItemsTabContent">
+                            <div class="tab-pane fade show active py-2 ps-2" id="all-noti2-tab" role="tabpanel">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <?php for($i=0; $i<count($salesList2); $i++){ ?>
+                                        <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                            <div class="d-flex">
+                                                <div class="flex-1">
+                                                    <a href="weighing.php?weight=<?=$salesList2[$i]['id'] ?>" class="stretched-link">
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$salesList2[$i]['weight_type'] ?> weighing with <b><?=$salesList2[$i]['transaction_id'] ?></b>
+                                                            is <span class="text-secondary">Pending Approval</span>
+                                                        </h6>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade py-2 ps-2" id="messages2-tab" role="tabpanel" aria-labelledby="messages-tab">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <?php for($i=0; $i<count($purchaseList2); $i++){ ?>
+                                        <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                            <div class="d-flex">
+                                                <div class="flex-1">
+                                                    <a href="weighing.php?weight=<?=$purchaseList2[$i]['id'] ?>" class="stretched-link">
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$purchaseList2[$i]['weight_type'] ?> weighing with <b><?=$purchaseList2[$i]['transaction_id'] ?></b>
+                                                            is <span class="text-secondary">Pending Approval</span>
+                                                        </h6>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade p-4" id="alerts2-tab" role="tabpanel" aria-labelledby="alerts-tab">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <?php for($i=0; $i<count($localList2); $i++){ ?>
+                                        <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                            <div class="d-flex">
+                                                <div class="flex-1">
+                                                    <a href="weighing.php?weight=<?=$localList2[$i]['id'] ?>" class="stretched-link">
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$localList2[$i]['weight_type'] ?> weighing with <b><?=$localList2[$i]['transaction_id'] ?></b>
+                                                            is <span class="text-secondary">Pending Approval</span>
+                                                        </h6>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <div class="notification-actions" id="notification-actions">
+                                <div class="d-flex text-muted justify-content-center">
+                                    Select <div id="select-content" class="text-body fw-semibold px-1">0</div> Result
+                                    <button type="button" class="btn btn-link link-danger p-0 ms-3"
+                                        data-bs-toggle="modal" data-bs-target="#removeNotificationModal">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"

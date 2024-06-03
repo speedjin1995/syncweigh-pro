@@ -9,7 +9,7 @@ $stmt = $db->prepare("SELECT * from Port WHERE id = ?");
 $stmt->bind_param('s', $user);
 $stmt->execute();
 $result = $stmt->get_result();
-$role = 'NORMAL';
+//$role = 'NORMAL';
 $port = 'COM5';
 $baudrate = 9600;
 $databits = "8";
@@ -138,8 +138,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select"  >
-                                                                <option value="Sales" selected>Sales</option>
+                                                            <select id="statusSearch" class="form-select">
+                                                                <option selected>-</option>
+                                                                <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
                                                             </select>
@@ -372,7 +373,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
                                                                                 <div class="row">
-                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Order Weight</label>
+                                                                                    <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
@@ -591,7 +592,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
@@ -877,17 +878,16 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>No</th>
-                                                                    <th>Status</th>
-                                                                    <th>Weight Status</th>
-                                                                    <th>Transaction Id</th>
-                                                                    <th>Vehicle No</th>
-                                                                    <th>Product Description Detail</th>
-                                                                    <th>Incoming(Gross Weight)</th>
-                                                                    <th>Incoming(Gross) Date Time</th>
-                                                                    <th>Outgoing(Tare) Weight</th>
-                                                                    <th>Outgoing(Tare) Date Time</th>
-                                                                    <th>ToTal Nett Weight</th>
+                                                                    <th>Transaction <br>Id</th>
+                                                                    <th>Weight <br> Status</th>
+                                                                    <th>Weight <br> Type</th>
+                                                                    <th>Vehicle</th>
+                                                                    <th>Product</th>
+                                                                    <th>Gross <br>Incoming</th>
+                                                                    <th>Incoming <br>Date</th>
+                                                                    <th>Tare <br>Outgoing</th>
+                                                                    <th>Outgoing <br>Date</th>
+                                                                    <th>Nett <br>Weight</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -899,8 +899,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                     </div> <!-- end .h-100-->
                                 </div> <!-- end col -->
                             </div><!-- container-fluid -->
-                    
-
                         </div> <!-- end .h-100-->
 
                     </div> <!-- end col -->
@@ -1053,10 +1051,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 } 
             },
             'columns': [
-                { data: 'id' },
+                { data: 'transaction_id' },
                 { data: 'transaction_status' },
                 { data: 'weight_type' },
-                { data: 'transaction_id' },
                 { data: 'lorry_plate_no1' },
                 { data: 'product_description' },
                 { data: 'gross_weight1' },
@@ -1249,7 +1246,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         });
 
-        $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
+        /*$.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
             if(data == "true"){
                 $('#indicatorConnected').addClass('bg-primary');
                 $('#checkingConnection').removeClass('bg-danger');
@@ -1276,7 +1273,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     $('#checkingConnection').addClass('bg-danger');
             }
             });
-        }, 500);
+        }, 500);*/
 
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
@@ -1313,10 +1310,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     } 
                 },
                 'columns': [
-                    { data: 'id' },
+                    { data: 'transaction_id' },
                     { data: 'transaction_status' },
                     { data: 'weight_type' },
-                    { data: 'transaction_id' },
                     { data: 'lorry_plate_no1' },
                     { data: 'product_description' },
                     { data: 'gross_weight1' },
@@ -1432,12 +1428,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         $('#manualVehicle').on('click', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
+                $('#vehiclePlateNo1').val('-');
                 $('.index-vehicle').hide();
                 $('#vehicleNoTxt').show();
             }
             else{
                 $(this).val(0);
                 $('#vehicleNoTxt').hide();
+                $('#vehicleNoTxt').val('');
                 $('.index-vehicle').show();
             }
         });
@@ -1445,38 +1443,40 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         $('#vehiclePlateNo1').on('change', function(){
             var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
         
-            if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
+            //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
                 $('#grossIncoming').val(parseFloat(tare).toFixed(0));
                 $('#grossIncoming').trigger('keyup');
-            }
+            /*}
             else{
                 $('#tareOutgoing').val(parseFloat(tare).toFixed(0));
                 $('#tareOutgoing').trigger('keyup');
-            }
+            }*/
         });
 
         $('#vehiclePlateNo2').on('change', function(){
             var tare = $('#vehiclePlateNo2 :selected').data('weight') ? parseFloat($('#vehiclePlateNo2 :selected').data('weight')) : 0;
         
-            if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
+            //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
                 $('#grossIncoming2').val(parseFloat(tare).toFixed(0));
                 $('#grossIncoming2').trigger('keyup');
-            }
+            /*}
             else{
                 $('#tareOutgoing2').val(parseFloat(tare).toFixed(0));
                 $('#tareOutgoing2').trigger('keyup');
-            }
+            }*/
         });
 
         $('#manualVehicle2').on('click', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
+                $('#vehiclePlateNo2').val('-');
                 $('.index-vehicle2').hide();
                 $('#vehicleNoTxt2').show();
             }
             else{
                 $(this).val(0);
                 $('#vehicleNoTxt2').hide();
+                $('#vehicleNoTxt2').val('');
                 $('.index-vehicle2').show();
             }
         });
@@ -1537,7 +1537,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
 
         $('#finalWeight').on('change', function(){
-            debugger;
             var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
             var nett2 = 0;
 
@@ -1618,8 +1617,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
 
         $('#transactionStatus').on('change', function(){
-            if($(this).val() == "Purchase" || $(this).val() == "Local")
-            {
+            if($(this).val() == "Purchase" || $(this).val() == "Local"){
                 $('#divWeightDifference').show();
                 $('#divSupplierWeight').show();
                 $('#addModal').find('#orderWeight').val("");
@@ -1697,15 +1695,36 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
+                if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
+                    $('#divWeightDifference').show();
+                    $('#divSupplierWeight').show();
+                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
+                    $('#addModal').find('#orderWeight').val("");
+                    $('#divSupplierName').show();
+                    $('#divOrderWeight').hide();
+                    $('#divCustomerName').hide();
+                }
+                else{
+                    $('#divOrderWeight').show();
+                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
+                    $('#addModal').find('#supplierWeight').val("");
+                    $('#divWeightDifference').show();
+                    $('#divSupplierWeight').hide();
+                    $('#divSupplierName').hide();
+                    $('#divCustomerName').show();
+                }
+
                 if(obj.message.vehicleNoTxt != null){
                     $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
                     $('#manualVehicle').val(1);
+                    $('#manualVehicle').prop("checked", true);
                     $('.index-vehicle').hide();
                     $('#vehicleNoTxt').show();
                 }
                 else{
                     $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
                     $('#manualVehicle').val(0);
+                    $('#manualVehicle').prop("checked", false);
                     $('.index-vehicle').show();
                     $('#vehicleNoTxt').hide();
                 }
@@ -1713,17 +1732,18 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 if(obj.message.vehicleNoTxt2 != null){
                     $('#addModal').find('#vehicleNoTxt2').val(obj.message.vehicleNoTxt2);
                     $('#manualVehicle2').val(1);
+                    $('#manualVehicle2').prop("checked", true);
                     $('.index-vehicle2').hide();
                     $('#vehicleNoTxt2').show();
                 }
                 else{
                     $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
                     $('#manualVehicle2').val(0);
+                    $('#manualVehicle2').prop("checked", false);
                     $('.index-vehicle2').show();
                     $('#vehicleNoTxt2').hide();
                 }
                 
-                $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
                 $('#addModal').find('#customerName').val(obj.message.customer_name);
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
