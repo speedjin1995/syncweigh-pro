@@ -217,7 +217,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                 </td>
                 <td>
                     <p>
-                        <span style="font-weight: bold;font-size: 12px;">Transaction Date. : '.$row['transaction_date'].'</span><br><br>
+                        <span style="font-weight: bold;font-size: 12px;">Transaction Date. : '.$row['transaction_date'].'</span><br>
+                        <span style="font-weight: bold;font-size: 12px;">Transaction No. &nbsp;&nbsp;&nbsp;: '.$row['transaction_id'].'</span><br>
                         <span style="font-size: 12px;">Transaction Status: '.$row['transaction_status'].'</span><br>';
                         
                     if($row['manual_weight'] == 'true'){
@@ -246,11 +247,6 @@ if(isset($_POST['userID'], $_POST["file"])){
             <td style="width: 20%;">
                 <p>&nbsp;</p>
             </td>
-            <td style="width: 40%;">
-                <p>
-                    <span style="font-weight: bold;font-size: 12px;">Transaction No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.$row['transaction_id'].'</span>
-                </p>
-            </td>
         </tr>
         <tr>
             <td>
@@ -259,6 +255,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                     <span style="font-size: 12px;">'.$customerA2.'</span><br>
                     <span style="font-size: 12px;">'.$customerA3.'</span><br>
                     <span style="font-size: 12px;">TEL: '.$customerP.'/ FAX: '.$customerE.'</span>
+                </p>
+            </td>
+            <td style="width: 20%;"></td>
+            <td>
+                <p>
+                    <span style="font-size: 12px;">Weight Date & Time : '.($row['gross_weight1_date'] ?? '').'</span><br>
+                    <span style="font-size: 12px;">User Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.$row['created_by'].'</span><br>
                 </p>
                 <table style="width:100%; border:1px solid black;">
                     <tr>';
@@ -333,13 +336,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                 }
                         
                 $message .= '</table>
-            </td>
-            <td style="width: 20%;"></td>
-            <td>
-                <p>
-                    <span style="font-size: 12px;">Weight Date & Time : '.($row['gross_weight1_date'] ?? '').'</span><br>
-                    <span style="font-size: 12px;">User Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.$row['created_by'].'</span><br>
-                </p>
             </td>
         </tr>
         </table><br>

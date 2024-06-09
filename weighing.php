@@ -850,9 +850,49 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="modal fade" id="approvalModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+                                            <div class="modal-content">
+                                                <form role="form" id="approvalForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalScrollableTitle">Key in reasons</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" id="id" name="id"/>
+                                                        <div class="row  col-xxl-12 col-lg-12 mb-1">
+                                                            <div class="row">
+                                                                <label for="statusA" class="col-sm-2 col-form-label">Approve?</label>
+                                                                <div class="col-sm-8">
+                                                                    <select class="form-select" id="statusA" name="statusA" required>
+                                                                        <option value="Y">Approve</option>
+                                                                        <option value="N">Reject</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row col-xxl-12 col-lg-12 mb-12">
+                                                            <div class="row">
+                                                                <label for="reasons" class="col-sm-2 col-form-label">Reasons *</label>
+                                                                <div class="col-sm-10">
+                                                                    <textarea class="form-control" id="reasons" name="reasons" rows="3" placeholder="Reasons" required></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12">
+                                                            <div class="hstack gap-2 justify-content-end">
+                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary" id="submitApproval">Submit</button>
+                                                            </div>
+                                                        </div><!--end col-->   
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div> <!-- end row-->
-
 
                             <div class="row">
                                 <div class="col">
@@ -909,60 +949,57 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             <div class="modal fade" id="setupModal">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-
                     <form role="form" id="setupForm">
-                    <div class="modal-header bg-gray-dark color-palette">
-                        <h4 class="modal-title">Setup</h4>
-                        <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                        <div class="modal-header bg-gray-dark color-palette">
+                            <h4 class="modal-title">Setup</h4>
+                            <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
 
-                    <div class="modal-body">
-                        <div class="row">
-                        <div class="col-4">
-                            <div class="form-group">
-                            <label>Serial Port</label>
-                            <input class="form-control" type="text" id="serialPort" name="serialPort" value="<?=$port ?>">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Serial Port</label>
+                                        <input class="form-control" type="text" id="serialPort" name="serialPort" value="<?=$port ?>">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Baud Rate</label>
+                                        <input class="form-control" type="number" id="serialPortBaudRate" name="serialPortBaudRate" value="<?=$baudrate ?>">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Data Bits</label>
+                                        <input class="form-control" type="text" id="serialPortDataBits" name="serialPortDataBits" value="<?=$databits ?>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Parity</label>
+                                        <input class="form-control" type="text" id="serialPortParity" name="serialPortParity" value="<?=$parity ?>">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Stop bits</label>
+                                        <input class="form-control" type="text" id="serialPortStopBits" name="serialPortStopBits" value="<?=$stopbits ?>">
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                            <label>Baud Rate</label>
-                            <input class="form-control" type="number" id="serialPortBaudRate" name="serialPortBaudRate" value="<?=$baudrate ?>">
-                            </div>
+                        <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                            <label>Data Bits</label>
-                            <input class="form-control" type="text" id="serialPortDataBits" name="serialPortDataBits" value="<?=$databits ?>">
-                            </div>
-                        </div>
-                        </div>
-                        <div class="row">
-                        <div class="col-4">
-                            <div class="form-group">
-                            <label>Parity</label>
-                            <input class="form-control" type="text" id="serialPortParity" name="serialPortParity" value="<?=$parity ?>">
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                            <label>Stop bits</label>
-                            <input class="form-control" type="text" id="serialPortStopBits" name="serialPortStopBits" value="<?=$stopbits ?>">
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-
                     </form>
                 </div>
-                </div>
-
+            </div>
             <?php include 'layouts/footer.php'; ?>
         </div>
         <!-- end main content-->
@@ -1063,13 +1100,19 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 { data: 'nett_weight1' },
                 { 
                     data: 'id',
-                    render: function ( data, type, row ) {
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                        '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    render: function (data, type, row) {
+                        let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                                        '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
+                                        '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+
+                        if (row.is_approved == 'N') {
+                            dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                        }
+
+                        dropdownMenu += '</ul></div>';
+                        return dropdownMenu;
                     }
                 }
             ],
@@ -1246,7 +1289,39 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         });
 
-        /*$.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
+        $('#submitApproval').on('click', function(){
+            if($('#approvalForm').valid()){
+                $('#spinnerLoading').show();
+                $.post('php/updateApproval.php', $('#approvalForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        <?php
+                            if(isset($_GET['approve'])){
+                                echo "window.location = 'weighing.php';";
+                            }
+                        ?>
+                        table.ajax.reload();
+                        window.location = 'weighing.php';
+                        $('#spinnerLoading').hide();
+                        $('#approvalModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        });
+
+        $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
             if(data == "true"){
                 $('#indicatorConnected').addClass('bg-primary');
                 $('#checkingConnection').removeClass('bg-danger');
@@ -1273,7 +1348,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     $('#checkingConnection').addClass('bg-danger');
             }
             });
-        }, 500);*/
+        }, 500);
 
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
@@ -1322,15 +1397,21 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     { data: 'nett_weight1' },
                     { 
                         data: 'id',
-                        render: function ( data, type, row ) {
-                            // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                            '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                        render: function (data, type, row) {
+                            let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                                            '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
+                                            '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+
+                            if (row.is_approved == 'N') {
+                                dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                            }
+
+                            dropdownMenu += '</ul></div>';
+                            return dropdownMenu;
                         }
-                    }
+                }
                 ],
                 "drawCallback": function(settings) {
                     $('#salesInfo').text(settings.json.salesTotal);
@@ -1681,6 +1762,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 echo 'edit('.$_GET['weight'].');';
             }
         ?>
+
+        <?php
+            if(isset($_GET['approve'])){
+                echo 'approve('.$_GET['approve'].');';
+            }
+        ?>
     });
 
     function edit(id){
@@ -1794,6 +1881,44 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').modal('show');
             
                 $('#weightForm').validate({
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
+    }
+
+    function approve(id){
+        $('#spinnerLoading').show();
+        $.post('php/getWeight.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                $('#approvalModal').find('#id').val(obj.message.id);
+                $('#approvalModal').find('#statusA').val('');
+                $('#approvalModal').find('#reasons').val('');
+                $('#approvalModal').modal('show');
+            
+                $('#approvalForm').validate({
                     errorElement: 'span',
                     errorPlacement: function (error, element) {
                         error.addClass('invalid-feedback');

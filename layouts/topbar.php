@@ -584,7 +584,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                                         <div class="text-reset notification-item d-block dropdown-item position-relative">
                                             <div class="d-flex">
                                                 <div class="flex-1">
-                                                    <a href="weighing.php?weight=<?=$salesList2[$i]['id'] ?>" class="stretched-link">
+                                                    <a href="weighing.php?approve=<?=$salesList2[$i]['id'] ?>" class="stretched-link">
                                                         <h6 class="mt-0 mb-2 lh-base">There is a <?=$salesList2[$i]['weight_type'] ?> weighing with <b><?=$salesList2[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending Approval</span>
                                                         </h6>
@@ -602,7 +602,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                                         <div class="text-reset notification-item d-block dropdown-item position-relative">
                                             <div class="d-flex">
                                                 <div class="flex-1">
-                                                    <a href="weighing.php?weight=<?=$purchaseList2[$i]['id'] ?>" class="stretched-link">
+                                                    <a href="weighing.php?approve=<?=$purchaseList2[$i]['id'] ?>" class="stretched-link">
                                                         <h6 class="mt-0 mb-2 lh-base">There is a <?=$purchaseList2[$i]['weight_type'] ?> weighing with <b><?=$purchaseList2[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending Approval</span>
                                                         </h6>
@@ -620,7 +620,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                                         <div class="text-reset notification-item d-block dropdown-item position-relative">
                                             <div class="d-flex">
                                                 <div class="flex-1">
-                                                    <a href="weighing.php?weight=<?=$localList2[$i]['id'] ?>" class="stretched-link">
+                                                    <a href="weighing.php?approve=<?=$localList2[$i]['id'] ?>" class="stretched-link">
                                                         <h6 class="mt-0 mb-2 lh-base">There is a <?=$localList2[$i]['weight_type'] ?> weighing with <b><?=$localList2[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending Approval</span>
                                                         </h6>
