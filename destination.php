@@ -288,7 +288,6 @@ $(function () {
         if($('#destinationForm').valid()){
             $('#spinnerLoading').show();
             $.post('php/destination.php', $('#destinationForm').serialize(), function(data){
-                debugger;
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success')
                 {

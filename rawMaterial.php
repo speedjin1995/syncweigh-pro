@@ -117,7 +117,7 @@
                                                                                 <div class="row">
                                                                                     <label for="productCode" class="col-sm-4 col-form-label">Raw Material Code</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="productCode" name="productCode" placeholder="Product Code" required>
+                                                                                        <input type="text" class="form-control" id="productCode" name="productCode" placeholder="Raw Mat Code" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
@@ -128,7 +128,7 @@
                                                                                 <div class="row">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Raw Material Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="productName" name="productName" placeholder="Product Name" required>
+                                                                                        <input type="text" class="form-control" id="productName" name="productName" placeholder="Raw Mat Name" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
@@ -139,10 +139,10 @@
                                                                                 <div class="row">
                                                                                     <label for="productPrice" class="col-sm-4 col-form-label">Raw Material Price</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="productPrice" name="productPrice" placeholder="Product Price" required>
-                                                                                        <div class="invalid-feedback">
+                                                                                        <input type="number" class="form-control" id="productPrice" name="productPrice" placeholder="Raw Mat Price">
+                                                                                        <!--div class="invalid-feedback">
                                                                                             Please fill in the field.
-                                                                                        </div>
+                                                                                        </div-->
                                                                                     </div>
                                                                                 </div>
                                                                             </div>                                                                           
@@ -303,10 +303,10 @@ $(function () {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'php/loadProducts.php'
+            'url':'php/loadRawMaterials.php'
         },
         'columns': [
-            { data: 'product_code' },
+            { data: 'raw_mat_code' },
             { data: 'name' },
             { data: 'price' },
             { data: 'description' },
@@ -328,8 +328,7 @@ $(function () {
     $('#submitProduct').on('click', function(){
         if($('#productForm').valid()){
             $('#spinnerLoading').show();
-            $.post('php/products.php', $('#productForm').serialize(), function(data){
-                debugger;
+            $.post('php/rawMaterial.php', $('#productForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success')
                 {
@@ -383,7 +382,7 @@ $(function () {
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getProduct.php', {userID: id}, function(data)
+        $.post('php/getRawMaterial.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
@@ -413,7 +412,7 @@ $(function () {
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteProduct.php', {userID: id}, function(data){
+        $.post('php/deleteRawMaterial.php', {userID: id}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){

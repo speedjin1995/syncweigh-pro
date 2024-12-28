@@ -4,8 +4,8 @@
 <?php
 require_once "php/db_connect.php";
 
-$user = '1';
-$stmt = $db->prepare("SELECT * from Port WHERE id = ?");
+$user = $_SESSION['id'];
+$stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -666,7 +666,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>                                                                                             -->
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -687,7 +687,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>                                                                                                -->
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>                                                                                       
                                                                             </div>
                                                                         </div>
@@ -740,7 +740,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming2" name="grossIncoming2" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture2"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture2"><i class="mdi mdi-sync" type="button"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -756,7 +756,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing2" name="tareOutgoing2" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture2"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture2" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1182,11 +1182,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     if(obj.status === 'success'){
                         <?php
                             if(isset($_GET['weight'])){
-                                echo "window.location = 'weighing.php';";
+                                echo "window.location = 'index.php';";
                             }
                         ?>
                         table.ajax.reload();
-                        window.location = 'weighing.php';
+                        window.location = 'index.php';
                         $('#spinnerLoading').hide();
                         $('#addModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);
@@ -1214,11 +1214,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         if(obj.status === 'success'){
                             <?php
                                 if(isset($_GET['weight'])){
-                                    echo "window.location = 'weighing.php';";
+                                    echo "window.location = 'index.php';";
                                 }
                             ?>
                             table.ajax.reload();
-                            window.location = 'weighing.php';
+                            window.location = 'index.php';
                             $('#spinnerLoading').hide();
                             $('#addModal').modal('hide');
                             $("#successBtn").attr('data-toast-text', obj.message);
@@ -1267,11 +1267,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     if(obj.status === 'success'){
                         <?php
                             if(isset($_GET['weight'])){
-                                echo "window.location = 'weighing.php';";
+                                echo "window.location = 'index.php';";
                             }
                         ?>
                         table.ajax.reload();
-                        window.location = 'weighing.php';
+                        window.location = 'index.php';
                         $('#spinnerLoading').hide();
                         $('#addModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);
@@ -1299,11 +1299,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     if(obj.status === 'success'){
                         <?php
                             if(isset($_GET['approve'])){
-                                echo "window.location = 'weighing.php';";
+                                echo "window.location = 'index.php';";
                             }
                         ?>
                         table.ajax.reload();
-                        window.location = 'weighing.php';
+                        window.location = 'index.php';
                         $('#spinnerLoading').hide();
                         $('#approvalModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);

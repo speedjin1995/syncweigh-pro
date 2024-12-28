@@ -66,7 +66,7 @@ if (isset($_POST['productCode'])) {
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Product SET product_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Raw_Mat SET raw_mat_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, created_by=?, modified_by=? WHERE id=?")) 
         {
             $update_stmt->bind_param('ssssssssss', $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $username, $username, $productId);
 
@@ -80,7 +80,7 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                     $insert_stmt->bind_param('ssssssssss', $productId, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $action, $username);
         
                     // Execute the prepared query.
@@ -119,7 +119,7 @@ if (isset($_POST['productCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Product (product_code, name, price, description, variance, high, low, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat (raw_mat_code, name, price, description, variance, high, low, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             $insert_stmt->bind_param('sssssssss', $productCode, $productName,  $productPrice, $description, $varianceType, $high, $low, $username, $username);
 
             // Execute the prepared query.
@@ -143,7 +143,7 @@ if (isset($_POST['productCode'])) {
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                if ($insert_log = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                     $insert_log->bind_param('ssssssssss', $totalRecords, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $action, $username);
         
                     // Execute the prepared query.

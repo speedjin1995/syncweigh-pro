@@ -3,11 +3,9 @@ require_once 'db_connect.php';
 
 session_start();
 
-/*if(!isset($_SESSION['uidserID'])){
+if(!isset($_SESSION['id'])){
 	echo '<script type="text/javascript">location.href = "../login.html";</script>'; 
-} else{
-	$id = $_SESSION['id'];
-}*/
+}
 
 if(isset($_POST['indicator'], $_POST['serialPort'], $_POST['serialPortBaudRate'], $_POST['serialPortDataBits'], $_POST['serialPortParity'], $_POST['serialPortStopBits'])){
 	$indicator = filter_input(INPUT_POST, 'indicator', FILTER_SANITIZE_STRING);
@@ -16,9 +14,9 @@ if(isset($_POST['indicator'], $_POST['serialPort'], $_POST['serialPortBaudRate']
 	$serialPortDataBits = filter_input(INPUT_POST, 'serialPortDataBits', FILTER_SANITIZE_STRING);
 	$serialPortParity = filter_input(INPUT_POST, 'serialPortParity', FILTER_SANITIZE_STRING);
 	$serialPortStopBits = filter_input(INPUT_POST, 'serialPortStopBits', FILTER_SANITIZE_STRING);
-	$id = '1';
+	$id = $_SESSION['id'];
 	
-	if ($stmt2 = $db->prepare("UPDATE Port SET indicator=?, com_port=?, bits_per_second=?, data_bits=?, parity=?, stop_bits=? WHERE id=?")) {
+	if ($stmt2 = $db->prepare("UPDATE Port SET indicator=?, com_port=?, bits_per_second=?, data_bits=?, parity=?, stop_bits=? WHERE weighind_id=?")) {
 		$stmt2->bind_param('sssssss', $indicator, $serialPort, $serialPortBaudRate, $serialPortDataBits, $serialPortParity, $serialPortStopBits, $id);
 		
 		if($stmt2->execute()){

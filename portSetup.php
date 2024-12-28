@@ -3,8 +3,8 @@
 <?php
 require_once 'php/db_connect.php';
 
-$id = '1';
-$stmt = $db->prepare("SELECT * from Port WHERE id = ?");
+$id = $_SESSION['id'];
+$stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -91,6 +91,8 @@ if($row = $result->fetch_assoc()){
                                                     </select>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Data Bits</label>
@@ -102,8 +104,6 @@ if($row = $result->fetch_assoc()){
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Parity</label>

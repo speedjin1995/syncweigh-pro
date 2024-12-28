@@ -69,9 +69,9 @@
                             <li class="nav-item">
                                 <a href="product.php" class="nav-link"><?=$lang['t-product']?></a>
                             </li>
-                            <li class="nav-item">
+                            <!--li class="nav-item">
                                 <a href="rawMaterial.php" class="nav-link"><?=$lang['t-raw-mat']?></a>
-                            </li>
+                            </li-->
                             <li class="nav-item">
                                 <a href="supplier.php" class="nav-link"><?=$lang['t-supplier']?></a>
                             </li>                            
