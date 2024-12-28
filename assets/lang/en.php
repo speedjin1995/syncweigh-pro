@@ -17,7 +17,7 @@
     $lang["t-user"]="User";
     $lang["t-unit"]="Unit";
     $lang["t-vehicle"]="Vehicle";
-
+    $lang["t-raw-mat"]="Raw Materials";
 
     $lang["t-report"]="Report";
     $lang["t-weighingReport"]="Weighing Report";

@@ -13,6 +13,7 @@ $baudrate = '';
 $databits = '';
 $parity = '';
 $stopbits = '';
+$indicator = 'BX23';
 
 if($row = $result->fetch_assoc()){
     $port = $row['com_port'];
@@ -20,6 +21,7 @@ if($row = $result->fetch_assoc()){
     $databits = $row['data_bits'];
     $parity = $row['parity'];
     $stopbits = $row['stop_bits'];
+    $indicator = $row['indicator'];
 }
 ?>
 
@@ -53,6 +55,15 @@ if($row = $result->fetch_assoc()){
                                 <div class="card-body">
                                     <form action="php/updatePort.php" method="post">
                                         <div class="row">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label>Indicator</label>
+                                                    <select class="form-control" style="width: 100%;" id="indicator" name="indicator" required>
+                                                        <option value="BX23" <?=$baudrate == 'BX23' ? 'selected="selected"' : '';?>>BAYKON BX23</option>
+                                                        <option value="X722" <?=$baudrate == 'X722' ? ' selected="selected"' : '';?>>SYNCTRONIX X722</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Serial Port</label>

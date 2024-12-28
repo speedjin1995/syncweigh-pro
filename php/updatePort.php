@@ -9,7 +9,8 @@ session_start();
 	$id = $_SESSION['id'];
 }*/
 
-if(isset($_POST['serialPort'], $_POST['serialPortBaudRate'], $_POST['serialPortDataBits'], $_POST['serialPortParity'], $_POST['serialPortStopBits'])){
+if(isset($_POST['indicator'], $_POST['serialPort'], $_POST['serialPortBaudRate'], $_POST['serialPortDataBits'], $_POST['serialPortParity'], $_POST['serialPortStopBits'])){
+	$indicator = filter_input(INPUT_POST, 'indicator', FILTER_SANITIZE_STRING);
 	$serialPort = filter_input(INPUT_POST, 'serialPort', FILTER_SANITIZE_STRING);
 	$serialPortBaudRate = filter_input(INPUT_POST, 'serialPortBaudRate', FILTER_SANITIZE_STRING);
 	$serialPortDataBits = filter_input(INPUT_POST, 'serialPortDataBits', FILTER_SANITIZE_STRING);
@@ -17,8 +18,8 @@ if(isset($_POST['serialPort'], $_POST['serialPortBaudRate'], $_POST['serialPortD
 	$serialPortStopBits = filter_input(INPUT_POST, 'serialPortStopBits', FILTER_SANITIZE_STRING);
 	$id = '1';
 	
-	if ($stmt2 = $db->prepare("UPDATE Port SET com_port=?, bits_per_second=?, data_bits=?, parity=?, stop_bits=? WHERE id=?")) {
-		$stmt2->bind_param('ssssss', $serialPort, $serialPortBaudRate, $serialPortDataBits, $serialPortParity, $serialPortStopBits, $id);
+	if ($stmt2 = $db->prepare("UPDATE Port SET indicator=?, com_port=?, bits_per_second=?, data_bits=?, parity=?, stop_bits=? WHERE id=?")) {
+		$stmt2->bind_param('sssssss', $indicator, $serialPort, $serialPortBaudRate, $serialPortDataBits, $serialPortParity, $serialPortStopBits, $id);
 		
 		if($stmt2->execute()){
 			$stmt2->close();
