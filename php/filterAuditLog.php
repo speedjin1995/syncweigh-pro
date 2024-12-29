@@ -16,13 +16,13 @@ $searchQuery = " ";
 
 if($_POST['fromDateSearch'] != null && $_POST['fromDateSearch'] != ''){
     $fromDate = new DateTime($_POST['fromDateSearch']);
-    $fromDateTime = date_format($fromDate,"Y-m-d");
+    $fromDateTime = date_format($fromDate,"Y-m-d 00:00:00");
      $searchQuery = " WHERE event_date >= '".$fromDateTime."'";
   }
   
   if($_POST['toDateSearch'] != null && $_POST['toDateSearch'] != ''){
     $toDate = new DateTime($_POST['toDateSearch']);
-    $toDateTime = date_format($toDate,"Y-m-d");
+    $toDateTime = date_format($toDate,"Y-m-d 23:59:59");
       $searchQuery .= " and event_date <= '".$toDateTime."'";
   }
 
@@ -293,8 +293,8 @@ if($_POST['selectedValue'] == "Vehicle")
 
 ## Response
 $response = [
-"columnNames" => $columnNames,
-"dataTable" => $data
+    "columnNames" => $columnNames,
+    "dataTable" => $data
 ];
 
 header("Content-Type: application/json");

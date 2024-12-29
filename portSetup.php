@@ -3,8 +3,8 @@
 <?php
 require_once 'php/db_connect.php';
 
-$id = '1';
-$stmt = $db->prepare("SELECT * from Port WHERE id = ?");
+$id = $_SESSION['id'];
+$stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -13,6 +13,7 @@ $baudrate = '';
 $databits = '';
 $parity = '';
 $stopbits = '';
+$indicator = 'BX23';
 
 if($row = $result->fetch_assoc()){
     $port = $row['com_port'];
@@ -20,6 +21,7 @@ if($row = $result->fetch_assoc()){
     $databits = $row['data_bits'];
     $parity = $row['parity'];
     $stopbits = $row['stop_bits'];
+    $indicator = $row['indicator'];
 }
 ?>
 
@@ -55,6 +57,15 @@ if($row = $result->fetch_assoc()){
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">
+                                                    <label>Indicator</label>
+                                                    <select class="form-control" style="width: 100%;" id="indicator" name="indicator" required>
+                                                        <option value="BX23" <?=$baudrate == 'BX23' ? 'selected="selected"' : '';?>>BAYKON BX23</option>
+                                                        <option value="X722" <?=$baudrate == 'X722' ? ' selected="selected"' : '';?>>SYNCTRONIX X722</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
                                                     <label>Serial Port</label>
                                                     <select class="form-control" style="width: 100%;" id="serialPort" name="serialPort" required></select>
                                                 </div>
@@ -80,6 +91,8 @@ if($row = $result->fetch_assoc()){
                                                     </select>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Data Bits</label>
@@ -91,8 +104,6 @@ if($row = $result->fetch_assoc()){
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Parity</label>

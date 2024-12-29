@@ -139,10 +139,10 @@
                                                                                 <div class="row">
                                                                                     <label for="productPrice" class="col-sm-4 col-form-label">Product Price</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="productPrice" name="productPrice" placeholder="Product Price" required>
-                                                                                        <div class="invalid-feedback">
+                                                                                        <input type="number" class="form-control" id="productPrice" name="productPrice" placeholder="Product Price">
+                                                                                        <!--div class="invalid-feedback">
                                                                                             Please fill in the field.
-                                                                                        </div>
+                                                                                        </div-->
                                                                                     </div>
                                                                                 </div>
                                                                             </div>                                                                           
@@ -329,7 +329,6 @@ $(function () {
         if($('#productForm').valid()){
             $('#spinnerLoading').show();
             $.post('php/products.php', $('#productForm').serialize(), function(data){
-                debugger;
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success')
                 {

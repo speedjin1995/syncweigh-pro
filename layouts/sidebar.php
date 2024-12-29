@@ -34,10 +34,10 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span><?=$lang['t-menu']?></span></li>
                 <!--li class="nav-item">
-                    <a href="index.php" class="nav-link"><i class="mdi mdi-billboard"></i><?=$lang['t-billboard']?></a>
+                    <a href="dashboard.php" class="nav-link"><i class="mdi mdi-billboard"></i><?=$lang['t-billboard']?></a>
                 </li-->
                 <li class="nav-item">
-                    <a href="weighing.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
+                    <a href="index.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
                 </li>                
                 <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
@@ -69,6 +69,9 @@
                             <li class="nav-item">
                                 <a href="product.php" class="nav-link"><?=$lang['t-product']?></a>
                             </li>
+                            <!--li class="nav-item">
+                                <a href="rawMaterial.php" class="nav-link"><?=$lang['t-raw-mat']?></a>
+                            </li-->
                             <li class="nav-item">
                                 <a href="supplier.php" class="nav-link"><?=$lang['t-supplier']?></a>
                             </li>                            

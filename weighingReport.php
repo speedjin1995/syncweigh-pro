@@ -266,6 +266,16 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             <div>
                                                                 <h5 class="card-title mb-0">Weighing Records</h5>
                                                             </div>
+                                                            <div class="flex-shrink-0">
+                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Export PDF
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
+                                                                </button>
+                                                            </div> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
@@ -419,172 +429,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }   
         });
 
-        $('#submitWeight').on('click', function(){
-            // Check weight
-            var trueWeight = 0;
-            var variance = $('#productVariance').val() || '';
-            var high = $('#productHigh').val() || '';
-            var low = $('#productLow').val() || '';
-            var final = $('#finalWeight').val() || '0';
-            var completed = 'N';
-            var pass = true;
-
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
-                trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
-            }
-            else{
-                trueWeight = parseFloat($('#addModal').find('#orderWeight').val());
-            }
-
-            if($('#weightType').val() == 'Normal' && ($('#grossIncoming').val() && $('#tareOutgoing').val())){
-                isComplete = 'Y';
-            }
-            else if($('#weightType').val() == 'Container' && ($('#grossIncoming').val() && $('#tareOutgoing').val() && $('#grossIncoming2').val() && $('#tareOutgoing2').val())){
-                isComplete = 'Y';
-            }
-            else{
-                isComplete = 'N';
-            }
-
-            if (isComplete == 'Y' && variance != '') {
-                final = parseFloat(final);
-                low = low != '' ? parseFloat(low) : null;
-                high = high != '' ? parseFloat(high) : null;
-                
-                if (variance == 'W') {
-                    if (low !== null && (final < trueWeight - low)) {
-                        pass = false;
-                    } 
-                    else if (high !== null && (final > trueWeight + high)) {
-                        pass = false;
-                    }
-                } 
-                else if (variance == 'P') {
-                    if (low !== null && (final < trueWeight * (1 - low / 100))) {
-                        pass = false;
-                    } 
-                    else if (high !== null && (final > trueWeight * (1 + high / 100))) {
-                        pass = false;
-                    }
-                }
-            }
-
-            if(pass && $('#weightForm').valid()){
-                $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        <?php
-                            if(isset($_GET['weight'])){
-                                echo "window.location = 'weighing.php';";
-                            }
-                        ?>
-                        table.ajax.reload();
-                        window.location = 'weighing.php';
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
-            }
-            else{
-                let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
-                if (userChoice) {
-                    $('#addModal').find('#status').val("pending");
-                    $('#spinnerLoading').show();
-                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                        var obj = JSON.parse(data); 
-                        if(obj.status === 'success'){
-                            <?php
-                                if(isset($_GET['weight'])){
-                                    echo "window.location = 'weighing.php';";
-                                }
-                            ?>
-                            table.ajax.reload();
-                            window.location = 'weighing.php';
-                            $('#spinnerLoading').hide();
-                            $('#addModal').modal('hide');
-                            $("#successBtn").attr('data-toast-text', obj.message);
-                            $("#successBtn").click();
-                        }
-                        else if(obj.status === 'failed'){
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', 'Failed to save');
-                            $("#failBtn").click();
-                        }
-                    });
-                } 
-                else {
-                    $('#bypassModal').find('#passcode').val("");
-                    $('#bypassModal').find('#reason').val("");
-                    $('#bypassModal').modal('show');
-            
-                    $('#bypassForm').validate({
-                        errorElement: 'span',
-                        errorPlacement: function (error, element) {
-                            error.addClass('invalid-feedback');
-                            element.closest('.form-group').append(error);
-                        },
-                        highlight: function (element, errorClass, validClass) {
-                            $(element).addClass('is-invalid');
-                        },
-                        unhighlight: function (element, errorClass, validClass) {
-                            $(element).removeClass('is-invalid');
-                        }
-                    });
-                }
-            }
-        });
-
-        $('#submitBypass').on('click', function(){
-            if($('#bypassForm').valid()){
-                $('#addModal').find('#bypassReason').val($('#bypassModal').find('#reason').val());
-                $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        <?php
-                            if(isset($_GET['weight'])){
-                                echo "window.location = 'weighing.php';";
-                            }
-                        ?>
-                        table.ajax.reload();
-                        window.location = 'weighing.php';
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
-            }
-        });
-
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
@@ -647,343 +491,61 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             });
         });
 
-        $('#addWeight').on('click', function(){
-            $('#addModal').find('#id').val("");
-            $('#addModal').find('#transactionId').val("");
-            $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
-            $('#addModal').find('#weightType').val("Normal").trigger('change');
-            $('#addModal').find('#transactionDate').val(formatDate2(today));
-            $('#addModal').find('#vehiclePlateNo1').val("");
-            $('#addModal').find('#vehiclePlateNo2').val("");
-            $('#addModal').find('#supplierWeight').val("");
-            $('#addModal').find('#bypassReason').val("");
-            $('#addModal').find('#customerCode').val("");
-            $('#addModal').find('#customerName').val("");
-            $('#addModal').find('#supplierCode').val("");
-            $('#addModal').find('#supplierName').val("");
-            $('#addModal').find('#productCode').val("");
-            $('#addModal').find('#productName').val("");
-            $('#addModal').find('#containerNo').val("");
-            $('#addModal').find('#invoiceNo').val("");
-            $('#addModal').find('#purchaseOrder').val("");
-            $('#addModal').find('#deliveryNo').val("");
-            $('#addModal').find('#transporterCode').val("");
-            $('#addModal').find('#transporter').val("");
-            $('#addModal').find('#destinationCode').val("");
-            $('#addModal').find('#destination').val("");
-            $('#addModal').find('#otherRemarks').val("");
-            $('#addModal').find('#grossIncoming').val("");
-            $('#addModal').find('#grossIncomingDate').val("");
-            $('#addModal').find('#tareOutgoing').val("");
-            $('#addModal').find('#tareOutgoingDate').val("");
-            $('#addModal').find('#nettWeight').val("");
-            $('#addModal').find('#grossIncoming2').val("");
-            $('#addModal').find('#status').val("");
-            $('#addModal').find('#grossIncomingDate2').val("");
-            $('#addModal').find('#tareOutgoing2').val("");
-            $('#addModal').find('#tareOutgoingDate2').val("");
-            $('#addModal').find('#nettWeight2').val("");
-            $('#addModal').find('#reduceWeight').val("");
-            // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
-            $('#addModal').find('#weightDifference').val("");
-            // $('#addModal').find('#id').val(obj.message.is_complete);
-            // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find('#manualWeight').val("");
-            //$('#addModal').find('#indicatorId').val("");
-            $('#addModal').find('#weighbridge').val("");
-            //$('#addModal').find('#indicatorId2').val("");
-            $('#addModal').find('#productDescription').val("");
-            $('#addModal').find('#productHigh').val("");
-            $('#addModal').find('#productLow').val("");
-            $('#addModal').find('#productVariance').val("");
-            $('#addModal').find('#orderWeight').val("0");
-            $('#addModal').find('#subTotalPrice').val("0.00");
-            $('#addModal').find('#sstPrice').val("0.00");
-            $('#addModal').find('#productPrice').val("0.00");
-            $('#addModal').find('#totalPrice').val("0.00");
-            $('#addModal').find('#finalWeight').val("");
-            $('#addModal').modal('show');
-            
-            $('#weightForm').validate({
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
+        $('#exportPdf').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+
+            $.post('php/exportPdf.php', {
+                file: 'weight',
+                fromDate: fromDateI,
+                toDate: toDateI,
+                status: statusI,
+                customer: customerNoI,
+                vehicle: vehicleNoI,
+                weighingType: invoiceNoI,
+                product: transactionStatusI
+            }, function(response){
+                var obj = JSON.parse(response);
+
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=400,width=800');
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
                 }
+                else if(obj.status === 'failed'){
+                    toastr["error"](obj.message, "Failed:");
+                }
+                else{
+                    toastr["error"]("Something wrong when activate", "Failed:");
+                }
+            }).fail(function(error){
+                console.error("Error exporting PDF:", error);
+                alert("An error occurred while generating the PDF.");
             });
         });
 
-        $('#weightType').on('change', function(){
-            if($(this).val() == "Container")
-            {
-                $('#containerCard').show();
-            }
-            else
-            {
-                $('#containerCard').hide();
-            }
-        });
-
-        $('#manualVehicle').on('click', function(){
-            if($(this).is(':checked')){
-                $(this).val(1);
-                $('.index-vehicle').hide();
-                $('#vehicleNoTxt').show();
-            }
-            else{
-                $(this).val(0);
-                $('#vehicleNoTxt').hide();
-                $('.index-vehicle').show();
-            }
-        });
-
-        $('#vehiclePlateNo1').on('change', function(){
-            var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
-        
-            if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                $('#grossIncoming').val(parseFloat(tare).toFixed(0));
-                $('#grossIncoming').trigger('keyup');
-            }
-            else{
-                $('#tareOutgoing').val(parseFloat(tare).toFixed(0));
-                $('#tareOutgoing').trigger('keyup');
-            }
-        });
-
-        $('#vehiclePlateNo2').on('change', function(){
-            var tare = $('#vehiclePlateNo2 :selected').data('weight') ? parseFloat($('#vehiclePlateNo2 :selected').data('weight')) : 0;
-        
-            if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                $('#grossIncoming2').val(parseFloat(tare).toFixed(0));
-                $('#grossIncoming2').trigger('keyup');
-            }
-            else{
-                $('#tareOutgoing2').val(parseFloat(tare).toFixed(0));
-                $('#tareOutgoing2').trigger('keyup');
-            }
-        });
-
-        $('#manualVehicle2').on('click', function(){
-            if($(this).is(':checked')){
-                $(this).val(1);
-                $('.index-vehicle2').hide();
-                $('#vehicleNoTxt2').show();
-            }
-            else{
-                $(this).val(0);
-                $('#vehicleNoTxt2').hide();
-                $('.index-vehicle2').show();
-            }
-        });
-
-        $('.radio-manual-weight').on('click', function(){
-            if($('input[name="manualWeight"]:checked').val() == "true"){
-                $('#tareOutgoing').removeAttr('readonly');
-                $('#grossIncoming').removeAttr('readonly');
-                $('#tareOutgoing2').removeAttr('readonly');
-                $('#grossIncoming2').removeAttr('readonly');
-            }
-            else{
-                $('#grossIncoming').attr('readonly', 'readonly');
-                $('#tareOutgoing').attr('readonly', 'readonly');
-                $('#grossIncoming2').attr('readonly', 'readonly');
-                $('#tareOutgoing2').attr('readonly', 'readonly');
-            }
-        });
-
-        $('#grossIncoming').on('keyup', function(){
-            var gross = $(this).val() ? parseFloat($(this).val()) : 0;
-            var tare = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
-            var nett = Math.abs(gross - tare);
-            $('#nettWeight').val(nett.toFixed(0));
-            $('#grossIncomingDate').val(formatDate2(today));
-            $('#nettWeight').trigger('change');
-        });
-
-        $('#grossCapture').on('click', function(){
-            var text = $('#indicatorWeight').text();
-            $('#grossIncoming').val(parseFloat(text).toFixed(0));
-            $('#grossIncoming').trigger('keyup');
-        });
-
-        $('#tareOutgoing').on('keyup', function(){
-            var tare = $(this).val() ? parseFloat($(this).val()) : 0;
-            var gross = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
-            var nett = Math.abs(gross - tare);
-            $('#nettWeight').val(nett.toFixed(0));
-            $('#tareOutgoingDate').val(formatDate2(today));
-            $('#nettWeight').trigger('change');
-        });
-
-        $('#tareCapture').on('click', function(){
-            var text = $('#indicatorWeight').text();
-            $('#tareOutgoing').val(parseFloat(text).toFixed(0));
-            $('#tareOutgoing').trigger('keyup');
-        });
-
-        $('#nettWeight').on('change', function(){
-            var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
-            $('#currentWeight').text(current.toFixed(0));
-            $('#finalWeight').val(current.toFixed(0));
-            $('#currentWeight').trigger('change');
-            $('#finalWeight').trigger('change');
-        });
-
-        $('#finalWeight').on('change', function(){
-            debugger;
-            var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett2 = 0;
-
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
-                nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
-            }
-            else{
-                nett2 = parseFloat($('#addModal').find('#orderWeight').val());
-            }
+        $('#exportExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             
-            var current = nett1 - nett2;
-            $('#weightDifference').val(current.toFixed(0));
+            window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+            "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
+            "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
         });
-
-        $('#orderWeight').on('change', function(){
-            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var current = nett1 - nett2;
-            $('#weightDifference').val(current.toFixed(0));
-        });
-
-        $('#supplierWeight').on('change', function(){
-            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var current = nett1 - nett2;
-            $('#weightDifference').val(current.toFixed(0));
-        });
-
-        $('#grossIncoming2').on('keyup', function(){
-            var gross = $(this).val() ? parseFloat($(this).val()) : 0;
-            var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
-            var nett = Math.abs(gross - tare);
-            $('#nettWeight2').val(nett.toFixed(0));
-            $('#grossIncomingDate2').val(formatDate2(today));
-            $('#nettWeight2').trigger('change');
-        });
-
-        $('#grossCapture2').on('click', function(){
-            var text = $('#indicatorWeight').text();
-            $('#grossIncoming2').val(parseFloat(text).toFixed(0));
-            $('#grossIncoming2').trigger('keyup');
-        });
-
-        $('#tareOutgoing2').on('keyup', function(){
-            var tare = $(this).val() ? parseFloat($(this).val()) : 0;
-            var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
-            var nett = Math.abs(gross - tare);
-            $('#nettWeight2').val(nett.toFixed(0));
-            $('#tareOutgoingDate2').val(formatDate2(today));
-            $('#nettWeight2').trigger('change');
-        });
-
-        $('#tareCapture2').on('click', function(){
-            var text = $('#indicatorWeight').text();
-            $('#tareOutgoing2').val(parseFloat(text).toFixed(0));
-            $('#tareOutgoing2').trigger('keyup');
-        });
-
-        $('#nettWeight2').on('change', function(){
-            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
-            $('#currentWeight').text(current.toFixed(0));
-            $('#finalWeight').val(current.toFixed(0));
-            $('#currentWeight').trigger('change');
-            $('#finalWeight').trigger('change');
-        });
-
-        $('#currentWeight').on('change', function(){
-            var price = $('#productPrice').val() ? parseFloat($('#productPrice').val()).toFixed(2) : 0.00;
-            var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
-            var subTotalPrice = price * weight;
-            var sstPrice = subTotalPrice * 0.06;
-            var totalPrice = subTotalPrice + sstPrice;
-            $('#subTotalPrice').val(subTotalPrice.toFixed(2));
-            $('#sstPrice').val(sstPrice.toFixed(2));
-            $('#totalPrice').val(totalPrice.toFixed(2));
-        });
-
-        $('#transactionStatus').on('change', function(){
-            if($(this).val() == "Purchase" || $(this).val() == "Local")
-            {
-                $('#divWeightDifference').show();
-                $('#divSupplierWeight').show();
-                $('#addModal').find('#orderWeight').val("");
-                $('#addModal').find('#supplierWeight').val("0");
-                $('#divSupplierName').show();
-                $('#divOrderWeight').hide();
-                $('#divCustomerName').hide();
-            }
-            else{
-                $('#divOrderWeight').show();
-                $('#addModal').find('#orderWeight').val("0");
-                $('#addModal').find('#supplierWeight').val("");
-                $('#divWeightDifference').show();
-                $('#divSupplierWeight').hide();
-                $('#divSupplierName').hide();
-                $('#divCustomerName').show();
-            }
-        });
-
-        //productName
-        $('#productName').on('change', function(){
-            $('#productCode').val($('#productName :selected').data('code'));
-            $('#productDescription').val($('#productName :selected').data('description'));
-            $('#productPrice').val($('#productName :selected').data('price'));
-            $('#productHigh').val($('#productName :selected').data('high'));
-            $('#productLow').val($('#productName :selected').data('low'));
-            $('#productVariance').val($('#productName :selected').data('variance'));
-
-            var price = $('#productPrice').val() ? parseFloat($('#productPrice').val()).toFixed(2) : 0.00;
-            var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
-            var subTotalPrice = price * weight;
-            var sstPrice = subTotalPrice * 0.06;
-            var totalPrice = subTotalPrice + sstPrice;
-            $('#subTotalPrice').val(subTotalPrice.toFixed(2));
-            $('#sstPrice').val(sstPrice.toFixed(2));
-            $('#totalPrice').val(totalPrice.toFixed(2));
-        });
-
-        //supplierName
-        $('#supplierName').on('change', function(){
-            $('#supplierCode').val($('#supplierName :selected').data('code'));
-        });
-
-        //transporter
-        $('#transporter').on('change', function(){
-            $('#transporterCode').val($('#transporter :selected').data('code'));
-        });
-
-        //destination
-        $('#destination').on('change', function(){
-            $('#destinationCode').val($('#destination :selected').data('code'));
-        });
-
-        //customerName
-        $('#customerName').on('change', function(){
-            $('#customerCode').val($('#customerName :selected').data('code'));
-        });
-
-        <?php
-            if(isset($_GET['weight'])){
-                echo 'edit('.$_GET['weight'].');';
-            }
-        ?>
     });
 
     function edit(id){

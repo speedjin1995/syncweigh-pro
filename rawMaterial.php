@@ -102,12 +102,12 @@
                                         <div class="modal-dialog modal-dialog-scrollable modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Destination</h5>
+                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Raw Material</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form role="form" id="destinationForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <form role="form" id="productForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class=" row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
                                                                 <div class="card bg-light">
@@ -115,9 +115,9 @@
                                                                         <div class="row">
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Destination Code</label>
+                                                                                    <label for="productCode" class="col-sm-4 col-form-label">Raw Material Code</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="destinationCode" name="destinationCode" placeholder="Destination Code" required>
+                                                                                        <input type="text" class="form-control" id="productCode" name="productCode" placeholder="Raw Mat Code" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
@@ -126,20 +126,59 @@
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destinationName" class="col-sm-4 col-form-label">Destination Name</label>
+                                                                                    <label for="productName" class="col-sm-4 col-form-label">Raw Material Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="destinationName" name="destinationName" placeholder="Destination Name" required>
+                                                                                        <input type="text" class="form-control" id="productName" name="productName" placeholder="Raw Mat Name" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="productPrice" class="col-sm-4 col-form-label">Raw Material Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="productPrice" name="productPrice" placeholder="Raw Mat Price">
+                                                                                        <!--div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div-->
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                           
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="description" class="col-sm-4 col-form-label">Description</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="description" class="col-sm-4 col-form-label">Variance Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control" style="width: 100%;" id="varianceType" name="varianceType">
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
+                                                                                            <option value="W">kg</option>
+                                                                                            <option value="P">%</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="description" class="col-sm-4 col-form-label">High (+)</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="high" name="high" placeholder="High" value="0">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="description" class="col-sm-4 col-form-label">Low (-)</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="low" name="low" placeholder="Low" value="0">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -154,7 +193,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitDestination">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitProduct">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -179,19 +218,20 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addDestination" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addProduct" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Destination
+                                                                Add New Raw Materials
                                                                 </button>
                                                             </div> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="destinationTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="productTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Destination Code</th>
-                                                                    <th>Destination Name</th>
+                                                                    <th>Raw Material Code</th>
+                                                                    <th>Raw Material Name</th>
+                                                                    <th>Raw Material Price</th>
                                                                     <th>Description</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -256,18 +296,19 @@
 var table;
 
 $(function () {
-    table = $("#destinationTable").DataTable({
+    table = $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'php/loadDestination.php'
+            'url':'php/loadRawMaterials.php'
         },
         'columns': [
-            { data: 'destination_code' },
+            { data: 'raw_mat_code' },
             { data: 'name' },
+            { data: 'price' },
             { data: 'description' },
             { 
                 data: 'id',
@@ -284,10 +325,10 @@ $(function () {
     
     // $.validator.setDefaults({
     //     submitHandler: function() {
-    $('#submitDestination').on('click', function(){
-        if($('#destinationForm').valid()){
+    $('#submitProduct').on('click', function(){
+        if($('#productForm').valid()){
             $('#spinnerLoading').show();
-            $.post('php/destination.php', $('#destinationForm').serialize(), function(data){
+            $.post('php/rawMaterial.php', $('#productForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success')
                 {
@@ -312,14 +353,18 @@ $(function () {
         // }
     });
 
-    $('#addDestination').on('click', function(){
+    $('#addProduct').on('click', function(){
         $('#addModal').find('#id').val("");
-        $('#addModal').find('#destinationCode').val("");
-        $('#addModal').find('#destinationName').val("");
+        $('#addModal').find('#productCode').val("");
+        $('#addModal').find('#productName').val("");
+        $('#addModal').find('#productPrice').val("");
         $('#addModal').find('#description').val("");
+        $('#addModal').find('#varianceType').val("");
+        $('#addModal').find('#high').val("0");
+        $('#addModal').find('#low').val("0");
         $('#addModal').modal('show');
         
-        $('#destinationForm').validate({
+        $('#productForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -337,14 +382,18 @@ $(function () {
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getDestination.php', {userID: id}, function(data)
+        $.post('php/getRawMaterial.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                $('#addModal').find('#destinationName').val(obj.message.name);
+                $('#addModal').find('#productCode').val(obj.message.product_code);
+                $('#addModal').find('#productName').val(obj.message.name);
+                $('#addModal').find('#productPrice').val(obj.message.price);
                 $('#addModal').find('#description').val(obj.message.description);
+                $('#addModal').find('#varianceType').val(obj.message.variance);
+                $('#addModal').find('#high').val(obj.message.high);
+                $('#addModal').find('#low').val(obj.message.low);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
@@ -363,7 +412,7 @@ $(function () {
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteDestination.php', {userID: id}, function(data){
+        $.post('php/deleteRawMaterial.php', {userID: id}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
@@ -385,7 +434,7 @@ $(function () {
         });
     }
 
-$('#destinationForm').validate({
+$('#productForm').validate({
     errorElement: 'span',
     errorPlacement: function (error, element) {
       error.addClass('invalid-feedback');
