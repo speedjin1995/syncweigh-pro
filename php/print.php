@@ -2,15 +2,6 @@
 
 require_once 'db_connect.php';
 include 'phpqrcode/qrlib.php';
-
-$compids = '1';
-$compname = 'SYNCTRONIX TECHNOLOGY (M) SDN BHD';
-$compreg = '123456789-X';
-$compaddress = 'No.34, Jalan Bagan 1,';
-$compaddress2 = 'Taman Bagan,';
-$compaddress3 = '13400 Butterworth. Penang. Malaysia.';
-$compphone = '6043325822';
-$compiemail = 'admin@synctronix.com.my';
  
 // Filter the excel data 
 function filterData(&$str){ 
@@ -20,21 +11,7 @@ function filterData(&$str){
 }
 
 if(isset($_POST['userID'], $_POST["file"])){
-    $stmt = $db->prepare("SELECT * FROM Company WHERE id=?");
-    $stmt->bind_param('s', $compids);
-    $stmt->execute();
-    $result1 = $stmt->get_result();
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
-            
-    if ($row = $result1->fetch_assoc()) {
-        $compname = $row['name'];
-        $compreg = $row['company_reg_no'];
-        $compaddress = $row['address_line_1'];
-        $compaddress2 = $row['address_line_2'];
-        $compaddress3 = $row['address_line_3'];
-        $compphone = $row['phone_no'];
-        $compiemail = $row['fax_no'];
-    }
 
     if($_POST["file"] == 'weight'){
         //i remove this because both(billboard and weight) also call this print page.
@@ -55,341 +32,231 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $result = $select_stmt->get_result();
                     
                 if ($row = $result->fetch_assoc()) {
-                    $customer = '';
-                    $customerR = '';
-                    $customerP = '';
-                    $customerA = '';
-                    $customerA2 = '';
-                    $customerA3 = '';
-                    $customerE = '';
-
-                    $product = '';
-                    $price = '';
-                    $variance = '';
-                    $high = '';
-                    $low = '';
+                    $type = $row['transaction_status'];
+                    $customerCode = '';
+                    $customerName = '';
+                    $productCode = $row['product_code'];
+                    $productName = $row['product_name'];
+                    $loadingChitNo = $row['transaction_id'];
+                    $deliverOrderNo = $row['delivery_no'];
+                    $lorryNo = $row['lorry_plate_no1'];
+                    $poNo = $row['purchase_order'];
+                    $grossWeightDate = new DateTime($row['gross_weight1_date']);
+                    $formattedGrossWeightDate = $grossWeightDate->format('H:i');
+                    $tareWeightDate =  new DateTime($row['tare_weight1_date']);
+                    $formattedTareWeightDate = $tareWeightDate->format('H:i');
+                    $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
+                    $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
+                    $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
+                    $sysdate = date("d-m-Y");
+                    $weightBy = $row['created_by'];
                     
-                    if($row['transaction_status'] == 'Sales'){
-                        $cid = $row['customer_code'];
-                    
-                        if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=?")) {
-                            $update_stmt->bind_param('s', $cid);
-                            
-                            // Execute the prepared query.
-                            if ($update_stmt->execute()) {
-                                $result2 = $update_stmt->get_result();
-                                
-                                if ($row2 = $result2->fetch_assoc()) {
-                                    $customer = $row2['name'];
-                                    $customerR = $row2['company_reg_no'] ?? '';
-                                    $customerP = $row2['phone_no'] ?? '-';
-                                    $customerA = $row2['address_line_1'];
-                                    $customerA2 = $row2['address_line_2'];
-                                    $customerA3 = $row2['address_line_3'];
-                                    $customerE = $row2['fax_no'] ?? '-';
-                                }
-                            }
-                        }
+                    if($type == 'Sales'){
+                        $customerCode = $row['customer_code'];
+                        $customerName = $row['customer_name'];
                     }
                     else{
-                        $cid = $row['supplier_code'];
-                    
-                        if ($update_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=?")) {
-                            $update_stmt->bind_param('s', $cid);
-                            
-                            // Execute the prepared query.
-                            if ($update_stmt->execute()) {
-                                $result2 = $update_stmt->get_result();
-                                
-                                if ($row2 = $result2->fetch_assoc()) {
-                                    $customer = $row2['name'];
-                                    $customerR = $row2['company_reg_no'] ?? '';
-                                    $customerP = $row2['phone_no'] ?? '-';
-                                    $customerA = $row2['address_line_1'];
-                                    $customerA2 = $row2['address_line_2'];
-                                    $customerA3 = $row2['address_line_3'];
-                                    $customerE = $row2['fax_no'] ?? '-';
-                                }
-                            }
-                        }
+                        $customerCode = $row['supplier_code'];
+                        $customerName = $row['supplier_name'];
                     }
                     
-
-                    $pid = $row['product_code'];
-                    
-                    if ($update_stmt2 = $db->prepare("SELECT * FROM Product WHERE product_code=?")) {
-                        $update_stmt2->bind_param('s', $pid);
-                        
-                        // Execute the prepared query.
-                        if ($update_stmt2->execute()) {
-                            $result3 = $update_stmt2->get_result();
-                            
-                            if ($row3 = $result3->fetch_assoc()) {
-                                $product = $row3['name'];
-                                $variance = $row3['variance'] ?? '';
-                                $high = $row3['high'] ?? '0';
-                                $low = $row3['low'] ?? '0';
-                                $price = $row3['price'] ??  '0.00';
-                            }
-                        }
-                    }
-                    /*$text = "https://speedjin.com/synctronix/qr.php?id=".$id."&compid=".$compids;
-  
-                    // $path variable store the location where to 
-                    // store image and $file creates directory name
-                    // of the QR code file by using 'uniqid'
-                    // uniqid creates unique id based on microtime
-                    $path = 'images/';
-                    $file = $path.uniqid().".png";
-                      
-                    // $ecc stores error correction capability('L')
-                    $ecc = 'L';
-                    $pixel_Size = 10;
-                    $frame_Size = 10;
-                      
-                    // Generates QR Code and Stores it in directory given
-                    QRcode::png($text, $file, $ecc, $pixel_Size, $frame_size);*/
                     
                     $message = '<html>
-    <head>
-        <style>
-            @media print {
-                @page {
-                    margin-left: 0.5in;
-                    margin-right: 0.5in;
-                    margin-top: 0.1in;
-                    margin-bottom: 0.1in;
-                }
-                
-            } 
+                        <head>
+                            <title>Weighing | Synctronix - Weighing System</title>
+                            <!-- Bootstrap CSS -->
+                            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+                            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" type="text/css" />
+                            <link href="https://your-cdn-link-to-app.min.css" rel="stylesheet" type="text/css" />
+                            <link href="https://your-cdn-link-to-custom.min.css" rel="stylesheet" type="text/css" />
+
+                            <style>
+                                @page {
+                                    size: A5 landscape;
+                                    margin: 10px;
+                                }
+
+                                .custom-hr {
+                                    border-top: 1px solid #000;        /* Remove the default border */
+                                    height: 1px;         /* Define the thickness */
+                                    margin: 0;           /* Reset margins */
+                                }
+                            </style>
+
+                        </head>
+
+                        <body>
+                            <div class="container-full">
+                                <div class="header mb-3">
+                                    <div class="row col-12">
+                                        <div class="col-10">
+                                            <div class="col-12" style="font-size: 15px; font-weight: bold;">
+                                                EAST ROCK MARKETING SDN BHD<span style="font-size: 9px; margin-left: 5px">202001016683 (1373003-H)</span>
+                                            </div>
+                                            <div class="col-12" style="font-size: 9px">
+                                                <span>Office</span><span style="margin-left:39px">:&nbsp;&nbsp; No.A1, 1st & 2nd Floor, Lorong Seri Setali 113/1, Perumahan Seri Setali, 25350 Kuantan, Pahang.</span>
+                                            </div>
+                                            <div class="col-12" style="font-size: 9px">
+                                                <span style="margin-left:74px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; 09-560 5788 / 5388</span>
+                                                <span style="margin-left:10px">Fax&nbsp;&nbsp;:&nbsp;&nbsp; 09-560 5198</span>
+                                                <span style="margin-left:36px">Email&nbsp;&nbsp;:&nbsp;&nbsp; ermsb@eastrock.com.my</span>
+                                            </div>
+                                            <div class="col-12" style="font-size: 9px">
+                                                <span>Bentong Plant&nbsp;:&nbsp;&nbsp; Lot 4557 Batu 61/2, Sungai Merjok Jln Karak, 28700 Bentong, Pahang.</span>
+                                            </div>
+                                            <div class="col-12" style="font-size: 9px">
+                                                <span style="margin-left:74px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; 017-725 6128</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <img src="assets/images/eastrock_logo.jpg" alt="East Rock Logo" width="100%" style="margin-left:20px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-7" style="margin-top:83px">
+                                        <table class="table" style="font-size: 10px">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="25%" style="border: 0px solid black;">
+                                                        <div class="row">
+                                                            <div class="col-12 mt-2 mb-3"><b>CUSTOMER</b></div>
+                                                            <div class="col-12 mb-3"><b>PROJECT</b></div>
+                                                            <div class="col-12 mb-3"><b>PRODUCT</b></div>
+                                                            <div class="col-12 mb-3"><b>DELIVERED TO</b></div>
+                                                            <div class="col-12 mb-3"><b>DELIVERED BY</b></div>
+                                                        </div>
+                                                    </td>
+                                                    <td colspan="2" width="75%" style="border: 1px solid black;">
+                                                        <div class="row" style="margin-left: 5px">
+                                                            <div class="col-12 mt-2 mb-3">'. $customerCode . ' ' . $customerName .'</div>
+                                                            <div class="col-12 mb-3"></div>
+                                                            <div class="col-12 mb-3">'. $productCode . ' ' . $productName .'</div>
+                                                            <div class="col-12 mb-3"></div>
+                                                            <div class="col-12 mb-3"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr style="font-size: 9px;">
+                                                    <td width="34%" style="border: 0px solid black; margin-bottom:0px;">
+                                                        <div style="margin-top:70px">
+                                                            <hr class="custom-hr mb-1">
+                                                            <div class="text-center">Stamped And Signed</div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="30%" style="border: 0px solid black; padding-bottom:0px; padding-left: 20px;">
+                                                        <div style="margin-top:70px;">
+                                                            <hr class="custom-hr mb-1">
+                                                            <div class="text-center">Lorry Driver</div>
+                                                        </div>
+                                                    </td>
+                                                    <td width="38%" style="border: 1px solid black;">
+                                                        <div class="row">
+                                                            <div class="col-12 mb-4">
+                                                                <span><b>Waiting Hours:</b></span>
+                                                                <span style="margin-left: 10px"></span>
+                                                            </div>
+                                                            <div class="col-12 mb-3">
+                                                                <span><b>From:</b></span>
+                                                                <span style="margin-left: 10px"></span>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <span><b>To:</b></span>
+                                                                <span style="margin-left: 10px"></span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>                
+                                        </table>
+                                    </div>
+                                    <div class="col-5">
+                                        <table class="table">
+                                            <tbody style="font-size: 9px">
+                                                <tr style="border: 1px solid black;">
+                                                    <td colspan="2">
+                                                        <div class="row" >
+                                                            <div class="col-12 mb-2">
+                                                                <span><b>Date</b></span><span style="margin-left: 78px"><b>:</b></span>
+                                                                <span style="margin-left: 15px">'.$sysdate.'</span>
+                                                            </div>
+                                                            <div class="col-12 mb-2">
+                                                                <span><b>Loading Chit No</b></span><span style="margin-left: 29px"><b>:</b></span>
+                                                                <span style="margin-left: 15px">'.$loadingChitNo.'</span>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <span><b>Delivery Order No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                <span style="margin-left: 15px">'.$deliverOrderNo.'</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr style="border: 1px solid black;">
+                                                    <td colspan="2">
+                                                        <div class="row">
+                                                            <div class="col-12 mb-2">
+                                                                <span><b>Lorry No</b></span><span style="margin-left: 22px"><b>:</b></span>
+                                                                <span style="margin-left: 15px">'.$lorryNo.'</span>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <span><b>P/O No</b></span><span style="margin-left: 27px"><b>:</b></span>
+                                                                <span style="margin-left: 15px">'.$poNo.'</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr style="border: 1px solid black;">
+                                                    <td style="border: 1px solid black; text-align: center;" width="50%"><b>Time</b></td>
+                                                    <td style="border: 1px solid black; text-align: center;" width="50%"><b>Weight (MT)</b></td>
+                                                </tr>
+                                                <tr style="border: 1px solid black; height: 93px;">
+                                                    <td style="border: 1px solid black; text-align: center;" width="50%">
+                                                        <span>'.$formattedGrossWeightDate.'</span>
+                                                        <br>
+                                                        <span>'.$formattedTareWeightDate.'</span>
+                                                    </td>
+                                                    <td style="border: 1px solid black; text-align: center;" width="50%">
+                                                        <span>'.$grossWeight.'</span>
+                                                        <br>
+                                                        <span>'.$tareWeight.'</span>
+                                                        <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
+                                                        <div style="margin-top: -10px;">'.$nettWeight.'</div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="border: 0px solid black; padding-bottom: 80px;">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <span><b>Weighted by :</b></span>
+                                                                <span style="margin-left: 15px">'.$weightBy.'</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" style="border: 0px solid black; text-align: right;">
+                                                        <div class="row">
+                                                            <div class="col-12 mb-4">
+                                                                <span><b>Customer Copy</b></span>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <span><b style="font-size: 15px">No : </b><b style="font-size: 25px; color: red;"></b></span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody> 
+                                        </table>
+                                    </div>
+                                    
+                                </div>
+
+                            </div>
+                        </body></html>';
+
+                    $select_stmt->close();
                     
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                
-            } 
-            
-            .table th, .table td {
-                padding: 0.70rem;
-                vertical-align: top;
-                border-top: 1px solid #dee2e6;
-                
-            } 
-            
-            .table-bordered {
-                border: 1px solid #000000;
-                
-            } 
-            
-            .table-bordered th, .table-bordered td {
-                border: 1px solid #000000;
-                font-family: sans-serif;
-                font-size: 12px;
-                
-            } 
-            
-            .row {
-                display: flex;
-                flex-wrap: wrap;
-                margin-top: 20px;
-                margin-right: -15px;
-                margin-left: -15px;
-                
-            } 
-            
-            .col-md-4{
-                position: relative;
-                width: 33.333333%;
-            }
-        </style>
-    </head>
-    <body>
-        <table style="width:100%">
-            <tr>
-                <td style="width: 60%;">
-                    <p>
-                        <span style="font-weight: bold;font-size: 16px;">'.$compname.'</span><br><br>
-                        <span style="font-size: 12px;">'.$compaddress.'</span><br>
-                        <span style="font-size: 12px;">'.$compaddress2.'</span><br>
-                        <span style="font-size: 12px;">'.$compaddress3.'</span><br>
-                        <span style="font-size: 12px;">TEL: '.$compphone.' / FAX: '.$compiemail.'</span>
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <span style="font-weight: bold;font-size: 12px;">Transaction Date. : '.$row['transaction_date'].'</span><br>
-                        <span style="font-weight: bold;font-size: 12px;">Transaction No. &nbsp;&nbsp;&nbsp;: '.$row['transaction_id'].'</span><br>
-                        <span style="font-size: 12px;">Transaction Status: '.$row['transaction_status'].'</span><br>';
-                        
-                    if($row['manual_weight'] == 'true'){
-                        $message .= '<span style="font-size: 12px;">Weight Status &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Manual Weighing</span><br>';
-                    }
-                    else{
-                        $message .= '<span style="font-size: 12px;">Weight Status &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Auto Weighing</span><br>';
-                    }
-                    
-                    $message .= '<span style="font-size: 12px;">Invoice No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.($row['invoice_no'] ?? '').'</span><br>
-                        <span style="font-size: 12px;">Delivery No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.($row['delivery_no'] ?? '').'</span><br>
-                        <span style="font-size: 12px;">Purchase No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.($row['purchase_order'] ?? '').'</span><br>
-                        <span style="font-size: 12px;">Container No. &nbsp;&nbsp;&nbsp;&nbsp;: '.($row['container_no'] ?? '').'</span>
-                    </p>
-                </td>
-            </tr>
-        </table>
-        <hr>
-        <table style="width:100%">
-        <tr>
-            <td style="width: 40%;">
-                <p>
-                    <span style="font-weight: bold;font-size: 16px;">'.$customer.'</span><br>
-                </p>
-            </td>
-            <td style="width: 20%;">
-                <p>&nbsp;</p>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <p>
-                    <span style="font-size: 12px;">'.$customerA.'</span><br>
-                    <span style="font-size: 12px;">'.$customerA2.'</span><br>
-                    <span style="font-size: 12px;">'.$customerA3.'</span><br>
-                    <span style="font-size: 12px;">TEL: '.$customerP.'/ FAX: '.$customerE.'</span>
-                </p>
-            </td>
-            <td style="width: 20%;"></td>
-            <td>
-                <p>
-                    <span style="font-size: 12px;">Weight Date & Time : '.($row['gross_weight1_date'] ?? '').'</span><br>
-                    <span style="font-size: 12px;">User Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.$row['created_by'].'</span><br>
-                </p>
-                <table style="width:100%; border:1px solid black;">
-                    <tr>';
-                if($row['transaction_status'] == 'Sales'){
-                    $message .= '<th colspan="2" style="border:1px solid black; font-size: 14px;">Order Weight</th>
-                    <th colspan="2" style="border:1px solid black; font-size: 14px;">Variance Weight</th>
-                    <th style="border:1px solid black; font-size: 14px;">Variance</th>';
-                }
-                else{
-                    $message .= '<th colspan="2" style="border:1px solid black; font-size: 14px;">Supply Weight</th>
-                    <th colspan="2" style="border:1px solid black; font-size: 14px;">Variance Weight</th>
-                    <th style="border:1px solid black; font-size: 14px;">Variance</th>';
-                }
-
-                if($row['transaction_status'] == 'Sales'){
-                    $final = $row['final_weight'];
-                    $trueWeight = $row['order_weight'] ?? '0';
-                    $different = 0;
-
-                    if ($variance == 'W') {
-                        if ($low !== null && ((float)$final < (float)$trueWeight - (float)$low || (float)$final > (float)$trueWeight + (float)$low)) {
-                            $different = (float)$final < (float)$trueWeight - (float)$low;
-                        } elseif ($high !== null && ((float)$final < (float)$trueWeight - (float)$high || (float)$final > (float)$trueWeight + (float)$high)) {
-                            $different = (float)$final < (float)$trueWeight - (float)$high;
-                        }
-                    } 
-                    elseif ($variance == 'P') {
-                        if ($low !== null && ((float)$final < (float)$trueWeight * (1 - (float)$low / 100) || (float)$final > (float)$trueWeight * (1 + (float)$low / 100))) {
-                            $different = (float)$final - (float)$trueWeight * (1 - (float)$low / 100);
-                        } elseif ($high !== null && ((float)$final < (float)$trueWeight * (1 - (float)$high / 100) || (float)$final > (float)$trueWeight * (1 + (float)$high / 100))) {
-                            $different = (float)$final - (float)$trueWeight * (1 - (float)$high / 100);
-                        }
-                    }
-
-                    $message .= '</tr>
-                    <tr>
-                        <td style="border:1px solid black;">'.($row['order_weight'] ?? '').'</td>
-                        <td style="border:1px solid black;">kg</td>
-                        <td style="border:1px solid black;">'.($row['weight_different'] ?? '').'</td>
-                        <td style="border:1px solid black;">kg</td>
-                        <td style="border:1px solid black;">'.$different.' '.($variance == "W" ? 'kg' : '%').'</td>
-                    </tr>';
-                }
-                else{
-                    $final = $row['final_weight'];
-                    $trueWeight = $row['supplier_weight'] ?? '0';
-                    $different = 0;
-
-                    if ($variance == 'W') {
-                        if ($low !== null && ((float)$final < (float)$trueWeight - (float)$low || (float)$final > (float)$trueWeight + (float)$low)) {
-                            $different = (float)$final < (float)$trueWeight - (float)$low;
-                        } elseif ($high !== null && ((float)$final < (float)$trueWeight - (float)$high || (float)$final > (float)$trueWeight + (float)$high)) {
-                            $different = (float)$final < (float)$trueWeight - (float)$high;
-                        }
-                    } 
-                    elseif ($variance == 'P') {
-                        if ($low !== null && ((float)$final < (float)$trueWeight * (1 - (float)$low / 100) || (float)$final > (float)$trueWeight * (1 + (float)$low / 100))) {
-                            $different = (float)$final - (float)$trueWeight * (1 - (float)$low / 100);
-                        } elseif ($high !== null && ((float)$final < (float)$trueWeight * (1 - (float)$high / 100) || (float)$final > (float)$trueWeight * (1 + (float)$high / 100))) {
-                            $different = (float)$final - (float)$trueWeight * (1 - (float)$high / 100);
-                        }
-                    }
-
-                    $message .= '</tr>
-                    <tr>
-                        <td style="border:1px solid black;">'.($row['supplier_weight'] ?? '').'</td>
-                        <td style="border:1px solid black;">kg</td>
-                        <td style="border:1px solid black;">'.($row['weight_different'] ?? '').'</td>
-                        <td style="border:1px solid black;">kg</td>
-                        <td style="border:1px solid black;">'.$different.' '.($variance == "W" ? 'kg' : '%').'</td>
-                    </tr>';
-                }
-                        
-                $message .= '</table>
-            </td>
-        </tr>
-        </table><br>
-        <table style="width:100%; border:1px solid black;">
-            <tr>
-                <th style="border:1px solid black;font-size: 14px;">Vehicle No.</th>
-                <th style="border:1px solid black;font-size: 14px;">Product Name</th>
-                <th style="border:1px solid black;font-size: 14px;">Unit Price</th>
-                <th colspan="2" style="border:1px solid black;font-size: 14px;">Total Weight</th>
-                <th style="border:1px solid black;font-size: 14px;">Total Price</th>
-            </tr>
-            <tr>
-                <td style="border:1px solid black;font-size: 14px;">'.$row['lorry_plate_no1'].'</td>
-                <td style="border:1px solid black;font-size: 14px;">'.$row['product_name'].'</td>
-                <td style="border:1px solid black;font-size: 14px;">RM '.$price.'</td>
-                <td style="border:1px solid black;font-size: 14px;">'.$row['nett_weight1'].'</td>
-                <td style="border:1px solid black;font-size: 14px;">kg</td>
-                <td style="border:1px solid black;font-weight: bold;font-size: 14px;">RM '.number_format(((float)$price * (float)$row['nett_weight1']), 2, '.', '').'</td>
-            </tr>';
-
-            if($row['weight_type'] == 'Container'){
-                $message .= '<tr>
-                    <td style="border:1px solid black;font-size: 14px;">'.$row['lorry_plate_no2'].'</td>
-                    <td style="border:1px solid black;font-size: 14px;">'.$row['product_name'].'</td>
-                    <td style="border:1px solid black;font-size: 14px;">RM '.$price.'</td>
-                    <td style="border:1px solid black;font-size: 14px;">'.$row['nett_weight2'].'</td>
-                    <td style="border:1px solid black;font-size: 14px;">kg</td>
-                    <td style="border:1px solid black;font-weight: bold;font-size: 14px;">RM '.number_format(((float)$price * (float)$row['nett_weight2']), 2, '.', '').'</td>
-                </tr>';
-            }
-
-            $message .= '<tr>
-                <td style="border:1px solid black;font-size: 14px;text-align:right;" colspan="3">Subtotal</td>
-                <td style="border:1px solid black;font-size: 14px;">'.$row['final_weight'].'</td>
-                <td style="border:1px solid black;font-size: 14px;">kg</td>
-                <td style="border:1px solid black;font-weight: bold;font-size: 14px;">RM '.$row['sub_total'].'</td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black;font-size: 14px;text-align:right;" colspan="3">SST</td>
-                <td style="border:1px solid black;font-size: 14px;text-align:right;" colspan="2"></td>
-                <td style="border:1px solid black;font-weight: bold;font-size: 14px;">RM '.$row['sst'].'</td>
-            </tr>
-            <tr>
-                <td style="border:1px solid black;font-size: 14px;text-align:right;" colspan="3">Total Price</td>
-                <td style="border:1px solid black;font-size: 14px;text-align:right;" colspan="2"></td>
-                <td style="border:1px solid black;font-weight: bold;font-size: 14px;">RM '.$row['total_price'].'</td>
-            </tr>
-        </table>
-        <p>
-            <span style="font-size: 12px;font-weight: bold;">Remark: </span>
-            <span style="font-size: 12px;">'.$row['remarks'].'</span>
-        </p>
-    </body>
-</html>';
                     echo json_encode(
                         array(
                             "status" => "success",
