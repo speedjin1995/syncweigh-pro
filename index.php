@@ -1038,6 +1038,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     <script type="text/javascript">
     $(function () {
+        var ind = '<?=$indicator ?>';
         const today = new Date();
         const tomorrow = new Date(today);
         const yesterday = new Date(today);
@@ -1340,15 +1341,25 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $.post('http://127.0.0.1:5002/handshaking', function(data){
                 if(data != "Error"){
                     console.log("Data Received:" + data);
-                    var text = data.split(" ");
-                    let newArray = text.slice(1, -1);
-                    //console.log(newArray);
-                    let newtext = newArray.join();
-                    $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
-                    $('#indicatorConnected').addClass('bg-primary');
-                    $('#checkingConnection').removeClass('bg-danger');
+                    
+                    if(ind == 'X2S'){
+                        var text = data.split(" ");
+                        $('#indicatorWeight').html(text[text.length - 1]);
+                        $('#indicatorConnected').addClass('bg-primary');
+                        $('#checkingConnection').removeClass('bg-danger');
+                    }
+                    else if(ind == 'BX23'){
+                        var text = data.split(" ");
+                        let newArray = text.slice(1, -1);
+                        let newtext = newArray.join();
+                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
+                        $('#indicatorConnected').addClass('bg-primary');
+                        $('#checkingConnection').removeClass('bg-danger');
+                    }
+                    
                 }
                 else{
+                    $('#indicatorWeight').html('0');
                     $('#indicatorConnected').removeClass('bg-primary');
                     $('#checkingConnection').addClass('bg-danger');
             }
