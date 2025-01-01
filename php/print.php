@@ -121,22 +121,23 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                 <tr>
                                                     <td width="25%" style="border: 0px solid black;">
                                                         <div class="row">
-                                                            <div class="col-12 mt-2 mb-3"><b>CUSTOMER</b></div>
-                                                            <div class="col-12 mb-3"><b>PROJECT</b></div>
-                                                            <div class="col-12 mb-3"><b>PRODUCT</b></div>
-                                                            <div class="col-12 mb-3"><b>DELIVERED TO</b></div>
-                                                            <div class="col-12 mb-3"><b>DELIVERED BY</b></div>
+                                                            <div class="col-12 mt-2" style="height: 30px;"><b>CUSTOMER</b></div>
+                                                            <div class="col-12" style="height: 30px;"><b>PROJECT</b></div>
+                                                            <div class="col-12" style="height: 30px;"><b>PRODUCT</b></div>
+                                                            <div class="col-12" style="height: 30px;"><b>DELIVERED TO</b></div>
+                                                            <div class="col-12" style="height: 30px;"><b>DELIVERED BY</b></div>
                                                         </div>
                                                     </td>
                                                     <td colspan="2" width="75%" style="border: 1px solid black;">
                                                         <div class="row" style="margin-left: 5px">
-                                                            <div class="col-12 mt-2 mb-3">'. $customerCode . ' ' . $customerName .'</div>
-                                                            <div class="col-12 mb-3"></div>
-                                                            <div class="col-12 mb-3">'. $productCode . ' ' . $productName .'</div>
-                                                            <div class="col-12 mb-3"></div>
-                                                            <div class="col-12 mb-3"></div>
+                                                            <div class="col-12 mt-2" style="height: 30px;">'. $customerCode . ' ' . $customerName .'</div>
+                                                            <div class="col-12" style="height: 30px;"></div>
+                                                            <div class="col-12" style="height: 30px;">'. $productCode . ' ' . $productName .'</div>
+                                                            <div class="col-12" style="height: 30px;"></div>
+                                                            <div class="col-12" style="height: 30px;"></div>
                                                         </div>
                                                     </td>
+
                                                 </tr>
                                                 <tr style="font-size: 9px;">
                                                     <td width="34%" style="border: 0px solid black; margin-bottom:0px;">
