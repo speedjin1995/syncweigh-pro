@@ -635,7 +635,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     <div class="card-body">
                                                                         <div class="row mb-3">
                                                                             <label for="vehiclePlateNo1" class="col-sm-4 col-form-label">
-                                                                                Vehicle Plate No 1
+                                                                                Vehicle Plate No.
                                                                             </label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
@@ -658,7 +658,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
-                                                                            <label for="grossIncoming" class="col-sm-4 col-form-label">1.Gross Incoming</label>
+                                                                            <label for="grossIncoming" class="col-sm-4 col-form-label">Incoming</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <!-- <div class="input-group-text">
@@ -679,7 +679,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                         </div>
 
                                                                         <div class="row mb-3">
-                                                                            <label for="tareOutgoing" class="col-sm-4 col-form-label">2.Tare Outgoing</label>
+                                                                            <label for="tareOutgoing" class="col-sm-4 col-form-label">Outgoing</label>
                                                                             <div class="col-sm-8">                                                                                     
                                                                                 <div class="input-group">
                                                                                     <!-- <div class="input-group-text">
@@ -1356,7 +1356,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                     }
-                    
+                    else if(ind == '205'){
+                        var text = data.split(" ");
+                        let newArray = text.slice(1, -1);
+                        let newtext = newArray.join();
+                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
+                        $('#indicatorConnected').addClass('bg-primary');
+                        $('#checkingConnection').removeClass('bg-danger');
+                    }
                 }
                 else{
                     $('#indicatorWeight').html('0');

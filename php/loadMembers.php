@@ -31,7 +31,7 @@ $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 $empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name from Users, roles WHERE 
-Users.role = roles.role_code AND Users.status = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
