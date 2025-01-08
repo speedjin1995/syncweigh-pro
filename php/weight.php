@@ -472,6 +472,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
             }
             else{
                 $misValue++;
+                $id = $insert_stmt->insert_id;
                 
                 ///insert miscellaneous
                 if ($update_stmt = $db->prepare("UPDATE miscellaneous SET value=? WHERE id=?")){
@@ -494,7 +495,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         echo json_encode(
                             array(
                                 "status"=> "success", 
-                                "message"=> "Added Successfully!!" 
+                                "message"=> "Added Successfully!!" ,
+                                "id"=>$id
                             )
                         );
                     }

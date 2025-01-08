@@ -67,7 +67,6 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-
 $filteredQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
 if($_SESSION["roles"] == 'ADMIN'){
     $username = $_SESSION["username"];
