@@ -71,9 +71,9 @@
                                     <li class="nav-item">
                                         <a href="product.php" class="nav-link">'.$lang['t-product'].'</a>
                                     </li>
-                                    <!--li class="nav-item">
+                                    <li class="nav-item">
                                         <a href="rawMaterial.php" class="nav-link">'.$lang['t-raw-mat'].'</a>
-                                    </li-->
+                                    </li>
                                     <li class="nav-item">
                                         <a href="supplier.php" class="nav-link">'.$lang['t-supplier'].'</a>
                                     </li>                            
@@ -87,8 +87,11 @@
                                         <a href="user.php" class="nav-link">'.$lang['t-user'].'</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
-                                    </li>                           
+                                        <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
+                                    </li>                                    
+                                    <li class="nav-item">
+                                        <a href="site.php" class="nav-link">'.$lang['t-site'].'</a>
+                                    </li>                   
                                 </ul>
                             </div>
                         </li>';
