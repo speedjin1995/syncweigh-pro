@@ -80,7 +80,7 @@
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="submit" class="btn btn-primary">
+                                                        <button type="submit" class="btn btn-danger">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -137,15 +137,44 @@
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="plantAddress" class="col-sm-4 col-form-label">Plant Address</label>
+                                                                                    <label for="addressLine1" class="col-sm-4 col-form-label">Address Line 1</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="plantAddress" name="plantAddress" placeholder="Plant Address" required>
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>
+                                                                                        <input type="text" class="form-control" id="addressLine1" name="addressLine1" placeholder="Address Line 1">
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>                                                                           
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="addressLine2" class="col-sm-4 col-form-label">Address Line 2</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="addressLine2" name="addressLine2" placeholder="Address Line 2">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="addressLine3" class="col-sm-4 col-form-label">Address Line 3</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="addressLine3" name="addressLine3" placeholder="Address Line 3">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="phoneNo" class="col-sm-4 col-form-label">Phone No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="phoneNo" name="phoneNo" placeholder="Phone No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="faxNo" class="col-sm-4 col-form-label">Fax No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="faxNo" name="faxNo" placeholder="Fax No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                        
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -157,7 +186,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitPlant">Submit</button>
+                                                                <button type="button" class="btn btn-danger" id="submitPlant">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -182,7 +211,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addPlant" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addPlant" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Plant
                                                                 </button>
@@ -195,7 +224,11 @@
                                                                 <tr>
                                                                     <th>Plant Code</th>
                                                                     <th>Plant Name</th>
-                                                                    <th>Plant Address</th>
+                                                                    <th>Address Line 1</th>
+                                                                    <th>Address Line 2</th>
+                                                                    <th>Address Line 3</th>
+                                                                    <th>Phone No</th>
+                                                                    <th>Fax No</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -271,8 +304,11 @@ $(function () {
         'columns': [
             { data: 'plant_code' },
             { data: 'name' },
-            { data: 'price' },
-            { data: 'description' },
+            { data: 'address_line_1' },
+            { data: 'address_line_2' },
+            { data: 'address_line_3' },
+            { data: 'phone_no' },
+            { data: 'fax_no' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -293,23 +329,21 @@ $(function () {
             $('#spinnerLoading').show();
             $.post('php/plants.php', $('#plantForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
-                if(obj.status === 'success')
-                {
+                if(obj.status === 'success'){
                     table.ajax.reload();
                     $('#spinnerLoading').hide();
                     $('#addModal').modal('hide');
                     $("#successBtn").attr('data-toast-text', obj.message);
                     $("#successBtn").click();
                 }
-                else if(obj.status === 'failed')
-                {
+                else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 }
-                else
-                {
-
+                else{
+                    $("#failBtn").attr('data-toast-text', 'Something went wrong!' );
+                    $("#failBtn").click();
                 }
             });
         }
@@ -320,7 +354,11 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#plantCode').val("");
         $('#addModal').find('#plantName').val("");
-        $('#addModal').find('#plantAddress').val("");
+        $('#addModal').find('#addressLine1').val("");
+        $('#addModal').find('#addressLine2').val("");
+        $('#addModal').find('#addressLine3').val("");
+        $('#addModal').find('#phoneNo').val("");
+        $('#addModal').find('#faxNo').val("");
         $('#addModal').modal('show');
         
         $('#plantForm').validate({
@@ -348,7 +386,11 @@ $(function () {
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#plantName').val(obj.message.name);
-                $('#addModal').find('#plantAddress').val(obj.message.address);
+                $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
+                $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
+                $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
+                $('#addModal').find('#phoneNo').val(obj.message.phone_no);
+                $('#addModal').find('#faxNo').val(obj.message.fax_no);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

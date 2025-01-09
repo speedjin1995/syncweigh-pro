@@ -244,9 +244,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             </tbody> 
                                         </table>
                                     </div>
-                                    
                                 </div>
-
                             </div>
                         </body></html>';
 

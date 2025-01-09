@@ -197,7 +197,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-primary" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -666,7 +666,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>                                                                                             -->
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-danger fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -687,7 +687,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>                                                                                                -->
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-danger fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>                                                                                       
                                                                             </div>
                                                                         </div>
@@ -740,7 +740,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming2" name="grossIncoming2" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture2"><i class="mdi mdi-sync" type="button"></i></button>
+                                                                                    <button class="input-group-text btn btn-danger fs-5" id="grossCapture2"><i class="mdi mdi-sync" type="button"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -756,7 +756,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing2" name="tareOutgoing2" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture2" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-danger fs-5" id="tareCapture2" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -791,6 +791,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button>
                                                                 <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
@@ -844,7 +845,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitBypass">Submit</button>
+                                                                <button type="button" class="btn btn-danger" id="submitBypass">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
                                                     </div>
@@ -885,7 +886,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitApproval">Submit</button>
+                                                                <button type="button" class="btn btn-danger" id="submitApproval">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
                                                     </div>
@@ -909,7 +910,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Weight
                                                                 </button>
@@ -996,8 +997,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                             </div>
                         </div>
                         <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Save</button>
                         </div>
                     </form>
                 </div>
@@ -1037,6 +1038,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     <script src="assets/js/additional.js"></script>
 
     <script type="text/javascript">
+    var table = null;
+    
     $(function () {
         var ind = '<?=$indicator ?>';
         const today = new Date();
@@ -1070,7 +1073,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
 
-        var table = $("#weightTable").DataTable({
+        table = $("#weightTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
@@ -1192,6 +1195,155 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $('#addModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                });
+            }
+            else{
+                let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
+                if (userChoice) {
+                    $('#addModal').find('#status').val("pending");
+                    $('#spinnerLoading').show();
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        var obj = JSON.parse(data); 
+                        if(obj.status === 'success'){
+                            <?php
+                                if(isset($_GET['weight'])){
+                                    echo "window.location = 'index.php';";
+                                }
+                            ?>
+                            table.ajax.reload();
+                            window.location = 'index.php';
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
+                        }
+                    });
+                } 
+                else {
+                    $('#bypassModal').find('#passcode').val("");
+                    $('#bypassModal').find('#reason').val("");
+                    $('#bypassModal').modal('show');
+            
+                    $('#bypassForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+            }
+        });
+
+        $('#submitWeightPrint').on('click', function(){
+            // Check weight
+            var trueWeight = 0;
+            var variance = $('#productVariance').val() || '';
+            var high = $('#productHigh').val() || '';
+            var low = $('#productLow').val() || '';
+            var final = $('#finalWeight').val() || '0';
+            var completed = 'N';
+            var pass = true;
+
+            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+                trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
+            }
+            else{
+                trueWeight = parseFloat($('#addModal').find('#orderWeight').val());
+            }
+
+            if($('#weightType').val() == 'Normal' && ($('#grossIncoming').val() && $('#tareOutgoing').val())){
+                isComplete = 'Y';
+            }
+            else if($('#weightType').val() == 'Container' && ($('#grossIncoming').val() && $('#tareOutgoing').val() && $('#grossIncoming2').val() && $('#tareOutgoing2').val())){
+                isComplete = 'Y';
+            }
+            else{
+                isComplete = 'N';
+            }
+
+            if (isComplete == 'Y' && variance != '') {
+                final = parseFloat(final);
+                low = low != '' ? parseFloat(low) : null;
+                high = high != '' ? parseFloat(high) : null;
+                
+                if (variance == 'W') {
+                    if (low !== null && (final < trueWeight - low)) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight + high)) {
+                        pass = false;
+                    }
+                } 
+                else if (variance == 'P') {
+                    if (low !== null && (final < trueWeight * (1 - low / 100))) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight * (1 + high / 100))) {
+                        pass = false;
+                    }
+                }
+            }
+
+            if(pass && $('#weightForm').valid()){
+                $('#spinnerLoading').show();
+                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+
+                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                            var obj = JSON.parse(data);
+
+                            if(obj.status === 'success'){
+                                debugger;
+                                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                printWindow.document.write(obj.message);
+                                printWindow.document.close();
+                                setTimeout(function(){
+                                    printWindow.print();
+                                    printWindow.close();
+                                    table.ajax.reload();
+                                    window.location = 'index.php';
+                                }, 500);
+                            }
+                            else if(obj.status === 'failed'){
+                                toastr["error"](obj.message, "Failed:");
+                            }
+                            else{
+                                toastr["error"]("Something wrong when activate", "Failed:");
+                            }
+                        });
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
