@@ -144,7 +144,7 @@ if(isset($_POST["file"])){
         </style>
     </head>
     <body>
-        <table style="width:100%; border:1px solid black;">
+        <table style="width:100%; border:1px solid black;"><thead>
             <tr>
                 <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>ID</th>
                 <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>STATUS</th>
@@ -158,7 +158,11 @@ if(isset($_POST["file"])){
                 <th style="border:1px solid black;font-size: 11px;">GROSS</th>
                 <th style="border:1px solid black;font-size: 11px;">TARE</th>
                 <th style="border:1px solid black;font-size: 11px;">NET</th>
-            </tr>';
+            </tr></thead><tbody>';
+            
+            $totalGross = 0;
+            $totalTare = 0;
+            $totalNet = 0;
 
             while ($row = $result->fetch_assoc()) {
                 $message .= '<tr>
@@ -175,7 +179,18 @@ if(isset($_POST["file"])){
                     <td style="border:1px solid black;font-size: 10px;">'.$row['tare_weight1'].' kg</td>
                     <td style="border:1px solid black;font-size: 10px;">'.$row['nett_weight1'].' kg</td>
                 </tr>';
+                
+                $totalGross += (float)$row['gross_weight1'];
+                $totalTare += (float)$row['tare_weight1'];
+                $totalNet += (float)$row['nett_weight1'];
             }
+            
+            $message .= '</tbody><tfoot><tr>
+                <th style="border:1px solid black;font-size: 11px;" colspan="9">Total</th>
+                <th style="border:1px solid black;font-size: 11px;">'.$totalGross.' kg</th>
+                <th style="border:1px solid black;font-size: 11px;">'.$totalTare.' kg</th>
+                <th style="border:1px solid black;font-size: 11px;">'.$totalNet.' kg</th>
+            </tr>';
             
         $message .= '</table>
     </body>
