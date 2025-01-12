@@ -61,97 +61,26 @@
                             </div>
                             <!--end row-->
 
-                            <div class="col-xxl-12 col-lg-12">
+                            <!-- <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
                                     <div class="card-body">
                                         <form action="javascript:void(0);">
                                             <div class="row">
                                                 <div class="col-3">
                                                     <div class="mb-3">
-                                                        <label for="fromDateSearch" class="form-label">From Date</label>
-                                                        <input type="date" class="form-control flatpickrStart" data-provider="flatpickr" id="fromDateSearch">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3">
-                                                    <div class="mb-3">
-                                                        <label for="toDateSearch" class="form-label">To Date</label>
-                                                        <input type="date" class="form-control flatpickrEnd" data-provider="flatpickr" id="toDateSearch">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3">
-                                                    <div class="mb-3">
-                                                        <label for="reportType" class="form-label">Status</label>
-                                                        <select id="reportType" name="reportType" class="form-select" data-choices data-choices-sorting="true" >
-                                                            <option value="Customer" selected>Customer</option>
-                                                            <option value="Destination">Destination</option>
-                                                            <option value="Product">Product</option>
-                                                            <option value="Supplier">Supplier</option>
-                                                            <option value="Transporter">Transporter</option>
-                                                            <option value="Unit">Unit</option>
-                                                            <option value="User">User</option>
-                                                            <option value="Vehicle">Vehicle</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 inputCode customerInput">
-                                                    <div class="mb-3">
                                                         <label for="customerCode" class="form-label">Customer Code</label>
-                                                        <input type="text" class="form-control" placeholder="Customer Code" name="customerCode" id="customerCode">
+                                                        <input type="text" class="form-control" placeholder="Customer Code" id="customerCode">
                                                     </div>
-                                                </div>
-                                                <div class="col-3 inputCode destinationInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="destinationCode" class="form-label">Destination Code</label>
-                                                        <input type="text" class="form-control" placeholder="Destination Code" name="destinationCode" id="destinationCode">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 inputCode productInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="productCode" class="form-label">Product Code</label>
-                                                        <input type="text" class="form-control" placeholder="Product Code" name="productCode" id="productCode">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 inputCode supplierInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="supplierCode" class="form-label">Supplier Code</label>
-                                                        <input type="text" class="form-control" placeholder="Supplier Code" name="supplierCode" id="supplierCode">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 inputCode transporterInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="transporterCode" class="form-label">Transporter Code</label>
-                                                        <input type="text" class="form-control" placeholder="Transporter Code" name="transporterCode" id="transporterCode">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 inputCode userInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="userCode" class="form-label">User Code</label>
-                                                        <input type="text" class="form-control" placeholder="User Code" name="userCode" id="userCode">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 inputCode unitInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="unit" class="form-label">Unit</label>
-                                                        <input type="text" class="form-control" placeholder="Unit Code" name="unit" id="unit">
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 inputCode vehicleInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="vehicleNo" class="form-label">Vehicle No</label>
-                                                        <input type="text" class="form-control" placeholder="Vehicle No" name="vehicleNo" id="vehicleNo">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">  
-                                                <div class="col-3">
                                                 </div>
                                                 <div class="col-3">
+
                                                 </div>
                                                 <div class="col-3">
-                                                </div>                                                                                                                                                                                                                                                                                                                                        
+  
+                                                </div>
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="button" class="btn btn-danger" id="searchLog">
+                                                        <button type="submit" class="btn btn-danger">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -160,7 +89,7 @@
                                         </form>                                                                        
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             
                             <button type="button" hidden id="successBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
                             <button type="button" hidden id="failBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
@@ -173,12 +102,12 @@
                                         <div class="modal-dialog modal-dialog-scrollable modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Transporter</h5>
+                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Site</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form role="form" id="transporterForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <form role="form" id="siteForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class=" row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
                                                                 <div class="card bg-light">
@@ -186,9 +115,9 @@
                                                                         <div class="row">
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="transporterCode" class="col-sm-4 col-form-label">Transporter Code</label>
+                                                                                    <label for="siteCode" class="col-sm-4 col-form-label">Site Code</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="transporterCode" name="transporterCode" placeholder="Transporter Code" required>
+                                                                                        <input type="text" class="form-control" id="siteCode" name="siteCode" placeholder="Site Code" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
@@ -197,17 +126,12 @@
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="companyRegNo" class="col-sm-4 col-form-label">Company Reg No</label>
+                                                                                    <label for="siteName" class="col-sm-4 col-form-label">Site Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" placeholder="Company Reg No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="companyName" class="col-sm-4 col-form-label">Company Name</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Customer Code">
+                                                                                        <input type="text" class="form-control" id="siteName" name="siteName" placeholder="Site Name" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -250,7 +174,7 @@
                                                                                         <input type="text" class="form-control" id="faxNo" name="faxNo" placeholder="Fax No">
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div>                                                                        
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -262,7 +186,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitTransporter">Submit</button>
+                                                                <button type="button" class="btn btn-danger" id="submitSite">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -286,24 +210,28 @@
                                                             <div>
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
-                                                            <!-- <div class="flex-shrink-0">
-                                                                <button type="button" id="addTransporter" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                            <div class="flex-shrink-0">
+                                                                <button type="button" id="addSite" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Transporter
+                                                                Add New Site
                                                                 </button>
-                                                            </div>  -->
+                                                            </div> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="dataTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="siteTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
-                                                                <tr id="headerRow">
-                                                                <!-- Column names will be dynamically updated here -->
+                                                                <tr>
+                                                                    <th>Site Code</th>
+                                                                    <th>Site Name</th>
+                                                                    <th>Address Line 1</th>
+                                                                    <th>Address Line 2</th>
+                                                                    <th>Address Line 3</th>
+                                                                    <th>Phone No</th>
+                                                                    <th>Fax No</th>
+                                                                    <th>Action</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody>
-                                                                <!-- Table rows will be dynamically updated here -->
-                                                            </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -364,132 +292,160 @@
 var table;
 
 $(function () {
-    
-    $('#reportType').on('change', function(){
-        if($(this).val() == "Customer")
-        {
-            $('.inputCode').hide();
-            $('.customerInput').show();
-        }
-        else if($(this).val() == "Destination")
-        {
-            $('.inputCode').hide();
-            $('.destinationInput').show();
-        }
-        else if($(this).val() == "Product")
-        {
-            $('.inputCode').hide();
-            $('.productInput').show();
-        }
-        else if($(this).val() == "Supplier")
-        {
-            $('.inputCode').hide();
-            $('.productInput').show();
-        }
-        else if($(this).val() == "Transporter")
-        {
-            $('.inputCode').hide();
-            $('.transporterInput').show();
-        }
-        else if($(this).val() == "Unit")
-        {
-            $('.inputCode').hide();
-            $('.unitInput').show();
-        }
-        else if($(this).val() == "User")
-        {
-            $('.inputCode').hide();
-            $('.userInput').show();
-        }
-        else if($(this).val() == "Vehicle")
-        {
-            $('.inputCode').hide();
-            $('.vehicleInput').show();
-        }
-    });
-
-    var startDate = new Date();
-    startDate.setDate(startDate.getDate() - 1);
-
-    $(".flatpickrStart").flatpickr({
-        defaultDate: new Date(startDate), 
-        dateFormat: "y-m-d"
-    });
-
-    $(".flatpickrEnd").flatpickr({
-        defaultDate: new Date(), 
-        dateFormat: "y-m-d"
+    table = $("#siteTable").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        'processing': true,
+        'serverSide': true,
+        'serverMethod': 'post',
+        'ajax': {
+            'url':'php/loadSites.php'
+        },
+        'columns': [
+            { data: 'site_code' },
+            { data: 'name' },
+            { data: 'address_line_1' },
+            { data: 'address_line_2' },
+            { data: 'address_line_3' },
+            { data: 'phone_no' },
+            { data: 'fax_no' },
+            { 
+                data: 'id',
+                render: function ( data, type, row ) {
+                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                    return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                    '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                    '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                }
+            }
+        ]       
     });
     
+    // $.validator.setDefaults({
+    //     submitHandler: function() {
+    $('#submitSite').on('click', function(){
+        if($('#siteForm').valid()){
+            $('#spinnerLoading').show();
+            $.post('php/sites.php', $('#siteForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success')
+                {
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed')
+                {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else
+                {
 
-        // Handle change event of the dropdown list
-        $('#searchLog').click(function() {
-            var selectedValue = $('#reportType').val();
-            // Call a function to update the DataTable based on the selected value
-            updateDataTable(selectedValue);
+                }
+            });
+        }
+        // }
+    });
+
+    $('#addSite').on('click', function(){
+        $('#addModal').find('#id').val("");
+        $('#addModal').find('#siteCode').val("");
+        $('#addModal').find('#siteName').val("");
+        $('#addModal').find('#addressLine1').val("");
+        $('#addModal').find('#addressLine2').val("");
+        $('#addModal').find('#addressLine3').val("");
+        $('#addModal').find('#phoneNo').val("");
+        $('#addModal').find('#faxNo').val("");
+        $('#addModal').modal('show');
+        
+        $('#siteForm').validate({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
         });
-
-        // Function to update the DataTable
-        function updateDataTable(selectedValue) {
-
-                $.ajax({
-                    url: "php/filterAuditLog.php",
-                    type: "POST",
-                    data: { 
-                        selectedValue: selectedValue,
-                        fromDateSearch: $('#fromDateSearch').val(),
-                        toDateSearch: $('#toDateSearch').val(),
-                        customerCode: $('#customerCode').val(),
-                        destinationCode: $('#destinationCode').val(),
-                        supplierCode: $('#supplierCode').val(),
-                        userCode: $('#userCode').val(),
-                        productCode: $('#productCode').val(),
-                        transporterCode: $('#transporterCode').val(),
-                        unit: $('#unit').val(),
-                        vehicleNo: $('#vehicleNo').val(),
-                    },
-                    success: function(data) {
-
-                        if (table) {
-                            table.destroy();
-                        }
-                        // Once you receive the updated DataTable from the server, update the HTML table
-                        var dataTable = data.dataTable;
-                        var columnNames = data.columnNames;
-
-                        var headerRow = $("#headerRow");
-                        headerRow.empty();
-
-                        // Update the column names
-                        $.each(columnNames, function(index, columnName) {
-                        var th = $("<th>").text(columnName);
-                        headerRow.append(th);
-                        });
-
-                        var tableBody = $("#dataTable tbody");
-                        tableBody.empty();
-
-                        $.each(dataTable, function(index, item) {
-                        var row = $("<tr>");
-                        $.each(columnNames, function(index, columnName) {
-                            var cell = $("<td>").text(item[columnName]);
-                            row.append(cell);
-                        });
-                        tableBody.append(row);
-                        });
-
-                        // table.draw();
-                        table = $("#dataTable").DataTable();
-                    },
-                    error: function(error) {
-                        console.log("Error occurred while fetching the updated DataTable.");
-                    }
-                });
-            
-        }
-
+    });
 });
 
+    function edit(id){
+        $('#spinnerLoading').show();
+        $.post('php/getSite.php', {userID: id}, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#siteCode').val(obj.message.site_code);
+                $('#addModal').find('#siteName').val(obj.message.name);
+                $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
+                $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
+                $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
+                $('#addModal').find('#phoneNo').val(obj.message.phone_no);
+                $('#addModal').find('#faxNo').val(obj.message.fax_no);
+                $('#addModal').modal('show');
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
+    }
+
+    function deactivate(id){
+        $('#spinnerLoading').show();
+        $.post('php/deleteSite.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                table.ajax.reload();
+                $('#spinnerLoading').hide();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+        });
+    }
+
+$('#siteForm').validate({
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
 </script>
     </body>
 

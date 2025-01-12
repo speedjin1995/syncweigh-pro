@@ -8,3 +8,8 @@
 <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 <!-- custom Css-->
 <link href="assets/css/custom.min.css" id="app-style" rel="stylesheet" type="text/css" />
+<!--style>
+    :is([data-layout=vertical],[data-layout=semibox])[data-sidebar=dark] .navbar-menu {
+        background: 
+    }
+</style-->

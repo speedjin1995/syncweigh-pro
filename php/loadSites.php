@@ -14,34 +14,34 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-   $searchQuery = " and (Users.username like '%".$searchValue."%' or 
-        Users.useremail like '%".$searchValue."%' or
-        roles.role_name like'%".$searchValue."%' ) ";
+  $searchQuery = " and (name like '%".$searchValue."%' or site_code like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Users");
+$sel = mysqli_query($db,"select count(*) as allcount from Site");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from Site WHERE status = '0'".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name from Users, roles WHERE 
-Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Site WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
       "id"=>$row['id'],
-      "employee_code"=>$row['employee_code'],
-      "username"=>$row['username'],
-      "useremail"=>$row['useremail'],
-      "role"=>$row['role_name']
+      "site_code"=>$row['site_code'],
+      "name"=>$row['name'],
+      "address_line_1"=>$row['address_line_1'],
+      "address_line_2"=>$row['address_line_2'],
+      "address_line_3"=>$row['address_line_3'],
+      "phone_no"=>$row['phone_no'],
+      "fax_no"=>$row['fax_no']
     );
 }
 

@@ -9,7 +9,14 @@ require_once "layouts/config.php";
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
 $name = $_SESSION["username"];
-$stmt2 = $link->prepare("SELECT role_code, role_name from roles");
+
+$query = "SELECT role_code, role_name from roles WHERE role_code <> 'SADMIN' AND deleted = '0'";
+
+if($_SESSION["roles"] == 'ADMIN'){
+    $query = "SELECT role_code, role_name from roles WHERE role_code <> 'SADMIN' AND role_code <> 'ADMIN' AND deleted = '0'";
+}
+
+$stmt2 = $link->prepare($query);
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
 mysqli_stmt_bind_result($stmt2, $code, $name);
@@ -282,7 +289,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" id="submitMember">Submit</button>
+                                <button type="submit" class="btn btn-danger" id="submitMember">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
@@ -404,10 +411,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
-                $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#employeeCode').val(obj.message.employee_code);
                 $('#addModal').find('#username').val(obj.message.username);
-                $('#addModal').find('#name').val(obj.message.name);
-                $('#addModal').find('#userRole').val(obj.message.role_code);
+                $('#addModal').find('#useremail').val(obj.message.useremail);
+                $('#addModal').find('#roles').val(obj.message.role_code);
                 $('#addModal').modal('show');
                 
                 $('#memberForm').validate({
