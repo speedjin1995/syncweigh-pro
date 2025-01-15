@@ -76,7 +76,10 @@
                                     </li>
                                     <li class="nav-item">
                                         <a href="supplier.php" class="nav-link">'.$lang['t-supplier'].'</a>
-                                    </li>                            
+                                    </li>       
+                                    <li class="nav-item">
+                                        <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
+                                    </li>                     
                                     <li class="nav-item">
                                         <a href="transporter.php" class="nav-link">'.$lang['t-transporter'].'</a>
                                     </li>
