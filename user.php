@@ -6,6 +6,10 @@
 // Include config file
 require_once "layouts/config.php";
 
+require_once "php/db_connect.php";
+
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
 $name = $_SESSION["username"];
@@ -50,7 +54,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $roles = trim($_POST["roles"]);
     }
 
-    if (empty($employeeCode_err) && empty($username_err) && empty($useremail_err) && empty($roles_err)) {
+    if (empty(trim($_POST["plantId"]))) {
+        $plant_err = "Please enter your plant.";
+    } else {
+        $plant = trim($_POST["plantId"]);
+    }
+
+    if (empty($employeeCode_err) && empty($username_err) && empty($useremail_err) && empty($plant_err)) {
         $sql2 = "SELECT * from Users WHERE employee_code = ?";
         $action = "1";
 
@@ -62,12 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 mysqli_stmt_store_result($stmt);
 
                 if (mysqli_stmt_num_rows($stmt) == 1) {
-                    $sql = "UPDATE Users SET username=?, useremail=?, role=?, modified_by=? WHERE employee_code=?";
+                    $sql = "UPDATE Users SET username=?, useremail=?, role=?, modified_by=?, plant_id=? WHERE employee_code=?";
                     $action = "2";
 
                     if ($stmt = mysqli_prepare($link, $sql)) {
                         // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt, "sssss", $param_username, $param_useremail, $param_role, $param_modified_by, $param_code);
+                        mysqli_stmt_bind_param($stmt, "ssssss", $param_username, $param_useremail, $param_role, $param_modified_by, $param_code, $param_plant);
 
                         // Set parameters
                         $param_code = $employeeCode;
@@ -75,6 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $param_username = $username;
                         $param_role = $roles;
                         $param_modified_by = $name;
+                        $param_plant = $plant;
 
                         // Attempt to execute the prepared statement
                         if (mysqli_stmt_execute($stmt)) {
@@ -89,11 +100,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 else{
                     $action = "1";
-                    $sql = "INSERT INTO Users (employee_code, useremail, username, password, token, role, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    $sql = "INSERT INTO Users (employee_code, useremail, username, password, token, role, plant_id, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
                     if ($stmt = mysqli_prepare($link, $sql)) {
                         // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt, "ssssssss", $param_code, $param_useremail, $param_username, $param_password, $param_token, $param_role, $param_created_by, $param_modified_by);
+                        mysqli_stmt_bind_param($stmt, "ssssssss", $param_code, $param_useremail, $param_username, $param_password, $param_token, $param_role, $param_plant, $param_created_by, $param_modified_by);
 
                         // Set parameters
                         $param_code = $employeeCode;
@@ -103,6 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
                         $param_token = bin2hex(random_bytes(50)); // generate unique token
                         $param_role = $roles;
+                        $param_plant = $plant;
                         $param_created_by = $name;
                         $param_modified_by = $name;
 
@@ -208,6 +220,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         <th>User Name</th>
                                                         <th>Email</th>
                                                         <th>Role</th>
+                                                        <th>Plant Name</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -280,6 +293,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
+                                                    <div class="col-sm-8">
+                                                        <select id="plantId" name="plantId" class="form-select" data-choices data-choices-sorting="true" >
+                                                            <option select="selected" value="">Please Select</option>
+                                                            <?php while($rowPF = mysqli_fetch_assoc($plant)){ ?>
+                                                                <option value="<?=$rowPF['id'] ?>"><?=$rowPF['name'] ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>                                            
                                         </div>
                                     </div>
                                 </div>
@@ -325,7 +351,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <!--script src="assets/js/pages/datatables.init.js"></script-->
+    <!-- <script src="assets/js/pages/datatables.init.js"></script> -->
     <script>
     $(function () {
         $("#usersTable").DataTable({
@@ -342,6 +368,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 { data: 'username' },
                 { data: 'useremail' },
                 { data: 'role' },
+                { data: 'plant' },
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
@@ -387,6 +414,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $('#addModal').find('#username').val("");
             $('#addModal').find('#name').val("");
             $('#addModal').find('#userRole').val("");
+            $('#addModal').find('#plantId').val("");
             $('#addModal').modal('show');
             
             $('#memberForm').validate({
@@ -415,6 +443,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $('#addModal').find('#username').val(obj.message.username);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
+                debugger;
+                $('#addModal').find('#plantId').val(obj.message.plant);
                 $('#addModal').modal('show');
                 
                 $('#memberForm').validate({

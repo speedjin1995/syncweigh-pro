@@ -30,8 +30,8 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name from Users, roles WHERE 
-Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Plant.name from Users, roles, Plant WHERE 
+Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN' AND Users.plant_id = Plant.id".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -41,7 +41,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "employee_code"=>$row['employee_code'],
       "username"=>$row['username'],
       "useremail"=>$row['useremail'],
-      "role"=>$row['role_name']
+      "role"=>$row['role_name'],
+      "plant"=>$row['name']
     );
 }
 
