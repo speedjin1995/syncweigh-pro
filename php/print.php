@@ -67,6 +67,95 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                 if($complete == 'N'){
                     // Put your loading chit
+                    $message = '<html>
+                            <head>
+                                <!-- Bootstrap CSS -->
+                                <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+                                <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+                                <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+                                <link href="assets/css/custom.min.css" id="app-style" rel="stylesheet" type="text/css" />
+
+                                <style>
+                                    @page {
+                                        size: A5 landscape;
+                                        margin: 10mm;
+                                    }
+
+                                    .custom-hr {
+                                        border-top: 1px solid #000;        /* Remove the default border */
+                                        height: 1px;         /* Define the thickness */
+                                        margin: 0;           /* Reset margins */
+                                    }
+
+                                    .body_1 p span{
+                                        margin-right: 15px;
+                                    }
+
+                                    .body_3 {
+                                        border-top: 1px dashed black;
+                                        text-align: center;
+                                        padding-top: 5px;
+                                    }
+
+                                    .signature {
+                                        padding-top: 30px; 
+                                        padding-left: 80px; 
+                                        padding-right: 80px;
+                                    }
+
+                                    .spacer {
+                                        margin: 16px 0; /* Adjust the spacing as needed */
+                                        height: 19.5px;   /* Set a height to create space */
+                                    }
+                                </style>
+
+                            </head>
+
+                            <body>
+                                <div class="container-full">
+                                    <div class="header row">
+                                        <h2 style="color: black; font-weight: bold;">EAST ROCK MARKETING SDN. BHD.</h2>
+                                        <div class="col-7" style="text-align: left;">
+                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> LOT PT 758, JALAN PADANG GAJAH <br>BATU 16, TAMBAK JAWA<br>45800 JERAM, KUALA SELANGOR,<br>SELANGOR D.E.<br>TEL: 013-969 7663, 012-9536128</p>
+                                        </div>
+                                        <div class="col-5 align-self-end">
+                                            <h3 style="font-weight: bold; margin-bottom: 0px;">LOADING CHIT</h3>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2 mt-2" style="border-top: 1px solid black;">
+                                        <div class="col-8 body_1 mt-2">
+                                            <p>WEIGHING DATE<span style="margin-left: 25px;">:</span>'.$formattedCreateDate.'</p>
+                                            <p>CUSTOMER<span style="margin-left: 55px;">:</span>'.$customerCode. ' ' . $customerName .'</p>
+                                            <p>VEHICLE NO.<span style="margin-left: 48px;">:</span>'.$lorryNo.'</p>
+                                            <p>PRODUCT<span style="margin-left: 62px;">:</span>'.$productCode. ' ' . $productName .'</p>
+                                            <p>PLANT NO.<span style="margin-left: 59px;">:</span></p>
+                                            <p>WEIGHT IN<span style="margin-left: 57px;">:</span>'.$grossWeight.' KG</p>
+                                        </div>
+                                        <div class="col-4 body_1 mt-2">
+                                            <p>LOADING CHIT NO.<span style="margin-left: 20px;">:</span>'.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</p>
+                                            <p class="spacer"></p>
+                                            <p class="spacer"></p>
+                                            <p class="spacer"></p>
+                                            <p class="spacer"></p>
+                                            <p>TIME IN<span style="margin-left: 90px;">:</span>'.$formattedGrossWeightDate.'</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" style="padding-top: 40px;">
+                                        <div class="col-6 signature">
+                                            <div class="body_3">
+                                                WEIGHED BY <br>'.$weightBy.'
+                                            </div>
+                                        </div>
+                                        <div class="col-6 signature">
+                                            <div class="body_3">
+                                                CHECKED BY
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </body></html>';
                 }
                 else{
                     if($type == 'Sales'){
@@ -351,7 +440,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <div class="row pt-5">
                                         <div class="col-6 signature">
                                             <div class="body_3">
-                                                WEIGHED BY VANI
+                                                WEIGHED BY '.$weightBy.'
                                             </div>
                                         </div>
                                         <div class="col-6 signature">
