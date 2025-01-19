@@ -51,6 +51,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
                 $sysdate = date("d-m-Y");
                 $weightBy = $row['created_by'];
+                $createDate = new DateTime($row['created_date']);
+                $formattedCreateDate = $createDate->format('d-m-Y');
+                $remarks = $row['remarks'];
                 $message = '';
                 
                 if($type == 'Sales'){
@@ -69,7 +72,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                     if($type == 'Sales'){
                         $message = '<html>
                         <head>
-                            <title>Weighing | Synctronix - Weighing System</title>
                             <!-- Bootstrap CSS -->
                             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
                             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -254,6 +256,114 @@ if(isset($_POST['userID'], $_POST["file"])){
                     }
                     else{
                         // Do your puchase slips here
+                        $message = '
+                            <html>
+                            <head>
+                                <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+                                <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+                                <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+                                <link href="assets/css/custom.min.css" id="app-style" rel="stylesheet" type="text/css" />
+
+                                <style>
+                                    @page {
+                                        size: A5 landscape;
+                                        margin: 10mm;
+                                    }
+
+                                    .custom-hr {
+                                        border-top: 1px solid #000;        /* Remove the default border */
+                                        height: 1px;         /* Define the thickness */
+                                        margin: 0;           /* Reset margins */
+                                    }
+
+                                    .body_1 p {
+                                        margin-bottom: 0px;
+                                    }
+
+                                    .body_1 p span{
+                                        margin-right: 15px;
+                                    }
+
+                                    .body_2 p {
+                                        margin-bottom: 0px;
+                                    }
+
+                                    .body_2 p span{
+                                        margin-right: 15px;
+                                    }
+
+                                    .body2 {
+                                        border-top: 1px dashed black;
+                                        border-bottom: 1px dashed black;
+                                    }
+
+                                    .body_3 {
+                                        border-top: 1px dashed black;
+                                        text-align: center;
+                                        padding-top: 5px;
+                                    }
+
+                                    .signature {
+                                        padding-top: 30px; 
+                                        padding-left: 80px; 
+                                        padding-right: 80px;
+                                    }
+                                </style>
+
+                            </head>
+
+                            <body>
+                                <div class="container-full">
+                                    <div class="header">
+                                        <div style="text-align: center;">
+                                            <h2 style="color: black; font-weight: bold;">EAST ROCK MARKETING SDN BHD</h2>
+                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> LOT PT 758, JALAN PADANG GAJAH <br>BATU 16, TAMBAK JAWA<br>45800 JERAM, KUALA SELANGOR,<br>SELANGOR D.E.<br>TEL: 013-969 7663, 012-9536128</p>
+                                            <h3 class="pb-2" style="color: black; font-weight: bold;"><span style="border-bottom: 1px solid black">PUBLIC WEIGHING</span></h3>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-8 body_1">
+                                            <p>DATE<span style="margin-left: 100px;">:</span>'.$formattedCreateDate.'</p>
+                                            <p>VEHICLE NO.<span style="margin-left: 55px;">:</span>'.$lorryNo.'</p>
+                                            <p>CUSTOMER NAME<span style="margin-left: 21px;">:</span>'.$customerName.'</p>
+                                            <p>PRODUCT NAME<span style="margin-left: 30px;">:</span>'.$productName.'</p>
+                                            <p>SERVICE CHARGES<span style="margin-left: 15px;">:</span>RM </p>
+                                            <p>REMARKS<span style="margin-left: 71px;">:</span>'.$remarks.'</p>
+                                        </div>
+                                        <div class="col-4 body_1">
+                                            <p>TICKET NO.<span style="margin-left: 20px;">:</span><b>'.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</b></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row body2">
+                                        <div class="col-6 body_2 mt-2 mb-2">
+                                            <p>WEIGHT IN <span style="margin-left: 25px;">(KG)</span><span>:</span>'.$grossWeight.'</p>
+                                            <p>WEIGHT OUT<span style="margin-left: 15px;">(KG)</span><span>:</span>'.$tareWeight.'</p>
+                                            <p>NET WEIGHT<span style="margin-left: 18px;">(KG)</span><span>:</span>'.$nettWeight.'</p>
+                                        </div>
+                                        <div class="col-6 body_2 mt-2 mb-2">
+                                            <p>TIME IN<span style="margin-left: 25px;">:</span>'.$formattedGrossWeightDate.'</p>
+                                            <p>TIME OUT<span style="margin-left: 11px;">:</span>'.$formattedTareWeightDate.'</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row pt-5">
+                                        <div class="col-6 signature">
+                                            <div class="body_3">
+                                                WEIGHED BY VANI
+                                            </div>
+                                        </div>
+                                        <div class="col-6 signature">
+                                            <div class="body_3">
+                                                LORRY DRIVER
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </body></html>
+                        ';
+                        $select_stmt->close();
                     }
                 }
                 
