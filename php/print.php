@@ -13,59 +13,61 @@ function filterData(&$str){
 if(isset($_POST['userID'], $_POST["file"])){
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if($_POST["file"] == 'weight'){
-        //i remove this because both(billboard and weight) also call this print page.
-        //AND weight.pStatus = 'Pending'
+    if ($select_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
+        $select_stmt->bind_param('s', $id);
 
-        if ($select_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
-            $select_stmt->bind_param('s', $id);
+        // Execute the prepared query.
+        if (! $select_stmt->execute()) {
+            echo json_encode(
+                array(
+                    "status" => "failed",
+                    "message" => "Something went wrong"
+                )); 
+        }
+        else{
+            $result = $select_stmt->get_result();
+                
+            if ($row = $result->fetch_assoc()) {
+                $type = $row['transaction_status'];
+                $customerCode = '';
+                $customerName = '';
+                $productCode = $row['product_code'];
+                $productName = $row['product_name'];
+                $transportCode = $row['transporter_code'];
+                $transportName = $row['transporter'];
+                $destinationCode = $row['destination_code'];
+                $destinationName = $row['destination'];
+                $loadingChitNo = $row['transaction_id'];
+                $deliverOrderNo = $row['delivery_no'];
+                $lorryNo = $row['lorry_plate_no1'];
+                $poNo = $row['purchase_order'];
+                $complete = $row['is_complete'];
+                $grossWeightDate = new DateTime($row['gross_weight1_date']);
+                $formattedGrossWeightDate = $grossWeightDate->format('H:i');
+                $tareWeightDate =  new DateTime($row['tare_weight1_date']);
+                $formattedTareWeightDate = $tareWeightDate->format('H:i');
+                $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
+                $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
+                $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
+                $sysdate = date("d-m-Y");
+                $weightBy = $row['created_by'];
+                $message = '';
+                
+                if($type == 'Sales'){
+                    $customerCode = $row['customer_code'];
+                    $customerName = $row['customer_name'];
+                }
+                else{
+                    $customerCode = $row['supplier_code'];
+                    $customerName = $row['supplier_name'];
+                }
 
-            // Execute the prepared query.
-            if (! $select_stmt->execute()) {
-                echo json_encode(
-                    array(
-                        "status" => "failed",
-                        "message" => "Something went wrong"
-                    )); 
-            }
-            else{
-                $result = $select_stmt->get_result();
-                    
-                if ($row = $result->fetch_assoc()) {
-                    $type = $row['transaction_status'];
-                    $customerCode = '';
-                    $customerName = '';
-                    $productCode = $row['product_code'];
-                    $productName = $row['product_name'];
-                    $transportCode = $row['transporter_code'];
-                    $transportName = $row['transporter'];
-                    $destinationCode = $row['destination_code'];
-                    $destinationName = $row['destination'];
-                    $loadingChitNo = $row['transaction_id'];
-                    $deliverOrderNo = $row['delivery_no'];
-                    $lorryNo = $row['lorry_plate_no1'];
-                    $poNo = $row['purchase_order'];
-                    $grossWeightDate = new DateTime($row['gross_weight1_date']);
-                    $formattedGrossWeightDate = $grossWeightDate->format('H:i');
-                    $tareWeightDate =  new DateTime($row['tare_weight1_date']);
-                    $formattedTareWeightDate = $tareWeightDate->format('H:i');
-                    $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
-                    $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
-                    $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
-                    $sysdate = date("d-m-Y");
-                    $weightBy = $row['created_by'];
-                    
+                if($complete == 'N'){
+                    // Put your loading chit
+                }
+                else{
                     if($type == 'Sales'){
-                        $customerCode = $row['customer_code'];
-                        $customerName = $row['customer_name'];
-                    }
-                    else{
-                        $customerCode = $row['supplier_code'];
-                        $customerName = $row['supplier_name'];
-                    }
-                    
-                    
-                    $message = '<html>
+                        $message = '<html>
                         <head>
                             <title>Weighing | Synctronix - Weighing System</title>
                             <!-- Bootstrap CSS -->
@@ -73,13 +75,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" type="text/css" />
                             <link href="https://your-cdn-link-to-app.min.css" rel="stylesheet" type="text/css" />
                             <link href="https://your-cdn-link-to-custom.min.css" rel="stylesheet" type="text/css" />
-
+    
                             <style>
                                 @page {
                                     size: A5 landscape;
                                     margin: 10px;
                                 }
-
+    
                                 .custom-hr {
                                     border-top: 1px solid #000;        /* Remove the default border */
                                     height: 1px;         /* Define the thickness */
@@ -87,7 +89,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 }
                             </style>
                         </head>
-
+    
                         <body>
                             <div class="container-full">
                                 <br>
@@ -247,138 +249,40 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 </div>
                             </div>
                         </body></html>';
-
-                    $select_stmt->close();
-                    
-                    echo json_encode(
-                        array(
-                            "status" => "success",
-                            "message" => $message
-                        )
-                    );
-                }
-                else{
-                    echo json_encode(
-                        array(
-                            "status" => "failed",
-                            "message" => 'Unable to read data'
-                        )
-                    );
-                }
-                
-                
-            }
-        }
-        else{
-            echo json_encode(
-                array(
-                    "status" => "failed",
-                    "message" => "Something Goes Wrong"
-                ));
-        }
-    }
-    else{
-        $empQuery = "select count.id, count.serialNo, vehicles.veh_number, lots.lots_no, count.batchNo, count.invoiceNo, count.deliveryNo, 
-        count.purchaseNo, customers.customer_name, products.product_name, packages.packages, count.unitWeight, count.tare, count.totalWeight, 
-        count.actualWeight, count.currentWeight, units.units, count.moq, count.dateTime, count.unitPrice, count.totalPrice,count.totalPCS, 
-        count.remark, status.status from count, vehicles, packages, lots, customers, products, units, status WHERE 
-        count.vehicleNo = vehicles.id AND count.package = packages.id AND count.lotNo = lots.id AND count.customer = customers.id AND 
-        count.productName = products.id AND status.id=count.status AND units.id=count.unit AND count.deleted = '0' AND count.id=?";
-
-        if ($select_stmt = $db->prepare($empQuery)) {
-            $select_stmt->bind_param('s', $id);
-
-            // Execute the prepared query.
-            if (! $select_stmt->execute()) {
-                echo json_encode(
-                    array(
-                        "status" => "failed",
-                        "message" => "Something went wrong"
-                    )); 
-            }
-            else{
-                $result = $select_stmt->get_result();
-                
-
-                if ($row = $result->fetch_assoc()) {
-                    $message = '<html>
-                    <head>
-                        <title>Html to PDF</title>
-                    </head>
-                    <body>
-                        <h3>'.$compname.'</h3>
-                        <p>No.34, Jalan Bagan 1, <br>Taman Bagan, 13400 Butterworth.<br> Penang. Malaysia.</p>
-                        <p>TEL: 6043325822 | EMAIL: admin@synctronix.com.my</p><hr>
-                        <table style="width:100%">
-                        <tr>
-                            <td>
-                                <h4>CUSTOMER NAME: '.$row['customer_name'].'</h4>
-                            </td>
-                            <td>
-                                <h4>SERIAL NO: '.$row['serialNo'].'</h4>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p>No.34, Jalan Bagan 1, <br>Taman Bagan, <br>13400 Butterworth. Penang. Malaysia.</p>
-                            </td>
-                            <td>
-                                <h4>Status: '.$row['status'].'</h4>
-                                <p>Date: 23/03/2022<br>Delivery No: '.$row['deliveryNo'].'</p>
-                            </td>
-                        </tr>
-                        </table>
-                        <table style="width:100%; border:1px solid black;">
-                        <tr>
-                            <th style="border:1px solid black;">Vehicle No.</th>
-                            <th style="border:1px solid black;">Product Name</th>
-                            <th style="border:1px solid black;">Date & Time</th>
-                            <th style="border:1px solid black;">Weight</th>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid black;">'.$row['veh_number'].'</td>
-                            <td style="border:1px solid black;">'.$row['product_name'].'</td>
-                            <td style="border:1px solid black;">'.$row['dateTime'].'</td>
-                            <td style="border:1px solid black;">'.$row['unitWeight'].' '.$row['units'].'</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td style="border:1px solid black;">Tare Weight</td>
-                            <td style="border:1px solid black;">'.$row['tare'].' '.$row['units'].'</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td style="border:1px solid black;">Net Weight</td>
-                            <td style="border:1px solid black;">'.$row['actualWeight'].' '.$row['units'].'</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td style="border:1px solid black;">M.O.Q</td>
-                            <td style="border:1px solid black;">'.$row['moq'].'</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td style="border:1px solid black;">Total Weight</td>
-                            <td style="border:1px solid black;">'.$row['totalWeight'].' '.$row['units'].'</td>
-                        </tr>
-                        </table>
-                        <p>Remark: '.$row['remark'].'</p>
-                    </body>
-                </html>';
+    
+                        $select_stmt->close();
+                    }
+                    else{
+                        // Do your puchase slips here
+                    }
                 }
                 
                 echo json_encode(
                     array(
                         "status" => "success",
                         "message" => $message
-                    ));
+                    )
+                );
             }
+            else{
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => 'Unable to read data'
+                    )
+                );
+            }
+            
+            
         }
-    } 
+    }
+    else{
+        echo json_encode(
+            array(
+                "status" => "failed",
+                "message" => "Something Goes Wrong"
+            ));
+    }
 }
 else{
     echo json_encode(
