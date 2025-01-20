@@ -5,10 +5,7 @@
 //session_start();
 // Include config file
 require_once "layouts/config.php";
-
 require_once "php/db_connect.php";
-
-$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
@@ -25,145 +22,13 @@ mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
 mysqli_stmt_bind_result($stmt2, $code, $name);
 
-$employeeCode = $username = $useremail = $roles = "";
-$employeeCode_err = $username_err = $useremail_err = $roles_err = "";
+// Pull plants
+$query4 = "SELECT id, name FROM Plant WHERE status = '0'";
 
-// Processing form data when form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty(trim($_POST["employeeCode"]))) {
-        $employeeCode_err = "Please enter employee code.";
-    } else {
-        $employeeCode = trim($_POST["employeeCode"]);
-    }
-
-    if (empty(trim($_POST["username"]))) {
-        $username_err = "Please enter your username.";
-    } else {
-        $username = trim($_POST["username"]);
-    }
-
-    if (empty(trim($_POST["useremail"]))) {
-        $useremail_err = "Please enter email.";
-    } else {
-        $useremail = trim($_POST["useremail"]);
-    }
-
-    if (empty(trim($_POST["roles"]))) {
-        $roles_err = "Please enter your roles.";
-    } else {
-        $roles = trim($_POST["roles"]);
-    }
-
-    if (empty(trim($_POST["plantId"]))) {
-        $plant_err = "Please enter your plant.";
-    } else {
-        $plant = trim($_POST["plantId"]);
-    }
-
-    if (empty($employeeCode_err) && empty($username_err) && empty($useremail_err) && empty($plant_err)) {
-        $sql2 = "SELECT * from Users WHERE employee_code = ?";
-        $action = "1";
-
-        if ($stmt = mysqli_prepare($link, $sql2)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_employeeCode);
-            $param_employeeCode = $employeeCode;
-
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1) {
-                    $sql = "UPDATE Users SET username=?, useremail=?, role=?, modified_by=?, plant_id=? WHERE employee_code=?";
-                    $action = "2";
-
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt, "ssssss", $param_username, $param_useremail, $param_role, $param_modified_by, $param_code, $param_plant);
-
-                        // Set parameters
-                        $param_code = $employeeCode;
-                        $param_useremail = $useremail;
-                        $param_username = $username;
-                        $param_role = $roles;
-                        $param_modified_by = $name;
-                        $param_plant = $plant;
-
-                        // Attempt to execute the prepared statement
-                        if (mysqli_stmt_execute($stmt)) {
-                            echo "Updated";
-                        } else {
-                            echo "Something went wrong. Please try again later.";
-                        }
-
-                        // Close statement
-                        mysqli_stmt_close($stmt);
-                    }
-                }
-                else{
-                    $action = "1";
-                    $sql = "INSERT INTO Users (employee_code, useremail, username, password, token, role, plant_id, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt, "ssssssss", $param_code, $param_useremail, $param_username, $param_password, $param_token, $param_role, $param_plant, $param_created_by, $param_modified_by);
-
-                        // Set parameters
-                        $param_code = $employeeCode;
-                        $password = "123456";
-                        $param_useremail = $useremail;
-                        $param_username = $username;
-                        $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
-                        $param_token = bin2hex(random_bytes(50)); // generate unique token
-                        $param_role = $roles;
-                        $param_plant = $plant;
-                        $param_created_by = $name;
-                        $param_modified_by = $name;
-
-                        // Attempt to execute the prepared statement
-                        if (mysqli_stmt_execute($stmt)) {
-                            echo "Added";
-                        } else {
-                            echo "Something went wrong. Please try again later.";
-                        }
-
-                        // Close statement
-                        mysqli_stmt_close($stmt);
-                    }
-                }
-
-                if($action == "1"){
-                    $sql3 = "INSERT INTO Users_Log (employee_code, username, user_department, status, password, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-                    if ($stmt3 = mysqli_prepare($link, $sql3)) {
-                        // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt3, "sssssss", $param_code, $param_username, $param_role, $param_status, $param_password, $param_action, $param_actionBy);
-
-                        // Set parameters
-                        $param_code = $employeeCode;
-                        $param_username = $username;
-                        $param_password = "123456"; // Creates a password hash
-                        $param_role = $roles;
-                        $param_status = "0";
-                        $param_action = $action;
-                        $param_actionBy = $name;
-
-                        // Attempt to execute the prepared statement
-                        if (mysqli_stmt_execute($stmt3)) {
-                            echo "Added";
-                        } else {
-                            echo "Something went wrong. Please try again later.";
-                        }
-
-                        // Close statement
-                        mysqli_stmt_close($stmt3);
-                    }
-                }
-                else{
-
-                }
-            }
-        }
-    }
-}
+$stmt4 = $link->prepare($query4);
+mysqli_stmt_execute($stmt4);
+mysqli_stmt_store_result($stmt4);
+mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 ?>
 
 <head>
@@ -250,12 +115,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="memberForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <form id="memberForm" class="needs-validation" novalidate autocomplete="off">
                         <div class="row col-12">
                             <div class="col-12">
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <div class="row">
+                                            <input type="hidden" class="form-control" id="id" name="id"> 
                                             <div class="col-12">
                                                 <div class="row">
                                                     <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code *</label>
@@ -284,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <div class="row">
                                                     <label for="roles" class="col-sm-4 col-form-label">Role *</label>
                                                     <div class="col-sm-8">
-                                                        <select id="roles" name="roles" class="form-select" data-choices data-choices-sorting="true" >
+                                                        <select id="roles" name="roles" class="form-select">
                                                             <option select="selected" value="">Please Select</option>
                                                             <?php while(mysqli_stmt_fetch($stmt2)){ ?>
                                                                 <option value="<?=$code ?>"><?=$name ?></option>
@@ -297,10 +163,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 <div class="row">
                                                     <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
                                                     <div class="col-sm-8">
-                                                        <select id="plantId" name="plantId" class="form-select" data-choices data-choices-sorting="true" >
+                                                        <select id="plantId" name="plantId" class="form-select">
                                                             <option select="selected" value="">Please Select</option>
-                                                            <?php while($rowPF = mysqli_fetch_assoc($plant)){ ?>
-                                                                <option value="<?=$rowPF['id'] ?>"><?=$rowPF['name'] ?></option>
+                                                            <?php while(mysqli_stmt_fetch($stmt4)){ ?>
+                                                                <option value="<?=$pcode ?>"><?=$pname ?></option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
@@ -315,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger" id="submitMember">Submit</button>
+                                <button type="button" class="btn btn-danger" id="submitMember">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
@@ -352,9 +218,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <!-- <script src="assets/js/pages/datatables.init.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
     <script>
     $(function () {
-        $("#usersTable").DataTable({
+        var table = $("#usersTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
@@ -383,27 +251,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
         
         $('#submitMember').on('click', function(){
-        if($('#memberForm').valid()){
-            $('#spinnerLoading').show();
+            if($('#memberForm').valid()){
+                $('#spinnerLoading').show();
                 $.post('php/users.php', $('#memberForm').serialize(), function(data){
                     var obj = JSON.parse(data); 
-                    
+
                     if(obj.status === 'success'){
-                        $('#addModal').modal('hide');
-                        toastr["success"](obj.message, "Success:");
-                        
-                        $.get('users.php', function(data) {
-                            $('#mainContents').html(data);
-                            $('#spinnerLoading').hide();
-                        });
-                    }
-                    else if(obj.status === 'failed'){
-                        toastr["error"](obj.message, "Failed:");
+                        table.ajax.reload();
                         $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed')
+                    {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
                     }
                     else{
-                        toastr["error"]("Something wrong when edit", "Failed:");
                         $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Something wrong when edit');
+                        $("#failBtn").click();
                     }
                 });
             }
@@ -439,11 +308,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
+                $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#employeeCode').val(obj.message.employee_code);
                 $('#addModal').find('#username').val(obj.message.username);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
-                debugger;
                 $('#addModal').find('#plantId').val(obj.message.plant);
                 $('#addModal').modal('show');
                 

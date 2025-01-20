@@ -57,9 +57,9 @@ if($searchValue != ''){
 
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Weight where status = '0'";
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $allQuery = "select count(*) as allcount from Weight where status = '0' and created_by='$username'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["plant_code"];
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code='$username'";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -68,9 +68,9 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 $filteredQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $filteredQuery = "select count(*) as allcount from Weight where status = '0' and created_by='$username'".$searchQuery;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["username"];
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and plant_code='$username'".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -80,9 +80,9 @@ $totalRecordwithFilter = $records['allcount'];
 ## Fetch records
 $empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $empQuery = "select * from Weight where status = '0' and created_by='$username'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["username"];
+  $empQuery = "select * from Weight where status = '0' and plant_code='$username'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);
@@ -113,6 +113,10 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "supplier_weight"=>$row['supplier_weight'],
     "customer_code"=>$row['customer_code'],
     "customer_name"=>$row['customer_name'],
+    "plant_code"=>$row['plant_code'],
+    "plant_name"=>$row['plant_name'],
+    "agent_code"=>$row['agent_code'],
+    "agent_name"=>$row['agent_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
     "product_code"=>$row['product_code'],

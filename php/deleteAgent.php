@@ -10,11 +10,11 @@ if(isset($_POST['userID'])){
 	$del = "1";
 	$action = "3";
 	
-	if ($stmt2 = $db->prepare("UPDATE Users SET status=? WHERE id=?")) {
+	if ($stmt2 = $db->prepare("UPDATE Agents SET status=? WHERE id=?")) {
 		$stmt2->bind_param('ss', $del , $id);
 		
 		if($stmt2->execute()){
-			if ($insert_stmt = $db->prepare("INSERT INTO User_Log (user_id, action_id, action_by) VALUES (?, ?, ?)")) {
+			if ($insert_stmt = $db->prepare("INSERT INTO Agents_Log (agent_id, action_id, action_by) VALUES (?, ?, ?)")) {
 				$insert_stmt->bind_param('sss', $id, $action, $username);
 	
 				// Execute the prepared query.
@@ -52,7 +52,7 @@ if(isset($_POST['userID'])){
 	    echo json_encode(
 	        array(
 	            "status"=> "failed", 
-	            "message"=> "Somthings wrong"
+	            "message"=> "Somethings wrong"
 	        )
 	    );
 	}

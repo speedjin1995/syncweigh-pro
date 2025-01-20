@@ -92,7 +92,7 @@ if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'
 // Column names 
 $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
     'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 
-    'NET WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
+    'NET WEIGHT', 'WEIGHT DIFERENCE', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
 
 // Display column names as first row 
 $excelData = implode("\t", array_values($fields)) . "\n";
@@ -116,8 +116,8 @@ if($query->num_rows > 0){
         if($_GET["file"] == 'weight'){
             $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
             $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['purchase_order'],
-            $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], 
-            $row['created_by']);
+            $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], $row['nett_weight1'], $row['weight_different'], $row['gross_weight1_date'], $row['tare_weight1_date'], 
+            $row['manual_weight'], $row['created_by']);
         }else{
             $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],
             $row['totalPCS'], $row['moq'], $row['unitPrice'], $row['totalPrice'], $row['veh_number'], $row['lots_no'], $row['batchNo'], $row['invoiceNo']

@@ -2,7 +2,7 @@
 <?php include 'layouts/head-main.php'; ?>
 
 <head>
-    <title>Weighing | Synctronix - Weighing System</title>
+    <title>SRP | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -16,7 +16,10 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery Validate plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     
     <?php include 'layouts/head-css.php'; ?>
 
@@ -99,12 +102,12 @@
                                         <div class="modal-dialog modal-dialog-scrollable modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Customer</h5>
+                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Add New SRP</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form role="form" id="supplierForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <form role="form" id="destinationForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class=" row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
                                                                 <div class="card bg-light">
@@ -112,9 +115,9 @@
                                                                         <div class="row">
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="supplierCode" class="col-sm-4 col-form-label">Supplier Code</label>
+                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">SRP Code</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="supplierCode" name="supplierCode" placeholder="Supplier Code" required>
+                                                                                        <input type="text" class="form-control" id="destinationCode" name="destinationCode" placeholder="Agent Code" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
@@ -123,57 +126,20 @@
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="companyRegNo" class="col-sm-4 col-form-label">Company Reg No</label>
+                                                                                    <label for="destinationName" class="col-sm-4 col-form-label">SRP Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" placeholder="Company Reg No">
+                                                                                        <input type="text" class="form-control" id="destinationName" name="destinationName" placeholder="Agent Name" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="companyName" class="col-sm-4 col-form-label">Company Name</label>
+                                                                                    <label for="description" class="col-sm-4 col-form-label">Remarks</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Customer Code">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="addressLine1" class="col-sm-4 col-form-label">Address Line 1</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="addressLine1" name="addressLine1" placeholder="Address Line 1">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="addressLine2" class="col-sm-4 col-form-label">Address Line 2</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="addressLine2" name="addressLine2" placeholder="Address Line 2">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="addressLine3" class="col-sm-4 col-form-label">Address Line 3</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="addressLine3" name="addressLine3" placeholder="Address Line 3">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="phoneNo" class="col-sm-4 col-form-label">Phone No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="phoneNo" name="phoneNo" placeholder="Phone No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="faxNo" class="col-sm-4 col-form-label">Fax No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="faxNo" name="faxNo" placeholder="Fax No">
+                                                                                        <input type="text" class="form-control" id="description" name="description" placeholder="Description">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -188,7 +154,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitCustomer">Submit</button>
+                                                                <button type="button" class="btn btn-danger" id="submitDestination">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -213,25 +179,20 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addSupplier" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addDestination" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Supplier
+                                                                Add New SRP
                                                                 </button>
                                                             </div> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="supplierTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="destinationTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Supplier Code</th>
-                                                                    <th>Company Reg No</th>
-                                                                    <th>Company Name</th>
-                                                                    <th>Address Line 1</th>
-                                                                    <th>Address Line 2</th>
-                                                                    <th>Address Line 3</th>
-                                                                    <th>Phone No</th>
-                                                                    <th>Fax No</th>
+                                                                    <th>SRP Code</th>
+                                                                    <th>SRP Name</th>
+                                                                    <th>Remarks</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -287,32 +248,27 @@
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
-    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+
+
 
 <script type="text/javascript">
 
 var table;
 
 $(function () {
-
-    table = $("#supplierTable").DataTable({
+    table = $("#destinationTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'php/loadSupplier.php'
+            'url':'php/loadAgents.php'
         },
         'columns': [
-            { data: 'supplier_code' },
-            { data: 'company_reg_no' },
+            { data: 'agent_code' },
             { data: 'name' },
-            { data: 'address_line_1' },
-            { data: 'address_line_2' },
-            { data: 'address_line_3' },
-            { data: 'phone_no' },
-            { data: 'fax_no' },
+            { data: 'description' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -327,13 +283,14 @@ $(function () {
     });
     
     // $.validator.setDefaults({
-    //     submitHandler: function () {
-        $('#submitCustomer').on('click', function(){
-            if($('#supplierForm').valid()){
+    //     submitHandler: function() {
+    $('#submitDestination').on('click', function(){
+        if($('#destinationForm').valid()){
             $('#spinnerLoading').show();
-            $.post('php/supplier.php', $('#supplierForm').serialize(), function(data){
+            $.post('php/agent.php', $('#destinationForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
-                if(obj.status === 'success'){
+                if(obj.status === 'success')
+                {
                     table.ajax.reload();
                     $('#spinnerLoading').hide();
                     $('#addModal').modal('hide');
@@ -352,21 +309,17 @@ $(function () {
                 }
             });
         }
+        // }
     });
 
-    $('#addSupplier').on('click', function(){
+    $('#addDestination').on('click', function(){
         $('#addModal').find('#id').val("");
-        $('#addModal').find('#supplierCode').val("");
-        $('#addModal').find('#companyName').val("");
-        $('#addModal').find('#companyRegNo').val("");
-        $('#addModal').find('#addressLine1').val("");
-        $('#addModal').find('#addressLine2').val("");
-        $('#addModal').find('#addressLine3').val("");
-        $('#addModal').find('#phoneNo').val("");
-        $('#addModal').find('#faxNo').val("");
+        $('#addModal').find('#destinationCode').val("");
+        $('#addModal').find('#destinationName').val("");
+        $('#addModal').find('#description').val("");
         $('#addModal').modal('show');
         
-        $('#supplierForm').validate({
+        $('#destinationForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -382,7 +335,57 @@ $(function () {
     });
 });
 
-$('#supplierForm').validate({
+    function edit(id){
+        $('#spinnerLoading').show();
+        $.post('php/getAgent.php', {userID: id}, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#destinationCode').val(obj.message.agent_code);
+                $('#addModal').find('#destinationName').val(obj.message.name);
+                $('#addModal').find('#description').val(obj.message.description);
+                $('#addModal').modal('show');
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
+    }
+
+    function deactivate(id){
+        $('#spinnerLoading').show();
+        $.post('php/deleteAgent.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                table.ajax.reload();
+                $('#spinnerLoading').hide();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+        });
+    }
+
+$('#destinationForm').validate({
     errorElement: 'span',
     errorPlacement: function (error, element) {
       error.addClass('invalid-feedback');
@@ -395,76 +398,7 @@ $('#supplierForm').validate({
       $(element).removeClass('is-invalid');
     }
   });
-
-function edit(id){
-    $('#spinnerLoading').show();
-    $.post('php/getSupplier.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            $('#addModal').find('#id').val(obj.message.id);
-            $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-            $('#addModal').find('#companyName').val(obj.message.name);
-            $('#addModal').find('#companyRegNo').val(obj.message.company_reg_no);
-            $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
-            $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
-            $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
-            $('#addModal').find('#phoneNo').val(obj.message.phone_no);
-            $('#addModal').find('#faxNo').val(obj.message.fax_no);
-            $('#addModal').modal('show');
-            
-            // $('#customerForm').validate({
-            //     errorElement: 'span',
-            //     errorPlacement: function (error, element) {
-            //         error.addClass('invalid-feedback');
-            //         element.closest('.form-group').append(error);
-            //     },
-            //     highlight: function (element, errorClass, validClass) {
-            //         $(element).addClass('is-invalid');
-            //     },
-            //     unhighlight: function (element, errorClass, validClass) {
-            //         $(element).removeClass('is-invalid');
-            //     }
-            // });
-        }
-        else if(obj.status === 'failed'){
-            $('#spinnerLoading').hide();
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-        else{
-            $('#spinnerLoading').hide();
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-        $('#spinnerLoading').hide();
-    });
-}
-
-function deactivate(id){
-    $('#spinnerLoading').show();
-    $.post('php/deleteSupplier.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            table.ajax.reload();
-            $('#spinnerLoading').hide();
-            $("#successBtn").attr('data-toast-text', obj.message);
-            $("#successBtn").click();
-        }
-        else if(obj.status === 'failed'){
-            $('#spinnerLoading').hide();
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-        else{
-            $('#spinnerLoading').hide();
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-    });
-}
 </script>
-</body>
+    </body>
 
-</html>
+    </html>
