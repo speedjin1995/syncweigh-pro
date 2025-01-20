@@ -10,7 +10,7 @@ if(isset($_POST['userID'])){
 	$del = "1";
 	$action = "3";
 	
-	if ($stmt2 = $db->prepare("UPDATE users SET deleted=? WHERE id=?")) {
+	if ($stmt2 = $db->prepare("UPDATE Users SET status=? WHERE id=?")) {
 		$stmt2->bind_param('ss', $del , $id);
 		
 		if($stmt2->execute()){

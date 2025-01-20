@@ -287,9 +287,7 @@
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
-
-
-<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 
 <script type="text/javascript">
 
@@ -327,7 +325,7 @@ $(function () {
             }
         ]       
     });
-    submitCustomer
+    
     // $.validator.setDefaults({
     //     submitHandler: function () {
         $('#submitCustomer').on('click', function(){

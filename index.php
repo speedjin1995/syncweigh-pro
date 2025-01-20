@@ -5,6 +5,7 @@
 require_once "php/db_connect.php";
 
 $user = $_SESSION['id'];
+$plantId = $_SESSION['plant'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
 $stmt->execute();
@@ -27,7 +28,21 @@ if(($row = $result->fetch_assoc()) !== null){
     $indicator = $row['indicator'];
 }
 
-//   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
+$plantName = '-';
+
+if($plantId != null && $plantId != ''){
+    $stmt2 = $db->prepare("SELECT * from Plant WHERE id = ?");
+    $stmt2->bind_param('s', $plantId);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+        
+    if(($row2 = $result2->fetch_assoc()) !== null){
+        $_SESSION['plant_code'] = $row2['plant_code'];
+        $plantName = $row2['name'];
+    }
+}
+
+//$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
 $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
@@ -38,6 +53,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 ?>
 
 <head>
@@ -624,6 +640,19 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select" id="plant" name="plant" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                         
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -800,6 +829,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <input type="hidden" id="finalWeight" name="finalWeight">
                                                         <input type="hidden" id="customerCode" name="customerCode">
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
+                                                        <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="status" name="status">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
@@ -1619,6 +1649,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#transporterCode').val("");
             $('#addModal').find('#transporter').val("");
             $('#addModal').find('#destinationCode').val("");
+            $('#addModal').find('#plantCode').val("");
+            $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
             $('#addModal').find('#destination').val("");
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#grossIncoming').val("");
@@ -1927,6 +1959,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#destinationCode').val($('#destination :selected').data('code'));
         });
 
+        //plant
+        $('#plant').on('change', function(){
+            $('#plantCode').val($('#plant :selected').data('code'));
+        });
+
         //customerName
         $('#customerName').on('change', function(){
             $('#customerCode').val($('#customerName :selected').data('code'));
@@ -2018,6 +2055,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter);
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                $('#addModal').find('#plant').val(obj.message.plant_name);
+                $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);

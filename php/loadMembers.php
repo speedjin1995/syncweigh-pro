@@ -1,6 +1,7 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+session_start();
 
 ## Read value
 $draw = $_POST['draw'];
@@ -20,18 +21,39 @@ if($searchValue != ''){
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Users");
+$allQuery = "select count(*) as allcount from Users where status = '0'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["plant"];
+  $allQuery = "select count(*) as allcount from Users where status = '0' and plant_id='$username'";
+}
+
+$sel = mysqli_query($db, $allQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0'".$searchQuery);
+$filteredQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0'".$searchQuery;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["plant"];
+  $filteredQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0' AND Users.plant_id='$username'".$searchQuery;
+}
+
+$sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 $empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Plant.name from Users, roles, Plant WHERE 
-Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN' AND Users.plant_id = Plant.id".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN' AND Users.plant_id = Plant.id".$searchQuery." 
+order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["plant"];
+  $empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Plant.name from Users, roles, Plant WHERE 
+  Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN' AND Users.plant_id = Plant.id AND Users.plant_id='$username'".$searchQuery." 
+  order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+}
+
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 

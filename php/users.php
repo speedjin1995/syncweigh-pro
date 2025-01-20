@@ -7,19 +7,26 @@ if(!isset($_SESSION['userID'])){
     echo '<script type="text/javascript">';
     echo 'window.location.href = "../login.html";</script>';
 }
-else{
-    $userId = $_SESSION['userID'];
-}
 
-if(isset($_POST['username'], $_POST['name'], $_POST['userRole'], $_POST['plantId'])){
-    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-	$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-    $roleCode = filter_input(INPUT_POST, 'userRole', FILTER_SANITIZE_STRING);
-    $plantId = filter_input(INPUT_POST, 'plantId', FILTER_SANITIZE_STRING);
+if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST['roles'])){
+    $id = $_SESSION['id'];
+    $name = $_SESSION["username"];
+
+    $param_code = filter_input(INPUT_POST, 'employeeCode', FILTER_SANITIZE_STRING);
+    $password = "123456";
+    $param_useremail = filter_input(INPUT_POST, 'useremail', FILTER_SANITIZE_STRING);
+    $param_username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+    $param_token = bin2hex(random_bytes(50)); // generate unique token
+    $param_role = filter_input(INPUT_POST, 'roles', FILTER_SANITIZE_STRING);
+    $param_plant = isset($_POST["plantId"]) ? trim($_POST["plantId"]) : null;
+    $param_created_by = $name;
+    $param_modified_by = $name;
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE users SET username=?, name=?, role_code=?, plant_id=? WHERE id=?")) {
-            $update_stmt->bind_param('sssss', $username, $name, $roleCode, $plantId, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE Users SET username=?, useremail=?, role=?, modified_by=?, plant_id=?, employee_code=? WHERE id=?")) {
+            $update_stmt->bind_param("sssssss", $param_username, $param_useremail, $param_role, $param_modified_by, $param_plant, $param_code, $_POST['id']);
+            $action = "2";
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -48,9 +55,10 @@ if(isset($_POST['username'], $_POST['name'], $_POST['userRole'], $_POST['plantId
         $password = '123456';
         $password = hash('sha512', $password . $random_salt);
 
-        if ($insert_stmt = $db->prepare("INSERT INTO users (username, name, password, salt, created_by, role_code, plant_id) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssss', $username, $name, $password, $random_salt, $userId, $roleCode, $plantId);
-            
+        if ($insert_stmt = $db->prepare("INSERT INTO Users (employee_code, useremail, username, password, token, role, plant_id, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param("ssssssss", $param_code, $param_useremail, $param_username, $param_password, $param_token, $param_role, $param_plant, $param_created_by, $param_modified_by);
+            $action = "1";
+
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
                 echo json_encode(
@@ -73,6 +81,37 @@ if(isset($_POST['username'], $_POST['name'], $_POST['userRole'], $_POST['plantId
             }
         }
     }
+
+    /*if($action == "1"){
+        $sql3 = "INSERT INTO Users_Log (employee_code, username, user_department, status, password, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        if ($stmt3 = mysqli_prepare($link, $sql3)) {
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt3, "sssssss", $param_code, $param_username, $param_role, $param_status, $param_password, $param_action, $param_actionBy);
+
+            // Set parameters
+            $param_code = $employeeCode;
+            $param_username = $username;
+            $param_password = "123456"; // Creates a password hash
+            $param_role = $roles;
+            $param_status = "0";
+            $param_action = $action;
+            $param_actionBy = $name;
+
+            // Attempt to execute the prepared statement
+            if (mysqli_stmt_execute($stmt3)) {
+                echo "Added";
+            } else {
+                echo "Something went wrong. Please try again later.";
+            }
+
+            // Close statement
+            mysqli_stmt_close($stmt3);
+        }
+    }
+    else{
+
+    }*/
 }
 else{
     echo json_encode(
