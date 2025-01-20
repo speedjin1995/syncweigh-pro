@@ -33,6 +33,10 @@ if(isset($_POST['userID'])){
                 $message['order_weight'] = $row['order_weight'];
                 $message['customer_code'] = $row['customer_code'];
                 $message['customer_name'] = $row['customer_name'];
+                $message['plant_code'] = $row['plant_code'];
+                $message['plant_name'] = $row['plant_name'];
+                $message['agent_code'] = $row['agent_code'];
+                $message['agent_name'] = $row['agent_name'];
                 $message['supplier_code'] = $row['supplier_code'];
                 $message['supplier_name'] = $row['supplier_name'];
                 $message['product_code'] = $row['product_code'];

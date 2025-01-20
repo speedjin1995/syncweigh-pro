@@ -79,7 +79,10 @@
                                     </li>       
                                     <li class="nav-item">
                                         <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
-                                    </li>                     
+                                    </li>   
+                                    <li class="nav-item">
+                                        <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
+                                    </li>                   
                                     <li class="nav-item">
                                         <a href="transporter.php" class="nav-link">'.$lang['t-transporter'].'</a>
                                     </li>

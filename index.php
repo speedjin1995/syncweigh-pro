@@ -54,6 +54,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+$agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 ?>
 
 <head>
@@ -640,6 +641,39 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="form-check align-radio mr-2">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualEx" value="true">
+                                                                                            <label class="form-check-label" for="manualEx">
+                                                                                               Ex-Quarry
+                                                                                            </label>
+                                                                                        </div>
+
+                                                                                        <div class="form-check align-radio">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualDel" value="false" checked>
+                                                                                            <label class="form-check-label" for="manualDel">
+                                                                                               Delivered
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select" id="agent" name="agent" >
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
+                                                                                                <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                         
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
@@ -830,6 +864,7 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                         <input type="hidden" id="customerCode" name="customerCode">
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
                                                         <input type="hidden" id="plantCode" name="plantCode">
+                                                        <input type="hidden" id="agentCode" name="agentCode">
                                                         <input type="hidden" id="status" name="status">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
@@ -1649,6 +1684,8 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
             $('#addModal').find('#transporterCode').val("");
             $('#addModal').find('#transporter').val("");
             $('#addModal').find('#destinationCode').val("");
+            $('#addModal').find('#agent').val("");
+            $('#addModal').find('#agentCode').val("");
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
             $('#addModal').find('#destination').val("");
@@ -1964,6 +2001,11 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
             $('#plantCode').val($('#plant :selected').data('code'));
         });
 
+        // SRP
+        $('#agent').on('change', function(){
+            $('#agentCode').val($('#agent :selected').data('code'));
+        });
+
         //customerName
         $('#customerName').on('change', function(){
             $('#customerCode').val($('#customerName :selected').data('code'));
@@ -2055,6 +2097,8 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter);
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                $('#addModal').find('#agent').val(obj.message.agent_name);
+                $('#addModal').find('#agentCode').val(obj.message.agent_code);
                 $('#addModal').find('#plant').val(obj.message.plant_name);
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#destination').val(obj.message.destination);
