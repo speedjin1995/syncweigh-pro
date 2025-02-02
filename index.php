@@ -791,7 +791,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button>
+                                                                <!--button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button-->
                                                                 <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
