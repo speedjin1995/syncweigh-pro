@@ -1113,9 +1113,15 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                         '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
                                         '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
+                        if (row.is_approved == 'Y') {
+                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                        }
+
                         if (row.is_approved == 'N') {
                             dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                         }
+
+                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
@@ -1494,9 +1500,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 if(data != "Error"){
                     console.log("Data Received:" + data);
                     
-                    if(ind == 'X2S'){
+                    if(ind == 'X2S' || ind == 'X722'){
                         var text = data.split(" ");
-                        $('#indicatorWeight').html(text[text.length - 1]);
+                        var text2 = text[text.length - 1];
+                        text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
+                        $('#indicatorWeight').html(text2);
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                     }
@@ -1579,9 +1587,15 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                             '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
                                             '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
+                            if (row.is_approved == 'Y') {
+                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            }
+
                             if (row.is_approved == 'N') {
                                 dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                             }
+
+                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
