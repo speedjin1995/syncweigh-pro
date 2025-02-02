@@ -34,6 +34,7 @@ $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
+$product3 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
@@ -60,6 +61,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include jQuery Validate plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <?php include 'layouts/head-css.php'; ?>
     <style>
@@ -69,6 +71,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
         .modal-header {
             padding: var(1rem, 1rem) !important;
+        }
+
+        #productTable th, #productTable td{
+            border: 1px solid #cdcdcd;
         }
     </style>
 </head>
@@ -172,6 +178,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
                                                                 <option value="Container">Container</option>
+                                                                <option value="Multiple">Multiple</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -404,6 +411,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                         <select id="weightType" name="weightType" class="form-select">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
+                                                                                            <option>Multiple</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -778,6 +786,37 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <div class="col-xxl-8 col-lg-8" id="multipleCard" style="display:none;">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row mb-3">
+                                                                            <div class="col-10"></div>
+                                                                            <div class="col-2">
+                                                                                <button style="margin-left:auto;margin-right: 25px;" type="button" class="btn btn-primary add-product">Add Product</button>
+                                                                            </div>
+                                                                        </div>  
+                                                                        <div class="row">
+                                                                            <table id="productTable" class="table table-primary">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>Product</th>
+                                                                                        <th>Manual Weight</th>
+                                                                                        <th>Bin Selection</th>
+                                                                                        <th>Start Date/Time</th>
+                                                                                        <th>End Date/Time</th>
+                                                                                        <th>Action</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+
+                                                                                </tbody>
+                                                                            </table>                                            
+                                                                        </div>                                                            
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row col-12">
                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                 <div class="row">
                                                                     <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
@@ -1008,6 +1047,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         <!-- end main content-->
 
     </div>
+
+    
     <!-- END layout-wrapper -->
 
     <?php include 'layouts/customizer.php'; ?>
@@ -1688,10 +1729,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             if($(this).val() == "Container")
             {
                 $('#containerCard').show();
+                $('#multipleCard').hide();
+            }
+            else if($(this).val() == "Multiple")
+            {
+                $('#multipleCard').show();
+                $('#containerCard').hide();
             }
             else
             {
                 $('#containerCard').hide();
+                $('#multipleCard').hide();
             }
         });
 
@@ -1957,6 +2005,20 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 echo 'approve('.$_GET['approve'].');';
             }
         ?>
+
+        $(".add-product").click(function(){
+            var markup = "<tr><td><select class='col-12 form-control' id='itemType' name='itemType["+size+"]' >"
+                + "<option selected='selected'>-</option><option value='T1'>T1</option><option value='T3'>T3</option><option value='T4'>T4</option></select>" +
+                '' + "</td><td><input class='col-12 form-control' type='text' name='lotNo["+size+"]' value='"+lotNo+"' />" + 
+                '' + "</td><td><input class='col-12 form-control' type='text' name='bTrayNo["+size+"]' value='"+bTrayNo+"' />" + 
+                '' + "</td><td><input class='col-12 form-control' type='number' id='"+size+"' name='grossWeight["+size+"]' value='"+grossWeight+"' />" + 
+                '' + "</td><td><input class='col-12 form-control' type='number' id='"+size+"' name='bTrayWeight["+size+"]' value='"+bTrayWeight+"' />" + 
+                '' + "</td><td><input class='col-12 form-control' type='number' id='"+size+"' name='netWeight["+size+"]' value='"+netWeight+"' />" + 
+                '' + "</td><td><span class='form-group'><input class='col-12 form-control' type='number' name='moistureValue["+size+"]' value='"+moistureValue+"' min='0' max='100' /></span>" + 
+                '' + "</td><td style='justify-content:center;display:flex;'><button type='button' class='btn btn-danger' name=delete"+ size +">delete</button></td></tr>";
+
+            $("#productTable tbody").append(markup);
+        });
     });
 
     function edit(id){
