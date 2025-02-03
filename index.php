@@ -800,9 +800,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 <thead>
                                                                                     <tr>
                                                                                         <th width="5%">No</th>
-                                                                                        <th>Product</th>
-                                                                                        <th>Manual Weight</th>
-                                                                                        <th>Bin Selection</th>
+                                                                                        <th width="15%">Product</th>
+                                                                                        <th width="5%">Manual Weight</th>
+                                                                                        <th>Bin Selection (Name)</th>
+                                                                                        <th>Bin Selection (KG)</th>
                                                                                         <th>Start Date/Time</th>
                                                                                         <th>End Date/Time</th>
                                                                                         <th>Action</th>
@@ -1065,13 +1066,16 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 </select>
             </td>
             <td>
-                <input type="text" class="form-control" id="productBin" name="productBin" style="background-color:white;">
+                <input type="text" class="form-control" id="productBinName" name="productBinName" style="background-color:white;">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productBinWeight" name="productBinWeight" style="background-color:white;">
             </td>
             <td>
                 <input type="date" class="form-control" data-provider="flatpickr" id="productStartDate" name="productStartDate" style="background-color:white;">
             </td>
             <td>
-                <input type="text" class="form-control" id="productEndDate" name="productEndDate" style="background-color:white;">
+                <input type="date" class="form-control" data-provider="flatpickr" id="productEndDate" name="productEndDate" style="background-color:white;">
             </td>
             <td style="text-align:center"><button class="btn btn-danger" id="remove" style="background-color: #f06548;"><i class="fa fa-times"></i></button></td>
         </tr>
@@ -2052,22 +2056,24 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount);
             $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount);
             $("#productTable").find('#productBin:last').attr('name', 'productBin['+productCount+']').attr("id", "productBin" + productCount);
-            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
-                {
-                    enableTime: true,          
-                    dateFormat: "d-m-Y H:i",   
-                    time_24hr: true,          
-                    defaultDate: ''
-                }
-            );
-            $("#productTable").find('#productEndDate').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
-                {
-                    enableTime: true,          
-                    dateFormat: "d-m-Y H:i",   
-                    time_24hr: true,          
-                    defaultDate: ''
-                }
-            );
+            setTimeout(function() {
+                $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+                    {
+                        enableTime: true,          
+                        dateFormat: "d-m-Y H:i",   
+                        time_24hr: true,          
+                        defaultDate: ''
+                    }
+                );
+                $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+                    {
+                        enableTime: true,          
+                        dateFormat: "d-m-Y H:i",   
+                        time_24hr: true,          
+                        defaultDate: ''
+                    }
+                );
+            },50);
 
             productCount++;
         });
