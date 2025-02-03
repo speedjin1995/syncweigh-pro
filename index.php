@@ -799,6 +799,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             <table id="productTable" class="table table-primary">
                                                                                 <thead>
                                                                                     <tr>
+                                                                                        <th width="5%">No</th>
                                                                                         <th>Product</th>
                                                                                         <th>Manual Weight</th>
                                                                                         <th>Bin Selection</th>
@@ -807,9 +808,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                         <th>Action</th>
                                                                                     </tr>
                                                                                 </thead>
-                                                                                <tbody>
-
-                                                                                </tbody>
                                                                             </table>                                            
                                                                         </div>                                                            
                                                                     </div>
@@ -1048,6 +1046,36 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     </div>
 
+    <script type="text/html" id="productDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="no" name="no" readonly>
+            </td>
+            <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
+                    <?php while($rowProduct=mysqli_fetch_assoc($product3)){ ?>
+                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="productManualWeight" name="productManualWeight">
+                    <option value="YES">Yes</option>
+                    <option value="NO">No</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="productBin" name="productBin" style="background-color:white;">
+            </td>
+            <td>
+                <input type="date" class="form-control" data-provider="flatpickr" id="productStartDate" name="productStartDate" style="background-color:white;">
+            </td>
+            <td>
+                <input type="text" class="form-control" id="productEndDate" name="productEndDate" style="background-color:white;">
+            </td>
+            <td style="text-align:center"><button class="btn btn-danger" id="remove" style="background-color: #f06548;"><i class="fa fa-times"></i></button></td>
+        </tr>
+    </script>
     
     <!-- END layout-wrapper -->
 
@@ -1080,7 +1108,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     <script type="text/javascript">
     var table = null;
-    
+    var productCount = $("#productTable").find(".details").length;
+
     $(function () {
         var ind = '<?=$indicator ?>';
         const today = new Date();
@@ -2006,18 +2035,41 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         ?>
 
-        $(".add-product").click(function(){
-            var markup = "<tr><td><select class='col-12 form-control' id='itemType' name='itemType["+size+"]' >"
-                + "<option selected='selected'>-</option><option value='T1'>T1</option><option value='T3'>T3</option><option value='T4'>T4</option></select>" +
-                '' + "</td><td><input class='col-12 form-control' type='text' name='lotNo["+size+"]' value='"+lotNo+"' />" + 
-                '' + "</td><td><input class='col-12 form-control' type='text' name='bTrayNo["+size+"]' value='"+bTrayNo+"' />" + 
-                '' + "</td><td><input class='col-12 form-control' type='number' id='"+size+"' name='grossWeight["+size+"]' value='"+grossWeight+"' />" + 
-                '' + "</td><td><input class='col-12 form-control' type='number' id='"+size+"' name='bTrayWeight["+size+"]' value='"+bTrayWeight+"' />" + 
-                '' + "</td><td><input class='col-12 form-control' type='number' id='"+size+"' name='netWeight["+size+"]' value='"+netWeight+"' />" + 
-                '' + "</td><td><span class='form-group'><input class='col-12 form-control' type='number' name='moistureValue["+size+"]' value='"+moistureValue+"' min='0' max='100' /></span>" + 
-                '' + "</td><td style='justify-content:center;display:flex;'><button type='button' class='btn btn-danger' name=delete"+ size +">delete</button></td></tr>";
+        // Find and remove selected table rows
+        $("#productTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
 
-            $("#productTable tbody").append(markup);
+        $(".add-product").click(function(){
+            var $addContents = $("#productDetail").clone();
+            $("#productTable").append($addContents.html());
+
+            $("#productTable").find('.details:last').attr("id", "detail" + productCount);
+            $("#productTable").find('.details:last').attr("data-index", productCount);
+            $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
+
+            $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((productCount + 1).toString());
+            $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount);
+            $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount);
+            $("#productTable").find('#productBin:last').attr('name', 'productBin['+productCount+']').attr("id", "productBin" + productCount);
+            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d-m-Y H:i",   
+                    time_24hr: true,          
+                    defaultDate: ''
+                }
+            );
+            $("#productTable").find('#productEndDate').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d-m-Y H:i",   
+                    time_24hr: true,          
+                    defaultDate: ''
+                }
+            );
+
+            productCount++;
         });
     });
 
