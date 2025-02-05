@@ -109,6 +109,28 @@ if(isset($_POST['userID'])){
                     // Log error if the statement couldn't be prepared
                     $message['vehicleNoTxt2'] = $db->error;
                 }
+
+                // retrieve products
+                $empQuery = "SELECT * FROM Weight_Product WHERE weight_id = $id ORDER BY id ASC";
+                $empRecords = mysqli_query($db, $empQuery);
+                $products = array();
+                $productCount = 0;
+
+                while($row4 = mysqli_fetch_assoc($empRecords)) {
+                    $products[] = array(
+                        "no" => $productCount,
+                        "id" => $row4['id'],
+                        "product_id" => $row4['product_id'],
+                        "manual_weight" => $row4['manual_weight'],
+                        "bin_name" => $row4['bin_name'],
+                        "bin_weight" => $row4['bin_weight'],
+                        "start_date" => $row4['start_date'],
+                        "end_date" => $row4['end_date']
+                    );
+                    $productCount++;
+                }
+
+                $message['products'] = $products;
             }
             
             echo json_encode(

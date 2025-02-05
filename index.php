@@ -791,26 +791,27 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     <div class="card-body">
                                                                         <div class="row mb-3">
                                                                             <div class="col-10"></div>
-                                                                            <div class="col-2">
-                                                                                <button style="margin-left:auto;margin-right: 25px;" type="button" class="btn btn-primary add-product">Add Product</button>
+                                                                            <div class="col-2 ml-auto">
+                                                                                <button type="button" class="btn btn-primary add-product">Add Product</button>
                                                                             </div>
                                                                         </div>  
                                                                         <div class="row">
-                                                                            <table id="productTable" class="table table-primary">
+                                                                            <table class="table table-primary">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th width="5%">No</th>
+                                                                                        <th width="7%">No</th>
                                                                                         <th width="15%">Product</th>
-                                                                                        <th width="5%">Manual Weight</th>
+                                                                                        <th width="8%">Manual Weight</th>
                                                                                         <th>Bin Selection (Name)</th>
                                                                                         <th>Bin Selection (KG)</th>
-                                                                                        <th>Start Date/Time</th>
-                                                                                        <th>End Date/Time</th>
+                                                                                        <th width="20%">Start Date/Time</th>
+                                                                                        <th width="20%">End Date/Time</th>
                                                                                         <th>Action</th>
                                                                                     </tr>
                                                                                 </thead>
+                                                                                <tbody id="productTable"></tbody>
                                                                             </table>                                            
-                                                                        </div>                                                            
+                                                                        </div>                                                        
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1051,6 +1052,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         <tr class="details">
             <td>
                 <input type="text" class="form-control" id="no" name="no" readonly>
+                <input type="text" class="form-control" id="id" name="id" hidden>
             </td>
             <td>
                 <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
@@ -1741,6 +1743,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
+            productCount = 0;
+            $("#productTable").html('');
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -2055,25 +2060,24 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((productCount + 1).toString());
             $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount);
             $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount);
-            $("#productTable").find('#productBin:last').attr('name', 'productBin['+productCount+']').attr("id", "productBin" + productCount);
-            setTimeout(function() {
-                $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
-                    {
-                        enableTime: true,          
-                        dateFormat: "d-m-Y H:i",   
-                        time_24hr: true,          
-                        defaultDate: ''
-                    }
-                );
-                $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
-                    {
-                        enableTime: true,          
-                        dateFormat: "d-m-Y H:i",   
-                        time_24hr: true,          
-                        defaultDate: ''
-                    }
-                );
-            },50);
+            $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount);
+            $("#productTable").find('#productBinWeight:last').attr('name', 'productBinWeight['+productCount+']').attr("id", "productBinWeight" + productCount);
+            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d/m/Y H:i K",   
+                    time_24hr: false,          
+                    defaultDate: ''
+                }
+            );
+            $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+                {
+                    enableTime: true,          
+                    dateFormat: "d/m/Y H:i K",   
+                    time_24hr: false,          
+                    defaultDate: ''
+                }
+            );
 
             productCount++;
         });
@@ -2088,7 +2092,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
-                $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
@@ -2187,6 +2191,48 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#sstPrice').val(obj.message.product_description);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+
+                // Display Products
+                $('#productTable').html('');
+                productCount = 0;
+
+                if (obj.message.products.length > 0){
+                    for(var i = 0; i < obj.message.products.length; i++){
+                        var item = obj.message.products[i];
+                        var $addContents = $("#productDetail").clone();
+                        $("#productTable").append($addContents.html());
+
+                        $("#productTable").find('.details:last').attr("id", "detail" + productCount);
+                        $("#productTable").find('.details:last').attr("data-index", productCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
+
+                        $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((item.no)+1);
+                        $("#productTable").find('#id:last').attr('name', 'id['+productCount+']').attr("id", "id" + productCount).val(item.id);
+                        $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount).val(item.product_id);
+                        $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount).val(item.manual_weight);
+                        $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount).val(item.bin_name);
+                        $("#productTable").find('#productBinWeight:last').attr('name', 'productBinWeight['+productCount+']').attr("id", "productBinWeight" + productCount).val(item.bin_weight);
+                        $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+                            {
+                                enableTime: true,          
+                                dateFormat: "d/m/Y H:i K",   
+                                time_24hr: false,          
+                                defaultDate: item.start_date || ''
+                            }
+                        );
+                        $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+                            {
+                                enableTime: true,          
+                                dateFormat: "d/m/Y H:i K",   
+                                time_24hr: false,          
+                                defaultDate: item.end_date || ''
+                            }
+                        );
+
+                        productCount++;
+                    }
+                }
+
                 $('#addModal').modal('show');
             
                 $('#weightForm').validate({

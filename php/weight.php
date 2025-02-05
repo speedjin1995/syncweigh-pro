@@ -491,7 +491,48 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     else{
                         $update_stmt->close();
                         //$db->close();
-                        
+
+                        # Insert into Weight_Product 
+                        $no = $_POST['no'];
+                        $products =  $_POST['products'];
+                        $productManualWeight = $_POST['productManualWeight'];
+                        $productBinName = [];
+                        $productBinWeight = [];
+                        $productStartDate = [];
+                        $productEndDate = [];
+
+                        if(isset($_POST['productBinName']) && $_POST['productBinName'] != null && $_POST['productBinName'] != ''){
+                            $productBinName = $_POST['productBinName'];
+                        }
+
+                        if(isset($_POST['productBinWeight']) && $_POST['productBinWeight'] != null && $_POST['productBinWeight'] != ''){
+                            $productBinWeight = $_POST['productBinWeight'];
+                        }
+
+                        if(isset($_POST['productStartDate']) && $_POST['productStartDate'] != null && $_POST['productStartDate'] != ''){
+                            $productStartDate = $_POST['productStartDate'];
+                            // $productStartDate = DateTime::createFromFormat('d-m-Y H:i', $productStartDate)->format('Y-m-d H:i:s');
+                        }
+
+                        if(isset($_POST['productEndDate']) && $_POST['productEndDate'] != null && $_POST['productEndDate'] != ''){
+                            $productEndDate = $_POST['productEndDate'];
+                            // $productEndDate = DateTime::createFromFormat('d-m-Y H:i', $productEndDate)->format('Y-m-d H:i:s');
+                        }
+
+                        if(isset($no) && $no != null && count($no) > 0){
+                            for ($i=0; $i < count($no); $i++) { 
+                                $productStartDate[$i] = DateTime::createFromFormat('d-m-Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
+                                $productEndDate[$i] = DateTime::createFromFormat('d-m-Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
+
+                                if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, manual_weight, bin_name, bin_weight, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)")){
+                                    $product_stmt->bind_param('sssssss', $id, $products[$i], $productManualWeight[$i], $productBinName[$i], $productBinWeight[$i], $productStartDate[$i], $productEndDate[$i]);
+                                    $product_stmt->execute();
+                                }
+                            }
+
+                            $product_stmt->close();
+                        }
+
                         echo json_encode(
                             array(
                                 "status"=> "success", 
