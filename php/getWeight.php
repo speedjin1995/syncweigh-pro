@@ -124,8 +124,8 @@ if(isset($_POST['userID'])){
                         "manual_weight" => $row4['manual_weight'],
                         "bin_name" => $row4['bin_name'],
                         "bin_weight" => $row4['bin_weight'],
-                        "start_date" => $row4['start_date'],
-                        "end_date" => $row4['end_date']
+                        "start_date" => DateTime::createFromFormat('Y-m-d H:i:s', $row4['start_date'])->format('d/m/Y H:i'),
+                        "end_date" => DateTime::createFromFormat('Y-m-d H:i:s', $row4['end_date'])->format('d/m/Y H:i')
                     );
                     $productCount++;
                 }

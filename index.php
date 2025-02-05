@@ -1052,7 +1052,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         <tr class="details">
             <td>
                 <input type="text" class="form-control" id="no" name="no" readonly>
-                <input type="text" class="form-control" id="id" name="id" hidden>
+                <input type="text" class="form-control" id="weightProductId" name="weightProductId" hidden>
             </td>
             <td>
                 <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
@@ -1185,9 +1185,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     render: function (data, type, row) {
                         let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                        '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                        '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                         if (row.is_approved == 'Y') {
                             dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1659,9 +1657,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         render: function (data, type, row) {
                             let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                            '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                            '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                             if (row.is_approved == 'Y') {
                                 dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -2058,6 +2054,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
 
             $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((productCount + 1).toString());
+            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount);
             $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount);
             $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount);
             $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount);
@@ -2065,16 +2062,16 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
                 {
                     enableTime: true,          
-                    dateFormat: "d/m/Y H:i K",   
-                    time_24hr: false,          
+                    dateFormat: "d/m/Y H:i",   
+                    time_24hr: true,          
                     defaultDate: ''
                 }
             );
             $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
                 {
                     enableTime: true,          
-                    dateFormat: "d/m/Y H:i K",   
-                    time_24hr: false,          
+                    dateFormat: "d/m/Y H:i",   
+                    time_24hr: true,          
                     defaultDate: ''
                 }
             );
@@ -2196,7 +2193,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#productTable').html('');
                 productCount = 0;
 
-                if (obj.message.products.length > 0){
+                if (obj.message.products.length > 0){ console.log(obj.message.products);
                     for(var i = 0; i < obj.message.products.length; i++){
                         var item = obj.message.products[i];
                         var $addContents = $("#productDetail").clone();
@@ -2207,7 +2204,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
 
                         $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((item.no)+1);
-                        $("#productTable").find('#id:last').attr('name', 'id['+productCount+']').attr("id", "id" + productCount).val(item.id);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount).val(item.id);
                         $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount).val(item.product_id);
                         $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount).val(item.manual_weight);
                         $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount).val(item.bin_name);
@@ -2215,16 +2212,16 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
                             {
                                 enableTime: true,          
-                                dateFormat: "d/m/Y H:i K",   
-                                time_24hr: false,          
+                                dateFormat: "d/m/Y H:i",   
+                                time_24hr: true,          
                                 defaultDate: item.start_date || ''
                             }
                         );
                         $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
                             {
                                 enableTime: true,          
-                                dateFormat: "d/m/Y H:i K",   
-                                time_24hr: false,          
+                                dateFormat: "d/m/Y H:i",   
+                                time_24hr: true,          
                                 defaultDate: item.end_date || ''
                             }
                         );
@@ -2346,6 +2343,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         });
     }
+
     </script>
 </body>
 </html>
