@@ -54,6 +54,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 ?>
@@ -209,6 +210,17 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="ForminputState" class="form-label">Plant</label>
+                                                            <select id="transactionStatusSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
+                                                                    <option value="<?=$rowPlantF['product_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -531,12 +543,12 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row" id="rawMaterialDisplay" style="display:none;">
-                                                                                    <label for="rawMaterial" class="col-sm-4 col-form-label">Raw Material</label>
+                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="rawMaterial" name="rawMaterial" >
+                                                                                        <select class="form-select" id="rawMaterialName" name="rawMaterialName" >
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRowMat['id'] ?>"><?=$rowRowMat['name'] ?></option>
+                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>           
                                                                                     </div>
@@ -886,6 +898,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                         <input type="hidden" id="productVariance" name="productVariance">
                                                         <input type="hidden" id="transporterCode" name="transporterCode">
                                                         <input type="hidden" id="supplierCode" name="supplierCode">
+                                                        <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                     </form>
@@ -1690,7 +1703,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             $('#addModal').find('#productCode').val("");
             $('#addModal').find('#productName').val("");
             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-            $('#addModal').find('#rawMaterial').val("");
+            $('#addModal').find('#rawMaterialCode').val("");
+            $('#addModal').find('#rawMaterialName').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
@@ -2122,8 +2136,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-                console.log(obj.message.raw_mat);
-                $('#addModal').find('#rawMaterial').val(obj.message.raw_mat).trigger('change');
+                $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
