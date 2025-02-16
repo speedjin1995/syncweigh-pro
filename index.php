@@ -42,6 +42,19 @@ if($plantId != null && $plantId != ''){
     }
 }
 
+$role = 'NORMAL';
+if ($user != null && $user != ''){
+    $stmt3 = $db->prepare("SELECT * from Users WHERE id = ?");
+    $stmt3->bind_param('s', $user);
+    $stmt3->execute();
+    $result3 = $stmt3->get_result();
+        
+    if(($row3 = $result3->fetch_assoc()) !== null){
+        $role = $row3['role'];
+    }
+}
+
+
 //$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
 $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
@@ -214,7 +227,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" id="plantSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select" >
@@ -1131,6 +1144,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
     var table = null;
     
     $(function () {
+        var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
         const today = new Date();
         const tomorrow = new Date(today);
@@ -1153,6 +1167,12 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             dateFormat: "d-m-Y",
             defaultDate: today
         });
+
+        if (userRole == 'SADMIN' || userRole == 'ADMIN'){
+            $('#plantSearchDisplay').show();
+        }else{
+            $('#plantSearchDisplay').hide();
+        }
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
