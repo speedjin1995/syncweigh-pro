@@ -70,6 +70,7 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 ?>
 
 <head>
@@ -171,7 +172,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="statusSearch" class="form-label">Status</label>
+                                                            <label for="statusSearch" class="form-label">Transaction Status</label>
                                                             <select id="statusSearch" class="form-select">
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
@@ -216,13 +217,24 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->                                                
-                                                    <div class="col-3">
+                                                    <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatusSearch" class="form-select" >
+                                                            <select id="productSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="rawMatSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="ForminputState" class="form-label">Raw Material</label>
+                                                            <select id="rawMatSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -1174,6 +1186,18 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             $('#plantSearchDisplay').hide();
         }
 
+        $('#statusSearch').on('change', function(){
+            var status = $(this).val();
+
+            if (status == 'Purchase' || status == 'Local'){
+                $('#productSearchDisplay').hide();
+                $('#rawMatSearchDisplay').show();
+            }else{
+                $('#productSearchDisplay').show();
+                $('#rawMatSearchDisplay').hide();
+            }
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -1181,7 +1205,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
-        var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         table = $("#weightTable").DataTable({
@@ -1201,7 +1226,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
                     batch: batchNoI,
-                    product: transactionStatusI,
+                    product: productSearchI,
+                    rawMaterial: rawMaterialI,
                     plant: plantNoI,
                 } 
             },
@@ -1645,7 +1671,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             //Destroy the old Datatable
@@ -1669,7 +1696,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
                         batch: batchNoI,
-                        product: transactionStatusI,
+                        product: productSearchI,
+                        rawMaterial: rawMaterialI,
                         plant: plantNoI,
                     } 
                 },
@@ -2074,6 +2102,11 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             }else{
                 $("#transporter").val('').trigger('change');
             }
+        });
+
+        //rawMaterialName
+        $('#rawMaterialName').on('change', function(){
+            $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
         });
 
         <?php
