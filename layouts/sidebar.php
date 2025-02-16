@@ -54,7 +54,7 @@
                 </li> -->
 
                 <?php
-                    if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
+                    if($_SESSION["roles"] == 'MANAGER' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                         echo '<li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarMasterdata">
@@ -79,7 +79,10 @@
                                     </li>       
                                     <li class="nav-item">
                                         <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
-                                    </li>                     
+                                    </li>   
+                                    <li class="nav-item">
+                                        <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
+                                    </li>                   
                                     <li class="nav-item">
                                         <a href="transporter.php" class="nav-link">'.$lang['t-transporter'].'</a>
                                     </li>
