@@ -217,10 +217,10 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Plant</label>
-                                                            <select id="transactionStatusSearch" class="form-select" >
+                                                            <select id="plantSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
-                                                                    <option value="<?=$rowPlantF['product_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -1162,6 +1162,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1181,6 +1182,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                     invoice: invoiceNoI,
                     batch: batchNoI,
                     product: transactionStatusI,
+                    plant: plantNoI,
                 } 
             },
             'columns': [
@@ -1624,6 +1626,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -1647,6 +1650,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                         invoice: invoiceNoI,
                         batch: batchNoI,
                         product: transactionStatusI,
+                        plant: plantNoI,
                     } 
                 },
                 'columns': [
