@@ -41,6 +41,8 @@ if(isset($_POST['userID'])){
                 $message['supplier_name'] = $row['supplier_name'];
                 $message['product_code'] = $row['product_code'];
                 $message['product_name'] = $row['product_name'];
+                $message['ex_del'] = $row['ex_del'];
+                $message['raw_mat'] = $row['raw_mat'];
                 $message['container_no'] = $row['container_no'];
                 $message['invoice_no'] = $row['invoice_no'];
                 $message['purchase_order'] = $row['purchase_order'];
