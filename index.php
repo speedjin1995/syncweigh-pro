@@ -71,6 +71,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$site = $db->query("SELECT * FROM Site WHERE status = '0'");
 ?>
 
 <head>
@@ -732,7 +733,20 @@ $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>                                                                                         
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="siteName" class="col-sm-4 col-form-label">Site *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select" id="siteName" name="siteName" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
+                                                                                                <option value="<?=$rowSite['name'] ?>" data-code="<?=$rowSite['site_code'] ?>"><?=$rowSite['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -924,6 +938,7 @@ $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                         <input type="hidden" id="transporterCode" name="transporterCode">
                                                         <input type="hidden" id="supplierCode" name="supplierCode">
                                                         <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
+                                                        <input type="hidden" id="siteCode" name="siteCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                     </form>
@@ -1757,6 +1772,8 @@ $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
             $('#addModal').find('#rawMaterialCode').val("");
             $('#addModal').find('#rawMaterialName').val("");
+            $('#addModal').find('#siteCode').val("");
+            $('#addModal').find('#siteName').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
@@ -2109,6 +2126,11 @@ $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
             $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
         });
 
+        //siteName
+        $('#siteName').on('change', function(){
+            $('#siteCode').val($('#siteName :selected').data('code'));
+        });
+
         <?php
             if(isset($_GET['weight'])){
                 echo 'edit('.$_GET['weight'].');';
@@ -2195,6 +2217,8 @@ $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                 }
                 $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
                 $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
+                $('#addModal').find('#siteCode').val(obj.message.site_code);
+                $('#addModal').find('#siteName').val(obj.message.site_name);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
