@@ -739,6 +739,26 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
+                                                                                    <label for="loadDrum" class="col-sm-4 col-form-label">By-Load/By-Drum</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="form-check align-radio mr-2">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="loadDrum" id="manualLoad" value="true" checked>
+                                                                                            <label class="form-check-label" for="manualLoad">
+                                                                                               By-Load
+                                                                                            </label>
+                                                                                        </div>
+
+                                                                                        <div class="form-check align-radio">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="loadDrum" id="manualDrum" value="false">
+                                                                                            <label class="form-check-label" for="manualDrum">
+                                                                                               By-Drum
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
                                                                                     <label for="siteName" class="col-sm-4 col-form-label">Site *</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="siteName" name="siteName" required>
@@ -781,6 +801,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                         Please fill in the field.
                                                                                     </div>
                                                                                 </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3" id="noOfDrumDisplay" style="display:none;">
+                                                                            <label for="noOfDrum" class="col-sm-4 col-form-label">No of Drum</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="number" class="form-control" id="noOfDrum" name="noOfDrum">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
@@ -1819,6 +1845,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
+            $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
+            $('#addModal').find('#noOfDrum').val("");
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -2131,6 +2160,15 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#siteCode').val($('#siteName :selected').data('code'));
         });
 
+        $('input[name="loadDrum"]').change(function() {
+            var selected = $(this).val();
+            if (selected == 'true'){
+                $("#noOfDrumDisplay").hide();
+            }else{
+                $("#noOfDrumDisplay").show();
+            }
+        });
+
         <?php
             if(isset($_GET['weight'])){
                 echo 'edit('.$_GET['weight'].');';
@@ -2265,6 +2303,15 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#sstPrice').val(obj.message.product_description);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+
+                if (obj.message.load_drum == 'LOAD'){
+                    $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
+                }else{
+                    $('#addModal').find("input[name='loadDrum'][value='false']").prop("checked", true).trigger('change');
+                }
+
+                $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+
                 $('#addModal').modal('show');
             
                 $('#weightForm').validate({
