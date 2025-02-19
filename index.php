@@ -123,7 +123,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
                             <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
+                                    <div class="card-header card-primary fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
@@ -389,7 +389,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                         <select id="weightType" name="weightType" class="form-select">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
-                                                                                            <option>Multiple</option>
+                                                                                            <!-- <option>Multiple</option> -->
+                                                                                            <option>Dual Bins</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -559,7 +560,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-xxl-4 col-lg-4">
+                                                            <div id="purchaseDisplay" class="col-xxl-4 col-lg-4">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                         <div class="row">
@@ -802,7 +803,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     <div class="card-body">
                                                                         <div class="row mb-3">
                                                                             <div class="col-10"></div>
-                                                                            <div class="col-2 ml-auto">
+                                                                            <div class="col-2 d-flex justify-content-end">
                                                                                 <button type="button" class="btn btn-primary add-product">Add Product</button>
                                                                             </div>
                                                                         </div>  
@@ -810,13 +811,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             <table class="table table-primary">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th width="7%">No</th>
+                                                                                        <th width="5%">No</th>
                                                                                         <th width="15%">Product</th>
-                                                                                        <th width="8%">Manual Weight</th>
+                                                                                        <th>Order Weight (KG)</th>
                                                                                         <th>Bin Selection (Name)</th>
-                                                                                        <th>Bin Selection (KG)</th>
-                                                                                        <th width="20%">Start Date/Time</th>
-                                                                                        <th width="20%">End Date/Time</th>
+                                                                                        <th>Actual Weight (KG)</th>
+                                                                                        <th>Start Date/Time</th>
+                                                                                        <th>End Date/Time</th>
+                                                                                        <th>Variance (KG)</th>
                                                                                         <th>Action</th>
                                                                                     </tr>
                                                                                 </thead>
@@ -1074,16 +1076,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 </select>
             </td>
             <td>
-                <select class="form-control" style="width: 100%; background-color:white;" id="productManualWeight" name="productManualWeight">
-                    <option value="YES">Yes</option>
-                    <option value="NO">No</option>
-                </select>
+                <input type="number" class="form-control" id="productOrderWeight" name="productOrderWeight" style="background-color:white;" value="0">
             </td>
             <td>
                 <input type="text" class="form-control" id="productBinName" name="productBinName" style="background-color:white;">
             </td>
             <td>
-                <input type="number" class="form-control" id="productBinWeight" name="productBinWeight" style="background-color:white;">
+                <input type="number" class="form-control" id="productActualWeight" name="productActualWeight" style="background-color:white;" value="0">
             </td>
             <td>
                 <input type="date" class="form-control" data-provider="flatpickr" id="productStartDate" name="productStartDate" style="background-color:white;">
@@ -1091,7 +1090,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             <td>
                 <input type="date" class="form-control" data-provider="flatpickr" id="productEndDate" name="productEndDate" style="background-color:white;">
             </td>
-            <td style="text-align:center"><button class="btn btn-danger" id="remove" style="background-color: #f06548;"><i class="fa fa-times"></i></button></td>
+            <td>
+                <input type="number" class="form-control" id="productVariance" name="productVariance" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-primary me-2" id="productWeightCapture" type="button">
+                    <i class="mdi mdi-sync"></i>
+                </button>
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
         </tr>
     </script>
     
@@ -1776,16 +1785,22 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             {
                 $('#containerCard').show();
                 $('#multipleCard').hide();
+                $('#purchaseDisplay').show();
+                $('#productName').attr('disabled', false);
             }
-            else if($(this).val() == "Multiple")
+            else if($(this).val() == "Multiple" || $(this).val() == "Dual Bins")
             {
                 $('#multipleCard').show();
                 $('#containerCard').hide();
+                $('#purchaseDisplay').hide();
+                $('#productName').attr('disabled', true);
             }
             else
             {
                 $('#containerCard').hide();
                 $('#multipleCard').hide();
+                $('#purchaseDisplay').show();
+                $('#productName').attr('disabled', false);
             }
         });
 
@@ -1851,12 +1866,20 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#grossIncoming').removeAttr('readonly');
                 $('#tareOutgoing2').removeAttr('readonly');
                 $('#grossIncoming2').removeAttr('readonly');
+
+                // Change actual weight to editable
+                $('.details input[id^="productActualWeight"]').prop('readonly', false);
             }
             else{
                 $('#grossIncoming').attr('readonly', 'readonly');
                 $('#tareOutgoing').attr('readonly', 'readonly');
                 $('#grossIncoming2').attr('readonly', 'readonly');
                 $('#tareOutgoing2').attr('readonly', 'readonly');
+
+                // Change actual weight to readonly
+                $('.details input[id^="productActualWeight"]').prop('readonly', true);
+
+
             }
         });
 
@@ -2057,7 +2080,36 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $(this).parents("tr").remove();
         });
 
+        // Event delegation for order weight to calculate variance
+        $(document).on('change', 'input[id^="productOrderWeight"]', function(){
+            // Retrieve the input's attributes
+            var orderWeight = $(this).val();
+            var actualWeight = $(this).closest('.details').find('input[id^="productActualWeight"]').val();
+            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+
+            // Update the respective inputs for brand and model
+            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
+        });
+
+        // Event delegation for actual weight to calculate variance
+        $(document).on('change', 'input[id^="productActualWeight"]', function(){
+            // Retrieve the input's attributes
+            var actualWeight = $(this).val();
+            var orderWeight = $(this).closest('.details').find('input[id^="productOrderWeight"]').val();
+            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+
+            // Update the respective inputs for brand and model
+            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
+        });
+
         $(".add-product").click(function(){
+            var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
+            if(manualWeight == 'false'){
+                var readonly = true;
+            }else{
+                var readonly = false;
+            }
+
             var $addContents = $("#productDetail").clone();
             $("#productTable").append($addContents.html());
 
@@ -2068,9 +2120,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((productCount + 1).toString());
             $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount);
             $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount);
-            $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount);
+            $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+productCount+']').attr("id", "productOrderWeight" + productCount);
             $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount);
-            $("#productTable").find('#productBinWeight:last').attr('name', 'productBinWeight['+productCount+']').attr("id", "productBinWeight" + productCount);
+            $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+productCount+']').attr("id", "productActualWeight" + productCount).attr("readonly", readonly);
+            $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+productCount+']').attr("id", "productVariance" + productCount).prop("readonly", true);
             $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
                 {
                     enableTime: true,          
@@ -2087,7 +2140,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     defaultDate: ''
                 }
             );
-
+            
             productCount++;
         });
     });
@@ -2218,9 +2271,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((item.no)+1);
                         $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount).val(item.id);
                         $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount).val(item.product_id);
-                        $("#productTable").find('#productManualWeight:last').attr('name', 'productManualWeight['+productCount+']').attr("id", "productManualWeight" + productCount).val(item.manual_weight);
+                        $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+productCount+']').attr("id", "productOrderWeight" + productCount).val(item.order_weight);
                         $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount).val(item.bin_name);
-                        $("#productTable").find('#productBinWeight:last').attr('name', 'productBinWeight['+productCount+']').attr("id", "productBinWeight" + productCount).val(item.bin_weight);
+                        $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+productCount+']').attr("id", "productActualWeight" + productCount).val(item.actual_weight);
                         $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
                             {
                                 enableTime: true,          
@@ -2237,6 +2290,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                 defaultDate: item.end_date || ''
                             }
                         );
+                        $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+productCount+']').attr("id", "productVariance" + productCount).val(item.variance);
+
 
                         productCount++;
                     }

@@ -9,7 +9,7 @@ if(!isset($_SESSION['id'])){
 	$username = $_SESSION["username"];
 }
 // Check if the user is already logged in, if yes then redirect him to index page
-$id = $_SESSION['id'];
+$id = $_SESSION['id']; var_dump($_POST['productVariance']);die;
 
 // Processing form data when form is submitted
 if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['supplierWeight'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
@@ -440,11 +440,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 $no = $_POST['no'];
                 $weightProductId = $_POST['weightProductId'];
                 $products =  $_POST['products'];
-                $productManualWeight = $_POST['productManualWeight'];
+                $productOrderWeight = $_POST['productOrderWeight'];
                 $productBinName = $_POST['productBinName'];
-                $productBinWeight = $_POST['productBinWeight'];
+                $productActualWeight = $_POST['productActualWeight'];
                 $productStartDate = $_POST['productStartDate'];
                 $productEndDate = $_POST['productEndDate'];
+                $productVariance = $_POST['productVariance'];
 
                 if(isset($no) && $no != null && count($no) > 0){
                     for ($i=0; $i < count($no); $i++) {
@@ -452,13 +453,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         $productEndDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
 
                         if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){
-                            if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_id=?, manual_weight=?, bin_name=?, bin_weight=?, start_date=?, end_date=? WHERE id=?")){
-                                $product_stmt->bind_param('ssssssss', $weightId, $products[$i], $productManualWeight[$i], $productBinName[$i], $productBinWeight[$i], $productStartDate[$i], $productEndDate[$i], $weightProductId[$i]);
+                            if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_id=?, order_weight=?, bin_name=?, actual_weight=?, start_date=?, end_date=?, variance=? WHERE id=?")){
+                                $product_stmt->bind_param('sssssssss', $weightId, $products[$i], $productOrderWeight[$i], $productBinName[$i], $productActualWeight[$i], $productStartDate[$i], $productEndDate[$i], $productVariance[$i], $weightProductId[$i]);
                                 $product_stmt->execute();
                             }
                         }else{
-                            if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, manual_weight, bin_name, bin_weight, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)")){
-                                $product_stmt->bind_param('sssssss', $weightId, $products[$i], $productManualWeight[$i], $productBinName[$i], $productBinWeight[$i], $productStartDate[$i], $productEndDate[$i]);
+                            if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, order_weight, bin_name, actual_weight, start_date, end_date, variance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
+                                $product_stmt->bind_param('ssssssss', $weightId, $products[$i], $productOrderWeight[$i], $productBinName[$i], $productActualWeight[$i], $productStartDate[$i], $productEndDate[$i], $productVariance[$i]);
                                 $product_stmt->execute();
                             }
                         }
@@ -526,19 +527,20 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         # Insert into Weight_Product 
                         $no = $_POST['no'];
                         $products =  $_POST['products'];
-                        $productManualWeight = $_POST['productManualWeight'];
+                        $productOrderWeight = $_POST['productOrderWeight'];
                         $productBinName = $_POST['productBinName'];
-                        $productBinWeight = $_POST['productBinWeight'];
+                        $productActualWeight = $_POST['productActualWeight'];
                         $productStartDate = $_POST['productStartDate'];
                         $productEndDate = $_POST['productEndDate'];
+                        $productVariance = $_POST['productVariance'];
 
                         if(isset($no) && $no != null && count($no) > 0){
                             for ($i=0; $i < count($no); $i++) { 
                                 $productStartDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
                                 $productEndDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
 
-                                if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, manual_weight, bin_name, bin_weight, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)")){
-                                    $product_stmt->bind_param('sssssss', $id, $products[$i], $productManualWeight[$i], $productBinName[$i], $productBinWeight[$i], $productStartDate[$i], $productEndDate[$i]);
+                                if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, order_weight, bin_name, actual_weight, start_date, end_date, variance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
+                                    $product_stmt->bind_param('ssssssss', $id, $products[$i], $productOrderWeight[$i], $productBinName[$i], $productActualWeight[$i], $productStartDate[$i], $productEndDate[$i], $productVariance[$i]);
                                     $product_stmt->execute();
                                 }
                             }

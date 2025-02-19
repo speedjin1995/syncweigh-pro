@@ -121,11 +121,12 @@ if(isset($_POST['userID'])){
                         "no" => $productCount,
                         "id" => $row4['id'],
                         "product_id" => $row4['product_id'],
-                        "manual_weight" => $row4['manual_weight'],
+                        "order_weight" => $row4['order_weight'],
                         "bin_name" => $row4['bin_name'],
-                        "bin_weight" => $row4['bin_weight'],
+                        "actual_weight" => $row4['actual_weight'],
                         "start_date" => DateTime::createFromFormat('Y-m-d H:i:s', $row4['start_date'])->format('d/m/Y H:i'),
-                        "end_date" => DateTime::createFromFormat('Y-m-d H:i:s', $row4['end_date'])->format('d/m/Y H:i')
+                        "end_date" => DateTime::createFromFormat('Y-m-d H:i:s', $row4['end_date'])->format('d/m/Y H:i'),
+                        "variance" => $row4['variance']
                     );
                     $productCount++;
                 }
