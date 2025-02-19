@@ -42,6 +42,19 @@ if($plantId != null && $plantId != ''){
     }
 }
 
+$role = 'NORMAL';
+if ($user != null && $user != ''){
+    $stmt3 = $db->prepare("SELECT * from Users WHERE id = ?");
+    $stmt3->bind_param('s', $user);
+    $stmt3->execute();
+    $result3 = $stmt3->get_result();
+        
+    if(($row3 = $result3->fetch_assoc()) !== null){
+        $role = $row3['role'];
+    }
+}
+
+
 //$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
 $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
@@ -54,7 +67,11 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$site = $db->query("SELECT * FROM Site WHERE status = '0'");
 ?>
 
 <head>
@@ -156,7 +173,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="statusSearch" class="form-label">Status</label>
+                                                            <label for="statusSearch" class="form-label">Transaction Status</label>
                                                             <select id="statusSearch" class="form-select">
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
@@ -201,13 +218,35 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->                                                
-                                                    <div class="col-3">
+                                                    <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatusSearch" class="form-select" >
+                                                            <select id="productSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="rawMatSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="ForminputState" class="form-label">Raw Material</label>
+                                                            <select id="rawMatSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="plantSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="ForminputState" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -322,7 +361,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                             <div class="col-lg-6">
                                                                 <div class="hstack gap-2 justify-content-center">
                                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                                        <div class="card bg-primary">
+                                                                        <div class="card bg-danger">
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
@@ -348,7 +387,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                             <div class="col-lg-6">
                                                                 <div class="hstack gap-2 justify-content-center">
                                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                                        <div class="card bg-primary">
+                                                                        <div class="card bg-danger">
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
@@ -509,7 +548,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
+                                                                                <div class="row" id="productNameDisplay">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="productName" name="productName" >
@@ -527,6 +566,17 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                                                 </option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row" id="rawMaterialDisplay" style="display:none;">
+                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select" id="rawMaterialName" name="rawMaterialName" >
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>           
                                                                                     </div>
                                                                                 </div>
                                                                             </div> 
@@ -641,7 +691,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
                                                                                     <div class="col-sm-8">
@@ -683,7 +733,40 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>                                                                                         
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="loadDrum" class="col-sm-4 col-form-label">By-Load/By-Drum</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="form-check align-radio mr-2">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="loadDrum" id="manualLoad" value="true" checked>
+                                                                                            <label class="form-check-label" for="manualLoad">
+                                                                                               By-Load
+                                                                                            </label>
+                                                                                        </div>
+
+                                                                                        <div class="form-check align-radio">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="loadDrum" id="manualDrum" value="false">
+                                                                                            <label class="form-check-label" for="manualDrum">
+                                                                                               By-Drum
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="siteName" class="col-sm-4 col-form-label">Site *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select" id="siteName" name="siteName" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
+                                                                                                <option value="<?=$rowSite['name'] ?>" data-code="<?=$rowSite['site_code'] ?>"><?=$rowSite['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -718,6 +801,12 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                                         Please fill in the field.
                                                                                     </div>
                                                                                 </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3" id="noOfDrumDisplay" style="display:none;">
+                                                                            <label for="noOfDrum" class="col-sm-4 col-form-label">No of Drum</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="number" class="form-control" id="noOfDrum" name="noOfDrum">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
@@ -874,6 +963,8 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                         <input type="hidden" id="productVariance" name="productVariance">
                                                         <input type="hidden" id="transporterCode" name="transporterCode">
                                                         <input type="hidden" id="supplierCode" name="supplierCode">
+                                                        <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
+                                                        <input type="hidden" id="siteCode" name="siteCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                     </form>
@@ -1106,6 +1197,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
     var table = null;
     
     $(function () {
+        var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
         const today = new Date();
         const tomorrow = new Date(today);
@@ -1129,6 +1221,24 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             defaultDate: today
         });
 
+        if (userRole == 'SADMIN' || userRole == 'ADMIN'){
+            $('#plantSearchDisplay').show();
+        }else{
+            $('#plantSearchDisplay').hide();
+        }
+
+        $('#statusSearch').on('change', function(){
+            var status = $(this).val();
+
+            if (status == 'Purchase' || status == 'Local'){
+                $('#productSearchDisplay').hide();
+                $('#rawMatSearchDisplay').show();
+            }else{
+                $('#productSearchDisplay').show();
+                $('#rawMatSearchDisplay').hide();
+            }
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -1136,7 +1246,9 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
-        var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1155,7 +1267,9 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
                     batch: batchNoI,
-                    product: transactionStatusI,
+                    product: productSearchI,
+                    rawMaterial: rawMaterialI,
+                    plant: plantNoI,
                 } 
             },
             'columns': [
@@ -1598,7 +1712,9 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -1621,7 +1737,9 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
                         batch: batchNoI,
-                        product: transactionStatusI,
+                        product: productSearchI,
+                        rawMaterial: rawMaterialI,
+                        plant: plantNoI,
                     } 
                 },
                 'columns': [
@@ -1677,6 +1795,11 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             $('#addModal').find('#supplierName').val("");
             $('#addModal').find('#productCode').val("");
             $('#addModal').find('#productName').val("");
+            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+            $('#addModal').find('#rawMaterialCode').val("");
+            $('#addModal').find('#rawMaterialName').val("");
+            $('#addModal').find('#siteCode').val("");
+            $('#addModal').find('#siteName').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
@@ -1722,6 +1845,9 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
+            $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
+            $('#addModal').find('#noOfDrum').val("");
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -1950,6 +2076,8 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                 $('#divSupplierName').show();
                 $('#divOrderWeight').hide();
                 $('#divCustomerName').hide();
+                $('#rawMaterialDisplay').show();
+                $('#productNameDisplay').hide();
             }
             else{
                 $('#divOrderWeight').show();
@@ -1959,6 +2087,8 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                 $('#divSupplierWeight').hide();
                 $('#divSupplierName').hide();
                 $('#divCustomerName').show();
+                $('#rawMaterialDisplay').hide();
+                $('#productNameDisplay').show();
             }
         });
 
@@ -2011,6 +2141,34 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             $('#customerCode').val($('#customerName :selected').data('code'));
         });
 
+        $('input[name="exDel"]').change(function() {
+            var selected = $(this).val();
+            if (selected == 'true'){
+                $("#transporter").val('Own Transportation').trigger('change');
+            }else{
+                $("#transporter").val('').trigger('change');
+            }
+        });
+
+        //rawMaterialName
+        $('#rawMaterialName').on('change', function(){
+            $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
+        });
+
+        //siteName
+        $('#siteName').on('change', function(){
+            $('#siteCode').val($('#siteName :selected').data('code'));
+        });
+
+        $('input[name="loadDrum"]').change(function() {
+            var selected = $(this).val();
+            if (selected == 'true'){
+                $("#noOfDrumDisplay").hide();
+            }else{
+                $("#noOfDrumDisplay").show();
+            }
+        });
+
         <?php
             if(isset($_GET['weight'])){
                 echo 'edit('.$_GET['weight'].');';
@@ -2032,7 +2190,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
-                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
+                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
@@ -2090,6 +2248,15 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
                 $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
+                if (obj.message.ex_del == 'EX'){
+                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
+                }else{
+                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                }
+                $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
+                $('#addModal').find('#siteCode').val(obj.message.site_code);
+                $('#addModal').find('#siteName').val(obj.message.site_name);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
@@ -2136,6 +2303,15 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                 $('#addModal').find('#sstPrice').val(obj.message.product_description);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+
+                if (obj.message.load_drum == 'LOAD'){
+                    $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
+                }else{
+                    $('#addModal').find("input[name='loadDrum'][value='false']").prop("checked", true).trigger('change');
+                }
+
+                $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+
                 $('#addModal').modal('show');
             
                 $('#weightForm').validate({

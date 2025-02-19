@@ -41,6 +41,11 @@ if(isset($_POST['userID'])){
                 $message['supplier_name'] = $row['supplier_name'];
                 $message['product_code'] = $row['product_code'];
                 $message['product_name'] = $row['product_name'];
+                $message['ex_del'] = $row['ex_del'];
+                $message['raw_mat_code'] = $row['raw_mat_code'];
+                $message['raw_mat_name'] = $row['raw_mat_name'];
+                $message['site_code'] = $row['site_code'];
+                $message['site_name'] = $row['site_name'];
                 $message['container_no'] = $row['container_no'];
                 $message['invoice_no'] = $row['invoice_no'];
                 $message['purchase_order'] = $row['purchase_order'];
@@ -78,6 +83,8 @@ if(isset($_POST['userID'])){
                 $message['sst'] = $row['sst'];
                 $message['total_price'] = $row['total_price'];
                 $message['final_weight'] = $row['final_weight'];
+                $message['load_drum'] = $row['load_drum'];
+                $message['no_of_drum'] = $row['no_of_drum'];
 
                 if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
                     $update_stmt2->bind_param('s', $row['lorry_plate_no1']);
