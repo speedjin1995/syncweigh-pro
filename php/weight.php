@@ -9,7 +9,7 @@ if(!isset($_SESSION['id'])){
 	$username = $_SESSION["username"];
 }
 // Check if the user is already logged in, if yes then redirect him to index page
-$id = $_SESSION['id']; 
+$id = $_SESSION['id'];
 
 // Processing form data when form is submitted
 if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['supplierWeight'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
@@ -448,9 +448,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 $productVariance = $_POST['productVarianceHidden'];
 
                 if(isset($no) && $no != null && count($no) > 0){
-                    for ($i=0; $i < count($no); $i++) {
-                        $productStartDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
-                        $productEndDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
+                    for ($i=1; $i <= count($no); $i++) {
+                        if ($productStartDate[$i] != ''){
+                            $productStartDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
+                        }else{
+                            $productStartDate[$i] = NULL;
+                        }
+
+                        if ($productEndDate[$i] != ''){
+                            $productEndDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
+                        }else{
+                            $productEndDate[$i] = NULL;
+                        }
 
                         if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){
                             if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_id=?, order_weight=?, bin_name=?, actual_weight=?, start_date=?, end_date=?, variance=? WHERE id=?")){
@@ -535,7 +544,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         $productVariance = $_POST['productVarianceHidden'];
         
                         if(isset($no) && $no != null && count($no) > 0){
-                            for ($i=0; $i < count($no); $i++) { 
+                            for ($i=1; $i <= count($no); $i++) { 
                                 $productStartDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
                                 $productEndDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productEndDate[$i])->format('Y-m-d H:i:s');
 

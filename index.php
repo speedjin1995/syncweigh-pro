@@ -2086,6 +2086,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         // Find and remove selected table rows
         $("#productTable").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
+
+            $("#productTable tr").each(function (index) {
+                $(this).find('input[name^="no"]').val(index + 1);
+            });
         });
 
         // Event delegation for order weight to calculate variance
@@ -2124,18 +2128,20 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var $addContents = $("#productDetail").clone();
             $("#productTable").append($addContents.html());
 
-            $("#productTable").find('.details:last').attr("id", "detail" + productCount);
-            $("#productTable").find('.details:last').attr("data-index", productCount);
-            $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
+            var rowCount = $("#productTable tr").length; // Get current row count
 
-            $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((productCount + 1).toString());
-            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount);
-            $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount);
-            $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+productCount+']').attr("id", "productOrderWeight" + productCount);
-            $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount);
-            $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+productCount+']').attr("id", "productActualWeight" + productCount).attr("readonly", readonly);
-            $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+productCount+']').attr("id", "productActualWeightHidden" + productCount);
-            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+            $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+            $("#productTable").find('.details:last').attr("data-index", rowCount);
+            $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+            $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
+            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+            $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+            $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount);
+            $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount);
+            $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).attr("readonly", readonly);
+            $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount);
+            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
                 {
                     enableTime: true,          
                     dateFormat: "d/m/Y H:i",   
@@ -2143,7 +2149,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     defaultDate: ''
                 }
             );
-            $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+            $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
                 {
                     enableTime: true,          
                     dateFormat: "d/m/Y H:i",   
@@ -2151,10 +2157,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     defaultDate: ''
                 }
             );
-            $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+productCount+']').attr("id", "productVariance" + productCount).prop("readonly", true);
-            $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+productCount+']').attr("id", "productVarianceHidden" + productCount);
+            $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
+            $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount);
             
-            productCount++;
+            rowCount++;
         });
     });
 
@@ -2247,15 +2253,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
 
                 if(obj.message.manual_weight == 'true'){
-                    $("#manualWeightYes").prop("checked", true);
+                    $("#manualWeightYes").prop("checked", true).trigger('click');
                     $("#manualWeightNo").prop("checked", false);
-                    $('#manualWeightYes').trigger('click');
                 }
                 else{
                     $("#manualWeightYes").prop("checked", false);
-                    $("#manualWeightNo").prop("checked", true);
-                    $('#manualWeightNo').trigger('click');
-                }
+                    $("#manualWeightNo").prop("checked", true).trigger('click');
+               }
 
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
@@ -2269,9 +2273,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
                 // Display Products
                 $('#productTable').html('');
-                productCount = 0;
+                productCount = 1;
 
-                if (obj.message.products.length > 0){ console.log(obj.message.products);
+                if (obj.message.products.length > 0){
                     for(var i = 0; i < obj.message.products.length; i++){
                         var item = obj.message.products[i];
                         var $addContents = $("#productDetail").clone();
@@ -2281,7 +2285,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $("#productTable").find('.details:last').attr("data-index", productCount);
                         $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
 
-                        $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val((item.no)+1);
+                        $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val(item.no);
                         $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount).val(item.id);
                         $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount).val(item.product_id);
                         $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+productCount+']').attr("id", "productOrderWeight" + productCount).val(item.order_weight);

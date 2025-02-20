@@ -114,7 +114,7 @@ if(isset($_POST['userID'])){
                 $empQuery = "SELECT * FROM Weight_Product WHERE weight_id = $id ORDER BY id ASC";
                 $empRecords = mysqli_query($db, $empQuery);
                 $products = array();
-                $productCount = 0;
+                $productCount = 1;
 
                 while($row4 = mysqli_fetch_assoc($empRecords)) {
                     $products[] = array(
@@ -124,8 +124,8 @@ if(isset($_POST['userID'])){
                         "order_weight" => $row4['order_weight'],
                         "bin_name" => $row4['bin_name'],
                         "actual_weight" => $row4['actual_weight'],
-                        "start_date" => DateTime::createFromFormat('Y-m-d H:i:s', $row4['start_date'])->format('d/m/Y H:i'),
-                        "end_date" => DateTime::createFromFormat('Y-m-d H:i:s', $row4['end_date'])->format('d/m/Y H:i'),
+                        "start_date" => !empty($row4['start_date']) ? DateTime::createFromFormat('Y-m-d H:i:s', $row4['start_date'])->format('d/m/Y H:i') : null,
+                        "end_date" => !empty($row4['end_date']) ? DateTime::createFromFormat('Y-m-d H:i:s', $row4['end_date'])->format('d/m/Y H:i') : null,
                         "variance" => $row4['variance']
                     );
                     $productCount++;
