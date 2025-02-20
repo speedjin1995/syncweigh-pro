@@ -2118,6 +2118,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
 
         $(".add-product").click(function(){
+            var rowCount = $("#productTable tr").length; // Get current row count
+            var weightType = $("#addModal").find('#weightType').val();
+
+            if (rowCount > 1 && weightType == 'Dual Bins'){
+                alert("Cannot more than 2 bins for Dual Bins weight type.");
+                return;
+            }
+
             var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
             if(manualWeight == 'false'){
                 var readonly = true;
@@ -2127,8 +2135,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
             var $addContents = $("#productDetail").clone();
             $("#productTable").append($addContents.html());
-
-            var rowCount = $("#productTable tr").length; // Get current row count
 
             $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
             $("#productTable").find('.details:last').attr("data-index", rowCount);
