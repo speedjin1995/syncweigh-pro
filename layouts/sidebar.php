@@ -89,6 +89,9 @@
                                     <li class="nav-item">
                                         <a href="user.php" class="nav-link">'.$lang['t-user'].'</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="bin.php" class="nav-link">'.$lang['t-bin'].'</a>
+                                    </li>       
                                     <!--li class="nav-item">
                                         <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
                                     </li>                                    
