@@ -834,14 +834,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        
-                                                        <div class="row col-12">
-                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                <div class="row">
-                                                                    <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
-                                                                    <div class="col-sm-10">
-                                                                        <textarea class="form-control" id="otherRemarks" name="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+
+                                                            <div class="row col-12">
+                                                                <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                    <div class="row">
+                                                                        <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
+                                                                        <div class="col-sm-10">
+                                                                            <textarea class="form-control" id="otherRemarks" name="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
