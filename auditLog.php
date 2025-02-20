@@ -90,6 +90,7 @@
                                                             <option value="Unit">Unit</option>
                                                             <option value="User">User</option>
                                                             <option value="Vehicle">Vehicle</option>
+                                                            <option value="Bin">Bin</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -139,6 +140,12 @@
                                                     <div class="mb-3">
                                                         <label for="vehicleNo" class="form-label">Vehicle No</label>
                                                         <input type="text" class="form-control" placeholder="Vehicle No" name="vehicleNo" id="vehicleNo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode binInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="binCode" class="form-label">Bin Code</label>
+                                                        <input type="text" class="form-control" placeholder="Bin Code" name="binCode" id="binCode">
                                                     </div>
                                                 </div>
                                             </div>
@@ -406,6 +413,11 @@ $(function () {
             $('.inputCode').hide();
             $('.vehicleInput').show();
         }
+        else if($(this).val() == "Bin")
+        {
+            $('.inputCode').hide();
+            $('.binInput').show();
+        }
     });
 
     var startDate = new Date();
@@ -447,6 +459,7 @@ $(function () {
                         transporterCode: $('#transporterCode').val(),
                         unit: $('#unit').val(),
                         vehicleNo: $('#vehicleNo').val(),
+                        binCode: $('#binCode').val(),
                     },
                     success: function(data) {
 

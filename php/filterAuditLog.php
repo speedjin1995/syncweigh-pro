@@ -82,6 +82,13 @@ if($_POST['selectedValue'] == "Vehicle")
     }
 }
 
+if($_POST['selectedValue'] == "Bin")
+{
+    if($_POST['binCode'] != null && $_POST['binCode'] != '' && $_POST['binCode'] != '-'){
+    $searchQuery .= " and bin_code = '".$_POST['binCode']."'";
+    }
+}
+
 ## Total number of records without filtering
 // $sel = mysqli_query($db,"select count(*) as allcount from Customer_Log");
 // $records = mysqli_fetch_assoc($sel);
@@ -289,6 +296,29 @@ if($_POST['selectedValue'] == "Vehicle")
     }
 
     $columnNames = ["Vehicle Id", "Vehicle No", "Vehicle Weight", "Action Id", "Action By", "Event Date"];
+}
+
+if($_POST['selectedValue'] == "Bin")
+{
+    ## Fetch records
+    $empQuery = "select * from Bin_Log".$searchQuery;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Bin Id"=>$row['bin_id'],
+        "Bin Code"=>$row['bin_code'],
+        "Name"=>$row['name'],
+        "Description"=>$row['description'],
+        "Action Id"=>$row['action_id'],
+        "Action By"=>$row['action_by'],
+        "Event Date"=>$row['event_date'],
+        );
+    }
+
+    $columnNames = ["Bin Id", "Bin Code", "Name", "Description", "Action Id", "Action By", "Event Date"];
 }
 
 ## Response

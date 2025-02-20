@@ -115,9 +115,9 @@
                                                                         <div class="row">
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Destination Code</label>
+                                                                                    <label for="binCode" class="col-sm-4 col-form-label">Bin Code</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="destinationCode" name="destinationCode" placeholder="Destination Code" required>
+                                                                                        <input type="text" class="form-control" id="binCode" name="binCode" placeholder="Bin Code" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
@@ -126,9 +126,9 @@
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destinationName" class="col-sm-4 col-form-label">Destination Name</label>
+                                                                                    <label for="binName" class="col-sm-4 col-form-label">Bin Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="destinationName" name="destinationName" placeholder="Destination Name" required>
+                                                                                        <input type="text" class="form-control" id="binName" name="binName" placeholder="Bin Name" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>
@@ -154,7 +154,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitDestination">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitBin">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -187,7 +187,7 @@
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
-                                                        <table id="destinationTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                        <table id="binTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Bin Code</th>
@@ -256,17 +256,17 @@
 var table;
 
 $(function () {
-    table = $("#destinationTable").DataTable({
+    table = $("#binTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url':'php/loadDestination.php'
+            'url':'php/loadBin.php'
         },
         'columns': [
-            { data: 'destination_code' },
+            { data: 'bin_code' },
             { data: 'name' },
             { data: 'description' },
             { 
@@ -276,7 +276,7 @@ $(function () {
                     return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                     '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                     '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+', \''+row.bin_code+'\', \''+row.name+'\', \''+row.description+'\')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
                 }
             }
         ]       
@@ -284,10 +284,10 @@ $(function () {
     
     // $.validator.setDefaults({
     //     submitHandler: function() {
-    $('#submitDestination').on('click', function(){
-        if($('#destinationForm').valid()){
+    $('#submitBin').on('click', function(){
+        if($('#binForm').valid()){
             $('#spinnerLoading').show();
-            $.post('php/destination.php', $('#destinationForm').serialize(), function(data){
+            $.post('php/bin.php', $('#binForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 if(obj.status === 'success')
                 {
@@ -312,14 +312,14 @@ $(function () {
         // }
     });
 
-    $('#addDestination').on('click', function(){
+    $('#addBin').on('click', function(){
         $('#addModal').find('#id').val("");
-        $('#addModal').find('#destinationCode').val("");
-        $('#addModal').find('#destinationName').val("");
+        $('#addModal').find('#binCode').val("");
+        $('#addModal').find('#binName').val("");
         $('#addModal').find('#description').val("");
         $('#addModal').modal('show');
         
-        $('#destinationForm').validate({
+        $('#binForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -337,13 +337,13 @@ $(function () {
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getDestination.php', {userID: id}, function(data)
+        $.post('php/getBin.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                $('#addModal').find('#destinationName').val(obj.message.name);
+                $('#addModal').find('#binCode').val(obj.message.bin_code);
+                $('#addModal').find('#binName').val(obj.message.name);
                 $('#addModal').find('#description').val(obj.message.description);
                 $('#addModal').modal('show');
             }
@@ -361,9 +361,9 @@ $(function () {
         });
     }
 
-    function deactivate(id){
+    function deactivate(id, code, name, desc){
         $('#spinnerLoading').show();
-        $.post('php/deleteDestination.php', {userID: id}, function(data){
+        $.post('php/deleteBin.php', {userID: id, code: code, name: name, desc: desc}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
@@ -385,7 +385,7 @@ $(function () {
         });
     }
 
-$('#destinationForm').validate({
+$('#binForm').validate({
     errorElement: 'span',
     errorPlacement: function (error, element) {
       error.addClass('invalid-feedback');
