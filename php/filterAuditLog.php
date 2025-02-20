@@ -2,6 +2,22 @@
 ## Database configuration
 require_once 'db_connect.php';
 
+function searchActionNameById($value, $db) {
+    $id = null;
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Log_Action WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $id = $row['description'];
+        }
+        $select_stmt->close();
+    }
+
+    return $id;
+}
+
 ## Read value
 // $draw = $_POST['draw'];
 // $row = $_POST['start'];
@@ -116,7 +132,7 @@ if($_POST['selectedValue'] == "Customer")
         "Address line 1"=>$row['address_line_1'],
         "Address line 2"=>$row['address_line_2'],
         "Address line 3"=>$row['address_line_3'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         "Phone No"=>$row['phone_no'],
@@ -141,7 +157,7 @@ if($_POST['selectedValue'] == "Destination")
         "Destination Code"=>$row['destination_code'],
         "Name"=>$row['name'],
         "Description"=>$row['description'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
@@ -167,7 +183,7 @@ if($_POST['selectedValue'] == "Product")
         "Variance Type"=>$row['variance'],
         "High"=>$row['high'],
         "Low"=>$row['low'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
@@ -193,7 +209,7 @@ if($_POST['selectedValue'] == "Supplier")
         "Address line 1"=>$row['address_line_1'],
         "Address line 2"=>$row['address_line_2'],
         "Address line 3"=>$row['address_line_3'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         "Phone No"=>$row['phone_no'],
@@ -221,7 +237,7 @@ if($_POST['selectedValue'] == "Transporter")
         "Address line 1"=>$row['address_line_1'],
         "Address line 2"=>$row['address_line_2'],
         "Address line 3"=>$row['address_line_3'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         "Phone No"=>$row['phone_no'],
@@ -246,7 +262,7 @@ if($_POST['selectedValue'] == "User")
         "User Code"=>$row['employee_code'],
         "Name"=>$row['username'],
         "User Department"=>$row['user_department'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
@@ -267,7 +283,7 @@ if($_POST['selectedValue'] == "Unit")
         "id"=>$row['id'],
         "Unit Id"=>$row['unit_id'],
         "Unit"=>$row['unit'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
@@ -289,7 +305,7 @@ if($_POST['selectedValue'] == "Vehicle")
         "Vehicle Id"=>$row['vehicle_id'],
         "Vehicle No"=>$row['veh_number'],
         "Vehicle Weight"=>$row['vehicle_weight'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
@@ -312,7 +328,7 @@ if($_POST['selectedValue'] == "Bin")
         "Bin Code"=>$row['bin_code'],
         "Name"=>$row['name'],
         "Description"=>$row['description'],
-        "Action Id"=>$row['action_id'],
+        "Action Id"=>searchActionNameById($row['action_id'],$db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
