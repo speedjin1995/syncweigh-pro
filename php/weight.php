@@ -9,7 +9,7 @@ if(!isset($_SESSION['id'])){
 	$username = $_SESSION["username"];
 }
 // Check if the user is already logged in, if yes then redirect him to index page
-$id = $_SESSION['id']; var_dump($_POST['productVariance']);die;
+$id = $_SESSION['id']; 
 
 // Processing form data when form is submitted
 if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['supplierWeight'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
@@ -442,10 +442,10 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 $products =  $_POST['products'];
                 $productOrderWeight = $_POST['productOrderWeight'];
                 $productBinName = $_POST['productBinName'];
-                $productActualWeight = $_POST['productActualWeight'];
+                $productActualWeight = $_POST['productActualWeightHidden'];
                 $productStartDate = $_POST['productStartDate'];
                 $productEndDate = $_POST['productEndDate'];
-                $productVariance = $_POST['productVariance'];
+                $productVariance = $_POST['productVarianceHidden'];
 
                 if(isset($no) && $no != null && count($no) > 0){
                     for ($i=0; $i < count($no); $i++) {
@@ -529,11 +529,11 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         $products =  $_POST['products'];
                         $productOrderWeight = $_POST['productOrderWeight'];
                         $productBinName = $_POST['productBinName'];
-                        $productActualWeight = $_POST['productActualWeight'];
+                        $productActualWeight = $_POST['productActualWeightHidden'];
                         $productStartDate = $_POST['productStartDate'];
                         $productEndDate = $_POST['productEndDate'];
-                        $productVariance = $_POST['productVariance'];
-
+                        $productVariance = $_POST['productVarianceHidden'];
+        
                         if(isset($no) && $no != null && count($no) > 0){
                             for ($i=0; $i < count($no); $i++) { 
                                 $productStartDate[$i] = DateTime::createFromFormat('d/m/Y H:i', $productStartDate[$i])->format('Y-m-d H:i:s');
