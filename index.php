@@ -308,7 +308,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                 </div>
                                                 <div class="modal-body">
                                                     <form role="form" id="weightForm" class="needs-validation" novalidate autocomplete="off">
-                                                        <div class="row">
+                                                        <div class="row" id="normalTopView">
                                                             <div class="col-lg-6">
                                                                 <div class="hstack gap-2 justify-content-center">
                                                                     <div class="col-xl-12 col-md-12 col-md-12">
@@ -347,6 +347,81 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     <div>
                                                                                         <div class="avatar-sm flex-shrink-0">
                                                                                             <span class="avatar-title bg-soft-light rounded-circle fs-2">
+                                                                                                <i class="mdi mdi-weight-kilogram"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div><!-- end card body -->
+                                                                        </div> <!-- end card-->
+                                                                    </div> <!-- end col-->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" id="dualBinsTopView" style="display:none;">
+                                                            <div class="col-lg-4">
+                                                                <div class="hstack gap-2 justify-content-center">
+                                                                    <div class="col-xl-12 col-md-12 col-md-12">
+                                                                        <div class="card bg-primary">
+                                                                            <div class="card-body">
+                                                                                <div class="d-flex justify-content-between">
+                                                                                    <div>
+                                                                                        <h4 class="fw-semibold text-white m-0">Truck Weight</h4>
+                                                                                        <h2 class="ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="truckWeight">0</span> Kg</h2>
+                                                                                    </div>
+                                                                                    <!--div class="connected-align">
+                                                                                        <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
+                                                                                        <div class="input-group-text bg-danger color-palette" id="checkingConnection"><i>Checking Connection</i></div>
+                                                                                    </div-->
+                                                                                    <div>
+                                                                                        <div class="avatar-sm flex-shrink-0">
+                                                                                            <span class="avatar-title bg-soft-light rounded-circle fs-2">
+                                                                                                <i class="mdi mdi-weight-kilogram"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div><!-- end card body -->
+                                                                        </div> <!-- end card-->
+                                                                    </div> <!-- end col-->
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <div class="hstack gap-2 justify-content-center">
+                                                                    <div class="col-xl-12 col-md-12 col-md-12">
+                                                                        <div class="card bg-warning">
+                                                                            <div class="card-body">
+                                                                                <div class="d-flex justify-content-between">
+                                                                                    <div>
+                                                                                        <h4 class="fw-semibold text-black m-0">Bin : 1</h4>
+                                                                                        <h2 class="ff-secondary fw-semibold display-3 text-black"><span class="counter-value" id="bin1Weight">0</span> Kg</h2>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div class="avatar-sm flex-shrink-0">
+                                                                                            <span class="avatar-title bg-primary rounded-circle fs-2">
+                                                                                                <i class="mdi mdi-weight-kilogram"></i>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div><!-- end card body -->
+                                                                        </div> <!-- end card-->
+                                                                    </div> <!-- end col-->
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <div class="hstack gap-2 justify-content-center">
+                                                                    <div class="col-xl-12 col-md-12 col-md-12">
+                                                                        <div class="card bg-warning">
+                                                                            <div class="card-body">
+                                                                                <div class="d-flex justify-content-between">
+                                                                                    <div>
+                                                                                        <h4 class="fw-semibold text-black m-0">Bin : 2</h4>
+                                                                                        <h2 class="ff-secondary fw-semibold display-3 text-black"><span class="counter-value" id="bin2Weight">0</span> Kg</h2>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div class="avatar-sm flex-shrink-0">
+                                                                                            <span class="avatar-title bg-primary rounded-circle fs-2">
                                                                                                 <i class="mdi mdi-weight-kilogram"></i>
                                                                                             </span>
                                                                                         </div>
@@ -1794,18 +1869,24 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#containerCard').show();
                 $('#multipleCard').hide();
                 $('#purchaseDisplay').show();
+                $('#dualBinsTopView').hide();
+                $('#normalTopView').show();
             }
             else if($(this).val() == "Multiple" || $(this).val() == "Dual Bins")
             {
                 $('#multipleCard').show();
                 $('#containerCard').hide();
                 $('#purchaseDisplay').hide();
+                $('#dualBinsTopView').show();
+                $('#normalTopView').hide();
             }
             else
             {
                 $('#containerCard').hide();
                 $('#multipleCard').hide();
                 $('#purchaseDisplay').show();
+                $('#dualBinsTopView').hide();
+                $('#normalTopView').show();
             }
         });
 
@@ -1923,8 +2004,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
             var current = Math.abs(nett1 - nett2);
             $('#currentWeight').text(current.toFixed(0));
+            $('#truckWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
+            $('#truckWeight').trigger('change');
             $('#finalWeight').trigger('change');
         });
 
@@ -2103,6 +2186,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
         // Event delegation for actual weight to calculate variance
         $(document).on('change', 'input[id^="productActualWeight"]', function(){
+            var actualWeightId = $(this).attr('id'); // Get the ID of the input field
             // Retrieve the input's attributes
             var actualWeight = $(this).val();
             var orderWeight = $(this).closest('.details').find('input[id^="productOrderWeight"]').val();
@@ -2112,7 +2196,15 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
             $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
             $(this).closest('.details').find('input[id^="productActualWeightHidden"]').val(actualWeight);
+
+            if (actualWeightId == 'productActualWeight1'){
+                // Update top view bin weight 1
+                $("#addModal").find('#bin1Weight').text(actualWeight).trigger('change');
+            }else if (actualWeightId == 'productActualWeight2'){
+                $("#addModal").find('#bin2Weight').text(actualWeight).trigger('change');
+            }
         });
+
 
         $(".add-product").click(function(){
             if(rowCount == 0){
@@ -2167,10 +2259,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
             $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount);
 
-            console.log(rowCount);
             rowCount++;
-            console.log(rowCount);
-
         });
     });
 
@@ -2253,7 +2342,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
-                $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                $('#addModal').find('#nettWeight').val(obj.message.nett_weight1).trigger('change');
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
@@ -2300,7 +2389,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount).val(item.product_id);
                         $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount).val(item.order_weight);
                         $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount).val(item.bin_name);
-                        $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).val(item.actual_weight);
+                        $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).val(item.actual_weight).trigger('change');
                         $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount).val(item.actual_weight);
                         $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
                             {
