@@ -1143,7 +1143,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     <script type="text/javascript">
     var table = null;
-    var productCount = $("#productTable").find(".details").length;
+    var rowCount = $("#productTable").find(".details").length;
 
     $(function () {
         var ind = '<?=$indicator ?>';
@@ -1217,7 +1217,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                         '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                         if (row.is_approved == 'Y') {
-                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ', \'' + row.weight_type + '\')">' + '<i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
                         }
 
                         if (row.is_approved == 'N') {
@@ -1689,7 +1689,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                             '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                             if (row.is_approved == 'Y') {
-                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ', \'' + row.weight_type + '\')">' + '<i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
                             }
 
                             if (row.is_approved == 'N') {
@@ -1752,7 +1752,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find("#manualWeightNo").prop("checked", true);
+            $('#addModal').find("#manualWeightNo").prop("checked", true).trigger('click');
             $('#addModal').find("#manualWeightYes").prop("checked", false);
             //$('#addModal').find('input[name="manualWeight"]').val("false");
             //$('#addModal').find('#indicatorId').val("");
@@ -1768,8 +1768,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
-            productCount = 0;
-            $("#productTable").html('');
+            rowCount = 1;
+            $('#productTable').html('');
 
             $('#addModal').modal('show');
             
@@ -1794,21 +1794,18 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#containerCard').show();
                 $('#multipleCard').hide();
                 $('#purchaseDisplay').show();
-                $('#productName').attr('disabled', false);
             }
             else if($(this).val() == "Multiple" || $(this).val() == "Dual Bins")
             {
                 $('#multipleCard').show();
                 $('#containerCard').hide();
                 $('#purchaseDisplay').hide();
-                $('#productName').attr('disabled', true);
             }
             else
             {
                 $('#containerCard').hide();
                 $('#multipleCard').hide();
                 $('#purchaseDisplay').show();
-                $('#productName').attr('disabled', false);
             }
         });
 
@@ -2118,10 +2115,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
 
         $(".add-product").click(function(){
-            var rowCount = $("#productTable tr").length; // Get current row count
+            if(rowCount == 0){
+                rowCount++;
+            }
+
             var weightType = $("#addModal").find('#weightType').val();
 
-            if (rowCount > 1 && weightType == 'Dual Bins'){
+            if (rowCount > 2 && weightType == 'Dual Bins'){
                 alert("Cannot more than 2 bins for Dual Bins weight type.");
                 return;
             }
@@ -2152,9 +2152,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     enableTime: true,          
                     dateFormat: "d/m/Y H:i",   
                     time_24hr: true,          
-                    defaultDate: ''
+                    defaultDate: new Date(),
+                    clickOpens: false
                 }
-            );
+            )
             $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
                 {
                     enableTime: true,          
@@ -2165,8 +2166,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             );
             $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
             $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount);
-            
+
+            console.log(rowCount);
             rowCount++;
+            console.log(rowCount);
+
         });
     });
 
@@ -2279,7 +2283,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
                 // Display Products
                 $('#productTable').html('');
-                productCount = 1;
+                rowCount = 1;
 
                 if (obj.message.products.length > 0){
                     for(var i = 0; i < obj.message.products.length; i++){
@@ -2287,18 +2291,18 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         var $addContents = $("#productDetail").clone();
                         $("#productTable").append($addContents.html());
 
-                        $("#productTable").find('.details:last').attr("id", "detail" + productCount);
-                        $("#productTable").find('.details:last').attr("data-index", productCount);
-                        $("#productTable").find('#remove:last').attr("id", "remove" + productCount);
+                        $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#productTable").find('.details:last').attr("data-index", rowCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
-                        $("#productTable").find('#no:last').attr('name', 'no['+productCount+']').attr("id", "no" + productCount).val(item.no);
-                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+productCount+']').attr("id", "weightProductId" + productCount).val(item.id);
-                        $("#productTable").find('#products:last').attr('name', 'products['+productCount+']').attr("id", "products" + productCount).val(item.product_id);
-                        $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+productCount+']').attr("id", "productOrderWeight" + productCount).val(item.order_weight);
-                        $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+productCount+']').attr("id", "productBinName" + productCount).val(item.bin_name);
-                        $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+productCount+']').attr("id", "productActualWeight" + productCount).val(item.actual_weight);
-                        $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+productCount+']').attr("id", "productActualWeightHidden" + productCount).val(item.actual_weight);
-                        $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+productCount+']').attr("id", "productStartDate" + productCount).flatpickr(
+                        $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(item.no);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount).val(item.id);
+                        $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount).val(item.product_id);
+                        $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount).val(item.order_weight);
+                        $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount).val(item.bin_name);
+                        $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).val(item.actual_weight);
+                        $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount).val(item.actual_weight);
+                        $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
                             {
                                 enableTime: true,          
                                 dateFormat: "d/m/Y H:i",   
@@ -2306,7 +2310,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                 defaultDate: item.start_date || ''
                             }
                         );
-                        $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+productCount+']').attr("id", "productEndDate" + productCount).flatpickr(
+                        $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
                             {
                                 enableTime: true,          
                                 dateFormat: "d/m/Y H:i",   
@@ -2314,10 +2318,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                 defaultDate: item.end_date || ''
                             }
                         );
-                        $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+productCount+']').attr("id", "productVariance" + productCount).val(item.variance);
-                        $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+productCount+']').attr("id", "productVarianceHidden" + productCount).val(item.variance);
+                        $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).val(item.variance);
+                        $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount).val(item.variance);
 
-                        productCount++;
+                        rowCount++;
                     }
                 }
 
@@ -2413,8 +2417,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
     }
 
-    function print(id) {
-        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+    function print(id, type) {
+        $.post('php/print.php', {userID: id, file: 'weight', type: type}, function(data){
             var obj = JSON.parse(data);
 
             if(obj.status === 'success'){
