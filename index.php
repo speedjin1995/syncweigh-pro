@@ -2172,6 +2172,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             });
         });
 
+        // Find and refresh actual weight
+        $("#productTable").on('click', 'button[id^="productWeightCapture"]', function () {
+            var text = $('#indicatorWeight').text();
+            $(this).closest('.details').find('input[id^="productActualWeight"]').val(parseFloat(text).toFixed(0));
+            $(this).closest('.details').find('input[id^="productActualWeight"]').trigger('change');
+        });
+        
         // Event delegation for order weight to calculate variance
         $(document).on('change', 'input[id^="productOrderWeight"]', function(){
             // Retrieve the input's attributes
@@ -2213,8 +2220,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 defaultDate: new Date(),
                 clickOpens: false
             });
-        });
-
+        });     
 
         $(".add-product").click(function(){
             if(rowCount == 0){
@@ -2240,6 +2246,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
             $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
             $("#productTable").find('.details:last').attr("data-index", rowCount);
+            $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
             $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
             $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
@@ -2393,6 +2400,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
                         $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
                         $("#productTable").find('.details:last').attr("data-index", rowCount);
+                        $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
                         $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
                         $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(item.no);
