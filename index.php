@@ -2197,12 +2197,22 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
             $(this).closest('.details').find('input[id^="productActualWeightHidden"]').val(actualWeight);
 
+            //Update Top View Bin Weight
             if (actualWeightId == 'productActualWeight1'){
-                // Update top view bin weight 1
                 $("#addModal").find('#bin1Weight').text(actualWeight).trigger('change');
             }else if (actualWeightId == 'productActualWeight2'){
                 $("#addModal").find('#bin2Weight').text(actualWeight).trigger('change');
             }
+
+            // Update End Date if manual
+            $(this).closest('.details').find('input[id^="productEndDate"]').flatpickr({
+            
+                enableTime: true,          
+                dateFormat: "d/m/Y H:i",   
+                time_24hr: true,          
+                defaultDate: new Date(),
+                clickOpens: false
+            });
         });
 
 
@@ -2253,7 +2263,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     enableTime: true,          
                     dateFormat: "d/m/Y H:i",   
                     time_24hr: true,          
-                    defaultDate: ''
+                    defaultDate: '',
+                    clickOpens: false
                 }
             );
             $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
