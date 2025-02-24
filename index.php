@@ -1337,7 +1337,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 row.child.hide();
                 tr.removeClass('shown');
             } else {
-                $.post('php/getWeight.php', { userID: row.data().id }, function (data) {
+                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
                     var obj = JSON.parse(data);
                     if (obj.status === 'success') {
                         row.child(format(obj.message)).show();
@@ -2317,139 +2317,67 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     });
 
     function format (row) {
-        console.log(row);
         var returnString = `
+            <!-- Weight Section -->
             <div class="row">
-
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Weighing Information</strong></span>
+                <div class="col-6">
+                    <p><strong>Transaction ID:</strong> ${row.transaction_id}</p>
+                    <p><strong>Weight Type:</strong> ${row.weight_type}</p>
+                    <p><strong>Transaction Status:</strong> ${row.transaction_status}</p>
+                    <p><strong>Transaction Date:</strong> ${row.transaction_date}</p>
+                    <p><strong>Invoice No:</strong> ${row.invoice_no}</p>
+                    <p><strong>Delivery No:</strong> ${row.delivery_no}</p>
+                </div>
+                <div class="col-6">
+                    <p><strong>Purchase Order:</strong> ${row.purchase_order}</p>
+                    <p><strong>Container No:</strong> ${row.container_no}</p>
+                    <p><strong>Customer Name:</strong> ${row.customer_name}</p>
+                    <p><strong>Product Name:</strong> ${row.product_name}</p>
+                    <p><strong>Transporter:</strong> ${row.transporter}</p>
+                    <p><strong>Destination:</strong> ${row.destination}</p>
+                </div>
             </div>
+            <hr>
+            <!-- Vehicle Section -->
+            <div class="row">
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Vehicle Information</strong></span>
+                <div class="col-6">
+                    <p><strong>Vehicle Plate No:</strong> ${row.lorry_plate_no1}</p>
+                    <p><strong>Incoming:</strong> ${row.gross_weight1} Kg</p>
+                    <p><strong>Incoming Date:</strong> ${row.gross_weight1_date}</p>
+                    <p><strong>Outgoing:</strong> ${row.tare_weight1} Kg</p>
+                    <p><strong>Outgoing Date:</strong> ${row.tare_weight1_date}</p>
+                    <p><strong>Nett Weight:</strong> ${row.nett_weight1} Kg</p>
+                </div>
         `;
 
-        // var returnString = `
-        // <div class="row">
-        //     <!-- Customer Section -->
-        //     <div class="col-md-6">
-        //     <p><span><strong style="font-size:120%; text-decoration: underline;">Stamping To : Customer</strong></span><br>
-        //     <strong>${row.customers}</strong><br>
-        //     ${row.address1}<br>${row.address2}<br>${row.address3}<br>${row.address4} `;
-
-        //     if (row.pic) {
-        //         returnString += `
-        //             <br><b>PIC:</b> ${row.pic} <b>PIC Contact:</b> ${row.pic_phone}`;
-        //     }     
-        //     returnString += `</p></div>`;
-
-        // if (row.dealer){
-        //     returnString += `
-        //     <!-- Reseller Section -->
-        //     <div class="col-md-6">
-        //     <p><span><strong style="font-size:120%; text-decoration: underline;">Billing or Supply by Reseller</strong></span><br>
-        //     <strong>${row.dealer}</strong><br>
-        //     ${row.reseller_address1}<br>${row.reseller_address2}<br>${row.reseller_address3}<br>${row.reseller_address4} `;
-            
-        //     if (row.reseller_pic) {
-        //         returnString += `
-        //             <br><b>PIC:</b> ${row.reseller_pic} <b>PIC Contact:</b> ${row.reseller_pic_phone}`;
-        //     }     
-        //     returnString += `</p></div>`;
-        // }
-
-        // returnString += `</div><hr>
-        // <div class="row">
-        //     <!-- Machine Section -->
-        //     <div class="col-6">
-        //     <p><strong>Brand:</strong> ${row.brand}</p>
-        //     <p><strong>Model:</strong> ${row.model}</p>
-        //     <p><strong>Machine Type:</strong> ${row.machine_type}</p>
-        //     <p><strong>Capacity:</strong> ${row.capacity}</p>
-        //     <p><strong>Jenis Alat:</strong> ${row.jenis_alat}</p>
-        //     <p><strong>Serial No:</strong> ${row.serial_no}</p>
-        //     <p><strong>Assigned To:</strong> ${row.assignTo}</p>
-        //     <p><strong>Make In:</strong> ${row.make_in}</p>
-        //     </div>`;
-
-        // if(row.stampType == 'RENEWAL'){
-        //     returnString += `
-        //     <!-- Stamping Section -->
-        //         <div class="col-6">
-        //         <p><strong>Lama No. Daftar:</strong> ${row.no_daftar_lama}</p>
-        //         <p><strong>Baru No. Daftar:</strong> ${row.no_daftar_baru}</p>
-        //         <p><strong>Siri Keselamatan:</strong> ${row.siri_keselamatan}</p>
-        //         <p><strong>Borang D:</strong> ${row.borang_d}</p>
-        //         <p><strong>Borang E:</strong> ${row.borang_e}</p>
-        //         <p><strong>Last Year Stamping Date:</strong> ${row.last_year_stamping_date}</p>
-        //         <p><strong>Stamping Date:</strong> ${row.stamping_date}</p>
-        //         <p><strong>Next Due Date:</strong> ${row.due_date}</p>
-        //         </div>
-        //     </div><hr>
-        //     `;
-        // }else{
-        //     returnString += `
-        //     <!-- Stamping Section -->
-        //         <div class="col-6">
-        //         <p><strong>Baru No. Daftar:</strong> ${row.no_daftar_baru}</p>
-        //         <p><strong>Siri Keselamatan:</strong> ${row.siri_keselamatan}</p>
-        //         <p><strong>Borang D:</strong> ${row.borang_d}</p>
-        //         <p><strong>Stamping Date:</strong> ${row.stamping_date}</p>
-        //         <p><strong>Next Due Date:</strong> ${row.due_date}</p>
-        //         </div>
-        //     </div><hr>
-        //     `;
-        // }
-            
-        // returnString += `
-        // <div class="row">
-        //     <!-- Billing Section -->
-        //     <div class="col-6">
-        //     <p><strong>Quotation No:</strong> ${row.quotation_no} `;
-            
-        //     if(row.quotation_attachment){
-        //         returnString += `<span class="ml-5"><a href="view_file.php?file=${row.quotation_attachment}" target="_blank" class="btn btn-success btn-sm" role="button"><i class="fa fa-file-pdf-o"></i></a></span></p>`;
-        //     }else{
-        //         returnString += `</p>`;
-        //     }
-
-        //     returnString += `
-        //     <p><strong>Quotation Date:</strong> ${row.quotation_date}</p>
-        //     <p><strong>Purchase No:</strong> ${row.purchase_no}</p>
-        //     <p><strong>Purchase Date:</strong> ${row.purchase_date}</p>
-        //     <p><strong>Invoice/Cash Bill No:</strong> ${row.invoice_no}`;
-
-        //     if(row.invoice_attachment){
-        //         returnString += `<span class="ml-5"><a href="view_file.php?file=${row.invoice_attachment}" target="_blank" class="btn btn-success btn-sm" role="button"><i class="fa fa-file-pdf-o"></i></a></span></p>`;
-        //     }else{
-        //         returnString += `</p>`;
-        //     }
-        //     returnString += `</div>
-
-        //     <!-- Price Section -->
-        //     <div class="col-6">
-        //     <p><strong>Unit Price:</strong> ${row.unit_price}</p>
-        //     <p><strong>Cert Price:</strong> ${row.cert_price}</p>
-        //     <p><strong>Total Amount:</strong> ${row.total_amount}</p>
-        //     <p><strong>SST Price:</strong> ${row.sst}</p>
-        //     <p><strong>Sub Total Price:</strong> ${row.subtotal_amount}</p>
-        //     <div class="row">
-        //         <div class="col-1"><button title="Edit" type="button" id="edit${row.id}" onclick="edit(${row.id})" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></div>
-        //         <div class="col-1"><button title="Duplicate" type="button" id="duplicate${row.id}" onclick="duplicate(${row.id})" class="btn btn-success btn-sm"><i class="fas fa-clone"></i></button></div>`; 
-
-        //         if (allowedAlats.includes(row.jenis_alat)) {
-        //         returnString += '<div class="col-1"><button title="Print" type="button" id="print'+row.id+'" onclick="print('+row.id+', \''+row.jenis_alat+'\', \''+row.validate_by+'\')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div>';
-        //         }
-
-        //         returnString += '<div class="col-1"><button title="Log" type="button" id="log'+row.id+'" onclick="log('+row.id+')" class="btn btn-secondary btn-sm"><i class="fa fa-list" aria-hidden="true"></i></button></div>';
-
-        //         // Complete button if conditions are met
-        //         if (row.stamping_date != '' && row.due_date != '' && row.siri_keselamatan != '' && row.borang_d != '' && row.borang_e != '') {
-        //         returnString += '<div class="col-1"><button title="Complete" type="button" id="complete'+row.id+'" onclick="complete('+row.id+')" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button></div>';
-        //         }
-
-        //         // Cancelled button
-        //         returnString += '<div class="col-1"><button title="Cancelled" type="button" id="delete'+row.id+'" onclick="deactivate('+row.id+')" class="btn btn-danger btn-sm"><i class="fa fa-times" aria-hidden="true"></i></button></div>';
-
-        //     returnString += `</div>
-        //     </div>
-        // </div><br>
-        // `;
+        if (row.weight_type == 'Container'){
+            returnString += `
+                <div class="col-6">
+                    <p><strong>Vehicle Plate No 2:</strong> ${row.lorry_plate_no2}</p>
+                    <p><strong>Gross Incoming:</strong> ${row.gross_weight2} Kg</p>
+                    <p><strong>Incoming Date:</strong> ${row.gross_weight2_date}</p>
+                    <p><strong>Tare Outgoing:</strong> ${row.tare_weight2} Kg</p>
+                    <p><strong>Outgoing Date:</strong> ${row.tare_weight2_date}</p>
+                    <p><strong>Nett Weight:</strong> ${row.nett_weight2} Kg</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Pricing Information</strong></span>
+                <div class="col-6">
+                    <p><strong>Order Weight:</strong> ${row.order_weight} Kg</p>
+                    <p><strong>Weight Difference:</strong> ${row.weight_different} Kg</p>
+                    <p><strong>Reduce Weight:</strong> ${row.reduce_weight} Kg</p>
+                    <p><strong>Sub-Total Price:</strong> RM ${row.sub_total}</p>
+                    <p><strong>SST (6%):</strong> RM ${row.sst}</p>
+                    <p><strong>Total Price:</strong> RM ${row.total_price}</p>
+                </div>
+            </div>`;
+        }else{
+            returnString += `</div>`;
+        }
 
         return returnString;
     }
