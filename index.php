@@ -721,6 +721,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     <label for="nothing" class="col-form-label"></label>
                                                                                 </div>
                                                                             </div>
+
+                                                                            <!-- To add empty space -->
+                                                                            <div class="row mb-1">
+                                                                                <p></p>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -806,8 +811,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                         <div class="row mb-3 pb-2">
                                                                             <p></p>
                                                                         </div>
-                                                                        </div>                                                                        
-                                                                    </div>                                                                                                                                  
+                                                                    </div>                         
                                                                 </div>
                                                             </div>
                                                             <div class="col-xxl-4 col-lg-4" id="containerCard" style="display:none;">
@@ -875,7 +879,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     <div class="input-group-text">Kg</div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>                                                                    
+                                                                        </div>     
+                                                                        <!-- To add empty space -->
+                                                                        <div class="row mb-3 pb-2">
+                                                                            <p></p>
+                                                                        </div>                                                               
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1286,6 +1294,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 { data: 'nett_weight1' },
                 { 
                     data: 'id',
+                    className: 'action-button-col',
                     render: function (data, type, row) {
                         let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
@@ -1311,6 +1320,31 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
             }   
+        });
+
+        // Add event listener for opening and closing details on row click
+        $('#weightTable tbody').on('click', 'tr', function (e) {
+            var tr = $(this); // The row that was clicked
+            var row = table.row(tr);
+
+            // Exclude specific td elements by checking the event target
+            if ($(e.target).closest('td').hasClass('action-button-col')) {
+                return;
+            }
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                $.post('php/getWeight.php', { userID: row.data().id }, function (data) {
+                    var obj = JSON.parse(data);
+                    if (obj.status === 'success') {
+                        row.child(format(obj.message)).show();
+                        tr.addClass("shown");
+                    }
+                });
+            }
         });
 
         $('#submitWeight').on('click', function(){
@@ -1758,6 +1792,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     { data: 'nett_weight1' },
                     { 
                         data: 'id',
+                        className: 'action-button-col',
                         render: function (data, type, row) {
                             let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
@@ -2280,6 +2315,144 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             rowCount++;
         });
     });
+
+    function format (row) {
+        console.log(row);
+        var returnString = `
+            <div class="row">
+
+            </div>
+        `;
+
+        // var returnString = `
+        // <div class="row">
+        //     <!-- Customer Section -->
+        //     <div class="col-md-6">
+        //     <p><span><strong style="font-size:120%; text-decoration: underline;">Stamping To : Customer</strong></span><br>
+        //     <strong>${row.customers}</strong><br>
+        //     ${row.address1}<br>${row.address2}<br>${row.address3}<br>${row.address4} `;
+
+        //     if (row.pic) {
+        //         returnString += `
+        //             <br><b>PIC:</b> ${row.pic} <b>PIC Contact:</b> ${row.pic_phone}`;
+        //     }     
+        //     returnString += `</p></div>`;
+
+        // if (row.dealer){
+        //     returnString += `
+        //     <!-- Reseller Section -->
+        //     <div class="col-md-6">
+        //     <p><span><strong style="font-size:120%; text-decoration: underline;">Billing or Supply by Reseller</strong></span><br>
+        //     <strong>${row.dealer}</strong><br>
+        //     ${row.reseller_address1}<br>${row.reseller_address2}<br>${row.reseller_address3}<br>${row.reseller_address4} `;
+            
+        //     if (row.reseller_pic) {
+        //         returnString += `
+        //             <br><b>PIC:</b> ${row.reseller_pic} <b>PIC Contact:</b> ${row.reseller_pic_phone}`;
+        //     }     
+        //     returnString += `</p></div>`;
+        // }
+
+        // returnString += `</div><hr>
+        // <div class="row">
+        //     <!-- Machine Section -->
+        //     <div class="col-6">
+        //     <p><strong>Brand:</strong> ${row.brand}</p>
+        //     <p><strong>Model:</strong> ${row.model}</p>
+        //     <p><strong>Machine Type:</strong> ${row.machine_type}</p>
+        //     <p><strong>Capacity:</strong> ${row.capacity}</p>
+        //     <p><strong>Jenis Alat:</strong> ${row.jenis_alat}</p>
+        //     <p><strong>Serial No:</strong> ${row.serial_no}</p>
+        //     <p><strong>Assigned To:</strong> ${row.assignTo}</p>
+        //     <p><strong>Make In:</strong> ${row.make_in}</p>
+        //     </div>`;
+
+        // if(row.stampType == 'RENEWAL'){
+        //     returnString += `
+        //     <!-- Stamping Section -->
+        //         <div class="col-6">
+        //         <p><strong>Lama No. Daftar:</strong> ${row.no_daftar_lama}</p>
+        //         <p><strong>Baru No. Daftar:</strong> ${row.no_daftar_baru}</p>
+        //         <p><strong>Siri Keselamatan:</strong> ${row.siri_keselamatan}</p>
+        //         <p><strong>Borang D:</strong> ${row.borang_d}</p>
+        //         <p><strong>Borang E:</strong> ${row.borang_e}</p>
+        //         <p><strong>Last Year Stamping Date:</strong> ${row.last_year_stamping_date}</p>
+        //         <p><strong>Stamping Date:</strong> ${row.stamping_date}</p>
+        //         <p><strong>Next Due Date:</strong> ${row.due_date}</p>
+        //         </div>
+        //     </div><hr>
+        //     `;
+        // }else{
+        //     returnString += `
+        //     <!-- Stamping Section -->
+        //         <div class="col-6">
+        //         <p><strong>Baru No. Daftar:</strong> ${row.no_daftar_baru}</p>
+        //         <p><strong>Siri Keselamatan:</strong> ${row.siri_keselamatan}</p>
+        //         <p><strong>Borang D:</strong> ${row.borang_d}</p>
+        //         <p><strong>Stamping Date:</strong> ${row.stamping_date}</p>
+        //         <p><strong>Next Due Date:</strong> ${row.due_date}</p>
+        //         </div>
+        //     </div><hr>
+        //     `;
+        // }
+            
+        // returnString += `
+        // <div class="row">
+        //     <!-- Billing Section -->
+        //     <div class="col-6">
+        //     <p><strong>Quotation No:</strong> ${row.quotation_no} `;
+            
+        //     if(row.quotation_attachment){
+        //         returnString += `<span class="ml-5"><a href="view_file.php?file=${row.quotation_attachment}" target="_blank" class="btn btn-success btn-sm" role="button"><i class="fa fa-file-pdf-o"></i></a></span></p>`;
+        //     }else{
+        //         returnString += `</p>`;
+        //     }
+
+        //     returnString += `
+        //     <p><strong>Quotation Date:</strong> ${row.quotation_date}</p>
+        //     <p><strong>Purchase No:</strong> ${row.purchase_no}</p>
+        //     <p><strong>Purchase Date:</strong> ${row.purchase_date}</p>
+        //     <p><strong>Invoice/Cash Bill No:</strong> ${row.invoice_no}`;
+
+        //     if(row.invoice_attachment){
+        //         returnString += `<span class="ml-5"><a href="view_file.php?file=${row.invoice_attachment}" target="_blank" class="btn btn-success btn-sm" role="button"><i class="fa fa-file-pdf-o"></i></a></span></p>`;
+        //     }else{
+        //         returnString += `</p>`;
+        //     }
+        //     returnString += `</div>
+
+        //     <!-- Price Section -->
+        //     <div class="col-6">
+        //     <p><strong>Unit Price:</strong> ${row.unit_price}</p>
+        //     <p><strong>Cert Price:</strong> ${row.cert_price}</p>
+        //     <p><strong>Total Amount:</strong> ${row.total_amount}</p>
+        //     <p><strong>SST Price:</strong> ${row.sst}</p>
+        //     <p><strong>Sub Total Price:</strong> ${row.subtotal_amount}</p>
+        //     <div class="row">
+        //         <div class="col-1"><button title="Edit" type="button" id="edit${row.id}" onclick="edit(${row.id})" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></div>
+        //         <div class="col-1"><button title="Duplicate" type="button" id="duplicate${row.id}" onclick="duplicate(${row.id})" class="btn btn-success btn-sm"><i class="fas fa-clone"></i></button></div>`; 
+
+        //         if (allowedAlats.includes(row.jenis_alat)) {
+        //         returnString += '<div class="col-1"><button title="Print" type="button" id="print'+row.id+'" onclick="print('+row.id+', \''+row.jenis_alat+'\', \''+row.validate_by+'\')" class="btn btn-info btn-sm"><i class="fas fa-print"></i></button></div>';
+        //         }
+
+        //         returnString += '<div class="col-1"><button title="Log" type="button" id="log'+row.id+'" onclick="log('+row.id+')" class="btn btn-secondary btn-sm"><i class="fa fa-list" aria-hidden="true"></i></button></div>';
+
+        //         // Complete button if conditions are met
+        //         if (row.stamping_date != '' && row.due_date != '' && row.siri_keselamatan != '' && row.borang_d != '' && row.borang_e != '') {
+        //         returnString += '<div class="col-1"><button title="Complete" type="button" id="complete'+row.id+'" onclick="complete('+row.id+')" class="btn btn-success btn-sm"><i class="fas fa-check"></i></button></div>';
+        //         }
+
+        //         // Cancelled button
+        //         returnString += '<div class="col-1"><button title="Cancelled" type="button" id="delete'+row.id+'" onclick="deactivate('+row.id+')" class="btn btn-danger btn-sm"><i class="fa fa-times" aria-hidden="true"></i></button></div>';
+
+        //     returnString += `</div>
+        //     </div>
+        // </div><br>
+        // `;
+
+        return returnString;
+    }
 
     function edit(id){
         $('#spinnerLoading').show();
