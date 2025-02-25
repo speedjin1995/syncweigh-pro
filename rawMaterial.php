@@ -182,6 +182,18 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="type" class="col-sm-4 col-form-label">Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control" style="width: 100%;" id="type" name="type" required>
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
+                                                                                            <option value="Bitumen">Bitumen</option>
+                                                                                            <option value="Raw Material">Raw Material</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -233,6 +245,7 @@
                                                                     <th>Raw Material Name</th>
                                                                     <th>Raw Material Price</th>
                                                                     <th>Description</th>
+                                                                    <th>Type</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -310,6 +323,7 @@ $(function () {
             { data: 'name' },
             { data: 'price' },
             { data: 'description' },
+            { data: 'type' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -362,6 +376,7 @@ $(function () {
         $('#addModal').find('#varianceType').val("");
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
+        $('#addModal').find('#type').val("");
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -394,6 +409,7 @@ $(function () {
                 $('#addModal').find('#varianceType').val(obj.message.variance);
                 $('#addModal').find('#high').val(obj.message.high);
                 $('#addModal').find('#low').val(obj.message.low);
+                $('#addModal').find('#type').val(obj.message.type);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
