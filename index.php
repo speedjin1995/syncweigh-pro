@@ -2317,6 +2317,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     });
 
     function format (row) {
+        let vehicleClass = "col-6"; // Default class
+
+        if (row.weight_type === 'Dual Bins') {
+            vehicleClass = "col-3"; // Change to col-4 if weight type is Dual Bins
+        }
+
         var returnString = `
             <!-- Weight Section -->
             <div class="row">
@@ -2342,7 +2348,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             <!-- Vehicle Section -->
             <div class="row">
                 <p><span><strong style="font-size:120%; text-decoration: underline;">Vehicle Information</strong></span>
-                <div class="col-6">
+                <div class="${vehicleClass}" id="singleVehView">
                     <p><strong>Vehicle Plate No:</strong> ${row.lorry_plate_no1}</p>
                     <p><strong>Incoming:</strong> ${row.gross_weight1} Kg</p>
                     <p><strong>Incoming Date:</strong> ${row.gross_weight1_date}</p>
@@ -2373,6 +2379,44 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     <p><strong>Sub-Total Price:</strong> RM ${row.sub_total}</p>
                     <p><strong>SST (6%):</strong> RM ${row.sst}</p>
                     <p><strong>Total Price:</strong> RM ${row.total_price}</p>
+                </div>
+            </div>`;
+        }else if (row.weight_type == 'Dual Bins'){
+            returnString += `
+                <div class="col-9">
+                    <table class="table table-primary table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Product</th>
+                                <th>Order Weight (KG)</th>
+                                <th>Bin Selection (Name)</th>
+                                <th>Actual Weight (KG)</th>
+                                <th>Start Date/Time</th>
+                                <th>End Date/Time</th>
+                                <th>Variance (KG)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="white-bg">`;
+
+                if (row.products.length > 0){
+                    var products = row.products;
+                    for (i = 0; i < row.products.length; i++) {
+                        returnString += `<tr>
+                            <td class="bg-white">${products[i].no}</td>
+                            <td class="bg-white">${products[i].product_id}</td>
+                            <td class="bg-white">${products[i].order_weight}</td>
+                            <td class="bg-white">${products[i].bin_name}</td>
+                            <td class="bg-white">${products[i].actual_weight}</td>
+                            <td class="bg-white">${products[i].start_date}</td>
+                            <td class="bg-white">${products[i].end_date}</td>
+                            <td class="bg-white">${products[i].variance}</td>
+                        </tr>`;
+                    }
+                }        
+
+                returnString += `</tbody>
+                    </table>
                 </div>
             </div>`;
         }else{
