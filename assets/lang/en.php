@@ -30,6 +30,7 @@
     $lang["t-crm"]="CRM";
     $lang["t-billboard"]="Billboard";
     $lang["t-weighing"]="Weighing";
+    $lang["t-bitumen"]="Bitumen";
     $lang["t-crypto"]="Crypto";
     $lang["t-projects"]="Projects";
     $lang["t-apps" ]="Apps";

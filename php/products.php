@@ -80,6 +80,32 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
+                # Weight_Product 
+                $no = $_POST['no'];
+                $productRawMatId = $_POST['productRawMatId'];
+                $rawMats =  $_POST['rawMats'];
+                $rawMatWeight = $_POST['rawMatWeight'];
+
+                var_dump($rawMats);die;
+
+                if(isset($no) && $no != null && count($no) > 0){
+                    for ($i=1; $i <= count($no); $i++) {
+                        if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){
+                            if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_id=?, order_weight=?, bin_name=?, actual_weight=?, start_date=?, end_date=?, variance=? WHERE id=?")){
+                                $product_stmt->bind_param('sssssssss', $weightId, $products[$i], $productOrderWeight[$i], $productBinName[$i], $productActualWeight[$i], $productStartDate[$i], $productEndDate[$i], $productVariance[$i], $weightProductId[$i]);
+                                $product_stmt->execute();
+                            }
+                        }else{
+                            if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, order_weight, bin_name, actual_weight, start_date, end_date, variance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
+                                $product_stmt->bind_param('ssssssss', $weightId, $products[$i], $productOrderWeight[$i], $productBinName[$i], $productActualWeight[$i], $productStartDate[$i], $productEndDate[$i], $productVariance[$i]);
+                                $product_stmt->execute();
+                            }
+                        }
+                    }
+
+                    $product_stmt->close();
+                }
+
                 if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                     $insert_stmt->bind_param('ssssssssss', $productId, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $action, $username);
         

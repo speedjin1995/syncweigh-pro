@@ -1,6 +1,11 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    require_once "php/db_connect.php";
+    $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -189,6 +194,38 @@
                                                             </div>
 
                                                         </div>
+
+                                                        <div class="row col-12">
+                                                            <div class="col-xxl-12 col-lg-12">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-header p-2">
+                                                                        <div class="d-flex justify-content-end">
+                                                                            <div class="flex-shrink-0">
+                                                                                <button type="button" class="btn btn-danger add-material"><i class="ri-add-circle-line align-middle me-1"></i>Add Raw Material</button>
+                                                                            </div> 
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <table class="table table-primary">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th width="10%">No</th>
+                                                                                            <th>Raw Material</th>
+                                                                                            <th>Weight (KG)</th>
+                                                                                            <th>Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody id="rawMaterialTable"></tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
@@ -289,6 +326,29 @@
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
 
+    <script type="text/html" id="rawMaterialDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="no" name="no" readonly>
+                <input type="text" class="form-control" id="productRawMatId" name="productRawMatId" hidden>
+            </td>
+            <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="rawMats" name="rawMats">
+                    <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                        <option value="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>"><?=$rowRawMat['raw_mat_code'] . ' - ' . $rowRawMat['name']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="rawMatWeight" name="rawMatWeight" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
 
 
 <script type="text/javascript">
@@ -296,6 +356,8 @@
 var table;
 
 $(function () {
+    var rowCount = $("#rawMaterialTable").find(".details").length;
+
     table = $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -363,6 +425,7 @@ $(function () {
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
         $('#addModal').modal('show');
+        rowCount = 1;
         
         $('#productForm').validate({
             errorElement: 'span',
@@ -377,6 +440,26 @@ $(function () {
                 $(element).removeClass('is-invalid');
             }
         });
+    });
+
+    $(".add-material").click(function(){
+        if(rowCount == 0){
+            rowCount++;
+        }
+
+        var $addContents = $("#rawMaterialDetail").clone();
+        $("#rawMaterialTable").append($addContents.html());
+
+        $("#rawMaterialTable").find('.details:last').attr("id", "detail" + rowCount);
+        $("#rawMaterialTable").find('.details:last').attr("data-index", rowCount);
+        $("#rawMaterialTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+        $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
+        $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount);
+        $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount);
+        $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount);
+
+        rowCount++;
     });
 });
 
@@ -394,6 +477,30 @@ $(function () {
                 $('#addModal').find('#varianceType').val(obj.message.variance);
                 $('#addModal').find('#high').val(obj.message.high);
                 $('#addModal').find('#low').val(obj.message.low);
+
+                $('#rawMaterialTable').html('');
+                rowCount = 1;
+
+                if (obj.message.rawMats.length > 0){
+                    for(var i = 0; i < obj.message.rawMats.length; i++){
+                        var item = obj.message.rawMats[i];
+                        var $addContents = $("#rawMaterialDetail").clone();
+                        $("#rawMaterialTable").append($addContents.html());
+
+                        $("#rawMaterialTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#rawMaterialTable").find('.details:last').attr("data-index", rowCount);
+                        $("#rawMaterialTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+                        $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(item.no);
+                        $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount).val(item.id);
+                        $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).val(item.raw_mat_code);
+                        $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount).val(item.raw_mat_weight);
+
+                        rowCount++;
+                    }
+                }
+
+
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
