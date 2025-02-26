@@ -20,6 +20,7 @@
     $lang["t-raw-mat"]="Raw Materials";
     $lang["t-site"]="Site";
     $lang["t-plant"]="Plant";
+    $lang["t-bin"]="Bin";
 
     $lang["t-report"]="Report";
     $lang["t-weighingReport"]="Weighing Report";

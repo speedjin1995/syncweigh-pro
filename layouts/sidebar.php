@@ -8,7 +8,7 @@
                 <img src="assets/images/logo-sm.png" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="" height="17">
+                <img src="assets/images/logo-lg.png" alt="" height="50">
             </span>
         </a>
         <!-- Light Logo-->
@@ -17,7 +17,7 @@
                 <img src="assets/images/logo-sm.png" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="" height="17">
+                <img src="assets/images/logo-lg.png" alt="" height="50">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -89,6 +89,9 @@
                                     <li class="nav-item">
                                         <a href="user.php" class="nav-link">'.$lang['t-user'].'</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="bin.php" class="nav-link">'.$lang['t-bin'].'</a>
+                                    </li>       
                                     <!--li class="nav-item">
                                         <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
                                     </li>                                    
