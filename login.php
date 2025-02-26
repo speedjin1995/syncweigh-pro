@@ -1,6 +1,7 @@
 <?php
 // Initialize the session
 session_start();
+require_once 'php/requires/lookup.php';
 
 // Check if the user is already logged in, if yes then redirect him to index page
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
@@ -63,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["username"] = $username;
                             $_SESSION["roles"] = $roles;
                             $_SESSION['userID']=$code;
-                            $_SESSION['plant']=$plant;
+                            $_SESSION['plant']=searchCodeById($plant, $link);
 
                             // Redirect user to welcome page
                             header("location: index.php");
