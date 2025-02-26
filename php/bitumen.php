@@ -51,8 +51,8 @@ if (empty($_POST["diesel"])) {
 }
 
 if(! empty($transporterId)){
-    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, pg76=?, crmb=?, lfo=?, diesel=? WHERE id=?")) {
-        $update_stmt->bind_param('ssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $transporterId);
+    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, pg76=?, crmb=?, lfo=?, diesel=?, plant_code=? WHERE id=?")) {
+        $update_stmt->bind_param('sssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $transporterId);
 
         // Execute the prepared query.
         if (! $update_stmt->execute()) {

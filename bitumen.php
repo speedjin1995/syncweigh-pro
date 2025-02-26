@@ -357,7 +357,8 @@ else{
             var toDateI = $('#toDateSearch').val();
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
-            debugger;
+            $("#weightTable").DataTable().clear().destroy();
+
             table = $("#weightTable").DataTable({
                 "responsive": true,
                 "autoWidth": false,
