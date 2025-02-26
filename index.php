@@ -31,13 +31,12 @@ if(($row = $result->fetch_assoc()) !== null){
 $plantName = '-';
 
 if($plantId != null && $plantId != ''){
-    $stmt2 = $db->prepare("SELECT * from Plant WHERE id = ?");
+    $stmt2 = $db->prepare("SELECT * from Plant WHERE plant_code = ?");
     $stmt2->bind_param('s', $plantId);
     $stmt2->execute();
     $result2 = $stmt2->get_result();
         
     if(($row2 = $result2->fetch_assoc()) !== null){
-        $_SESSION['plant_code'] = $row2['plant_code'];
         $plantName = $row2['name'];
     }
 }
