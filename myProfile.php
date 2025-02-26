@@ -8,7 +8,7 @@ require_once "layouts/config.php";
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
-$stmt2 = $link->prepare("SELECT username, useremail from Users where employee_code = ?");
+$stmt2 = $link->prepare("SELECT username, useremail from Users where id = ?");
 mysqli_stmt_bind_param($stmt2, "s", $id);
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
