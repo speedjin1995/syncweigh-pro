@@ -1,8 +1,13 @@
 <?php
 
 require_once 'db_connect.php';
+session_start();
 
 $searchQuery = "";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = $_SESSION["plant_code"];
+    $searchQuery = "and plant_code='$username'";
+}
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $date = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
@@ -30,7 +35,12 @@ if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''
 
 if(isset($_POST['status']) && $_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
     if($_POST["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_status = '".$_POST['status']."'";
+        if($_POST['status'] == 'Sales'){
+            $searchQuery .= " and Weight.transaction_status = '".$_POST['status']."'";
+        }
+        else{
+            $searchQuery .= " and Weight.transaction_status IN ('Purchase', 'Local')";
+        }
     }
     else{
         $searchQuery .= " and count.transaction_status = '".$_POST['status']."'";
@@ -144,53 +154,139 @@ if(isset($_POST["file"])){
         </style>
     </head>
     <body>
-        <table style="width:100%; border:1px solid black;"><thead>
-            <tr>
-                <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>ID</th>
-                <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>STATUS</th>
-                <th style="border:1px solid black;font-size: 11px;">WEIGHT <br>TYPE</th>
-                <th style="border:1px solid black;font-size: 11px;">LORRY <br>NO.</th>
-                <th style="border:1px solid black;font-size: 11px;">CUSTOMER</th>
-                <th style="border:1px solid black;font-size: 11px;">SUPPLIER</th>
-                <th style="border:1px solid black;font-size: 11px;">PRODUCT</th>
-                <th style="border:1px solid black;font-size: 11px;">PO NO.</th>
-                <th style="border:1px solid black;font-size: 11px;">DO NO.</th>
-                <th style="border:1px solid black;font-size: 11px;">GROSS</th>
-                <th style="border:1px solid black;font-size: 11px;">TARE</th>
-                <th style="border:1px solid black;font-size: 11px;">NET</th>
-            </tr></thead><tbody>';
-            
-            $totalGross = 0;
-            $totalTare = 0;
-            $totalNet = 0;
+        <table style="width:100%;">
+            <thead>
+                <tr>
+                    <th style="font-size: 9px;">TRANSACTION <br>ID</th>
+                    <th style="font-size: 9px;">TRANSACTION <br>DATE</th>
+                    <th style="font-size: 9px;">TRANSACTION <br>STATUS</th>
+                    <th style="font-size: 9px;">WEIGHT <br>TYPE</th>
+                    <th style="font-size: 9px;">LORRY <br>NO.</th>';
+                    
+                if($_POST['status'] == 'Sales'){
+                    $message .= '<th style="font-size: 9px;">CUSTOMER <br>CODE</th>';
+                    $message .= '<th style="font-size: 9px;">CUSTOMER</th>';
+                }
+                else{
+                    $message .= '<th style="font-size: 9px;">SUPPLIER <br>CODE</th>';
+                    $message .= '<th style="font-size: 9px;">SUPPLIER</th>';
+                }
+                    
+                    $message .= '<th style="font-size: 9px;">PRODUCT <br>CODE</th>
+                    <th style="font-size: 9px;">PRODUCT</th>
+                    <th style="font-size: 9px;">DESTINATION <br>CODE</th>
+                    <th style="font-size: 9px;">DESTINATION</th>
+                    <th style="font-size: 9px;">PO NO.</th>
+                    <th style="font-size: 9px;">DO NO.</th>
+                    <th style="font-size: 9px;">GROSS</th>
+                    <th style="font-size: 9px;">TARE</th>
+                    <th style="font-size: 9px;">NET</th>
+                    <th style="font-size: 9px;">IN TIME</th>
+                    <th style="font-size: 9px;">OUT TIME</th>
+                </tr>
+            </thead>
+            <tbody>';
 
+            // Initialize the grouped data array
+            $groupedData = [];
+            
+            // Fetch data and group by product_name
             while ($row = $result->fetch_assoc()) {
-                $message .= '<tr>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['transaction_id'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['transaction_status'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['weight_type'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['lorry_plate_no1'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['customer_name'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['supplier_name'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['product_name'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['purchase_order'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['delivery_no'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['gross_weight1'].' kg</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['tare_weight1'].' kg</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['nett_weight1'].' kg</td>
-                </tr>';
-                
-                $totalGross += (float)$row['gross_weight1'];
-                $totalTare += (float)$row['tare_weight1'];
-                $totalNet += (float)$row['nett_weight1'];
+                $productName = $row['product_name'];
+            
+                if (!isset($groupedData[$productName])) {
+                    $groupedData[$productName] = [];
+                }
+            
+                $groupedData[$productName][] = $row;
             }
             
-            $message .= '</tbody><tfoot><tr>
-                <th style="border:1px solid black;font-size: 11px;" colspan="9">Total</th>
-                <th style="border:1px solid black;font-size: 11px;">'.$totalGross.' kg</th>
-                <th style="border:1px solid black;font-size: 11px;">'.$totalTare.' kg</th>
-                <th style="border:1px solid black;font-size: 11px;">'.$totalNet.' kg</th>
-            </tr>';
+            // Initialize total values
+            $grandTotalGross = 0;
+            $grandTotalTare = 0;
+            $grandTotalNet = 0;
+
+            // Generate table grouped by product
+            foreach ($groupedData as $product => $rows) {
+                $message .= '<tr>
+                    <td colspan="14" style="font-size: 9px;">. </td>
+                </tr>
+                <tr>
+                    <td colspan="14" style="font-size: 9px;">. </td>
+                </tr>';
+            
+                $totalGross = 0;
+                $totalTare = 0;
+                $totalNet = 0;
+            
+                foreach ($rows as $row) {
+                    $grossWeightDate = new DateTime($row['gross_weight1_date']);
+                    $formattedGrossWeightDate = $grossWeightDate->format('H:i');
+                    $tareWeightDate =  new DateTime($row['tare_weight1_date']);
+                    $formattedTareWeightDate = $tareWeightDate->format('H:i');
+                    $transactionDate =  new DateTime($row['transaction_date']);
+                    $formattedtransactionDate = $transactionDate->format('d/m/Y');
+                    
+                    $message .= '<tr>
+                        <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
+                        <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
+                        <td style="font-size: 8px;">' . $row['transaction_status'] . '</td>
+                        <td style="font-size: 8px;">' . $row['weight_type'] . '</td>
+                        <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
+                        
+                        if($_POST['status'] == 'Sales'){
+                            $message .= '<td style="font-size: 8px;">' . $row['customer_code'] . '</td>';
+                            $message .= '<td style="font-size: 8px;">' . $row['customer_name'] . '</td>';
+                        }
+                        else{
+                            $message .= '<td style="font-size: 8px;">' . $row['supplier_code'] . '</td>';
+                            $message .= '<td style="font-size: 8px;">' . $row['supplier_name'] . '</td>';
+                        }
+                        
+                        
+                        $message .= '<td style="font-size: 8px;">' . $row['product_code'] . '</td>
+                        <td style="font-size: 8px;">' . $row['product_name'] . '</td>
+                        <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
+                        <td style="font-size: 8px;">' . $row['destination'] . '</td>
+                        <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
+                        <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
+                        <td style="font-size: 8px;">' . $row['gross_weight1'] . ' kg</td>
+                        <td style="font-size: 8px;">' . $row['tare_weight1'] . ' kg</td>
+                        <td style="font-size: 8px;">' . $row['nett_weight1'] . ' kg</td>
+                        <td style="font-size: 8px;">' . $formattedGrossWeightDate . '</td>
+                        <td style="font-size: 8px;">' . $formattedTareWeightDate . '</td>
+                    </tr>';
+            
+                    // Calculate subtotals
+                    $totalGross += (float)$row['gross_weight1'];
+                    $totalTare += (float)$row['tare_weight1'];
+                    $totalNet += (float)$row['nett_weight1'];
+                }
+            
+                // Add product-wise subtotal
+                $message .= '<tr>
+                    <th style="font-size: 10px;" colspan="13">Subtotal (' . $product . ')</th>
+                    <th style="border:1px solid black;font-size: 9px;">' . $totalGross . ' kg</th>
+                    <th style="border:1px solid black;font-size: 9px;">' . $totalTare . ' kg</th>
+                    <th style="border:1px solid black;font-size: 9px;">' . $totalNet . ' kg</th>
+                </tr>';
+            
+                // Add to grand total
+                $grandTotalGross += $totalGross;
+                $grandTotalTare += $totalTare;
+                $grandTotalNet += $totalNet;
+            }
+            
+            $message .= '</tbody>
+                <tfoot>
+                    <tr>
+                        <th style="font-size: 10px;" colspan="13">Grand Total</th>
+                        <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.$grandTotalGross.' kg</th>
+                        <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.$grandTotalTare.' kg</th>
+                        <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.$grandTotalNet.' kg</th>
+                    </tr>
+                </tfoot>';
+            $message .= '</tbody>';
             
         $message .= '</table>
     </body>

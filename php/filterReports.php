@@ -1,6 +1,7 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+session_start();
 
 ## Read value
 $draw = $_POST['draw'];
@@ -50,18 +51,36 @@ if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
-## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Weight where status = '0'");
+$allQuery = "select count(*) as allcount from Weight where status = '0'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["plant_code"];
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code='$username'";
+}
+
+$sel = mysqli_query($db, $allQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Weight where status = '0'".$searchQuery);
+
+$filteredQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["plant_code"];
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and plant_code='$username'".$searchQuery;
+}
+
+$sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 $empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = $_SESSION["plant_code"];
+  $empQuery = "select * from Weight where status = '0' and plant_code='$username'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+}
+
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $salesCount = 0;

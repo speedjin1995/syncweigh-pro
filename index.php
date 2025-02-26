@@ -671,7 +671,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3"  <?php 
+                                                                                if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+                                                                                    echo 'style="display:none;"';
+                                                                                }?>>
                                                                                 <div class="row">
                                                                                     <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
                                                                                     <div class="col-sm-8">
@@ -1952,7 +1955,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var tare = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#grossIncomingDate').val(formatDate2(today));
+            $('#grossIncomingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
         });
 
@@ -1967,7 +1970,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var gross = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#tareOutgoingDate').val(formatDate2(today));
+            $('#tareOutgoingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
         });
 
@@ -2021,7 +2024,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#grossIncomingDate2').val(formatDate2(today));
+            $('#grossIncomingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
         });
 
@@ -2036,7 +2039,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#tareOutgoingDate2').val(formatDate2(today));
+            $('#tareOutgoingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
         });
 
@@ -2271,14 +2274,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
+                $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
-                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
+                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
-                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
+                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
-                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate2(new Date(obj.message.tare_weight2_date)) : '');
+                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate3(new Date(obj.message.tare_weight2_date)) : '');
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
