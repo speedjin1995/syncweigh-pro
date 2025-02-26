@@ -4,21 +4,19 @@
 <?php
 require_once "php/db_connect.php";
 
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = $_SESSION["username"];
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code='$username'");
+}
+else{
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
 ?>
 
 <head>
 
-    <title>Reports | Synctronix - Weighing System</title>
+    <title>Inventory | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -103,61 +101,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                 <div class="row">
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="fromDateSearch" class="form-label">From Date</label>
-                                                            <input type="date" class="form-control" data-provider="flatpickr" id="fromDateSearch">
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="toDateSearch" class="form-label">To Date</label>
-                                                            <input type="date" class="form-control" data-provider="flatpickr" id="toDateSearch">
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select"  >
-                                                                <option selected>-</option>
-                                                                <option value="Sales">Sales</option>
-                                                                <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Local</option>
-                                                            </select>
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" >
-                                                                <option selected>-</option>
-                                                                <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
-                                                                <?php } ?>
-                                                            </select>
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="vehicleNo" class="form-label">Vehicle No</label>
-                                                            <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
-                                                            <select id="invoiceNoSearch" class="form-select"  >
-                                                                <option selected>-</option>
-                                                                <option value="Normal">Normal</option>
-                                                                <option value="Container">Container</option>
-                                                            </select>
-                                                        </div>
-                                                    </div><!--end col-->                                               
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatusSearch" class="form-select" >
-                                                                <option selected>-</option>
-                                                                <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                            <label for="ForminputState" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select" >
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -173,86 +120,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="row">
-                                <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
-                                    <div class="card card-animate">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Sales</p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="salesInfo">0</span>
-                                                    </h4>
-                                                </div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-success rounded fs-3">
-                                                        <i class="bx bx-dollar-circle text-success"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-
-                                <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
-                                    <div class="card card-animate">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Purchase</p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="purchaseInfo">0</span></h4>
-                                                </div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-info rounded fs-3">
-                                                        <i class="bx bx-shopping-bag text-info"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-
-                                <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
-                                    <div class="card card-animate">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Local</p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="localInfo">0</span>
-                                                    </h4>
-                                                </div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-warning rounded fs-3">
-                                                        <i class="bx bx-user-circle text-warning"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-                            </div> <!-- end row-->
-
 
                             <div class="row">
                                 <div class="col">
@@ -264,9 +131,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     <div class="card-header">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Weighing Records</h5>
+                                                                <h5 class="card-title mb-0">Inventory</h5>
                                                             </div>
-                                                            <div class="flex-shrink-0">
+                                                            <!--div class="flex-shrink-0">
                                                                 <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export PDF
@@ -275,7 +142,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
-                                                            </div> 
+                                                            </div--> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
@@ -283,16 +150,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             <thead>
                                                                 <tr>
                                                                     <th>No</th>
-                                                                    <th>Status</th>
-                                                                    <th>Weight Status</th>
-                                                                    <th>Transaction Id</th>
-                                                                    <th>Vehicle No</th>
-                                                                    <th>Product Description Detail</th>
-                                                                    <th>Incoming(Gross Weight)</th>
-                                                                    <th>Incoming(Gross) Date Time</th>
-                                                                    <th>Outgoing(Tare) Weight</th>
-                                                                    <th>Outgoing(Tare) Date Time</th>
-                                                                    <th>ToTal Nett Weight</th>
+                                                                    <th>Raw Material Code</th>
+                                                                    <th>Raw Material Name</th>
+                                                                    <th>Weight (Kg)</th>
+                                                                    <th>Drum</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -318,7 +179,73 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             <?php include 'layouts/footer.php'; ?>
         </div>
         <!-- end main content-->
+        <!-- /.modal-dialog -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalScrollableTitle">Edit Inventory</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" id="siteForm" class="needs-validation" novalidate autocomplete="off">
+                            <div class=" row col-12">
+                                <div class="col-xxl-12 col-lg-12">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="rawMatCode" class="col-sm-4 col-form-label">Raw Material Code</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="text" class="form-control" id="rawMatCode" name="rawMatCode" placeholder="Raw Material Code" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="rawMatName" class="col-sm-4 col-form-label">Raw Material Name</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="text" class="form-control" id="rawMatName" name="rawMatName" placeholder="Raw Material Name" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="weight" class="col-sm-4 col-form-label">Weight (Kg)</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="number" class="form-control" id="weight" name="weight" placeholder="Raw Material Weight (Kg)">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="drum" class="col-sm-4 col-form-label">Drum</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="number" class="form-control" id="drum" name="drum" placeholder="Raw Material Count">
+                                                        </div>
+                                                    </div>
+                                                </div>                                                       
+                                                <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                            </div>
+                            
+                            <div class="col-lg-12">
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-danger" id="submitSite">Submit</button>
+                                </div>
+                            </div><!--end col-->                                                               
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     </div>
     <!-- END layout-wrapper -->
 
@@ -357,29 +284,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        //Date picker
-        $('#fromDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: yesterday
-        });
-
-        $('#toDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: today
-        });
-
-        $('#transactionDate').flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: today
-        });
-
-        var fromDateI = $('#fromDateSearch').val();
-        var toDateI = $('#toDateSearch').val();
-        var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-        var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-        var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-        var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -388,60 +293,34 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             'serverSide': true,
             'searching': true,
             'serverMethod': 'post',
+            'order': [[ 1, 'asc' ]],
+            'columnDefs': [ { orderable: false, targets: [0] }],
             'ajax': {
-                'url':'php/filterReports.php',
+                'url':'php/filterInventory.php',
                 'data': {
-                    fromDate: fromDateI,
-                    toDate: toDateI,
-                    status: statusI,
-                    customer: customerNoI,
-                    vehicle: vehicleNoI,
-                    invoice: invoiceNoI,
-                    product: transactionStatusI,
+                    plant: plantNoI,
                 } 
             },
             'columns': [
-                { data: 'id' },
-                { data: 'transaction_status' },
-                { data: 'weight_type' },
-                { data: 'transaction_id' },
-                { data: 'lorry_plate_no1' },
-                { data: 'product_description' },
-                { data: 'gross_weight1' },
-                { data: 'gross_weight1_date' },
-                { data: 'tare_weight1' },
-                { data: 'tare_weight1_date' },
-                { data: 'nett_weight1' },
+                { data: 'no' },
+                { data: 'raw_mat_code' },
+                { data: 'name' },
+                { data: 'raw_mat_weight' },
+                { data: 'raw_mat_count' },
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pen align-bottom me-2 text-muted"></i> Edit</a></li></ul></div>';
                     }
                 }
-            ],
-            "drawCallback": function(settings) {
-                $('#salesInfo').text(settings.json.salesTotal);
-                $('#purchaseInfo').text(settings.json.purchaseTotal);
-                $('#localInfo').text(settings.json.localTotal);
-            }   
+            ] 
         });
 
         $('#filterSearch').on('click', function(){
-            var fromDateI = $('#fromDateSearch').val();
-            var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
-            //Destroy the old Datatable
-            $("#weightTable").DataTable().clear().destroy();
-
-            //Create new Datatable
             table = $("#weightTable").DataTable({
                 "responsive": true,
                 "autoWidth": false,
@@ -449,46 +328,55 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 'serverSide': true,
                 'searching': true,
                 'serverMethod': 'post',
+                'order': [[ 1, 'asc' ]],
+                'columnDefs': [ { orderable: false, targets: [0] }],
                 'ajax': {
-                    'url':'php/filterReports.php',
+                    'url':'php/filterInventory.php',
                     'data': {
-                        fromDate: fromDateI,
-                        toDate: toDateI,
-                        status: statusI,
-                        customer: customerNoI,
-                        vehicle: vehicleNoI,
-                        invoice: invoiceNoI,
-                        product: transactionStatusI,
+                        plant: plantNoI,
                     } 
                 },
                 'columns': [
-                    { data: 'id' },
-                    { data: 'transaction_status' },
-                    { data: 'weight_type' },
-                    { data: 'transaction_id' },
-                    { data: 'lorry_plate_no1' },
-                    { data: 'product_description' },
-                    { data: 'gross_weight1' },
-                    { data: 'gross_weight1_date' },
-                    { data: 'tare_weight1' },
-                    { data: 'tare_weight1_date' },
-                    { data: 'nett_weight1' },
+                    { data: 'no' },
+                    { data: 'raw_mat_code' },
+                    { data: 'name' },
+                    { data: 'raw_mat_weight' },
+                    { data: 'raw_mat_count' },
                     { 
                         data: 'id',
                         render: function ( data, type, row ) {
-                            // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                             return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pen align-bottom me-2 text-muted"></i> Edit</a></li></ul></div>';
                         }
                     }
-                ],
-                "drawCallback": function(settings) {
-                    $('#salesInfo').text(settings.json.salesTotal);
-                    $('#purchaseInfo').text(settings.json.purchaseTotal);
-                    $('#localInfo').text(settings.json.localTotal);
-                }   
+                ] 
             });
+        });
+
+        $('#submitSite').on('click', function(){
+            if($('#siteForm').valid()){
+                $('#spinnerLoading').show();
+                $.post('php/inventory.php', $('#siteForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+
+                    }
+                });
+            }
         });
 
         $('#exportPdf').on('click', function(){
@@ -550,75 +438,18 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getWeight.php', {userID: id}, function(data)
+        $.post('php/getInventory.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#transactionId').val(obj.message.transaction_id);
-                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
-                $('#addModal').find('#weightType').val(obj.message.weight_type);
-                $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
-                $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
-
-                if(obj.message.vehicleNoTxt != null)
-                {
-                    $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
-                }
-
-                $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
-                $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
-                $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                $('#addModal').find('#customerName').val(obj.message.customer_name);
-                $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                $('#addModal').find('#supplierName').val(obj.message.supplier_name);
-                $('#addModal').find('#productCode').val(obj.message.product_code);
-                $('#addModal').find('#containerNo').val(obj.message.container_no);
-                $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
-                $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
-                $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
-                $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
-                $('#addModal').find('#transporter').val(obj.message.transporter);
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                $('#addModal').find('#destination').val(obj.message.destination);
-                $('#addModal').find('#otherRemarks').val(obj.message.remarks);
-                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
-                $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
-                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
-                $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
-                $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
-                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
-                $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
-                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate2(new Date(obj.message.tare_weight2_date)) : '');
-                $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
-                $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
-                // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
-                $('#addModal').find('#weightDifference').val(obj.message.weight_different);
-                // $('#addModal').find('#id').val(obj.message.is_complete);
-                // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-                //$('#addModal').find('#manualWeight').val(obj.message.manual_weight);
-                if(obj.message.manual_weight == 'true'){
-                    $("#manualWeightYes").prop("checked", true);
-                    $("#manualWeightNo").prop("checked", false);
-                }
-                else{
-                    $("#manualWeightYes").prop("checked", false);
-                    $("#manualWeightNo").prop("checked", true);
-                }
-
-                $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
-                $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
-                $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
-                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
-                $('#addModal').find('#productDescription').val(obj.message.product_description);
-                $('#addModal').find('#subTotalPrice').val(obj.message.product_description);
-                $('#addModal').find('#sstPrice').val(obj.message.product_description);
-                $('#addModal').find('#totalPrice').val(obj.message.total_price);
-                $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+                $('#addModal').find('#rawMatCode').val(obj.message.raw_mat_code);
+                $('#addModal').find('#rawMatName').val(obj.message.name);
+                $('#addModal').find('#weight').val(obj.message.raw_mat_weight);
+                $('#addModal').find('#drum').val(obj.message.raw_mat_count);
                 $('#addModal').modal('show');
             
-                $('#weightForm').validate({
+                $('#siteForm').validate({
                     errorElement: 'span',
                     errorPlacement: function (error, element) {
                         error.addClass('invalid-feedback');
