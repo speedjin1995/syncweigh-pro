@@ -5,7 +5,7 @@ session_start();
 
 $searchQuery = "";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = $_SESSION["plant_code"];
+    $username = $_SESSION["plant"];
     $searchQuery = "and plant_code='$username'";
 }
 

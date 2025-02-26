@@ -11,6 +11,7 @@ if(!isset($_SESSION['id'])){
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
 $phoneNo = $_SESSION['plant'];
+$faxNo = date("Y-m-d H:i:s");
 
 // Processing form data when form is submitted
 if (empty($_POST["id"])) {
@@ -50,8 +51,8 @@ if (empty($_POST["diesel"])) {
 }
 
 if(! empty($transporterId)){
-    if ($update_stmt = $db->prepare("UPDATE Bitumen SET site_code=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE id=?")) {
-        $update_stmt->bind_param('ssssssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $username, $username, $transporterId);
+    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, pg76=?, crmb=?, lfo=?, diesel=? WHERE id=?")) {
+        $update_stmt->bind_param('ssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $transporterId);
 
         // Execute the prepared query.
         if (! $update_stmt->execute()) {
@@ -111,7 +112,7 @@ if(! empty($transporterId)){
 }
 else
 {
-    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (60/70, pg76, crmb, lfo, diesel, plant_code, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, pg76, crmb, lfo, diesel, plant_code, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
         $insert_stmt->bind_param('sssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo);
 
         // Execute the prepared query.

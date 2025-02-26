@@ -55,16 +55,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     mysqli_stmt_bind_result($stmt, $id, $code, $username, $hashed_password, $roles, $plant);
                     if (mysqli_stmt_fetch($stmt)) {
                         if (password_verify($password, $hashed_password)) {
-                            // Password is correct, so start a new session
-                            session_start();
-
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
                             $_SESSION["roles"] = $roles;
                             $_SESSION['userID']=$code;
-                            $_SESSION['plant']=searchCodeById($plant, $link);
+                            $_SESSION['plant']=searchPlantCodeById($plant, $link);
 
                             // Redirect user to welcome page
                             header("location: index.php");

@@ -427,17 +427,19 @@ function searchStateNameById($value, $db) {
     return $id;
 }
 
-function searchCodeById($value, $db) {
-    $id = null;
+function searchPlantCodeById($value, $db) {
+    $id = '0';
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {
-        $select_stmt->bind_param('s', $value);
-        $select_stmt->execute();
-        $result = $select_stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
-            $id = $row['plant_code'];
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['plant_code'];
+            }
+            $select_stmt->close();
         }
-        $select_stmt->close();
     }
 
     return $id;
