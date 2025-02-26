@@ -421,7 +421,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divPurchaseOrder">
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8">
@@ -773,6 +773,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -970,6 +978,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                         <input type="hidden" id="siteCode" name="siteCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
+                                                        <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -2024,6 +2033,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
+
+            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+            if (previousRecordsTag == 'false'){
+                $('#addModal').find('#balance').val($(this).val());
+            }
         });
 
         $('#supplierWeight').on('change', function(){
@@ -2031,6 +2046,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
+            
+            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+            if (previousRecordsTag == 'false'){
+                $('#addModal').find('#balance').val($(this).val());
+            }
         });
 
         $('#grossIncoming2').on('keyup', function(){
@@ -2095,6 +2116,16 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').hide();
                 $('#rawMaterialDisplay').show();
                 $('#productNameDisplay').hide();
+
+                if ($(this).val() == "Purchase"){
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                }else{
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
+
+                }
             }
             else{
                 $('#divOrderWeight').show();
@@ -2106,6 +2137,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').show();
                 $('#rawMaterialDisplay').hide();
                 $('#productNameDisplay').show();
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
             }
         });
 
@@ -2184,6 +2217,56 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }else{
                 $("#noOfDrumDisplay").show();
             }
+        });
+
+        $('#purchaseOrder').on('change', function (){
+            var purchaseOrder = $(this).val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var customerName = obj.message.customer_name;
+                    var productName = obj.message.product_name;
+                    var orderSupplierWeight = obj.message.order_supplier_weight;
+                    var finalWeight = obj.message.final_weight;
+                    var previousRecordsTag = obj.message.previousRecordsTag;
+
+                    $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+
+                    if (previousRecordsTag){
+                        $('#addModal').find('#customerName').val(customerName);
+                        $('#addModal').find('#productName').val(productName);
+                        $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+
+                        if (type == 'Purchase'){
+                            $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
+                        }else{
+                            $('#addModal').find('#orderWeight').val(orderSupplierWeight);
+                        }
+                    }else{
+                        var weight = 0;
+                        if (type == 'Purchase'){
+                            weight = $('#addModal').find('#supplierWeight').val();
+                        }else{
+                            weight = $('#addModal').find('#orderWeight').val();
+                        }
+
+                        $('#addModal').find('#balance').val(weight);
+                    }
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+
         });
 
         <?php
@@ -2287,7 +2370,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
-                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
+                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1); console.lo
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
