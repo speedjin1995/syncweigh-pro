@@ -253,7 +253,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-primary" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -421,7 +421,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divPurchaseOrder">
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8">
@@ -773,6 +773,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -821,7 +829,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>                                                                                             -->
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-danger fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -842,7 +850,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>                                                                                                -->
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-danger fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>                                                                                       
                                                                             </div>
                                                                         </div>
@@ -895,7 +903,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming2" name="grossIncoming2" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-danger fs-5" id="grossCapture2"><i class="mdi mdi-sync" type="button"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="grossCapture2"><i class="mdi mdi-sync" type="button"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -911,7 +919,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing2" name="tareOutgoing2" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
-                                                                                    <button class="input-group-text btn btn-danger fs-5" id="tareCapture2" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                    <button class="input-group-text btn btn-primary fs-5" id="tareCapture2" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -946,7 +954,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button>
+                                                                <!--button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button-->
                                                                 <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
@@ -970,6 +978,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                         <input type="hidden" id="siteCode" name="siteCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
+                                                        <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -1004,7 +1013,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitBypass">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitBypass">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
                                                     </div>
@@ -1045,7 +1054,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitApproval">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitApproval">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
                                                     </div>
@@ -1069,7 +1078,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Weight
                                                                 </button>
@@ -1157,7 +1166,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         </div>
                         <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                             <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-danger">Save</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </div>
                     </form>
                 </div>
@@ -1295,9 +1304,15 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                         '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
                                         '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
+                        if (row.is_approved == 'Y') {
+                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                        }
+
                         if (row.is_approved == 'N') {
                             dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                         }
+
+                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
@@ -1676,9 +1691,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 if(data != "Error"){
                     console.log("Data Received:" + data);
                     
-                    if(ind == 'X2S'){
+                    if(ind == 'X2S' || ind == 'X722'){
                         var text = data.split(" ");
-                        $('#indicatorWeight').html(text[text.length - 1]);
+                        var text2 = text[text.length - 1];
+                        text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
+                        $('#indicatorWeight').html(text2);
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                     }
@@ -1765,9 +1782,15 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
                                             '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
+                            if (row.is_approved == 'Y') {
+                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            }
+
                             if (row.is_approved == 'N') {
                                 dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                             }
+
+                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
@@ -2010,6 +2033,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
+
+            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+            if (previousRecordsTag == 'false'){
+                $('#addModal').find('#balance').val($(this).val());
+            }
         });
 
         $('#supplierWeight').on('change', function(){
@@ -2017,6 +2046,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
+            
+            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+            if (previousRecordsTag == 'false'){
+                $('#addModal').find('#balance').val($(this).val());
+            }
         });
 
         $('#grossIncoming2').on('keyup', function(){
@@ -2081,6 +2116,16 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').hide();
                 $('#rawMaterialDisplay').show();
                 $('#productNameDisplay').hide();
+
+                if ($(this).val() == "Purchase"){
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                }else{
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
+
+                }
             }
             else{
                 $('#divOrderWeight').show();
@@ -2092,6 +2137,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').show();
                 $('#rawMaterialDisplay').hide();
                 $('#productNameDisplay').show();
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
             }
         });
 
@@ -2170,6 +2217,56 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }else{
                 $("#noOfDrumDisplay").show();
             }
+        });
+
+        $('#purchaseOrder').on('change', function (){
+            var purchaseOrder = $(this).val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var customerName = obj.message.customer_name;
+                    var productName = obj.message.product_name;
+                    var orderSupplierWeight = obj.message.order_supplier_weight;
+                    var finalWeight = obj.message.final_weight;
+                    var previousRecordsTag = obj.message.previousRecordsTag;
+
+                    $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+
+                    if (previousRecordsTag){
+                        $('#addModal').find('#customerName').val(customerName);
+                        $('#addModal').find('#productName').val(productName);
+                        $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+
+                        if (type == 'Purchase'){
+                            $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
+                        }else{
+                            $('#addModal').find('#orderWeight').val(orderSupplierWeight);
+                        }
+                    }else{
+                        var weight = 0;
+                        if (type == 'Purchase'){
+                            weight = $('#addModal').find('#supplierWeight').val();
+                        }else{
+                            weight = $('#addModal').find('#orderWeight').val();
+                        }
+
+                        $('#addModal').find('#balance').val(weight);
+                    }
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+
         });
 
         <?php
@@ -2273,7 +2370,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
-                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
+                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1); console.lo
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
