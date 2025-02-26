@@ -66,8 +66,24 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = $_SESSION["plant"];
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code='$username'");
+}
+else{
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = $_SESSION["plant"];
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code='$username'");
+}
+else{
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
+
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");

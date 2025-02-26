@@ -321,6 +321,9 @@ else{
         $('#filterSearch').on('click', function(){
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
+            //Destroy the old Datatable
+            $("#weightTable").DataTable().clear().destroy();
+            
             table = $("#weightTable").DataTable({
                 "responsive": true,
                 "autoWidth": false,
@@ -333,7 +336,7 @@ else{
                 'ajax': {
                     'url':'php/filterInventory.php',
                     'data': {
-                        plant: plantNoI,
+                        plant: plantNoI
                     } 
                 },
                 'columns': [
