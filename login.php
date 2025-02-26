@@ -116,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- auth page content -->
             <div class="auth-page-content">
                 <div class="container">
-                    <div class="row">
+                    <!--div class="row">
                         <div class="col-lg-12">
                             <div class="text-center mt-sm-5 mb-4 text-white-50">
                                 <div>
@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <p class="mt-3 fs-15 fw-medium">Synctronix Weighing System</p>
                             </div>
                         </div>
-                    </div>
+                    </div-->
                     <!-- end row -->
 
                     <div class="row justify-content-center">
