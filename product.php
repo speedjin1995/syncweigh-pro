@@ -424,8 +424,10 @@ $(function () {
         $('#addModal').find('#varianceType').val("");
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
-        $('#addModal').modal('show');
+        $('#rawMaterialTable').html('');
         rowCount = 1;
+
+        $('#addModal').modal('show');
         
         $('#productForm').validate({
             errorElement: 'span',
@@ -439,6 +441,15 @@ $(function () {
             unhighlight: function (element, errorClass, validClass) {
                 $(element).removeClass('is-invalid');
             }
+        });
+    });
+
+    // Find and remove selected table rows
+    $("#rawMaterialTable").on('click', 'button[id^="remove"]', function () {
+        $(this).parents("tr").remove();
+
+        $("#rawMaterialTable tr").each(function (index) {
+            $(this).find('input[name^="no"]').val(index + 1);
         });
     });
 

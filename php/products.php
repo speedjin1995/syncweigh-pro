@@ -10,7 +10,6 @@ if(!isset($_SESSION['id'])){
 }
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
-
 // Processing form data when form is submitted
 if (isset($_POST['productCode'])) {
 
@@ -80,30 +79,53 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
-                # Weight_Product 
+                # Product_RawMat 
                 $no = $_POST['no'];
                 $productRawMatId = $_POST['productRawMatId'];
                 $rawMats =  $_POST['rawMats'];
                 $rawMatWeight = $_POST['rawMatWeight'];
-
-                var_dump($rawMats);die;
-
+                $deleteStatus = 1;
                 if(isset($no) && $no != null && count($no) > 0){
-                    for ($i=1; $i <= count($no); $i++) {
-                        if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){
-                            if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_id=?, order_weight=?, bin_name=?, actual_weight=?, start_date=?, end_date=?, variance=? WHERE id=?")){
-                                $product_stmt->bind_param('sssssssss', $weightId, $products[$i], $productOrderWeight[$i], $productBinName[$i], $productActualWeight[$i], $productStartDate[$i], $productEndDate[$i], $productVariance[$i], $weightProductId[$i]);
-                                $product_stmt->execute();
-                            }
-                        }else{
-                            if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_id, order_weight, bin_name, actual_weight, start_date, end_date, variance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
-                                $product_stmt->bind_param('ssssssss', $weightId, $products[$i], $productOrderWeight[$i], $productBinName[$i], $productActualWeight[$i], $productStartDate[$i], $productEndDate[$i], $productVariance[$i]);
-                                $product_stmt->execute();
+                    # Delete all existing product rawmat records tied to the product id then reinsert
+                    if ($delete_stmt = $db->prepare("UPDATE Product_RawMat SET status=? WHERE product_id=?")){
+                        $delete_stmt->bind_param('ss', $deleteStatus, $productId);
+
+                        // Execute the prepared query.
+                        if (! $delete_stmt->execute()) {
+                            echo json_encode(
+                                array(
+                                    "status"=> "failed", 
+                                    "message"=> $delete_stmt->error
+                                )
+                            );
+                        }
+                        else{
+                            for ($i=1; $i <= count($no); $i++) {
+                                if(isset($no) && $no != null && count($no) > 0){
+                                    for ($i=1; $i <= count($no); $i++) { 
+                                        if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
+                                            $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
+                                            $product_stmt->execute();
+                                        }
+                                    }
+                
+                                    $product_stmt->close();
+                                }
+                
+                                // if(isset($productRawMatId[$i]) && $productRawMatId[$i] > 0){
+                                //     if ($product_stmt = $db->prepare("UPDATE Product_RawMat SET product_id=?, raw_mat_code=?, raw_mat_weight=? WHERE id=?")){
+                                //         $product_stmt->bind_param('ssss', $productId, $rawMats[$i], $rawMatWeight[$i], $productRawMatId[$i]);
+                                //         $product_stmt->execute();
+                                //     }
+                                // }else{
+                                //     if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
+                                //         $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
+                                //         $product_stmt->execute();
+                                //     }
+                                // }
                             }
                         }
-                    }
-
-                    $product_stmt->close();
+                    } 
                 }
 
                 if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
@@ -158,6 +180,24 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
+                $productId = $insert_stmt->insert_id;
+
+                # Product_RawMat 
+                $no = $_POST['no'];
+                $rawMats =  $_POST['rawMats'];
+                $rawMatWeight = $_POST['rawMatWeight'];
+
+                if(isset($no) && $no != null && count($no) > 0){
+                    for ($i=1; $i <= count($no); $i++) { 
+                        if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
+                            $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
+                            $product_stmt->execute();
+                        }
+                    }
+
+                    $product_stmt->close();
+                }
+
                 echo json_encode(
                     array(
                         "status"=> "success", 

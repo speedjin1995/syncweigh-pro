@@ -33,7 +33,7 @@ if(isset($_POST['userID'])){
             }
 
             // retrieve products
-            $empQuery = "SELECT * FROM Product_RawMat WHERE product_id = $id ORDER BY id ASC";
+            $empQuery = "SELECT * FROM Product_RawMat WHERE product_id = $id AND status = '0' ORDER BY id ASC";
             $empRecords = mysqli_query($db, $empQuery);
             $rawMats = array();
             $rawMatCount = 1;
@@ -44,7 +44,6 @@ if(isset($_POST['userID'])){
                     "id" => $row2['id'],
                     "product_id" => $row2['product_id'],
                     "raw_mat_code" => $row2['raw_mat_code'],
-                    "raw_mat_name" => $rowrow24['raw_mat_name'],
                     "raw_mat_weight" => $row2['raw_mat_weight'],
                 );
                 $rawMatCount++;
