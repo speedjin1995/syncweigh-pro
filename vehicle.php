@@ -125,7 +125,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="vehicleWeight" class="col-sm-4 col-form-label">Vehicle Weight</label>
                                                                                     <div class="col-sm-8">
@@ -323,6 +323,12 @@ $(function () {
                 $(element).removeClass('is-invalid');
             }
         });
+    });
+
+    $('#vehicleNo').on('keyup', function(){
+        var x = $('#vehicleNo').val();
+        x = x.toUpperCase();
+        $('#addModal').find('#vehicleNo').val(x);
     });
 });
 

@@ -538,7 +538,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
                                                                                     <div class="col-sm-8">
@@ -1235,7 +1235,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         //Date picker
         $('#fromDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: yesterday
+            defaultDate: today,
+            minDate: today
         });
 
         $('#toDateSearch').flatpickr({
@@ -1325,7 +1326,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                             dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                         }
 
-                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        //dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
@@ -1533,25 +1534,46 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         $("#successBtn").click();
 
                         $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
-                            var obj = JSON.parse(data);
+                            var obj2 = JSON.parse(data);
 
-                            if(obj.status === 'success'){
-                                debugger;
+                            if(obj2.status === 'success'){
                                 var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                printWindow.document.write(obj.message);
+                                printWindow.document.write(obj2.message);
                                 printWindow.document.close();
                                 setTimeout(function(){
                                     printWindow.print();
                                     printWindow.close();
                                     table.ajax.reload();
-                                    window.location = 'index.php';
+                                    //window.location = 'index.php';
+                                    
+                                    setTimeout(function () {
+                                        if (confirm("Do you need to reprint?")) {
+                                            $.post('php/print.php', { userID: obj.id, file: 'weight' }, function (data) {
+                                                var obj = JSON.parse(data);
+                                                if (obj.status === 'success') {
+                                                    var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                                    reprintWindow.document.write(obj.message);
+                                                    reprintWindow.document.close();
+                                                    setTimeout(function () {
+                                                        reprintWindow.print();
+                                                        reprintWindow.close();
+                                                    }, 500);
+                                                } 
+                                                else {
+                                                    window.location = 'index.php';
+                                                }
+                                            });
+                                        }
+                                    }, 500);
                                 }, 500);
                             }
                             else if(obj.status === 'failed'){
-                                toastr["error"](obj.message, "Failed:");
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
                             }
                             else{
-                                toastr["error"]("Something wrong when activate", "Failed:");
+                                $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                                $("#failBtn").click();
                             }
                         });
                     }
@@ -1801,7 +1823,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                 dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                             }
 
-                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            //dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
@@ -1928,12 +1950,18 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
         });
 
+        $('#vehicleNoTxt').on('keyup', function(){
+            var x = $('#vehicleNoTxt').val();
+            x = x.toUpperCase();
+            $('#vehicleNoTxt').val(x);
+        });
+
         $('#vehiclePlateNo1').on('change', function(){
-            var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
+            //var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
         
             //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                $('#grossIncoming').val(parseFloat(tare).toFixed(0));
-                $('#grossIncoming').trigger('keyup');
+                //$('#grossIncoming').val(parseFloat(tare).toFixed(0));
+                //$('#grossIncoming').trigger('keyup');
             /*}
             else{
                 $('#tareOutgoing').val(parseFloat(tare).toFixed(0));
@@ -1942,11 +1970,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
 
         $('#vehiclePlateNo2').on('change', function(){
-            var tare = $('#vehiclePlateNo2 :selected').data('weight') ? parseFloat($('#vehiclePlateNo2 :selected').data('weight')) : 0;
+            //var tare = $('#vehiclePlateNo2 :selected').data('weight') ? parseFloat($('#vehiclePlateNo2 :selected').data('weight')) : 0;
         
             //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                $('#grossIncoming2').val(parseFloat(tare).toFixed(0));
-                $('#grossIncoming2').trigger('keyup');
+                //$('#grossIncoming2').val(parseFloat(tare).toFixed(0));
+                //$('#grossIncoming2').trigger('keyup');
             /*}
             else{
                 $('#tareOutgoing2').val(parseFloat(tare).toFixed(0));
@@ -1967,6 +1995,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#vehicleNoTxt2').val('');
                 $('.index-vehicle2').show();
             }
+        });
+
+        $('#vehicleNoTxt2').on('keyup', function(){
+            var x = $('#vehicleNoTxt2').val();
+            x = x.toUpperCase();
+            $('#vehicleNoTxt2').val(x);
         });
 
         $('.radio-manual-weight').on('click', function(){
@@ -2529,10 +2563,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 }, 500);
             }
             else if(obj.status === 'failed'){
-                toastr["error"](obj.message, "Failed:");
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
             }
             else{
-                toastr["error"]("Something wrong when activate", "Failed:");
+                $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                $("#failBtn").click();
             }
         });
     }
