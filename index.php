@@ -468,13 +468,24 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             </div>  
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="weightType" name="weightType" class="form-select">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
+                                                                                        </select>   
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="customerType" class="col-sm-4 col-form-label">Customer Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select id="customerType" name="customerType" class="form-select">
+                                                                                            <option>Cash</option>
+                                                                                            <option selected>Normal</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -538,6 +549,17 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
@@ -595,7 +617,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
                                                                                 <div class="row">
                                                                                     <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
                                                                                     <div class="col-sm-8">
@@ -629,7 +651,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
                                                                                 <div class="row">
                                                                                     <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
                                                                                     <div class="col-sm-8">
@@ -668,7 +690,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
                                                                                 <div class="row">
                                                                                     <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
                                                                                     <div class="col-sm-8">
@@ -736,7 +758,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="plant" name="plant" required>
                                                                                             <option selected="-">-</option>
@@ -777,7 +799,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="siteName" class="col-sm-4 col-form-label">Project *</label>
+                                                                                    <label for="siteName" class="col-sm-4 col-form-label">Project</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="siteName" name="siteName" required>
                                                                                             <option selected="-">-</option>
@@ -793,10 +815,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance *</label>
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
+                                                                                    <span class="col-sm-4"></span>
+                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
                                                                                 </div>
                                                                             </div>                            
                                                                         </div>
@@ -1846,6 +1872,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
+            $('#addModal').find('#customerType').val("Normal").trigger('change');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
             $('#addModal').find('#vehiclePlateNo1').val("");
             $('#addModal').find('#vehiclePlateNo2').val("");
@@ -1903,6 +1930,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#productLow').val("");
             $('#addModal').find('#productVariance').val("");
             $('#addModal').find('#orderWeight').val("0");
+            $('#addModal').find('#unitPrice').val("0.00");
             $('#addModal').find('#subTotalPrice').val("0.00");
             $('#addModal').find('#sstPrice').val("0.00");
             $('#addModal').find('#productPrice').val("0.00");
@@ -1910,6 +1938,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#finalWeight').val("");
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
             $('#addModal').find('#noOfDrum').val("");
+            $('#addModal').find('#balance').val("");
+            $('#addModal').find('#insufficientBalDisplay').hide();
 
             $('#addModal').modal('show');
             
@@ -1936,6 +1966,32 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             else
             {
                 $('#containerCard').hide();
+            }
+        });
+
+        $('#customerType').on('change', function(){
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+
+            if (transactionStatus == 'Purchase'){
+                $('#unitPriceDisplay').hide();
+                $('#subTotalPriceDisplay').hide();
+                $('#sstDisplay').hide();
+                $('#totalPriceDisplay').hide();
+            }else{
+                if($(this).val() == "Cash")
+                {
+                    $('#unitPriceDisplay').show();
+                    $('#subTotalPriceDisplay').show();
+                    $('#sstDisplay').show();
+                    $('#totalPriceDisplay').show();
+                }
+                else
+                {
+                    $('#unitPriceDisplay').hide();
+                    $('#subTotalPriceDisplay').hide();
+                    $('#sstDisplay').hide();
+                    $('#totalPriceDisplay').hide();
+                }
             }
         });
 
@@ -2109,6 +2165,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
 
             if (previousRecordsTag == 'false'){
                 $('#addModal').find('#balance').val($(this).val());
+                if ($(this).val() <= 0) {
+                    $('#addModal').find('#insufficientBalDisplay').hide();
+                } else {
+                    $('#addModal').find('#insufficientBalDisplay').show();
+                }
             }
         });
 
@@ -2122,6 +2183,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
 
             if (previousRecordsTag == 'false'){
                 $('#addModal').find('#balance').val($(this).val());
+                if ($(this).val() <= 0) {
+                    $('#addModal').find('#insufficientBalDisplay').hide();
+                } else {
+                    $('#addModal').find('#insufficientBalDisplay').show();
+                }
             }
         });
 
@@ -2169,7 +2235,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var price = $('#productPrice').val() ? parseFloat($('#productPrice').val()).toFixed(2) : 0.00;
             var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
             var subTotalPrice = price * weight;
-            var sstPrice = subTotalPrice * 0.06;
+            var sstPrice = subTotalPrice * 0.08;
             var totalPrice = subTotalPrice + sstPrice;
             $('#subTotalPrice').val(subTotalPrice.toFixed(2));
             $('#sstPrice').val(sstPrice.toFixed(2));
@@ -2177,6 +2243,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
 
         $('#transactionStatus').on('change', function(){
+            var customerType = $('#addModal').find('#customerType').val();
+
             if($(this).val() == "Purchase" || $(this).val() == "Local"){
                 $('#divWeightDifference').show();
                 $('#divSupplierWeight').show();
@@ -2192,10 +2260,27 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 if ($(this).val() == "Purchase"){
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
                     $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
-
+                    
+                    // Hide Pricing Fields
+                    $('#unitPriceDisplay').hide();
+                    $('#subTotalPriceDisplay').hide();
+                    $('#sstDisplay').hide();
+                    $('#totalPriceDisplay').hide();
                 }else{
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                     $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                    if (customerType == 'Cash'){
+                        $('#unitPriceDisplay').show();
+                        $('#subTotalPriceDisplay').show();
+                        $('#sstDisplay').show();
+                        $('#totalPriceDisplay').show();
+                    }else{
+                        $('#unitPriceDisplay').hide();
+                        $('#subTotalPriceDisplay').hide();
+                        $('#sstDisplay').hide();
+                        $('#totalPriceDisplay').hide();
+                    }
                 }
             }
             else{
@@ -2211,6 +2296,18 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                 $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
                 $('#doDisplay').hide();
+
+                if (customerType == 'Cash'){
+                    $('#unitPriceDisplay').show();
+                    $('#subTotalPriceDisplay').show();
+                    $('#sstDisplay').show();
+                    $('#totalPriceDisplay').show();
+                }else{
+                    $('#unitPriceDisplay').hide();
+                    $('#subTotalPriceDisplay').hide();
+                    $('#sstDisplay').hide();
+                    $('#totalPriceDisplay').hide();
+                }
             }
         });
 
@@ -2226,8 +2323,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var price = $('#productPrice').val() ? parseFloat($('#productPrice').val()).toFixed(2) : 0.00;
             var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
             var subTotalPrice = price * weight;
-            var sstPrice = subTotalPrice * 0.06;
+            var sstPrice = subTotalPrice * 0.08;
             var totalPrice = subTotalPrice + sstPrice;
+
+            $('#unitPrice').val(price);
             $('#subTotalPrice').val(subTotalPrice.toFixed(2));
             $('#sstPrice').val(sstPrice.toFixed(2));
             $('#totalPrice').val(totalPrice.toFixed(2));
@@ -2316,6 +2415,13 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         }else{
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight);
                         }
+
+                        // Hide or show insufficient balance
+                        if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
+                            $('#addModal').find('#insufficientBalDisplay').hide();
+                        } else {
+                            $('#addModal').find('#insufficientBalDisplay').show();
+                        }
                     }else{
                         var weight = 0;
                         if (type == 'Purchase'){
@@ -2325,6 +2431,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         }
 
                         $('#addModal').find('#balance').val(weight);
+                        // Hide or show insufficient balance
+                        if (weight <= 0) {
+                            $('#addModal').find('#insufficientBalDisplay').hide();
+                        } else {
+                            $('#addModal').find('#insufficientBalDisplay').show();
+                        }
                     }
                 }
                 else if(obj.status === 'failed'){
@@ -2364,6 +2476,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#customerType').val(obj.message.customer_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
@@ -2471,8 +2584,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
                 $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
-                $('#addModal').find('#subTotalPrice').val(obj.message.product_description);
-                $('#addModal').find('#sstPrice').val(obj.message.product_description);
+                $('#addModal').find('#unitPrice').val(obj.message.unit_price);
+                $('#addModal').find('#subTotalPrice').val(obj.message.sub_total);
+                $('#addModal').find('#sstPrice').val(obj.message.sst);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
 
