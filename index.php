@@ -1967,6 +1967,28 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#tareOutgoing').val(parseFloat(tare).toFixed(0));
                 $('#tareOutgoing').trigger('keyup');
             }*/
+
+            var vehicleNo1 = $(this).val();
+            $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var transporterName = obj.message.transporter_name;
+                    var transporterCode = obj.message.transporter_code;
+
+                    $('#addModal').find('#transporter').val(transporterName);
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
         });
 
         $('#vehiclePlateNo2').on('change', function(){
@@ -2366,7 +2388,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#vehicleNoTxt').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                     $('#manualVehicle').val(0);
                     $('#manualVehicle').prop("checked", false);
                     $('.index-vehicle').show();
