@@ -516,7 +516,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice" id="customerName" name="customerName">
+                                                                                        <select class="form-select js-choice" id="customerName" name="customerName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
                                                                                                 <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
@@ -529,7 +529,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="supplierName" name="supplierName">
+                                                                                        <select class="form-select" id="supplierName" name="supplierName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                 <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
@@ -566,7 +566,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row" id="productNameDisplay">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="productName" name="productName" >
+                                                                                        <select class="form-select" id="productName" name="productName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
                                                                                                 <option 
@@ -586,7 +586,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row" id="rawMaterialDisplay" style="display:none;">
                                                                                     <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="rawMaterialName" name="rawMaterialName" >
+                                                                                        <select class="form-select" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
                                                                                                 <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
@@ -620,7 +620,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="transporter" name="transporter" >
+                                                                                        <select class="form-select" id="transporter" name="transporter" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
                                                                                                 <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
@@ -659,7 +659,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="destination" name="destination">
+                                                                                        <select class="form-select" id="destination" name="destination" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
                                                                                                 <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
@@ -788,6 +788,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            
+                                                                        </div>
+                                                                        <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="balance" class="col-sm-4 col-form-label">Balance *</label>
@@ -795,7 +798,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                         <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div>                            
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1859,6 +1862,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#rawMaterialName').val("");
             $('#addModal').find('#siteCode').val("");
             $('#addModal').find('#siteName').val("");
+            $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
