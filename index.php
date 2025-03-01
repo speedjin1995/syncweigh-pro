@@ -644,9 +644,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
+                                                                                    <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
+                                                                                        <select class="form-select" id="agent" name="agent" >
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
+                                                                                                <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                         
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -731,19 +736,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select" id="agent" name="agent" >
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
-                                                                                                <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                         
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="plant" name="plant" required>
@@ -752,6 +744,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                                 <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -2183,15 +2183,15 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').hide();
                 $('#rawMaterialDisplay').show();
                 $('#productNameDisplay').hide();
+                $('#doDisplay').show();
 
                 if ($(this).val() == "Purchase"){
-                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
-                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
-
-                }else{
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
                     $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
 
+                }else{
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
                 }
             }
             else{
@@ -2204,8 +2204,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').show();
                 $('#rawMaterialDisplay').hide();
                 $('#productNameDisplay').show();
-                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
-                $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                $('#doDisplay').hide();
             }
         });
 

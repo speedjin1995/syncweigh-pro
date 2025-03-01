@@ -226,10 +226,15 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $invoiceNo = trim($_POST["invoiceNo"]);
     }
 
-    if (empty($_POST["deliveryNo"])) {
-        $deliveryNo = null;
-    } else {
-        $deliveryNo = trim($_POST["deliveryNo"]);
+
+    if ($transactionStatus == 'Sales'){
+        $deliveryNo = $transactionId;
+    }else{
+        if (empty($_POST["deliveryNo"])) {
+            $deliveryNo = null;
+        } else {
+            $deliveryNo = trim($_POST["deliveryNo"]);
+        }
     }
 
     if (empty($_POST["purchaseOrder"])) {
