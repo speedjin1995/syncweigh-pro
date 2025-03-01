@@ -49,7 +49,7 @@ order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = $_SESSION["plant"];
-  $empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Plant.name from Users, roles, Plant WHERE 
+  $empQuery = "select Users.name AS empname, Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Plant.name from Users, roles, Plant WHERE 
   Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN' AND Users.plant_id = Plant.id AND Users.plant_id='$username'".$searchQuery." 
   order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
@@ -62,6 +62,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "id"=>$row['id'],
       "employee_code"=>$row['employee_code'],
       "username"=>$row['username'],
+      "name"=>$row['empname'] ?? '',
       "useremail"=>$row['useremail'],
       "role"=>$row['role_name'],
       "plant"=>$row['name']

@@ -133,3 +133,5 @@ ALTER TABLE `Vehicle_Log` ADD `transporter_code` VARCHAR(50) NULL AFTER `vehicle
 ALTER TABLE `Weight` ADD `unit_price` VARCHAR(10) NULL AFTER `indicator_id_2`;
 
 ALTER TABLE `Weight` ADD `customer_type` VARCHAR(100) NULL AFTER `weight_type`;
+
+ALTER TABLE `Users` ADD `name` VARCHAR(255) NULL AFTER `username`;

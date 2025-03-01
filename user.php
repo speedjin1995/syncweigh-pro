@@ -72,8 +72,8 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <div class="col-10">
                                                     <h5 class="card-title mb-0">User Records</h5>
                                                 </div>
-                                                <div class="col-2">
-                                                    <button type="button" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-add-circle-line align-middle me-1"></i>Add New User</button>              
+                                                <div class="col-2 d-flex justify-content-end">
+                                                    <button type="button" id="addMembers" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-add-circle-line align-middle me-1"></i>Add New User</button>              
                                                 </div>
                                             </div>
                                         </div>
@@ -82,7 +82,8 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <thead>
                                                     <tr>
                                                         <th>Employee Code</th>
-                                                        <th>User Name</th>
+                                                        <th>Username</th>
+                                                        <th>Name</th>
                                                         <th>Email</th>
                                                         <th>Role</th>
                                                         <th>Plant Name</th>
@@ -132,9 +133,17 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             </div>
                                             <div class="col-12">
                                                 <div class="row">
-                                                <label for="username" class="col-sm-4 col-form-label">User Name *</label>
+                                                <label for="username" class="col-sm-4 col-form-label">Username *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="username" name="username" placeholder="User Name" required>
+                                                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                <label for="name" class="col-sm-4 col-form-label">User Name *</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="name" name="name" placeholder="User Name" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -234,6 +243,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             'columns': [
                 { data: 'employee_code' },
                 { data: 'username' },
+                { data: 'name' },
                 { data: 'useremail' },
                 { data: 'role' },
                 { data: 'plant' },
@@ -280,9 +290,11 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
         $('#addMembers').on('click', function(){
             $('#addModal').find('#id').val("");
+            $('#addModal').find('#employeeCode').val("");
             $('#addModal').find('#username').val("");
             $('#addModal').find('#name').val("");
-            $('#addModal').find('#userRole').val("");
+            $('#addModal').find('#useremail').val("");
+            $('#addModal').find('#roles').val("");
             $('#addModal').find('#plantId').val("");
             $('#addModal').modal('show');
             
@@ -311,6 +323,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#employeeCode').val(obj.message.employee_code);
                 $('#addModal').find('#username').val(obj.message.username);
+                $('#addModal').find('#name').val(obj.message.name);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
                 $('#addModal').find('#plantId').val(obj.message.plant);

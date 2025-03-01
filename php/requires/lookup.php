@@ -460,4 +460,20 @@ function searchFilePathById($value, $db) {
 
     return $id;
 }
+
+function searchNamebyId($value, $db) {
+    $id = null;
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Users WHERE username=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $id = $row['name'];
+        }
+        $select_stmt->close();
+    }
+
+    return $id;
+}
 ?>
