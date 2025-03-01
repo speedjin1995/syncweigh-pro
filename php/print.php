@@ -37,6 +37,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $transportName = $row['transporter'];
                 $destinationCode = $row['destination_code'];
                 $destinationName = $row['destination'];
+                $projectCode = $row['site_code'];
+                $projectName = $row['site_name'];
                 $loadingChitNo = $row['transaction_id'];
                 $deliverOrderNo = $row['delivery_no'];
                 $lorryNo = $row['lorry_plate_no1'];
@@ -222,7 +224,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2" width="75%" style="border: 1px solid black;">
                                                         <div class="row" style="margin-left: 5px">
                                                             <div class="col-12 mt-2" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;"></div>
+                                                            <div class="col-12" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
                                                             <div class="col-12" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
                                                             <div class="col-12" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
                                                             <div class="col-12" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>

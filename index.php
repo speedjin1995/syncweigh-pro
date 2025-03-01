@@ -777,7 +777,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="siteName" class="col-sm-4 col-form-label">Site *</label>
+                                                                                    <label for="siteName" class="col-sm-4 col-form-label">Project *</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="siteName" name="siteName" required>
                                                                                             <option selected="-">-</option>
