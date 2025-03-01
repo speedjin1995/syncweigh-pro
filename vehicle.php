@@ -1,6 +1,12 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    require_once "php/db_connect.php";
+
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -137,7 +143,23 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control" id="transporter" name="transporter">
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
+                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
+                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <input type="hidden" class="form-control" id="id" name="id">
+                                                                            <input type="hidden" id="transporterCode" name="transporterCode">
+                                                                                                                                                         
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -186,6 +208,7 @@
                                                                 <tr>
                                                                     <th>Vehicle No</th>
                                                                     <th>Vehicle Weight</th>
+                                                                    <th>Transporter</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -261,6 +284,7 @@ $(function () {
         'columns': [
             { data: 'veh_number' },
             { data: 'vehicle_weight' },
+            { data: 'transporter_name' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -308,6 +332,8 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#vehicleNo').val("");
         $('#addModal').find('#vehicleWeight').val("");
+        $('#addModal').find('#transporter').val("");
+        $('#addModal').find('#transporterCode').val("");
         $('#addModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -330,6 +356,11 @@ $(function () {
         x = x.toUpperCase();
         $('#addModal').find('#vehicleNo').val(x);
     });
+
+    //transporter
+    $('#transporter').on('change', function(){
+        $('#transporterCode').val($('#transporter :selected').data('code'));
+    });
 });
 
     function edit(id){
@@ -341,6 +372,8 @@ $(function () {
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#vehicleNo').val(obj.message.veh_number);
                 $('#addModal').find('#vehicleWeight').val(obj.message.vehicle_weight);
+                $('#addModal').find('#transporter').val(obj.message.transporter_name);
+                $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
