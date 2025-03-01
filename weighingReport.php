@@ -321,6 +321,54 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     </div>
     <!-- END layout-wrapper -->
+    
+    <div class="modal fade" id="exportPdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Weighing Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="exportPdfForm" class="needs-validation" novalidate autocomplete="off">
+                        <div class="row col-12">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <input type="hidden" class="form-control" id="id" name="id"> 
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="reportType" class="col-sm-4 col-form-label">Report Type *</label>
+                                                    <div class="col-sm-8">
+                                                        <select id="reportType" name="reportType" class="form-select" required>
+                                                            <option value="CUSTOMER">Customer Report</option>
+                                                            <option value="SUMMARY">Summary Report</option>
+                                                            <option value="PRODUCT">Product Report</option>
+                                                            <option value="S&P">Sales and Purchase Report</option>
+                                                        </select>   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                                                      
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-12">
+                            <div class="hstack gap-2 justify-content-end">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
+                            </div>
+                        </div><!--end col-->                                                               
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 
     <?php include 'layouts/customizer.php'; ?>
     <?php include 'layouts/vendor-scripts.php'; ?>
@@ -491,45 +539,67 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             });
         });
 
+        $('#submit').on('click', function(){
+            if($('#exportPdfForm').valid()){
+                $('#spinnerLoading').show();
+                // var fromDateI = $('#fromDateSearch').val();
+                // var toDateI = $('#toDateSearch').val();
+                // var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+                // var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+                // var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+                // var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+                // var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+
+                // $.post('php/exportPdf.php', {
+                //     file: 'weight',
+                //     fromDate: fromDateI,
+                //     toDate: toDateI,
+                //     status: statusI,
+                //     customer: customerNoI,
+                //     vehicle: vehicleNoI,
+                //     weighingType: invoiceNoI,
+                //     product: transactionStatusI
+                // }, function(response){
+                //     var obj = JSON.parse(response);
+
+                //     if(obj.status === 'success'){
+                //         var printWindow = window.open('', '', 'height=400,width=800');
+                //         printWindow.document.write(obj.message);
+                //         printWindow.document.close();
+                //         setTimeout(function(){
+                //             printWindow.print();
+                //             printWindow.close();
+                //         }, 500);
+                //     }
+                //     else if(obj.status === 'failed'){
+                //         toastr["error"](obj.message, "Failed:");
+                //     }
+                //     else{
+                //         toastr["error"]("Something wrong when activate", "Failed:");
+                //     }
+                // }).fail(function(error){
+                //     console.error("Error exporting PDF:", error);
+                //     alert("An error occurred while generating the PDF.");
+                // });
+            }
+        });
+
         $('#exportPdf').on('click', function(){
-            var fromDateI = $('#fromDateSearch').val();
-            var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            $("#exportPdfModal").find('#reportType').val('');
+            $("#exportPdfModal").modal("show");
 
-            $.post('php/exportPdf.php', {
-                file: 'weight',
-                fromDate: fromDateI,
-                toDate: toDateI,
-                status: statusI,
-                customer: customerNoI,
-                vehicle: vehicleNoI,
-                weighingType: invoiceNoI,
-                product: transactionStatusI
-            }, function(response){
-                var obj = JSON.parse(response);
-
-                if(obj.status === 'success'){
-                    var printWindow = window.open('', '', 'height=400,width=800');
-                    printWindow.document.write(obj.message);
-                    printWindow.document.close();
-                    setTimeout(function(){
-                        printWindow.print();
-                        printWindow.close();
-                    }, 500);
+            $('#exportPdfForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
                 }
-                else if(obj.status === 'failed'){
-                    toastr["error"](obj.message, "Failed:");
-                }
-                else{
-                    toastr["error"]("Something wrong when activate", "Failed:");
-                }
-            }).fail(function(error){
-                console.error("Error exporting PDF:", error);
-                alert("An error occurred while generating the PDF.");
             });
         });
 
