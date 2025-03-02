@@ -463,6 +463,24 @@ function searchPlantNameById($value, $db) {
     return $id;
 }
 
+function searchProjectByCode($value, $db) {
+    $id = '0';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Site WHERE site_code=?")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['name'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
 function searchFilePathById($value, $db) {
     $id = null;
 

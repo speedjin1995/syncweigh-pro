@@ -124,11 +124,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
 
 <?php include 'layouts/body.php'; ?>
 
-<!-- <div class="loading" id="spinnerLoading" style="display:none">
+<div class="loading" id="spinnerLoading" style="display:none">
   <div class='mdi mdi-loading' style='transform:scale(0.79);'>
     <div></div>
   </div>
-</div> -->
+</div>
 
 <!-- Begin page -->
 <div id="layout-wrapper">
@@ -1107,7 +1107,29 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                         </div>
                                     </div>
 
-                                    <div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
+                                    <div class="modal fade" id="uploadModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Upload Excel File</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="file" id="fileInput">
+                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitWeights">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                                             <div class="modal-content">
                                                 <form role="form" id="uploadForm" class="needs-validation" novalidate autocomplete="off">
@@ -1119,9 +1141,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                         <input type="file" id="fileInput">
                                                         <button type="button" id="previewButton">Preview Data</button>
                                                         <div id="previewTable" style="overflow: auto;"></div>
-                                                    </div> <!-- Closing modal-body properly here -->
+                                                    </div> 
 
-                                                    <!-- Footer inside modal-content, not inside modal-body -->
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                                         <button type="button" class="btn btn-danger" id="saveButton">Submit</button>
@@ -1129,7 +1150,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div-->
                                 </div>
                             </div> <!-- end row-->
 
@@ -1147,7 +1168,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <a href="/template/Reseller_Template.xlsx" download>
-                                                                    <button type="button" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal">
+                                                                    <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                         Download Template 
                                                                     </button>
@@ -1460,6 +1481,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
 
             pass = true;
+            debugger;
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -1595,6 +1617,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
 
             pass = true;
+            debugger;
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -1779,6 +1802,53 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 });
             }
+        });
+
+        $('#submitWeights').on('click', function(){
+            $('#spinnerLoading').show();
+            var formData = $('#uploadForm').serializeArray();
+            var data = [];
+            var rowIndex = -1;
+            formData.forEach(function(field) {
+            var match = field.name.match(/([a-zA-Z0-9]+)\[(\d+)\]/);
+            if (match) {
+                var fieldName = match[1];
+                var index = parseInt(match[2], 10);
+                if (index !== rowIndex) {
+                rowIndex = index;
+                data.push({});
+                }
+                data[index][fieldName] = field.value;
+            }
+            });
+
+            // Send the JSON array to the server
+            $.ajax({
+                url: 'php/uploadWeights.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    var obj = JSON.parse(response);
+                    if (obj.status === 'success') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                        $('#customerTable').DataTable().ajax.reload(null, false);
+                    } 
+                    else if (obj.status === 'failed') {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    } 
+                    else {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                }
+            });
         });
 
         $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
@@ -2010,17 +2080,17 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#uploadModal').modal('show');
 
             $('#uploadForm').validate({
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
             });
         });
 
@@ -2030,9 +2100,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var reader = new FileReader();
             
             reader.onload = function(e) {
-            var data = e.target.result;
-            // Process data and display preview
-            displayPreview(data);
+                var data = e.target.result;
+                // Process data and display preview
+                displayPreview(data);
             };
 
             reader.readAsBinaryString(file);
@@ -2561,7 +2631,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         var headers = jsonData[0];
 
         // Ensure we handle cases where there may be less than 15 columns
-        while (headers.length < 15) {
+        while (headers.length < 18) {
             headers.push(''); // Adding empty headers to reach 15 columns
         }
 
@@ -2578,11 +2648,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var rowData = jsonData[i];
 
             // Ensure we handle cases where there may be less than 15 cells in a row
-            while (rowData.length < 15) {
+            while (rowData.length < 18) {
                 rowData.push(''); // Adding empty cells to reach 15 columns
             }
 
-            for (var j = 0; j < 15; j++) {
+            for (var j = 0; j < 18; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 
@@ -2729,12 +2799,13 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
 
+                debugger;
                 if (obj.message.load_drum == 'LOAD'){
                     $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
                 }else{
                     $('#addModal').find("input[name='loadDrum'][value='false']").prop("checked", true).trigger('change');
                 }
-
+                
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
 
                 $('#addModal').modal('show');

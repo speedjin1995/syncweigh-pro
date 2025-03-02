@@ -56,6 +56,12 @@ if (isset($_POST['supplierCode'])) {
         $addressLine3 = trim($_POST["addressLine3"]);
     }
 
+    if (empty($_POST["addressLine4"])) {
+        $addressLine4 = null;
+    } else {
+        $addressLine4 = trim($_POST["addressLine4"]);
+    }
+
     if (empty($_POST["phoneNo"])) {
         $phoneNo = null;
     } else {
@@ -72,9 +78,9 @@ if (isset($_POST['supplierCode'])) {
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Supplier SET supplier_code=?, company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Supplier SET supplier_code=?, company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, address_line_4=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssss', $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $username, $username, $supplierId);
+            $update_stmt->bind_param('ssssssssssss', $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $addressLine4, $phoneNo, $faxNo, $username, $username, $supplierId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -86,27 +92,13 @@ if (isset($_POST['supplierCode'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Supplier_Log (supplier_id, supplier_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssss', $supplierId, $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Supplier_Log (supplier_id, supplier_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, address_line_4, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssss', $supplierId, $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $addressLine4, $phoneNo, $faxNo, $action, $username);
         
                     // Execute the prepared query.
-                    if (! $insert_stmt->execute()) {
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "failed", 
-                        //         "message"=> $insert_stmt->error
-                        //     )
-                        // );
-                    }
+                    if (! $insert_stmt->execute()) {}
                     else{
                         $insert_stmt->close();
-                        
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "success", 
-                        //         "message"=> "Added Successfully!!" 
-                        //     )
-                        // );
                     }
 
                     $update_stmt->close();
@@ -125,8 +117,8 @@ if (isset($_POST['supplierCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Supplier (supplier_code , company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssss', $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Supplier (supplier_code , company_reg_no, name, address_line_1, address_line_2, address_line_3, address_line_4, phone_no, fax_no, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssss', $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $addressLine4, $phoneNo, $faxNo, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -149,26 +141,13 @@ if (isset($_POST['supplierCode'])) {
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Supplier_Log (supplier_id, supplier_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssssssssss', $totalRecords, $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Supplier_Log (supplier_id, supplier_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, address_line_4, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('ssssssssssss', $totalRecords, $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $addressLine4, $phoneNo, $faxNo, $action, $username);
         
                     // Execute the prepared query.
-                    if (! $insert_log->execute()) {
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "failed", 
-                        //         "message"=> $insert_stmt->error
-                        //     )
-                        // );
-                    }
+                    if (! $insert_log->execute()) {}
                     else{
                         $insert_log->close();
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "success", 
-                        //         "message"=> "Added Successfully!!" 
-                        //     )
-                        // );
                     }
                 }
 

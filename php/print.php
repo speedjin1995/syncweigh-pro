@@ -57,7 +57,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $weightBy = searchNamebyId($row['created_by'], $db);
                 $createDate = new DateTime($row['created_date']);
                 $formattedCreateDate = $createDate->format('d-m-Y');
-                $transDate = new DateTime(row['transaction_date']);
+                $transDate = new DateTime($row['transaction_date']);
                 $transDateOnly = $transDate->format('d-m-Y');
                 //$transDateOnly = date('Y-m-d', strtotime($transDate));
                 $remarks = $row['remarks'];

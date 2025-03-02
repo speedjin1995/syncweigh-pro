@@ -183,19 +183,21 @@ if (isset($_POST['productCode'])) {
                 $productId = $insert_stmt->insert_id;
 
                 # Product_RawMat 
-                $no = $_POST['no'];
-                $rawMats =  $_POST['rawMats'];
-                $rawMatWeight = $_POST['rawMatWeight'];
-
-                if(isset($no) && $no != null && count($no) > 0){
-                    for ($i=1; $i <= count($no); $i++) { 
-                        if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
-                            $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
-                            $product_stmt->execute();
+                if(isset($_POST['no'])){
+                    $no = $_POST['no'];
+                    $rawMats =  $_POST['rawMats'];
+                    $rawMatWeight = $_POST['rawMatWeight'];
+    
+                    if(isset($no) && $no != null && count($no) > 0){
+                        for ($i=1; $i <= count($no); $i++) { 
+                            if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
+                                $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
+                                $product_stmt->execute();
+                            }
                         }
+    
+                        $product_stmt->close();
                     }
-
-                    $product_stmt->close();
                 }
 
                 echo json_encode(
