@@ -233,7 +233,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                             <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
                                                             <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
                                                             <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
-                                                            <div class="col-12" style="height: 25px;"></div>
+                                                            <div class="col-12" style="height: 15px;"></div>
                                                             <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
                                                         </div>
                                                     </td>
@@ -269,29 +269,29 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="3" style="border:0;padding-top:45px;">
+                                                    <td colspan="3" style="border:0;padding-top:15px;">
                                                         <span style="font-size: 12px">REMARK: '.$remarks.'</span>  
                                                     </td>
                                                 </tr>
                                             </tbody>                
                                         </table>
                                     </div>
-                                    <div class="col-5">
+                                    <div class="col-4">
                                         <table class="table">
                                             <tbody style="font-size: 11px">
                                                 <tr style="border: 1px solid black;">
                                                     <td colspan="2">
                                                         <div class="row" >
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 14px;"><b>Date</b></span><span style="margin-left: 78px"><b>:</b></span>
+                                                                <span style="font-size: 13px;"><b>Date</b></span><span style="margin-left: 78px"><b>:</b></span>
                                                                 <span style="margin-left: 10px;font-size: 14px;">'.$transDateOnly.'</span>
                                                             </div>
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 14px;"><b>Loading Chit No</b></span><span style="margin-left: 29px"><b>:</b></span>
+                                                                <span style="font-size: 13px;"><b>Loading Chit No</b></span><span style="margin-left: 29px"><b>:</b></span>
                                                                 <span style="margin-left: 10px;font-size: 14px;">'.$loadingChitNo.'</span>
                                                             </div>
                                                             <div class="col-12">
-                                                                <span style="font-size: 14px;"><b>Delivery Order No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                <span style="font-size: 13px;"><b>Delivery Order No</b></span><span style="margin-left: 20px"><b>:</b></span>
                                                                 <span style="margin-left: 10px;font-size: 14px;">'.$deliverOrderNo.' ('.$exDel.')</span>
                                                             </div>
                                                         </div>
@@ -301,11 +301,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2">
                                                         <div class="row">
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 14px;"><b>Lorry No</b></span><span style="margin-left: 22px"><b>:</b></span>
+                                                                <span style="font-size: 13px;"><b>Lorry No</b></span><span style="margin-left: 22px"><b>:</b></span>
                                                                 <span style="margin-left: 10px;font-size: 14px;">'.$lorryNo.'</span>
                                                             </div>
                                                             <div class="col-12">
-                                                                <span style="font-size: 14px;"><b>P/O No</b></span><span style="margin-left: 27px"><b>:</b></span>
+                                                                <span style="font-size: 13px;"><b>P/O No</b></span><span style="margin-left: 27px"><b>:</b></span>
                                                                 <span style="margin-left: 10px;font-size: 14px;">'.$poNo.'</span>
                                                             </div>
                                                         </div>
@@ -317,16 +317,16 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                 </tr>
                                                 <tr style="border: 1px solid black; height: 70px;">
                                                     <td style="border: 1px solid black; text-align: center;" width="50%">
-                                                        <span style="font-size: 14px;">'.$formattedGrossWeightDate.'</span>
+                                                        <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
                                                         <br>
-                                                        <span style="font-size: 14px;">'.$formattedTareWeightDate.'</span>
+                                                        <span style="font-size: 13px;">'.$formattedTareWeightDate.'</span>
                                                     </td>
                                                     <td style="border: 1px solid black; text-align: center;" width="50%">
-                                                        <span style="font-size: 14px;">'.$grossWeight.'</span>
+                                                        <span style="font-size: 13px;">'.$grossWeight.'</span>
                                                         <br>
-                                                        <span style="font-size: 14px;">'.$tareWeight.'</span>
+                                                        <span style="font-size: 13px;">'.$tareWeight.'</span>
                                                         <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
-                                                        <div style="margin-top: -10px;font-size: 14px;">'.$nettWeight.'</div>
+                                                        <div style="margin-top: -10px;font-size: 13px;">'.$nettWeight.'</div>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -343,7 +343,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2" style="border: 0px solid black; text-align: right; padding-top:39px;">
                                                         <div class="row">
                                                             <div class="col-12">
-                                                                <span><b style="font-size: 15px">No : '.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</b><b style="font-size: 25px; color: red;"></b></span>
+                                                                <span><b style="font-size: 15px">No : '.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</b><b style="font-size: 20px; color: red;"></b></span>
                                                             </div>
                                                         </div>
                                                     </td>

@@ -336,7 +336,6 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>No</th>
                                                                     <th>Transaction Id</th>
                                                                     <th>Status</th>
                                                                     <th>Customer/ <br> Supplier</th>
@@ -521,7 +520,6 @@ else{
                 } 
             },
             'columns': [
-                { data: 'id' },
                 { data: 'transaction_id' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
@@ -590,7 +588,6 @@ else{
                     } 
                 },
                 'columns': [
-                    { data: 'id' },
                     { data: 'transaction_id' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
