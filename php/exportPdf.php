@@ -12,6 +12,7 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $date = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
     $formatted_date = $date->format('Y-m-d 00:00:00');
+    $fromDate = $date->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
@@ -24,6 +25,7 @@ if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate']
 if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''){
     $date = DateTime::createFromFormat('d-m-Y', $_POST['toDate']);
     $formatted_date = $date->format('Y-m-d 23:59:59');
+    $toDate = $date->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
@@ -151,7 +153,7 @@ if(isset($_POST["file"])){
                                 </div>
                                 <div class="row">
                                     <p>
-                                        Start Date : 01/02/2025 Last Date : 28/02/2025
+                                        Start Date : '.$fromDate.' Last Date : '.$toDate.'
                                         <br>
                                         Start/Last Company : ERMSB / ERMSB
                                     </p>
