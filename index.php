@@ -714,7 +714,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3"  <?php 
-                                                                                if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+                                                                                if($_SESSION["roles"] != 'SADMIN'){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -1135,9 +1135,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <tr>
                                                                     <th>Transaction <br>Id</th>
                                                                     <th>Weight <br> Status</th>
-                                                                    <th>Weight <br> Type</th>
+                                                                    <th>Customer/ <br> Supplier</th>
                                                                     <th>Vehicle</th>
                                                                     <th>Product</th>
+                                                                    <th>SO/PO</th>
+                                                                    <th>DO</th>
                                                                     <th>Gross <br>Incoming</th>
                                                                     <th>Incoming <br>Date</th>
                                                                     <th>Tare <br>Outgoing</th>
@@ -1278,7 +1280,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             defaultDate: today
         });
 
-        if (userRole == 'SADMIN' || userRole == 'ADMIN'){
+        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
             $('#plantSearchDisplay').show();
         }else{
             $('#plantSearchDisplay').hide();
@@ -1332,9 +1334,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             'columns': [
                 { data: 'transaction_id' },
                 { data: 'transaction_status' },
-                { data: 'weight_type' },
+                { data: 'customer' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_description' },
+                { data: 'product_name' },
+                { data: 'purchase_order' },
+                { data: 'delivery_no' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
@@ -1355,7 +1359,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                             dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                         }
 
-                        //dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        }
 
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
@@ -1418,6 +1424,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 }
             }
+
+            pass = true;
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -1551,6 +1559,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 }
             }
+
+            pass = true;
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -1829,9 +1839,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 'columns': [
                     { data: 'transaction_id' },
                     { data: 'transaction_status' },
-                    { data: 'weight_type' },
+                    { data: 'customer' },
                     { data: 'lorry_plate_no1' },
-                    { data: 'product_description' },
+                    { data: 'product_name' },
+                    { data: 'purchase_order' },
+                    { data: 'delivery_no' },
                     { data: 'gross_weight1' },
                     { data: 'gross_weight1_date' },
                     { data: 'tare_weight1' },
@@ -1852,7 +1864,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                 dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                             }
 
-                            //dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                                dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            }
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;

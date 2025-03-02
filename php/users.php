@@ -20,7 +20,14 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
     $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
     $param_token = bin2hex(random_bytes(50)); // generate unique token
     $param_role = filter_input(INPUT_POST, 'roles', FILTER_SANITIZE_STRING);
-    $param_plant = isset($_POST["plantId"]) ? trim($_POST["plantId"]) : null;
+
+    $param_plant = array();
+
+    if(isset($_POST['plantId']) && $_POST['plantId'] != null){
+        $param_plant = $_POST['plantId'];
+    }
+
+    $param_plant = json_encode($param_plant);
     $param_created_by = $name;
     $param_modified_by = $name;
 
@@ -56,8 +63,8 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
         $password = '123456';
         $password = hash('sha512', $password . $random_salt);
 
-        if ($insert_stmt = $db->prepare("INSERT INTO Users (employee_code, useremail, username, name, password, token, role, plant_id, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param("sssssssss", $param_code, $param_useremail, $param_username, $param_name, $param_password, $param_token, $param_role, $param_plant, $param_created_by, $param_modified_by);
+        if ($insert_stmt = $db->prepare("INSERT INTO Users (employee_code, useremail, username, name, password, token, role, plant_id, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param("ssssssssss", $param_code, $param_useremail, $param_username, $param_name, $param_password, $param_token, $param_role, $param_plant, $param_created_by, $param_modified_by);
             $action = "1";
 
             // Execute the prepared query.

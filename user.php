@@ -46,6 +46,9 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 
     <?php include 'layouts/head-css.php'; ?>
 
@@ -172,8 +175,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <div class="row">
                                                     <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
                                                     <div class="col-sm-8">
-                                                        <select id="plantId" name="plantId" class="form-select">
-                                                            <option select="selected" value="">Please Select</option>
+                                                        <select id="plantId" name="plantId[]" class="select2" multiple="multiple">
                                                             <?php while(mysqli_stmt_fetch($stmt4)){ ?>
                                                                 <option value="<?=$pcode ?>"><?=$pname ?></option>
                                                             <?php } ?>
@@ -190,7 +192,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger" id="submitMember">Submit</button>
+                                <button type="button" class="btn btn-danger" id="submitMember">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
@@ -228,9 +230,14 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <!-- <script src="assets/js/pages/datatables.init.js"></script> -->
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="plugins/select2/js/select2.full.min.js"></script>
 
     <script>
     $(function () {
+        $('.select2').select2({
+            allowClear: true
+        });
+
         var table = $("#usersTable").DataTable({
             "responsive": true,
             "autoWidth": false,
@@ -295,7 +302,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             $('#addModal').find('#name').val("");
             $('#addModal').find('#useremail').val("");
             $('#addModal').find('#roles').val("");
-            $('#addModal').find('#plantId').val("");
+            $('#addModal').find('#plantId').select2('destroy').val('').select2();
             $('#addModal').modal('show');
             
             $('#memberForm').validate({
@@ -326,7 +333,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#name').val(obj.message.name);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
-                $('#addModal').find('#plantId').val(obj.message.plant);
+                $('#addModal').find("select[name='plant[]']").val(obj.message.plant).trigger('change');
                 $('#addModal').modal('show');
                 
                 $('#memberForm').validate({

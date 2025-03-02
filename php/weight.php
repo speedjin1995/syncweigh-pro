@@ -542,7 +542,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 echo json_encode(
                     array(
                         "status"=> "success", 
-                        "message"=> "Updated Successfully!!" 
+                        "message"=> "Updated Successfully!!",
+                        "id"=>$weightId
                     )
                 );
             }
@@ -604,7 +605,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         echo json_encode(
                             array(
                                 "status"=> "success", 
-                                "message"=> "Added Successfully!!" ,
+                                "message"=> "Added Successfully!!",
                                 "id"=>$id
                             )
                         );
