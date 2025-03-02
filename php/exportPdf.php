@@ -134,114 +134,124 @@ if(isset($_POST["file"])){
                     $totalTransportWeight = 0;
 
                     $message = '
-                        <style>
-                            @page {
-                                size: A4 landscape;
-                                margin: 10mm;
-                            }
-                        </style>
-                        <div class="container-full">
-                            <div class="header">
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
+                        <html>
+                            <head>
+                                <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
+                                <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
+
+                                <style>
+                                    @page {
+                                        size: A4 landscape;
+                                        margin: 10mm;
+                                    }
+                                </style>
+                            </head>
+
+                            <body>
+                                <div class="container-full">
+                                    <div class="header">
+                                        <div class="row">
+                                            <div class="d-flex justify-content-center">
+                                                <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
+                                            </div>
+                                            <div class="d-flex justify-content-center">
+                                                <p>Sales Weighing Summary Report By Date</p>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <p>
+                                                Start Date : '.$fromDate.' Last Date : '.$toDate.'
+                                                <br>
+                                                Start/Last Company : ERMSB / ERMSB
+                                            </p>
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <p>
+                                                Quarry And Prefix Product
+                                                <br>
+                                                Start/Last Customer Type: /IN 
+                                                <br>
+                                                Start/Last Site : BEN/BEN - Weighing Only
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="d-flex justify-content-center">
-                                        <p>Sales Weighing Summary Report By Date</p>
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead style="border-bottom: 1px solid black;">
+                                                    <tr class="text-center" style="border-top: 1px solid black;">
+                                                        <th rowspan="2" width="15%" class="text-start">Date</th>
+                                                        <th rowspan="2">Total Loads</th>
+                                                        <th rowspan="2">Product Weight (MT)</th>
+                                                        <th rowspan="2">Transport Weight (MT)</th>
+                                                        <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
+                                                        <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
+                                                        <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
+                                                        <th rowspan="2">Total Amount (RM)</th>
+                                                    </tr>
+                                                    <tr class="text-center">
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                        <th>Total</th>
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>';
+
+                                                while ($row = $result->fetch_assoc()) {
+                                                    $transactionDate = date("d-m-Y", strtotime($row['transaction_date']));
+                                                    $productWeight = number_format($row['product_weight']/1000, 2);
+                                                    $transportWeight = number_format($row['transport_weight']/1000, 2);
+
+                                                    $totalRecords += $row['total_records'];
+                                                    $totalProductWeight += $productWeight;
+                                                    $totalTransportWeight += $transportWeight;
+
+                                                    $message .= '<tr>
+                                                            <td>'.$transactionDate.'</td>
+                                                            <td>'.$row['total_records'].'</td>
+                                                            <td>'.$productWeight.'</td>
+                                                            <td>'.$transportWeight.'</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                        </tr>';
+                                                }
+                                                
+                                                $message .= '</tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td class="fw-bold">Company Total:</td>
+                                                        <td>'.$totalRecords.'</td>
+                                                        <td>'.number_format($totalProductWeight, 2).'</td>
+                                                        <td>'.number_format($totalTransportWeight, 2).'</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
                                     </div>
-
                                 </div>
-                                <div class="row">
-                                    <p>
-                                        Start Date : '.$fromDate.' Last Date : '.$toDate.'
-                                        <br>
-                                        Start/Last Company : ERMSB / ERMSB
-                                    </p>
-                                    <br>
-                                    <br>
-                                    <br>
-                                    <br>
-                                    <p>
-                                        Quarry And Prefix Product
-                                        <br>
-                                        Start/Last Customer Type: /IN 
-                                        <br>
-                                        Start/Last Site : BEN/BEN - Weighing Only
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead style="border-bottom: 1px solid black;">
-                                            <tr class="text-center" style="border-top: 1px solid black;">
-                                                <th rowspan="2" width="15%" class="text-start">Date</th>
-                                                <th rowspan="2">Total Loads</th>
-                                                <th rowspan="2">Product Weight (MT)</th>
-                                                <th rowspan="2">Transport Weight (MT)</th>
-                                                <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
-                                                <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
-                                                <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
-                                                <th rowspan="2">Total Amount (RM)</th>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <th>Product</th>
-                                                <th>Transport</th>
-                                                <th>Product</th>
-                                                <th>Transport</th>
-                                                <th>Total</th>
-                                                <th>Product</th>
-                                                <th>Transport</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>';
-
-                                        while ($row = $result->fetch_assoc()) {
-                                            $transactionDate = date("d-m-Y", strtotime($row['transaction_date']));
-                                            $productWeight = number_format($row['product_weight']/1000, 2);
-                                            $transportWeight = number_format($row['transport_weight']/1000, 2);
-
-                                            $totalRecords += $row['total_records'];
-                                            $totalProductWeight += $productWeight;
-                                            $totalTransportWeight += $transportWeight;
-
-                                            $message .= '<tr>
-                                                    <td>'.$transactionDate.'</td>
-                                                    <td>'.$row['total_records'].'</td>
-                                                    <td>'.$productWeight.'</td>
-                                                    <td>'.$transportWeight.'</td>
-                                                    <td>0.00</td>
-                                                    <td>0.00</td>
-                                                    <td>0.00</td>
-                                                    <td>0.00</td>
-                                                    <td>0.00</td>
-                                                    <td>0.00</td>
-                                                    <td>0.00</td>
-                                                    <td>0.00</td>
-                                                </tr>';
-                                        }
-                                        
-                                        $message .= '</tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td class="fw-bold">Company Total:</td>
-                                                <td>'.$totalRecords.'</td>
-                                                <td>'.number_format($totalProductWeight, 2).'</td>
-                                                <td>'.number_format($totalTransportWeight, 2).'</td>
-                                                <td>0.00</td>
-                                                <td>0.00</td>
-                                                <td>0.00</td>
-                                                <td>0.00</td>
-                                                <td>0.00</td>
-                                                <td>0.00</td>
-                                                <td>0.00</td>
-                                                <td>0.00</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                            </body>
+                        </html>
                     ';
 
                     echo json_encode(

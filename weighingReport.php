@@ -653,28 +653,7 @@ else{
 
                         if(obj.status === 'success'){
                             var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                            printWindow.document.write(
-                                `
-                                    <html>
-                                        <head>
-                                            <title>Print Preview</title>
-                                            <!-- Layout config Js -->
-                                            <script src="assets/js/layout.js"></script>
-                                            <!-- Bootstrap Css -->
-                                            <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
-                                            <!-- Icons Css -->
-                                            <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-                                            <!-- App Css-->
-                                            <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
-                                            <!-- custom Css-->
-                                            <link href="assets/css/custom.min.css" id="app-style" rel="stylesheet" type="text/css" />
-                                        </head>
-                                        <body>
-                                            ${obj.message}
-                                        </body>
-                                    </html>
-                                `
-                            );
+                            printWindow.document.write(obj.message);
                             printWindow.document.close();
                             setTimeout(function(){
                                 printWindow.print();
