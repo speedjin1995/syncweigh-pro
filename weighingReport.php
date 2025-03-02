@@ -398,7 +398,7 @@ else{
                                                     <label for="reportType" class="col-sm-4 col-form-label">Report Type *</label>
                                                     <div class="col-sm-8">
                                                         <select id="reportType" name="reportType" class="form-select" required>
-                                                            <option value="CUSTOMER">Customer Report</option>
+                                                            <!-- <option value="CUSTOMER">Customer Report</option> -->
                                                             <option value="SUMMARY">Summary Report</option>
                                                             <option value="PRODUCT">Product Report</option>
                                                             <option value="S&P">Sales and Purchase Report</option>
