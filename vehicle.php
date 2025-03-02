@@ -195,9 +195,17 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Download Template
+                                                                </button>
+                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Upload Excel
+                                                                </button>
                                                                 <button type="button" id="addVehicle" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Vehicle
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Vehicle
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -360,6 +368,14 @@ $(function () {
     //transporter
     $('#transporter').on('change', function(){
         $('#transporterCode').val($('#transporter :selected').data('code'));
+    });
+
+    $('#uploadExcel').on('click', function(){
+
+    });
+
+    $('#downloadTemplate').on('click', function(){
+
     });
 });
 

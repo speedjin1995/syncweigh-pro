@@ -77,14 +77,37 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <div class="row">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h5 class="card-title mb-0">User Records</h5>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
+                                                        <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                        Download Template
+                                                    </button>
+                                                    <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                        <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                        Upload Excel
+                                                    </button>
+                                                    <button type="button" id="addMembers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                        <i class="ri-add-circle-line align-middle me-1"></i>
+                                                        Add New User
+                                                    </button>
+                                                </div> 
+                                            </div> 
+
+                                            <!-- <div class="row">
                                                 <div class="col-10">
                                                     <h5 class="card-title mb-0">User Records</h5>
                                                 </div>
                                                 <div class="col-2 d-flex justify-content-end">
-                                                    <button type="button" id="addMembers" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-add-circle-line align-middle me-1"></i>Add New User</button>              
+                                                    <button type="button" id="addMembers" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                        <i class="ri-add-circle-line align-middle me-1"></i>
+                                                        Add New User
+                                                    </button>              
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="card-body">
                                             <table id="usersTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
@@ -324,6 +347,14 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                     $(element).removeClass('is-invalid');
                 }
             });
+        });
+
+        $('#uploadExcel').on('click', function(){
+
+        });
+
+        $('#downloadTemplate').on('click', function(){
+
         });
     });
 
