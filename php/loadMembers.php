@@ -1,6 +1,7 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 session_start();
 
 ## Read value
@@ -23,8 +24,8 @@ if($searchValue != ''){
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Users where status = '0'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = $_SESSION["plant"];
-  $allQuery = "select count(*) as allcount from Users where status = '0' and plant_id='$username'";
+  $username = implode("', '", $_SESSION["plant_id"]);
+  $allQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0' and Users.plant_id IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -34,8 +35,8 @@ $totalRecords = $records['allcount'];
 ## Total number of record with filtering
 $filteredQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = $_SESSION["plant"];
-  $filteredQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0' AND Users.plant_id='$username'".$searchQuery;
+  $$username = implode("', '", $_SESSION["plant_id"]);
+  $filteredQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status = '0' AND Users.plant_id IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -43,30 +44,56 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Plant.name from Users, roles, Plant WHERE 
-Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN' AND Users.plant_id = Plant.id".$searchQuery." 
+$empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Users.plant_id from Users, roles WHERE 
+Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN'".$searchQuery." 
 order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = $_SESSION["plant"];
-  $empQuery = "select Users.name AS empname, Users.id, Users.employee_code, Users.username, Users.useremail, roles.role_name, Plant.name from Users, roles, Plant WHERE 
-  Users.role = roles.role_code AND Users.status = '0' AND Users.role <> 'SADMIN' AND Users.plant_id = Plant.id AND Users.plant_id='$username'".$searchQuery." 
-  order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN') {
+  $plantIds = $_SESSION["plant_id"]; // Should be an array like ["26", "27"]
+
+  if (!empty($plantIds) && is_array($plantIds)) {
+      $conditions = [];
+      foreach ($plantIds as $plant) {
+          $conditions[] = "JSON_CONTAINS(Users.plant_id, '\"$plant\"')";
+      }
+      $jsonCondition = implode(" OR ", $conditions);
+
+      $empQuery = "SELECT Users.name AS empname, Users.id, Users.employee_code, Users.username, Users.useremail, 
+                          roles.role_name, Users.plant_id 
+                   FROM Users 
+                   JOIN roles ON Users.role = roles.role_code 
+                   WHERE Users.status = '0' 
+                   AND Users.role <> 'SADMIN' 
+                   AND ($jsonCondition) 
+                   $searchQuery 
+                   ORDER BY $columnName $columnSortOrder 
+                   LIMIT $row, $rowperpage";
+  }
 }
 
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
-    $data[] = array( 
-      "id"=>$row['id'],
-      "employee_code"=>$row['employee_code'],
-      "username"=>$row['username'],
-      "name"=>$row['empname'] ?? '',
-      "useremail"=>$row['useremail'],
-      "role"=>$row['role_name'],
-      "plant"=>$row['name']
-    );
+  $plant = array();
+
+  if($row['plant_id'] != null){
+    $plant_ids = json_decode($row['plant_id'], true);
+
+    for($i=0; $i<count($plant_ids); $i++){
+      $plant[] = searchPlantNameById($plant_ids[$i], $db);
+    }
+  }
+
+  $data[] = array( 
+    "id"=>$row['id'],
+    "employee_code"=>$row['employee_code'],
+    "username"=>$row['username'],
+    "name"=>$row['empname'] ?? '',
+    "useremail"=>$row['useremail'],
+    "role"=>$row['role_name'],
+    "plant"=>$plant
+  );
 }
 
 ## Response

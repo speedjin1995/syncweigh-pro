@@ -7,12 +7,12 @@ $username = $_SESSION["username"];
 
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
-	$del = "1";
+	//$del = "1";
 	$cancel = "Y";
 	$action = "3";
 
-	if ($stmt2 = $db->prepare("UPDATE Weight SET status=?, is_complete=?, is_cancel=? WHERE id=?")) {
-		$stmt2->bind_param('ssss', $del, $cancel, $cancel, $id);
+	if ($stmt2 = $db->prepare("UPDATE Weight SET is_complete=?, is_cancel=? WHERE id=?")) {
+		$stmt2->bind_param('ssss', $cancel, $cancel, $id);
 		
 		if($stmt2->execute()){
 			// if ($insert_stmt = $db->prepare("INSERT INTO Supplier_Log (supplier_id, action_id, action_by) VALUES (?, ?, ?)")) {

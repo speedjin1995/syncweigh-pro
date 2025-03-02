@@ -5,8 +5,8 @@
 require_once "php/db_connect.php";
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = $_SESSION["plant"];
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code='$username'");
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
 }
 else{
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");

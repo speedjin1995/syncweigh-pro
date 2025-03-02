@@ -283,11 +283,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             <thead>
                                                                 <tr>
                                                                     <th>No</th>
-                                                                    <th>Status</th>
-                                                                    <th>Weight Status</th>
                                                                     <th>Transaction Id</th>
-                                                                    <th>Vehicle No</th>
-                                                                    <th>Product Description Detail</th>
+                                                                    <th>Status</th>
+                                                                    <th>Customer/ <br> Supplier</th>
+                                                                    <th>Vehicle</th>
+                                                                    <th>Product</th>
+                                                                    <th>SO/PO</th>
+                                                                    <th>DO</th>
                                                                     <th>Incoming(Gross Weight)</th>
                                                                     <th>Incoming(Gross) Date Time</th>
                                                                     <th>Outgoing(Tare) Weight</th>
@@ -450,11 +452,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             },
             'columns': [
                 { data: 'id' },
-                { data: 'transaction_status' },
-                { data: 'weight_type' },
                 { data: 'transaction_id' },
+                { data: 'transaction_status' },
+                { data: 'customer' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_description' },
+                { data: 'product_name' },
+                { data: 'purchase_order' },
+                { data: 'delivery_no' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
@@ -511,11 +515,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 },
                 'columns': [
                     { data: 'id' },
-                    { data: 'transaction_status' },
-                    { data: 'weight_type' },
                     { data: 'transaction_id' },
+                    { data: 'transaction_status' },
+                    { data: 'customer' },
                     { data: 'lorry_plate_no1' },
-                    { data: 'product_description' },
+                    { data: 'product_name' },
+                    { data: 'purchase_order' },
+                    { data: 'delivery_no' },
                     { data: 'gross_weight1' },
                     { data: 'gross_weight1_date' },
                     { data: 'tare_weight1' },

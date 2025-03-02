@@ -23,7 +23,13 @@ mysqli_stmt_store_result($stmt2);
 mysqli_stmt_bind_result($stmt2, $code, $name);
 
 // Pull plants
-$query4 = "SELECT id, name FROM Plant WHERE status = '0'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $query4 = "SELECT id, name FROM Plant WHERE status = '0' and plant_code IN ('$username')";
+}
+else{
+    $query4 = "SELECT id, name FROM Plant WHERE status = '0'";
+}
 
 $stmt4 = $link->prepare($query4);
 mysqli_stmt_execute($stmt4);

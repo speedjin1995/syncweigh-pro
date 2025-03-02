@@ -30,9 +30,9 @@ if(($row = $result->fetch_assoc()) !== null){
 
 $plantName = '-';
 
-if($plantId != null && $plantId != ''){
+if($plantId != null && count($plantId) > 0){
     $stmt2 = $db->prepare("SELECT * from Plant WHERE plant_code = ?");
-    $stmt2->bind_param('s', $plantId);
+    $stmt2->bind_param('s', $plantId[0]);
     $stmt2->execute();
     $result2 = $stmt2->get_result();
         
@@ -67,16 +67,16 @@ $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = $_SESSION["plant"];
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code='$username'");
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
 }
 else{
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = $_SESSION["plant"];
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code='$username'");
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
 }
 else{
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");

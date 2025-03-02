@@ -51,10 +51,10 @@ if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
-$allQuery = "select count(*) as allcount from Weight where status = '0'";
+$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = $_SESSION["plant"];
-  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code='$username'";
+  $username = implode("', '", $_SESSION["plant"]);
+  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -63,10 +63,10 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 
-$filteredQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = $_SESSION["plant"];
-  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and plant_code='$username'".$searchQuery;
+  $username = implode("', '", $_SESSION["plant"]);
+  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -74,11 +74,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where is_complete = 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = $_SESSION["plant"];
-  $empQuery = "select * from Weight where status = '0' and plant_code='$username'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $username = implode("', '", $_SESSION["plant"]);
+  $empQuery = "select * from Weight where is_complete = 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);
@@ -111,6 +111,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "customer_name"=>$row['customer_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
+    "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
     "product_code"=>$row['product_code'],
     "product_name"=>$row['product_name'],
     "container_no"=>$row['container_no'],

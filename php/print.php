@@ -47,9 +47,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $exDel = $row['ex_del'] === 'EX' ? 'E' : 'D';
                 $complete = $row['is_complete'];
                 $grossWeightDate = new DateTime($row['gross_weight1_date']);
-                $formattedGrossWeightDate = $grossWeightDate->format('H:i');
+                $formattedGrossWeightDate = $grossWeightDate->format('H:i A');
                 $tareWeightDate =  new DateTime($row['tare_weight1_date']);
-                $formattedTareWeightDate = $tareWeightDate->format('H:i');
+                $formattedTareWeightDate = $tareWeightDate->format('H:i A');
                 $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
                 $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
                 $nettWeight = number_format($row['nett_weight1'] / 1000, 3);

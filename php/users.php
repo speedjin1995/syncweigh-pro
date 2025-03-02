@@ -59,10 +59,6 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
         }
     }
     else{
-        $random_salt = hash('sha512', uniqid(openssl_random_pseudo_bytes(16), TRUE));
-        $password = '123456';
-        $password = hash('sha512', $password . $random_salt);
-
         if ($insert_stmt = $db->prepare("INSERT INTO Users (employee_code, useremail, username, name, password, token, role, plant_id, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             $insert_stmt->bind_param("ssssssssss", $param_code, $param_useremail, $param_username, $param_name, $param_password, $param_token, $param_role, $param_plant, $param_created_by, $param_modified_by);
             $action = "1";
@@ -82,8 +78,9 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
                 
                 echo json_encode(
                     array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
+                        "status" => "success", 
+                        "message" => "Added Successfully!!",
+                        "plants" => $param_plant
                     )
                 );
             }

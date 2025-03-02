@@ -55,13 +55,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     mysqli_stmt_bind_result($stmt, $id, $code, $username, $hashed_password, $roles, $plant);
                     if (mysqli_stmt_fetch($stmt)) {
                         if (password_verify($password, $hashed_password)) {
+                            $plantlist = array();
+
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
                             $_SESSION["roles"] = $roles;
                             $_SESSION['userID']=$code;
-                            $_SESSION['plant']=searchPlantCodeById($plant, $link);
+
+                            if($plant != null){
+                                $plant_ids = json_decode($plant, true);
+                                $_SESSION['plant_id']=$plant_ids;
+
+                                for($i=0; $i<count($plant_ids); $i++){
+                                    $plantlist[] = searchPlantCodeById($plant_ids[$i], $link);
+                                }
+                            }
+                            else{
+                                $_SESSION['plant_id']=$plant;
+                            }
+
+                            $_SESSION['plant']=$plantlist;
 
                             // Redirect user to welcome page
                             header("location: index.php");

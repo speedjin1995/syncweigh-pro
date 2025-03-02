@@ -207,7 +207,7 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th>Vehicle No</th>
-                                                                    <th>Vehicle Weight</th>
+                                                                    <!--th>Vehicle Weight</th-->
                                                                     <th>Transporter</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -283,7 +283,7 @@ $(function () {
         },
         'columns': [
             { data: 'veh_number' },
-            { data: 'vehicle_weight' },
+            //{ data: 'vehicle_weight' },
             { data: 'transporter_name' },
             { 
                 data: 'id',

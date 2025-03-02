@@ -21,8 +21,8 @@ if($_GET["file"] == 'weight'){
 ## Search 
 $searchQuery = "";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = $_SESSION["plant"];
-    $searchQuery = "and plant_code='$username'";
+    $username = implode("', '", $_SESSION["plant"]);
+    $searchQuery = "and plant_code IN ('$username')";
 }
 
 if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){

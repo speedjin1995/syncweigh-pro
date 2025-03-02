@@ -5,8 +5,8 @@ session_start();
 
 $searchQuery = "";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = $_SESSION["plant"];
-    $searchQuery = "and plant_code='$username'";
+    $username = implode("', '", $_SESSION["plant"]);
+    $searchQuery = "and plant_code IN ('$username')";
 }
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
