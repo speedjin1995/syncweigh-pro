@@ -93,7 +93,7 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $empQuery = "select * from Weight where is_complete = 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
-$empRecords = mysqli_query($db, $empQuery);
+$empRecords = mysqli_query($db, $empQuery); 
 $data = array();
 $salesCount = 0;
 $purchaseCount = 0;

@@ -210,11 +210,164 @@ if(isset($_POST["file"])){
                                                     $transportWeight = number_format($row['transport_weight']/1000, 2);
 
                                                     $totalRecords += $row['total_records'];
-                                                    $totalProductWeight += $productWeight;
-                                                    $totalTransportWeight += $transportWeight;
+                                                    $totalProductWeight += $row['product_weight']/1000;
+                                                    $totalTransportWeight += $row['transport_weight']/1000;
 
                                                     $message .= '<tr>
                                                             <td>'.$transactionDate.'</td>
+                                                            <td>'.$row['total_records'].'</td>
+                                                            <td>'.$productWeight.'</td>
+                                                            <td>'.$transportWeight.'</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                        </tr>';
+                                                }
+                                                
+                                                $message .= '</tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td class="fw-bold">Company Total:</td>
+                                                        <td>'.$totalRecords.'</td>
+                                                        <td>'.number_format($totalProductWeight, 2).'</td>
+                                                        <td>'.number_format($totalTransportWeight, 2).'</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </body>
+                        </html>
+                    ';
+
+                    echo json_encode(
+                        array(
+                            "status" => "success",
+                            "message" => $message
+                        )
+                    );
+                }
+            }else{
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Something Goes Wrong"
+                    ));
+            }
+        }
+        else if ($_POST['reportType'] == 'PRODUCT'){
+            if ($select_stmt = $db->prepare("SELECT * FROM ( SELECT product_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY code")){
+
+                if (!$select_stmt->execute()){
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }else{
+                    $result = $select_stmt->get_result();
+
+                    $totalRecords = 0;
+                    $totalProductWeight = 0;
+                    $totalTransportWeight = 0;
+
+                    $message = '
+                        <html>
+                            <head>
+                                <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
+                                <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
+
+                                <style>
+                                    @page {
+                                        size: A4 landscape;
+                                        margin: 10mm;
+                                    }
+                                </style>
+                            </head>
+
+                            <body>
+                                <div class="container-full">
+                                    <div class="header">
+                                        <div class="row">
+                                            <div class="d-flex justify-content-center">
+                                                <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
+                                            </div>
+                                            <div class="d-flex justify-content-center">
+                                                <p>Sales Weighing Summary Report By Product</p>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <p>
+                                                Start Date : '.$fromDate.' Last Date : '.$toDate.'
+                                                <br>
+                                                Start/Last Company : ERMSB / ERMSB
+                                                Start Product / Last Product : / QD
+                                            </p>
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <p>
+                                                Quarry And Prefix Product
+                                                <br>
+                                                Start/Last Customer Type: /IN 
+                                                <br>
+                                                Start/Last Site : BEN/BEN - Weighing Only
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead style="border-bottom: 1px solid black;">
+                                                    <tr class="text-center" style="border-top: 1px solid black;">
+                                                        <th rowspan="2" class="text-start">Product</th>
+                                                        <th rowspan="2">Total Loads</th>
+                                                        <th rowspan="2">Product Weight (MT)</th>
+                                                        <th rowspan="2">Transport Weight (MT)</th>
+                                                        <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
+                                                        <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
+                                                        <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
+                                                        <th rowspan="2">Average Selling Price</th>
+                                                    </tr>
+                                                    <tr class="text-center">
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                        <th>Total</th>
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>';
+
+                                                while ($row = $result->fetch_assoc()) {
+                                                    $product = $row['code'];
+                                                    $productWeight = number_format($row['product_weight']/1000, 2);
+                                                    $transportWeight = number_format($row['transport_weight']/1000, 2);
+
+                                                    $totalRecords += $row['total_records'];
+                                                    $totalProductWeight += $row['product_weight']/1000;
+                                                    $totalTransportWeight += $row['transport_weight']/1000;
+
+                                                    $message .= '<tr>
+                                                            <td>'.$product.'</td>
                                                             <td>'.$row['total_records'].'</td>
                                                             <td>'.$productWeight.'</td>
                                                             <td>'.$transportWeight.'</td>
