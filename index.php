@@ -761,7 +761,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="plant" name="plant" required>
-                                                                                            <option selected="-">-</option>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
@@ -801,7 +800,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="siteName" class="col-sm-4 col-form-label">Project</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="siteName" name="siteName" required>
+                                                                                        <select class="form-select" id="siteName" name="siteName">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
                                                                                                 <option value="<?=$rowSite['name'] ?>" data-code="<?=$rowSite['site_code'] ?>"><?=$rowSite['name'] ?></option>
@@ -1481,7 +1480,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
 
             pass = true;
-            debugger;
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -1512,7 +1510,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 });
             }
-            else{
+            /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
                 if (userChoice) {
                     $('#addModal').find('#status').val("pending");
@@ -1563,7 +1561,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         }
                     });
                 }
-            }
+            }*/
         });
 
         $('#submitWeightPrint').on('click', function(){
@@ -1617,7 +1615,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
 
             pass = true;
-            debugger;
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -1685,7 +1682,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 });
             }
-            else{
+            /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
                 if (userChoice) {
                     $('#addModal').find('#status').val("pending");
@@ -1736,7 +1733,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         }
                     });
                 }
-            }
+            }*/
         });
 
         $('#submitBypass').on('click', function(){
@@ -2715,7 +2712,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#vehicleNoTxt').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
                     $('#manualVehicle').val(0);
                     $('#manualVehicle').prop("checked", false);
                     $('.index-vehicle').show();
@@ -2799,7 +2796,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
 
-                debugger;
                 if (obj.message.load_drum == 'LOAD'){
                     $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
                 }else{

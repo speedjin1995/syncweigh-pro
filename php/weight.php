@@ -12,9 +12,8 @@ if(!isset($_SESSION['id'])){
 $id = $_SESSION['id'];
 
 // Processing form data when form is submitted
-if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['supplierWeight'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
-, $_POST['tareOutgoing'], $_POST['tareOutgoingDate'], $_POST['nettWeight'], $_POST['manualWeight'], $_POST['weighbridge'], $_POST['indicatorId'], $_POST['subTotalPrice'], $_POST['sstPrice']
-, $_POST['totalPrice'], $_POST['plantCode'], $_POST['plant'], $_POST['exDel'], $_POST['loadDrum'])) {
+if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
+, $_POST['manualWeight'], $_POST['plantCode'], $_POST['plant'], $_POST['exDel'], $_POST['loadDrum'])) {
     $isCancel = 'N';
     $isComplete = 'N';
     $isApproved = 'Y';
