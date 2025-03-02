@@ -1166,7 +1166,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <a href="/template/Reseller_Template.xlsx" download>
+                                                                <a href="/template/Weight_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                         Download Template 
