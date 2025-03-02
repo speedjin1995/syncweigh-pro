@@ -1106,6 +1106,30 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="importModalScrollableTitle">Upload Excel File</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="file" id="fileInput">
+                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                    </div> <!-- Closing modal-body properly here -->
+
+                                                    <!-- Footer inside modal-content, not inside modal-body -->
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="saveButton">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div> <!-- end row-->
 
@@ -1122,9 +1146,19 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <a href="/template/Reseller_Template.xlsx" download>
+                                                                    <button type="button" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal">
+                                                                        <i class="mdi mdi-file-import-outline align-middle me-1"></i>
+                                                                        Download Template 
+                                                                    </button>
+                                                                </a>
+                                                                <button type="button" id="uploadExccl" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal">
+                                                                    <i class="mdi mdi-file-excel align-middle me-1"></i>
+                                                                    Import Orders
+                                                                </button>
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Weight
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Weight
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -1972,6 +2006,38 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             });
         });
 
+        $('#uploadExccl').on('click', function(){
+            $('#uploadModal').modal('show');
+
+            $('#uploadForm').validate({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+            });
+        });
+
+        $('#uploadModal').find('#previewButton').on('click', function(){
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+            var data = e.target.result;
+            // Process data and display preview
+            displayPreview(data);
+            };
+
+            reader.readAsBinaryString(file);
+        });
+
         $('#weightType').on('change', function(){
             if($(this).val() == "Container")
             {
@@ -2479,6 +2545,65 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
         ?>
     });
+
+    function displayPreview(data) {
+        // Parse the Excel data
+        var workbook = XLSX.read(data, { type: 'binary' });
+
+        // Get the first sheet
+        var sheetName = workbook.SheetNames[0];
+        var sheet = workbook.Sheets[sheetName];
+
+        // Convert the sheet to an array of objects
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Get the headers
+        var headers = jsonData[0];
+
+        // Ensure we handle cases where there may be less than 15 columns
+        while (headers.length < 15) {
+            headers.push(''); // Adding empty headers to reach 15 columns
+        }
+
+        // Create HTML table headers
+        var htmlTable = '<table style="width:100%;"><thead><tr>';
+        headers.forEach(function(header) {
+            htmlTable += '<th>' + header + '</th>';
+        });
+        htmlTable += '</tr></thead><tbody>';
+
+        // Iterate over the data and create table rows
+        for (var i = 1; i < jsonData.length; i++) {
+            htmlTable += '<tr>';
+            var rowData = jsonData[i];
+
+            // Ensure we handle cases where there may be less than 15 cells in a row
+            while (rowData.length < 15) {
+                rowData.push(''); // Adding empty cells to reach 15 columns
+            }
+
+            for (var j = 0; j < 15; j++) {
+                var cellData = rowData[j];
+                var formattedData = cellData;
+
+                // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
+                if (typeof cellData === 'number' && cellData > 0) {
+                    var excelDate = XLSX.SSF.parse_date_code(cellData);
+                    if (excelDate) {
+                        formattedData = formatDate2(new Date(excelDate.y, excelDate.m - 1, excelDate.d));
+                    }
+                }
+
+                htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
+            }
+            htmlTable += '</tr>';
+        }
+
+        htmlTable += '</tbody></table>';
+
+        var previewTable = document.getElementById('previewTable');
+        previewTable.innerHTML = htmlTable;
+    }
 
     function edit(id){
         $('#spinnerLoading').show();
