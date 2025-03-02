@@ -57,6 +57,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $weightBy = searchNamebyId($row['created_by'], $db);
                 $createDate = new DateTime($row['created_date']);
                 $formattedCreateDate = $createDate->format('d-m-Y');
+                $transDate = new DateTime(row['transaction_date']);
+                $transDateOnly = $transDate->format('d-m-Y');
+                //$transDateOnly = date('Y-m-d', strtotime($transDate));
                 $remarks = $row['remarks'];
                 $message = '';
                 
@@ -129,7 +132,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                                     <div class="row mb-2 mt-2" style="border-top: 1px solid black;">
                                         <div class="col-8 body_1 mt-2">
-                                            <p>WEIGHING DATE<span style="margin-left: 25px;">:</span>'.$formattedCreateDate.'</p>
+                                            <p>WEIGHING DATE<span style="margin-left: 25px;">:</span>'.$transDateOnly.'</p>
                                             <p>CUSTOMER<span style="margin-left: 55px;">:</span>'.$customerCode. ' ' . $customerName .'</p>
                                             <p>VEHICLE NO.<span style="margin-left: 48px;">:</span>'.$lorryNo.'</p>
                                             <p>PRODUCT<span style="margin-left: 62px;">:</span>'.$productCode. ' ' . $productName .'</p>
@@ -281,7 +284,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                         <div class="row" >
                                                             <div class="col-12 mb-2">
                                                                 <span style="font-size: 14px;"><b>Date</b></span><span style="margin-left: 78px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$sysdate.'</span>
+                                                                <span style="margin-left: 10px;font-size: 14px;">'.$transDateOnly.'</span>
                                                             </div>
                                                             <div class="col-12 mb-2">
                                                                 <span style="font-size: 14px;"><b>Loading Chit No</b></span><span style="margin-left: 29px"><b>:</b></span>
@@ -424,7 +427,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                                     <div class="row mb-2">
                                         <div class="col-8 body_1">
-                                            <p>DATE<span style="margin-left: 100px;">:</span>'.$formattedCreateDate.'</p>
+                                            <p>DATE<span style="margin-left: 100px;">:</span>'.$transDateOnly.'</p>
                                             <p>VEHICLE NO.<span style="margin-left: 55px;">:</span>'.$lorryNo.'</p>
                                             <p>CUSTOMER NAME<span style="margin-left: 21px;">:</span>'.$customerName.'</p>
                                             <p>PRODUCT NAME<span style="margin-left: 30px;">:</span>'.$productName.'</p>
