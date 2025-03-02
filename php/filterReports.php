@@ -13,7 +13,7 @@ $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Search value
 
 ## Search 
-$searchQuery = " and is_complete = 'Y'";
+$searchQuery = "";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
   $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
@@ -39,12 +39,24 @@ if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != 
 	$searchQuery .= " and lorry_plate_no1 like '%".$_POST['vehicle']."%'";
 }
 
-if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != '-'){
-	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
+// if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != '-'){
+// 	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
+// }
+
+if($_POST['customerType'] != null && $_POST['customerType'] != '' && $_POST['customerType'] != '-'){
+	$searchQuery .= " and customer_type = '".$_POST['customerType']."'";
 }
 
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
+}
+
+if($_POST['destination'] != null && $_POST['destination'] != '' && $_POST['destination'] != '-'){
+	$searchQuery .= " and destination = '".$_POST['destination']."'";
+}
+
+if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
 }
 
 if($searchValue != ''){
@@ -57,7 +69,7 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' and plant_code IN ('$username')";
 }
 
-$sel = mysqli_query($db, $allQuery);
+$sel = mysqli_query($db, $allQuery); 
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
