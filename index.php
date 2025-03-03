@@ -2402,7 +2402,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').hide();
                 $('#rawMaterialDisplay').show();
                 $('#productNameDisplay').hide();
-                $('#doDisplay').show();
+                //$('#doDisplay').show();
 
                 if ($(this).val() == "Purchase"){
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
@@ -2442,7 +2442,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#productNameDisplay').show();
                 $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                 $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
-                $('#doDisplay').hide();
+                //$('#doDisplay').hide();
 
                 if (customerType == 'Cash'){
                     $('#unitPriceDisplay').show();
@@ -2553,8 +2553,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
                     if (previousRecordsTag){
-                        $('#addModal').find('#customerName').val(customerName);
-                        $('#addModal').find('#productName').val(productName);
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        $('#addModal').find('#productName').val(productName).trigger('change');
                         $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
 
                         if (type == 'Purchase'){

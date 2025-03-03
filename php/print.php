@@ -32,6 +32,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $type = $row['transaction_status'];
                 $customerCode = '';
                 $customerName = '';
+                $plantCode = $row['plant_code'];
                 $productCode = $row['product_code'];
                 $productName = $row['product_name'];
                 $transportCode = $row['transporter_code'];
@@ -41,7 +42,58 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $projectCode = $row['site_code'];
                 $projectName = $row['site_name'];
                 $loadingChitNo = $row['transaction_id'];
-                $deliverOrderNo = $row['delivery_no'];
+
+                if($type == 'Sales'){
+                    if($row['delivery_no'] == null || $row['delivery_no'] == ''){
+                        $deliverOrderNo = $plantCode.'/S';
+                        $queryPlant = "SELECT do_no as curcount FROM Plant WHERE plant_code='$plantCode'";
+        
+                        if ($plant_stmt = $db->prepare($queryPlant)) {
+                            // Execute the prepared query.
+                            $plant_stmt->execute();
+                            $result2 = $plant_stmt->get_result();
+                            
+                            if ($row2 = $result2->fetch_assoc()) {
+                                $charSize = strlen($row2['curcount']);
+                                $misValue = $row2['curcount'];
+            
+                                for($i=0; $i<(5-(int)$charSize); $i++){
+                                    $deliverOrderNo.='0';  // S0000
+                                }
+                        
+                                $deliverOrderNo .= $misValue;  //S00009
+
+                                // Update back to Plant
+                                $misValue++;
+                                $queryPlantU = "UPDATE Plant SET do_no=? WHERE plant_code='$plantCode'";
+                                
+                                if ($update_plant_stmt = $db->prepare($queryPlantU)){
+                                    $update_plant_stmt->bind_param('s', $misValue);
+                                    $update_plant_stmt->execute();
+                                    $update_plant_stmt->close();
+                                } 
+
+                                // Update back to Weight
+                                $queryWeightU = "UPDATE Weight SET delivery_no=? WHERE id='$id'";
+                                
+                                if ($update_weight_stmt = $db->prepare($queryWeightU)){
+                                    $update_weight_stmt->bind_param('s', $deliverOrderNo);
+                                    $update_weight_stmt->execute();
+                                    $update_weight_stmt->close();
+                                } 
+                            }
+
+                            $plant_stmt->close();
+                        }
+                    }
+                    else{
+                        $deliverOrderNo = $row['delivery_no'];
+                    }
+                }
+                else{
+                    $deliverOrderNo = $row['delivery_no'];
+                }
+                
                 $lorryNo = $row['lorry_plate_no1'];
                 $poNo = $row['purchase_order'];
                 $exDel = $row['ex_del'] === 'EX' ? 'E' : 'D';
@@ -49,7 +101,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $grossWeightDate = new DateTime($row['gross_weight1_date']);
                 $formattedGrossWeightDate = $grossWeightDate->format('H:i A');
                 $tareWeightDate =  new DateTime($row['tare_weight1_date']);
-                $formattedTareWeightDate = $tareWeightDate->format('h:i A');
+                $formattedTareWeightDate = $tareWeightDate->format('H:i A');
                 $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
                 $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
                 $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
@@ -140,7 +192,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <p>WEIGHT IN<span style="margin-left: 57px;">:</span>'.$grossWeight.' KG</p>
                                         </div>
                                         <div class="col-4 body_1 mt-2">
-                                            <p>LOADING CHIT NO.<span style="margin-left: 20px;">:</span>'.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</p>
+                                            <p>LOADING CHIT NO.<span style="margin-left: 20px;">:</span>'.$loadingChitNo.'</p>
                                             <p class="spacer"></p>
                                             <p class="spacer"></p>
                                             <p class="spacer"></p>
@@ -165,7 +217,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </body></html>';
                 }
                 else{
-                    if($type == 'Sales'){
+                    if($type == 'Sales' || $type == 'Purchase'){
                         $message = '<html>
                         <head>
                             <!-- Bootstrap CSS -->
@@ -343,7 +395,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2" style="border: 0px solid black; text-align: right; padding-top:39px;">
                                                         <div class="row">
                                                             <div class="col-12">
-                                                                <span><b style="font-size: 15px">No : '.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</b><b style="font-size: 20px; color: red;"></b></span>
+                                                                <span><b style="font-size: 15px">No : '.$loadingChitNo.'</b><b style="font-size: 20px; color: red;"></b></span>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -429,13 +481,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <div class="col-8 body_1">
                                             <p>DATE<span style="margin-left: 100px;">:</span>'.$transDateOnly.'</p>
                                             <p>VEHICLE NO.<span style="margin-left: 55px;">:</span>'.$lorryNo.'</p>
-                                            <p>CUSTOMER NAME<span style="margin-left: 21px;">:</span>'.$customerName.'</p>
+                                            <p>SUPPLIER NAME<span style="margin-left: 21px;">:</span>'.$customerName.'</p>
                                             <p>PRODUCT NAME<span style="margin-left: 30px;">:</span>'.$productName.'</p>
                                             <p>SERVICE CHARGES<span style="margin-left: 15px;">:</span>RM </p>
                                             <p>REMARKS<span style="margin-left: 71px;">:</span>'.$remarks.'</p>
                                         </div>
                                         <div class="col-4 body_1">
-                                            <p>TICKET NO.<span style="margin-left: 20px;">:</span><b>'.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</b></p>
+                                            <p>TICKET NO.<span style="margin-left: 20px;">:</span><b>'.$loadingChitNo.'</b></p>
                                         </div>
                                     </div>
 
