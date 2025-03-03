@@ -157,9 +157,9 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             <input type="hidden" class="form-control" id="id" name="id"> 
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code *</label>
+                                                    <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code </label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code" required>
+                                                        <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code">
                                                     </div>
                                                 </div>
                                             </div>

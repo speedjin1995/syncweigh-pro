@@ -3,7 +3,7 @@ require_once "db_connect.php";
 
 session_start();
 
-if(!isset($_SESSION['userID'])){
+if(!isset($_SESSION['username'])){
     echo '<script type="text/javascript">';
     echo 'window.location.href = "../login.html";</script>';
 }
@@ -12,7 +12,7 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
     $id = $_SESSION['id'];
     $name = $_SESSION["username"];
 
-    $param_code = filter_input(INPUT_POST, 'employeeCode', FILTER_SANITIZE_STRING);
+    $param_code = null;
     $password = "123456";
     $param_name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
     $param_useremail = filter_input(INPUT_POST, 'useremail', FILTER_SANITIZE_STRING);
@@ -20,6 +20,10 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
     $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
     $param_token = bin2hex(random_bytes(50)); // generate unique token
     $param_role = filter_input(INPUT_POST, 'roles', FILTER_SANITIZE_STRING);
+    
+    if(isset($_POST['plantId']) && $_POST['plantId'] != null){
+        $param_code = filter_input(INPUT_POST, 'employeeCode', FILTER_SANITIZE_STRING);
+    }
 
     $param_plant = array();
 
