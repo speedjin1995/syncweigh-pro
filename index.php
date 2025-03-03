@@ -2404,7 +2404,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#productNameDisplay').hide();
                 //$('#doDisplay').show();
 
-                if ($(this).val() == "Purchase"){
+                if ($(this).val() == "Purchase" || $(this).val() == "Purchase"){
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
                     $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
                     
