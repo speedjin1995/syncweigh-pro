@@ -1894,44 +1894,30 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         $('#submitPrePrint').on('click', function(){
             if($('#prePrintForm').valid()){
                 $('#spinnerLoading').show();
-                var formData = $('#prePrintForm').serialize(); console.log(formData);
-                var id = $('#prePrintForm').find('#id').val();
+                var id = $('#prePrintModal').find('#id').val();
+                var prePrintStatus = $('#prePrintModal').find('#prePrint').val();
 
-                // if(printType == 'SINGLE'){
-                // window.open('php/printBorang.php?userID='+id+'&file='+type+'&validator='+validate+'&printType='+printType+'&actualPrintDate='+actualPrintDate, '_blank');
-                // }else{
-                // window.open('php/printMergedBorang.php?userID='+id+'&actualPrintDate='+actualPrintDate, '_blank');
-                // }
+                $.post('php/print.php', {userID: id, file: 'weight', prePrint: prePrintStatus}, function(data){
+                    var obj = JSON.parse(data);
 
-                // $('#printBorangModal').modal('hide');
-
-                // // Send the JSON array to the server
-                // $.ajax({
-                //     url: 'php/uploadWeights.php',
-                //     type: 'POST',
-                //     contentType: 'application/json',
-                //     data: JSON.stringify(data),
-                //     success: function(response) {
-                //         var obj = JSON.parse(response);
-                //         if (obj.status === 'success') {
-                //             $('#spinnerLoading').hide();
-                //             $('#uploadModal').modal('hide');
-                //             $("#successBtn").attr('data-toast-text', obj.message);
-                //             $("#successBtn").click();
-                //             $('#customerTable').DataTable().ajax.reload(null, false);
-                //         } 
-                //         else if (obj.status === 'failed') {
-                //             $('#spinnerLoading').hide();
-                //             $("#failBtn").attr('data-toast-text', obj.message );
-                //             $("#failBtn").click();
-                //         } 
-                //         else {
-                //             $('#spinnerLoading').hide();
-                //             $("#failBtn").attr('data-toast-text', 'Failed to save');
-                //             $("#failBtn").click();
-                //         }
-                //     }
-                // });
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+                    }
+                    else if(obj.status === 'failed'){
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                        $("#failBtn").click();
+                    }
+                });
             }
         });
 
