@@ -139,8 +139,7 @@ else{
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select"  >
-                                                                <option selected>-</option>
-                                                                <option value="Sales">Sales</option>
+                                                                <option value="Sales" selected>Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
                                                             </select>
