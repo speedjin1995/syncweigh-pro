@@ -1134,7 +1134,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             <div class="modal-content">
                                                 <form role="form" id="prePrintForm">
                                                     <div class="modal-header bg-gray-dark color-palette">
-                                                        <h4 class="modal-title"></h4>
+                                                        <h4 class="modal-title">Pre-print Sale Slip</h4>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
@@ -2998,50 +2998,49 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
     }
 
     function print(id) {
-<<<<<<< Updated upstream
-        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
-            var obj = JSON.parse(data);
-=======
-        $('#prePrintModal').find('#id').val(id);
-        $('#prePrintModal').find('#prePrint').val("");
-        $("#prePrintModal").modal("show");
->>>>>>> Stashed changes
+        var transactionStatus = $('#statusSearch').val();
 
-        $('#prePrintForm').validate({
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-        });
+        if (transactionStatus == "Sales"){
+            $('#prePrintModal').find('#id').val(id);
+            $('#prePrintModal').find('#prePrint').val("");
+            $("#prePrintModal").modal("show");
 
-        // $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
-        //     var obj = JSON.parse(data);
+            $('#prePrintForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }else{
+            $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+                var obj = JSON.parse(data);
 
-        //     if(obj.status === 'success'){
-        //         var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-        //         printWindow.document.write(obj.message);
-        //         printWindow.document.close();
-        //         setTimeout(function(){
-        //             printWindow.print();
-        //             printWindow.close();
-        //         }, 500);
-        //     }
-        //     else if(obj.status === 'failed'){
-        //         $("#failBtn").attr('data-toast-text', obj.message );
-        //         $("#failBtn").click();
-        //     }
-        //     else{
-        //         $("#failBtn").attr('data-toast-text', "Something wrong when print");
-        //         $("#failBtn").click();
-        //     }
-        // });
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                }
+                else if(obj.status === 'failed'){
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                    $("#failBtn").click();
+                }
+            });
+        }
     }
     </script>
 </body>
