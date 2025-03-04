@@ -1050,6 +1050,107 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="modal fade" id="uploadModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Upload Excel File</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="file" id="fileInput">
+                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitWeights">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="uploadModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Upload Excel File</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="file" id="fileInput">
+                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitWeights">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="prePrintModal">
+                                        <div class="modal-dialog modal-xl">
+                                            <div class="modal-content">
+                                            <form role="form" id="prePrintForm">
+                                                <div class="modal-header bg-gray-dark color-palette">
+                                                    <h4 class="modal-title"></h4>
+                                                    <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-4">
+                                                            <div class="form-group">
+                                                                <label>Pre-print Sale Slip</label>
+                                                                <select name="prePrint" id="prePrint">
+                                                                    <option value="Y">Yes</option>
+                                                                    <option value="N">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary" id="submitPrePrint">Save</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!--div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="importModalScrollableTitle">Upload Excel File</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="file" id="fileInput">
+                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                    </div> 
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="saveButton">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div-->
                                 </div>
                             </div> <!-- end row-->
 
@@ -2424,6 +2525,28 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 toastr["error"]("Something wrong when activate", "Failed:");
             }
         });
+
+        // $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+        //     var obj = JSON.parse(data);
+
+        //     if(obj.status === 'success'){
+        //         var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+        //         printWindow.document.write(obj.message);
+        //         printWindow.document.close();
+        //         setTimeout(function(){
+        //             printWindow.print();
+        //             printWindow.close();
+        //         }, 500);
+        //     }
+        //     else if(obj.status === 'failed'){
+        //         $("#failBtn").attr('data-toast-text', obj.message );
+        //         $("#failBtn").click();
+        //     }
+        //     else{
+        //         $("#failBtn").attr('data-toast-text', "Something wrong when print");
+        //         $("#failBtn").click();
+        //     }
+        // });
     }
     </script>
 </body>
