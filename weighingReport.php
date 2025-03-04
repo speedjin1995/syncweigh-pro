@@ -670,52 +670,6 @@ else{
             }
         });
 
-        // $('#submit').on('click', function(){
-        //     if($('#exportPdfForm').valid()){
-        //         $('#spinnerLoading').show();
-        //         var fromDateI = $('#fromDateSearch').val();
-        //         var toDateI = $('#toDateSearch').val();
-        //         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-        //         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-        //         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-        //         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-        //         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
-        //         var file = $('#reportType').val();
-
-        //         $.post('php/exportPdf.php', $('#printDOForm').serialize(){
-        //             file: file,
-        //             fromDate: fromDateI,
-        //             toDate: toDateI,
-        //             status: statusI,
-        //             customer: customerNoI,
-        //             vehicle: vehicleNoI,
-        //             weighingType: invoiceNoI,
-        //             product: transactionStatusI
-        //         }, function(response){
-        //             var obj = JSON.parse(response);
-
-        //             if(obj.status === 'success'){
-        //                 var printWindow = window.open('', '', 'height=400,width=800');
-        //                 printWindow.document.write(obj.message);
-        //                 printWindow.document.close();
-        //                 setTimeout(function(){
-        //                     printWindow.print();
-        //                     printWindow.close();
-        //                 }, 500);
-        //             }
-        //             else if(obj.status === 'failed'){
-        //                 toastr["error"](obj.message, "Failed:");
-        //             }
-        //             else{
-        //                 toastr["error"]("Something wrong when activate", "Failed:");
-        //             }
-        //         }).fail(function(error){
-        //             console.error("Error exporting PDF:", error);
-        //             alert("An error occurred while generating the PDF.");
-        //         });
-        //     }
-        // });
-
         $('#exportPdf').on('click', function(){
             $("#exportPdfModal").find('#reportType').val('');
             $("#exportPdfModal").modal("show");

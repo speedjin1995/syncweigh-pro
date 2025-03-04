@@ -1271,6 +1271,38 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     </form>
                 </div>
             </div>
+            <div class="modal fade" id="prePrintModal">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <form role="form" id="prePrintForm">
+                        <div class="modal-header bg-gray-dark color-palette">
+                            <h4 class="modal-title"></h4>
+                            <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Pre-print Sale Slip</label>
+                                        <select name="prePrint" id="prePrint">
+                                            <option selected>Please Select</option>
+                                            <option value="Y">Yes</option>
+                                            <option value="N">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <?php include 'layouts/footer.php'; ?>
         </div>
         <!-- end main content-->
@@ -2921,6 +2953,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
     }
 
     function print(id) {
+        $('#prePrintModal').find('#prePrint').val("");
+        
         $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
             var obj = JSON.parse(data);
 
