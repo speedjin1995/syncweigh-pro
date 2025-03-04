@@ -1129,59 +1129,35 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                     </div>
 
                                     <!-- SKY to fix -->
-                                    <div class="modal fade" id="uploadModal">
+                                    <div class="modal fade" id="prePrintModal">
                                         <div class="modal-dialog modal-xl" style="max-width: 90%;">
                                             <div class="modal-content">
-                                                <form role="form" id="uploadForm">
+                                                <form role="form" id="prePrintForm">
                                                     <div class="modal-header bg-gray-dark color-palette">
-                                                        <h4 class="modal-title">Upload Excel File</h4>
+                                                        <h4 class="modal-title"></h4>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <input type="file" id="fileInput">
-                                                        <button type="button" id="previewButton">Preview Data</button>
-                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <div class="form-group">
+                                                                    <label>Pre-print Sale Slip</label>
+                                                                    <select name="prePrint" id="prePrint">
+                                                                        <option value="Y">Yes</option>
+                                                                        <option value="N">No</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                                                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-danger" id="submitWeights">Save changes</button>
+                                                        <button type="button" class="btn btn-danger" id="submitPrePrint">Save changes</button>
                                                     </div>
                                                 </form>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="modal fade" id="prePrintModal">
-                                        <div class="modal-dialog modal-xl">
-                                            <div class="modal-content">
-                                            <form role="form" id="prePrintForm">
-                                                <div class="modal-header bg-gray-dark color-palette">
-                                                    <h4 class="modal-title"></h4>
-                                                    <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-4">
-                                                            <div class="form-group">
-                                                                <label>Pre-print Sale Slip</label>
-                                                                <select name="prePrint" id="prePrint">
-                                                                    <option value="Y">Yes</option>
-                                                                    <option value="N">No</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                        <input type="hidden" class="form-control" id="id" name="id">                                   
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary" id="submitPrePrint">Save</button>
-                                                </div>
-                                            </form>
                                         </div>
                                     </div>
 
@@ -1913,6 +1889,50 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 }
             });
+        });
+
+        $('#submitPrePrint').on('click', function(){
+            if($('#prePrintForm').valid()){
+                $('#spinnerLoading').show();
+                var formData = $('#prePrintForm').serialize(); console.log(formData);
+                var id = $('#prePrintForm').find('#id').val();
+
+                // if(printType == 'SINGLE'){
+                // window.open('php/printBorang.php?userID='+id+'&file='+type+'&validator='+validate+'&printType='+printType+'&actualPrintDate='+actualPrintDate, '_blank');
+                // }else{
+                // window.open('php/printMergedBorang.php?userID='+id+'&actualPrintDate='+actualPrintDate, '_blank');
+                // }
+
+                // $('#printBorangModal').modal('hide');
+
+                // // Send the JSON array to the server
+                // $.ajax({
+                //     url: 'php/uploadWeights.php',
+                //     type: 'POST',
+                //     contentType: 'application/json',
+                //     data: JSON.stringify(data),
+                //     success: function(response) {
+                //         var obj = JSON.parse(response);
+                //         if (obj.status === 'success') {
+                //             $('#spinnerLoading').hide();
+                //             $('#uploadModal').modal('hide');
+                //             $("#successBtn").attr('data-toast-text', obj.message);
+                //             $("#successBtn").click();
+                //             $('#customerTable').DataTable().ajax.reload(null, false);
+                //         } 
+                //         else if (obj.status === 'failed') {
+                //             $('#spinnerLoading').hide();
+                //             $("#failBtn").attr('data-toast-text', obj.message );
+                //             $("#failBtn").click();
+                //         } 
+                //         else {
+                //             $('#spinnerLoading').hide();
+                //             $("#failBtn").attr('data-toast-text', 'Failed to save');
+                //             $("#failBtn").click();
+                //         }
+                //     }
+                // });
+            }
         });
 
         $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
@@ -2978,25 +2998,26 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
     }
 
     function print(id) {
+<<<<<<< Updated upstream
         $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
             var obj = JSON.parse(data);
+=======
+        $('#prePrintModal').find('#id').val(id);
+        $('#prePrintModal').find('#prePrint').val("");
+        $("#prePrintModal").modal("show");
+>>>>>>> Stashed changes
 
-            if(obj.status === 'success'){
-                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                printWindow.document.write(obj.message);
-                printWindow.document.close();
-                setTimeout(function(){
-                    printWindow.print();
-                    printWindow.close();
-                }, 500);
-            }
-            else if(obj.status === 'failed'){
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $("#failBtn").attr('data-toast-text', "Something wrong when print");
-                $("#failBtn").click();
+        $('#prePrintForm').validate({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
             }
         });
 
