@@ -1,6 +1,7 @@
 <?php
 
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 include 'phpqrcode/qrlib.php';
  
 // Filter the excel data 
@@ -31,30 +32,90 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $type = $row['transaction_status'];
                 $customerCode = '';
                 $customerName = '';
+                $plantCode = $row['plant_code'];
                 $productCode = $row['product_code'];
                 $productName = $row['product_name'];
                 $transportCode = $row['transporter_code'];
                 $transportName = $row['transporter'];
                 $destinationCode = $row['destination_code'];
                 $destinationName = $row['destination'];
+                $projectCode = $row['site_code'];
+                $projectName = $row['site_name'];
                 $loadingChitNo = $row['transaction_id'];
-                $deliverOrderNo = $row['delivery_no'];
                 $lorryNo = $row['lorry_plate_no1'];
                 $poNo = $row['purchase_order'];
+                $doNo = $row['delivery_no'];
+                $exDel = $row['ex_del'] === 'EX' ? 'E' : 'D';
                 $complete = $row['is_complete'];
                 $grossWeightDate = new DateTime($row['gross_weight1_date']);
-                $formattedGrossWeightDate = $grossWeightDate->format('H:i');
+                $formattedGrossWeightDate = $grossWeightDate->format('H:i A');
                 $tareWeightDate =  new DateTime($row['tare_weight1_date']);
-                $formattedTareWeightDate = $tareWeightDate->format('H:i');
-                $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
-                $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
-                $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
+                $formattedTareWeightDate = $tareWeightDate->format('H:i A');
+                $grossWeight = number_format($row['gross_weight1']);
+                $tareWeight = number_format($row['tare_weight1']);
+                $nettWeight = number_format($row['nett_weight1']);
+                $supplierWeight =  number_format($row['supplier_weight']);
+                $weightDifference = number_format($row['weight_different']);
                 $sysdate = date("d-m-Y");
-                $weightBy = $row['created_by'];
+                $weightBy = searchNamebyId($row['created_by'], $db);
                 $createDate = new DateTime($row['created_date']);
                 $formattedCreateDate = $createDate->format('d-m-Y');
+                $transDate = new DateTime($row['transaction_date']);
+                $transDateOnly = $transDate->format('d-m-Y');
+                //$transDateOnly = date('Y-m-d', strtotime($transDate));
                 $remarks = $row['remarks'];
                 $message = '';
+                
+                if($type == 'Sales' && $complete == 'Y'){
+                    if($row['delivery_no'] == null || $row['delivery_no'] == ''){
+                        $deliverOrderNo = $plantCode.'/DO';
+                        $queryPlant = "SELECT do_no as curcount FROM Plant WHERE plant_code='$plantCode'";
+        
+                        if ($plant_stmt = $db->prepare($queryPlant)) {
+                            // Execute the prepared query.
+                            $plant_stmt->execute();
+                            $result2 = $plant_stmt->get_result();
+                            
+                            if ($row2 = $result2->fetch_assoc()) {
+                                $charSize = strlen($row2['curcount']);
+                                $misValue = $row2['curcount'];
+            
+                                for($i=0; $i<(5-(int)$charSize); $i++){
+                                    $deliverOrderNo.='0';  // S0000
+                                }
+                        
+                                $deliverOrderNo .= $misValue;  //S00009
+
+                                // Update back to Plant
+                                $misValue++;
+                                $queryPlantU = "UPDATE Plant SET do_no=? WHERE plant_code='$plantCode'";
+                                
+                                if ($update_plant_stmt = $db->prepare($queryPlantU)){
+                                    $update_plant_stmt->bind_param('s', $misValue);
+                                    $update_plant_stmt->execute();
+                                    $update_plant_stmt->close();
+                                } 
+
+                                // Update back to Weight
+                                $queryWeightU = "UPDATE Weight SET delivery_no=? WHERE id='$id'";
+                                
+                                if ($update_weight_stmt = $db->prepare($queryWeightU)){
+                                    $update_weight_stmt->bind_param('s', $deliverOrderNo);
+                                    $update_weight_stmt->execute();
+                                    $update_weight_stmt->close();
+                                } 
+                            }
+
+                            $plant_stmt->close();
+                        }
+                    }
+                    else{
+                        $deliverOrderNo = $row['delivery_no'];
+                    }
+                }
+                else{
+                    $deliverOrderNo = $row['delivery_no'];
+                }
                 
                 if($type == 'Sales'){
                     $customerCode = $row['customer_code'];
@@ -63,6 +124,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                 else{
                     $customerCode = $row['supplier_code'];
                     $customerName = $row['supplier_name'];
+                    $productCode = $row['raw_mat_code'];
+                    $productName = $row['raw_mat_name'];
                 }
 
                 if($complete == 'N'){
@@ -125,7 +188,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                                     <div class="row mb-2 mt-2" style="border-top: 1px solid black;">
                                         <div class="col-8 body_1 mt-2">
-                                            <p>WEIGHING DATE<span style="margin-left: 25px;">:</span>'.$formattedCreateDate.'</p>
+                                            <p>WEIGHING DATE<span style="margin-left: 25px;">:</span>'.$transDateOnly.'</p>
                                             <p>CUSTOMER<span style="margin-left: 55px;">:</span>'.$customerCode. ' ' . $customerName .'</p>
                                             <p>VEHICLE NO.<span style="margin-left: 48px;">:</span>'.$lorryNo.'</p>
                                             <p>PRODUCT<span style="margin-left: 62px;">:</span>'.$productCode. ' ' . $productName .'</p>
@@ -133,7 +196,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <p>WEIGHT IN<span style="margin-left: 57px;">:</span>'.$grossWeight.' KG</p>
                                         </div>
                                         <div class="col-4 body_1 mt-2">
-                                            <p>LOADING CHIT NO.<span style="margin-left: 20px;">:</span>'.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</p>
+                                            <p>LOADING CHIT NO.<span style="margin-left: 20px;">:</span>'.$loadingChitNo.'</p>
                                             <p class="spacer"></p>
                                             <p class="spacer"></p>
                                             <p class="spacer"></p>
@@ -187,14 +250,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <div class="header mb-3">
                                     <div class="row col-12">
                                         <div class="col-10">
-                                            <div class="col-12" style="font-size: 18px; font-weight: bold;margin-left:10px">
+                                            <div class="col-12" style="font-size: 17px; font-weight: bold;margin-left:10px">
                                                 BLACKTOP LANCHANG SDN BHD<span style="font-size: 12px; margin-left: 5px">198501006021 (138463-T)</span>
                                             </div>
-                                            <div class="col-12" style="font-size: 13px">
-                                                <span style="margin-left:10px">Office</span><span style="margin-left:39px">:&nbsp;&nbsp; 37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
+                                            <div class="col-12" style="font-size: 12px">
+                                                <span style="margin-left:10px">Office</span><span style="margin-left:25px">:&nbsp;37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
                                             </div>
-                                            <div class="col-12" style="font-size: 13px">
-                                                <span style="margin-left:50px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; +603-6096 0383</span>
+                                            <div class="col-12" style="font-size: 12px">
+                                                <span style="margin-left:45px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; +603-6096 0383</span>
                                                 <span style="margin-left:10px">Email&nbsp;&nbsp;:&nbsp;&nbsp; lowct@eastrock.com.my</span>
                                                 <span style="margin-left:10px">Website&nbsp;&nbsp;:&nbsp;&nbsp; www.eastrock.com.my</span>
                                             </div>
@@ -212,20 +275,22 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                 <tr>
                                                     <td width="25%" style="border: 0px solid black;">
                                                         <div class="row">
-                                                            <div class="col-12 mt-2" style="height: 25px;font-size: 14px;"><b>CUSTOMER</b></div>
+                                                            <div class="col-12" style="height: 25px;font-size: 14px;"><b>CUSTOMER</b></div>
                                                             <div class="col-12" style="height: 25px;font-size: 14px;"><b>PROJECT</b></div>
                                                             <div class="col-12" style="height: 25px;font-size: 14px;"><b>PRODUCT</b></div>
                                                             <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED TO</b></div>
+                                                            <div class="col-12" style="height: 25px;"></div>
                                                             <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED BY</b></div>
                                                         </div>
                                                     </td>
                                                     <td colspan="2" width="75%" style="border: 1px solid black;">
-                                                        <div class="row" style="margin-left: 5px">
-                                                            <div class="col-12 mt-2" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;"></div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
+                                                        <div class="row" style="margin-left: 1px">
+                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
+                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
+                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
+                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
+                                                            <div class="col-12" style="height: 15px;"></div>
+                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -259,6 +324,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                         </div>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td colspan="3" style="border:0;padding-top:15px;">
+                                                        <span style="font-size: 12px">REMARK: '.$remarks.'</span>  
+                                                    </td>
+                                                </tr>
                                             </tbody>                
                                         </table>
                                     </div>
@@ -269,16 +339,16 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2">
                                                         <div class="row" >
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 14px;"><b>Date</b></span><span style="margin-left: 78px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$sysdate.'</span>
+                                                                <span style="font-size: 13px;"><b>Date</b></span><span style="margin-left: 70px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$transDateOnly.'</span>
                                                             </div>
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 14px;"><b>Loading Chit No</b></span><span style="margin-left: 29px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$loadingChitNo.'</span>
+                                                                <span style="font-size: 13px;"><b>Loading Chit No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$loadingChitNo.'</span>
                                                             </div>
                                                             <div class="col-12">
-                                                                <span style="font-size: 14px;"><b>Delivery Order No</b></span><span style="margin-left: 20px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$deliverOrderNo.'</span>
+                                                                <span style="font-size: 13px;"><b>Delivery Order No</b></span><span style="margin-left: 10px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$deliverOrderNo.' ('.$exDel.')</span>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -287,12 +357,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2">
                                                         <div class="row">
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 14px;"><b>Lorry No</b></span><span style="margin-left: 22px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$lorryNo.'</span>
+                                                                <span style="font-size: 13px;"><b>Lorry No</b></span><span style="margin-left: 15px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$lorryNo.'</span>
                                                             </div>
                                                             <div class="col-12">
-                                                                <span style="font-size: 14px;"><b>P/O No</b></span><span style="margin-left: 27px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$poNo.'</span>
+                                                                <span style="font-size: 13px;"><b>P/O No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$poNo.'</span>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -303,20 +373,20 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                 </tr>
                                                 <tr style="border: 1px solid black; height: 70px;">
                                                     <td style="border: 1px solid black; text-align: center;" width="50%">
-                                                        <span style="font-size: 14px;">'.$formattedGrossWeightDate.'</span>
+                                                        <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
                                                         <br>
-                                                        <span style="font-size: 14px;">'.$formattedTareWeightDate.'</span>
+                                                        <span style="font-size: 13px;">'.$formattedTareWeightDate.'</span>
                                                     </td>
                                                     <td style="border: 1px solid black; text-align: center;" width="50%">
-                                                        <span style="font-size: 14px;">'.$grossWeight.'</span>
+                                                        <span style="font-size: 13px;">'.$grossWeight.'</span>
                                                         <br>
-                                                        <span style="font-size: 14px;">'.$tareWeight.'</span>
+                                                        <span style="font-size: 13px;">'.$tareWeight.'</span>
                                                         <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
-                                                        <div style="margin-top: -10px;font-size: 14px;">'.$nettWeight.'</div>
+                                                        <div style="margin-top: -10px;font-size: 13px;">'.$nettWeight.'</div>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="2" style="border: 0px solid black; padding-bottom: 45px;font-size: 14px;">
+                                                    <td colspan="2" style="border: 0px solid black; padding-bottom: 40px;font-size: 13px;">
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <span><b>Weighted by :</b></span>
@@ -326,10 +396,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="2" style="border: 0px solid black; text-align: right;">
+                                                    <td colspan="2" style="border: 0px solid black; text-align: right; padding-top:30px;">
                                                         <div class="row">
                                                             <div class="col-12">
-                                                                <span><b style="font-size: 15px">No : '.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</b><b style="font-size: 25px; color: red;"></b></span>
+                                                                <span><b style="font-size: 13px">No : '.$loadingChitNo.'</b><b style="font-size: 20px; color: red;"></b></span>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -343,8 +413,124 @@ if(isset($_POST['userID'], $_POST["file"])){
     
                         $select_stmt->close();
                     }
+                    elseif ($type == 'Purchase'){ 
+                        $message = '
+                            <html>
+                                <head>
+                                    <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
+                                    <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
+                                    <style>
+                                        @page {
+                                            size: A5 landscape;
+                                            margin: 10mm;
+                                        }
+
+                                        .custom-hr {
+                                            border-top: 1px solid #000;        /* Remove the default border */
+                                            height: 1px;         /* Define the thickness */
+                                            margin: 0;           /* Reset margins */
+                                        }
+
+                                        .body_1 p {
+                                            margin-bottom: 0px;
+                                        }
+
+                                        .body_1 p span{
+                                            margin-right: 15px;
+                                        }
+
+                                        .body_2 p {
+                                            margin-bottom: 0px;
+                                        }
+
+                                        .body_2 p span{
+                                            margin-right: 15px;
+                                        }
+
+                                        .body2 {
+                                            border-top: 1px dashed black;
+                                            border-bottom: 1px dashed black;
+                                        }
+
+                                        .body_3 {
+                                            border-top: 1px dashed black;
+                                            text-align: center;
+                                            padding-top: 5px;
+                                        }
+
+                                        .signature {
+                                            padding-top: 40px; 
+                                            padding-left: 30px; 
+                                            padding-right: 30px;
+                                        }
+                                    </style>
+
+                                </head>
+
+                                <body>
+                                    <div class="container-full">
+                                        <div class="header">
+                                            <div style="text-align: center;">
+                                                <h3 class="mb-0 fw-bold text-dark">EAST ROCK MARKETING SDN BHD</h3>
+                                                <p style="font-size: 10px; margin-bottom: 3px;">(1373003-H) <br> LOT PT 758, JALAN PADANG GAJAH <br>BATU 16, TAMBAK JAWA<br>45800 JERAM, KUALA SELANGOR,<br>SELANGOR D.E.<br>TEL: 013-969 7663, 012-9536128</p>
+                                                <h4 class="pb-2 fw-bold text-dark"><span style="border-bottom: 1px solid black">PURCHASE WEIGHING TICKET</span></h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col-8 body_1">
+                                                <p>WEIGHING DATE<span style="margin-left: 44.5px; margin-right:10px;">:</span>'.$transDateOnly.'</p>
+                                                <p>VEHICLE NO.<span style="margin-left: 66.5px; margin-right:10px;">:</span>'.$lorryNo.'</p>
+                                                <p>TRANSPORTER CODE<span style="margin-left: 10px; margin-right:10px;">:</span>'.$transportCode . '<span style="margin-left:89px">' .$transportName.'</span></p>
+                                                <p>SUPPLIER CODE<span style="margin-left: 43.5px; margin-right:10px;">:</span>'.$customerCode. '<span style="margin-left:82px">' .$customerCode.'</span></p>
+                                                <p>PRODUCT CODE<span style="margin-left: 43.5px; margin-right:10px;">:</span>'.$productCode. '<span style="margin-left:57.5px">' .$productName.'</span></p>
+                                                <p>DESTINATION CODE<span style="margin-left: 21px; margin-right:10px;">:</span>'.$destinationCode. '<span style="margin-left:60px">' .$destinationName.'</span></p>
+                                                <p>P/O NO.<span style="margin-left: 99px; margin-right:10px;">:</span>'.$poNo.' D/O No. : '.$doNo.'</p>
+                                                <p>REMARKS<span style="margin-left: 83.5px; margin-right:10px;">:</span>'.$remarks.'</p>
+                                            </div>
+                                            <div class="col-4 body_1">
+                                                <p>TICKET NO.<span style="margin-left: 25.5px; margin-right:5px;">:</span><b>'.$loadingChitNo.'</b></p>
+                                                <p>SUPPLIER WT<span style="margin-left: 10px; margin-right:5px;">:</span>'.$supplierWeight.'</p>
+                                                <p>WEIGHT DIFF<span style="margin-left: 14px; margin-right:6px;">:</span>'.$weightDifference.'</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row body2">
+                                            <div class="col-6 body_2 mt-2 mb-2">
+                                                <p>WEIGHT IN <span style="margin-left: 26px;">(KG)</span><span>:</span>'.$grossWeight.'</p>
+                                                <p>WEIGHT OUT<span style="margin-left: 15px;">(KG)</span><span>:</span>'.$tareWeight.'</p>
+                                                <p>NET WEIGHT<span style="margin-left: 16px;">(KG)</span><span>:</span>'.$nettWeight.'</p>
+                                            </div>
+                                            <div class="col-6 body_2 mt-2 mb-2">
+                                                <p>TIME IN<span style="margin-left: 26px;">:</span>'.$formattedGrossWeightDate.'</p>
+                                                <p>TIME OUT<span style="margin-left: 11.5px;">:</span>'.$formattedTareWeightDate.'</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row pt-4">
+                                            <div class="col-4 signature">
+                                                <div class="body_3">
+                                                    WEIGHED BY '.strtoupper($weightBy).'
+                                                </div>
+                                            </div>
+                                            <div class="col-4 signature">
+                                                <div class="body_3">
+                                                    LORRY DRIVER
+                                                </div>
+                                            </div>
+                                            <div class="col-4 signature">
+                                                <div class="body_3">
+                                                    RECEIVED BY
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </body>
+                            </html>
+                        ';
+                    }
                     else{
-                        // Do your puchase slips here
+                        // Do your Local slips here
                         $message = '
                             <html>
                             <head>
@@ -413,15 +599,15 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                                     <div class="row mb-2">
                                         <div class="col-8 body_1">
-                                            <p>DATE<span style="margin-left: 100px;">:</span>'.$formattedCreateDate.'</p>
-                                            <p>VEHICLE NO.<span style="margin-left: 55px;">:</span>'.$lorryNo.'</p>
-                                            <p>CUSTOMER NAME<span style="margin-left: 21px;">:</span>'.$customerName.'</p>
-                                            <p>PRODUCT NAME<span style="margin-left: 30px;">:</span>'.$productName.'</p>
-                                            <p>SERVICE CHARGES<span style="margin-left: 15px;">:</span>RM </p>
-                                            <p>REMARKS<span style="margin-left: 71px;">:</span>'.$remarks.'</p>
+                                            <p>DATE<span style="margin-left: 100px;">:</span>'.$transDateOnly.'</p>
+                                            <p>VEHICLE NO.<span style="margin-left: 55.5px;">:</span>'.$lorryNo.'</p>
+                                            <p>SUPPLIER NAME<span style="margin-left: 37px;">:</span>'.$customerName.'</p>
+                                            <p>PRODUCT NAME<span style="margin-left: 30.5px;">:</span>'.$productName.'</p>
+                                            <p>SERVICE CHARGES<span style="margin-left: 16px;">:</span>RM </p>
+                                            <p>REMARKS<span style="margin-left: 72.5px;">:</span>'.$remarks.'</p>
                                         </div>
                                         <div class="col-4 body_1">
-                                            <p>TICKET NO.<span style="margin-left: 20px;">:</span><b>'.str_replace('P', '', str_replace('S', '', $loadingChitNo)).'</b></p>
+                                            <p>TICKET NO.<span style="margin-left: 20px;">:</span><b>'.$loadingChitNo.'</b></p>
                                         </div>
                                     </div>
 

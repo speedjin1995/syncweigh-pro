@@ -17,6 +17,7 @@
     $lang["t-user"]="User";
     $lang["t-unit"]="Unit";
     $lang["t-vehicle"]="Vehicle";
+    $lang["t-inventory"]="Inventory";
     $lang["t-agent"]="Sales Representative";
     $lang["t-raw-mat"]="Raw Materials";
     $lang["t-site"]="Site";
@@ -30,6 +31,7 @@
     $lang["t-crm"]="CRM";
     $lang["t-billboard"]="Billboard";
     $lang["t-weighing"]="Weighing";
+    $lang["t-bitumen"]="Bitumen";
     $lang["t-crypto"]="Crypto";
     $lang["t-projects"]="Projects";
     $lang["t-apps" ]="Apps";

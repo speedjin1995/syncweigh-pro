@@ -1,6 +1,12 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    require_once "php/db_connect.php";
+
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -125,7 +131,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="vehicleWeight" class="col-sm-4 col-form-label">Vehicle Weight</label>
                                                                                     <div class="col-sm-8">
@@ -137,7 +143,23 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control" id="transporter" name="transporter">
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
+                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
+                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <input type="hidden" class="form-control" id="id" name="id">
+                                                                            <input type="hidden" id="transporterCode" name="transporterCode">
+                                                                                                                                                         
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -173,9 +195,17 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Download Template
+                                                                </button>
+                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Upload Excel
+                                                                </button>
                                                                 <button type="button" id="addVehicle" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Vehicle
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Vehicle
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -185,7 +215,8 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th>Vehicle No</th>
-                                                                    <th>Vehicle Weight</th>
+                                                                    <!--th>Vehicle Weight</th-->
+                                                                    <th>Transporter</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -260,7 +291,8 @@ $(function () {
         },
         'columns': [
             { data: 'veh_number' },
-            { data: 'vehicle_weight' },
+            //{ data: 'vehicle_weight' },
+            { data: 'transporter_name' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -308,6 +340,8 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#vehicleNo').val("");
         $('#addModal').find('#vehicleWeight').val("");
+        $('#addModal').find('#transporter').val("");
+        $('#addModal').find('#transporterCode').val("");
         $('#addModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -324,6 +358,25 @@ $(function () {
             }
         });
     });
+
+    $('#vehicleNo').on('keyup', function(){
+        var x = $('#vehicleNo').val();
+        x = x.toUpperCase();
+        $('#addModal').find('#vehicleNo').val(x);
+    });
+
+    //transporter
+    $('#transporter').on('change', function(){
+        $('#transporterCode').val($('#transporter :selected').data('code'));
+    });
+
+    $('#uploadExcel').on('click', function(){
+
+    });
+
+    $('#downloadTemplate').on('click', function(){
+
+    });
 });
 
     function edit(id){
@@ -335,6 +388,8 @@ $(function () {
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#vehicleNo').val(obj.message.veh_number);
                 $('#addModal').find('#vehicleWeight').val(obj.message.vehicle_weight);
+                $('#addModal').find('#transporter').val(obj.message.transporter_name);
+                $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

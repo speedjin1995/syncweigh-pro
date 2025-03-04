@@ -1,6 +1,11 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    require_once "php/db_connect.php";
+    $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -187,7 +192,38 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
 
+                                                        <div class="row col-12">
+                                                            <div class="col-xxl-12 col-lg-12">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-header p-2">
+                                                                        <div class="d-flex justify-content-end">
+                                                                            <div class="flex-shrink-0">
+                                                                                <button type="button" class="btn btn-danger add-material"><i class="ri-add-circle-line align-middle me-1"></i>Add Raw Material</button>
+                                                                            </div> 
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <table class="table table-primary">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th width="10%">No</th>
+                                                                                            <th>Raw Material</th>
+                                                                                            <th>Weight (KG)</th>
+                                                                                            <th>Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody id="rawMaterialTable"></tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         
                                                         <div class="col-lg-12">
@@ -202,6 +238,27 @@
                                         </div><!-- /.modal-dialog -->
                                     </div><!-- /.modal -->
 
+                                    <div class="modal fade" id="uploadModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Upload Excel File</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="file" id="fileInput">
+                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitWeights">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div> <!-- end row-->
 
@@ -218,9 +275,19 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <a href="template/Product_Template.xlsx" download>
+                                                                    <button type="button" class="btn btn-info waves-effect waves-light">
+                                                                        <i class="mdi mdi-file-import-outline align-middle me-1"></i>
+                                                                        Download Template 
+                                                                    </button>
+                                                                </a>
+                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Upload Excel
+                                                                </button>
                                                                 <button type="button" id="addProduct" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Product
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Product
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -289,6 +356,29 @@
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
 
+    <script type="text/html" id="rawMaterialDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="no" name="no" readonly>
+                <input type="text" class="form-control" id="productRawMatId" name="productRawMatId" hidden>
+            </td>
+            <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="rawMats" name="rawMats">
+                    <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                        <option value="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>"><?=$rowRawMat['raw_mat_code'] . ' - ' . $rowRawMat['name']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="rawMatWeight" name="rawMatWeight" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
 
 
 <script type="text/javascript">
@@ -296,6 +386,8 @@
 var table;
 
 $(function () {
+    var rowCount = $("#rawMaterialTable").find(".details").length;
+
     table = $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -353,6 +445,53 @@ $(function () {
         // }
     });
 
+    $('#submitWeights').on('click', function(){
+        $('#spinnerLoading').show();
+        var formData = $('#uploadForm').serializeArray();
+        var data = [];
+        var rowIndex = -1;
+        formData.forEach(function(field) {
+        var match = field.name.match(/([a-zA-Z0-9]+)\[(\d+)\]/);
+        if (match) {
+            var fieldName = match[1];
+            var index = parseInt(match[2], 10);
+            if (index !== rowIndex) {
+            rowIndex = index;
+            data.push({});
+            }
+            data[index][fieldName] = field.value;
+        }
+        });
+
+        // Send the JSON array to the server
+        $.ajax({
+            url: 'php/uploadProducts.php',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                var obj = JSON.parse(response);
+                if (obj.status === 'success') {
+                    $('#spinnerLoading').hide();
+                    $('#uploadModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                    $('#customerTable').DataTable().ajax.reload(null, false);
+                } 
+                else if (obj.status === 'failed') {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                } 
+                else {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                }
+            }
+        });
+    });
+
     $('#addProduct').on('click', function(){
         $('#addModal').find('#id').val("");
         $('#addModal').find('#productCode').val("");
@@ -362,6 +501,9 @@ $(function () {
         $('#addModal').find('#varianceType').val("");
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
+        $('#rawMaterialTable').html('');
+        rowCount = 1;
+
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -377,6 +519,67 @@ $(function () {
                 $(element).removeClass('is-invalid');
             }
         });
+    });
+
+    // Find and remove selected table rows
+    $("#rawMaterialTable").on('click', 'button[id^="remove"]', function () {
+        $(this).parents("tr").remove();
+
+        $("#rawMaterialTable tr").each(function (index) {
+            $(this).find('input[name^="no"]').val(index + 1);
+        });
+    });
+
+    $(".add-material").click(function(){
+        if(rowCount == 0){
+            rowCount++;
+        }
+
+        var $addContents = $("#rawMaterialDetail").clone();
+        $("#rawMaterialTable").append($addContents.html());
+
+        $("#rawMaterialTable").find('.details:last').attr("id", "detail" + rowCount);
+        $("#rawMaterialTable").find('.details:last').attr("data-index", rowCount);
+        $("#rawMaterialTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+        $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
+        $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount);
+        $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount);
+        $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount);
+
+        rowCount++;
+    });
+
+    $('#uploadExcel').on('click', function(){
+        $('#uploadModal').modal('show');
+
+        $('#uploadForm').validate({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
+    $('#uploadModal').find('#previewButton').on('click', function(){
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            var data = e.target.result;
+            // Process data and display preview
+            displayPreview(data);
+        };
+
+        reader.readAsBinaryString(file);
     });
 });
 
@@ -394,6 +597,30 @@ $(function () {
                 $('#addModal').find('#varianceType').val(obj.message.variance);
                 $('#addModal').find('#high').val(obj.message.high);
                 $('#addModal').find('#low').val(obj.message.low);
+
+                $('#rawMaterialTable').html('');
+                rowCount = 1;
+
+                if (obj.message.rawMats.length > 0){
+                    for(var i = 0; i < obj.message.rawMats.length; i++){
+                        var item = obj.message.rawMats[i];
+                        var $addContents = $("#rawMaterialDetail").clone();
+                        $("#rawMaterialTable").append($addContents.html());
+
+                        $("#rawMaterialTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#rawMaterialTable").find('.details:last').attr("data-index", rowCount);
+                        $("#rawMaterialTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+                        $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(item.no);
+                        $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount).val(item.id);
+                        $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).val(item.raw_mat_code);
+                        $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount).val(item.raw_mat_weight);
+
+                        rowCount++;
+                    }
+                }
+
+
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
@@ -432,6 +659,62 @@ $(function () {
                 $("#failBtn").click();
             }
         });
+    }
+
+    function displayPreview(data) {
+        // Parse the Excel data
+        var workbook = XLSX.read(data, { type: 'binary' });
+
+        // Get the first sheet
+        var sheetName = workbook.SheetNames[0];
+        var sheet = workbook.Sheets[sheetName];
+
+        // Convert the sheet to an array of objects
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Get the headers
+        var headers = jsonData[0];
+
+        // Ensure we handle cases where there may be less than 15 columns
+        while (headers.length < 2) {
+            headers.push(''); // Adding empty headers to reach 15 columns
+        }
+
+        // Create HTML table headers
+        var htmlTable = '<table style="width:100%;"><thead><tr>';
+        headers.forEach(function(header) {
+            htmlTable += '<th>' + header + '</th>';
+        });
+        htmlTable += '</tr></thead><tbody>';
+
+        // Iterate over the data and create table rows
+        for (var i = 1; i < jsonData.length; i++) {
+            htmlTable += '<tr>';
+            var rowData = jsonData[i];
+
+            // Ensure we handle cases where there may be less than 15 cells in a row
+            while (rowData.length < 2) {
+                rowData.push(''); // Adding empty cells to reach 15 columns
+            }
+
+            for (var j = 0; j < 2; j++) {
+                var cellData = rowData[j];
+                var formattedData = cellData;
+
+                // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
+                if (typeof cellData === 'number' && cellData > 0) {
+                    var excelDate = XLSX.SSF.parse_date_code(cellData);
+                }
+
+                htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
+            }
+            htmlTable += '</tr>';
+        }
+
+        htmlTable += '</tbody></table>';
+
+        var previewTable = document.getElementById('previewTable');
+        previewTable.innerHTML = htmlTable;
     }
 
 $('#productForm').validate({

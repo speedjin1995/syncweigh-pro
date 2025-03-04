@@ -23,7 +23,13 @@ mysqli_stmt_store_result($stmt2);
 mysqli_stmt_bind_result($stmt2, $code, $name);
 
 // Pull plants
-$query4 = "SELECT id, name FROM Plant WHERE status = '0'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $query4 = "SELECT id, name FROM Plant WHERE status = '0' and plant_code IN ('$username')";
+}
+else{
+    $query4 = "SELECT id, name FROM Plant WHERE status = '0'";
+}
 
 $stmt4 = $link->prepare($query4);
 mysqli_stmt_execute($stmt4);
@@ -46,6 +52,9 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 
     <?php include 'layouts/head-css.php'; ?>
 
@@ -68,21 +77,45 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <div class="row">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h5 class="card-title mb-0">User Records</h5>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
+                                                        <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                        Download Template
+                                                    </button>
+                                                    <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                        <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                        Upload Excel
+                                                    </button>
+                                                    <button type="button" id="addMembers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                        <i class="ri-add-circle-line align-middle me-1"></i>
+                                                        Add New User
+                                                    </button>
+                                                </div> 
+                                            </div> 
+
+                                            <!-- <div class="row">
                                                 <div class="col-10">
                                                     <h5 class="card-title mb-0">User Records</h5>
                                                 </div>
-                                                <div class="col-2">
-                                                    <button type="button" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-add-circle-line align-middle me-1"></i>Add New User</button>              
+                                                <div class="col-2 d-flex justify-content-end">
+                                                    <button type="button" id="addMembers" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                        <i class="ri-add-circle-line align-middle me-1"></i>
+                                                        Add New User
+                                                    </button>              
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="card-body">
                                             <table id="usersTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                 <thead>
                                                     <tr>
                                                         <th>Employee Code</th>
-                                                        <th>User Name</th>
+                                                        <th>Username</th>
+                                                        <th>Name</th>
                                                         <th>Email</th>
                                                         <th>Role</th>
                                                         <th>Plant Name</th>
@@ -124,17 +157,25 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             <input type="hidden" class="form-control" id="id" name="id"> 
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code *</label>
+                                                    <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code </label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code" required>
+                                                        <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="row">
-                                                <label for="username" class="col-sm-4 col-form-label">User Name *</label>
+                                                <label for="username" class="col-sm-4 col-form-label">Username *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="username" name="username" placeholder="User Name" required>
+                                                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                <label for="name" class="col-sm-4 col-form-label">User Name *</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="name" name="name" placeholder="User Name" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -163,8 +204,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <div class="row">
                                                     <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
                                                     <div class="col-sm-8">
-                                                        <select id="plantId" name="plantId" class="form-select">
-                                                            <option select="selected" value="">Please Select</option>
+                                                        <select id="plantId" name="plantId[]" class="select2" multiple="multiple">
                                                             <?php while(mysqli_stmt_fetch($stmt4)){ ?>
                                                                 <option value="<?=$pcode ?>"><?=$pname ?></option>
                                                             <?php } ?>
@@ -219,9 +259,14 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <!-- <script src="assets/js/pages/datatables.init.js"></script> -->
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="plugins/select2/js/select2.full.min.js"></script>
 
     <script>
     $(function () {
+        $('.select2').select2({
+            allowClear: true
+        });
+
         var table = $("#usersTable").DataTable({
             "responsive": true,
             "autoWidth": false,
@@ -234,6 +279,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             'columns': [
                 { data: 'employee_code' },
                 { data: 'username' },
+                { data: 'name' },
                 { data: 'useremail' },
                 { data: 'role' },
                 { data: 'plant' },
@@ -280,10 +326,12 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
         $('#addMembers').on('click', function(){
             $('#addModal').find('#id').val("");
+            $('#addModal').find('#employeeCode').val("");
             $('#addModal').find('#username').val("");
             $('#addModal').find('#name').val("");
-            $('#addModal').find('#userRole').val("");
-            $('#addModal').find('#plantId').val("");
+            $('#addModal').find('#useremail').val("");
+            $('#addModal').find('#roles').val("");
+            $('#addModal').find('#plantId').select2('destroy').val('').select2();
             $('#addModal').modal('show');
             
             $('#memberForm').validate({
@@ -300,6 +348,14 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 }
             });
         });
+
+        $('#uploadExcel').on('click', function(){
+
+        });
+
+        $('#downloadTemplate').on('click', function(){
+
+        });
     });
 
     function edit(id){
@@ -311,9 +367,10 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#employeeCode').val(obj.message.employee_code);
                 $('#addModal').find('#username').val(obj.message.username);
+                $('#addModal').find('#name').val(obj.message.name);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
-                $('#addModal').find('#plantId').val(obj.message.plant);
+                $('#addModal').find("select[name='plant[]']").val(obj.message.plant).trigger('change');
                 $('#addModal').modal('show');
                 
                 $('#memberForm').validate({

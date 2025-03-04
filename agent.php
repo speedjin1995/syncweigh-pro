@@ -179,9 +179,17 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Download Template
+                                                                </button>
+                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Upload Excel
+                                                                </button>
                                                                 <button type="button" id="addDestination" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New SRP
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New SRP
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -332,6 +340,14 @@ $(function () {
                 $(element).removeClass('is-invalid');
             }
         });
+    });
+
+    $('#uploadExcel').on('click', function(){
+
+    });
+
+    $('#downloadTemplate').on('click', function(){
+
     });
 });
 

@@ -1,6 +1,7 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+session_start();
 
 ## Read value
 $draw = $_POST['draw'];
@@ -12,7 +13,7 @@ $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Search value
 
 ## Search 
-$searchQuery = " and is_complete = 'Y'";
+$searchQuery = "";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
   $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
@@ -38,31 +39,61 @@ if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != 
 	$searchQuery .= " and lorry_plate_no1 like '%".$_POST['vehicle']."%'";
 }
 
-if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != '-'){
-	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
+// if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != '-'){
+// 	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
+// }
+
+if($_POST['customerType'] != null && $_POST['customerType'] != '' && $_POST['customerType'] != '-'){
+	$searchQuery .= " and customer_type = '".$_POST['customerType']."'";
 }
 
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
 }
 
+if($_POST['destination'] != null && $_POST['destination'] != '' && $_POST['destination'] != '-'){
+	$searchQuery .= " and destination = '".$_POST['destination']."'";
+}
+
+if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
-## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Weight where status = '0'");
+$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' and plant_code IN ('$username')";
+}
+
+$sel = mysqli_query($db, $allQuery); 
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Weight where status = '0'".$searchQuery);
+
+$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y'".$searchQuery;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' and plant_code IN ('$username')".$searchQuery;
+}
+
+$sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-$empRecords = mysqli_query($db, $empQuery);
+$empQuery = "select * from Weight where is_complete = 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $empQuery = "select * from Weight where is_complete = 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+}
+
+$empRecords = mysqli_query($db, $empQuery); 
 $data = array();
 $salesCount = 0;
 $purchaseCount = 0;
@@ -92,8 +123,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "customer_name"=>$row['customer_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
-    "product_code"=>$row['product_code'],
-    "product_name"=>$row['product_name'],
+    "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
+    "product_code"=>($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
+    "product_name"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
     "container_no"=>$row['container_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],

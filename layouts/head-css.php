@@ -8,6 +8,9 @@
 <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 <!-- custom Css-->
 <link href="assets/css/custom.min.css" id="app-style" rel="stylesheet" type="text/css" />
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
 <!--style>
     :is([data-layout=vertical],[data-layout=semibox])[data-sidebar=dark] .navbar-menu {
         background: 

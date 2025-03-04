@@ -3,6 +3,7 @@
 
 <?php
 require_once "php/db_connect.php";
+$plantId = $_SESSION['plant'];
 
 $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
@@ -14,6 +15,27 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+
+$plantName = '-';
+
+if($plantId != null && count($plantId) > 0){
+    $stmt2 = $db->prepare("SELECT * from Plant WHERE plant_code = ?");
+    $stmt2->bind_param('s', $plantId[0]);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+        
+    if(($row2 = $result2->fetch_assoc()) !== null){
+        $plantName = $row2['name'];
+    }
+}
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+}
+else{
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
 ?>
 
 <head>
@@ -117,8 +139,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select"  >
-                                                                <option selected>-</option>
-                                                                <option value="Sales">Sales</option>
+                                                                <option value="Sales" selected>Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
                                                             </select>
@@ -141,7 +162,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <!--<div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
@@ -150,14 +171,46 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option value="Container">Container</option>
                                                             </select>
                                                         </div>
+                                                    </div>--><!--end col-->                                               
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="customerTypeSearch" class="form-label">Customer Type</label>
+                                                            <select id="customerTypeSearch" class="form-select">
+                                                                <option selected>-</option>
+                                                                <option value="Cash">Cash</option>
+                                                                <option value="Normal">Normal</option>
+                                                            </select>
+                                                        </div>
                                                     </div><!--end col-->                                               
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatusSearch" class="form-select" >
+                                                            <label for="productSearch" class="form-label">Product</label>
+                                                            <select id="productSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="destinationSearch" class="form-label">Destination</label>
+                                                            <select id="destinationSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
+                                                                    <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="plantSearch" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select">
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -282,12 +335,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>No</th>
-                                                                    <th>Status</th>
-                                                                    <th>Weight Status</th>
                                                                     <th>Transaction Id</th>
-                                                                    <th>Vehicle No</th>
-                                                                    <th>Product Description Detail</th>
+                                                                    <th>Status</th>
+                                                                    <th>Customer/ <br> Supplier</th>
+                                                                    <th>Vehicle</th>
+                                                                    <th>Product</th>
+                                                                    <th>SO/PO</th>
+                                                                    <th>DO</th>
                                                                     <th>Incoming(Gross Weight)</th>
                                                                     <th>Incoming(Gross) Date Time</th>
                                                                     <th>Outgoing(Tare) Weight</th>
@@ -321,6 +375,64 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     </div>
     <!-- END layout-wrapper -->
+    
+    <div class="modal fade" id="exportPdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Weighing Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="exportPdfForm" class="needs-validation" novalidate autocomplete="off">
+                        <div class="row col-12">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <input type="hidden" class="form-control" id="id" name="id"> 
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="reportType" class="col-sm-4 col-form-label">Report Type *</label>
+                                                    <div class="col-sm-8">
+                                                        <select id="reportType" name="reportType" class="form-select" required>
+                                                            <!-- <option value="CUSTOMER">Customer Report</option> -->
+                                                            <option value="SUMMARY">Summary Report</option>
+                                                            <option value="PRODUCT">Product Report</option>
+                                                            <option value="S&P">Sales and Purchase Report</option>
+                                                        </select>   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="fromDate" name="fromDate">                                   
+                                            <input type="hidden" class="form-control" id="toDate" name="toDate">                                   
+                                            <input type="hidden" class="form-control" id="status" name="status">                                   
+                                            <input type="hidden" class="form-control" id="customer" name="customer">     
+                                            <input type="hidden" class="form-control" id="vehicle" name="vehicle">     
+                                            <input type="hidden" class="form-control" id="weighingType" name="weighingType">     
+                                            <input type="hidden" class="form-control" id="customerType" name="customerType">     
+                                            <input type="hidden" class="form-control" id="product" name="product">     
+                                            <input type="hidden" class="form-control" id="destination" name="destination">     
+                                            <input type="hidden" class="form-control" id="plant" name="plant">     
+                                            <input type="hidden" class="form-control" id="file" name="file">     
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-12">
+                            <div class="hstack gap-2 justify-content-end">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
+                            </div>
+                        </div><!--end col-->                                                               
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 
     <?php include 'layouts/customizer.php'; ?>
     <?php include 'layouts/vendor-scripts.php'; ?>
@@ -378,8 +490,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-        var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-        var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        // var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+        var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+        var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -396,17 +511,21 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     status: statusI,
                     customer: customerNoI,
                     vehicle: vehicleNoI,
-                    invoice: invoiceNoI,
-                    product: transactionStatusI,
+                    // invoice: invoiceNoI,
+                    customerType: customerTypeI,
+                    product: productI,
+                    destination: destinationI,
+                    plant: plantI,
                 } 
             },
             'columns': [
-                { data: 'id' },
-                { data: 'transaction_status' },
-                { data: 'weight_type' },
                 { data: 'transaction_id' },
+                { data: 'transaction_status' },
+                { data: 'customer' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_description' },
+                { data: 'product_name' },
+                { data: 'purchase_order' },
+                { data: 'delivery_no' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
@@ -435,8 +554,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            // var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -457,17 +579,21 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         status: statusI,
                         customer: customerNoI,
                         vehicle: vehicleNoI,
-                        invoice: invoiceNoI,
-                        product: transactionStatusI,
+                        // invoice: invoiceNoI,
+                        customerType: customerTypeI,
+                        product: productI,
+                        destination: destinationI,
+                        plant: plantI,
                     } 
                 },
                 'columns': [
-                    { data: 'id' },
-                    { data: 'transaction_status' },
-                    { data: 'weight_type' },
                     { data: 'transaction_id' },
+                    { data: 'transaction_status' },
+                    { data: 'customer' },
                     { data: 'lorry_plate_no1' },
-                    { data: 'product_description' },
+                    { data: 'product_name' },
+                    { data: 'purchase_order' },
+                    { data: 'delivery_no' },
                     { data: 'gross_weight1' },
                     { data: 'gross_weight1_date' },
                     { data: 'tare_weight1' },
@@ -491,45 +617,121 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             });
         });
 
+        $.validator.setDefaults({
+            submitHandler: function () {
+                if($('#exportPdfModal').hasClass('show')){   
+                    var fromDateI = $('#fromDateSearch').val();
+                    var toDateI = $('#toDateSearch').val();
+                    var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+                    var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+                    var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+                    // var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+                    var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+                    var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+                    var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+                    var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+
+                    $('#exportPdfForm').find('#fromDate').val(fromDateI);
+                    $('#exportPdfForm').find('#toDate').val(toDateI);
+                    $('#exportPdfForm').find('#status').val(statusI);
+                    $('#exportPdfForm').find('#customer').val(customerNoI);
+                    $('#exportPdfForm').find('#vehicle').val(vehicleNoI);
+                    // $('#exportPdfForm').find('#weighingType').val();
+                    $('#exportPdfForm').find('#customerType').val(customerTypeI);
+                    $('#exportPdfForm').find('#product').val(productI);
+                    $('#exportPdfForm').find('#destination').val(destinationI);
+                    $('#exportPdfForm').find('#plant').val(plantI);
+                    $('#exportPdfForm').find('#file').val('weight');
+                    $('#exportPdfModal').modal('hide');
+
+                    $.post('php/exportPdf.php', $('#exportPdfForm').serialize(), function(response){
+                        var obj = JSON.parse(response);
+
+                        if(obj.status === 'success'){
+                            var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                            printWindow.document.write(obj.message);
+                            printWindow.document.close();
+                            setTimeout(function(){
+                                printWindow.print();
+                                printWindow.close();
+                            }, 500);
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                        }
+                    }).fail(function(error){
+                        console.error("Error exporting PDF:", error);
+                        alert("An error occurred while generating the PDF.");
+                    });
+                }
+            }
+        });
+
+        // $('#submit').on('click', function(){
+        //     if($('#exportPdfForm').valid()){
+        //         $('#spinnerLoading').show();
+        //         var fromDateI = $('#fromDateSearch').val();
+        //         var toDateI = $('#toDateSearch').val();
+        //         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+        //         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        //         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+        //         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+        //         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        //         var file = $('#reportType').val();
+
+        //         $.post('php/exportPdf.php', $('#printDOForm').serialize(){
+        //             file: file,
+        //             fromDate: fromDateI,
+        //             toDate: toDateI,
+        //             status: statusI,
+        //             customer: customerNoI,
+        //             vehicle: vehicleNoI,
+        //             weighingType: invoiceNoI,
+        //             product: transactionStatusI
+        //         }, function(response){
+        //             var obj = JSON.parse(response);
+
+        //             if(obj.status === 'success'){
+        //                 var printWindow = window.open('', '', 'height=400,width=800');
+        //                 printWindow.document.write(obj.message);
+        //                 printWindow.document.close();
+        //                 setTimeout(function(){
+        //                     printWindow.print();
+        //                     printWindow.close();
+        //                 }, 500);
+        //             }
+        //             else if(obj.status === 'failed'){
+        //                 toastr["error"](obj.message, "Failed:");
+        //             }
+        //             else{
+        //                 toastr["error"]("Something wrong when activate", "Failed:");
+        //             }
+        //         }).fail(function(error){
+        //             console.error("Error exporting PDF:", error);
+        //             alert("An error occurred while generating the PDF.");
+        //         });
+        //     }
+        // });
+
         $('#exportPdf').on('click', function(){
-            var fromDateI = $('#fromDateSearch').val();
-            var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            $("#exportPdfModal").find('#reportType').val('');
+            $("#exportPdfModal").modal("show");
 
-            $.post('php/exportPdf.php', {
-                file: 'weight',
-                fromDate: fromDateI,
-                toDate: toDateI,
-                status: statusI,
-                customer: customerNoI,
-                vehicle: vehicleNoI,
-                weighingType: invoiceNoI,
-                product: transactionStatusI
-            }, function(response){
-                var obj = JSON.parse(response);
-
-                if(obj.status === 'success'){
-                    var printWindow = window.open('', '', 'height=400,width=800');
-                    printWindow.document.write(obj.message);
-                    printWindow.document.close();
-                    setTimeout(function(){
-                        printWindow.print();
-                        printWindow.close();
-                    }, 500);
+            $('#exportPdfForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
                 }
-                else if(obj.status === 'failed'){
-                    toastr["error"](obj.message, "Failed:");
-                }
-                else{
-                    toastr["error"]("Something wrong when activate", "Failed:");
-                }
-            }).fail(function(error){
-                console.error("Error exporting PDF:", error);
-                alert("An error occurred while generating the PDF.");
             });
         });
 
