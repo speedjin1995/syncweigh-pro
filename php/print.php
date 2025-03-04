@@ -42,10 +42,30 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $projectCode = $row['site_code'];
                 $projectName = $row['site_name'];
                 $loadingChitNo = $row['transaction_id'];
-
-                if($type == 'Sales'){
+                $lorryNo = $row['lorry_plate_no1'];
+                $poNo = $row['purchase_order'];
+                $exDel = $row['ex_del'] === 'EX' ? 'E' : 'D';
+                $complete = $row['is_complete'];
+                $grossWeightDate = new DateTime($row['gross_weight1_date']);
+                $formattedGrossWeightDate = $grossWeightDate->format('H:i A');
+                $tareWeightDate =  new DateTime($row['tare_weight1_date']);
+                $formattedTareWeightDate = $tareWeightDate->format('H:i A');
+                $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
+                $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
+                $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
+                $sysdate = date("d-m-Y");
+                $weightBy = searchNamebyId($row['created_by'], $db);
+                $createDate = new DateTime($row['created_date']);
+                $formattedCreateDate = $createDate->format('d-m-Y');
+                $transDate = new DateTime($row['transaction_date']);
+                $transDateOnly = $transDate->format('d-m-Y');
+                //$transDateOnly = date('Y-m-d', strtotime($transDate));
+                $remarks = $row['remarks'];
+                $message = '';
+                
+                if($type == 'Sales' && $complete == 'Y'){
                     if($row['delivery_no'] == null || $row['delivery_no'] == ''){
-                        $deliverOrderNo = $plantCode.'/S';
+                        $deliverOrderNo = $plantCode.'/DO';
                         $queryPlant = "SELECT do_no as curcount FROM Plant WHERE plant_code='$plantCode'";
         
                         if ($plant_stmt = $db->prepare($queryPlant)) {
@@ -94,27 +114,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $deliverOrderNo = $row['delivery_no'];
                 }
                 
-                $lorryNo = $row['lorry_plate_no1'];
-                $poNo = $row['purchase_order'];
-                $exDel = $row['ex_del'] === 'EX' ? 'E' : 'D';
-                $complete = $row['is_complete'];
-                $grossWeightDate = new DateTime($row['gross_weight1_date']);
-                $formattedGrossWeightDate = $grossWeightDate->format('H:i A');
-                $tareWeightDate =  new DateTime($row['tare_weight1_date']);
-                $formattedTareWeightDate = $tareWeightDate->format('H:i A');
-                $grossWeight = number_format($row['gross_weight1'] / 1000, 3);
-                $tareWeight = number_format($row['tare_weight1'] / 1000, 3);
-                $nettWeight = number_format($row['nett_weight1'] / 1000, 3);
-                $sysdate = date("d-m-Y");
-                $weightBy = searchNamebyId($row['created_by'], $db);
-                $createDate = new DateTime($row['created_date']);
-                $formattedCreateDate = $createDate->format('d-m-Y');
-                $transDate = new DateTime($row['transaction_date']);
-                $transDateOnly = $transDate->format('d-m-Y');
-                //$transDateOnly = date('Y-m-d', strtotime($transDate));
-                $remarks = $row['remarks'];
-                $message = '';
-                
                 if($type == 'Sales'){
                     $customerCode = $row['customer_code'];
                     $customerName = $row['customer_name'];
@@ -122,6 +121,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                 else{
                     $customerCode = $row['supplier_code'];
                     $customerName = $row['supplier_name'];
+                    $productCode = $row['raw_mat_code'];
+                    $productName = $row['raw_mat_name'];
                 }
 
                 if($complete == 'N'){
@@ -246,14 +247,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <div class="header mb-3">
                                     <div class="row col-12">
                                         <div class="col-10">
-                                            <div class="col-12" style="font-size: 18px; font-weight: bold;margin-left:10px">
+                                            <div class="col-12" style="font-size: 17px; font-weight: bold;margin-left:10px">
                                                 BLACKTOP LANCHANG SDN BHD<span style="font-size: 12px; margin-left: 5px">198501006021 (138463-T)</span>
                                             </div>
-                                            <div class="col-12" style="font-size: 13px">
-                                                <span style="margin-left:10px">Office</span><span style="margin-left:39px">:&nbsp;&nbsp; 37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
+                                            <div class="col-12" style="font-size: 12px">
+                                                <span style="margin-left:10px">Office</span><span style="margin-left:25px">:&nbsp;37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
                                             </div>
-                                            <div class="col-12" style="font-size: 13px">
-                                                <span style="margin-left:50px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; +603-6096 0383</span>
+                                            <div class="col-12" style="font-size: 12px">
+                                                <span style="margin-left:45px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; +603-6096 0383</span>
                                                 <span style="margin-left:10px">Email&nbsp;&nbsp;:&nbsp;&nbsp; lowct@eastrock.com.my</span>
                                                 <span style="margin-left:10px">Website&nbsp;&nbsp;:&nbsp;&nbsp; www.eastrock.com.my</span>
                                             </div>
@@ -335,16 +336,16 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2">
                                                         <div class="row" >
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 13px;"><b>Date</b></span><span style="margin-left: 78px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$transDateOnly.'</span>
+                                                                <span style="font-size: 13px;"><b>Date</b></span><span style="margin-left: 70px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$transDateOnly.'</span>
                                                             </div>
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 13px;"><b>Loading Chit No</b></span><span style="margin-left: 29px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$loadingChitNo.'</span>
+                                                                <span style="font-size: 13px;"><b>Loading Chit No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$loadingChitNo.'</span>
                                                             </div>
                                                             <div class="col-12">
-                                                                <span style="font-size: 13px;"><b>Delivery Order No</b></span><span style="margin-left: 20px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$deliverOrderNo.' ('.$exDel.')</span>
+                                                                <span style="font-size: 13px;"><b>Delivery Order No</b></span><span style="margin-left: 10px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$deliverOrderNo.' ('.$exDel.')</span>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -353,12 +354,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     <td colspan="2">
                                                         <div class="row">
                                                             <div class="col-12 mb-2">
-                                                                <span style="font-size: 13px;"><b>Lorry No</b></span><span style="margin-left: 22px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$lorryNo.'</span>
+                                                                <span style="font-size: 13px;"><b>Lorry No</b></span><span style="margin-left: 15px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$lorryNo.'</span>
                                                             </div>
                                                             <div class="col-12">
-                                                                <span style="font-size: 13px;"><b>P/O No</b></span><span style="margin-left: 27px"><b>:</b></span>
-                                                                <span style="margin-left: 10px;font-size: 14px;">'.$poNo.'</span>
+                                                                <span style="font-size: 13px;"><b>P/O No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                <span style="margin-left: 8px;font-size: 13px;">'.$poNo.'</span>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -382,7 +383,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="2" style="border: 0px solid black; padding-bottom: 45px;font-size: 14px;">
+                                                    <td colspan="2" style="border: 0px solid black; padding-bottom: 40px;font-size: 13px;">
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <span><b>Weighted by :</b></span>
@@ -392,10 +393,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="2" style="border: 0px solid black; text-align: right; padding-top:39px;">
+                                                    <td colspan="2" style="border: 0px solid black; text-align: right; padding-top:30px;">
                                                         <div class="row">
                                                             <div class="col-12">
-                                                                <span><b style="font-size: 15px">No : '.$loadingChitNo.'</b><b style="font-size: 20px; color: red;"></b></span>
+                                                                <span><b style="font-size: 13px">No : '.$loadingChitNo.'</b><b style="font-size: 20px; color: red;"></b></span>
                                                             </div>
                                                         </div>
                                                     </td>

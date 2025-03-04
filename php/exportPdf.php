@@ -527,7 +527,7 @@ if(isset($_POST["file"])){
                                         
                                         // Fetch data and group by product_name
                                         while ($row = $result->fetch_assoc()) {
-                                            $productName = $row['product_name'];
+                                            $productName = ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']);
                                         
                                             if (!isset($groupedData[$productName])) {
                                                 $groupedData[$productName] = [];

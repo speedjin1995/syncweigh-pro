@@ -1191,7 +1191,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Customer/ <br> Supplier</th>
                                                                     <th>Vehicle</th>
-                                                                    <th>Product</th>
+                                                                    <th>Product/ <br> Raw Material</th>
                                                                     <th>SO/PO</th>
                                                                     <th>DO</th>
                                                                     <th>Gross <br>Incoming</th>
@@ -1318,11 +1318,21 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         yesterday.setDate(yesterday.getDate() - 1);
 
         //Date picker
-        $('#fromDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: today,
-            minDate: today
-        });
+        <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+            echo '$("#fromDateSearch").flatpickr({
+                dateFormat: "d-m-Y",
+                defaultDate: today,
+                minDate: today
+            });';
+        }
+        else{
+            echo '$("#fromDateSearch").flatpickr({
+                dateFormat: "d-m-Y",
+                defaultDate: today
+            });';
+        }
+        ?>
+        
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
@@ -2402,7 +2412,15 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').hide();
                 $('#rawMaterialDisplay').show();
                 $('#productNameDisplay').hide();
-                //$('#doDisplay').show();
+                
+                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                    echo "$('#doDisplay').show();";
+                }
+                else{
+                    echo "//$('#doDisplay').show();";
+                }
+                ?>
+                
 
                 if ($(this).val() == "Purchase" || $(this).val() == "Purchase"){
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
@@ -2442,7 +2460,13 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#productNameDisplay').show();
                 $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                 $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
-                //$('#doDisplay').hide();
+                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                    echo "$('#doDisplay').hide();";
+                }
+                else{
+                    echo "//$('#doDisplay').hide();";
+                }
+                ?>
 
                 if (customerType == 'Cash'){
                     $('#unitPriceDisplay').show();
