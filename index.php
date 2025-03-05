@@ -1134,19 +1134,17 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             <div class="modal-content">
                                                 <form role="form" id="prePrintForm">
                                                     <div class="modal-header bg-gray-dark color-palette">
-                                                        <h4 class="modal-title">Pre-print Sale Slip</h4>
+                                                        <h4 class="modal-title">Pre-print Sales Slip</h4>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="row">
-                                                            <div class="col-4">
-                                                                <div class="form-group">
-                                                                    <label>Pre-print Sale Slip</label>
-                                                                    <select name="prePrint" id="prePrint">
-                                                                        <option value="Y">Yes</option>
-                                                                        <option value="N">No</option>
-                                                                    </select>
-                                                                </div>
+                                                            <label for="prePrint" class="col-sm-4 col-form-label">Pre-print Sales Slip</label>
+                                                            <div class="col-sm-8">
+                                                                <select id="prePrint" name="prePrint" class="form-select" required>
+                                                                    <option value="Y" selected>Yes</option>
+                                                                    <option value="N">No</option>
+                                                                </select>  
                                                             </div>
 
                                                             <input type="hidden" class="form-control" id="id" name="id">                                   
@@ -1908,6 +1906,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                             printWindow.print();
                             printWindow.close();
                         }, 500);
+
+                        $('#spinnerLoading').hide();
                     }
                     else if(obj.status === 'failed'){
                         $("#failBtn").attr('data-toast-text', obj.message );

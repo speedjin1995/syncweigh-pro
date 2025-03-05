@@ -14,6 +14,12 @@ function filterData(&$str){
 if(isset($_POST['userID'], $_POST["file"])){
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
+    if (empty($_POST["prePrint"])) {
+        $prePrintStatus = 'N';
+    } else {
+        $prePrintStatus = trim($_POST["prePrint"]);
+    }
+
     if ($select_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
         $select_stmt->bind_param('s', $id);
 
@@ -222,195 +228,394 @@ if(isset($_POST['userID'], $_POST["file"])){
                 }
                 else{
                     if($type == 'Sales'){
-                        $message = '<html>
-                        <head>
-                            <!-- Bootstrap CSS -->
-                            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-                            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" type="text/css" />
-                            <link href="https://your-cdn-link-to-app.min.css" rel="stylesheet" type="text/css" />
-                            <link href="https://your-cdn-link-to-custom.min.css" rel="stylesheet" type="text/css" />
-    
-                            <style>
-                                @page {
-                                    size: A5 landscape;
-                                    margin: 10px;
-                                }
-    
-                                .custom-hr {
-                                    border-top: 1px solid #000;        /* Remove the default border */
-                                    height: 1px;         /* Define the thickness */
-                                    margin: 0;           /* Reset margins */
-                                }
-                            </style>
-                        </head>
-    
-                        <body>
-                            <div class="container-full">
-                                <br>
-                                <div class="header mb-3">
-                                    <div class="row col-12">
-                                        <div class="col-10">
-                                            <div class="col-12" style="font-size: 17px; font-weight: bold;margin-left:10px">
-                                                BLACKTOP LANCHANG SDN BHD<span style="font-size: 12px; margin-left: 5px">198501006021 (138463-T)</span>
-                                            </div>
-                                            <div class="col-12" style="font-size: 12px">
-                                                <span style="margin-left:10px">Office</span><span style="margin-left:25px">:&nbsp;37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
-                                            </div>
-                                            <div class="col-12" style="font-size: 12px">
-                                                <span style="margin-left:45px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; +603-6096 0383</span>
-                                                <span style="margin-left:10px">Email&nbsp;&nbsp;:&nbsp;&nbsp; lowct@eastrock.com.my</span>
-                                                <span style="margin-left:10px">Website&nbsp;&nbsp;:&nbsp;&nbsp; www.eastrock.com.my</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-2">
-                                            <img src="assets/images/eastrock_logo.jpg" alt="East Rock Logo" width="100%" style="margin-left:20px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-7" style="margin-top:60px">
-                                        <table class="table">
-                                            <tbody>
-                                                <tr>
-                                                    <td width="25%" style="border: 0px solid black;">
-                                                        <div class="row">
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;"><b>CUSTOMER</b></div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;"><b>PROJECT</b></div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;"><b>PRODUCT</b></div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED TO</b></div>
-                                                            <div class="col-12" style="height: 25px;"></div>
-                                                            <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED BY</b></div>
-                                                        </div>
-                                                    </td>
-                                                    <td colspan="2" width="75%" style="border: 1px solid black;">
-                                                        <div class="row" style="margin-left: 1px">
-                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
-                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
-                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
-                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
-                                                            <div class="col-12" style="height: 15px;"></div>
-                                                            <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr style="font-size: 9px;">
-                                                    <td width="31%" style="border: 0px solid black; margin-bottom:0px;">
-                                                        <div style="margin-top:60px">
-                                                            <hr class="custom-hr mb-1">
-                                                            <div class="text-center" style="font-size: 11px;">Stamped And Signed</div>
-                                                        </div>
-                                                    </td>
-                                                    <td width="31%" style="border: 0px solid black; padding-bottom:0px; ">
-                                                        <div style="margin-top:60px;">
-                                                            <hr class="custom-hr mb-1">
-                                                            <div class="text-center" style="font-size: 11px;">Lorry Driver</div>
-                                                        </div>
-                                                    </td>
-                                                    <td width="38%" style="border: 1px solid black;">
-                                                        <div class="row">
-                                                            <div class="col-12 mb-4">
-                                                                <span style="font-size: 12px;"><b>Waiting Hours:</b></span>
-                                                                <span style="margin-left: 10px; font-size: 12px;"></span>
+
+                        if ($prePrintStatus == 'N'){
+                            $message = '<html>
+                                            <head>
+                                                <!-- Bootstrap CSS -->
+                                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+                                                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" type="text/css" />
+                                                <link href="https://your-cdn-link-to-app.min.css" rel="stylesheet" type="text/css" />
+                                                <link href="https://your-cdn-link-to-custom.min.css" rel="stylesheet" type="text/css" />
+                        
+                                                <style>
+                                                    @page {
+                                                        size: A5 landscape;
+                                                        margin: 10px;
+                                                    }
+                        
+                                                    .custom-hr {
+                                                        border-top: 1px solid #000;        /* Remove the default border */
+                                                        height: 1px;         /* Define the thickness */
+                                                        margin: 0;           /* Reset margins */
+                                                    }
+                                                </style>
+                                            </head>
+                        
+                                            <body>
+                                                <div class="container-full">
+                                                    <br>
+                                                    <div class="header mb-3">
+                                                        <div class="row col-12">
+                                                            <div class="col-10">
+                                                                <div class="col-12" style="font-size: 17px; font-weight: bold;margin-left:10px">
+                                                                    BLACKTOP LANCHANG SDN BHD<span style="font-size: 12px; margin-left: 5px">198501006021 (138463-T)</span>
+                                                                </div>
+                                                                <div class="col-12" style="font-size: 12px">
+                                                                    <span style="margin-left:10px">Office</span><span style="margin-left:25px">:&nbsp;37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
+                                                                </div>
+                                                                <div class="col-12" style="font-size: 12px">
+                                                                    <span style="margin-left:45px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; +603-6096 0383</span>
+                                                                    <span style="margin-left:10px">Email&nbsp;&nbsp;:&nbsp;&nbsp; lowct@eastrock.com.my</span>
+                                                                    <span style="margin-left:10px">Website&nbsp;&nbsp;:&nbsp;&nbsp; www.eastrock.com.my</span>
+                                                                </div>
                                                             </div>
-                                                            <div class="col-12 mb-3">
-                                                                <span style="font-size: 12px;"><b>From:</b></span>
-                                                                <span style="margin-left: 10px; font-size: 12px;"></span>
-                                                            </div>
-                                                            <div class="col-12">
-                                                                <span style="font-size: 12px;"><b>To:</b></span>
-                                                                <span style="margin-left: 10px; font-size: 12px;"></span>
+                                                            <div class="col-2">
+                                                                <img src="assets/images/eastrock_logo.jpg" alt="East Rock Logo" width="100%" style="margin-left:20px;">
                                                             </div>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="3" style="border:0;padding-top:15px;">
-                                                        <span style="font-size: 12px">REMARK: '.$remarks.'</span>  
-                                                    </td>
-                                                </tr>
-                                            </tbody>                
-                                        </table>
-                                    </div>
-                                    <div class="col-4">
-                                        <table class="table">
-                                            <tbody style="font-size: 11px">
-                                                <tr style="border: 1px solid black;">
-                                                    <td colspan="2">
-                                                        <div class="row" >
-                                                            <div class="col-12 mb-2">
-                                                                <span style="font-size: 13px;"><b>Date</b></span><span style="margin-left: 70px"><b>:</b></span>
-                                                                <span style="margin-left: 8px;font-size: 13px;">'.$transDateOnly.'</span>
+                                                    </div>
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-7" style="margin-top:60px">
+                                                            <table class="table">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td width="25%" style="border: 0px solid black;">
+                                                                            <div class="row">
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>CUSTOMER</b></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>PROJECT</b></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>PRODUCT</b></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED TO</b></div>
+                                                                                <div class="col-12" style="height: 25px;"></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED BY</b></div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td colspan="2" width="75%" style="border: 1px solid black;">
+                                                                            <div class="row" style="margin-left: 1px">
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
+                                                                                <div class="col-12" style="height: 15px;"></div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr style="font-size: 9px;">
+                                                                        <td width="31%" style="border: 0px solid black; margin-bottom:0px;">
+                                                                            <div style="margin-top:60px">
+                                                                                <hr class="custom-hr mb-1">
+                                                                                <div class="text-center" style="font-size: 11px;">Stamped And Signed</div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td width="31%" style="border: 0px solid black; padding-bottom:0px; ">
+                                                                            <div style="margin-top:60px;">
+                                                                                <hr class="custom-hr mb-1">
+                                                                                <div class="text-center" style="font-size: 11px;">Lorry Driver</div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td width="38%" style="border: 1px solid black;">
+                                                                            <div class="row">
+                                                                                <div class="col-12 mb-4">
+                                                                                    <span style="font-size: 12px;"><b>Waiting Hours:</b></span>
+                                                                                    <span style="margin-left: 10px; font-size: 12px;"></span>
+                                                                                </div>
+                                                                                <div class="col-12 mb-3">
+                                                                                    <span style="font-size: 12px;"><b>From:</b></span>
+                                                                                    <span style="margin-left: 10px; font-size: 12px;"></span>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <span style="font-size: 12px;"><b>To:</b></span>
+                                                                                    <span style="margin-left: 10px; font-size: 12px;"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="3" style="border:0;padding-top:15px;">
+                                                                            <span style="font-size: 12px">REMARK: '.$remarks.'</span>  
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>                
+                                                            </table>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <table class="table">
+                                                                <tbody style="font-size: 11px">
+                                                                    <tr style="border: 1px solid black;">
+                                                                        <td colspan="2">
+                                                                            <div class="row" >
+                                                                                <div class="col-12 mb-2">
+                                                                                    <span style="font-size: 13px;"><b>Date</b></span><span style="margin-left: 70px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$transDateOnly.'</span>
+                                                                                </div>
+                                                                                <div class="col-12 mb-2">
+                                                                                    <span style="font-size: 13px;"><b>Loading Chit No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$loadingChitNo.'</span>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <span style="font-size: 13px;"><b>Delivery Order No</b></span><span style="margin-left: 10px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$deliverOrderNo.' ('.$exDel.')</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr style="border: 1px solid black;">
+                                                                        <td colspan="2">
+                                                                            <div class="row">
+                                                                                <div class="col-12 mb-2">
+                                                                                    <span style="font-size: 13px;"><b>Lorry No</b></span><span style="margin-left: 15px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$lorryNo.'</span>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <span style="font-size: 13px;"><b>P/O No</b></span><span style="margin-left: 20px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$poNo.'</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr style="border: 1px solid black;">
+                                                                        <td style="border: 1px solid black; text-align: center;" width="50%"><b>Time</b></td>
+                                                                        <td style="border: 1px solid black; text-align: center;" width="50%"><b>Weight (MT)</b></td>
+                                                                    </tr>
+                                                                    <tr style="border: 1px solid black; height: 70px;">
+                                                                        <td style="border: 1px solid black; text-align: center;" width="50%">
+                                                                            <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
+                                                                            <br>
+                                                                            <span style="font-size: 13px;">'.$formattedTareWeightDate.'</span>
+                                                                        </td>
+                                                                        <td style="border: 1px solid black; text-align: center;" width="50%">
+                                                                            <span style="font-size: 13px;">'.$grossWeight.'</span>
+                                                                            <br>
+                                                                            <span style="font-size: 13px;">'.$tareWeight.'</span>
+                                                                            <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
+                                                                            <div style="margin-top: -10px;font-size: 13px;">'.$nettWeight.'</div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="2" style="border: 0px solid black; padding-bottom: 40px;font-size: 13px;">
+                                                                            <div class="row">
+                                                                                <div class="col-12">
+                                                                                    <span><b>Weighted by :</b></span>
+                                                                                    <span style="margin-left: 15px">'.$weightBy.'</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="2" style="border: 0px solid black; text-align: right; padding-top:30px;">
+                                                                            <div class="row">
+                                                                                <div class="col-12">
+                                                                                    <span><b style="font-size: 13px">No : '.$loadingChitNo.'</b><b style="font-size: 20px; color: red;"></b></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody> 
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </body>
+                                        </html>';
+                        }else{
+                            $message = '<html>
+                                            <head>
+                                                <!-- Bootstrap CSS -->
+                                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+                                                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" type="text/css" />
+                                                <link href="https://your-cdn-link-to-app.min.css" rel="stylesheet" type="text/css" />
+                                                <link href="https://your-cdn-link-to-custom.min.css" rel="stylesheet" type="text/css" />
+                        
+                                                <style>
+                                                    @page {
+                                                        size: A5 landscape;
+                                                        margin: 10px;
+                                                    }
+                        
+                                                    .custom-hr {
+                                                        border-top: 1px solid #000;        /* Remove the default border */
+                                                        height: 1px;         /* Define the thickness */
+                                                        margin: 0;           /* Reset margins */
+                                                    }
+
+                                                    .hideElement {
+                                                        visibility: hidden;
+                                                    }
+
+                                                </style>
+                                            </head>
+                        
+                                            <body>
+                                                <div class="container-full">
+                                                    <br>
+                                                    <div class="header mb-3 hideElement">
+                                                        <div class="row col-12">
+                                                            <div class="col-10">
+                                                                <div class="col-12" style="font-size: 17px; font-weight: bold;margin-left:10px">
+                                                                    BLACKTOP LANCHANG SDN BHD<span style="font-size: 12px; margin-left: 5px">198501006021 (138463-T)</span>
+                                                                </div>
+                                                                <div class="col-12" style="font-size: 12px">
+                                                                    <span style="margin-left:10px">Office</span><span style="margin-left:25px">:&nbsp;37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
+                                                                </div>
+                                                                <div class="col-12" style="font-size: 12px">
+                                                                    <span style="margin-left:45px">Tel&nbsp;&nbsp;:&nbsp;&nbsp; +603-6096 0383</span>
+                                                                    <span style="margin-left:10px">Email&nbsp;&nbsp;:&nbsp;&nbsp; lowct@eastrock.com.my</span>
+                                                                    <span style="margin-left:10px">Website&nbsp;&nbsp;:&nbsp;&nbsp; www.eastrock.com.my</span>
+                                                                </div>
                                                             </div>
-                                                            <div class="col-12 mb-2">
-                                                                <span style="font-size: 13px;"><b>Loading Chit No</b></span><span style="margin-left: 20px"><b>:</b></span>
-                                                                <span style="margin-left: 8px;font-size: 13px;">'.$loadingChitNo.'</span>
-                                                            </div>
-                                                            <div class="col-12">
-                                                                <span style="font-size: 13px;"><b>Delivery Order No</b></span><span style="margin-left: 10px"><b>:</b></span>
-                                                                <span style="margin-left: 8px;font-size: 13px;">'.$deliverOrderNo.' ('.$exDel.')</span>
+                                                            <div class="col-2">
+                                                                <img src="assets/images/eastrock_logo.jpg" alt="East Rock Logo" width="100%" style="margin-left:20px;">
                                                             </div>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                                <tr style="border: 1px solid black;">
-                                                    <td colspan="2">
-                                                        <div class="row">
-                                                            <div class="col-12 mb-2">
-                                                                <span style="font-size: 13px;"><b>Lorry No</b></span><span style="margin-left: 15px"><b>:</b></span>
-                                                                <span style="margin-left: 8px;font-size: 13px;">'.$lorryNo.'</span>
-                                                            </div>
-                                                            <div class="col-12">
-                                                                <span style="font-size: 13px;"><b>P/O No</b></span><span style="margin-left: 20px"><b>:</b></span>
-                                                                <span style="margin-left: 8px;font-size: 13px;">'.$poNo.'</span>
-                                                            </div>
+                                                    </div>
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-7" style="margin-top:60px">
+                                                            <table class="table">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="hideElement" width="25%" style="border: 0;">
+                                                                            <div class="row">
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>CUSTOMER</b></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>PROJECT</b></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>PRODUCT</b></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED TO</b></div>
+                                                                                <div class="col-12" style="height: 25px;"></div>
+                                                                                <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED BY</b></div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td colspan="2" width="75%" style="border: 0;">
+                                                                            <div class="row" style="margin-left: 1px">
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
+                                                                                <div class="col-12" style="height: 15px;"></div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr style="font-size: 9px;">
+                                                                        <td width="31%" class="hideElement" style="border: 0; margin-bottom:0px;">
+                                                                            <div style="margin-top:60px">
+                                                                                <hr class="custom-hr mb-1">
+                                                                                <div class="text-center" style="font-size: 11px;">Stamped And Signed</div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td width="31%" class="hideElement" style="border: 0; padding-bottom:0px; ">
+                                                                            <div style="margin-top:60px;">
+                                                                                <hr class="custom-hr mb-1">
+                                                                                <div class="text-center" style="font-size: 11px;">Lorry Driver</div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td width="38%" style="border: 0;">
+                                                                            <div class="row">
+                                                                                <div class="col-12 mb-4">
+                                                                                    <span class="hideElement" style="font-size: 12px;"><b>Waiting Hours:</b></span>
+                                                                                    <span style="margin-left: 10px; font-size: 12px;"></span>
+                                                                                </div>
+                                                                                <div class="col-12 mb-3">
+                                                                                    <span class="hideElement" style="font-size: 12px;"><b>From:</b></span>
+                                                                                    <span style="margin-left: 10px; font-size: 12px;"></span>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <span class="hideElement" style="font-size: 12px;"><b>To:</b></span>
+                                                                                    <span style="margin-left: 10px; font-size: 12px;"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="3" style="border:0;padding-top:15px;">
+                                                                            <span class="hideElement" style="font-size: 12px">REMARK: </span><span style="font-size: 12px">'.$remarks.'</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>                
+                                                            </table>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                                <tr style="border: 1px solid black;">
-                                                    <td style="border: 1px solid black; text-align: center;" width="50%"><b>Time</b></td>
-                                                    <td style="border: 1px solid black; text-align: center;" width="50%"><b>Weight (MT)</b></td>
-                                                </tr>
-                                                <tr style="border: 1px solid black; height: 70px;">
-                                                    <td style="border: 1px solid black; text-align: center;" width="50%">
-                                                        <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
-                                                        <br>
-                                                        <span style="font-size: 13px;">'.$formattedTareWeightDate.'</span>
-                                                    </td>
-                                                    <td style="border: 1px solid black; text-align: center;" width="50%">
-                                                        <span style="font-size: 13px;">'.$grossWeight.'</span>
-                                                        <br>
-                                                        <span style="font-size: 13px;">'.$tareWeight.'</span>
-                                                        <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
-                                                        <div style="margin-top: -10px;font-size: 13px;">'.$nettWeight.'</div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2" style="border: 0px solid black; padding-bottom: 40px;font-size: 13px;">
-                                                        <div class="row">
-                                                            <div class="col-12">
-                                                                <span><b>Weighted by :</b></span>
-                                                                <span style="margin-left: 15px">'.$weightBy.'</span>
-                                                            </div>
+                                                        <div class="col-4">
+                                                            <table class="table">
+                                                                <tbody style="font-size: 11px">
+                                                                    <tr style="border: 0;">
+                                                                        <td colspan="2" style="border:0;">
+                                                                            <div class="row">
+                                                                                <div class="col-12 mb-2">
+                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Date</b></span><span class="hideElement" style="margin-left: 70px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$transDateOnly.'</span>
+                                                                                </div>
+                                                                                <div class="col-12 mb-2">
+                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Loading Chit No</b></span><span class="hideElement" style="margin-left: 20px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$loadingChitNo.'</span>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Delivery Order No</b></span><span class="hideElement" style="margin-left: 10px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$deliverOrderNo.' ('.$exDel.')</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr style="border: 0;">
+                                                                        <td colspan="2" style="border:0;">
+                                                                            <div class="row" style="border:0;">
+                                                                                <div class="col-12 mb-2">
+                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Lorry No</b></span><span class="hideElement" style="margin-left: 15px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$lorryNo.'</span>
+                                                                                </div>
+                                                                                <div class="col-12">
+                                                                                    <span class="hideElement" style="font-size: 13px;"><b>P/O No</b></span><span class="hideElement" style="margin-left: 20px"><b>:</b></span>
+                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$poNo.'</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr style="border: 0">
+                                                                        <td class="hideElement" style="border: 0; text-align: center;" width="50%"><b>Time</b></td>
+                                                                        <td class="hideElement" style="border: 0; text-align: center;" width="50%"><b>Weight (MT)</b></td>
+                                                                    </tr>
+                                                                    <tr style="border: 0; height: 70px;">
+                                                                        <td style="border: 0; text-align: center;" width="50%">
+                                                                            <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
+                                                                            <br>
+                                                                            <span style="font-size: 13px;">'.$formattedTareWeightDate.'</span>
+                                                                        </td>
+                                                                        <td style="border: 0; text-align: center;" width="50%">
+                                                                            <span style="font-size: 13px;">'.$grossWeight.'</span>
+                                                                            <br>
+                                                                            <span style="font-size: 13px;">'.$tareWeight.'</span>
+                                                                            <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
+                                                                            <div style="margin-top: -10px;font-size: 13px;">'.$nettWeight.'</div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="2" style="border: 0; padding-bottom: 40px;font-size: 13px;">
+                                                                            <div class="row">
+                                                                                <div class="col-12">
+                                                                                    <span class="hideElement"><b>Weighted by :</b></span>
+                                                                                    <span style="margin-left: 15px">'.$weightBy.'</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="2" style="border: 0; text-align: right; padding-top:30px;">
+                                                                            <div class="row">
+                                                                                <div class="col-12">
+                                                                                    <span><b class="hideElement" style="font-size: 13px">No : </b><b style="font-size: 13px;">'.$loadingChitNo.'</b></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody> 
+                                                            </table>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2" style="border: 0px solid black; text-align: right; padding-top:30px;">
-                                                        <div class="row">
-                                                            <div class="col-12">
-                                                                <span><b style="font-size: 13px">No : '.$loadingChitNo.'</b><b style="font-size: 20px; color: red;"></b></span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody> 
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </body></html>';
-    
+                                                    </div>
+                                                </div>
+                                            </body>
+                                        </html>';
+                        }
+                        
                         $select_stmt->close();
                     }
                     elseif ($type == 'Purchase'){ 
@@ -528,6 +733,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 </body>
                             </html>
                         ';
+
+                        $select_stmt->close();
                     }
                     else{
                         // Do your Local slips here
