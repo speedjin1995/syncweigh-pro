@@ -55,7 +55,7 @@ if ($user != null && $user != ''){
 
 
 //$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
@@ -193,7 +193,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Local</option>
+                                                                <option value="Local">Public</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -337,7 +337,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Local</p>
+                                                    Public</p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -518,7 +518,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Local</option>
+                                                                                            <option value="Local">Public</option>
                                                                                         </select>  
                                                                                     </div>
                                                                                 </div>
@@ -1128,7 +1128,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                         </div>
                                     </div>
 
-                                    <!-- SKY to fix -->
                                     <div class="modal fade" id="prePrintModal">
                                         <div class="modal-dialog modal-xl" style="max-width: 90%;">
                                             <div class="modal-content">
@@ -1158,7 +1157,32 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             </div>
                                         </div>
                                     </div>
-
+                                    
+                                    <div class="modal fade" id="cancelModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="cancelForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Cancellation Reason</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <label>Cancellation Reason *</label>
+                                                                <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
+                                                            </div>
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitCancel">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!--div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                                             <div class="modal-content">
@@ -1363,7 +1387,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             });';
         }
         ?>
-        
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
@@ -1442,26 +1465,79 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 { 
                     data: 'id',
                     render: function (data, type, row) {
-                        let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+                        let buttons = `<div class="row g-1 d-flex">`;
 
-                        if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                            dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
+                            }
+                        }else {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-weight-hanging"></i>
+                                    </button>
+                                </div>`;
+                            }
                         }
 
                         if (row.is_approved == 'Y') {
-                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Print" type="button" id="print${data}" onclick="print(${data})" class="btn btn-info btn-sm">
+                                    <i class="fa-solid fa-print"></i>
+                                </button>
+                            </div>`;
                         }
 
                         if (row.is_approved == 'N') {
-                            dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Print" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </div>`;
                         }
 
                         if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>`;
                         }
+                            
+                        buttons += `</div>`;
 
-                        dropdownMenu += '</ul></div>';
-                        return dropdownMenu;
+                        return buttons;
+
+                        // let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                        // if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                        //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                        // }
+
+                        // if (row.is_approved == 'Y') {
+                        //     dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                        // }
+
+                        // if (row.is_approved == 'N') {
+                        //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                        // }
+
+                        // if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                        //     dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        // }
+
+                        // dropdownMenu += '</ul></div>';
+                        // return dropdownMenu;
                     }
                 }
             ],
@@ -1923,6 +1999,34 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
         });
 
+        $('#submitCancel').on('click', function(){
+            if($('#cancelForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#cancelModal').find('#id').val();
+                $.post('php/deleteWeight.php', $('#cancelForm').serialize(), function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        $('#spinnerLoading').hide();
+                        $('#cancelModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        });
+
         $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
             if(data == "true"){
                 $('#indicatorConnected').addClass('bg-primary');
@@ -2028,26 +2132,78 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     { 
                         data: 'id',
                         render: function (data, type, row) {
-                            let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+                            let buttons = `<div class="row g-1 d-flex">`;
 
-                            if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER') {
-                                dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>`;
+                                }
+                            }else {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-weight-hanging"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
 
                             if (row.is_approved == 'Y') {
-                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${data}" onclick="print(${data})" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>`;
                             }
 
                             if (row.is_approved == 'N') {
-                                dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>`;
                             }
 
                             if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                                dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
                             }
+                                
+                            buttons += `</div>`;
 
-                            dropdownMenu += '</ul></div>';
-                            return dropdownMenu;
+                            return buttons;
+                            // let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                            // if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER') {
+                            //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                            // }
+
+                            // if (row.is_approved == 'Y') {
+                            //     dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            // }
+
+                            // if (row.is_approved == 'N') {
+                            //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                            // }
+
+                            // if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                            //     dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            // }
+
+                            // dropdownMenu += '</ul></div>';
+                            // return dropdownMenu;
                         }
                 }
                 ],
@@ -2060,6 +2216,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
 
         $('#addWeight').on('click', function(){
+            // Show Capture Buttons When Add New
+            $('#addModal').find('#grossCapture').show();
+            $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
@@ -2095,6 +2254,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
             $('#addModal').find('#destination').val("");
             $('#addModal').find('#otherRemarks').val("");
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             $('#addModal').find('#grossIncomingDate').val("");
             $('#addModal').find('#tareOutgoing').val("");
@@ -2219,7 +2379,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
         });
 
-        $('#manualVehicle').on('click', function(){
+        $('#manualVehicle').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo1').val('-');
@@ -2261,6 +2421,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     var transporterCode = obj.message.transporter_code;
 
                     $('#addModal').find('#transporter').val(transporterName);
+                }
+                else if(obj.status === 'error'){
+                    alert(obj.message);
+                    $('#vehiclePlateNo1').val('');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
@@ -2769,15 +2933,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
-                if(obj.message.is_complete == 'Y'){
-                    $('#addModal').find('#grossCapture').hide();
-                    $('#addModal').find('#tareCapture').hide();
-                }
-                else{
-                    $('#addModal').find('#grossCapture').show();
-                    $('#addModal').find('#tareCapture').show();
-                }
-                
+                // Hide Capture Button When Edit
+                $('#addModal').find('#grossCapture').hide();
+                $('#addModal').find('#tareCapture').hide();
+
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
@@ -2972,29 +3131,51 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
     }
 
-    function deactivate(id){
-        $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+    function deactivate(id) {
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $('#cancelModal').find('#id').val(id);
+            $('#cancelModal').modal('show');
+
+            $('#cancelForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }
     }
+
+    // function deactivate(id){
+        
+    //     $('#spinnerLoading').show();
+    //     $.post('php/deleteWeight.php', {userID: id}, function(data){
+    //         var obj = JSON.parse(data);
+            
+    //         if(obj.status === 'success'){
+    //             table.ajax.reload();
+    //             $('#spinnerLoading').hide();
+    //             $("#successBtn").attr('data-toast-text', obj.message);
+    //             $("#successBtn").click();
+    //         }
+    //         else if(obj.status === 'failed'){
+    //             $('#spinnerLoading').hide();
+    //             $("#failBtn").attr('data-toast-text', obj.message );
+    //             $("#failBtn").click();
+    //         }
+    //         else{
+    //             $('#spinnerLoading').hide();
+    //             $("#failBtn").attr('data-toast-text', obj.message );
+    //             $("#failBtn").click();
+    //         }
+    //     });
+    // }
 
     function print(id) {
         var transactionStatus = $('#statusSearch').val();
