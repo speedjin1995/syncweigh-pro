@@ -35,13 +35,13 @@ if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] 
 	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
 }
 
+if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
+	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
+}
+
 if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
 	$searchQuery .= " and lorry_plate_no1 like '%".$_POST['vehicle']."%'";
 }
-
-// if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != '-'){
-// 	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
-// }
 
 if($_POST['customerType'] != null && $_POST['customerType'] != '' && $_POST['customerType'] != '-'){
 	$searchQuery .= " and customer_type = '".$_POST['customerType']."'";
@@ -49,6 +49,10 @@ if($_POST['customerType'] != null && $_POST['customerType'] != '' && $_POST['cus
 
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
+}
+
+if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMaterial'] != '-'){
+	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
 }
 
 if($_POST['destination'] != null && $_POST['destination'] != '' && $_POST['destination'] != '-'){
@@ -63,10 +67,10 @@ if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
-$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y'";
+$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' and plant_code IN ('$username')";
+  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery); 
@@ -75,10 +79,10 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 
-$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -86,11 +90,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where is_complete = 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where is_complete = 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery); 
@@ -169,7 +173,8 @@ $response = array(
   "aaData" => $data,
   "salesTotal" => $salesCount,
   "purchaseTotal" => $purchaseCount,
-  "localTotal" => $localCount
+  "localTotal" => $localCount,
+  "sql" => $empQuery
 );
 
 echo json_encode($response);

@@ -1166,7 +1166,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <a href="/template/Weight_Template.xlsx" download>
+                                                                <!--a href="/template/Weight_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                         Download Template 
@@ -1175,7 +1175,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <button type="button" id="uploadExccl" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal">
                                                                     <i class="mdi mdi-file-excel align-middle me-1"></i>
                                                                     Import Orders
-                                                                </button>
+                                                                </button-->
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Weight
@@ -1411,9 +1411,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 { 
                     data: 'id',
                     render: function (data, type, row) {
-                        let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                        let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                        if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                        }
 
                         if (row.is_approved == 'Y') {
                             dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1963,9 +1965,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     { 
                         data: 'id',
                         render: function (data, type, row) {
-                            let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                            let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                            if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER') {
+                                dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                            }
 
                             if (row.is_approved == 'Y') {
                                 dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -2702,6 +2706,15 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
+                if(obj.message.is_complete == 'Y'){
+                    $('#addModal').find('#grossCapture').hide();
+                    $('#addModal').find('#tareCapture').hide();
+                }
+                else{
+                    $('#addModal').find('#grossCapture').show();
+                    $('#addModal').find('#tareCapture').show();
+                }
+                
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
