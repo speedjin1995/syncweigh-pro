@@ -55,7 +55,7 @@ if ($user != null && $user != ''){
 
 
 //$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
@@ -2421,6 +2421,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     var transporterCode = obj.message.transporter_code;
 
                     $('#addModal').find('#transporter').val(transporterName);
+                }
+                else if(obj.status === 'error'){
+                    alert(obj.message);
+                    $('#vehiclePlateNo1').val('');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
