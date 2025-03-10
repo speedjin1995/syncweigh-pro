@@ -135,3 +135,117 @@ ALTER TABLE `Weight` ADD `unit_price` VARCHAR(10) NULL AFTER `indicator_id_2`;
 ALTER TABLE `Weight` ADD `customer_type` VARCHAR(100) NULL AFTER `weight_type`;
 
 ALTER TABLE `Users` ADD `name` VARCHAR(255) NULL AFTER `username`;
+
+-- 09/03/2025 --
+
+CREATE TABLE `Purchase_Order` (
+  `id` int(11) NOT NULL,
+  `company_code` varchar(50) DEFAULT NULL,
+  `company_name` varchar(100) DEFAULT NULL,
+  `customer_code` varchar(50) DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `site_code` varchar(50) DEFAULT NULL,
+  `site_name` varchar(100) DEFAULT NULL,
+  `order_date` datetime DEFAULT NULL,
+  `order_no` varchar(50) DEFAULT NULL,
+  `po_no` varchar(50) DEFAULT NULL,
+  `delivery_date` datetime DEFAULT NULL,
+  `agent_code` int(50) DEFAULT NULL,
+  `agent_name` int(100) DEFAULT NULL,
+  `deliver_to_name` varchar(50) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_date` timestamp NULL DEFAULT current_timestamp(),
+  `modified_by` varchar(50) DEFAULT NULL,
+  `modified_date` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Purchase_Order` ADD `deleted` INT(1) NOT NULL DEFAULT '0' AFTER `status`;
+
+ALTER TABLE `Purchase_Order` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Purchase_Order` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Purchase_Order_Log` (
+  `id` int(11) NOT NULL,
+  `company_code` varchar(50) DEFAULT NULL,
+  `company_name` varchar(100) DEFAULT NULL,
+  `customer_code` varchar(50) DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `site_code` varchar(50) DEFAULT NULL,
+  `site_name` varchar(100) DEFAULT NULL,
+  `order_date` datetime DEFAULT NULL,
+  `order_no` varchar(50) DEFAULT NULL,
+  `po_no` varchar(50) DEFAULT NULL,
+  `delivery_date` datetime DEFAULT NULL,
+  `agent_code` int(50) DEFAULT NULL,
+  `agent_name` int(100) DEFAULT NULL,
+  `deliver_to_name` varchar(50) DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Purchase_Order_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Purchase_Order_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TRIGGER `TRG_INS_PO` AFTER INSERT ON `Purchase_Order`
+ FOR EACH ROW INSERT INTO Purchase_Order_Log (
+    company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
+    agent_name, deliver_to_name, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.deliver_to_name, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+)
+
+CREATE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
+FOR EACH ROW 
+BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Purchase_Order table
+    INSERT INTO Purchase_Order_Log (
+        company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
+        agent_name, deliver_to_name, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.deliver_to_name, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+
+ALTER TABLE `Purchase_Order` CHANGE `agent_code` `agent_code` VARCHAR(50) NULL DEFAULT NULL;
+
+ALTER TABLE `Purchase_Order` CHANGE `agent_name` `agent_name` VARCHAR(100) NULL DEFAULT NULL;
+
+CREATE TABLE `Site_Log` (
+  `id` int(11) NOT NULL,
+  `site_code` varchar(50) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `address_line_1` varchar(255) DEFAULT NULL,
+  `address_line_2` varchar(255) DEFAULT NULL,
+  `address_line_3` varchar(255) DEFAULT NULL,
+  `phone_no` varchar(50) DEFAULT NULL,
+  `fax_no` varchar(50) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Site_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Site_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `Site_Log` ADD `site_id` INT(11) NOT NULL AFTER `id`;
+
+ALTER TABLE `Company_Log` ADD `company_code` VARCHAR(50) NOT NULL AFTER `company_id`;

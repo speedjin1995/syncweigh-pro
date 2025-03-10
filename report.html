@@ -13,54 +13,73 @@
     <style>
         @page {
             size: A4 landscape;
-            margin: 10mm;
+            margin: 5mm;
         }
 
-        body{
-            font-size: 12px;
-        }
+        @media print {
+            header {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background: white;
+                padding-bottom: 10px;
+            }
 
-        .details td {
-            border: 0;
-            padding-top: 0;
-            padding-bottom: 0;
+            body {
+                margin-top: 50mm; /* Adjust to match header height */
+            }
+
+            .content {
+                page-break-before: always;
+                margin-top: 65mm; /* Ensure it starts below the fixed header */
+            }
+
+            .details td {
+                border: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+
+            .section-break {
+                page-break-before: always;
+            }
         }
+        
     </style>
 
 </head>
 
 <body>
-    <div class="container-full">
-        <div class="header">
-            <div class="row">
-                <div class="d-flex justify-content-center">
-                    <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <p>Sales Weighing Summary Report By Customer/Destination/Product</p>
-                </div>
-
+    <header>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
             </div>
-            <div class="row">
-                <p>
-                    Start Date : 01/02/2025 Last Date : 28/02/2025
-                    <br>
-                    Start/Last Company : ERMSB / ERMSB
-                    <br>
-                    Start Customer / Last Customer : / H0005
-                    <br>
-                    Start Destination / Last Destination : / W007-JP-
-                    <br>
-                    Quarry And Prefix Product
-                    <br>
-                    Start/Last Customer Type: /IN 
-                    <br>
-                    Start/Last Site : BEN/BEN - Weighing Only
-                    <br>
-                    Start Product / Last Produce : / QD
-                </p>
+            <div class="d-flex justify-content-center">
+                <p>Sales Weighing Summary Report By Customer/Destination/Product</p>
             </div>
         </div>
+        <div class="row">
+            <p>
+                Start Date : 01/02/2025 Last Date : 28/02/2025
+                <br>
+                Start/Last Company : ERMSB / ERMSB
+                <br>
+                Start Customer / Last Customer : / H0005
+                <br>
+                Start Destination / Last Destination : / W007-JP-
+                <br>
+                Quarry And Prefix Product
+                <br>
+                Start/Last Customer Type: /IN 
+                <br>
+                Start/Last Site : BEN/BEN - Weighing Only
+                <br>
+                Start Product / Last Produce : / QD
+            </p>
+        </div>
+    </header>
+    <div class="container-full content">
         <div class="row">
             <div class="table-responsive">
                 <table class="table">
@@ -127,7 +146,7 @@
                             <td>E</td>
                             <td>FIKAH</td>
                         </tr>
-                        <tr class="details">
+                        <tr class="details fw-bold">
                             <td colspan="6">Date Total : 10/02/2025</td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
@@ -137,7 +156,7 @@
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                         </tr>
                         <tr style="height: 18.5px;"></tr>
-                        <tr class="details">
+                        <tr class="details fw-bold">
                             <td colspan="6">Plant Total : BATCH PLANT</td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
@@ -146,165 +165,182 @@
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                         </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td class="fw-bold">Company Total:</td>
-                            <td>563</td>
-                            <td>11,488.42</td>
-                            <td>6,006.73</td>
-                            <td>6,963.50</td>
-                            <td>0.00</td>
-                            <td>6,963.50</td>
-                            <td>0.00</td>
-                            <td>6,963.50</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
-                            <td>6,963.50</td>
+                        <tr style="height: 18.5px;"></tr>
+                        <tr class="details fw-bold">
+                            <td colspan="6">Product Total : 3/8 WC</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                         </tr>
-                    </tfoot>
+                        <tr style="height: 18.5px;"></tr>
+                        <tr class="details fw-bold">
+                            <td colspan="6">Destination Total : OWN COLLECTION</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        </tr>
+                        <tr style="height: 18.5px;"></tr>
+                        <tr class="details fw-bold">
+                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Customer Total : CHIA TRADING & TRANSPORT SDN BHD</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        </tr>
+                        <tr style="height: 18.5px;"></tr>
+                        
+                    </tbody>
                 </table>
             </div>
         </div>
-        <!-- <div class="row">
-            <div class="col-7" style="margin-top:83px">
-                <table class="table" style="font-size: 10px">
+    </div>
+
+    <div class="container-full content">
+        <div class="row content">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead style="border-bottom: 1px solid black;">
+                        <tr class="text-center" style="border-top: 1px solid black;">
+                            <th rowspan="2" class="text-start">Serial No.</th>
+                            <th rowspan="2">Transport</th>
+                            <th rowspan="2">Vehicle No.</th>
+                            <th rowspan="2">Salesman</th>
+                            <th rowspan="2">Date</th>
+                            <th rowspan="2">P/O No</th>
+                            <th colspan="2" class="pb-0 pt-0" style="border-bottom: none;">Time</th>
+                            <th colspan="3" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
+                            <th rowspan="2">Price / Ton</th>
+                            <th rowspan="2">Trans Rate</th>
+                            <th rowspan="2">Ex_GST (RM)</th>
+                            <th rowspan="2">GST 0% (RM)</th>
+                            <th rowspan="2">Amount (RM)</th>
+                            <th rowspan="2">E/D</th>
+                        </tr>
+                        <tr class="text-center">
+                            <th>In</th>
+                            <th>Out</th>
+                            <th>In</th>
+                            <th>Out</th>
+                            <th>Net</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr>
-                            <td width="25%" style="border: 0px solid black;">
-                                <div class="row">
-                                    <div class="col-12 mt-2 mb-3"><b>CUSTOMER</b></div>
-                                    <div class="col-12 mb-3"><b>PROJECT</b></div>
-                                    <div class="col-12 mb-3"><b>PRODUCT</b></div>
-                                    <div class="col-12 mb-3"><b>DELIVERED TO</b></div>
-                                    <div class="col-12 mb-3"><b>DELIVERED BY</b></div>
-                                </div>
-                            </td>
-                            <td colspan="2" width="75%" style="border: 1px solid black;">
-                                <div class="row" style="margin-left: 5px">
-                                    <div class="col-12 mt-2 mb-3">CUSTOMER</div>
-                                    <div class="col-12 mb-3">PROJECT</div>
-                                    <div class="col-12 mb-3">PRODUCT</div>
-                                    <div class="col-12 mb-3">DELIVERED TO</div>
-                                    <div class="col-12 mb-3">DELIVERED BY</div>
+                            <td colspan="17" style="border:0; padding-bottom: 0;">
+                                <div class="fw-bold">
+                                    <span>
+                                        Customer <span>:</span> 310A-C0011 CHIA TRADING & TRANSPORT SDN BHD
+                                        <br>
+                                        Destination <span>:</span> O001-B OWN COLLECTION
+                                        <br>
+                                        Product <span>:</span> 501A-012 3/8 WC
+                                        <br>
+                                        Plant <span>:</span> 02 BATCH PLANT
+                                        <br>
+                                        Date <span>:</span> 10/02/2025
+                                    </span>
                                 </div>
                             </td>
                         </tr>
-                        <tr style="font-size: 9px;">
-                            <td width="34%" style="border: 0px solid black; margin-bottom:0px;">
-                                <div style="margin-top:70px">
-                                    <hr class="custom-hr mb-1">
-                                    <div class="text-center">Stamped And Signed</div>
-                                </div>
-                            </td>
-                            <td width="30%" style="border: 0px solid black; padding-bottom:0px; padding-left: 20px;">
-                                <div style="margin-top:70px;">
-                                    <hr class="custom-hr mb-1">
-                                    <div class="text-center">Lorry Driver</div>
-                                </div>
-                            </td>
-                            <td width="38%" style="border: 1px solid black;">
-                                <div class="row">
-                                    <div class="col-12 mb-4">
-                                        <span><b>Waiting Hours:</b></span>
-                                        <span style="margin-left: 10px">TEST</span>
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <span><b>From:</b></span>
-                                        <span style="margin-left: 10px">TEST</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <span><b>To:</b></span>
-                                        <span style="margin-left: 10px">TEST</span>
-                                    </div>
-                                </div>
-                            </td>
+                        <tr class="details">
+                            <td>BT039325</td>
+                            <td>OWN</td>
+                            <td>BLG4848</td>
+                            <td>LSH</td>
+                            <td>10/02/2025</td>
+                            <td width="10%">PO-241204</td>
+                            <td class="text-end">08:26</td>
+                            <td class="text-end">09:03</td>
+                            <td class="text-end">4.23</td>
+                            <td class="text-end">5.22</td>
+                            <td class="text-end">0.99</td>
+                            <td class="text-end">0.00</td>
+                            <td class="text-end">0.00</td>
+                            <td class="text-end">0.00</td>
+                            <td class="text-end">0.00</td>
+                            <td class="text-end">0.00</td>
+                            <td>E</td>
+                            <td>FIKAH</td>
                         </tr>
-                    </tbody>                
+                        <tr class="details fw-bold">
+                            <td colspan="6">Date Total : 10/02/2025</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        </tr>
+                        <tr style="height: 18.5px;"></tr>
+                        <tr class="details fw-bold">
+                            <td colspan="6">Plant Total : BATCH PLANT</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        </tr>
+                        <tr style="height: 18.5px;"></tr>
+                        <tr class="details fw-bold">
+                            <td colspan="6">Product Total : 3/8 WC</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        </tr>
+                        <tr style="height: 18.5px;"></tr>
+                        <tr class="details fw-bold">
+                            <td colspan="6">Destination Total : OWN COLLECTION</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        </tr>
+                        <tr style="height: 18.5px;"></tr>
+                        <tr class="details fw-bold">
+                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Customer Total : CHIA TRADING & TRANSPORT SDN BHD</td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                            <td></td>
+                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        </tr>
+                        <tr style="height: 18.5px;"></tr>
+                        
+                    </tbody>
                 </table>
             </div>
-            <div class="col-5">
-                <table class="table">
-                    <tbody style="font-size: 9px">
-                        <tr style="border: 1px solid black;">
-                            <td colspan="2">
-                                <div class="row" >
-                                    <div class="col-12 mb-2">
-                                        <span><b>Date</b></span><span style="margin-left: 78px"><b>:</b></span>
-                                        <span style="margin-left: 15px">TEST</span>
-                                    </div>
-                                    <div class="col-12 mb-2">
-                                        <span><b>Loading Chit No</b></span><span style="margin-left: 27px"><b>:</b></span>
-                                        <span style="margin-left: 15px">TEST</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <span><b>Delivery Order No</b></span><span style="margin-left: 20px"><b>:</b></span>
-                                        <span style="margin-left: 15px">TEST</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr style="border: 1px solid black;">
-                            <td colspan="2">
-                                <div class="row">
-                                    <div class="col-12 mb-2">
-                                        <span><b>Lorry No</b></span><span style="margin-left: 22px"><b>:</b></span>
-                                        <span style="margin-left: 15px">TEST</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <span><b>P/O No</b></span><span style="margin-left: 27px"><b>:</b></span>
-                                        <span style="margin-left: 15px">TEST</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr style="border: 1px solid black;">
-                            <td style="border: 1px solid black; text-align: center;" width="50%"><b>Time</b></td>
-                            <td style="border: 1px solid black; text-align: center;" width="50%"><b>Weight (MT)</b></td>
-                        </tr>
-                        <tr style="border: 1px solid black; height: 93px;">
-                            <td style="border: 1px solid black; text-align: center;" width="50%">
-                                <span>09:34</span>
-                                <br>
-                                <span>09:38</span>
-                            </td>
-                            <td style="border: 1px solid black; text-align: center;" width="50%">
-                                <span>4,180</span>
-                                <br>
-                                <span>5,740</span>
-                                <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
-                                <div style="margin-top: -10px;">1,560</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" style="border: 0px solid black; padding-bottom: 30px;">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <span><b>Weighted by :</b></span>
-                                        <span style="margin-left: 15px">TEST</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" style="border: 0px solid black; text-align: right;">
-                                <div class="row">
-                                    <div class="col-12 mb-3">
-                                        <span><b>Customer Copy</b></span>
-                                    </div>
-                                    <div class="col-12">
-                                        <span><b style="font-size: 15px">No : </b><b style="font-size: 20px; color: red;">0029001</b></span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody> 
-                </table>
-            </div>
-            
-        </div> -->
-
+        </div>
+        
     </div>
+    
+    <table class="table">
+        <tbody>
+            <tr class="details fw-bold">
+                <td width="400px" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                <td width="168.69px" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2</td>
+                <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">2.00</td>
+                <td></td>
+                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>

@@ -1128,6 +1128,37 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                         </div>
                                     </div>
 
+                                    <!-- SKY to fix -->
+                                    <div class="modal fade" id="prePrintModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="prePrintForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Pre-print Sales Slip</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <label for="prePrint" class="col-sm-4 col-form-label">Pre-print Sales Slip</label>
+                                                            <div class="col-sm-8">
+                                                                <select id="prePrint" name="prePrint" class="form-select" required>
+                                                                    <option value="Y" selected>Yes</option>
+                                                                    <option value="N">No</option>
+                                                                </select>  
+                                                            </div>
+
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitPrePrint">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!--div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                                             <div class="modal-content">
@@ -1858,6 +1889,38 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 }
             });
+        });
+
+        $('#submitPrePrint').on('click', function(){
+            if($('#prePrintForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#prePrintModal').find('#id').val();
+                var prePrintStatus = $('#prePrintModal').find('#prePrint').val();
+
+                $.post('php/print.php', {userID: id, file: 'weight', prePrint: prePrintStatus}, function(data){
+                    var obj = JSON.parse(data);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                        $("#failBtn").click();
+                    }
+                });
+            }
         });
 
         $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
@@ -2934,27 +2997,49 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
     }
 
     function print(id) {
-        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
-            var obj = JSON.parse(data);
+        var transactionStatus = $('#statusSearch').val();
 
-            if(obj.status === 'success'){
-                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                printWindow.document.write(obj.message);
-                printWindow.document.close();
-                setTimeout(function(){
-                    printWindow.print();
-                    printWindow.close();
-                }, 500);
-            }
-            else if(obj.status === 'failed'){
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $("#failBtn").attr('data-toast-text', "Something wrong when print");
-                $("#failBtn").click();
-            }
-        });
+        if (transactionStatus == "Sales"){
+            $('#prePrintModal').find('#id').val(id);
+            $('#prePrintModal').find('#prePrint').val("");
+            $("#prePrintModal").modal("show");
+
+            $('#prePrintForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }else{
+            $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+                var obj = JSON.parse(data);
+
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                }
+                else if(obj.status === 'failed'){
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                    $("#failBtn").click();
+                }
+            });
+        }
     }
     </script>
 </body>

@@ -55,6 +55,22 @@
                         </ul>
                     </div>
                 </li> -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarAccounting" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarAccounting">
+                        <i class="ri-pages-line"></i> <span><?=$lang['t-accounting']?></span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarAccounting">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="salesOrder.php" class="nav-link"><?=$lang['t-so']?></a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="purchaseOrder.php" class="nav-link"><?=$lang['t-po']?></a>
+                            </li>               
+                        </ul>
+                    </div>
+                </li>
 
                 <?php
                     if($_SESSION["roles"] == 'MANAGER' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
