@@ -2216,6 +2216,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
 
         $('#addWeight').on('click', function(){
+            // Show Capture Buttons When Add New
+            $('#addModal').find('#grossCapture').show();
+            $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
@@ -2925,15 +2928,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
-                if(obj.message.is_complete == 'Y'){
-                    $('#addModal').find('#grossCapture').hide();
-                    $('#addModal').find('#tareCapture').hide();
-                }
-                else{
-                    $('#addModal').find('#grossCapture').hide();
-                    $('#addModal').find('#tareCapture').hide();
-                }
-                
+                // Hide Capture Button When Edit
+                $('#addModal').find('#grossCapture').hide();
+                $('#addModal').find('#tareCapture').hide();
+
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
