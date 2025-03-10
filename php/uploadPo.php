@@ -8,9 +8,9 @@ session_start();
 $uid = $_SESSION['username'];
 
 // Read the JSON data from the request body
-$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(file_get_contents('php://input'), true); 
 
-if (!empty($data)) {
+if (!empty($data)) { 
     foreach ($data as $rows) {
         $CompanyCode = !empty($rows['CompanyCode']) ? trim($rows['CompanyCode']) : '';
         $CompanyName = !empty($rows['CompanyName']) ? trim($rows['CompanyName']) : '';
@@ -18,10 +18,10 @@ if (!empty($data)) {
         $CustomerName = !empty($rows['CustomerName']) ? trim($rows['CustomerName']) : '';
         $SiteCode = !empty($rows['SiteCode']) ? trim($rows['SiteCode']) : '';
         $SiteName = !empty($rows['SiteName']) ? trim($rows['SiteName']) : '';
-        $OrderDate = !empty($rows['OrderDateDDMMYYYY']) ? trim($rows['CustomerName']) : '';
+        $OrderDate = !empty($rows['OrderDateDDMMYYYY']) ? DateTime::createFromFormat('d-m-Y', $rows["OrderDateDDMMYYYY"])->format('Y-m-d H:i:s') : '';
         $OrderNumber = !empty($rows['OrderNumber']) ? trim($rows['OrderNumber']) : '';
         $PONumber = !empty($rows['PONumber']) ? trim($rows['PONumber']) : '';
-        $DeliveryDate = !empty($rows['DeliveryDateDDMMYYYY']) ? trim($rows['CustomerName']) : '';
+        $DeliveryDate = !empty($rows['DeliveryDateDDMMYYYY']) ? DateTime::createFromFormat('d-m-Y', $rows["DeliveryDateDDMMYYYY"])->format('Y-m-d H:i:s') : '';
         $SalesrepCode = !empty($rows['SalesrepCode']) ? trim($rows['SalesrepCode']) : '';
         $SalesrepName = !empty($rows['SalesrepName']) ? trim($rows['SalesrepName']) : '';
         $DelivertoName = !empty($rows['DelivertoName']) ? trim($rows['DelivertoName']) : '';
@@ -96,44 +96,32 @@ if (!empty($data)) {
         }
 
         # Agent Checking & Processing
-        if($CustomerCode != null && $CustomerCode != ''){
-            $customerQuery = "SELECT * FROM Customer WHERE customer_code = '$CustomerCode'";
-            $customerDetail = mysqli_query($db, $customerQuery);
-            $customerRow = mysqli_fetch_assoc($customerDetail);
+        if($SalesrepCode != null && $SalesrepCode != ''){
+            $agentQuery = "SELECT * FROM Agents WHERE agent_code = '$SalesrepCode'";
+            $agentDetail = mysqli_query($db, $agentQuery);
+            $agentRow = mysqli_fetch_assoc($agentDetail);
             
-            if(empty($customerRow)){
-                if($insert_customer = $db->prepare("INSERT INTO Customer (customer_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_customer->bind_param('ssss', $CustomerCode, $CustomerName, $uid, $uid);
-                    $insert_customer->execute();
-                    $customerId = $insert_customer->insert_id; // Get the inserted company ID
-                    $insert_customer->close();
+            if(empty($agentRow)){
+                if($insert_agent = $db->prepare("INSERT INTO Agents (agent_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_agent->bind_param('ssss', $SalesrepCode, $SalesrepName, $uid, $uid);
+                    $insert_agent->execute();
+                    $agentId = $insert_agent->insert_id; // Get the inserted agent ID
+                    $insert_agent->close();
                     
-                    if ($insert_customer_log = $db->prepare("INSERT INTO Customer_Log (company_id, customer_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_customer_log->bind_param('sssss', $customerId, $CustomerCode, $CustomerName, $actionId, $uid);
-                        $insert_customer_log->execute();
-                        $insert_customer_log->close();
+                    if ($insert_agent_log = $db->prepare("INSERT INTO Agents_Log (agent_id, agent_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_agent_log->bind_param('sssss', $customerId, $SalesrepCode, $SalesrepName, $actionId, $uid);
+                        $insert_agent_log->execute();
+                        $insert_agent_log->close();
                     }    
                 }
             }
         }
 
-        die;
-
-        if ($insert_stmt = $db->prepare("INSERT INTO Customer (customer_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, address_line_4, phone_no, fax_no, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssssss', $Code, $RegNo, $Name, $Address1, $Address2, $Address3, $Address4, $Phone, $Fax, $uid, $uid);
+        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, deliver_to_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $PONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DelivertoName, $Remarks, $status, $uid, $uid);
             $insert_stmt->execute();
-            $invid = $insert_stmt->insert_id; // Get the inserted reseller ID
-            $insert_stmt->close();
-
-            $sel = mysqli_query($db,"select count(*) as allcount from Customer");
-            $records = mysqli_fetch_assoc($sel);
-            $totalRecords = $records['allcount'];
-
-            if ($insert_log = $db->prepare("INSERT INTO Customer_Log (customer_id, customer_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, address_line_4, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                $insert_log->bind_param('ssssssssssss', $totalRecords, $Code, $RegNo, $Name, $Address1, $Address2, $Address3, $Address4, $Phone, $Fax, $action, $uid);
-                $insert_log->execute();
-                $insert_log->close();
-            }            
+            $poId = $insert_stmt->insert_id; // Get the inserted reseller ID
+            $insert_stmt->close(); 
         }
     }
 

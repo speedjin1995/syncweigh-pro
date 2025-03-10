@@ -242,11 +242,10 @@ CREATE TABLE `Site_Log` (
   `event_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE `Site_Log`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `Site_Log` ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `Site_Log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-COMMIT;
+ALTER TABLE `Site_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `Site_Log` ADD `site_id` INT(11) NOT NULL AFTER `id`;
+
+ALTER TABLE `Company_Log` ADD `company_code` VARCHAR(50) NOT NULL AFTER `company_id`;

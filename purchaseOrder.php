@@ -359,7 +359,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                 </a>
                                                                 <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
-                                                                    Upload Excel
+                                                                    Import Purchase Orders
                                                                 </button>
                                                                 <button type="button" id="addPurchaseOrder" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
@@ -673,7 +673,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                         $('#uploadModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
-                        $('#customerTable').DataTable().ajax.reload(null, false);
+                        window.location.reload();
                     } 
                     else if (obj.status === 'failed') {
                         $('#spinnerLoading').hide();
