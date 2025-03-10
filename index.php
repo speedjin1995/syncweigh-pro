@@ -1128,7 +1128,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                         </div>
                                     </div>
 
-                                    <!-- SKY to fix -->
                                     <div class="modal fade" id="prePrintModal">
                                         <div class="modal-dialog modal-xl" style="max-width: 90%;">
                                             <div class="modal-content">
@@ -1158,7 +1157,32 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             </div>
                                         </div>
                                     </div>
-
+                                    
+                                    <div class="modal fade" id="cancelModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="cancelForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Cancellation Reason</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <label>Cancellation Reason *</label>
+                                                                <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
+                                                            </div>
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitCancel">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!--div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                                             <div class="modal-content">
@@ -1363,7 +1387,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             });';
         }
         ?>
-        
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
@@ -1917,6 +1940,34 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                     else{
                         $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        });
+
+        $('#submitCancel').on('click', function(){
+            if($('#cancelForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#cancelModal').find('#id').val();
+                $.post('php/deleteWeight.php', $('#cancelForm').serialize(), function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        $('#spinnerLoading').hide();
+                        $('#cancelModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
                         $("#failBtn").click();
                     }
                 });
@@ -2972,29 +3023,51 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
     }
 
-    function deactivate(id){
-        $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+    function deactivate(id) {
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $('#cancelModal').find('#id').val(id);
+            $('#cancelModal').modal('show');
+
+            $('#cancelForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }
     }
+
+    // function deactivate(id){
+        
+    //     $('#spinnerLoading').show();
+    //     $.post('php/deleteWeight.php', {userID: id}, function(data){
+    //         var obj = JSON.parse(data);
+            
+    //         if(obj.status === 'success'){
+    //             table.ajax.reload();
+    //             $('#spinnerLoading').hide();
+    //             $("#successBtn").attr('data-toast-text', obj.message);
+    //             $("#successBtn").click();
+    //         }
+    //         else if(obj.status === 'failed'){
+    //             $('#spinnerLoading').hide();
+    //             $("#failBtn").attr('data-toast-text', obj.message );
+    //             $("#failBtn").click();
+    //         }
+    //         else{
+    //             $('#spinnerLoading').hide();
+    //             $("#failBtn").attr('data-toast-text', obj.message );
+    //             $("#failBtn").click();
+    //         }
+    //     });
+    // }
 
     function print(id) {
         var transactionStatus = $('#statusSearch').val();
