@@ -2825,8 +2825,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#addModal').find('#tareCapture').hide();
                 }
                 else{
-                    $('#addModal').find('#grossCapture').show();
-                    $('#addModal').find('#tareCapture').show();
+                    $('#addModal').find('#grossCapture').hide();
+                    $('#addModal').find('#tareCapture').hide();
                 }
                 
                 $('#addModal').find('#id').val(obj.message.id);
