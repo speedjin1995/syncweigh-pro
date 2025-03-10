@@ -58,6 +58,15 @@ if(isset($_POST['customer']) && $_POST['customer'] != null && $_POST['customer']
     }
 }
 
+if(isset($_POST['supplier']) && $_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
+    if($_POST["file"] == 'weight'){
+        $searchQuery .= " and Weight.supplier_code = '".$_POST['supplier']."'";
+    }
+    else{
+        $searchQuery .= " and count.supplier_code = '".$_POST['supplier']."'";
+    }
+}
+
 if(isset($_POST['vehicle']) && $_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.lorry_plate_no1 = '".$_POST['vehicle']."'";
@@ -94,6 +103,15 @@ if(isset($_POST['product']) && $_POST['product'] != null && $_POST['product'] !=
     }
 }
 
+if(isset($_POST['rawMat']) && $_POST['rawMat'] != null && $_POST['rawMat'] != '' && $_POST['rawMat'] != '-'){
+    if($_POST["file"] == 'weight'){
+        $searchQuery .= " and Weight.raw_mat_code = '".$_POST['rawMat']."'";
+    }
+    else{
+        $searchQuery .= " and count.raw_mat_code = '".$_POST['rawMat']."'";
+    }
+}
+
 if(isset($_POST['destination']) && $_POST['destination'] != null && $_POST['destination'] != '' && $_POST['destination'] != '-'){
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.destination = '".$_POST['destination']."'";
@@ -118,7 +136,7 @@ if(isset($_POST["file"])){
         //AND weight.pStatus = 'Pending'
 
         if ($_POST['reportType'] == 'SUMMARY') {
-            if ($select_stmt = $db->prepare("SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC")){
+            if ($select_stmt = $db->prepare("SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC")){
 
                 if (!$select_stmt->execute()){
                     echo json_encode(
@@ -257,6 +275,7 @@ if(isset($_POST["file"])){
                     echo json_encode(
                         array(
                             "status" => "success",
+                            "query" => "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC",
                             "message" => $message
                         )
                     );
@@ -270,7 +289,7 @@ if(isset($_POST["file"])){
             }
         }
         else if ($_POST['reportType'] == 'PRODUCT'){
-            if ($select_stmt = $db->prepare("SELECT * FROM ( SELECT product_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY code")){
+            if ($select_stmt = $db->prepare("SELECT * FROM ( SELECT product_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY code")){
 
                 if (!$select_stmt->execute()){
                     echo json_encode(
@@ -423,7 +442,7 @@ if(isset($_POST["file"])){
             }
         }
         else{
-            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
+            if ($select_stmt = $db->prepare("select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date')) {
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {
                     echo json_encode(
@@ -513,9 +532,9 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">DESTINATION</th>
                                                 <th style="font-size: 9px;">PO NO.</th>
                                                 <th style="font-size: 9px;">DO NO.</th>
-                                                <th style="font-size: 9px;">GROSS</th>
-                                                <th style="font-size: 9px;">TARE</th>
-                                                <th style="font-size: 9px;">NET</th>
+                                                <th style="font-size: 9px;">INCOMING <br>(MT)</th>
+                                                <th style="font-size: 9px;">OUTGOING <br>(MT)</th>
+                                                <th style="font-size: 9px;">NET <br>(MT)</th>
                                                 <th style="font-size: 9px;">IN TIME</th>
                                                 <th style="font-size: 9px;">OUT TIME</th>
                                             </tr>
@@ -579,15 +598,15 @@ if(isset($_POST["file"])){
                                                     }
                                                     
                                                     
-                                                    $message .= '<td style="font-size: 8px;">' . $row['product_code'] . '</td>
-                                                    <td style="font-size: 8px;">' . $row['product_name'] . '</td>
+                                                    $message .= '<td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']) . '</td>
+                                                    <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
-                                                    <td style="font-size: 8px;">' . $row['gross_weight1'] . ' kg</td>
-                                                    <td style="font-size: 8px;">' . $row['tare_weight1'] . ' kg</td>
-                                                    <td style="font-size: 8px;">' . $row['nett_weight1'] . ' kg</td>
+                                                    <td style="font-size: 8px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
+                                                    <td style="font-size: 8px;">' . number_format($row['tare_weight1']/1000, 2) . '</td>
+                                                    <td style="font-size: 8px;">' . number_format($row['nett_weight1']/1000, 2) . '</td>
                                                     <td style="font-size: 8px;">' . $formattedGrossWeightDate . '</td>
                                                     <td style="font-size: 8px;">' . $formattedTareWeightDate . '</td>
                                                 </tr>';
@@ -601,9 +620,9 @@ if(isset($_POST["file"])){
                                             // Add product-wise subtotal
                                             $message .= '<tr>
                                                 <th style="font-size: 10px;" colspan="13">Subtotal (' . $product . ')</th>
-                                                <th style="border:1px solid black;font-size: 9px;">' . $totalGross . ' kg</th>
-                                                <th style="border:1px solid black;font-size: 9px;">' . $totalTare . ' kg</th>
-                                                <th style="border:1px solid black;font-size: 9px;">' . $totalNet . ' kg</th>
+                                                <th style="border:1px solid black;font-size: 9px;">' . number_format($totalGross /1000, 2). '</th>
+                                                <th style="border:1px solid black;font-size: 9px;">' . number_format($totalTare/1000, 2) . '</th>
+                                                <th style="border:1px solid black;font-size: 9px;">' . number_format($totalNet/1000, 2) . '</th>
                                             </tr>';
                                         
                                             // Add to grand total
@@ -616,9 +635,9 @@ if(isset($_POST["file"])){
                                             <tfoot>
                                                 <tr>
                                                     <th style="font-size: 10px;" colspan="13">Grand Total</th>
-                                                    <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.$grandTotalGross.' kg</th>
-                                                    <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.$grandTotalTare.' kg</th>
-                                                    <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.$grandTotalNet.' kg</th>
+                                                    <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
+                                                    <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
+                                                    <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
                                                 </tr>
                                             </tfoot>';
                                         $message .= '</tbody>';
