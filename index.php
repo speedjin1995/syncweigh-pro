@@ -193,7 +193,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Local</option>
+                                                                <option value="Local">Public</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -337,7 +337,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Local</p>
+                                                    Public</p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -518,7 +518,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Local</option>
+                                                                                            <option value="Local">Public</option>
                                                                                         </select>  
                                                                                     </div>
                                                                                 </div>
