@@ -65,6 +65,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$purchaseOrder = $db->query("SELECT * FROM Purchase_Order WHERE status = 'Open' AND deleted = '0'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
@@ -439,9 +440,23 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divPurchaseOrder">
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order">
+                                                                                    <div class="col-sm-8" id="poSelect">
+                                                                                        <select class="form-select js-choice" id="purchaseOrder" name="purchaseOrder" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
+                                                                                                <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                        <!-- <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order"> -->
                                                                                     </div>
+                                                                                    <!-- <div class="col-sm-8" id="soSelect">
+                                                                                        <select class="form-select js-choice" id="purchaseOrder" name="purchaseOrder" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
+                                                                                                <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div> -->
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
@@ -2653,9 +2668,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 ?>
                 
 
-                if ($(this).val() == "Purchase" || $(this).val() == "Purchase"){
-                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
-                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
+                if ($(this).val() == "Purchase"){
+                    // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                    // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
                     
                     // Hide Pricing Fields
                     $('#unitPriceDisplay').hide();
@@ -2663,8 +2678,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
                 }else{
-                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
-                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                    // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                    // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
 
                     if (customerType == 'Cash'){
                         $('#unitPriceDisplay').show();
@@ -2689,8 +2704,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').show();
                 $('#rawMaterialDisplay').hide();
                 $('#productNameDisplay').show();
-                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
-                $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
                 <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').hide();";
                 }
