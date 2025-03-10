@@ -1465,26 +1465,79 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 { 
                     data: 'id',
                     render: function (data, type, row) {
-                        let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+                        let buttons = `<div class="row g-1 d-flex">`;
 
-                        if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                            dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
+                            }
+                        }else {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-weight-hanging"></i>
+                                    </button>
+                                </div>`;
+                            }
                         }
 
                         if (row.is_approved == 'Y') {
-                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Print" type="button" id="print${data}" onclick="print(${data})" class="btn btn-info btn-sm">
+                                    <i class="fa-solid fa-print"></i>
+                                </button>
+                            </div>`;
                         }
 
                         if (row.is_approved == 'N') {
-                            dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Print" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </div>`;
                         }
 
                         if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>`;
                         }
+                            
+                        buttons += `</div>`;
 
-                        dropdownMenu += '</ul></div>';
-                        return dropdownMenu;
+                        return buttons;
+
+                        // let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                        // if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                        //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                        // }
+
+                        // if (row.is_approved == 'Y') {
+                        //     dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                        // }
+
+                        // if (row.is_approved == 'N') {
+                        //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                        // }
+
+                        // if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                        //     dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        // }
+
+                        // dropdownMenu += '</ul></div>';
+                        // return dropdownMenu;
                     }
                 }
             ],
@@ -2079,26 +2132,78 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     { 
                         data: 'id',
                         render: function (data, type, row) {
-                            let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+                            let buttons = `<div class="row g-1 d-flex">`;
 
-                            if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER') {
-                                dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>`;
+                                }
+                            }else {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-weight-hanging"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
 
                             if (row.is_approved == 'Y') {
-                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${data}" onclick="print(${data})" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>`;
                             }
 
                             if (row.is_approved == 'N') {
-                                dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>`;
                             }
 
                             if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                                dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
                             }
+                                
+                            buttons += `</div>`;
 
-                            dropdownMenu += '</ul></div>';
-                            return dropdownMenu;
+                            return buttons;
+                            // let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                            // if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER') {
+                            //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                            // }
+
+                            // if (row.is_approved == 'Y') {
+                            //     dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            // }
+
+                            // if (row.is_approved == 'N') {
+                            //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                            // }
+
+                            // if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                            //     dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            // }
+
+                            // dropdownMenu += '</ul></div>';
+                            // return dropdownMenu;
                         }
                 }
                 ],
