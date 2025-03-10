@@ -314,7 +314,27 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                             </div><!-- /.modal-content -->
                                         </div><!-- /.modal-dialog -->
                                     </div><!-- /.modal -->
-
+                                    <div class="modal fade" id="uploadModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Upload Excel File</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="file" id="fileInput">
+                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div id="previewTable" style="overflow: auto;"></div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="uploadPo">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>                                                                
                                 </div>
                             </div> <!-- end row-->
 
@@ -331,10 +351,12 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Purchase Orders</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <!-- <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
-                                                                    Export PDF
-                                                                </button> -->
+                                                                <a href="template/Po_Template.xlsx" download>
+                                                                    <button type="button" class="btn btn-info waves-effect waves-light">
+                                                                        <i class="mdi mdi-file-import-outline align-middle me-1"></i>
+                                                                        Download Template 
+                                                                    </button>
+                                                                </a>
                                                                 <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Upload Excel
@@ -484,36 +506,30 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                 {
                     data: 'id',
                     render: function (data, type, row) {
-                        let buttons = '<div class="row g-1 d-flex">';
-                        
-                        if (row.role == 'SADMIN' || row.role == 'ADMIN' || row.role == 'MANAGER') {
-                            buttons += `
-                            <div class="col-auto">
-                                <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-pen"></i>
-                                </button>
-                            </div>`;
-                        } else {
-                            buttons += `
-                            <div class="col-auto">
-                                <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                    <i class="fa-solid fa-weight-hanging"></i>
-                                </button>
-                            </div>`;
-                        }
+                        let buttons = `
+                            <div class="row g-1 d-flex">
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
 
-                        buttons += `
-                            <div class="col-auto">
-                                <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </div>
-                            <div class="col-auto">
-                                <button title="Cancelled" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>`;
+                            if (row.status == 'Open'){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>`;
+                            }
+                            
+                            buttons += `
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>`;
 
                         return buttons;
                     }
@@ -565,36 +581,30 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            let buttons = '<div class="row g-1 d-flex">';
-                            
-                            if (row.role == 'SADMIN' || row.role == 'ADMIN' || row.role == 'MANAGER') {
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-pen"></i>
-                                    </button>
-                                </div>`;
-                            } else {
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                        <i class="fa-solid fa-weight-hanging"></i>
-                                    </button>
-                                </div>`;
-                            }
+                            let buttons = `
+                                <div class="row g-1 d-flex">
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>`;
 
-                            buttons += `
-                                <div class="col-auto">
-                                    <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                </div>
-                                <div class="col-auto">
-                                    <button title="Cancelled" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>`;
+                                if (row.status == 'Open'){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>`;
+                                }
+                                
+                                buttons += `
+                                    <div class="col-auto">
+                                        <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>`;
 
                             return buttons;
                         }
@@ -632,6 +642,53 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             }
         });
 
+        $('#uploadPo').on('click', function(){
+            $('#spinnerLoading').show();
+            var formData = $('#uploadForm').serializeArray();
+            var data = [];
+            var rowIndex = -1;
+            formData.forEach(function(field) {
+            var match = field.name.match(/([a-zA-Z0-9]+)\[(\d+)\]/);
+            if (match) {
+                var fieldName = match[1];
+                var index = parseInt(match[2], 10);
+                if (index !== rowIndex) {
+                rowIndex = index;
+                data.push({});
+                }
+                data[index][fieldName] = field.value;
+            }
+            });
+
+            // Send the JSON array to the server
+            $.ajax({
+                url: 'php/uploadPo.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    var obj = JSON.parse(response);
+                    if (obj.status === 'success') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                        $('#customerTable').DataTable().ajax.reload(null, false);
+                    } 
+                    else if (obj.status === 'failed') {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    } 
+                    else {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                }
+            });
+        });
+
         $('#addPurchaseOrder').on('click', function(){
             $('#addModal').find('#id').val("");
             $('#addModal').find('#company').val("");
@@ -660,11 +717,39 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                     $(element).removeClass('is-invalid');
                 }
             });
-        });      
+        });                                                                  
 
         $('#uploadExcel').on('click', function(){
-            console.log("UploadExcel");
-        });                                                                
+            $('#uploadModal').modal('show');
+
+            $('#uploadForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });      
+        
+        $('#uploadModal').find('#previewButton').on('click', function(){
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                var data = e.target.result;
+                // Process data and display preview
+                displayPreview(data);
+            };
+
+            reader.readAsBinaryString(file);
+        });
 
         $('#company').on('change', function(){
             $('#companyName').val($('#company :selected').data('name'));
@@ -732,16 +817,15 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
         });
     }
 
-    function deactivate(id){
-        if (confirm('Are you sure you want to delete this item?')) {
+    function complete(id){
+        if (confirm('Are you sure you want to close this item?')) {
             $('#spinnerLoading').show();
-            $.post('php/deletePurchaseOrder.php', {userID: id}, function(data){
+            $.post('php/completePurchaseOrder.php', {userID: id}, function(data){
                 var obj = JSON.parse(data);
                 
                 if(obj.status === 'success'){
                     table.ajax.reload();
                     $('#spinnerLoading').hide();
-                    $('#addModal').modal('hide');
                     $("#successBtn").attr('data-toast-text', obj.message);
                     $("#successBtn").click();
                 }
@@ -758,6 +842,89 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             });
         }
     }
+
+    function deactivate(id){
+        if (confirm('Are you sure you want to delete this item?')) {
+            $('#spinnerLoading').show();
+            $.post('php/deletePurchaseOrder.php', {userID: id}, function(data){
+                var obj = JSON.parse(data);
+                
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message);
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    function displayPreview(data) {
+        // Parse the Excel data
+        var workbook = XLSX.read(data, { type: 'binary' });
+
+        // Get the first sheet
+        var sheetName = workbook.SheetNames[0];
+        var sheet = workbook.Sheets[sheetName];
+
+        // Convert the sheet to an array of objects
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Get the headers
+        var headers = jsonData[0];
+
+        // Ensure we handle cases where there may be less than 15 columns
+        while (headers.length < 14) {
+            headers.push(''); // Adding empty headers to reach 15 columns
+        }
+
+        // Create HTML table headers
+        var htmlTable = '<table style="width:100%;"><thead><tr>';
+        headers.forEach(function(header) {
+            htmlTable += '<th>' + header + '</th>';
+        });
+        htmlTable += '</tr></thead><tbody>';
+
+        // Iterate over the data and create table rows
+        for (var i = 1; i < jsonData.length; i++) {
+            htmlTable += '<tr>';
+            var rowData = jsonData[i];
+
+            // Ensure we handle cases where there may be less than 15 cells in a row
+            while (rowData.length < 14) {
+                rowData.push(''); // Adding empty cells to reach 15 columns
+            }
+
+            for (var j = 0; j < 14; j++) {
+                var cellData = rowData[j];
+                var formattedData = cellData;
+
+                // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
+                if (typeof cellData === 'number' && cellData > 0) {
+                    var excelDate = XLSX.SSF.parse_date_code(cellData);
+                }
+
+                htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
+            }
+            htmlTable += '</tr>';
+        }
+
+        htmlTable += '</tbody></table>';
+
+        var previewTable = document.getElementById('previewTable');
+        previewTable.innerHTML = htmlTable;
+    }
+
     </script>
 </body>
 </html>

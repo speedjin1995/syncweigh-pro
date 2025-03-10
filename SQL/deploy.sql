@@ -227,3 +227,26 @@ END
 ALTER TABLE `Purchase_Order` CHANGE `agent_code` `agent_code` VARCHAR(50) NULL DEFAULT NULL;
 
 ALTER TABLE `Purchase_Order` CHANGE `agent_name` `agent_name` VARCHAR(100) NULL DEFAULT NULL;
+
+CREATE TABLE `Site_Log` (
+  `id` int(11) NOT NULL,
+  `site_code` varchar(50) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `address_line_1` varchar(255) DEFAULT NULL,
+  `address_line_2` varchar(255) DEFAULT NULL,
+  `address_line_3` varchar(255) DEFAULT NULL,
+  `phone_no` varchar(50) DEFAULT NULL,
+  `fax_no` varchar(50) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Site_Log`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Site_Log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+ALTER TABLE `Site_Log` ADD `site_id` INT(11) NOT NULL AFTER `id`;

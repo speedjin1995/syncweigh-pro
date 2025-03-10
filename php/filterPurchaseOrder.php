@@ -85,8 +85,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
     "delivery_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["delivery_date"])->format('d-m-Y'),
     "po_no"=>$row['po_no'],
+    "status"=>$row['status'],
     "modified_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y'),
-    "role"=>$_SESSION['roles']
   );
 }
 
