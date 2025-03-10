@@ -2254,7 +2254,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
             $('#addModal').find('#destination').val("");
             $('#addModal').find('#otherRemarks').val("");
-            $('#addModal').find('#manualVehicle').prop('checked', false);
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             $('#addModal').find('#grossIncomingDate').val("");
             $('#addModal').find('#tareOutgoing').val("");
@@ -2379,7 +2379,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
         });
 
-        $('#manualVehicle').on('click', function(){
+        $('#manualVehicle').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo1').val('-');
