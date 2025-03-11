@@ -8,14 +8,14 @@ session_start();
 $uid = $_SESSION['username'];
 
 // Read the JSON data from the request body
-$data = json_decode(file_get_contents('php://input'), true); 
+$data = json_decode(file_get_contents('php://input'), true);
 
 if (!empty($data)) { 
     foreach ($data as $rows) {
         $CompanyCode = !empty($rows['CompanyCode']) ? trim($rows['CompanyCode']) : '';
         $CompanyName = !empty($rows['CompanyName']) ? trim($rows['CompanyName']) : '';
-        $CustomerCode = !empty($rows['CustomerCode']) ? trim($rows['CustomerCode']) : '';
-        $CustomerName = !empty($rows['CustomerName']) ? trim($rows['CustomerName']) : '';
+        $SupplierCode = !empty($rows['SupplierCode']) ? trim($rows['SupplierCode']) : '';
+        $SupplierName = !empty($rows['SupplierName']) ? trim($rows['SupplierName']) : '';
         $SiteCode = !empty($rows['SiteCode']) ? trim($rows['SiteCode']) : '';
         $SiteName = !empty($rows['SiteName']) ? trim($rows['SiteName']) : '';
         $OrderDate = !empty($rows['OrderDateDDMMYYYY']) ? DateTime::createFromFormat('d-m-Y', $rows["OrderDateDDMMYYYY"])->format('Y-m-d H:i:s') : '';
@@ -51,23 +51,23 @@ if (!empty($data)) {
             }
         }
 
-        # Customer Checking & Processing
-        if($CustomerCode != null && $CustomerCode != ''){
-            $customerQuery = "SELECT * FROM Customer WHERE customer_code = '$CustomerCode'";
-            $customerDetail = mysqli_query($db, $customerQuery);
-            $customerRow = mysqli_fetch_assoc($customerDetail);
+        # Supplier Checking & Processing
+        if($SupplierCode != null && $SupplierCode != ''){
+            $supplierQuery = "SELECT * FROM Supplier WHERE supplier_code = '$SupplierCode'";
+            $supplierDetail = mysqli_query($db, $supplierQuery);
+            $supplierRow = mysqli_fetch_assoc($supplierDetail);
             
-            if(empty($customerRow)){
-                if($insert_customer = $db->prepare("INSERT INTO Customer (customer_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_customer->bind_param('ssss', $CustomerCode, $CustomerName, $uid, $uid);
-                    $insert_customer->execute();
-                    $customerId = $insert_customer->insert_id; // Get the inserted customer ID
-                    $insert_customer->close();
+            if(empty($supplierRow)){
+                if($insert_supplier = $db->prepare("INSERT INTO Supplier (supplier_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_supplier->bind_param('ssss', $SupplierCode, $SupplierName, $uid, $uid);
+                    $insert_supplier->execute();
+                    $supplierId = $insert_supplier->insert_id; // Get the inserted supplier ID
+                    $insert_supplier->close();
                     
-                    if ($insert_customer_log = $db->prepare("INSERT INTO Customer_Log (customer_id, customer_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_customer_log->bind_param('sssss', $customerId, $CustomerCode, $CustomerName, $actionId, $uid);
-                        $insert_customer_log->execute();
-                        $insert_customer_log->close();
+                    if ($insert_supplier_log = $db->prepare("INSERT INTO Supplier_Log (supplier_id, supplier_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_supplier_log->bind_param('sssss', $supplierId, $SupplierCode, $SupplierName, $actionId, $uid);
+                        $insert_supplier_log->execute();
+                        $insert_supplier_log->close();
                     }    
                 }
             }
@@ -109,7 +109,7 @@ if (!empty($data)) {
                     $insert_agent->close();
                     
                     if ($insert_agent_log = $db->prepare("INSERT INTO Agents_Log (agent_id, agent_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_agent_log->bind_param('sssss', $customerId, $SalesrepCode, $SalesrepName, $actionId, $uid);
+                        $insert_agent_log->bind_param('sssss', $agentId, $SalesrepCode, $SalesrepName, $actionId, $uid);
                         $insert_agent_log->execute();
                         $insert_agent_log->close();
                     }    
@@ -117,8 +117,8 @@ if (!empty($data)) {
             }
         }
 
-        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, deliver_to_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $PONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DelivertoName, $Remarks, $status, $uid, $uid);
+        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, deliver_to_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $PONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DelivertoName, $Remarks, $status, $uid, $uid);
             $insert_stmt->execute();
             $poId = $insert_stmt->insert_id; // Get the inserted reseller ID
             $insert_stmt->close(); 

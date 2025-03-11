@@ -31,16 +31,16 @@ if (isset($_POST['poNo'], $_POST['orderNo'])) {
         $companyName = trim($_POST["companyName"]);
     }
 
-    if (empty($_POST["customer"])) {
-        $customerCode = null;
+    if (empty($_POST["supplier"])) {
+        $supplierCode = null;
     } else {
-        $customerCode = trim($_POST["customer"]);
+        $supplierCode = trim($_POST["supplier"]);
     }
 
-    if (empty($_POST["customerName"])) {
-        $customerName = null;
+    if (empty($_POST["supplierName"])) {
+        $supplierName = null;
     } else {
-        $customerName = trim($_POST["customerName"]);
+        $supplierName = trim($_POST["supplierName"]);
     }
 
     if (empty($_POST["site"])) {
@@ -105,9 +105,9 @@ if (isset($_POST['poNo'], $_POST['orderNo'])) {
 
     if(!empty($poId))
     {
-        if ($update_stmt = $db->prepare("UPDATE Purchase_Order SET company_code=?, company_name=?, customer_code=?, customer_name=?, site_code=?, site_name=?, order_date=?, order_no=?, po_no=?, delivery_date=?, agent_code=?, agent_name=?, deliver_to_name=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Purchase_Order SET company_code=?, company_name=?, supplier_code=?, supplier_name=?, site_code=?, site_name=?, order_date=?, order_no=?, po_no=?, delivery_date=?, agent_code=?, agent_name=?, deliver_to_name=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $deliverToName, $remarks, $username, $username, $poId);
+            $update_stmt->bind_param('sssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $deliverToName, $remarks, $username, $username, $poId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -134,8 +134,8 @@ if (isset($_POST['poNo'], $_POST['orderNo'])) {
     else
     {
         $status = 'Open';
-        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, deliver_to_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $deliverToName, $remarks, $status, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, deliver_to_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $deliverToName, $remarks, $status, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

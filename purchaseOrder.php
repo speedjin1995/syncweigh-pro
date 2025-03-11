@@ -5,8 +5,8 @@
 require_once "php/db_connect.php";
 // $plantId = $_SESSION['plant'];
 
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $company = $db->query("SELECT * FROM Company");
 $company2 = $db->query("SELECT * FROM Company");
 $site = $db->query("SELECT * FROM Site WHERE status = '0'");
@@ -146,11 +146,11 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <label for="supplierNoSearch" class="form-label">Supplier No</label>
+                                                            <select id="supplierNoSearch" class="form-select" >
                                                                 <option selected>-</option>
-                                                                <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                <?php while($rowPF = mysqli_fetch_assoc($supplier2)){ ?>
+                                                                    <option value="<?=$rowPF['supplier_code'] ?>"><?=$rowPF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -200,12 +200,12 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                             </div>  
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="customer" class="col-sm-4 col-form-label">Customer</label>
+                                                                                    <label for="supplier" class="col-sm-4 col-form-label">Supplier</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="customer" name="customer">
+                                                                                        <select class="form-control" style="width: 100%;" id="supplier" name="supplier">
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['customer_code'] ?>" data-name="<?=$rowCustomer['name'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                            <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                <option value="<?=$rowSupplier['supplier_code'] ?>" data-name="<?=$rowSupplier['name'] ?>"><?=$rowSupplier['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -294,7 +294,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                 
                                                                             <input type="hidden" class="form-control" id="companyName" name="companyName">                                                                   
-                                                                            <input type="hidden" class="form-control" id="customerName" name="customerName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="supplierName" name="supplierName">                                                                   
                                                                             <input type="hidden" class="form-control" id="siteName" name="siteName">                                                                   
                                                                             <input type="hidden" class="form-control" id="agentName" name="agentName">                                                                   
                                                                         </div>
@@ -374,8 +374,8 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                 <tr>
                                                                     <th>Company Code</th>
                                                                     <th>Company Name</th>
-                                                                    <th>Customer Code</th>
-                                                                    <th>Customer Name</th>
+                                                                    <th>Supplier Code</th>
+                                                                    <th>Supplier Name</th>
                                                                     <th>Order No.</th>
                                                                     <th>Order Date</th>
                                                                     <th>Delivery Date</th>
@@ -473,7 +473,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
         var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
         var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
-        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -490,14 +490,14 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                     status: statusI,
                     company: companyI,
                     site: siteI,
-                    customer: customerNoI,
+                    supplier: supplierNoI,
                 } 
             },
             'columns': [
                 { data: 'company_code' },
                 { data: 'company_name' },
-                { data: 'customer_code' },
-                { data: 'customer_name' },
+                { data: 'supplier_code' },
+                { data: 'supplier_name' },
                 { data: 'order_no' },
                 { data: 'order_date' },
                 { data: 'delivery_date' },
@@ -544,7 +544,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
             var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -565,14 +565,14 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                         status: statusI,
                         company: companyI,
                         site: siteI,
-                        customer: customerNoI,
+                        supplier: supplierNoI,
                     } 
                 },
                 'columns': [
                     { data: 'company_code' },
                     { data: 'company_name' },
-                    { data: 'customer_code' },
-                    { data: 'customer_name' },
+                    { data: 'supplier_code' },
+                    { data: 'supplier_name' },
                     { data: 'order_no' },
                     { data: 'order_date' },
                     { data: 'delivery_date' },
@@ -692,7 +692,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
         $('#addPurchaseOrder').on('click', function(){
             $('#addModal').find('#id').val("");
             $('#addModal').find('#company').val("");
-            $('#addModal').find('#customer').val("");
+            $('#addModal').find('#supplier').val("");
             $('#addModal').find('#site').val("");
             $('#addModal').find('#orderDate').val("");
             $('#addModal').find('#orderNo').val("");
@@ -755,8 +755,8 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             $('#companyName').val($('#company :selected').data('name'));
         });
 
-        $('#customer').on('change', function(){
-            $('#customerName').val($('#customer :selected').data('name'));
+        $('#supplier').on('change', function(){
+            $('#supplierName').val($('#supplier :selected').data('name'));
         });
 
         $('#site').on('change', function(){
@@ -777,7 +777,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#company').val(obj.message.company_code).trigger('change');
-                $('#addModal').find('#customer').val(obj.message.customer_code).trigger('change');
+                $('#addModal').find('#supplier').val(obj.message.supplier_code).trigger('change');
                 $('#addModal').find('#site').val(obj.message.site_code).trigger('change');
                 $('#addModal').find('#orderDate').val(formatDate2(new Date(obj.message.order_date)));
                 $('#addModal').find('#orderNo').val(obj.message.order_no);

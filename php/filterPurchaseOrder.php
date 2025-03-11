@@ -39,16 +39,16 @@ if($_POST['site'] != null && $_POST['site'] != '' && $_POST['site'] != '-'){
 	$searchQuery .= " and site_code = '".$_POST['site']."'";
 }
 
-if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
+	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
 }
 
 if($searchValue != ''){
   $searchQuery = " and (
     company_code like '%".$searchValue."%' or 
     company_name like '%".$searchValue."%' or 
-    customer_code like '%".$searchValue."%' or 
-    customer_name like '%".$searchValue."%' or 
+    supplier_code like '%".$searchValue."%' or 
+    supplier_name like '%".$searchValue."%' or 
     order_no like '%".$searchValue."%' or 
     order_date like '%".$searchValue."%' or 
     delivery_date like '%".$searchValue."%' or 
@@ -79,8 +79,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "id"=>$row['id'],
     "company_code"=>$row['company_code'],
     "company_name"=>$row['company_name'],
-    "customer_code"=>$row['customer_code'],
-    "customer_name"=>$row['customer_name'],
+    "supplier_code"=>$row['supplier_code'],
+    "supplier_name"=>$row['supplier_name'],
     "order_no"=>$row['order_no'],
     "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
     "delivery_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["delivery_date"])->format('d-m-Y'),
