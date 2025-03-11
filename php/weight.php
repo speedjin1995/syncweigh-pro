@@ -250,10 +250,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     //}
 
-    if (empty($_POST["purchaseOrder"])) {
-        $purchaseOrder = null;
-    } else {
-        $purchaseOrder = trim($_POST["purchaseOrder"]);
+    if ($transactionStatus == 'Purchase'){
+        if (empty($_POST["purchaseOrder"])) {
+            $purchaseOrder = null;
+        } else {
+            $purchaseOrder = trim($_POST["purchaseOrder"]);
+        }
+    }else{
+        if (empty($_POST["salesOrder"])) {
+            $purchaseOrder = null;
+        } else {
+            $purchaseOrder = trim($_POST["salesOrder"]);
+        }
     }
 
     if (empty($_POST["containerNo"])) {

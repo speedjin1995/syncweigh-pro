@@ -19,11 +19,13 @@ if(isset($_POST['code'], $_POST['type'])){
     if (mysqli_num_rows($empRecords) > 0) { // Check if records exist
         while ($row = mysqli_fetch_assoc($empRecords)) {
             if ($count == 1) {
-                $customerName = $row['customer_name'];
-                $productName = $row['product_name'];
                 if ($type == 'Purchase') {
+                    $customerName = $row['supplier_name'];
+                    $productName = $row['raw_mat_name'];
                     $order_supplier_weight = $row['supplier_weight'] ?? 0;
                 } else {
+                    $customerName = $row['customer_name'];
+                    $productName = $row['product_name'];
                     $order_supplier_weight = $row['order_weight'] ?? 0;
                 }
             }

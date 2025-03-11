@@ -66,6 +66,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $purchaseOrder = $db->query("SELECT * FROM Purchase_Order WHERE status = 'Open' AND deleted = '0'");
+$salesOrder = $db->query("SELECT * FROM Sales_Order WHERE status = 'Open' AND deleted = '0'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
@@ -447,16 +448,17 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                                 <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                        <!-- <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order"> -->
                                                                                     </div>
-                                                                                    <!-- <div class="col-sm-8" id="soSelect">
-                                                                                        <select class="form-select js-choice" id="purchaseOrder" name="purchaseOrder" required>
+                                                                                    <div class="col-sm-8" id="soSelect">
+                                                                                        <select class="form-select js-choice" id="salesOrder" name="salesOrder" required>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
-                                                                                                <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
+                                                                                            <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                                                <option value="<?=$rowSO['so_no'] ?>"><?=$rowSO['so_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div> -->
+                                                                                    </div>
+
+                                                                                    <!-- <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order"> -->
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
@@ -2259,6 +2261,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
+            $('#addModal').find('#salesOrder').val("");
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#transporterCode').val("");
             $('#addModal').find('#transporter').val("");
@@ -2669,17 +2672,25 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 
 
                 if ($(this).val() == "Purchase"){
-                    // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
                     // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
                     
+                    //Hide SO Select
+                    $('#divPurchaseOrder').find('#soSelect').hide();
+                    $('#divPurchaseOrder').find('#poSelect').show();
+
                     // Hide Pricing Fields
                     $('#unitPriceDisplay').hide();
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
                 }else{
-                    // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                     // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                    //Hide PO Select
+                    $('#divPurchaseOrder').find('#soSelect').show();
+                    $('#divPurchaseOrder').find('#poSelect').hide();
 
                     if (customerType == 'Cash'){
                         $('#unitPriceDisplay').show();
@@ -2704,8 +2715,13 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').show();
                 $('#rawMaterialDisplay').hide();
                 $('#productNameDisplay').show();
-                // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                 // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                //Hide PO Select
+                $('#divPurchaseOrder').find('#soSelect').show();
+                $('#divPurchaseOrder').find('#poSelect').hide();
+
                 <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').hide();";
                 }
@@ -2811,6 +2827,69 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var purchaseOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val();
             $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var customerName = obj.message.customer_name;
+                    var productName = obj.message.product_name;
+                    var orderSupplierWeight = obj.message.order_supplier_weight;
+                    var finalWeight = obj.message.final_weight;
+                    var previousRecordsTag = obj.message.previousRecordsTag;
+
+                    $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+
+                    if (previousRecordsTag){
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        $('#addModal').find('#productName').val(productName).trigger('change');
+                        $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+
+                        if (type == 'Purchase'){
+                            $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
+                        }else{
+                            $('#addModal').find('#orderWeight').val(orderSupplierWeight);
+                        }
+
+                        // Hide or show insufficient balance
+                        if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
+                            $('#addModal').find('#insufficientBalDisplay').hide();
+                        } else {
+                            $('#addModal').find('#insufficientBalDisplay').show();
+                        }
+                    }else{
+                        var weight = 0;
+                        if (type == 'Purchase'){
+                            weight = $('#addModal').find('#supplierWeight').val();
+                        }else{
+                            weight = $('#addModal').find('#orderWeight').val();
+                        }
+
+                        $('#addModal').find('#balance').val(weight);
+                        // Hide or show insufficient balance
+                        if (weight <= 0) {
+                            $('#addModal').find('#insufficientBalDisplay').hide();
+                        } else {
+                            $('#addModal').find('#insufficientBalDisplay').show();
+                        }
+                    }
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+
+        });
+
+        $('#salesOrder').on('change', function (){
+            var salesOrder = $(this).val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            $.post('php/getOrderSupplier.php', {code: salesOrder, type: type}, function (data){
                 var obj = JSON.parse(data);
 
                 if (obj.status == 'success'){
