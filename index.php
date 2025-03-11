@@ -453,7 +453,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                         <select class="form-select js-choice" id="salesOrder" name="salesOrder" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
-                                                                                                <option value="<?=$rowSO['so_no'] ?>"><?=$rowSO['so_no'] ?></option>
+                                                                                                <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -2830,24 +2830,26 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 var obj = JSON.parse(data);
 
                 if (obj.status == 'success'){
-                    var customerName = obj.message.customer_name;
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
                     var finalWeight = obj.message.final_weight;
                     var previousRecordsTag = obj.message.previousRecordsTag;
 
+                    // Change Details
+                    $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                    $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    $('#addModal').find('#agent').val(agentName).trigger('change');
                     $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
                     if (previousRecordsTag){
-                        $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        $('#addModal').find('#productName').val(productName).trigger('change');
+                        $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                        $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
                         $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        if (type == 'Purchase'){
-                            $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
-                        }else{
-                            $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                        }
 
                         // Hide or show insufficient balance
                         if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
@@ -2893,24 +2895,25 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 var obj = JSON.parse(data);
 
                 if (obj.status == 'success'){
-                    var customerName = obj.message.customer_name;
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
                     var finalWeight = obj.message.final_weight;
                     var previousRecordsTag = obj.message.previousRecordsTag;
 
+                    $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                    $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    $('#addModal').find('#agent').val(agentName).trigger('change');
                     $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
                     if (previousRecordsTag){
-                        $('#addModal').find('#customerName').val(customerName).trigger('change');
                         $('#addModal').find('#productName').val(productName).trigger('change');
+                        $('#addModal').find('#orderWeight').val(orderSupplierWeight);
                         $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        if (type == 'Purchase'){
-                            $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
-                        }else{
-                            $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                        }
 
                         // Hide or show insufficient balance
                         if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
