@@ -24,7 +24,8 @@ if (!empty($data)) {
         $DeliveryDate = !empty($rows['DeliveryDateDDMMYYYY']) ? DateTime::createFromFormat('d-m-Y', $rows["DeliveryDateDDMMYYYY"])->format('Y-m-d H:i:s') : '';
         $SalesrepCode = !empty($rows['SalesrepCode']) ? trim($rows['SalesrepCode']) : '';
         $SalesrepName = !empty($rows['SalesrepName']) ? trim($rows['SalesrepName']) : '';
-        $DelivertoName = !empty($rows['DelivertoName']) ? trim($rows['DelivertoName']) : '';
+        $DestinationCode = !empty($rows['DestinationCode']) ? trim($rows['DestinationCode']) : '';
+        $DestinationName = !empty($rows['DestinationName']) ? trim($rows['DestinationName']) : '';
         $Remarks = !empty($rows['Remarks']) ? trim($rows['Remarks']) : '';
         $status = 'Open';
         $actionId = 1;
@@ -117,8 +118,30 @@ if (!empty($data)) {
             }
         }
 
-        if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, deliver_to_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $SONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DelivertoName, $Remarks, $status, $uid, $uid);
+        # Destination Checking & Processing
+        if($DestinationCode != null && $DestinationCode != ''){
+            $destinationQuery = "SELECT * FROM Destination WHERE destination_code = '$DestinationCode'";
+            $destinationDetail = mysqli_query($db, $destinationQuery);
+            $destinationRow = mysqli_fetch_assoc($destinationDetail);
+            
+            if(empty($destinationRow)){
+                if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
+                    $insert_destination->execute();
+                    $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
+                    $insert_destination->close();
+                    
+                    if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
+                        $insert_destination_log->execute();
+                        $insert_destination_log->close();
+                    }    
+                }
+            }
+        }
+
+        if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $SONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $Remarks, $status, $uid, $uid);
             $insert_stmt->execute();
             $poId = $insert_stmt->insert_id; // Get the inserted reseller ID
             $insert_stmt->close(); 

@@ -11,7 +11,7 @@ if(!isset($_SESSION['id'])){
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
 // Processing form data when form is submitted
-if (isset($_POST['soNo'], $_POST['orderNo'])) {
+if (isset($_POST['orderNo'])) {
 
     if (empty($_POST["id"])) {
         $poId = null;
@@ -91,10 +91,16 @@ if (isset($_POST['soNo'], $_POST['orderNo'])) {
         $agentName = trim($_POST["agentName"]);
     }
 
-    if (empty($_POST["deliverToName"])) {
-        $deliverToName = null;
+    if (empty($_POST["destinationCode"])) {
+        $destinationCode = null;
     } else {
-        $deliverToName = trim($_POST["deliverToName"]);
+        $destinationCode = trim($_POST["destinationCode"]);
+    }
+
+    if (empty($_POST["destinationName"])) {
+        $destinationName = null;
+    } else {
+        $destinationName = trim($_POST["destinationName"]);
     }
 
     if (empty($_POST["remarks"])) {
@@ -105,9 +111,9 @@ if (isset($_POST['soNo'], $_POST['orderNo'])) {
 
     if(!empty($poId))
     {
-        if ($update_stmt = $db->prepare("UPDATE Sales_Order SET company_code=?, company_name=?, customer_code=?, customer_name=?, site_code=?, site_name=?, order_date=?, order_no=?, so_no=?, delivery_date=?, agent_code=?, agent_name=?, deliver_to_name=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Sales_Order SET company_code=?, company_name=?, customer_code=?, customer_name=?, site_code=?, site_name=?, order_date=?, order_no=?, so_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $deliverToName, $remarks, $username, $username, $poId);
+            $update_stmt->bind_param('ssssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $remarks, $username, $username, $poId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -134,8 +140,8 @@ if (isset($_POST['soNo'], $_POST['orderNo'])) {
     else
     {
         $status = 'Open';
-        if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, deliver_to_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $deliverToName, $remarks, $status, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $remarks, $status, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
