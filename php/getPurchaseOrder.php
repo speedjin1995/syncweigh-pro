@@ -31,7 +31,7 @@ if(isset($_POST['userID'])){
                 $message['po_no'] = $row['po_no'];
                 $message['delivery_date'] = $row['delivery_date'];
                 $message['agent_code'] = $row['agent_code'];
-                $message['deliver_to_name'] = $row['deliver_to_name'];
+                $message['destination_code'] = $row['destination_code'];
                 $message['remarks'] = $row['remarks'];
             }
             

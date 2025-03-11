@@ -12,6 +12,7 @@ $company2 = $db->query("SELECT * FROM Company");
 $site = $db->query("SELECT * FROM Site WHERE status = '0'");
 $site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 
 ?>
 
@@ -239,7 +240,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="orderNo" class="col-sm-4 col-form-label">Order Number</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="orderNo" name="orderNo" placeholder="Order Number" required>
+                                                                                        <input type="text" class="form-control" id="orderNo" name="orderNo" placeholder="Order Number">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -277,9 +278,14 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                             </div> 
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="deliverToName" class="col-sm-4 col-form-label">Deliver To Name</label>
+                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Deliver To Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="deliverToName" name="deliverToName" placeholder="Deliver To Name">
+                                                                                        <select class="form-control" style="width: 100%;" id="destinationCode" name="destinationCode">
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
+                                                                                                <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -287,7 +293,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Deliver To Name"></textarea>
+                                                                                        <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Remarks"></textarea>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -297,6 +303,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                                                                             <input type="hidden" class="form-control" id="supplierName" name="supplierName">                                                                   
                                                                             <input type="hidden" class="form-control" id="siteName" name="siteName">                                                                   
                                                                             <input type="hidden" class="form-control" id="agentName" name="agentName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="destinationName" name="destinationName">                                                                   
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -699,7 +706,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             $('#addModal').find('#poNo').val("");
             $('#addModal').find('#deliveryDate').val("");
             $('#addModal').find('#agent').val("");
-            $('#addModal').find('#deliverToName').val("");
+            $('#addModal').find('#destinationCode').val("");
             $('#addModal').find('#remarks').val("");
             
             $('#addModal').modal('show');
@@ -767,6 +774,10 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             $('#agentName').val($('#agent :selected').data('name'));
         });
 
+        $('#destinationCode').on('change', function(){
+            $('#destinationName').val($('#destinationCode :selected').data('name'));
+        });
+
     });
 
     function edit(id){
@@ -784,7 +795,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
                 $('#addModal').find('#poNo').val(obj.message.po_no);
                 $('#addModal').find('#deliveryDate').val(formatDate2(new Date(obj.message.delivery_date)));
                 $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
-                $('#addModal').find('#deliverToName').val(obj.message.deliver_to_name);
+                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
 
                 $('#addModal').modal('show');
@@ -884,7 +895,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
         var headers = jsonData[0];
 
         // Ensure we handle cases where there may be less than 15 columns
-        while (headers.length < 14) {
+        while (headers.length < 15) {
             headers.push(''); // Adding empty headers to reach 15 columns
         }
 
@@ -901,11 +912,11 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
             var rowData = jsonData[i];
 
             // Ensure we handle cases where there may be less than 15 cells in a row
-            while (rowData.length < 14) {
+            while (rowData.length < 15) {
                 rowData.push(''); // Adding empty cells to reach 15 columns
             }
 
-            for (var j = 0; j < 14; j++) {
+            for (var j = 0; j < 15; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 
