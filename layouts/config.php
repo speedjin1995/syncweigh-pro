@@ -3,7 +3,7 @@
 server with default setting (user 'root' with no password) */
 define('DB_SERVER', 'srv597.hstgr.io');
 define('DB_USERNAME', 'u664110560_treer');
-define('DB_PASSWORD', '@‌Sync5500');
+define('DB_PASSWORD', '@Sync5500');
 define('DB_NAME', 'u664110560_treer');
 
 /* Attempt to connect to MySQL database */
