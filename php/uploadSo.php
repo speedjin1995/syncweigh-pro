@@ -26,6 +26,11 @@ if (!empty($data)) {
         $SalesrepName = !empty($rows['SalesrepName']) ? trim($rows['SalesrepName']) : '';
         $DestinationCode = !empty($rows['DestinationCode']) ? trim($rows['DestinationCode']) : '';
         $DestinationName = !empty($rows['DestinationName']) ? trim($rows['DestinationName']) : '';
+        $DeliverToName = !empty($rows['DeliverToName']) ? trim($rows['DeliverToName']) : '';
+        $ProductCode = !empty($rows['ProductCode']) ? trim($rows['ProductCode']) : '';
+        $ProductName = !empty($rows['ProductName']) ? trim($rows['ProductName']) : '';
+        $OrderLoad = !empty($rows['OrderLoad']) ? trim($rows['OrderLoad']) : '';
+        $OrderQuantity = !empty($rows['OrderQuantity']) ? trim($rows['OrderQuantity']) : '';
         $Remarks = !empty($rows['Remarks']) ? trim($rows['Remarks']) : '';
         $status = 'Open';
         $actionId = 1;
@@ -140,11 +145,41 @@ if (!empty($data)) {
             }
         }
 
-        if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $SONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $Remarks, $status, $uid, $uid);
-            $insert_stmt->execute();
-            $poId = $insert_stmt->insert_id; // Get the inserted reseller ID
-            $insert_stmt->close(); 
+        # Product Checking & Processing
+        if($ProductCode != null && $ProductCode != ''){
+            $productQuery = "SELECT * FROM Product WHERE product_code = '$ProductCode'";
+            $productDetail = mysqli_query($db, $productQuery);
+            $productRow = mysqli_fetch_assoc($productDetail);
+            
+            if(empty($productRow)){
+                if($insert_product = $db->prepare("INSERT INTO Product (product_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_product->bind_param('ssss', $ProductCode, $ProductName, $uid, $uid);
+                    $insert_product->execute();
+                    $productId = $insert_product->insert_id; // Get the inserted destination ID
+                    $insert_product->close();
+                    
+                    if ($insert_product_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_product_log->bind_param('sssss', $productId, $ProductCode, $ProductName, $actionId, $uid);
+                        $insert_product_log->execute();
+                        $insert_product_log->close();
+                    }    
+                }
+            }
+        }
+
+        # Checking for existing PO No.
+        if($OrderNumber != null && $OrderNumber != ''){
+            $soQuery = "SELECT * FROM Sales_Order WHERE order_no = '$OrderNumber' AND deleted = '0'";
+            $soDetail = mysqli_query($db, $soQuery);
+            $soRow = mysqli_fetch_assoc($soDetail);
+
+            if(empty($soRow)){
+                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, order_load, order_quantity, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $SONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $DeliverToName, $ProductCode, $ProductName, $OrderLoad, $OrderQuantity, $Remarks, $status, $uid, $uid);
+                    $insert_stmt->execute();
+                    $insert_stmt->close(); 
+                }
+            }
         }
     }
 

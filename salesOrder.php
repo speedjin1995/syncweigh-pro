@@ -13,7 +13,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
 $site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-
+$product = $db->query("SELECT * FROM Product WHERE status = '0'");
 ?>
 
 <head>
@@ -190,7 +190,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="company" class="col-sm-4 col-form-label">Company</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="company" name="company">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="company" name="company">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCompany=mysqli_fetch_assoc($company)){ ?>
                                                                                                 <option value="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>"><?=$rowCompany['name'] ?></option>
@@ -203,7 +203,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="customer" class="col-sm-4 col-form-label">Customer</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="customer" name="customer">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="customer" name="customer">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
                                                                                                 <option value="<?=$rowCustomer['customer_code'] ?>" data-name="<?=$rowCustomer['name'] ?>"><?=$rowCustomer['name'] ?></option>
@@ -216,7 +216,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="site" class="col-sm-4 col-form-label">Site</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="site" name="site">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="site" name="site">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
                                                                                                 <option value="<?=$rowSite['site_code'] ?>" data-name="<?=$rowSite['name'] ?>"><?=$rowSite['name'] ?></option>
@@ -267,7 +267,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="agent" name="agent">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="agent" name="agent">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
                                                                                                 <option value="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>"><?=$rowAgent['name'] ?></option>
@@ -278,14 +278,54 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                             </div> 
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Deliver To Name</label>
+                                                                                    <label for="deliverToName" class="col-sm-4 col-form-label">Deliver To Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="destinationCode" name="destinationCode">
+                                                                                        <input type="text" class="form-control" id="deliverToName" name="deliverToName" placeholder="Deliver To Name">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Destination</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="destinationCode" name="destinationCode">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
                                                                                                 <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="product" class="col-sm-4 col-form-label">Product</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="product" name="product" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
+                                                                                                <option value="<?=$rowProduct['product_code'] ?>" data-name="<?=$rowProduct['name'] ?>"><?=$rowProduct['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="orderLoad" class="col-sm-4 col-form-label">Order Load</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="orderLoad" name="orderLoad" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Order Quantity</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required>
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -303,7 +343,8 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                             <input type="hidden" class="form-control" id="customerName" name="customerName">                                                                   
                                                                             <input type="hidden" class="form-control" id="siteName" name="siteName">                                                                   
                                                                             <input type="hidden" class="form-control" id="agentName" name="agentName">   
-                                                                            <input type="hidden" class="form-control" id="destinationName" name="destinationName">                                                                                                                                   
+                                                                            <input type="hidden" class="form-control" id="destinationName" name="destinationName">
+                                                                            <input type="hidden" class="form-control" id="productName" name="productName">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -473,6 +514,15 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
         $('#deliveryDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        $('.select2').each(function() {
+            $(this).select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                // Conditionally set dropdownParent based on the element’s location
+                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
+            });
         });
 
         var fromDateI = $('#fromDateSearch').val();
@@ -698,15 +748,19 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 
         $('#addSalesOrder').on('click', function(){
             $('#addModal').find('#id').val("");
-            $('#addModal').find('#company').val("");
-            $('#addModal').find('#customer').val("");
-            $('#addModal').find('#site').val("");
+            $('#addModal').find('#company').val("").trigger('change');
+            $('#addModal').find('#customer').val("").trigger('change');
+            $('#addModal').find('#site').val("").trigger('change');
             $('#addModal').find('#orderDate').val("");
             $('#addModal').find('#orderNo').val("");
             $('#addModal').find('#soNo').val("");
             $('#addModal').find('#deliveryDate').val("");
-            $('#addModal').find('#agent').val("");
-            $('#addModal').find('#destinationCode').val("");
+            $('#addModal').find('#agent').val("").trigger('change');
+            $('#addModal').find('#destinationCode').val("").trigger('change');
+            $('#addModal').find('#deliverToName').val("");
+            $('#addModal').find('#product').val("").trigger('change');
+            $('#addModal').find('#orderLoad').val("");
+            $('#addModal').find('#orderQty').val("");
             $('#addModal').find('#remarks').val("");
             
             $('#addModal').modal('show');
@@ -777,6 +831,10 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
         $('#destinationCode').on('change', function(){
             $('#destinationName').val($('#destinationCode :selected').data('name'));
         });
+        
+        $('#product').on('change', function(){
+            $('#productName').val($('#product :selected').data('name'));
+        });
 
     });
 
@@ -795,7 +853,11 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                 $('#addModal').find('#soNo').val(obj.message.so_no);
                 $('#addModal').find('#deliveryDate').val(formatDate2(new Date(obj.message.delivery_date)));
                 $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
+                $('#addModal').find('#deliverToName').val(obj.message.deliver_to_name);
+                $('#addModal').find('#product').val(obj.message.product_code).trigger('change');
+                $('#addModal').find('#orderLoad').val(obj.message.order_load);
+                $('#addModal').find('#orderQty').val(obj.message.order_quantity);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
 
                 $('#addModal').modal('show');
@@ -894,9 +956,9 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 15 columns
-        while (headers.length < 15) {
-            headers.push(''); // Adding empty headers to reach 15 columns
+        // Ensure we handle cases where there may be less than 20 columns
+        while (headers.length < 20) {
+            headers.push(''); // Adding empty headers to reach 20 columns
         }
 
         // Create HTML table headers
@@ -911,12 +973,12 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
             htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 15 cells in a row
-            while (rowData.length < 15) {
-                rowData.push(''); // Adding empty cells to reach 15 columns
+            // Ensure we handle cases where there may be less than 20 cells in a row
+            while (rowData.length < 20) {
+                rowData.push(''); // Adding empty cells to reach 20 columns
             }
 
-            for (var j = 0; j < 15; j++) {
+            for (var j = 0; j < 20; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 

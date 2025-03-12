@@ -275,6 +275,11 @@ CREATE TABLE `Sales_Order` (
   `agent_name` varchar(100) DEFAULT NULL,
   `destination_code` varchar(50) DEFAULT NULL,
   `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `product_code` varchar(50) DEFAULT NULL,
+  `product_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,
   `created_by` varchar(50) DEFAULT NULL,
   `created_date` timestamp NULL DEFAULT current_timestamp(),
@@ -287,10 +292,10 @@ CREATE TABLE `Sales_Order` (
 DELIMITER $$
 CREATE TRIGGER `TRG_INS_SO` AFTER INSERT ON `Sales_Order` FOR EACH ROW INSERT INTO Sales_Order_Log (
     company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code,
-    agent_name, destination_code, destination_name, remarks, status, action_id, action_by, event_date
+    agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
 ) 
 VALUES (
-    NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+    NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
 )
 $$
 DELIMITER ;
@@ -308,10 +313,10 @@ CREATE TRIGGER `TRG_UPD_SO` BEFORE UPDATE ON `Sales_Order` FOR EACH ROW BEGIN
     -- Insert into Sales_Order table
     INSERT INTO Sales_Order_Log (
         company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code,
-        agent_name, destination_code, destination_name, remarks, status, action_id, action_by, event_date
+        agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
     ) 
     VALUES (
-        NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+        NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
     );
 END
 $$
@@ -337,6 +342,11 @@ CREATE TABLE `Sales_Order_Log` (
   `agent_name` varchar(100) DEFAULT NULL,
   `destination_code` varchar(50) DEFAULT NULL,
   `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `product_code` varchar(50) DEFAULT NULL,
+  `product_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
   `action_id` int(11) NOT NULL,
