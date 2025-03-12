@@ -191,7 +191,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="company" class="col-sm-4 col-form-label">Company</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="company" name="company">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="company" name="company">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCompany=mysqli_fetch_assoc($company)){ ?>
                                                                                                 <option value="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>"><?=$rowCompany['name'] ?></option>
@@ -204,7 +204,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="supplier" class="col-sm-4 col-form-label">Supplier</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="supplier" name="supplier">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="supplier" name="supplier">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                 <option value="<?=$rowSupplier['supplier_code'] ?>" data-name="<?=$rowSupplier['name'] ?>"><?=$rowSupplier['name'] ?></option>
@@ -217,7 +217,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="site" class="col-sm-4 col-form-label">Site</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="site" name="site">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="site" name="site">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
                                                                                                 <option value="<?=$rowSite['site_code'] ?>" data-name="<?=$rowSite['name'] ?>"><?=$rowSite['name'] ?></option>
@@ -268,7 +268,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="agent" name="agent">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="agent" name="agent">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
                                                                                                 <option value="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>"><?=$rowAgent['name'] ?></option>
@@ -281,7 +281,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="deliverToName" class="col-sm-4 col-form-label">Deliver To Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="deliverToName" name="deliverToName" placeholder="Deliver To Name" required>
+                                                                                        <input type="text" class="form-control" id="deliverToName" name="deliverToName" placeholder="Deliver To Name">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -289,7 +289,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="destinationCode" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="destinationCode" name="destinationCode">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="destinationCode" name="destinationCode">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
                                                                                                 <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
@@ -302,7 +302,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="rawMat" class="col-sm-4 col-form-label">Raw Material</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="rawMat" name="rawMat" required>
+                                                                                        <select class="form-control select2" style="width: 100%;" id="rawMat" name="rawMat" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
                                                                                                 <option value="<?=$rowRowMat['raw_mat_code'] ?>" data-name="<?=$rowRowMat['name'] ?>"><?=$rowRowMat['name'] ?></option>
@@ -515,6 +515,15 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
         $('#deliveryDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        $('.select2').each(function() {
+            $(this).select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                // Conditionally set dropdownParent based on the element’s location
+                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
+            });
         });
 
         var fromDateI = $('#fromDateSearch').val();
