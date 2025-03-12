@@ -13,6 +13,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
 $site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 
 ?>
 
@@ -278,7 +279,15 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                             </div> 
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Deliver To Name</label>
+                                                                                    <label for="deliverToName" class="col-sm-4 col-form-label">Deliver To Name</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="deliverToName" name="deliverToName" placeholder="Deliver To Name" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control" style="width: 100%;" id="destinationCode" name="destinationCode">
                                                                                             <option selected="-">-</option>
@@ -286,6 +295,38 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                                                 <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="rawMat" class="col-sm-4 col-form-label">Raw Material</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control" style="width: 100%;" id="rawMat" name="rawMat" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                                                                                                <option value="<?=$rowRowMat['raw_mat_code'] ?>" data-name="<?=$rowRowMat['name'] ?>"><?=$rowRowMat['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="orderLoad" class="col-sm-4 col-form-label">Supplier Load</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="orderLoad" name="orderLoad" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Supplier Quantity</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required>
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -304,6 +345,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                                                                             <input type="hidden" class="form-control" id="siteName" name="siteName">                                                                   
                                                                             <input type="hidden" class="form-control" id="agentName" name="agentName">                                                                   
                                                                             <input type="hidden" class="form-control" id="destinationName" name="destinationName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="rawMatName" name="rawMatName">                                                                   
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -707,6 +749,10 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
             $('#addModal').find('#deliveryDate').val("");
             $('#addModal').find('#agent').val("");
             $('#addModal').find('#destinationCode').val("");
+            $('#addModal').find('#deliverToName').val("");
+            $('#addModal').find('#rawMat').val("");
+            $('#addModal').find('#orderLoad').val("");
+            $('#addModal').find('#orderQty').val("");
             $('#addModal').find('#remarks').val("");
             
             $('#addModal').modal('show');
@@ -778,6 +824,10 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
             $('#destinationName').val($('#destinationCode :selected').data('name'));
         });
 
+        $('#rawMat').on('change', function(){
+            $('#rawMatName').val($('#rawMat :selected').data('name'));
+        });
+
     });
 
     function edit(id){
@@ -795,7 +845,11 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
                 $('#addModal').find('#poNo').val(obj.message.po_no);
                 $('#addModal').find('#deliveryDate').val(formatDate2(new Date(obj.message.delivery_date)));
                 $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
+                $('#addModal').find('#deliverToName').val(obj.message.deliver_to_name);
+                $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).trigger('change');
+                $('#addModal').find('#orderLoad').val(obj.message.order_load);
+                $('#addModal').find('#orderQty').val(obj.message.order_quantity);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
 
                 $('#addModal').modal('show');
@@ -894,9 +948,9 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 15 columns
-        while (headers.length < 15) {
-            headers.push(''); // Adding empty headers to reach 15 columns
+        // Ensure we handle cases where there may be less than 20 columns
+        while (headers.length < 20) {
+            headers.push(''); // Adding empty headers to reach 20 columns
         }
 
         // Create HTML table headers
@@ -911,12 +965,12 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
             htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 15 cells in a row
-            while (rowData.length < 15) {
-                rowData.push(''); // Adding empty cells to reach 15 columns
+            // Ensure we handle cases where there may be less than 20 cells in a row
+            while (rowData.length < 20) {
+                rowData.push(''); // Adding empty cells to reach 20 columns
             }
 
-            for (var j = 0; j < 15; j++) {
+            for (var j = 0; j < 20; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 

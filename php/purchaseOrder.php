@@ -103,6 +103,36 @@ if (isset($_POST['poNo'])) {
         $destinationName = trim($_POST["destinationName"]);
     }
 
+    if (empty($_POST["deliverToName"])) {
+        $deliverToName = null;
+    } else {
+        $deliverToName = trim($_POST["deliverToName"]);
+    }
+
+    if (empty($_POST["rawMat"])) {
+        $rawMatCode = null;
+    } else {
+        $rawMatCode = trim($_POST["rawMat"]);
+    }
+
+    if (empty($_POST["rawMatName"])) {
+        $rawMatName = null;
+    } else {
+        $rawMatName = trim($_POST["rawMatName"]);
+    }
+
+    if (empty($_POST["orderLoad"])) {
+        $orderLoad = null;
+    } else {
+        $orderLoad = trim($_POST["orderLoad"]);
+    }
+
+    if (empty($_POST["orderQty"])) {
+        $orderQty = null;
+    } else {
+        $orderQty = trim($_POST["orderQty"]);
+    }
+
     if (empty($_POST["remarks"])) {
         $remarks = null;
     } else {
@@ -111,9 +141,9 @@ if (isset($_POST['poNo'])) {
 
     if(!empty($poId))
     {
-        if ($update_stmt = $db->prepare("UPDATE Purchase_Order SET company_code=?, company_name=?, supplier_code=?, supplier_name=?, site_code=?, site_name=?, order_date=?, order_no=?, po_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Purchase_Order SET company_code=?, company_name=?, supplier_code=?, supplier_name=?, site_code=?, site_name=?, order_date=?, order_no=?, po_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, deliver_to_name=?, raw_mat_code=?, raw_mat_name=?, order_load=?, order_quantity=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('ssssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $remarks, $username, $username, $poId);
+            $update_stmt->bind_param('sssssssssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $rawMatCode, $rawMatName, $orderLoad, $orderQty, $remarks, $username, $username, $poId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -140,8 +170,8 @@ if (isset($_POST['poNo'])) {
     else
     {
         $status = 'Open';
-        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $remarks, $status, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $rawMatCode, $rawMatName, $orderLoad, $orderQty,$remarks, $status, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

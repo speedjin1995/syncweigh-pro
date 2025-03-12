@@ -177,6 +177,11 @@ CREATE TABLE `Purchase_Order` (
   `agent_name` varchar(100) DEFAULT NULL,
   `destination_code` varchar(50) DEFAULT NULL,
   `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `raw_mat_code` varchar(50) DEFAULT NULL,
+  `raw_mat_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,
   `created_by` varchar(50) DEFAULT NULL,
   `created_date` timestamp NULL DEFAULT current_timestamp(),
@@ -188,11 +193,10 @@ CREATE TABLE `Purchase_Order` (
 
 DELIMITER $$
 CREATE TRIGGER `TRG_INS_PO` AFTER INSERT ON `Purchase_Order` FOR EACH ROW INSERT INTO Purchase_Order_Log (
-    company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
-    agent_name, destination_code, destination_name, remarks, status, action_id, action_by, event_date
+    company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
 ) 
 VALUES (
-    NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+    NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
 )
 $$
 DELIMITER ;
@@ -210,10 +214,10 @@ CREATE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order` FOR EACH ROW BEGIN
     -- Insert into Purchase_Order table
     INSERT INTO Purchase_Order_Log (
         company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
-        agent_name, destination_code, destination_name, remarks, status, action_id, action_by, event_date
+        agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
     ) 
     VALUES (
-        NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+        NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
     );
 END
 $$
@@ -235,10 +239,15 @@ CREATE TABLE `Purchase_Order_Log` (
   `order_no` varchar(50) DEFAULT NULL,
   `po_no` varchar(50) DEFAULT NULL,
   `delivery_date` datetime DEFAULT NULL,
-  `agent_code` int(50) DEFAULT NULL,
-  `agent_name` int(100) DEFAULT NULL,
+  `agent_code` varchar(50) DEFAULT NULL,
+  `agent_name` varchar(100) DEFAULT NULL,
   `destination_code` varchar(50) DEFAULT NULL,
   `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `raw_mat_code` varchar(50) DEFAULT NULL,
+  `raw_mat_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
   `action_id` int(11) NOT NULL,
@@ -324,8 +333,8 @@ CREATE TABLE `Sales_Order_Log` (
   `order_no` varchar(50) DEFAULT NULL,
   `so_no` varchar(50) DEFAULT NULL,
   `delivery_date` datetime DEFAULT NULL,
-  `agent_code` int(50) DEFAULT NULL,
-  `agent_name` int(100) DEFAULT NULL,
+  `agent_code` varchar(50) DEFAULT NULL,
+  `agent_name` varchar(100) DEFAULT NULL,
   `destination_code` varchar(50) DEFAULT NULL,
   `destination_name` varchar(100) DEFAULT NULL,
   `remarks` varchar(255) DEFAULT NULL,

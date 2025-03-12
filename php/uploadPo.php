@@ -26,6 +26,11 @@ if (!empty($data)) {
         $SalesrepName = !empty($rows['SalesrepName']) ? trim($rows['SalesrepName']) : '';
         $DestinationCode = !empty($rows['DestinationCode']) ? trim($rows['DestinationCode']) : '';
         $DestinationName = !empty($rows['DestinationName']) ? trim($rows['DestinationName']) : '';
+        $DeliverToName = !empty($rows['DeliverToName']) ? trim($rows['DeliverToName']) : '';
+        $RawMaterialCode = !empty($rows['RawMaterialCode']) ? trim($rows['RawMaterialCode']) : '';
+        $RawMaterialName = !empty($rows['RawMaterialName']) ? trim($rows['RawMaterialName']) : '';
+        $SupplierLoad = !empty($rows['SupplierLoad']) ? trim($rows['SupplierLoad']) : '';
+        $SupplierQuantity = !empty($rows['SupplierQuantity']) ? trim($rows['SupplierQuantity']) : '';
         $Remarks = !empty($rows['Remarks']) ? trim($rows['Remarks']) : '';
         $status = 'Open';
         $actionId = 1;
@@ -140,11 +145,41 @@ if (!empty($data)) {
             }
         }
 
-        if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $PONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $Remarks, $status, $uid, $uid);
-            $insert_stmt->execute();
-            $poId = $insert_stmt->insert_id; // Get the inserted reseller ID
-            $insert_stmt->close(); 
+        # Raw Material Checking & Processing
+        if($RawMaterialCode != null && $RawMaterialCode != ''){
+            $rawMatQuery = "SELECT * FROM Raw_Mat WHERE raw_mat_code = '$RawMaterialCode'";
+            $rawMatDetail = mysqli_query($db, $rawMatQuery);
+            $rawMatRow = mysqli_fetch_assoc($rawMatDetail);
+            
+            if(empty($rawMatRow)){
+                if($insert_raw_mat = $db->prepare("INSERT INTO Raw_Mat (raw_mat_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_raw_mat->bind_param('ssss', $RawMaterialCode, $RawMaterialName, $uid, $uid);
+                    $insert_raw_mat->execute();
+                    $rawMatId = $insert_raw_mat->insert_id; // Get the inserted destination ID
+                    $insert_raw_mat->close();
+                    
+                    if ($insert_raw_mat_log = $db->prepare("INSERT INTO Raw_Mat_Log (mar_mat_id, raw_mat_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_raw_mat_log->bind_param('sssss', $rawMatId, $RawMaterialCode, $RawMaterialName, $actionId, $uid);
+                        $insert_raw_mat_log->execute();
+                        $insert_raw_mat_log->close();
+                    }    
+                }
+            }
+        }
+
+        # Checking for existing PO No.
+        if($PONumber != null && $PONumber != ''){
+            $poQuery = "SELECT * FROM Purchase_Order WHERE po_no = '$PONumber' AND deleted = '0'";
+            $poDetail = mysqli_query($db, $poQuery);
+            $poRow = mysqli_fetch_assoc($poDetail);
+
+            if(empty($poRow)){
+                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $PONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $DeliverToName, $RawMaterialCode, $RawMaterialName, $SupplierLoad, $SupplierQuantity,$Remarks, $status, $uid, $uid);
+                    $insert_stmt->execute();
+                    $insert_stmt->close(); 
+                }
+            }
         }
     }
 
