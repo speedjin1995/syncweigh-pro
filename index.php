@@ -2844,11 +2844,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#addModal').find('#destination').val(destinationName).trigger('change');
                     $('#addModal').find('#siteName').val(siteName).trigger('change');
                     $('#addModal').find('#agent').val(agentName).trigger('change');
+                    $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                    $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
                     $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
                     if (previousRecordsTag){
-                        $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                        $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
                         $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
 
                         // Hide or show insufficient balance
@@ -2908,11 +2908,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#addModal').find('#destination').val(destinationName).trigger('change');
                     $('#addModal').find('#siteName').val(siteName).trigger('change');
                     $('#addModal').find('#agent').val(agentName).trigger('change');
+                    $('#addModal').find('#productName').val(productName).trigger('change');
+                    $('#addModal').find('#orderWeight').val(orderSupplierWeight);
                     $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
                     if (previousRecordsTag){
-                        $('#addModal').find('#productName').val(productName).trigger('change');
-                        $('#addModal').find('#orderWeight').val(orderSupplierWeight);
                         $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
 
                         // Hide or show insufficient balance

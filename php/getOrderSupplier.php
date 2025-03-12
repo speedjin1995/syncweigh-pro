@@ -38,21 +38,14 @@ if(isset($_POST['code'], $_POST['type'])){
                     $destinationName = $row['destination_name'];
                     $siteName = $row['site_name'];
                     $agentName = $row['agent_name'];
+                    $productName = $row['raw_mat_name'];
+                    $order_supplier_weight = $row['order_quantity'];
                 }
 
                 $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
                 $empRecords = mysqli_query($db, $empQuery);
                 if (mysqli_num_rows($empRecords) > 0) { // Check if records exist
                     while ($row = mysqli_fetch_assoc($empRecords)) {
-                        if ($count == 1) {
-                            if ($type == 'Purchase') {
-                                $productName = $row['raw_mat_name'];
-                                $order_supplier_weight = $row['supplier_weight'] ?? 0;
-                            } else {
-                                $productName = $row['product_name'];
-                                $order_supplier_weight = $row['order_weight'] ?? 0;
-                            }
-                        }
                         $final_weight[] = !empty($row['final_weight']) ? $row['final_weight'] : 0;
                     }
                 } else {
@@ -100,21 +93,14 @@ if(isset($_POST['code'], $_POST['type'])){
                     $destinationName = $row['destination_name'];
                     $siteName = $row['site_name'];
                     $agentName = $row['agent_name'];
+                    $productName = $row['product_name'];
+                    $order_supplier_weight = $row['order_quantity'];
                 }  
 
                 $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
                 $empRecords = mysqli_query($db, $empQuery);
                 if (mysqli_num_rows($empRecords) > 0) { // Check if records exist
                     while ($row = mysqli_fetch_assoc($empRecords)) {
-                        if ($count == 1) {
-                            if ($type == 'Purchase') {
-                                $productName = $row['raw_mat_name'];
-                                $order_supplier_weight = $row['supplier_weight'] ?? 0;
-                            } else {
-                                $productName = $row['product_name'];
-                                $order_supplier_weight = $row['order_weight'] ?? 0;
-                            }
-                        }
                         $final_weight[] = !empty($row['final_weight']) ? $row['final_weight'] : 0;
                     }
                 } else {
