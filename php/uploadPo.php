@@ -158,7 +158,7 @@ if (!empty($data)) {
                     $rawMatId = $insert_raw_mat->insert_id; // Get the inserted destination ID
                     $insert_raw_mat->close();
                     
-                    if ($insert_raw_mat_log = $db->prepare("INSERT INTO Raw_Mat_Log (mar_mat_id, raw_mat_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                    if ($insert_raw_mat_log = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
                         $insert_raw_mat_log->bind_param('sssss', $rawMatId, $RawMaterialCode, $RawMaterialName, $actionId, $uid);
                         $insert_raw_mat_log->execute();
                         $insert_raw_mat_log->close();
