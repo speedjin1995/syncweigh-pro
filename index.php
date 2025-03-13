@@ -448,6 +448,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                                 <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
+                                                                                        <input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;">
                                                                                     </div>
                                                                                     <div class="col-sm-8" id="soSelect">
                                                                                         <select class="form-select js-choice" id="salesOrder" name="salesOrder" required>
@@ -456,9 +457,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                                 <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
+                                                                                        <input type="text" class="form-control" id="salesOrderEdit" name="salesOrderEdit" disabled style="display:none;">
                                                                                     </div>
-
-                                                                                    <!-- <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order"> -->
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
@@ -3095,8 +3095,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
 
-                debugger;
-
                 if (obj.message.transaction_status == 'Purchase'){
                     $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
                 }else{
@@ -3108,10 +3106,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter);
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
                 $('#addModal').find('#plant').val(obj.message.plant_name);
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
-                $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
@@ -3171,6 +3167,17 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#addModal').find('#productCode').val(obj.message.product_code);
                     $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
                     $('#addModal').find('#orderWeight').val(obj.message.order_weight);
+                    $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                    $('#addModal').find('#destination').val(obj.message.destination);
+
+                    // Hide select and show input readonly
+                    if (obj.message.transaction_status == 'Purchase'){
+                        $('#addModal').find('#purchaseOrder').hide();
+                        $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    }else{
+                        $('#addModal').find('#salesOrder').hide();
+                        $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    }
                 });
 
                 $('#addModal').modal('show');
