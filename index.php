@@ -2873,6 +2873,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                             $('#addModal').find('#insufficientBalDisplay').show();
                         }
                     }
+
+                    $('#addModal').trigger('orderLoaded');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
@@ -2885,7 +2887,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $("#failBtn").click();
                 }
             });
-
         });
 
         $('#salesOrder').on('change', function (){
@@ -2937,6 +2938,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                             $('#addModal').find('#insufficientBalDisplay').show();
                         }
                     }
+                    
+                    $('#addModal').trigger('orderLoaded');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
@@ -2949,7 +2952,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $("#failBtn").click();
                 }
             });
-
         });
 
         <?php
@@ -3044,16 +3046,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').show();
-                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
-                    $('#addModal').find('#orderWeight').val("");
                     $('#divSupplierName').show();
                     $('#divOrderWeight').hide();
                     $('#divCustomerName').hide();
                 }
                 else{
                     $('#divOrderWeight').show();
-                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
-                    $('#addModal').find('#supplierWeight').val("");
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').hide();
                     $('#divSupplierName').hide();
@@ -3090,34 +3088,32 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#vehicleNoTxt2').hide();
                 }
                 
-                $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                $('#addModal').find('#customerName').val(obj.message.customer_name);
-                $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
                 if (obj.message.ex_del == 'EX'){
                     $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-                $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
-                $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
-                $('#addModal').find('#siteCode').val(obj.message.site_code);
-                $('#addModal').find('#siteName').val(obj.message.site_name);
+
+                debugger;
+
+                if (obj.message.transaction_status == 'Purchase'){
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                }else{
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                }
+                
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
-                $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter);
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                $('#addModal').find('#agent').val(obj.message.agent_name);
-                $('#addModal').find('#agentCode').val(obj.message.agent_code);
                 $('#addModal').find('#plant').val(obj.message.plant_name);
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
-                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1); console.lo
+                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
@@ -3144,7 +3140,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
-                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#subTotalPrice').val(obj.message.sub_total);
@@ -3159,6 +3154,24 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+
+                // Load these field after PO/SO is loaded
+                $('#addModal').on('orderLoaded', function() {
+                    $('#addModal').find('#customerCode').val(obj.message.customer_code);
+                    $('#addModal').find('#customerName').val(obj.message.customer_name);
+                    $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
+                    $('#addModal').find('#supplierName').val(obj.message.supplier_name);
+                    $('#addModal').find('#siteCode').val(obj.message.site_code);
+                    $('#addModal').find('#siteName').val(obj.message.site_name);
+                    $('#addModal').find('#agent').val(obj.message.agent_name);
+                    $('#addModal').find('#agentCode').val(obj.message.agent_code);
+                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
+                    $('#addModal').find('#productName').val(obj.message.product_name);
+                    $('#addModal').find('#productCode').val(obj.message.product_code);
+                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
+                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
+                });
 
                 $('#addModal').modal('show');
             
