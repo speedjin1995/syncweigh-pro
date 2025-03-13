@@ -39,38 +39,38 @@ if($_POST['site'] != null && $_POST['site'] != '' && $_POST['site'] != '-'){
 	$searchQuery .= " and site_code = '".$_POST['site']."'";
 }
 
-if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
-	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
+if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
+	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
 }
 
 if($searchValue != ''){
   $searchQuery = " and (
     company_code like '%".$searchValue."%' or 
     company_name like '%".$searchValue."%' or 
-    supplier_code like '%".$searchValue."%' or 
-    supplier_name like '%".$searchValue."%' or 
+    customer_code like '%".$searchValue."%' or 
+    customer_name like '%".$searchValue."%' or 
     order_no like '%".$searchValue."%' or 
     order_date like '%".$searchValue."%' or 
     delivery_date like '%".$searchValue."%' or 
-    po_no like '%".$searchValue."%' or
+    so_no like '%".$searchValue."%' or
     modified_date like '%".$searchValue."%'
   )";
 }
 
-$allQuery = "select count(*) as allcount from Purchase_Order where deleted = '0'";
+$allQuery = "select count(*) as allcount from Sales_Order where deleted = '0'";
 
 $sel = mysqli_query($db, $allQuery); 
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount from Purchase_Order where deleted = '0'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Sales_Order where deleted = '0'".$searchQuery;
 $sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Purchase_Order where deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Sales_Order where deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery); 
 $data = array();
 
@@ -79,12 +79,12 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "id"=>$row['id'],
     "company_code"=>$row['company_code'],
     "company_name"=>$row['company_name'],
-    "supplier_code"=>$row['supplier_code'],
-    "supplier_name"=>$row['supplier_name'],
+    "customer_code"=>$row['customer_code'],
+    "customer_name"=>$row['customer_name'],
     "order_no"=>$row['order_no'],
     "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
     "delivery_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["delivery_date"])->format('d-m-Y'),
-    "po_no"=>$row['po_no'],
+    "so_no"=>$row['so_no'],
     "status"=>$row['status'],
     "modified_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y'),
   );

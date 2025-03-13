@@ -66,6 +66,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $purchaseOrder = $db->query("SELECT * FROM Purchase_Order WHERE status = 'Open' AND deleted = '0'");
+$salesOrder = $db->query("SELECT * FROM Sales_Order WHERE status = 'Open' AND deleted = '0'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
@@ -447,16 +448,17 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                                 <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                        <!-- <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order"> -->
+                                                                                        <input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;">
                                                                                     </div>
-                                                                                    <!-- <div class="col-sm-8" id="soSelect">
-                                                                                        <select class="form-select js-choice" id="purchaseOrder" name="purchaseOrder" required>
+                                                                                    <div class="col-sm-8" id="soSelect">
+                                                                                        <select class="form-select js-choice" id="salesOrder" name="salesOrder" required>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
-                                                                                                <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
+                                                                                            <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                                                <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div> -->
+                                                                                        <input type="text" class="form-control" id="salesOrderEdit" name="salesOrderEdit" disabled style="display:none;">
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
@@ -2259,6 +2261,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
+            $('#addModal').find('#salesOrder').val("");
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#transporterCode').val("");
             $('#addModal').find('#transporter').val("");
@@ -2669,17 +2672,25 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 
 
                 if ($(this).val() == "Purchase"){
-                    // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
                     // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
                     
+                    //Hide SO Select
+                    $('#divPurchaseOrder').find('#soSelect').hide();
+                    $('#divPurchaseOrder').find('#poSelect').show();
+
                     // Hide Pricing Fields
                     $('#unitPriceDisplay').hide();
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
                 }else{
-                    // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                     // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                    //Hide PO Select
+                    $('#divPurchaseOrder').find('#soSelect').show();
+                    $('#divPurchaseOrder').find('#poSelect').hide();
 
                     if (customerType == 'Cash'){
                         $('#unitPriceDisplay').show();
@@ -2704,8 +2715,13 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#divCustomerName').show();
                 $('#rawMaterialDisplay').hide();
                 $('#productNameDisplay').show();
-                // $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                 // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                //Hide PO Select
+                $('#divPurchaseOrder').find('#soSelect').show();
+                $('#divPurchaseOrder').find('#poSelect').hide();
+
                 <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').hide();";
                 }
@@ -2814,24 +2830,26 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 var obj = JSON.parse(data);
 
                 if (obj.status == 'success'){
-                    var customerName = obj.message.customer_name;
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
                     var finalWeight = obj.message.final_weight;
                     var previousRecordsTag = obj.message.previousRecordsTag;
 
+                    // Change Details
+                    $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                    $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    $('#addModal').find('#agent').val(agentName).trigger('change');
+                    $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                    $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
                     $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
                     if (previousRecordsTag){
-                        $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        $('#addModal').find('#productName').val(productName).trigger('change');
                         $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        if (type == 'Purchase'){
-                            $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
-                        }else{
-                            $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                        }
 
                         // Hide or show insufficient balance
                         if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
@@ -2855,6 +2873,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                             $('#addModal').find('#insufficientBalDisplay').show();
                         }
                     }
+
+                    $('#addModal').trigger('orderLoaded');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
@@ -2867,7 +2887,71 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $("#failBtn").click();
                 }
             });
+        });
 
+        $('#salesOrder').on('change', function (){
+            var salesOrder = $(this).val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            $.post('php/getOrderSupplier.php', {code: salesOrder, type: type}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
+                    var productName = obj.message.product_name;
+                    var orderSupplierWeight = obj.message.order_supplier_weight;
+                    var finalWeight = obj.message.final_weight;
+                    var previousRecordsTag = obj.message.previousRecordsTag;
+
+                    $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                    $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    $('#addModal').find('#agent').val(agentName).trigger('change');
+                    $('#addModal').find('#productName').val(productName).trigger('change');
+                    $('#addModal').find('#orderWeight').val(orderSupplierWeight);
+                    $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+
+                    if (previousRecordsTag){
+                        $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+
+                        // Hide or show insufficient balance
+                        if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
+                            $('#addModal').find('#insufficientBalDisplay').hide();
+                        } else {
+                            $('#addModal').find('#insufficientBalDisplay').show();
+                        }
+                    }else{
+                        var weight = 0;
+                        if (type == 'Purchase'){
+                            weight = $('#addModal').find('#supplierWeight').val();
+                        }else{
+                            weight = $('#addModal').find('#orderWeight').val();
+                        }
+
+                        $('#addModal').find('#balance').val(weight);
+                        // Hide or show insufficient balance
+                        if (weight <= 0) {
+                            $('#addModal').find('#insufficientBalDisplay').hide();
+                        } else {
+                            $('#addModal').find('#insufficientBalDisplay').show();
+                        }
+                    }
+                    
+                    $('#addModal').trigger('orderLoaded');
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
         });
 
         <?php
@@ -2962,16 +3046,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').show();
-                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
-                    $('#addModal').find('#orderWeight').val("");
                     $('#divSupplierName').show();
                     $('#divOrderWeight').hide();
                     $('#divCustomerName').hide();
                 }
                 else{
                     $('#divOrderWeight').show();
-                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
-                    $('#addModal').find('#supplierWeight').val("");
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').hide();
                     $('#divSupplierName').hide();
@@ -3008,34 +3088,28 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#vehicleNoTxt2').hide();
                 }
                 
-                $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                $('#addModal').find('#customerName').val(obj.message.customer_name);
-                $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
                 if (obj.message.ex_del == 'EX'){
                     $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-                $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
-                $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
-                $('#addModal').find('#siteCode').val(obj.message.site_code);
-                $('#addModal').find('#siteName').val(obj.message.site_name);
+
+                if (obj.message.transaction_status == 'Purchase'){
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                }else{
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                }
+                
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
-                $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter);
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                $('#addModal').find('#agent').val(obj.message.agent_name);
-                $('#addModal').find('#agentCode').val(obj.message.agent_code);
                 $('#addModal').find('#plant').val(obj.message.plant_name);
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
-                $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
-                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1); console.lo
+                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
@@ -3062,7 +3136,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
-                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#subTotalPrice').val(obj.message.sub_total);
@@ -3077,6 +3150,35 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+
+                // Load these field after PO/SO is loaded
+                $('#addModal').on('orderLoaded', function() {
+                    $('#addModal').find('#customerCode').val(obj.message.customer_code);
+                    $('#addModal').find('#customerName').val(obj.message.customer_name);
+                    $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
+                    $('#addModal').find('#supplierName').val(obj.message.supplier_name);
+                    $('#addModal').find('#siteCode').val(obj.message.site_code);
+                    $('#addModal').find('#siteName').val(obj.message.site_name);
+                    $('#addModal').find('#agent').val(obj.message.agent_name);
+                    $('#addModal').find('#agentCode').val(obj.message.agent_code);
+                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
+                    $('#addModal').find('#productName').val(obj.message.product_name);
+                    $('#addModal').find('#productCode').val(obj.message.product_code);
+                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
+                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
+                    $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                    $('#addModal').find('#destination').val(obj.message.destination);
+
+                    // Hide select and show input readonly
+                    if (obj.message.transaction_status == 'Purchase'){
+                        $('#addModal').find('#purchaseOrder').hide();
+                        $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    }else{
+                        $('#addModal').find('#salesOrder').hide();
+                        $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    }
+                });
 
                 $('#addModal').modal('show');
             

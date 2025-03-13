@@ -250,10 +250,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     //}
 
-    if (empty($_POST["purchaseOrder"])) {
-        $purchaseOrder = null;
-    } else {
-        $purchaseOrder = trim($_POST["purchaseOrder"]);
+    if ($transactionStatus == 'Purchase'){
+        if (empty($_POST["purchaseOrder"])) {
+            $purchaseOrder = null;
+        } else {
+            $purchaseOrder = trim($_POST["purchaseOrder"]);
+        }
+    }else{
+        if (empty($_POST["salesOrder"])) {
+            $purchaseOrder = null;
+        } else {
+            $purchaseOrder = trim($_POST["salesOrder"]);
+        }
     }
 
     if (empty($_POST["containerNo"])) {
@@ -478,6 +486,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $noOfDrum = null;
     }
 
+    if(isset($_POST['balance']) && $_POST['balance'] != null && $_POST['balance'] != ''){
+        $prevBalance = $_POST['balance'];
+    }
+    else{
+        $prevBalance = 0;
+    }
+
     /*if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){
         // $inDate = new DateTime($_POST['grossIncomingDate']);
         // $inCDateTime = date_format($inDate,"Y-m-d H:i:s");
@@ -536,6 +551,44 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 //         //     )
                 //         // );
                 //     }
+
+                # Checking to find balance weight before edit
+                $record_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?");
+                $record_stmt->bind_param('s', $weightId);
+                $record_stmt->execute();
+                $record_result = $record_stmt->get_result();
+                $recordRow = $record_result->fetch_assoc();    
+                $beforeEditNettWeight = $recordRow['nett_weight1'];
+                $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
+                
+                # Update PO or SO table row to Close
+                $currentBalance = $balanceBeforeEdit - $nettWeight;
+                if ($currentBalance <= 0){
+                    if ($transactionStatus == 'Purchase'){
+                        $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
+                    }else{
+                        $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
+                    }
+
+                    $poSo_stmt->bind_param('s', $purchaseOrder);
+                    $poSo_stmt->execute();
+                    $result = $poSo_stmt->get_result();
+                    $poSoRow = $result->fetch_assoc();    
+                    $poSoId = $poSoRow['id'];
+                    $poSoStatus = 'Close';
+                    $poSo_stmt->close();
+
+                    if ($transactionStatus == 'Purchase'){
+                        $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET status=? WHERE id=?");
+                    }else{
+                        $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET status=? WHERE id=?");
+                    }
+
+                    $updatePoSoStmt->bind_param('ss', $poSoStatus, $poSoId);
+                    $updatePoSoStmt->execute();
+
+                    $updatePoSoStmt->close();
+                }
 
                 $update_stmt->close();
                 $db->close();
@@ -602,6 +655,35 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     else{
                         $update_stmt->close();
                         //$db->close();
+
+                        # Update PO or SO table row to Close
+                        $currentBalance = $prevBalance - $nettWeight;
+                        if ($currentBalance <= 0){
+                            if ($transactionStatus == 'Purchase'){
+                                $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
+                            }else{
+                                $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
+                            }
+
+                            $poSo_stmt->bind_param('s', $purchaseOrder);
+                            $poSo_stmt->execute();
+                            $result = $poSo_stmt->get_result();
+                            $poSoRow = $result->fetch_assoc();    
+                            $poSoId = $poSoRow['id'];
+                            $poSoStatus = 'Close';
+                            $poSo_stmt->close();
+
+                            if ($transactionStatus == 'Purchase'){
+                                $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET status=? WHERE id=?");
+                            }else{
+                                $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET status=? WHERE id=?");
+                            }
+
+                            $updatePoSoStmt->bind_param('ss', $poSoStatus, $poSoId);
+                            $updatePoSoStmt->execute();
+        
+                            $updatePoSoStmt->close();
+                        }
                         
                         echo json_encode(
                             array(

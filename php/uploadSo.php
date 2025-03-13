@@ -14,23 +14,23 @@ if (!empty($data)) {
     foreach ($data as $rows) {
         $CompanyCode = !empty($rows['CompanyCode']) ? trim($rows['CompanyCode']) : '';
         $CompanyName = !empty($rows['CompanyName']) ? trim($rows['CompanyName']) : '';
-        $SupplierCode = !empty($rows['SupplierCode']) ? trim($rows['SupplierCode']) : '';
-        $SupplierName = !empty($rows['SupplierName']) ? trim($rows['SupplierName']) : '';
+        $CustomerCode = !empty($rows['CustomerCode']) ? trim($rows['CustomerCode']) : '';
+        $CustomerName = !empty($rows['CustomerName']) ? trim($rows['CustomerName']) : '';
         $SiteCode = !empty($rows['SiteCode']) ? trim($rows['SiteCode']) : '';
         $SiteName = !empty($rows['SiteName']) ? trim($rows['SiteName']) : '';
         $OrderDate = !empty($rows['OrderDateDDMMYYYY']) ? DateTime::createFromFormat('d-m-Y', $rows["OrderDateDDMMYYYY"])->format('Y-m-d H:i:s') : '';
         $OrderNumber = !empty($rows['OrderNumber']) ? trim($rows['OrderNumber']) : '';
-        $PONumber = !empty($rows['PONumber']) ? trim($rows['PONumber']) : '';
+        $SONumber = !empty($rows['SONumber']) ? trim($rows['SONumber']) : '';
         $DeliveryDate = !empty($rows['DeliveryDateDDMMYYYY']) ? DateTime::createFromFormat('d-m-Y', $rows["DeliveryDateDDMMYYYY"])->format('Y-m-d H:i:s') : '';
         $SalesrepCode = !empty($rows['SalesrepCode']) ? trim($rows['SalesrepCode']) : '';
         $SalesrepName = !empty($rows['SalesrepName']) ? trim($rows['SalesrepName']) : '';
         $DestinationCode = !empty($rows['DestinationCode']) ? trim($rows['DestinationCode']) : '';
         $DestinationName = !empty($rows['DestinationName']) ? trim($rows['DestinationName']) : '';
         $DeliverToName = !empty($rows['DeliverToName']) ? trim($rows['DeliverToName']) : '';
-        $RawMaterialCode = !empty($rows['RawMaterialCode']) ? trim($rows['RawMaterialCode']) : '';
-        $RawMaterialName = !empty($rows['RawMaterialName']) ? trim($rows['RawMaterialName']) : '';
-        $SupplierLoad = !empty($rows['SupplierLoad']) ? trim($rows['SupplierLoad']) : '';
-        $SupplierQuantity = !empty($rows['SupplierQuantity']) ? trim($rows['SupplierQuantity']) : '';
+        $ProductCode = !empty($rows['ProductCode']) ? trim($rows['ProductCode']) : '';
+        $ProductName = !empty($rows['ProductName']) ? trim($rows['ProductName']) : '';
+        $OrderLoad = !empty($rows['OrderLoad']) ? trim($rows['OrderLoad']) : '';
+        $OrderQuantity = !empty($rows['OrderQuantity']) ? trim($rows['OrderQuantity']) : '';
         $Remarks = !empty($rows['Remarks']) ? trim($rows['Remarks']) : '';
         $status = 'Open';
         $actionId = 1;
@@ -57,23 +57,23 @@ if (!empty($data)) {
             }
         }
 
-        # Supplier Checking & Processing
-        if($SupplierCode != null && $SupplierCode != ''){
-            $supplierQuery = "SELECT * FROM Supplier WHERE supplier_code = '$SupplierCode'";
-            $supplierDetail = mysqli_query($db, $supplierQuery);
-            $supplierRow = mysqli_fetch_assoc($supplierDetail);
+        # Customer Checking & Processing
+        if($CustomerCode != null && $CustomerCode != ''){
+            $customerQuery = "SELECT * FROM Customer WHERE customer_code = '$CustomerCode'";
+            $customerDetail = mysqli_query($db, $customerQuery);
+            $customerRow = mysqli_fetch_assoc($customerDetail);
             
-            if(empty($supplierRow)){
-                if($insert_supplier = $db->prepare("INSERT INTO Supplier (supplier_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_supplier->bind_param('ssss', $SupplierCode, $SupplierName, $uid, $uid);
-                    $insert_supplier->execute();
-                    $supplierId = $insert_supplier->insert_id; // Get the inserted supplier ID
-                    $insert_supplier->close();
+            if(empty($customerRow)){
+                if($insert_customer = $db->prepare("INSERT INTO Customer (customer_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_customer->bind_param('ssss', $CustomerCode, $CustomerName, $uid, $uid);
+                    $insert_customer->execute();
+                    $customerId = $insert_customer->insert_id; // Get the inserted customer ID
+                    $insert_customer->close();
                     
-                    if ($insert_supplier_log = $db->prepare("INSERT INTO Supplier_Log (supplier_id, supplier_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_supplier_log->bind_param('sssss', $supplierId, $SupplierCode, $SupplierName, $actionId, $uid);
-                        $insert_supplier_log->execute();
-                        $insert_supplier_log->close();
+                    if ($insert_customer_log = $db->prepare("INSERT INTO Customer_Log (customer_id, customer_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_customer_log->bind_param('sssss', $customerId, $CustomerCode, $CustomerName, $actionId, $uid);
+                        $insert_customer_log->execute();
+                        $insert_customer_log->close();
                     }    
                 }
             }
@@ -122,7 +122,7 @@ if (!empty($data)) {
                 }
             }
         }
-        
+
         # Destination Checking & Processing
         if($DestinationCode != null && $DestinationCode != ''){
             $destinationQuery = "SELECT * FROM Destination WHERE destination_code = '$DestinationCode'";
@@ -145,37 +145,37 @@ if (!empty($data)) {
             }
         }
 
-        # Raw Material Checking & Processing
-        if($RawMaterialCode != null && $RawMaterialCode != ''){
-            $rawMatQuery = "SELECT * FROM Raw_Mat WHERE raw_mat_code = '$RawMaterialCode'";
-            $rawMatDetail = mysqli_query($db, $rawMatQuery);
-            $rawMatRow = mysqli_fetch_assoc($rawMatDetail);
+        # Product Checking & Processing
+        if($ProductCode != null && $ProductCode != ''){
+            $productQuery = "SELECT * FROM Product WHERE product_code = '$ProductCode'";
+            $productDetail = mysqli_query($db, $productQuery);
+            $productRow = mysqli_fetch_assoc($productDetail);
             
-            if(empty($rawMatRow)){
-                if($insert_raw_mat = $db->prepare("INSERT INTO Raw_Mat (raw_mat_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_raw_mat->bind_param('ssss', $RawMaterialCode, $RawMaterialName, $uid, $uid);
-                    $insert_raw_mat->execute();
-                    $rawMatId = $insert_raw_mat->insert_id; // Get the inserted destination ID
-                    $insert_raw_mat->close();
+            if(empty($productRow)){
+                if($insert_product = $db->prepare("INSERT INTO Product (product_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_product->bind_param('ssss', $ProductCode, $ProductName, $uid, $uid);
+                    $insert_product->execute();
+                    $productId = $insert_product->insert_id; // Get the inserted destination ID
+                    $insert_product->close();
                     
-                    if ($insert_raw_mat_log = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_raw_mat_log->bind_param('sssss', $rawMatId, $RawMaterialCode, $RawMaterialName, $actionId, $uid);
-                        $insert_raw_mat_log->execute();
-                        $insert_raw_mat_log->close();
+                    if ($insert_product_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_product_log->bind_param('sssss', $productId, $ProductCode, $ProductName, $actionId, $uid);
+                        $insert_product_log->execute();
+                        $insert_product_log->close();
                     }    
                 }
             }
         }
 
         # Checking for existing PO No.
-        if($PONumber != null && $PONumber != ''){
-            $poQuery = "SELECT * FROM Purchase_Order WHERE po_no = '$PONumber' AND deleted = '0'";
-            $poDetail = mysqli_query($db, $poQuery);
-            $poRow = mysqli_fetch_assoc($poDetail);
+        if($OrderNumber != null && $OrderNumber != ''){
+            $soQuery = "SELECT * FROM Sales_Order WHERE order_no = '$OrderNumber' AND deleted = '0'";
+            $soDetail = mysqli_query($db, $soQuery);
+            $soRow = mysqli_fetch_assoc($soDetail);
 
-            if(empty($poRow)){
-                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $PONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $DeliverToName, $RawMaterialCode, $RawMaterialName, $SupplierLoad, $SupplierQuantity,$Remarks, $status, $uid, $uid);
+            if(empty($soRow)){
+                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, order_load, order_quantity, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $SONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $DeliverToName, $ProductCode, $ProductName, $OrderLoad, $OrderQuantity, $Remarks, $status, $uid, $uid);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }
