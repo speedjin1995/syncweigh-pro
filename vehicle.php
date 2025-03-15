@@ -169,7 +169,7 @@
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" id="transporter" name="transporter">
+                                                                                        <select class="form-control select2" id="transporter" name="transporter">
                                                                                             <option value="" selected disabled hidden>Please Select</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
                                                                                                 <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
@@ -183,7 +183,7 @@
                                                                                 <div class="row">
                                                                                     <label for="customer" class="col-sm-4 col-form-label">Customer</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" id="customer" name="customer">
+                                                                                        <select class="form-control select2" id="customer" name="customer">
                                                                                             <option value="" selected disabled hidden>Please Select</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
                                                                                                 <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
@@ -319,6 +319,13 @@
 var table;
 
 $(function () {
+    // Initialize all Select2 elements in the modal
+    $('#addModal .select2').select2({
+        allowClear: true,
+        placeholder: "Please Select",
+        dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+    });
+
     table = $("#vehicleTable").DataTable({
         "responsive": true,
         "autoWidth": false,
