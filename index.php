@@ -191,7 +191,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Transaction Status</label>
-                                                            <select id="statusSearch" class="form-select">
+                                                            <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
@@ -202,7 +202,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
@@ -219,7 +219,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
-                                                            <select id="invoiceNoSearch" class="form-select"  >
+                                                            <select id="invoiceNoSearch" class="form-select select2"  >
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
                                                                 <option value="Container">Container</option>
@@ -229,7 +229,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="batchNoSearch" class="form-label">Status</label>
-                                                            <select id="batchNoSearch" class="form-select">
+                                                            <select id="batchNoSearch" class="form-select select2">
                                                                 <option value="N" selected>Pending</option>
                                                                 <option value="Y">Complete</option>
                                                             </select>
@@ -238,7 +238,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="productSearch" class="form-select" >
+                                                            <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
@@ -249,7 +249,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3" id="rawMatSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Raw Material</label>
-                                                            <select id="rawMatSearch" class="form-select" >
+                                                            <select id="rawMatSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
                                                                     <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
@@ -260,7 +260,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3" id="plantSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Plant</label>
-                                                            <select id="plantSearch" class="form-select" >
+                                                            <select id="plantSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
@@ -442,7 +442,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8" id="poSelect">
-                                                                                        <select class="form-select js-choice" id="purchaseOrder" name="purchaseOrder" required>
+                                                                                        <select class="form-select js-choice select2" id="purchaseOrder" name="purchaseOrder" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
                                                                                                 <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
@@ -451,7 +451,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                         <input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;">
                                                                                     </div>
                                                                                     <div class="col-sm-8" id="soSelect">
-                                                                                        <select class="form-select js-choice" id="salesOrder" name="salesOrder" required>
+                                                                                        <select class="form-select js-choice select2" id="salesOrder" name="salesOrder" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
                                                                                                 <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
@@ -489,7 +489,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="weightType" name="weightType" class="form-select">
+                                                                                        <select id="weightType" name="weightType" class="form-select select2">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
                                                                                         </select>   
@@ -500,7 +500,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="customerType" class="col-sm-4 col-form-label">Customer Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="customerType" name="customerType" class="form-select">
+                                                                                        <select id="customerType" name="customerType" class="form-select select2">
                                                                                             <option>Cash</option>
                                                                                             <option selected>Normal</option>
                                                                                         </select>   
@@ -532,7 +532,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select">
+                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select select2">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
                                                                                             <option value="Local">Public</option>
@@ -544,7 +544,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice" id="customerName" name="customerName" required>
+                                                                                        <select class="form-select js-choice select2" id="customerName" name="customerName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
                                                                                                 <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
@@ -557,7 +557,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="supplierName" name="supplierName" required>
+                                                                                        <select class="form-select select2" id="supplierName" name="supplierName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                 <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
@@ -605,7 +605,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row" id="productNameDisplay">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="productName" name="productName" required>
+                                                                                        <select class="form-select select2" id="productName" name="productName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
                                                                                                 <option 
@@ -625,7 +625,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row" id="rawMaterialDisplay" style="display:none;">
                                                                                     <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="rawMaterialName" name="rawMaterialName" required>
+                                                                                        <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
                                                                                                 <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
@@ -659,7 +659,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="transporter" name="transporter" required>
+                                                                                        <select class="form-select select2" id="transporter" name="transporter" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
                                                                                                 <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
@@ -685,7 +685,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="agent" name="agent" >
+                                                                                        <select class="form-select select2" id="agent" name="agent" >
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
                                                                                                 <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
@@ -698,7 +698,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="destination" name="destination" required>
+                                                                                        <select class="form-select select2" id="destination" name="destination" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
                                                                                                 <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
@@ -724,7 +724,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="indicatorId" name="indicatorId" class="form-select" >
+                                                                                        <select id="indicatorId" name="indicatorId" class="form-select select2" >
                                                                                             <option selected>ind12345</option>
                                                                                         </select>
                                                                                     </div>
@@ -777,7 +777,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="plant" name="plant" required>
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
@@ -817,7 +817,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="siteName" class="col-sm-4 col-form-label">Project</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="siteName" name="siteName">
+                                                                                        <select class="form-select select2" id="siteName" name="siteName">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
                                                                                                 <option value="<?=$rowSite['name'] ?>" data-code="<?=$rowSite['site_code'] ?>"><?=$rowSite['name'] ?></option>
@@ -861,7 +861,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                     <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
                                                                                     <div class="col-10 index-vehicle">
-                                                                                        <select class="form-select" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
+                                                                                        <select class="form-select select2" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                                                                                                 <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
@@ -944,7 +944,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                     <input type="text" class="form-control" id="vehicleNoTxt2" name="vehicleNoTxt2" placeholder="Vehicle Plate No" style="display:none">
                                                                                     <div class="col-10 index-vehicle2">
-                                                                                        <select class="form-select" id="vehiclePlateNo2" name="vehiclePlateNo2">
+                                                                                        <select class="form-select select2" id="vehiclePlateNo2" name="vehiclePlateNo2">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowv2=mysqli_fetch_assoc($vehicles2)){ ?>
                                                                                                 <option value="<?=$rowv2['veh_number'] ?>" data-weight="<?=$rowv2['vehicle_weight'] ?>"><?=$rowv2['veh_number'] ?></option>
@@ -1388,6 +1388,43 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         const yesterday = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
+
+        // Initialize all Select2 elements in the search bar
+        $('#collapseSearch .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+        });
+
+        // Apply custom styling to Select2 elements in search bar
+        $('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        // Apply custom styling to Select2 elements in addModal
+        $('#addModal .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#addModal .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
 
         //Date picker
         <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
@@ -2242,35 +2279,35 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
-            $('#addModal').find('#vehiclePlateNo1').val("");
-            $('#addModal').find('#vehiclePlateNo2').val("");
+            $('#addModal').find('#vehiclePlateNo1').val("").trigger('change');
+            $('#addModal').find('#vehiclePlateNo2').val("").trigger('change');
             $('#addModal').find('#supplierWeight').val("");
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
-            $('#addModal').find('#customerName').val("");
+            $('#addModal').find('#customerName').val("").trigger('change');
             $('#addModal').find('#supplierCode').val("");
-            $('#addModal').find('#supplierName').val("");
+            $('#addModal').find('#supplierName').val("").trigger('change');
             $('#addModal').find('#productCode').val("");
-            $('#addModal').find('#productName').val("");
+            $('#addModal').find('#productName').val("").trigger('change');
             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
             $('#addModal').find('#rawMaterialCode').val("");
-            $('#addModal').find('#rawMaterialName').val("");
+            $('#addModal').find('#rawMaterialName').val("").trigger('change');
             $('#addModal').find('#siteCode').val("");
-            $('#addModal').find('#siteName').val("");
+            $('#addModal').find('#siteName').val("").trigger('change');
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
-            $('#addModal').find('#purchaseOrder').val("");
-            $('#addModal').find('#salesOrder').val("");
+            $('#addModal').find('#purchaseOrder').val("").trigger('change');
+            $('#addModal').find('#salesOrder').val("").trigger('change');
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#transporterCode').val("");
-            $('#addModal').find('#transporter').val("");
+            $('#addModal').find('#transporter').val("").trigger('change');
             $('#addModal').find('#destinationCode').val("");
-            $('#addModal').find('#agent').val("");
+            $('#addModal').find('#agent').val("").trigger('change');
             $('#addModal').find('#agentCode').val("");
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
-            $('#addModal').find('#destination').val("");
+            $('#addModal').find('#destination').val("").trigger('change');
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
@@ -2400,7 +2437,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         $('#manualVehicle').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
-                $('#vehiclePlateNo1').val('-');
+                $('#vehiclePlateNo1').val('-').trigger('change');
                 $('.index-vehicle').hide();
                 $('#vehicleNoTxt').show();
             }
@@ -2433,7 +2470,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var vehicleNo1 = $(this).val();
             var exDel = $('input[name="exDel"]:checked').val();
             if (exDel == 'true'){
-                $('#addModal').find('#transporter').val('Own Transportation');
+                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
                 $('#addModal').find('#transporterCode').val('T01');
                 $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
                     var obj = JSON.parse(data);
@@ -2442,7 +2479,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         var customerName = obj.message.customer_name;
                         var customerCode = obj.message.customer_code;
 
-                        $('#addModal').find('#customerName').val(customerName);
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
                         $('#addModal').find('#customerCode').val(customerCode);
                     }
                     else if(obj.status === 'error'){
@@ -2461,9 +2498,9 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 });
             }else{
-                $('#addModal').find('#customerName').val('');
+                $('#addModal').find('#customerName').val('').trigger('change');
                 $('#addModal').find('#customerCode').val('');
-                
+
                 $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
                     var obj = JSON.parse(data);
 
@@ -2471,7 +2508,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         var transporterName = obj.message.transporter_name;
                         var transporterCode = obj.message.transporter_code;
 
-                        $('#addModal').find('#transporter').val(transporterName);
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
                         $('#addModal').find('#transporterCode').val(transporterCode);
                     }
                     else if(obj.status === 'error'){
@@ -2834,7 +2871,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var vehicleNo1 = $('#addModal').find('#vehiclePlateNo1').val();
             var exDel = $('input[name="exDel"]:checked').val();
             if (exDel == 'true'){
-                $('#addModal').find('#transporter').val('Own Transportation');
+                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
                 $('#addModal').find('#transporterCode').val('T01');
                 $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function(data){
                     var obj = JSON.parse(data);
@@ -2842,7 +2879,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         var customerName = obj.message.customer_name;
                         var customerCode = obj.message.customer_code;
 
-                        $('#addModal').find('#customerName').val(customerName);
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
                         $('#addModal').find('#customerCode').val(customerCode);
                     }   
                     else if(obj.status === 'failed'){
@@ -2855,7 +2892,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     }
                 });
             }else{
-                $('#addModal').find('#customerName').val('');
+                $('#addModal').find('#customerName').val('').trigger('change');
                 $('#addModal').find('#customerCode').val('');
 
                 $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
@@ -2865,7 +2902,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                         var transporterName = obj.message.transporter_name;
                         var transporterCode = obj.message.transporter_code;
 
-                        $('#addModal').find('#transporter').val(transporterName);
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
                         $('#addModal').find('#transporterCode').val(transporterCode);
                     }
                     else if(obj.status === 'failed'){
