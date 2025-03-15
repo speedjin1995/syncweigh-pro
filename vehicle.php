@@ -5,6 +5,7 @@
     require_once "php/db_connect.php";
 
     $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 ?>
 
 <head>
@@ -145,6 +146,27 @@
 
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
+                                                                                    <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="form-check align-radio mr-2">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualEx" value="true">
+                                                                                            <label class="form-check-label" for="manualEx">
+                                                                                               Ex-Quarry
+                                                                                            </label>
+                                                                                        </div>
+
+                                                                                        <div class="form-check align-radio">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualDel" value="false" checked>
+                                                                                            <label class="form-check-label" for="manualDel">
+                                                                                               Delivered
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control" id="transporter" name="transporter">
@@ -157,8 +179,23 @@
                                                                                 </div>
                                                                             </div>
 
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="customer" class="col-sm-4 col-form-label">Customer</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control" id="customer" name="customer">
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
+                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
+                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
                                                                             <input type="hidden" class="form-control" id="id" name="id">
                                                                             <input type="hidden" id="transporterCode" name="transporterCode">
+                                                                            <input type="hidden" id="customerCode" name="customerCode">
                                                                                                                                                          
                                                                         </div>
                                                                     </div>
@@ -216,7 +253,9 @@
                                                                 <tr>
                                                                     <th>Vehicle No</th>
                                                                     <!--th>Vehicle Weight</th-->
+                                                                    <th>EX-Quarry/Delivered</th>
                                                                     <th>Transporter</th>
+                                                                    <th>Customer</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -292,7 +331,18 @@ $(function () {
         'columns': [
             { data: 'veh_number' },
             //{ data: 'vehicle_weight' },
+            { 
+                data: 'ex_del',
+                render: function ( data, type, row ) {
+                    if (data == 'EX'){
+                        return "EX-Quarry";
+                    }else{
+                        return "Delivered";
+                    }
+                }
+            },
             { data: 'transporter_name' },
+            { data: 'customer_name' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -342,6 +392,9 @@ $(function () {
         $('#addModal').find('#vehicleWeight').val("");
         $('#addModal').find('#transporter').val("");
         $('#addModal').find('#transporterCode').val("");
+        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+        $('#addModal').find('#customer').val("");
+        $('#addModal').find('#customerCode').val("");
         $('#addModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -370,11 +423,12 @@ $(function () {
         $('#transporterCode').val($('#transporter :selected').data('code'));
     });
 
-    $('#uploadExcel').on('click', function(){
-
+    //customer
+    $('#customer').on('change', function(){
+        $('#customerCode').val($('#customer :selected').data('code'));
     });
 
-    $('#downloadTemplate').on('click', function(){
+    $('#uploadExcel').on('click', function(){
 
     });
 });
@@ -390,6 +444,14 @@ $(function () {
                 $('#addModal').find('#vehicleWeight').val(obj.message.vehicle_weight);
                 $('#addModal').find('#transporter').val(obj.message.transporter_name);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
+                if (obj.message.ex_del == 'EX'){
+                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
+                }else{
+                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                }
+                $('#addModal').find('#customer').val(obj.message.customer_name);
+                $('#addModal').find('#customerCode').val(obj.message.customer_code);
+
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

@@ -357,3 +357,8 @@ CREATE TABLE `Sales_Order_Log` (
 ALTER TABLE `Sales_Order_Log` ADD PRIMARY KEY (`id`); 
 
 ALTER TABLE `Sales_Order_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 15/03/2025 --
+ALTER TABLE `Vehicle` ADD `ex_del` VARCHAR(10) NULL AFTER `transporter_name`, ADD `customer_code` VARCHAR(50) NULL AFTER `ex_del`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`;
+
+ALTER TABLE `Vehicle_Log` ADD `ex_del` VARCHAR(10) NULL AFTER `transporter_name`, ADD `customer_code` VARCHAR(50) NULL AFTER `ex_del`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`;

@@ -65,6 +65,9 @@ if(isset($_POST['userID'])){
                                 $message['vehicle_weight'] = $row['vehicle_weight'];
                                 $message['transporter_name'] = $row['transporter_name'];
                                 $message['transporter_code'] = $row['transporter_code'];
+                                $message['ex_del'] = $row['ex_del'];
+                                $message['customer_code'] = $row['customer_code'];
+                                $message['customer_name'] = $row['customer_name'];
                             }
                             
                             echo json_encode(
@@ -99,6 +102,9 @@ if(isset($_POST['userID'])){
                     $message['vehicle_weight'] = $row['vehicle_weight'];
                     $message['transporter_name'] = $row['transporter_name'];
                     $message['transporter_code'] = $row['transporter_code'];
+                    $message['ex_del'] = $row['ex_del'];
+                    $message['customer_code'] = $row['customer_code'];
+                    $message['customer_name'] = $row['customer_name'];
                 }
                 
                 echo json_encode(
