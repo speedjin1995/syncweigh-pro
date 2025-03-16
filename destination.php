@@ -414,6 +414,10 @@ $(function () {
         $('#addModal').find('#destinationCode').val("");
         $('#addModal').find('#destinationName').val("");
         $('#addModal').find('#description').val("");
+
+        // Remove Validation Error Message
+        $('#addModal .is-invalid').removeClass('is-invalid');
+
         $('#addModal').modal('show');
         
         $('#destinationForm').validate({
@@ -514,6 +518,10 @@ function edit(id){
             $('#addModal').find('#destinationCode').val(obj.message.destination_code);
             $('#addModal').find('#destinationName').val(obj.message.name);
             $('#addModal').find('#description').val(obj.message.description);
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
             $('#addModal').modal('show');
         }
         else if(obj.status === 'failed'){

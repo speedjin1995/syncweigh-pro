@@ -494,6 +494,10 @@ $(function () {
         $('#addModal').find('#addressLine4').val("");
         $('#addModal').find('#phoneNo').val("");
         $('#addModal').find('#faxNo').val("");
+
+        // Remove Validation Error Message
+        $('#addModal .is-invalid').removeClass('is-invalid');
+
         $('#addModal').modal('show');
         
         $('#customerForm').validate({
@@ -600,6 +604,10 @@ function edit(id){
             $('#addModal').find('#addressLine4').val(obj.message.address_line_4);
             $('#addModal').find('#phoneNo').val(obj.message.phone_no);
             $('#addModal').find('#faxNo').val(obj.message.fax_no);
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
             $('#addModal').modal('show');
         }
         else if(obj.status === 'failed'){

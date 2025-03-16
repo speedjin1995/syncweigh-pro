@@ -412,7 +412,7 @@ $(function () {
         var isValid = true;
 
         // custom validation for select2
-        $('#productForm .select2[required]').each(function () {
+        $('#addModal .select2[required]').each(function () {
             var select2Field = $(this);
             var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
             var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";

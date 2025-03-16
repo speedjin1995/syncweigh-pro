@@ -455,6 +455,10 @@ $(function () {
         $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
         $('#addModal').find('#customer').val("");
         $('#addModal').find('#customerCode').val("");
+
+        // Remove Validation Error Message
+        $('#addModal .is-invalid').removeClass('is-invalid');
+
         $('#addModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -626,6 +630,9 @@ function edit(id){
             }
             $('#addModal').find('#customer').val(obj.message.customer_name).trigger('change');
             $('#addModal').find('#customerCode').val(obj.message.customer_code);
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
 
             $('#addModal').modal('show');
         }

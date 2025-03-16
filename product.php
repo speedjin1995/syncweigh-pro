@@ -471,6 +471,28 @@ $(function () {
     // $.validator.setDefaults({
     //     submitHandler: function() {
     $('#submitProduct').on('click', function(){
+        // custom validation for select2
+        $('#addModal .select2[required]').each(function () {
+            var select2Field = $(this);
+            var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+            var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+            // Check if the value is empty
+            if (select2Field.val() === "" || select2Field.val() === null) {
+                select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                // Add error message if not already present
+                if (select2Container.next('.select2-error').length === 0) {
+                    select2Container.after(errorMsg);
+                }
+
+                isValid = false;
+            } else {
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            }
+        });
+
         if($('#productForm').valid()){
             $('#spinnerLoading').show();
             $.post('php/products.php', $('#productForm').serialize(), function(data){
@@ -556,6 +578,17 @@ $(function () {
         $('#addModal').find('#low').val("0");
         $('#rawMaterialTable').html('');
         rowCount = 1;
+
+        // Remove Validation Error Message
+        $('#addModal .is-invalid').removeClass('is-invalid');
+
+        $('#addModal .select2[required]').each(function () {
+            var select2Field = $(this);
+            var select2Container = select2Field.next('.select2-container');
+            
+            select2Container.find('.select2-selection').css('border', ''); // Remove red border
+            select2Container.next('.select2-error').remove(); // Remove error message
+        });
 
         $('#addModal').modal('show');
         
@@ -717,7 +750,17 @@ function edit(id){
                 }
             }
 
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
 
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
+            
             $('#addModal').modal('show');
         }
         else if(obj.status === 'failed'){

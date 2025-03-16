@@ -252,6 +252,10 @@
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
                                                                 </button>
+                                                                <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
+                                                                    <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                                    Delete Raw Material
+                                                                </button>
                                                                 <button type="button" id="addSupplier" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Supplier
@@ -263,6 +267,7 @@
                                                         <table id="supplierTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Supplier Code</th>
                                                                     <th>Company Reg No</th>
                                                                     <th>Company Name</th>
@@ -344,6 +349,15 @@ $(function () {
             'url':'php/loadSupplier.php'
         },
         'columns': [
+            {
+                // Add a checkbox with a unique ID for each row
+                data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                className: 'select-checkbox',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                }
+            },
             { data: 'supplier_code' },
             { data: 'company_reg_no' },
             { data: 'name' },
@@ -451,6 +465,10 @@ $(function () {
         $('#addModal').find('#addressLine4').val("");
         $('#addModal').find('#phoneNo').val("");
         $('#addModal').find('#faxNo').val("");
+
+        // Remove Validation Error Message
+        $('#addModal .is-invalid').removeClass('is-invalid');
+
         $('#addModal').modal('show');
         
         $('#supplierForm').validate({
@@ -498,6 +516,46 @@ $(function () {
         };
 
         reader.readAsBinaryString(file);
+    });
+
+    $('#multiDeactivate').on('click', function () {
+        $('#spinnerLoading').show();
+        var selectedIds = []; // An array to store the selected 'id' values
+
+        $("#supplierTable tbody input[type='checkbox']").each(function () {
+            if (this.checked) {
+                selectedIds.push($(this).val());
+            }
+        });
+
+        if (selectedIds.length > 0) {
+            if (confirm('Are you sure you want to cancel these items?')) {
+                $.post('php/deleteSupplier.php', {userID: selectedIds, type: 'MULTI'}, function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        toastr["success"](obj.message, "Success:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                });
+            }
+
+            $('#spinnerLoading').hide();
+        } 
+        else {
+            // Optionally, you can display a message or take another action if no IDs are selected
+            alert("Please select at least one destination to delete.");
+            $('#spinnerLoading').hide();
+        }     
     });
 });
 
@@ -587,6 +645,10 @@ function edit(id){
             $('#addModal').find('#addressLine4').val(obj.message.address_line_4);
             $('#addModal').find('#phoneNo').val(obj.message.phone_no);
             $('#addModal').find('#faxNo').val(obj.message.fax_no);
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
             $('#addModal').modal('show');
             
             // $('#customerForm').validate({
