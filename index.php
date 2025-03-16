@@ -865,7 +865,8 @@ else{
                                                                                                 <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div>
+                                                                                        <input type="text" class="form-control" id="vehiclePlateNo1Edit" name="vehiclePlateNo1Edit" hidden>
+                                                                                        </div>
                                                                                     <div class="invalid-feedback">
                                                                                         Please fill in the field.
                                                                                     </div>
@@ -1652,6 +1653,30 @@ else{
 
             pass = true;
 
+            var isValid = true;
+
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
+
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -2346,6 +2371,17 @@ else{
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
 
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -2526,8 +2562,11 @@ else{
             }*/
 
             var vehicleNo1 = $(this).val();
+            var vehicleNo1Edit = $('#vehiclePlateNo1Edit').val(); console.log(vehicleNo1Edit);
             var exDel = $('input[name="exDel"]:checked').val();
-            if (exDel == 'true'){
+            if (vehicleNo1Edit == 'EDIT'){
+                return;
+            }else if (exDel == 'true'){
                 $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
                 $('#addModal').find('#transporterCode').val('T01');
                 $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
@@ -3237,7 +3276,8 @@ else{
                     $('#vehicleNoTxt').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
+                    $('#addModal').find('#vehiclePlateNo1Edit').val('EDIT');
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                     $('#manualVehicle').val(0);
                     $('#manualVehicle').prop("checked", false);
                     $('.index-vehicle').show();
@@ -3276,8 +3316,8 @@ else{
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
-                $('#addModal').find('#transporter').val(obj.message.transporter);
-                $('#addModal').find('#plant').val(obj.message.plant_name);
+                $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
+                $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
@@ -3325,30 +3365,41 @@ else{
                 // Load these field after PO/SO is loaded
                 $('#addModal').on('orderLoaded', function() {
                     $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                    $('#addModal').find('#customerName').val(obj.message.customer_name);
+                    $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
                     $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                    $('#addModal').find('#supplierName').val(obj.message.supplier_name);
+                    $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change')
                     $('#addModal').find('#siteCode').val(obj.message.site_code);
-                    $('#addModal').find('#siteName').val(obj.message.site_name);
-                    $('#addModal').find('#agent').val(obj.message.agent_name);
+                    $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
+                    $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
                     $('#addModal').find('#agentCode').val(obj.message.agent_code);
                     $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
-                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
-                    $('#addModal').find('#productName').val(obj.message.product_name);
+                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                    $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                     $('#addModal').find('#productCode').val(obj.message.product_code);
                     $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
                     $('#addModal').find('#orderWeight').val(obj.message.order_weight);
                     $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                    $('#addModal').find('#destination').val(obj.message.destination);
+                    $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
 
                     // Hide select and show input readonly
                     if (obj.message.transaction_status == 'Purchase'){
-                        $('#addModal').find('#purchaseOrder').hide();
+                        $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
                         $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
                     }else{
-                        $('#addModal').find('#salesOrder').hide();
+                        $('#addModal').find('#salesOrder').next('.select2-container').hide();
                         $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     }
+                });
+
+                // Remove Validation Error Message
+                $('#addModal .is-invalid').removeClass('is-invalid');
+
+                $('#addModal .select2[required]').each(function () {
+                    var select2Field = $(this);
+                    var select2Container = select2Field.next('.select2-container');
+                    
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
                 });
 
                 $('#addModal').modal('show');
