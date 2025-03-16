@@ -44,7 +44,7 @@ if(isset($_POST['userID'])){
                             "message" => 'There is a pending record for this vehicle'
                         ));  
                 }else{
-                    if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
+                    if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=? AND status='0'")) {
                         $update_stmt->bind_param('s', $id);
                         
                         // Execute the prepared query.
@@ -81,7 +81,7 @@ if(isset($_POST['userID'])){
             }
         }
     }else{
-        if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE id=?")) {
+        if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE id=? AND status='0'")) {
             $update_stmt->bind_param('s', $id);
             
             // Execute the prepared query.

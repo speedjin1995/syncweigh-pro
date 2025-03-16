@@ -2451,6 +2451,66 @@ else{
             var x = $('#vehicleNoTxt').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
+
+            var exDel = $('input[name="exDel"]:checked').val();
+            if (exDel == 'true'){
+                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+                $('#addModal').find('#transporterCode').val('T01');
+                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var customerName = obj.message.customer_name;
+                        var customerCode = obj.message.customer_code;
+
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        $('#addModal').find('#customerCode').val(customerCode);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehicleNoTxt').val('');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }else{
+                $('#addModal').find('#customerName').val('').trigger('change');
+                $('#addModal').find('#customerCode').val('');
+
+                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var transporterName = obj.message.transporter_name;
+                        var transporterCode = obj.message.transporter_code;
+
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                        $('#addModal').find('#transporterCode').val(transporterCode);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehicleNoTxt').val('');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
         });
 
         $('#vehiclePlateNo1').on('change', function(){
@@ -2482,7 +2542,7 @@ else{
                     }
                     else if(obj.status === 'error'){
                         alert(obj.message);
-                        $('#vehiclePlateNo1').val('');
+                        $('#vehiclePlateNo1').val('').trigger('change');
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -2511,7 +2571,7 @@ else{
                     }
                     else if(obj.status === 'error'){
                         alert(obj.message);
-                        $('#vehiclePlateNo1').val('');
+                        $('#vehiclePlateNo1').val('').trigger('change');
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
