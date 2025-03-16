@@ -553,7 +553,7 @@ $(function () {
         } 
         else {
             // Optionally, you can display a message or take another action if no IDs are selected
-            alert("Please select at least one destination to delete.");
+            alert("Please select at least one supplier to delete.");
             $('#spinnerLoading').hide();
         }     
     });

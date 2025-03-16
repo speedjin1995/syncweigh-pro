@@ -501,7 +501,7 @@ $(function () {
         } 
         else {
             // Optionally, you can display a message or take another action if no IDs are selected
-            alert("Please select at least one vehicle to delete.");
+            alert("Please select at least one sales rep to delete.");
             $('#spinnerLoading').hide();
         }     
     });
