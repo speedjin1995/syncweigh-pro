@@ -158,7 +158,7 @@
                                                                                 <div class="row">
                                                                                     <label for="description" class="col-sm-4 col-form-label">Variance Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="varianceType" name="varianceType">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="varianceType" name="varianceType">
                                                                                             <option value="" selected disabled hidden>Please Select</option>
                                                                                             <option value="W">kg</option>
                                                                                             <option value="P">%</option>
@@ -185,8 +185,8 @@
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="type" class="col-sm-4 col-form-label">Type</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-control" style="width: 100%;" id="type" name="type" required>
+                                                                                    <div class="col-sm-8"> 
+                                                                                        <select class="form-control select2" style="width: 100%;" id="type" name="type" required>
                                                                                             <option value="" selected disabled hidden>Please Select</option>
                                                                                             <option value="Bitumen">Bitumen</option>
                                                                                             <option value="Raw Material">Raw Material</option>
@@ -261,6 +261,10 @@
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
                                                                 </button>
+                                                                <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
+                                                                    <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                                    Delete Raw Material
+                                                                </button>
                                                                 <button type="button" id="addProduct" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Raw Materials
@@ -272,6 +276,7 @@
                                                         <table id="productTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Raw Material Code</th>
                                                                     <th>Raw Material Name</th>
                                                                     <th>Raw Material Price</th>
@@ -340,6 +345,30 @@
 var table;
 
 $(function () {
+    $('#selectAllCheckbox').on('change', function() {
+        var checkboxes = $('#productTable tbody input[type="checkbox"]');
+        checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+    });
+
+    // Initialize all Select2 elements in the modal
+    $('#addModal .select2').select2({
+        allowClear: true,
+        placeholder: "Please Select",
+        dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+    });
+
+    // Apply custom styling to Select2 elements in addModal
+    $('#addModal .select2-container .select2-selection--single').css({
+        'padding-top': '4px',
+        'padding-bottom': '4px',
+        'height': 'auto'
+    });
+
+    $('#addModal .select2-container .select2-selection__arrow').css({
+        'padding-top': '33px',
+        'height': 'auto'
+    });
+
     table = $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -350,6 +379,15 @@ $(function () {
             'url':'php/loadRawMaterials.php'
         },
         'columns': [
+            {
+                // Add a checkbox with a unique ID for each row
+                data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                className: 'select-checkbox',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                }
+            },
             { data: 'raw_mat_code' },
             { data: 'name' },
             { data: 'price' },
@@ -371,6 +409,23 @@ $(function () {
     // $.validator.setDefaults({
     //     submitHandler: function() {
     $('#submitProduct').on('click', function(){
+        let isValid = true;
+
+        $('#productForm .select2[required]').each(function () {
+            let select2Field = $(this);
+            let select2Container = select2Field.next('.select2-container'); // Get the Select2 UI
+
+            // Check if the value is empty
+            if (select2Field.val() === "" || select2Field.val() === null) {
+                // Add red border for error
+                select2Container.find('.select2-selection').css('border', '1px solid red');
+                isValid = false;
+            } else {
+                // Remove red border if valid
+                select2Container.find('.select2-selection').css('border', '');
+            }
+        });
+
         if($('#productForm').valid()){
             $('#spinnerLoading').show();
             $.post('php/rawMaterial.php', $('#productForm').serialize(), function(data){
@@ -451,10 +506,10 @@ $(function () {
         $('#addModal').find('#productName').val("");
         $('#addModal').find('#productPrice').val("");
         $('#addModal').find('#description').val("");
-        $('#addModal').find('#varianceType').val("");
+        $('#addModal').find('#varianceType').val("").trigger('change');
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
-        $('#addModal').find('#type').val("");
+        $('#addModal').find('#type').val("").trigger('change');
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -503,118 +558,158 @@ $(function () {
 
         reader.readAsBinaryString(file);
     });
+
+    $('#multiDeactivate').on('click', function () {
+        $('#spinnerLoading').show();
+        var selectedIds = []; // An array to store the selected 'id' values
+
+        $("#productTable tbody input[type='checkbox']").each(function () {
+            if (this.checked) {
+                selectedIds.push($(this).val());
+            }
+        });
+
+        if (selectedIds.length > 0) {
+            if (confirm('Are you sure you want to cancel these items?')) {
+                $.post('php/deleteRawMaterial.php', {userID: selectedIds, type: 'MULTI'}, function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        toastr["success"](obj.message, "Success:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                });
+            }
+
+            $('#spinnerLoading').hide();
+        } 
+        else {
+            // Optionally, you can display a message or take another action if no IDs are selected
+            alert("Please select at least one destination to delete.");
+            $('#spinnerLoading').hide();
+        }     
+    });
 });
 
-    function edit(id){
-        $('#spinnerLoading').show();
-        $.post('php/getRawMaterial.php', {userID: id}, function(data)
-        {
-            var obj = JSON.parse(data);
-            if(obj.status === 'success'){
-                $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#productCode').val(obj.message.product_code);
-                $('#addModal').find('#productName').val(obj.message.name);
-                $('#addModal').find('#productPrice').val(obj.message.price);
-                $('#addModal').find('#description').val(obj.message.description);
-                $('#addModal').find('#varianceType').val(obj.message.variance);
-                $('#addModal').find('#high').val(obj.message.high);
-                $('#addModal').find('#low').val(obj.message.low);
-                $('#addModal').find('#type').val(obj.message.type);
-                $('#addModal').modal('show');
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
+function edit(id){
+    $('#spinnerLoading').show();
+    $.post('php/getRawMaterial.php', {userID: id}, function(data)
+    {
+        var obj = JSON.parse(data);
+        if(obj.status === 'success'){
+            $('#addModal').find('#id').val(obj.message.id);
+            $('#addModal').find('#productCode').val(obj.message.product_code);
+            $('#addModal').find('#productName').val(obj.message.name);
+            $('#addModal').find('#productPrice').val(obj.message.price);
+            $('#addModal').find('#description').val(obj.message.description);
+            $('#addModal').find('#varianceType').val(obj.message.variance).trigger('change');
+            $('#addModal').find('#high').val(obj.message.high);
+            $('#addModal').find('#low').val(obj.message.low);
+            $('#addModal').find('#type').val(obj.message.type).trigger('change');
+            $('#addModal').modal('show');
+        }
+        else if(obj.status === 'failed'){
             $('#spinnerLoading').hide();
-        });
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        else{
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        $('#spinnerLoading').hide();
+    });
+}
+
+function deactivate(id){
+    $('#spinnerLoading').show();
+    $.post('php/deleteRawMaterial.php', {userID: id}, function(data){
+        var obj = JSON.parse(data);
+        
+        if(obj.status === 'success'){
+            table.ajax.reload();
+            $('#spinnerLoading').hide();
+            $("#successBtn").attr('data-toast-text', obj.message);
+            $("#successBtn").click();
+        }
+        else if(obj.status === 'failed'){
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        else{
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+    });
+}
+
+function displayPreview(data) {
+    // Parse the Excel data
+    var workbook = XLSX.read(data, { type: 'binary' });
+
+    // Get the first sheet
+    var sheetName = workbook.SheetNames[0];
+    var sheet = workbook.Sheets[sheetName];
+
+    // Convert the sheet to an array of objects
+    var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    // Get the headers
+    var headers = jsonData[0];
+
+    // Ensure we handle cases where there may be less than 15 columns
+    while (headers.length < 2) {
+        headers.push(''); // Adding empty headers to reach 15 columns
     }
 
-    function deactivate(id){
-        $('#spinnerLoading').show();
-        $.post('php/deleteRawMaterial.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
-    }
+    // Create HTML table headers
+    var htmlTable = '<table style="width:100%;"><thead><tr>';
+    headers.forEach(function(header) {
+        htmlTable += '<th>' + header + '</th>';
+    });
+    htmlTable += '</tr></thead><tbody>';
 
-    function displayPreview(data) {
-        // Parse the Excel data
-        var workbook = XLSX.read(data, { type: 'binary' });
+    // Iterate over the data and create table rows
+    for (var i = 1; i < jsonData.length; i++) {
+        htmlTable += '<tr>';
+        var rowData = jsonData[i];
 
-        // Get the first sheet
-        var sheetName = workbook.SheetNames[0];
-        var sheet = workbook.Sheets[sheetName];
-
-        // Convert the sheet to an array of objects
-        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        // Get the headers
-        var headers = jsonData[0];
-
-        // Ensure we handle cases where there may be less than 15 columns
-        while (headers.length < 2) {
-            headers.push(''); // Adding empty headers to reach 15 columns
+        // Ensure we handle cases where there may be less than 15 cells in a row
+        while (rowData.length < 2) {
+            rowData.push(''); // Adding empty cells to reach 15 columns
         }
 
-        // Create HTML table headers
-        var htmlTable = '<table style="width:100%;"><thead><tr>';
-        headers.forEach(function(header) {
-            htmlTable += '<th>' + header + '</th>';
-        });
-        htmlTable += '</tr></thead><tbody>';
+        for (var j = 0; j < 2; j++) {
+            var cellData = rowData[j];
+            var formattedData = cellData;
 
-        // Iterate over the data and create table rows
-        for (var i = 1; i < jsonData.length; i++) {
-            htmlTable += '<tr>';
-            var rowData = jsonData[i];
-
-            // Ensure we handle cases where there may be less than 15 cells in a row
-            while (rowData.length < 2) {
-                rowData.push(''); // Adding empty cells to reach 15 columns
+            // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
+            if (typeof cellData === 'number' && cellData > 0) {
+                var excelDate = XLSX.SSF.parse_date_code(cellData);
             }
 
-            for (var j = 0; j < 2; j++) {
-                var cellData = rowData[j];
-                var formattedData = cellData;
-
-                // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
-                if (typeof cellData === 'number' && cellData > 0) {
-                    var excelDate = XLSX.SSF.parse_date_code(cellData);
-                }
-
-                htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
-            }
-            htmlTable += '</tr>';
+            htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
         }
-
-        htmlTable += '</tbody></table>';
-
-        var previewTable = document.getElementById('previewTable');
-        previewTable.innerHTML = htmlTable;
+        htmlTable += '</tr>';
     }
+
+    htmlTable += '</tbody></table>';
+
+    var previewTable = document.getElementById('previewTable');
+    previewTable.innerHTML = htmlTable;
+}
 
 $('#productForm').validate({
     errorElement: 'span',
