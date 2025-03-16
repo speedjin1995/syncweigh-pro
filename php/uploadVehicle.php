@@ -82,7 +82,14 @@ if (!empty($data)) {
                 if ($insert_stmt = $db->prepare("INSERT INTO Vehicle (veh_number, transporter_code, transporter_name, ex_del, customer_code, customer_name, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                     $insert_stmt->bind_param('sssssssss', $VehicleNo, $TransporterCode, $TransporterName, $ExQuarryDelivered, $CustomerCode, $CustomerName, $status, $uid, $uid);
                     $insert_stmt->execute();
+                    $vehicleId = $insert_stmt->insert_id;
                     $insert_stmt->close(); 
+
+                    if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, transporter_code, transporter_name, ex_del, customer_code, customer_name, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                        $insert_log->bind_param('sssssssss', $vehicleId, $VehicleNo, $TransporterCode, $TransporterName, $ExQuarryDelivered, $CustomerCode, $CustomerName, $actionId, $uid);
+                        $insert_log->execute();
+                        $insert_log->close();
+                    }  
                 }
             }
         }
