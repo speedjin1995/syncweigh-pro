@@ -409,20 +409,27 @@ $(function () {
     // $.validator.setDefaults({
     //     submitHandler: function() {
     $('#submitProduct').on('click', function(){
-        let isValid = true;
+        var isValid = true;
 
+        // custom validation for select2
         $('#productForm .select2[required]').each(function () {
-            let select2Field = $(this);
-            let select2Container = select2Field.next('.select2-container'); // Get the Select2 UI
+            var select2Field = $(this);
+            var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+            var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
 
             // Check if the value is empty
             if (select2Field.val() === "" || select2Field.val() === null) {
-                // Add red border for error
-                select2Container.find('.select2-selection').css('border', '1px solid red');
+                select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                // Add error message if not already present
+                if (select2Container.next('.select2-error').length === 0) {
+                    select2Container.after(errorMsg);
+                }
+
                 isValid = false;
             } else {
-                // Remove red border if valid
-                select2Container.find('.select2-selection').css('border', '');
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
             }
         });
 
@@ -510,6 +517,18 @@ $(function () {
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
         $('#addModal').find('#type').val("").trigger('change');
+
+        // Remove Validation Error Message
+        $('#addModal .is-invalid').removeClass('is-invalid');
+
+        $('#addModal .select2[required]').each(function () {
+            var select2Field = $(this);
+            var select2Container = select2Field.next('.select2-container');
+            
+            select2Container.find('.select2-selection').css('border', ''); // Remove red border
+            select2Container.next('.select2-error').remove(); // Remove error message
+        });
+
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -615,6 +634,18 @@ function edit(id){
             $('#addModal').find('#high').val(obj.message.high);
             $('#addModal').find('#low').val(obj.message.low);
             $('#addModal').find('#type').val(obj.message.type).trigger('change');
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
+
             $('#addModal').modal('show');
         }
         else if(obj.status === 'failed'){
