@@ -362,3 +362,31 @@ ALTER TABLE `Sales_Order_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `Vehicle` ADD `ex_del` VARCHAR(10) NULL AFTER `transporter_name`, ADD `customer_code` VARCHAR(50) NULL AFTER `ex_del`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`;
 
 ALTER TABLE `Vehicle_Log` ADD `ex_del` VARCHAR(10) NULL AFTER `transporter_name`, ADD `customer_code` VARCHAR(50) NULL AFTER `ex_del`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`;
+
+
+-- 17/03/2025 --
+
+CREATE TABLE `Plant_Log` (
+  `id` int(11) NOT NULL,
+  `plant_id` int(11) NOT NULL,
+  `plant_code` varchar(50) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `address_line_1` varchar(255) DEFAULT NULL,
+  `address_line_2` varchar(255) DEFAULT NULL,
+  `address_line_3` varchar(255) DEFAULT NULL,
+  `phone_no` varchar(50) DEFAULT NULL,
+  `fax_no` varchar(50) DEFAULT NULL,
+  `sales` varchar(5) DEFAULT NULL,
+  `purchase` varchar(5) DEFAULT NULL,
+  `locals` varchar(5) DEFAULT NULL,
+  `do_no` varchar(5) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Plant_Log`
+ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Plant_Log`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
