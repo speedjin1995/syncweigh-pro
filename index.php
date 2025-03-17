@@ -1543,7 +1543,7 @@ else{
                         if (row.is_approved == 'Y') {
                             buttons += `
                             <div class="col-auto">
-                                <button title="Print" type="button" id="print${data}" onclick="print(${data})" class="btn btn-info btn-sm">
+                                <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
                                     <i class="fa-solid fa-print"></i>
                                 </button>
                             </div>`;
@@ -1552,7 +1552,7 @@ else{
                         if (row.is_approved == 'N') {
                             buttons += `
                             <div class="col-auto">
-                                <button title="Print" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                <button title="Approve" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
                                     <i class="fa-solid fa-check"></i>
                                 </button>
                             </div>`;
@@ -2234,7 +2234,7 @@ else{
                             if (row.is_approved == 'Y') {
                                 buttons += `
                                 <div class="col-auto">
-                                    <button title="Print" type="button" id="print${data}" onclick="print(${data})" class="btn btn-info btn-sm">
+                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
                                         <i class="fa-solid fa-print"></i>
                                     </button>
                                 </div>`;
@@ -2243,7 +2243,7 @@ else{
                             if (row.is_approved == 'N') {
                                 buttons += `
                                 <div class="col-auto">
-                                    <button title="Print" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                    <button title="Approve" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
                                 </div>`;
@@ -3516,9 +3516,7 @@ else{
     //     });
     // }
 
-    function print(id) {
-        var transactionStatus = $('#statusSearch').val();
-
+    function print(id, transactionStatus) {
         if (transactionStatus == "Sales"){
             $('#prePrintModal').find('#id').val(id);
             $('#prePrintModal').find('#prePrint').val("");
