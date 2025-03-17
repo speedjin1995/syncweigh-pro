@@ -303,76 +303,78 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     <form role="form" id="weightForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class="row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
+                                                            <!-- <div class="col-lg-12"> -->
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
-                                                                        <div class="col-lg-4">
-                                                                            <div class="hstack gap-2 justify-content-center">
-                                                                                <div class="col-xl-12 col-md-12 col-md-12">
-                                                                                    <div class="card bg-primary">
-                                                                                        <div class="card-body">
-                                                                                            <div class="d-flex justify-content-between">
-                                                                                                <div>
-                                                                                                    <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="indicatorWeight">0</span> Kg</h2>
-                                                                                                </div>
-                                                                                                <!--div class="connected-align">
-                                                                                                    <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
-                                                                                                    <div class="input-group-text bg-danger color-palette" id="checkingConnection"><i>Checking Connection</i></div>
-                                                                                                </div-->
-                                                                                                <div>
-                                                                                                    <div class="avatar-sm flex-shrink-0">
-                                                                                                        <span class="avatar-title bg-soft-light rounded-circle fs-2">
-                                                                                                            <i class="mdi mdi-weight-kilogram"></i>
-                                                                                                        </span>
+                                                                        <div class="row">
+                                                                            <div class="col-lg-4">
+                                                                                <div class="hstack gap-2 justify-content-center">
+                                                                                    <div class="col-xl-12 col-md-12 col-md-12">
+                                                                                        <div class="card bg-primary">
+                                                                                            <div class="card-body">
+                                                                                                <div class="d-flex justify-content-between align-items-center justify-content-center">
+                                                                                                    <div class="d-flex align-items-center justify-content-center">
+                                                                                                    <!-- <div> -->
+                                                                                                        <h4 class="mt-4 ff-secondary fw-semibold display-5 text-white"><span class="counter-value" id="indicatorWeight">0</span> Kg</h4>
+                                                                                                    </div>
+                                                                                                    <div>
+                                                                                                        <div class="avatar-sm flex-shrink-0">
+                                                                                                            <span class="avatar-title bg-soft-light rounded-circle fs-2">
+                                                                                                                <i class="mdi mdi-weight-kilogram"></i>
+                                                                                                            </span>
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
+                                                                                            </div><!-- end card body -->
+                                                                                        </div> <!-- end card-->
+                                                                                    </div> <!-- end col-->
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-8">
+                                                                                <div class="row">
+                                                                                    <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                        <div class="row">
+                                                                                            <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
+                                                                                            <div class="col-sm-8">
+                                                                                                <select id="weightType" name="weightType" class="form-select">
+                                                                                                    <option selected>Normal</option>
+                                                                                                    <option>Container</option>
+                                                                                                </select>   
                                                                                             </div>
-                                                                                        </div><!-- end card body -->
-                                                                                    </div> <!-- end card-->
-                                                                                </div> <!-- end col-->
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select id="weightType" name="weightType" class="form-select">
-                                                                                            <option selected>Normal</option>
-                                                                                            <option>Container</option>
-                                                                                        </select>   
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                        <div class="row">
+                                                                                            <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
+                                                                                            <div class="col-sm-8">
+                                                                                                <input type="text" class="form-control input-readonly" id="transactionId" name="transactionId" placeholder="Transaction ID" readonly>                                                                                  
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly" id="transactionId" name="transactionId" placeholder="Transaction ID" readonly>                                                                                  
+                                                                                    <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                        <div class="row">
+                                                                                            <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
+                                                                                            <div class="col-sm-8">
+                                                                                                <select id="transactionStatus" name="transactionStatus" class="form-select">
+                                                                                                    <option value="Sales" selected>Sales</option>
+                                                                                                    <option value="Purchase">Purchase</option>
+                                                                                                    <option value="Local">Local</option>
+                                                                                                </select>  
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select">
-                                                                                            <option value="Sales" selected>Sales</option>
-                                                                                            <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Local</option>
-                                                                                        </select>  
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>    
+                                                                                    <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                        <div class="row">
+                                                                                            <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                            <div class="col-sm-8">
+                                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
+                                                                                                <div class="invalid-feedback">
+                                                                                                    Please fill in the field.
+                                                                                                </div>    
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -900,7 +902,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     <th>Item Weight (kg)</th>
                                                                                     <th>Unit Price (RM)</th>
                                                                                     <th>Total Price (RM)</th>
-                                                                                    <th>Variance (KG)</th>
+                                                                                    <!-- <th>Variance (KG)</th> -->
                                                                                     <th>Action</th>
                                                                                 </tr>
                                                                             </thead>
@@ -1138,6 +1140,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 <input type="text" class="form-control" id="weightProductId" name="weightProductId" hidden>
             </td>
             <td>
+                <input type="text" class="form-control" id="productPartCode" name="productPartCode" style="background-color:white;">
+            </td>
+            <td>
                 <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
                     <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
                         <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
@@ -1145,9 +1150,28 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 </select>
             </td>
             <td>
-                <input type="number" class="form-control" id="productOrderWeight" name="productOrderWeight" style="background-color:white;" value="0">
+                <input type="number" class="form-control" id="productPercentage" name="productPercentage" style="background-color:white;" value="0">
             </td>
             <td>
+                <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productUnitPrice" name="productUnitPrice" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productTotalPrice" name="productTotalPrice" style="background-color:#d6d6d6;" value="0">
+            </td>
+            <!-- <td>
+                <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
+                    <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
+                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
+                    <?php } ?>
+                </select>
+            </td> -->
+            <!-- <td>
+                <input type="number" class="form-control" id="productOrderWeight" name="productOrderWeight" style="background-color:white;" value="0">
+            </td> -->
+            <!-- <td>
                 <input type="text" class="form-control" id="productBinName" name="productBinName" style="background-color:white;">
             </td>
             <td>
@@ -1163,7 +1187,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             <td>
                 <input type="number" class="form-control" id="productVariance" name="productVariance" style="background-color:white;" value="0">
                 <input type="hidden" id="productVarianceHidden" name="productVarianceHidden">
-            </td>
+            </td> -->
             <td class="d-flex" style="text-align:center">
                 <!-- <button class="btn btn-primary me-2" id="productWeightCapture" type="button">
                     <i class="mdi mdi-sync"></i>
@@ -2126,6 +2150,65 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         ?>
 
+        // Find and remove selected table rows
+        $("#productTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+
+            $("#productTable tr").each(function (index) {
+                $(this).find('input[name^="no"]').val(index + 1);
+            });
+        });
+
+        // Find and refresh actual weight
+        $("#productTable").on('click', 'button[id^="productWeightCapture"]', function () {
+            var text = $('#indicatorWeight').text();
+            $(this).closest('.details').find('input[id^="productActualWeight"]').val(parseFloat(text).toFixed(0));
+            $(this).closest('.details').find('input[id^="productActualWeight"]').trigger('change');
+        });
+        
+        // Event delegation for order weight to calculate variance
+        $(document).on('change', 'input[id^="productOrderWeight"]', function(){
+            // Retrieve the input's attributes
+            var orderWeight = $(this).val();
+            var actualWeight = $(this).closest('.details').find('input[id^="productActualWeight"]').val();
+            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
+            $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
+        });
+
+        // Event delegation for actual weight to calculate variance
+        $(document).on('change', 'input[id^="productActualWeight"]', function(){
+            var actualWeightId = $(this).attr('id'); // Get the ID of the input field
+            // Retrieve the input's attributes
+            var actualWeight = $(this).val();
+            var orderWeight = $(this).closest('.details').find('input[id^="productOrderWeight"]').val();
+            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
+            $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
+            $(this).closest('.details').find('input[id^="productActualWeightHidden"]').val(actualWeight);
+
+            //Update Top View Bin Weight
+            if (actualWeightId == 'productActualWeight1'){
+                $("#addModal").find('#bin1Weight').text(actualWeight).trigger('change');
+            }else if (actualWeightId == 'productActualWeight2'){
+                $("#addModal").find('#bin2Weight').text(actualWeight).trigger('change');
+            }
+
+            // Update End Date if manual
+            $(this).closest('.details').find('input[id^="productEndDate"]').flatpickr({
+            
+                enableTime: true,          
+                dateFormat: "d/m/Y H:i",   
+                time_24hr: true,          
+                defaultDate: new Date(),
+                clickOpens: false
+            });
+        });
+
         $(".add-product").click(function(){
             if(rowCount == 0){
                 rowCount++;
@@ -2153,33 +2236,42 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
             $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
+            // $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
+            // $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+            // $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+            // $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount);
+            // $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount);
+            // $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).attr("readonly", readonly);
+            // $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount);
+            // $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
+            //     {
+            //         enableTime: true,          
+            //         dateFormat: "d/m/Y H:i",   
+            //         time_24hr: true,          
+            //         defaultDate: new Date(),
+            //         clickOpens: false
+            //     }
+            // )
+            // $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
+            //     {
+            //         enableTime: true,          
+            //         dateFormat: "d/m/Y H:i",   
+            //         time_24hr: true,          
+            //         defaultDate: '',
+            //         clickOpens: false
+            //     }
+            // );
+            // $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
+            // $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount);
+
             $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
             $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+            $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
             $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
-            $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount);
-            $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount);
-            $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).attr("readonly", readonly);
-            $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount);
-            $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
-                {
-                    enableTime: true,          
-                    dateFormat: "d/m/Y H:i",   
-                    time_24hr: true,          
-                    defaultDate: new Date(),
-                    clickOpens: false
-                }
-            )
-            $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
-                {
-                    enableTime: true,          
-                    dateFormat: "d/m/Y H:i",   
-                    time_24hr: true,          
-                    defaultDate: '',
-                    clickOpens: false
-                }
-            );
-            $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
-            $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount);
+            $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
+            $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount);
+            $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount);
+            $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
 
             rowCount++;
         });
