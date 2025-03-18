@@ -14,7 +14,7 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-  $searchQuery = " and (driver_driver_name like '%".$searchValue."%' or driver_ic like '%".$searchValue."%' or driver_code like '%".$searchValue."%')";
+  $searchQuery = " and (driver_name like '%".$searchValue."%' or driver_ic like '%".$searchValue."%' or driver_code like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering

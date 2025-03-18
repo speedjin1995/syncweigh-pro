@@ -263,7 +263,7 @@ $(function () {
         },
         'columns': [
             { data: 'driver_code' },
-            { data: 'name' },
+            { data: 'driver_name' },
             { data: 'driver_ic' },
             { 
                 data: 'id',
@@ -339,7 +339,7 @@ $(function () {
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#driverCode').val(obj.message.driver_code);
-                $('#addModal').find('#driverName').val(obj.message.name);
+                $('#addModal').find('#driverName').val(obj.message.driver_name);
                 $('#addModal').find('#driverIC').val(obj.message.driver_ic);
                 $('#addModal').modal('show');
             }
