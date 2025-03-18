@@ -66,6 +66,9 @@
                                         <a href="customer.php" class="nav-link">'.$lang['t-customer'].'</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="driver.php" class="nav-link">'.$lang['t-driver'].'</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="destination.php" class="nav-link">'.$lang['t-destination'].'</a>
                                     </li>
                                     <li class="nav-item">
