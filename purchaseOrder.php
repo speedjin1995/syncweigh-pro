@@ -249,14 +249,14 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <!-- <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="orderNo" class="col-sm-4 col-form-label">Order Number</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="orderNo" name="orderNo" placeholder="Order Number">
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div> -->
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="poNo" class="col-sm-4 col-form-label">P/O Number</label>
@@ -426,7 +426,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                     <th>Supplier Name</th>
                                                                     <th>Plant Code</th>
                                                                     <th>Plant Name</th>
-                                                                    <th>Order No.</th>
+                                                                    <!-- <th>Order No.</th> -->
                                                                     <th>P/O No.</th>
                                                                     <th>Order Date</th>
                                                                     <th>Balance</th>
@@ -573,7 +573,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                 { data: 'supplier_name' },
                 { data: 'plant_code' },
                 { data: 'plant_name' },
-                { data: 'order_no' },
+                // { data: 'order_no' },
                 { data: 'po_no' },
                 { data: 'order_date' },
                 { data: 'balance' },
@@ -652,7 +652,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                     { data: 'supplier_name' },
                     { data: 'plant_code' },
                     { data: 'plant_name' },
-                    { data: 'order_no' },
+                    // { data: 'order_no' },
                     { data: 'po_no' },
                     { data: 'order_date' },
                     { data: 'balance' },
@@ -793,14 +793,14 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         $('#addPurchaseOrder').on('click', function(){
             $('#addModal').find('#id').val("");
             $('#addModal').find('#company').val($('#company option:first').val()).trigger('change');
-            $('#addModal').find('#supplier').val("");
-            $('#addModal').find('#site').val("");
+            $('#addModal').find('#supplier').val("").trigger('change');
+            $('#addModal').find('#site').val("").trigger('change');
             $('#addModal').find('#orderDate').val("");
-            $('#addModal').find('#orderNo').val("");
+            // $('#addModal').find('#orderNo').val("");
             $('#addModal').find('#poNo').val("");
-            $('#addModal').find('#agent').val("");
-            $('#addModal').find('#destinationCode').val("");
-            $('#addModal').find('#rawMat').val("");
+            $('#addModal').find('#agent').val("").trigger('change');
+            $('#addModal').find('#destinationCode').val("").trigger('change');
+            $('#addModal').find('#rawMat').val("").trigger('change');
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#orderQty').val("");
             $('#addModal').find('#remarks').val("");
@@ -1021,9 +1021,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 20 columns
-        while (headers.length < 20) {
-            headers.push(''); // Adding empty headers to reach 20 columns
+        // Ensure we handle cases where there may be less than 17 columns
+        while (headers.length < 17) {
+            headers.push(''); // Adding empty headers to reach 17 columns
         }
 
         // Create HTML table headers
@@ -1038,12 +1038,12 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 20 cells in a row
-            while (rowData.length < 20) {
-                rowData.push(''); // Adding empty cells to reach 20 columns
+            // Ensure we handle cases where there may be less than 17 cells in a row
+            while (rowData.length < 17) {
+                rowData.push(''); // Adding empty cells to reach 17 columns
             }
 
-            for (var j = 0; j < 20; j++) {
+            for (var j = 0; j < 17; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 
