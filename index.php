@@ -751,6 +751,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <input type="hidden" id="finalWeight" name="finalWeight">
                                                         <input type="hidden" id="customerCode" name="customerCode">
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
+                                                        <input type="hidden" id="driverCode" name="driverCode">
                                                         <input type="hidden" id="status" name="status">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
@@ -969,7 +970,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 <input type="text" class="form-control" id="productPartCode" name="productPartCode" style="background-color:white;">
             </td>
             <td>
-                <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
+                <select class="form-control form-select" style="width: 100%; background-color:white;" id="products" name="products">
                     <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
                         <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
                     <?php } ?>
@@ -988,19 +989,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 <input type="number" class="form-control" id="productTotalPrice" name="productTotalPrice" style="background-color:#d6d6d6;" value="0">
             </td>
             <!-- <td>
-                <select class="form-control" style="width: 100%; background-color:white;" id="products" name="products">
-                    <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
-                    <?php } ?>
-                </select>
-            </td> -->
-            <!-- <td>
-                <input type="number" class="form-control" id="productOrderWeight" name="productOrderWeight" style="background-color:white;" value="0">
-            </td> -->
-            <!-- <td>
-                <input type="text" class="form-control" id="productBinName" name="productBinName" style="background-color:white;">
-            </td>
-            <td>
                 <input type="number" class="form-control" id="productActualWeight" name="productActualWeight" style="background-color:white;" value="0">
                 <input type="hidden" id="productActualWeightHidden" name="productActualWeightHidden">
             </td>
@@ -1547,7 +1535,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     $('#indicatorWeight').html('0');
                     $('#indicatorConnected').removeClass('bg-primary');
                     $('#checkingConnection').addClass('bg-danger');
-            }
+                }
             });
         }, 500);
 
@@ -1618,7 +1606,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
                         }
-                }
+                    }
                 ],
                 "drawCallback": function(settings) {
                     $('#salesInfo').text(settings.json.salesTotal);
@@ -1640,6 +1628,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
             $('#addModal').find('#customerName').val("");
+            $('#addModal').find('#driverCode').val("");
+            $('#addModal').find('#driverName').val("");
+            $('#addModal').find('#driverIC').val("");
             $('#addModal').find('#supplierCode').val("");
             $('#addModal').find('#supplierName').val("");
             $('#addModal').find('#productCode').val("");
@@ -1647,17 +1638,19 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
+            $('#addModal').find('#supplyWeight').val("");
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#transporterCode').val("");
             $('#addModal').find('#transporter').val("");
             $('#addModal').find('#destinationCode').val("");
             $('#addModal').find('#destination').val("");
-            $('#addModal').find('#otherRemarks').val("");
+            $('#addModal').find('#remarks').val("");
             $('#addModal').find('#grossIncoming').val("");
             $('#addModal').find('#grossIncomingDate').val("");
             $('#addModal').find('#tareOutgoing').val("");
             $('#addModal').find('#tareOutgoingDate').val("");
             $('#addModal').find('#nettWeight').val("");
+            $('#addModal').find('#estimateLoading').val("");
             $('#addModal').find('#grossIncoming2').val("");
             $('#addModal').find('#status').val("");
             $('#addModal').find('#grossIncomingDate2').val("");
@@ -1671,6 +1664,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
             $('#addModal').find("#manualWeightNo").prop("checked", true);
             $('#addModal').find("#manualWeightYes").prop("checked", false);
+            $('#addModal').find("#manualPriceNo").prop("checked", true);
+            $('#addModal').find("#manualPriceYes").prop("checked", false);
             //$('#addModal').find('input[name="manualWeight"]').val("false");
             //$('#addModal').find('#indicatorId').val("");
             $('#addModal').find('#weighbridge').val("");
@@ -1781,6 +1776,15 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#tareOutgoing').attr('readonly', 'readonly');
                 $('#grossIncoming2').attr('readonly', 'readonly');
                 $('#tareOutgoing2').attr('readonly', 'readonly');
+            }
+        });
+
+        $('.radio-manual-price').on('click', function(){
+            if($('input[name="manualPrice"]:checked').val() == "true"){
+                $('[id^="productUnitPrice"]').removeAttr('readonly');
+            }
+            else{
+                $('[id^="productUnitPrice"]').attr('readonly', 'readonly');
             }
         });
 
@@ -1957,6 +1961,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         //destination
         $('#destination').on('change', function(){
             $('#destinationCode').val($('#destination :selected').data('code'));
+        });
+
+        //driver
+        $('#driverName').on('change', function(){
+            $('#driverCode').val($('#driverName :selected').data('code'));
+            $('#driverIC').val(""); // 
         });
 
         //customerName
@@ -2166,23 +2176,28 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
                 $('#addModal').find('#customerName').val(obj.message.customer_name);
+                $('#addModal').find('#driverCode').val(obj.message.driver_code); //
+                $('#addModal').find('#driverName').val(obj.message.driver_name); //
+                $('#addModal').find('#driverIC').val(obj.message.driver_ic); //
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
                 $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
+                $('#addModal').find('#supplyWeight').val(obj.message.supply_weight); // 
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter);
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code);
                 $('#addModal').find('#destination').val(obj.message.destination);
-                $('#addModal').find('#otherRemarks').val(obj.message.remarks);
+                $('#addModal').find('#remarks').val(obj.message.remarks); //
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                $('#addModal').find('#estimateLoading').val(obj.message.estimate_loading); //
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
@@ -2200,6 +2215,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     $("#manualWeightYes").prop("checked", false);
                     $("#manualWeightNo").prop("checked", true);
                     $('#manualWeightNo').trigger('click');
+                }
+
+                if(obj.message.manual_price == 'true'){
+                    $("#manualPriceYes").prop("checked", true);
+                    $("#manualPriceNo").prop("checked", false);
+                    $('#manualPriceYes').trigger('click');
+                }
+                else{
+                    $("#manualPriceYes").prop("checked", false);
+                    $("#manualPriceNo").prop("checked", true);
+                    $('#manualPriceNo').trigger('click');
                 }
 
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
