@@ -32,6 +32,7 @@ $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
@@ -75,12 +76,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
 <?php include 'layouts/body.php'; ?>
 
-<!-- <div class="loading" id="spinnerLoading" style="display:none">
-  <div class='mdi mdi-loading' style='transform:scale(0.79);'>
-    <div></div>
-  </div>
-</div> -->
-
 <!-- Begin page -->
 <div id="layout-wrapper">
 
@@ -99,14 +94,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                 <div class="col-12">
                                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                                         <div class="flex-grow-1">
-                                            <!--h4 class="fs-16 mb-1">Good Morning, Anna!</h4>
-                                            <p class="text-muted mb-0">Here's what's happening with your store
-                                                today.</p-->
                                         </div>
                                         <div class="mt-3 mt-lg-0">
                                             <form action="javascript:void(0);">
                                                 <div class="row g-3 mb-0 align-items-center">
-
                                             </form>
                                         </div>
                                     </div><!-- end card header -->
@@ -303,7 +294,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     <form role="form" id="weightForm" class="needs-validation" novalidate autocomplete="off">
                                                         <div class="row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
-                                                            <!-- <div class="col-lg-12"> -->
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                         <div class="row">
@@ -379,10 +369,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                                    </div><!-- end card body -->
+                                                                </div><!-- end card -->
+                                                            </div><!-- end col -->
+                                                        </div><!-- end row -->
                                                         <div class="row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
                                                                 <div class="card bg-light">
@@ -390,10 +380,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <!-- <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly" id="transactionId" name="transactionId" placeholder="Transaction ID" readonly>                                                                                  
-                                                                                    </div> -->
                                                                                     <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="form-check align-radio mr-2">
@@ -402,22 +388,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                Yes
                                                                                             </label>
                                                                                         </div>
-
                                                                                         <div class="form-check align-radio">
                                                                                             <input class="form-check-input radio-manual-weight" type="radio" name="manualWeight" id="manualWeightNo" value="false" checked>
                                                                                             <label class="form-check-label" for="manualWeightNo">
                                                                                                No
                                                                                             </label>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <!-- <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order">
-                                                                                    </div> -->
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="transporter" name="transporter" >
@@ -426,18 +407,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                 <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                          
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <!-- <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div> -->
                                                                                     <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="destination" name="destination">
@@ -446,9 +420,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                 <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                         
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
@@ -457,22 +431,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>  
-                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->  
+                                                                        </div><!-- end row -->
                                                                         <div class="row">
-                                                                            <!-- <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select id="weightType" name="weightType" class="form-select">
-                                                                                            <option selected>Normal</option>
-                                                                                            <option>Container</option>
-                                                                                        </select>   
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
@@ -483,32 +446,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                 <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <!-- <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="containerNo" name="containerNo" placeholder="Container No">
-                                                                                    </div> -->
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <!-- <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
-                                                                                <div class="row">
-                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>  -->
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="supplyWeight" class="col-sm-4 col-form-label">Supply Weight</label>
@@ -517,44 +465,32 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <input type="number" class="form-control" id="supplyWeight" name="supplyWeight" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                        </div><!-- end row -->
                                                                         <div class="row">
-                                                                            <!-- <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select">
-                                                                                            <option value="Sales" selected>Sales</option>
-                                                                                            <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Local</option>
-                                                                                        </select>  
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverName">
                                                                                 <div class="row">
                                                                                     <label for="driverName" class="col-sm-4 col-form-label">Driver Name</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select js-choice" id="driverName" name="driverName">
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                            <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
+                                                                                                <option value="<?=$rowDriver['driver_name'] ?>" data-code="<?=$rowDriver['driver_code'] ?>"><?=$rowDriver['driver_name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierName" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
@@ -565,20 +501,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                 <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <!-- <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> -->
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
                                                                                 <div class="row">
                                                                                     <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
@@ -587,35 +512,24 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> 
-                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                        </div><!-- end row -->
                                                                         <div class="row">
-                                                                            <!-- <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>    
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverICNo">
                                                                                 <div class="row">
                                                                                     <label for="driverICNo" class="col-sm-4 col-form-label">Driver I/C No</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select js-choice" id="driverICNo" name="driverICNo">
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                            <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
+                                                                                                <option value="<?=$rowDriver['driver_ic'] ?>" data-code="<?=$rowDriver['driver_code'] ?>"><?=$rowDriver['driver_ic'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <!-- <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
@@ -639,9 +553,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> 
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="reduceWeight" class="col-sm-4 col-form-label">Overall Reduce Weight</label>
@@ -650,114 +564,14 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>   
-                                                                        </div>
-                                                                        <!-- <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select" id="transporter" name="transporter" >
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                          
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select" id="destination" name="destination">
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                         
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select id="indicatorId" name="indicatorId" class="form-select" >
-                                                                                            <option selected>ind12345</option>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="manualWeight" class="col-sm-4 col-form-label">Manual Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="form-check align-radio mr-2">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="manualWeight" id="manualWeightYes" value="true">
-                                                                                            <label class="form-check-label" for="manualWeightYes">
-                                                                                               Yes
-                                                                                            </label>
-                                                                                        </div>
-
-                                                                                        <div class="form-check align-radio">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="manualWeight" id="manualWeightNo" value="false" checked>
-                                                                                            <label class="form-check-label" for="manualWeightNo">
-                                                                                               No
-                                                                                            </label>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div> -->
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                        </div><!-- end row -->
+                                                                    </div><!-- end card body -->
+                                                                </div><!-- end card -->
+                                                            </div><!-- end col -->
+                                                        </div><!-- end row -->
                                                         <div class="row col-12">
                                                             <div class="col-xxl-12 col-lg-12">
                                                                 <div class="card bg-light">
@@ -786,79 +600,73 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                 Please fill in the field.
                                                                                             </div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="grossIncomingDate" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate" readonly>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="grossIncoming" class="col-sm-4 col-form-label">Incoming Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <!-- <div class="input-group-text">
-                                                                                                <input class="form-check-input mt-0" id="manual" name="manual" type="checkbox" value="0" aria-label="Checkbox for following text input">
-                                                                                            </div>                                                                                             -->
                                                                                             <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                        </div><!-- end row -->
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row" style="display:none;">
-                                                                                </div>
-                                                                            </div>
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Outgoing Date</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate" readonly>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="tareOutgoing" class="col-sm-4 col-form-label">Outgoing Weight</label>
                                                                                     <div class="col-sm-8">                                                                                     
                                                                                         <div class="input-group">
-                                                                                            <!-- <div class="input-group-text">
-                                                                                                <input class="form-check-input mt-0" id="manualOutgoing" name="manualOutgoing" type="checkbox" value="0" aria-label="Checkbox for following text input">
-                                                                                            </div>                                                                                                -->
                                                                                             <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                             <button class="input-group-text btn btn-primary fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>                                                                                       
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                        </div><!-- end row -->
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="remarks" class="col-sm-4     col-form-label">Remarks</label>
+                                                                                    <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
                                                                                     <div class="col-sm-8">
                                                                                         <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Remarks"></textarea>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="estimateLoading" class="col-sm-4 col-form-label">Estimate Loading</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control input-readonly" id="estimateLoading" name="estimateLoading" readonly>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="nettWeight" class="col-sm-4 col-form-label">Nett Weight</label>
@@ -867,30 +675,49 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <input type="number" class="form-control input-readonly" id="nettWeight" name="nettWeight" placeholder="0" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> 
-                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
+                                                                        </div><!-- end row -->
+                                                                    </div><!-- end card body -->
+                                                                </div><!-- end card -->
+                                                            </div><!-- end col -->
+                                                        </div><!-- end row -->
+                                                        <div class="col-xxl-4 col-lg-4">
+                                                            <div class="row">
+                                                                <div class="col-xxl-3 col-lg-3">
+                                                                    <div class="hstack">
+                                                                        <div class="card bg-light">
+                                                                            <div class="row">
+                                                                                <button type="button" class="btn btn-primary add-product" id="addProduct">Add Product</button>
+                                                                            </div>
+                                                                        </div><!-- end card -->
                                                                     </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-12">
-                                                            <div class="hstack">
-                                                                <div class="card bg-light">
-                                                                    <button type="button" class="btn btn-primary add-product" id="addProduct">Add Product</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                                </div><!-- end col-xxl -->
+                                                                <div class="col-xxl-9 col-lg-9">
+                                                                    <div class="row">
+                                                                        <label for="manualPrice" class="col-sm-4 col-form-label">Manual Price</label>
+                                                                        <div class="col-sm-8">
+                                                                            <div class="form-check align-radio mr-2">
+                                                                                <input class="form-check-input radio-manual-price" type="radio" name="manualPrice" id="manualPriceYes" value="true">
+                                                                                <label class="form-check-label" for="manualPriceYes">
+                                                                                    Yes
+                                                                                </label>
+                                                                            </div>
+                                                                            <div class="form-check align-radio">
+                                                                                <input class="form-check-input radio-manual-price" type="radio" name="manualPrice" id="manualPriceNo" value="false" checked>
+                                                                                <label class="form-check-label" for="manualPriceNo">
+                                                                                    No
+                                                                                </label>
+                                                                            </div>
+                                                                        </div><!-- end col -->
+                                                                    </div><!-- end row -->
+                                                                </div><!-- end col-xxl -->
+                                                            </div><!-- end row -->
+                                                        </div><!-- end col -->
                                                         <div class="col-xxl-12 col-lg-12" id="multipleCard">
                                                             <div class="card bg-light">
                                                                 <div class="card-body">
-                                                                    <div class="row mb-3" style="display:none;">
-                                                                        <div class="col-10"></div>
-                                                                        <div class="col-2 d-flex justify-content-end">
-                                                                            <button type="button" class="btn btn-primary add-product">Add Product</button>
-                                                                        </div>
-                                                                    </div>  
                                                                     <div class="row">
                                                                         <table class="table table-primary" style="text-align: center;">
                                                                             <thead>
@@ -908,17 +735,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             </thead>
                                                                             <tbody id="productTable"></tbody>
                                                                         </table>                                            
-                                                                    </div>                                                        
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                                    </div><!-- end row -->                                                    
+                                                                </div><!-- end card-body -->
+                                                            </div><!-- end card -->
+                                                        </div><!-- end col -->
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                                                 <!--button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button-->
                                                                 <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
                                                             </div>
-                                                        </div><!--end col-->   
+                                                        </div><!--end col-->
                                                         
                                                         <input type="hidden" id="bypassReason" name="bypassReason">
                                                         <input type="hidden" id="finalWeight" name="finalWeight">
@@ -936,7 +763,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                     </form>
-                                                </div>
+                                                </div><!-- end modal-body -->
                                             </div><!-- /.modal-content -->
                                         </div><!-- /.modal-dialog -->
                                     </div><!-- /.modal -->
@@ -1018,7 +845,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div><!-- end col -->
                             </div> <!-- end row-->
 
                             <div class="row">
@@ -1067,7 +894,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                 </div> <!-- end col -->
                             </div><!-- container-fluid -->
                         </div> <!-- end .h-100-->
-
                     </div> <!-- end col -->
                 </div>
                 <!-- container-fluid -->
@@ -1076,61 +902,61 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             <div class="modal fade" id="setupModal">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                    <form role="form" id="setupForm">
-                        <div class="modal-header bg-gray-dark color-palette">
-                            <h4 class="modal-title">Setup</h4>
-                            <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
+                        <form role="form" id="setupForm">
+                            <div class="modal-header bg-gray-dark color-palette">
+                                <h4 class="modal-title">Setup</h4>
+                                <button type="button" class="close bg-gray-dark color-palette" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
 
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Serial Port</label>
-                                        <input class="form-control" type="text" id="serialPort" name="serialPort" value="<?=$port ?>">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Serial Port</label>
+                                            <input class="form-control" type="text" id="serialPort" name="serialPort" value="<?=$port ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Baud Rate</label>
+                                            <input class="form-control" type="number" id="serialPortBaudRate" name="serialPortBaudRate" value="<?=$baudrate ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Data Bits</label>
+                                            <input class="form-control" type="text" id="serialPortDataBits" name="serialPortDataBits" value="<?=$databits ?>">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Baud Rate</label>
-                                        <input class="form-control" type="number" id="serialPortBaudRate" name="serialPortBaudRate" value="<?=$baudrate ?>">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Parity</label>
+                                            <input class="form-control" type="text" id="serialPortParity" name="serialPortParity" value="<?=$parity ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Data Bits</label>
-                                        <input class="form-control" type="text" id="serialPortDataBits" name="serialPortDataBits" value="<?=$databits ?>">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Stop bits</label>
+                                            <input class="form-control" type="text" id="serialPortStopBits" name="serialPortStopBits" value="<?=$stopbits ?>">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Parity</label>
-                                        <input class="form-control" type="text" id="serialPortParity" name="serialPortParity" value="<?=$parity ?>">
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label>Stop bits</label>
-                                        <input class="form-control" type="text" id="serialPortStopBits" name="serialPortStopBits" value="<?=$stopbits ?>">
-                                    </div>
-                                </div>
+                            <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
                             </div>
-                        </div>
-                        <div class="modal-footer justify-content-between bg-gray-dark color-palette">
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
             <?php include 'layouts/footer.php'; ?>
         </div>
         <!-- end main content-->
-
     </div>
 
     <script type="text/html" id="productDetail">
