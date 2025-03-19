@@ -463,6 +463,24 @@ function searchPlantNameById($value, $db) {
     return $id;
 }
 
+function searchPlantNameByCode($value, $db) {
+    $id = '0';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE plant_code=? AND status = '0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['name'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
 function searchProjectByCode($value, $db) {
     $id = '0';
 
@@ -511,5 +529,11 @@ function searchNamebyId($value, $db) {
     }
 
     return $id;
+}
+
+function excelSerialToDate($serial) {
+    // Excel date starts from 1900-01-01, subtract 1 for correct calculation
+    $baseDate = strtotime('1899-12-30');
+    return date('Y-m-d', strtotime("+$serial days", $baseDate));
 }
 ?>
