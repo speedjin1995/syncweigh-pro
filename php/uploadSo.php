@@ -39,7 +39,7 @@ if (!empty($data)) {
         $OrderQuantity = (isset($rows['Qty']) && !empty($rows['Qty']) && $rows['Qty'] !== '' && $rows['Qty'] !== null) ? trim($rows['Qty']) : '';
         $unit = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? trim($rows['UOM']) : '';
         if ($unit == 'MT'){
-            $OrderQuantity = $OrderQuantity * 100;
+            $OrderQuantity = $OrderQuantity * 1000;
         }
         $Remarks = !empty($rows['REMARK1']) ? trim($rows['REMARK1']) : '';
         $status = 'Open';
@@ -199,7 +199,7 @@ if (!empty($data)) {
             }
         }
 
-        # Checking for existing PO No.
+        # Checking for existing Order No.
         if($OrderNumber != null && $OrderNumber != ''){
             $soQuery = "SELECT * FROM Sales_Order WHERE order_no = '$OrderNumber' AND deleted = '0'";
             $soDetail = mysqli_query($db, $soQuery);
