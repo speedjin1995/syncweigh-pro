@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weighing Slip</title>
+    <style>
+        @media print{
+            @page {
+                size: a5 landscape;
+                margin: 0;
+            }
+            /* Ensure the body content is contained within the page size */
+            body {
+                width: 100%; /* Full width of the A5 landscape */
+                height: 100%; /* Full height of the A5 landscape */
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box; /* Ensure padding and borders are accounted for */
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            .container {
+                display: flex;
+                justify-content: space-between;
+            }
+            .left-section {
+                width: 100%;
+                text-align: left;
+            }
+            .right-section {
+                width: 100%;
+                text-align: right;
+            }
+            .info-table {
+                width: 100%;
+                border: none;
+            }
+            .info-table td {
+                padding: 4px 8px;
+                border: none;
+            }
+            .info-table .label {
+                font-weight: bold;
+                text-align: left;
+                white-space: nowrap;
+            }
+            .info-table .value {
+                text-align: left;
+                padding-left: 10px;
+            }
+            .info-table td:first-child {
+                width: 150px;
+            }
+            .signature-section {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 50px;
+            }
+            .signature-box {
+                width: 100%;
+                text-align: center;
+            }
+            .dotted-line {
+                border-bottom: 1px dotted black;
+                width: 100%;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>TREE R WASTAGE MANAGEMENT SDN BHD</h2>
+    <p>66A, JALAN KOTA GIAM, 11600 GEORGETOWN, PULAU PINANG.</p>
+    <p>Tel: +60 12-420 2050</p>
+    <hr>
+    
+    <div class="container">
+        <table class="info-table left-section">
+            <tr><td class="label">Customer</td><td>:</td></td><td class="value">ABS Waste Enterprise Sdn Bhd</td></tr>
+            <tr><td class="label">Address</td><td>:</td><td class="value">No.34, Jalan Bagan 1, Taman Luar Bagan, Butterworth, Penang.</td></tr>
+            <tr><td class="label">Tel</td><td>:</td><td class="value">+604-644 4444 | Fax: +604-654 4444</td></tr>
+        </table>
+        <table class="info-table right-section">
+            <tr><td class="label">Weight Status</td><td>:</td><td class="value">Sales / Purchase</td></tr>
+            <tr><td class="label">Weight No</td><td>:</td><td class="value">S2407-0001</td></tr>
+            <tr><td class="label">Weight Date</td><td>:</td><td class="value">07/08/2024</td></tr>
+            <tr><td class="label">Weight Time</td><td>:</td><td class="value">9:12:30 AM</td></tr>
+            <tr><td class="label">Vehicle Plate</td><td>:</td><td class="value">PPD8877</td></tr>
+        </table>
+    </div>
+    <br>
+    <br>
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>Weight (kg)</th>
+            <th>Product Description</th>
+            <th>(%)</th>
+            <th>Weight (kg)</th>
+            <th>U/Price (RM)</th>
+            <th>Total Price (RM)</th>
+        </tr>
+        <tr>
+            <td>9:12:30 AM</td>
+            <td>IN</td>
+            <td colspan="5">9500</td>
+        </tr>
+        <tr>
+            <td>10:12:30 AM</td>
+            <td>OUT</td>
+            <td colspan="5">7380</td>
+        </tr>
+        <tr>
+            <td>Total Weight (kg)</td>
+            <td colspan="6">2120</td>
+        </tr>
+        <tr>
+            <td>Deduct (kg)</td>
+            <td colspan="6">20</td>
+        </tr>
+        <tr>
+            <td>Net Weight (kg)</td>
+            <td colspan="6">2100</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>All Metal</td>
+            <td>30</td>
+            <td>630</td>
+            <td>RM</td>
+            <td>1.20</td>
+            <td>RM 756.00</td>
+        </tr>
+        <tr>
+            <td colspan="5"></td>
+            <td><strong>Total Amount:</strong></td>
+            <td><strong>RM 1,596.00</strong></td>
+        </tr>
+    </table>
+    
+    <p><strong>Remark:</strong></p>
+    <br><br><br>
+    <div class="signature-section">
+        <div class="left-section">
+            <p class="dotted-line"></p>
+            <p>Driver Sign</p>
+            <p>Name: ABS Sdn Bhd</p>
+            <p>I/C: XXXXXX-XXXX</p>
+        </div>
+        <div class="right-section">
+            <p>THIS WEIGHING SLIP IS COMPUTER GENERATED AND REQUIRES NO SIGNATURE & CHOP</p>
+            <p>Authorised by: SDN BHD</p>
+        </div>
+    </div>
+</body>
+</html>
