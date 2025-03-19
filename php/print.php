@@ -23,6 +23,14 @@ if(isset($_POST['userID'], $_POST["file"])){
     if ($select_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
         $select_stmt->bind_param('s', $id);
 
+        $compaddress = '37, Jalan Perusahaan Amari,';
+        $compaddress2 = 'Amari Business Park,';
+        $compaddress3 = '68100 Batu Caves, Selangor Darul Ehsan';
+        $compphone = '+603-6096 0383';
+        $compiemail = 'lowct@eastrock.com.my';
+        $compiwebsite = 'www.eastrock.com.my';
+
+
         // Execute the prepared query.
         if (! $select_stmt->execute()) {
             echo json_encode(
@@ -71,6 +79,21 @@ if(isset($_POST['userID'], $_POST["file"])){
                 //$transDateOnly = date('Y-m-d', strtotime($transDate));
                 $remarks = $row['remarks'];
                 $message = '';
+
+                $queryPlantAddr = "SELECT *  FROM Plant WHERE plant_code='$plantCode'";
+                
+                if ($plant_stmt_addr = $db->prepare($queryPlantAddr)) {
+                    // Execute the prepared query.
+                    $plant_stmt_addr->execute();
+                    $resultAddr = $plant_stmt_addr->get_result();
+                       
+                    if ($rowAddr = $resultAddr->fetch_assoc()) {
+                        $compaddress = $rowAddr['address_line_1'];
+                        $compaddress2 = $rowAddr['address_line_2'];
+                        $compaddress3 = $rowAddr['address_line_3'];
+                        $compphone = $rowAddr['phone_no'];
+                    }
+                }
                 
                 if($type == 'Sales' && $complete == 'Y'){
                     if($row['delivery_no'] == null || $row['delivery_no'] == ''){
@@ -185,7 +208,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <div class="header row">
                                         <h2 style="color: black; font-weight: bold;">EAST ROCK MARKETING SDN. BHD.</h2>
                                         <div class="col-7" style="text-align: left;">
-                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> LOT PT 758, JALAN PADANG GAJAH <br>BATU 16, TAMBAK JAWA<br>45800 JERAM, KUALA SELANGOR,<br>SELANGOR D.E.<br>TEL: 013-969 7663, 012-9536128</p>
+                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
                                         </div>
                                         <div class="col-5 align-self-end">
                                             <h3 style="font-weight: bold; margin-bottom: 0px;">LOADING CHIT</h3>
@@ -227,7 +250,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </body></html>';
                 }
                 else{
-                    if($type == 'Sales' || $type == 'Purchase'){
+                    if($type == 'Sales'){
                         if ($prePrintStatus == 'N'){
                             $message = '<html>
                                             <head>
@@ -671,7 +694,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <div class="header">
                                             <div style="text-align: center;">
                                                 <h3 class="mb-0 fw-bold text-dark">EAST ROCK MARKETING SDN BHD</h3>
-                                                <p style="font-size: 10px; margin-bottom: 3px;">(1373003-H) <br> LOT PT 758, JALAN PADANG GAJAH <br>BATU 16, TAMBAK JAWA<br>45800 JERAM, KUALA SELANGOR,<br>SELANGOR D.E.<br>TEL: 013-969 7663, 012-9536128</p>
+                                                <p style="font-size: 10px; margin-bottom: 3px;">(1373003-H) <br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
                                                 <h4 class="pb-2 fw-bold text-dark"><span style="border-bottom: 1px solid black">PURCHASE WEIGHING TICKET</span></h4>
                                             </div>
                                         </div>
@@ -793,7 +816,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <div class="header">
                                         <div style="text-align: center;">
                                             <h2 style="color: black; font-weight: bold;">EAST ROCK MARKETING SDN BHD</h2>
-                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> LOT PT 758, JALAN PADANG GAJAH <br>BATU 16, TAMBAK JAWA<br>45800 JERAM, KUALA SELANGOR,<br>SELANGOR D.E.<br>TEL: 013-969 7663, 012-9536128</p>
+                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
                                             <h3 class="pb-2" style="color: black; font-weight: bold;"><span style="border-bottom: 1px solid black">PUBLIC WEIGHING</span></h3>
                                         </div>
                                     </div>
