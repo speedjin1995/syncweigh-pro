@@ -39,6 +39,10 @@ if($_POST['site'] != null && $_POST['site'] != '' && $_POST['site'] != '-'){
 	$searchQuery .= " and site_code = '".$_POST['site']."'";
 }
 
+if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+}
+
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
 	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
 }
@@ -49,6 +53,8 @@ if($searchValue != ''){
     company_name like '%".$searchValue."%' or 
     customer_code like '%".$searchValue."%' or 
     customer_name like '%".$searchValue."%' or 
+    plant_code like '%".$searchValue."%' or 
+    plant_name like '%".$searchValue."%' or 
     order_no like '%".$searchValue."%' or 
     so_no like '%".$searchValue."%' or
     modified_date like '%".$searchValue."%'

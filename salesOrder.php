@@ -118,7 +118,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select">
+                                                            <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="Open">Open</option>
                                                                 <option value="Close">Close</option>
@@ -128,7 +128,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="companySearch" class="form-label">Company</label>
-                                                            <select id="companySearch" class="form-select" >
+                                                            <select id="companySearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowCompanyF=mysqli_fetch_assoc($company2)){ ?>
                                                                     <option value="<?=$rowCompanyF['company_code'] ?>"><?=$rowCompanyF['company_code']. ' - ' .$rowCompanyF['name'] ?></option>
@@ -139,7 +139,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="siteSearch" class="form-label">Site</label>
-                                                            <select id="siteSearch" class="form-select" >
+                                                            <select id="siteSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowSiteF=mysqli_fetch_assoc($site2)){ ?>
                                                                     <option value="<?=$rowSiteF['site_code'] ?>"><?=$rowSiteF['name'] ?></option>
@@ -149,8 +149,19 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
+                                                            <label for="plantSearch" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <select id="customerNoSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
@@ -516,13 +527,13 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         });
 
         // Apply custom styling to Select2 elements in addModal
-        $('#addModal .select2-container .select2-selection--single').css({
+        $('.select2-container .select2-selection--single').css({
             'padding-top': '4px',
             'padding-bottom': '4px',
             'height': 'auto'
         });
 
-        $('#addModal .select2-container .select2-selection__arrow').css({
+        $('.select2-container .select2-selection__arrow').css({
             'padding-top': '33px',
             'height': 'auto'
         });
@@ -532,6 +543,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
         var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
         var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+        var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
 
         table = $("#weightTable").DataTable({
@@ -549,6 +561,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                     status: statusI,
                     company: companyI,
                     site: siteI,
+                    plant: plantI,
                     customer: customerNoI,
                 } 
             },
@@ -605,6 +618,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
             var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
 
             //Destroy the old Datatable
@@ -626,6 +640,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                         status: statusI,
                         company: companyI,
                         site: siteI,
+                        plant: plantI,
                         customer: customerNoI,
                     } 
                 },
