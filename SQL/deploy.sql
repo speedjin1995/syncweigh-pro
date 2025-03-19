@@ -394,3 +394,9 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `Sales_Order` ADD `plant_code` VARCHAR(50) NULL AFTER `product_name`, ADD `plant_name` VARCHAR(100) NULL AFTER `plant_code`;
 
 ALTER TABLE `Sales_Order` ADD `balance` VARCHAR(100) NULL AFTER `order_quantity`;
+
+ALTER TABLE `Purchase_Order` ADD `plant_code` VARCHAR(50) NULL AFTER `raw_mat_name`, ADD `plant_name` VARCHAR(100) NULL AFTER `plant_code`;
+
+ALTER TABLE `Purchase_Order` ADD `balance` VARCHAR(100) NULL AFTER `order_quantity`;
+
+ALTER TABLE `Purchase_Order` CHANGE `order_load` `order_load` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;

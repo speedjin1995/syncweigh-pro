@@ -57,6 +57,7 @@ if($searchValue != ''){
     plant_name like '%".$searchValue."%' or 
     order_no like '%".$searchValue."%' or 
     so_no like '%".$searchValue."%' or
+    order_date like '%".$searchValue."%' or 
     modified_date like '%".$searchValue."%'
   )";
 }
