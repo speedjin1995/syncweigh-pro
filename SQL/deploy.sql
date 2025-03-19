@@ -365,7 +365,6 @@ ALTER TABLE `Vehicle_Log` ADD `ex_del` VARCHAR(10) NULL AFTER `transporter_name`
 
 
 -- 17/03/2025 --
-
 CREATE TABLE `Plant_Log` (
   `id` int(11) NOT NULL,
   `plant_id` int(11) NOT NULL,
@@ -390,3 +389,8 @@ ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `Plant_Log`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 19/03/2025 --
+ALTER TABLE `Sales_Order` ADD `plant_code` VARCHAR(50) NULL AFTER `product_name`, ADD `plant_name` VARCHAR(100) NULL AFTER `plant_code`;
+
+ALTER TABLE `Sales_Order` ADD `balance` VARCHAR(100) NULL AFTER `order_quantity`;
