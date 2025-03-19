@@ -23,3 +23,24 @@ function formatDate2(date) {
     //return `${day}/${month}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
     return `${day}-${month}-${year}`;
 }
+
+function formatDate3(date) {
+    const day = ('0' + date.getDate()).slice(-2);
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const seconds = ('0' + date.getSeconds()).slice(-2);
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+}
+
+function parseDate(dateStr) {
+    let parts = dateStr.split(" ");
+    let datePart = parts[0].split("/"); // [19, 03, 2025]
+    let timePart = parts[1].split(":"); // [21, 21, 15]
+    
+    let formattedDate = `${datePart[2]}-${datePart[1]}-${datePart[0]}T${parts[1]}`; // YYYY-MM-DDTHH:mm:ss
+    return new Date(formattedDate);
+}

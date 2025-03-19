@@ -1,14 +1,14 @@
 <!-- ========== App Menu ========== -->
-<div class="app-menu navbar-menu">
+<div class="app-menu navbar-menu" style="background:#548233;">
     <!-- LOGO -->
-    <div class="navbar-brand-box">
+    <div class="navbar-brand-box" style="background-color: white;">
         <!-- Dark Logo-->
-        <a href="index.php" class="logo logo-dark">
+        <a href="index.php" class="logo logo-dark" style="background-color: white;">
             <span class="logo-sm">
                 <img src="assets/images/logo-sm.png" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="" height="17">
+                <img src="assets/images/logo-lg.png" alt="" height="170">
             </span>
         </a>
         <!-- Light Logo-->
@@ -17,7 +17,7 @@
                 <img src="assets/images/logo-sm.png" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="" height="17">
+                <img src="assets/images/logo-lg.png" alt="" height="170">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
