@@ -33,6 +33,9 @@ if(isset($_POST['userID'])){
                 $message['order_weight'] = $row['order_weight'];
                 $message['customer_code'] = $row['customer_code'];
                 $message['customer_name'] = $row['customer_name'];
+                $message['driver_code'] = $row['driver_code'];
+                $message['driver_name'] = $row['driver_name'];
+                $message['driver_ic'] = $row['driver_ic'];
                 $message['supplier_code'] = $row['supplier_code'];
                 $message['supplier_name'] = $row['supplier_name'];
                 $message['product_code'] = $row['product_code'];
@@ -46,6 +49,7 @@ if(isset($_POST['userID'])){
                 $message['destination_code'] = $row['destination_code'];
                 $message['destination'] = $row['destination'];
                 $message['remarks'] = $row['remarks'];
+                $message['supply_weight'] = $row['supply_weight'];
                 $message['gross_weight1'] = $row['gross_weight1'];
                 $message['gross_weight1_date'] = $row['gross_weight1_date'];
                 $message['tare_weight1'] = $row['tare_weight1'];
@@ -59,9 +63,11 @@ if(isset($_POST['userID'])){
                 $message['reduce_weight'] = $row['reduce_weight'];
                 $message['final_weight'] = $row['final_weight'];
                 $message['weight_different'] = $row['weight_different'];
+                $message['estimate_loading'] = $row['estimate_loading'];
                 $message['is_complete'] = $row['is_complete'];
                 $message['is_cancel'] = $row['is_cancel'];
                 $message['manual_weight'] = $row['manual_weight'];
+                $message['manual_price'] = $row['manual_price'];
                 $message['indicator_id'] = $row['indicator_id'];
                 $message['weighbridge_id'] = $row['weighbridge_id'];
                 $message['created_date'] = $row['created_date'];
