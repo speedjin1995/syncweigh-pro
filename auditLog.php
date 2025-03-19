@@ -151,7 +151,7 @@
                                                 </div>                                                                                                                                                                                                                                                                                                                                        
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="button" class="btn btn-primary" id="searchLog">
+                                                        <button type="button" class="btn btn-success" id="searchLog">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -262,7 +262,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitTransporter">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitTransporter">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -287,7 +287,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <!-- <div class="flex-shrink-0">
-                                                                <button type="button" id="addTransporter" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addTransporter" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Transporter
                                                                 </button>

@@ -188,7 +188,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-primary" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-success" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -602,7 +602,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
                                                                                             <div class="input-group-text">Kg</div>
-                                                                                            <button class="input-group-text btn btn-primary fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                            <button class="input-group-text btn btn-success fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
@@ -628,7 +628,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0" readonly>
                                                                                             <div class="input-group-text">Kg</div>
-                                                                                            <button class="input-group-text btn btn-primary fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
+                                                                                            <button class="input-group-text btn btn-success fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                         </div>                                                                                       
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
@@ -673,7 +673,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                     <div class="hstack">
                                                                         <div class="card bg-light">
                                                                             <div class="row">
-                                                                                <button type="button" class="btn btn-primary add-product" id="addProduct">Add Product</button>
+                                                                                <button type="button" class="btn btn-success add-product" id="addProduct">Add Product</button>
                                                                             </div>
                                                                         </div><!-- end card -->
                                                                     </div>
@@ -732,7 +732,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                                                 <!--button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button-->
-                                                                <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitWeight">Submit</button>
                                                             </div>
                                                         </div><!--end col-->
                                                         
@@ -787,7 +787,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitBypass">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitBypass">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
                                                     </div>
@@ -828,7 +828,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitApproval">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitApproval">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
                                                     </div>
@@ -852,7 +852,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Weight
                                                                 </button>
@@ -939,7 +939,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                             </div>
                             <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="submit" class="btn btn-success">Save</button>
                             </div>
                         </form>
                     </div>
@@ -1003,7 +1003,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 <input type="hidden" id="productVarianceHidden" name="productVarianceHidden">
             </td> -->
             <td class="d-flex" style="text-align:center">
-                <!-- <button class="btn btn-primary me-2" id="productWeightCapture" type="button">
+                <!-- <button class="btn btn-success me-2" id="productWeightCapture" type="button">
                     <i class="mdi mdi-sync"></i>
                 </button> -->
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
