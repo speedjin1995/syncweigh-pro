@@ -74,7 +74,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 
                 if($type == 'Sales' && $complete == 'Y'){
                     if($row['delivery_no'] == null || $row['delivery_no'] == ''){
-                        $deliverOrderNo = $plantCode.'/DO';
+                        $deliverOrderNo = $plantCode.'/TEMP';
                         $queryPlant = "SELECT do_no as curcount FROM Plant WHERE plant_code='$plantCode'";
         
                         if ($plant_stmt = $db->prepare($queryPlant)) {
@@ -227,7 +227,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </body></html>';
                 }
                 else{
-                    if($type == 'Sales'){
+                    if($type == 'Sales' || $type == 'Purchase'){
                         if ($prePrintStatus == 'N'){
                             $message = '<html>
                                             <head>
@@ -276,7 +276,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     </div>
                                                     
                                                     <div class="row">
-                                                        <div class="col-7" style="margin-top:60px">
+                                                        <div class="col-7" style="margin-top:50px">
                                                             <table class="table">
                                                                 <tbody>
                                                                     <tr>
@@ -378,7 +378,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                         <td style="border: 1px solid black; text-align: center;" width="50%"><b>Time</b></td>
                                                                         <td style="border: 1px solid black; text-align: center;" width="50%"><b>Weight (MT)</b></td>
                                                                     </tr>
-                                                                    <tr style="border: 1px solid black; height: 70px;">
+                                                                    <tr style="border: 1px solid black; height: 50px;">
                                                                         <td style="border: 1px solid black; text-align: center;" width="50%">
                                                                             <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
                                                                             <br>
