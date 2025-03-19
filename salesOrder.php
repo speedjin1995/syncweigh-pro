@@ -1021,9 +1021,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 20 columns
-        while (headers.length < 20) {
-            headers.push(''); // Adding empty headers to reach 20 columns
+        // Ensure we handle cases where there may be less than 17 columns
+        while (headers.length < 17) {
+            headers.push(''); // Adding empty headers to reach 17 columns
         }
 
         // Create HTML table headers
@@ -1038,12 +1038,12 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 20 cells in a row
-            while (rowData.length < 20) {
-                rowData.push(''); // Adding empty cells to reach 20 columns
+            // Ensure we handle cases where there may be less than 17 cells in a row
+            while (rowData.length < 17) {
+                rowData.push(''); // Adding empty cells to reach 17 columns
             }
 
-            for (var j = 0; j < 20; j++) {
+            for (var j = 0; j < 17; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 
