@@ -74,7 +74,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 
                 if($type == 'Sales' && $complete == 'Y'){
                     if($row['delivery_no'] == null || $row['delivery_no'] == ''){
-                        $deliverOrderNo = $plantCode.'/DO';
+                        $deliverOrderNo = $plantCode.'/TEMP';
                         $queryPlant = "SELECT do_no as curcount FROM Plant WHERE plant_code='$plantCode'";
         
                         if ($plant_stmt = $db->prepare($queryPlant)) {
@@ -227,8 +227,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </body></html>';
                 }
                 else{
-                    if($type == 'Sales'){
-
+                    if($type == 'Sales' || $type == 'Purchase'){
                         if ($prePrintStatus == 'N'){
                             $message = '<html>
                                             <head>
@@ -277,7 +276,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     </div>
                                                     
                                                     <div class="row">
-                                                        <div class="col-7" style="margin-top:60px">
+                                                        <div class="col-7" style="margin-top:50px">
                                                             <table class="table">
                                                                 <tbody>
                                                                     <tr>
@@ -379,7 +378,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                         <td style="border: 1px solid black; text-align: center;" width="50%"><b>Time</b></td>
                                                                         <td style="border: 1px solid black; text-align: center;" width="50%"><b>Weight (MT)</b></td>
                                                                     </tr>
-                                                                    <tr style="border: 1px solid black; height: 70px;">
+                                                                    <tr style="border: 1px solid black; height: 50px;">
                                                                         <td style="border: 1px solid black; text-align: center;" width="50%">
                                                                             <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
                                                                             <br>
@@ -472,11 +471,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                     </div>
                                                     
                                                     <div class="row">
-                                                        <div class="col-7" style="margin-top:60px">
-                                                            <table class="table">
+                                                        <div class="col-7">
+                                                            <table class="table" style="margin-top:60px">
                                                                 <tbody>
                                                                     <tr>
-                                                                        <td class="hideElement" width="25%" style="border: 0;">
+                                                                        <td class="hideElement" width="15%" style="border: 0;">
                                                                             <div class="row">
                                                                                 <div class="col-12" style="height: 25px;font-size: 14px;"><b>CUSTOMER</b></div>
                                                                                 <div class="col-12" style="height: 25px;font-size: 14px;"><b>PROJECT</b></div>
@@ -486,13 +485,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                                 <div class="col-12" style="height: 25px;font-size: 14px;"><b>DELIVERED BY</b></div>
                                                                             </div>
                                                                         </td>
-                                                                        <td colspan="2" width="75%" style="border: 0;">
-                                                                            <div class="row" style="margin-left: 1px">
+                                                                        <td colspan="2" width="85%" style="border: 0;">
+                                                                            <div class="row" style="margin-left: -35px">
+                                                                                <div class="col-12" style="height: 15px;"></div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
+                                                                                <div class="col-12" style="height: 5px;"></div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
-                                                                                <div class="col-12" style="height: 15px;"></div>
+                                                                                <div class="col-12" style="height: 10px;"></div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
                                                                             </div>
                                                                         </td>
@@ -535,23 +536,25 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                 </tbody>                
                                                             </table>
                                                         </div>
+                                                        <div class="col-1">
+                                                        </div>
                                                         <div class="col-4">
-                                                            <table class="table">
+                                                            <table class="table" style="margin-top:-20px">
                                                                 <tbody style="font-size: 11px">
                                                                     <tr style="border: 0;">
                                                                         <td colspan="2" style="border:0;">
                                                                             <div class="row">
                                                                                 <div class="col-12 mb-2">
                                                                                     <span class="hideElement" style="font-size: 13px;"><b>Date</b></span><span class="hideElement" style="margin-left: 70px"><b>:</b></span>
-                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$transDateOnly.'</span>
+                                                                                    <span style="margin-left: -5px;font-size: 13px;">'.$transDateOnly.'</span>
                                                                                 </div>
                                                                                 <div class="col-12 mb-2">
-                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Loading Chit No</b></span><span class="hideElement" style="margin-left: 20px"><b>:</b></span>
-                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$loadingChitNo.'</span>
+                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Loading Chit No</b></span><span class="hideElement" style="margin-left: 8px"><b>:</b></span>
+                                                                                    <span style="margin-left: -13px;font-size: 13px;">'.$loadingChitNo.'</span>
                                                                                 </div>
                                                                                 <div class="col-12">
-                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Delivery Order No</b></span><span class="hideElement" style="margin-left: 10px"><b>:</b></span>
-                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$deliverOrderNo.' ('.$exDel.')</span>
+                                                                                    <span class="hideElement" style="font-size: 13px;"><b>Delivery Order No</b></span><span class="hideElement" style="margin-left: 5px"><b>:</b></span>
+                                                                                    <span style="margin-left: -23px;font-size: 13px;">'.$deliverOrderNo.' ('.$exDel.')</span>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -561,11 +564,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                             <div class="row" style="border:0;">
                                                                                 <div class="col-12 mb-2">
                                                                                     <span class="hideElement" style="font-size: 13px;"><b>Lorry No</b></span><span class="hideElement" style="margin-left: 15px"><b>:</b></span>
-                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$lorryNo.'</span>
+                                                                                    <span style="margin-left: -10px;font-size: 13px;">'.$lorryNo.'</span>
                                                                                 </div>
                                                                                 <div class="col-12">
                                                                                     <span class="hideElement" style="font-size: 13px;"><b>P/O No</b></span><span class="hideElement" style="margin-left: 20px"><b>:</b></span>
-                                                                                    <span style="margin-left: 8px;font-size: 13px;">'.$poNo.'</span>
+                                                                                    <span style="margin-left: -7px;font-size: 13px;">'.$poNo.'</span>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -574,11 +577,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                         <td class="hideElement" style="border: 0; text-align: center;" width="50%"><b>Time</b></td>
                                                                         <td class="hideElement" style="border: 0; text-align: center;" width="50%"><b>Weight (MT)</b></td>
                                                                     </tr>
-                                                                    <tr style="border: 0; height: 70px;">
+                                                                    <tr style="border: 0; height: 55px;">
                                                                         <td style="border: 0; text-align: center;" width="50%">
-                                                                            <span style="font-size: 13px;">'.$formattedGrossWeightDate.'</span>
+                                                                            <span style="margin-left: -25px;font-size: 13px;">'.$formattedGrossWeightDate.'</span>
                                                                             <br>
-                                                                            <span style="font-size: 13px;">'.$formattedTareWeightDate.'</span>
+                                                                            <span style="margin-left: -25px;font-size: 13px;">'.$formattedTareWeightDate.'</span>
                                                                         </td>
                                                                         <td style="border: 0; text-align: center;" width="50%">
                                                                             <span style="font-size: 13px;">'.$grossWeight.'</span>
@@ -589,20 +592,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td colspan="2" style="border: 0; padding-bottom: 40px;font-size: 13px;">
+                                                                        <td colspan="2" style="border: 0; padding-bottom: 45px;font-size: 13px;">
                                                                             <div class="row">
                                                                                 <div class="col-12">
                                                                                     <span class="hideElement"><b>Weighted by :</b></span>
-                                                                                    <span style="margin-left: 15px">'.$weightBy.'</span>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan="2" style="border: 0; text-align: right; padding-top:30px;">
-                                                                            <div class="row">
-                                                                                <div class="col-12">
-                                                                                    <span><b class="hideElement" style="font-size: 13px">No : </b><b style="font-size: 13px;">'.$loadingChitNo.'</b></span>
+                                                                                    <span style="margin-left: 5px">'.$weightBy.'</span>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
