@@ -250,9 +250,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="orderNo" class="col-sm-4 col-form-label">Customer Order Number</label>
+                                                                                    <label for="orderNo" class="col-sm-4 col-form-label">Customer P/O Number</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="orderNo" name="orderNo" placeholder="Customer Order Number" required>
+                                                                                        <input type="text" class="form-control" id="orderNo" name="orderNo" placeholder="Customer P/O Number" required>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -425,7 +425,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                     <th>Customer Name</th>
                                                                     <th>Plant Code</th>
                                                                     <th>Plant Name</th>
-                                                                    <th>Order No.</th>
+                                                                    <th>Customer P/O No.</th>
                                                                     <th>S/O No.</th>
                                                                     <th>Order Date</th>
                                                                     <th>Balance</th>
