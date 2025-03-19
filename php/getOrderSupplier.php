@@ -13,8 +13,10 @@ if(isset($_POST['code'], $_POST['type'])){
     $siteName = '';
     $agentName = '';
     $productName = '';
+    $plantName = '';
+    $balance = 0;
     $order_supplier_weight = 0;
-    $previousRecordsTag = true;
+    // $previousRecordsTag = true;
     $count = 1;
 
     if ($type == 'Purchase'){
@@ -39,30 +41,34 @@ if(isset($_POST['code'], $_POST['type'])){
                     $siteName = $row['site_name'];
                     $agentName = $row['agent_name'];
                     $productName = $row['raw_mat_name'];
+                    $plantName = $row['plant_name'];
                     $order_supplier_weight = $row['order_quantity'];
+                    $balance = $row['balance'];
                 }
 
-                $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
-                $empRecords = mysqli_query($db, $empQuery);
-                if (mysqli_num_rows($empRecords) > 0) { // Check if records exist
-                    while ($row = mysqli_fetch_assoc($empRecords)) {
-                        $final_weight[] = !empty($row['final_weight']) ? $row['final_weight'] : 0;
-                    }
-                } else {
-                    // No records found
-                    $previousRecordsTag = false;
-                }
+                // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
+                // $empRecords = mysqli_query($db, $empQuery);
+                // if (mysqli_num_rows($empRecords) == 0) { // Check if records exist
+                //     // No records found
+                //     $previousRecordsTag = false;
+
+                //     // while ($row = mysqli_fetch_assoc($empRecords)) {
+                //     //     $final_weight[] = !empty($row['final_weight']) ? $row['final_weight'] : 0;
+                //     // }
+                // }
 
                 // prevRecordTag
-                $finalWeight = array_sum($final_weight);
+                // $finalWeight = array_sum($final_weight);
                 $message['customer_supplier_name'] = $customerSupplierName;
                 $message['destination_name'] = $destinationName;
                 $message['site_name'] = $siteName;
                 $message['agent_name'] = $agentName;
                 $message['product_name'] = $productName;
+                $message['plant_name'] = $plantName;
                 $message['order_supplier_weight'] = $order_supplier_weight;
-                $message['final_weight'] = $finalWeight;
-                $message['previousRecordsTag'] = $previousRecordsTag;
+                $message['balance'] = $balance;
+                // $message['final_weight'] = $finalWeight;
+                // $message['previousRecordsTag'] = $previousRecordsTag;
 
                 echo json_encode(
                     array(
@@ -94,30 +100,34 @@ if(isset($_POST['code'], $_POST['type'])){
                     $siteName = $row['site_name'];
                     $agentName = $row['agent_name'];
                     $productName = $row['product_name'];
+                    $plantName = $row['plant_name'];
                     $order_supplier_weight = $row['order_quantity'];
+                    $balance = $row['balance'];
                 }  
 
-                $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
-                $empRecords = mysqli_query($db, $empQuery);
-                if (mysqli_num_rows($empRecords) > 0) { // Check if records exist
-                    while ($row = mysqli_fetch_assoc($empRecords)) {
-                        $final_weight[] = !empty($row['final_weight']) ? $row['final_weight'] : 0;
-                    }
-                } else {
-                    // No records found
-                    $previousRecordsTag = false;
-                }
+                // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
+                // $empRecords = mysqli_query($db, $empQuery);
+                // if (mysqli_num_rows($empRecords) == 0) { // Check if records exist
+                //     // No records found
+                //     $previousRecordsTag = false;
+
+                //     // while ($row = mysqli_fetch_assoc($empRecords)) {
+                //     //     $final_weight[] = !empty($row['final_weight']) ? $row['final_weight'] : 0;
+                //     // }
+                // }
 
                 // prevRecordTag
-                $finalWeight = array_sum($final_weight);
+                // $finalWeight = array_sum($final_weight);
                 $message['customer_supplier_name'] = $customerSupplierName;
                 $message['destination_name'] = $destinationName;
                 $message['site_name'] = $siteName;
                 $message['agent_name'] = $agentName;
                 $message['product_name'] = $productName;
+                $message['plant_name'] = $plantName;
                 $message['order_supplier_weight'] = $order_supplier_weight;
-                $message['final_weight'] = $finalWeight;
-                $message['previousRecordsTag'] = $previousRecordsTag;
+                $message['balance'] = $balance;
+                // $message['final_weight'] = $finalWeight;
+                // $message['previousRecordsTag'] = $previousRecordsTag;
 
                 echo json_encode(
                     array(

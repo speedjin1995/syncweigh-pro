@@ -2371,6 +2371,11 @@ else{
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
 
+            // Show select and hide input readonly
+            $('#addModal').find('#salesOrderEdit').val("").hide();
+            $('#addModal').find('#purchaseOrderEdit').val("").hide();
+            $('#addModal').find('#salesOrder').next('.select2-container').show();
+
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
 
@@ -2562,7 +2567,7 @@ else{
             }*/
 
             var vehicleNo1 = $(this).val();
-            var vehicleNo1Edit = $('#vehiclePlateNo1Edit').val(); console.log(vehicleNo1Edit);
+            var vehicleNo1Edit = $('#vehiclePlateNo1Edit').val();
             var exDel = $('input[name="exDel"]:checked').val();
             if (vehicleNo1Edit == 'EDIT'){
                 return;
@@ -3045,9 +3050,11 @@ else{
                     var siteName = obj.message.site_name;
                     var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
+                    var plantName = obj.message.plant_name;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
-                    var finalWeight = obj.message.final_weight;
-                    var previousRecordsTag = obj.message.previousRecordsTag;
+                    var balance = obj.message.balance;
+                    // var finalWeight = obj.message.final_weight;
+                    // var previousRecordsTag = obj.message.previousRecordsTag;
 
                     // Change Details
                     $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
@@ -3055,34 +3062,36 @@ else{
                     $('#addModal').find('#siteName').val(siteName).trigger('change');
                     $('#addModal').find('#agent').val(agentName).trigger('change');
                     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                    $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
-                    $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+                    $('#addModal').find('#plant').val(plantName).trigger('change');
+                    $('#addModal').find('#supplierWeight').val(orderSupplierWeight)
+                    $('#addModal').find('#balance').val(balance);
+                    // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
-                    if (previousRecordsTag){
-                        $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+                    // if (previousRecordsTag){
+                    //     $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
 
-                        // Hide or show insufficient balance
-                        if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
-                    }else{
-                        var weight = 0;
-                        if (type == 'Purchase'){
-                            weight = $('#addModal').find('#supplierWeight').val();
-                        }else{
-                            weight = $('#addModal').find('#orderWeight').val();
-                        }
+                    //     // Hide or show insufficient balance
+                    //     if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }else{
+                    //     var weight = 0;
+                    //     if (type == 'Purchase'){
+                    //         weight = $('#addModal').find('#supplierWeight').val();
+                    //     }else{
+                    //         weight = $('#addModal').find('#orderWeight').val();
+                    //     }
 
-                        $('#addModal').find('#balance').val(weight);
-                        // Hide or show insufficient balance
-                        if (weight <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
-                    }
+                    //     $('#addModal').find('#balance').val(weight);
+                    //     // Hide or show insufficient balance
+                    //     if (weight <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }
 
                     $('#addModal').trigger('orderLoaded');
                 }
@@ -3111,43 +3120,54 @@ else{
                     var siteName = obj.message.site_name;
                     var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
+                    var plantName = obj.message.plant_name;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
-                    var finalWeight = obj.message.final_weight;
-                    var previousRecordsTag = obj.message.previousRecordsTag;
+                    var balance = obj.message.balance;
+                    // var finalWeight = obj.message.final_weight;
+                    // var previousRecordsTag = obj.message.previousRecordsTag;
 
                     $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
                     $('#addModal').find('#destination').val(destinationName).trigger('change');
                     $('#addModal').find('#siteName').val(siteName).trigger('change');
                     $('#addModal').find('#agent').val(agentName).trigger('change');
                     $('#addModal').find('#productName').val(productName).trigger('change');
+                    $('#addModal').find('#plant').val(plantName).trigger('change');
                     $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                    $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+                    $('#addModal').find('#balance').val(balance);
+                    // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
-                    if (previousRecordsTag){
-                        $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        // Hide or show insufficient balance
-                        if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
-                    }else{
-                        var weight = 0;
-                        if (type == 'Purchase'){
-                            weight = $('#addModal').find('#supplierWeight').val();
-                        }else{
-                            weight = $('#addModal').find('#orderWeight').val();
-                        }
-
-                        $('#addModal').find('#balance').val(weight);
-                        // Hide or show insufficient balance
-                        if (weight <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
+                    if (parseFloat(balance) <= 0) {
+                        $('#addModal').find('#insufficientBalDisplay').hide();
+                    } else {
+                        $('#addModal').find('#insufficientBalDisplay').show();
                     }
+
+
+                    // if (previousRecordsTag){
+                    //     // $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+
+                    //     // Hide or show insufficient balance
+                    //     if (parseFloat(balance) <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }else{
+                    //     var weight = 0;
+                    //     if (type == 'Purchase'){
+                    //         weight = $('#addModal').find('#supplierWeight').val();
+                    //     }else{
+                    //         weight = $('#addModal').find('#orderWeight').val();
+                    //     }
+
+                    //     $('#addModal').find('#balance').val(weight);
+                    //     // Hide or show insufficient balance
+                    //     if (weight <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }
                     
                     $('#addModal').trigger('orderLoaded');
                 }
@@ -3317,8 +3337,6 @@ else{
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
-                $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
-                $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
@@ -3380,6 +3398,8 @@ else{
                     $('#addModal').find('#orderWeight').val(obj.message.order_weight);
                     $('#addModal').find('#destinationCode').val(obj.message.destination_code);
                     $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
+                    $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                    $('#addModal').find('#plantCode').val(obj.message.plant_code);
 
                     // Hide select and show input readonly
                     if (obj.message.transaction_status == 'Purchase'){
