@@ -162,7 +162,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             <select id="invoiceNoSearch" class="form-select"  >
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
-                                                                <option value="Container">Container</option>
+                                                                <!--option value="Container">Container</option-->
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -300,7 +300,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             <div class="col-lg-4">
                                                                                 <div class="hstack gap-2 justify-content-center">
                                                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                                                        <div class="card bg-primary">
+                                                                                        <div class="card bg-primary" style="margin-bottom: 0.3rem;">
                                                                                             <div class="card-body">
                                                                                                 <div class="d-flex justify-content-between align-items-center justify-content-center">
                                                                                                     <div class="d-flex align-items-center justify-content-center">
@@ -423,17 +423,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->  
                                                                         </div><!-- end row -->
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
@@ -449,48 +438,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl --> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order">
-                                                                                    </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl --> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="supplyWeight" class="col-sm-4 col-form-label">Supply Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplyWeight" name="supplyWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                        </div><!-- end row -->
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverName">
-                                                                                <div class="row">
-                                                                                    <label for="driverName" class="col-sm-4 col-form-label">Driver Name</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice" id="driverName" name="driverName">
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
-                                                                                                <option value="<?=$rowDriver['driver_name'] ?>" data-code="<?=$rowDriver['driver_code'] ?>"><?=$rowDriver['driver_name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
-                                                                                    </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
-                                                                                    </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierName" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
@@ -501,6 +448,59 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                 <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order">
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
+                                                                                <div class="row">
+                                                                                    <label for="supplyWeight" class="col-sm-4 col-form-label">Order Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight" placeholder="0">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supply Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
+                                                                        </div><!-- end row -->
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverName">
+                                                                                <div class="row">
+                                                                                    <label for="driverName" class="col-sm-4 col-form-label">Driver Name</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select js-choice" id="driverName" name="driverName">
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
+                                                                                                <option data-ic="<?=$rowDriver['driver_ic'] ?>" value="<?=$rowDriver['driver_name'] ?>" data-code="<?=$rowDriver['driver_code'] ?>"><?=$rowDriver['driver_name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -521,12 +521,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="driverICNo" class="col-sm-4 col-form-label">Driver I/C No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice" id="driverICNo" name="driverICNo">
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
-                                                                                                <option value="<?=$rowDriver['driver_ic'] ?>" data-code="<?=$rowDriver['driver_code'] ?>"><?=$rowDriver['driver_ic'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
+                                                                                        <input type="text" class="form-control" id="driverICNo" name="driverICNo" placeholder="Driver IC">
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -536,18 +531,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select" id="productName" name="productName" >
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                                                                                                <option 
-                                                                                                    value="<?=$rowProduct['name'] ?>" 
-                                                                                                    data-price="<?=$rowProduct['price'] ?>" 
-                                                                                                    data-code="<?=$rowProduct['product_code'] ?>" 
-                                                                                                    data-high="<?=$rowProduct['high'] ?>" 
-                                                                                                    data-low="<?=$rowProduct['low'] ?>" 
-                                                                                                    data-variance="<?=$rowProduct['variance'] ?>" 
-                                                                                                    data-description="<?=$rowProduct['description'] ?>">
-                                                                                                    <?=$rowProduct['name'] ?>
-                                                                                                </option>
-                                                                                            <?php } ?>
+                                                                                            
                                                                                         </select>                                                                                        
                                                                                     </div> -->
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
@@ -556,7 +540,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="reduceWeight" class="col-sm-4 col-form-label">Overall Reduce Weight</label>
                                                                                     <div class="col-sm-8">
@@ -661,7 +645,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="estimateLoading" class="col-sm-4 col-form-label">Estimate Loading</label>
+                                                                                    <label for="estimateLoading" class="col-sm-4 col-form-label">Estimate Loading (Mins)</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control input-readonly" id="estimateLoading" name="estimateLoading" readonly>
                                                                                     </div><!-- end col -->
@@ -734,6 +718,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody id="productTable"></tbody>
+                                                                            <tfoot>
+                                                                                <th colspan="6">Total Price (RM)</th>
+                                                                                <th><input type="number" class="form-control" id="totalPrice" name="totalPrice" style="background-color:white;" value="0" readonly></th>
+                                                                                <th></th>
+                                                                            </tfoot>
                                                                         </table>                                            
                                                                     </div><!-- end row -->                                                    
                                                                 </div><!-- end card-body -->
@@ -747,6 +736,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             </div>
                                                         </div><!--end col-->
                                                         
+                                                        <input type="hidden" id="containerNo" name="containerNo">
                                                         <input type="hidden" id="bypassReason" name="bypassReason">
                                                         <input type="hidden" id="finalWeight" name="finalWeight">
                                                         <input type="hidden" id="customerCode" name="customerCode">
@@ -967,26 +957,36 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 <input type="text" class="form-control" id="weightProductId" name="weightProductId" hidden>
             </td>
             <td>
-                <input type="text" class="form-control" id="productPartCode" name="productPartCode" style="background-color:white;">
-            </td>
-            <td>
-                <select class="form-control form-select" style="width: 100%; background-color:white;" id="products" name="products">
+                <select class="form-control form-select" style="width: 100%; background-color:white;" id="productPartCode" name="productPartCode">
+                    <option selected="-">-</option>    
                     <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_code'] . ' - ' . $rowProduct['name']?></option>
+                        <option 
+                            value="<?=$rowProduct['product_code'] ?>" 
+                            data-price="<?=$rowProduct['price'] ?>" 
+                            data-code="<?=$rowProduct['name'] ?>" 
+                            data-high="<?=$rowProduct['high'] ?>" 
+                            data-low="<?=$rowProduct['low'] ?>" 
+                            data-variance="<?=$rowProduct['variance'] ?>" 
+                            data-description="<?=$rowProduct['description'] ?>">
+                            <?=$rowProduct['product_code'] ?> - <?=$rowProduct['name'] ?>
+                        </option>
                     <?php } ?>
                 </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="products" name="products" style="background-color:white;" readonly>
             </td>
             <td>
                 <input type="number" class="form-control" id="productPercentage" name="productPercentage" style="background-color:white;" value="0">
             </td>
             <td>
-                <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0">
+                <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0" readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="productUnitPrice" name="productUnitPrice" style="background-color:white;" value="0">
+                <input type="number" class="form-control" id="productUnitPrice" name="productUnitPrice" style="background-color:white;" value="0" readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="productTotalPrice" name="productTotalPrice" style="background-color:#d6d6d6;" value="0">
+                <input type="number" class="form-control" id="productTotalPrice" name="productTotalPrice" style="background-color:white;" value="0">
             </td>
             <!-- <td>
                 <input type="number" class="form-control" id="productActualWeight" name="productActualWeight" style="background-color:white;" value="0">
@@ -1115,9 +1115,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     render: function (data, type, row) {
                         let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                        '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                        '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                         if (row.is_approved == 'Y') {
                             dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1191,6 +1189,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 }
             }
 
+            pass = true;
+
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -1220,7 +1220,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     }
                 });
             }
-            else{
+            /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
                 if (userChoice) {
                     $('#addModal').find('#status').val("pending");
@@ -1271,7 +1271,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         }
                     });
                 }
-            }
+            }*/
         });
 
         $('#submitWeightPrint').on('click', function(){
@@ -1324,6 +1324,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 }
             }
 
+            pass = true;
+
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -1369,7 +1371,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     }
                 });
             }
-            else{
+            /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
                 if (userChoice) {
                     $('#addModal').find('#status').val("pending");
@@ -1420,7 +1422,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         }
                     });
                 }
-            }
+            }*/
         });
 
         $('#submitBypass').on('click', function(){
@@ -1589,9 +1591,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         render: function (data, type, row) {
                             let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                                            '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>' +
-                                            '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
 
                             if (row.is_approved == 'Y') {
                                 dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1727,8 +1727,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
         
             //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                $('#grossIncoming').val(parseFloat(tare).toFixed(0));
-                $('#grossIncoming').trigger('keyup');
+                //$('#grossIncoming').val(parseFloat(tare).toFixed(0));
+                //$('#grossIncoming').trigger('keyup');
             /*}
             else{
                 $('#tareOutgoing').val(parseFloat(tare).toFixed(0));
@@ -1740,8 +1740,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#vehiclePlateNo2 :selected').data('weight') ? parseFloat($('#vehiclePlateNo2 :selected').data('weight')) : 0;
         
             //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                $('#grossIncoming2').val(parseFloat(tare).toFixed(0));
-                $('#grossIncoming2').trigger('keyup');
+                //$('#grossIncoming2').val(parseFloat(tare).toFixed(0));
+                //$('#grossIncoming2').trigger('keyup');
             /*}
             else{
                 $('#tareOutgoing2').val(parseFloat(tare).toFixed(0));
@@ -1793,7 +1793,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#grossIncomingDate').val(formatDate2(today));
+            $('#grossIncomingDate').val(formatDate3(new Date())).trigger('keyup');
             $('#nettWeight').trigger('change');
         });
 
@@ -1808,7 +1808,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var gross = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#tareOutgoingDate').val(formatDate2(today));
+            $('#tareOutgoingDate').val(formatDate3(new Date())).trigger('keyup');
             $('#nettWeight').trigger('change');
         });
 
@@ -1816,6 +1816,32 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var text = $('#indicatorWeight').text();
             $('#tareOutgoing').val(parseFloat(text).toFixed(0));
             $('#tareOutgoing').trigger('keyup');
+        });
+
+        $('#grossIncomingDate').on('keyup', function(){
+            let startDate = $(this).val();
+            let endDate = $('#tareOutgoingDate').val();
+
+            if(startDate && endDate) {
+                let start = parseDate(startDate);
+                let end = parseDate(endDate);
+
+                let diffInMinutes = Math.ceil((end - start) / 60000); // Convert milliseconds to minutes
+                $('#estimateLoading').val(Math.abs(diffInMinutes));
+            }
+        });
+
+        $('#tareOutgoingDate').on('keyup', function(){
+            let startDate = $('#grossIncomingDate').val();
+            let endDate = $(this).val();
+            
+            if(startDate && endDate) {
+                let start = parseDate(startDate);
+                let end = parseDate(endDate);
+
+                let diffInMinutes = Math.ceil((end - start) / 60000); // Convert milliseconds to minutes
+                $('#estimateLoading').val(Math.abs(diffInMinutes));
+            }
         });
 
         $('#nettWeight').on('change', function(){
@@ -1862,7 +1888,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#grossIncomingDate2').val(formatDate2(today));
+            $('#grossIncomingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
         });
 
@@ -1877,7 +1903,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#tareOutgoingDate2').val(formatDate2(today));
+            $('#tareOutgoingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
         });
 
@@ -1966,7 +1992,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         //driver
         $('#driverName').on('change', function(){
             $('#driverCode').val($('#driverName :selected').data('code'));
-            $('#driverIC').val(""); // 
+            $('#driverICNo').val($('#driverName :selected').data('ic')); // 
         });
 
         //customerName
@@ -1993,69 +2019,62 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable tr").each(function (index) {
                 $(this).find('input[name^="no"]').val(index + 1);
             });
+
+            rowCount--;
         });
 
         // Find and refresh actual weight
-        $("#productTable").on('click', 'button[id^="productWeightCapture"]', function () {
-            var text = $('#indicatorWeight').text();
-            $(this).closest('.details').find('input[id^="productActualWeight"]').val(parseFloat(text).toFixed(0));
-            $(this).closest('.details').find('input[id^="productActualWeight"]').trigger('change');
+        $("#productTable").on('change', 'select[id^="productPartCode"]', function () {
+            var selectedOption = $(this).find(":selected"); // Get only the selected option within this select
+            var text = selectedOption.data('code');  // Get data-code
+            var price = selectedOption.data('price'); // Get data-price
+            debugger;
+
+            // Update the respective input fields within the same row
+            $(this).closest('.details').find('input[id^="products"]').val(text);
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').val(parseFloat(price).toFixed(2)).trigger('change');
         });
         
         // Event delegation for order weight to calculate variance
-        $(document).on('change', 'input[id^="productOrderWeight"]', function(){
+        $("#productTable").on('change', 'input[id^="productPercentage"]', function(){
             // Retrieve the input's attributes
-            var orderWeight = $(this).val();
-            var actualWeight = $(this).closest('.details').find('input[id^="productActualWeight"]').val();
-            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+            var productPercentage = $(this).val();
+            var nettWeight = $('#nettWeight').val();
+            var productItemWeight = parseFloat(nettWeight) * (parseFloat(productPercentage) / 100);
 
             // Update the respective inputs for variance
-            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
-            $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
+            $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
         });
 
-        // Event delegation for actual weight to calculate variance
-        $(document).on('change', 'input[id^="productActualWeight"]', function(){
-            var actualWeightId = $(this).attr('id'); // Get the ID of the input field
+        // Event delegation for order weight to calculate variance
+        $("#productTable").on('change', 'input[id^="productUnitPrice"]', function(){
             // Retrieve the input's attributes
-            var actualWeight = $(this).val();
-            var orderWeight = $(this).closest('.details').find('input[id^="productOrderWeight"]').val();
-            var variance = parseFloat(orderWeight) - parseFloat(actualWeight);
+            var unitPrice = $(this).val();
+            var productItemWeight = $(this).closest('.details').find('input[id^="productItemWeight"]').val();
+            var variance = parseFloat(unitPrice) * parseFloat(productItemWeight);
 
             // Update the respective inputs for variance
-            $(this).closest('.details').find('input[id^="productVariance"]').val(variance);
-            $(this).closest('.details').find('input[id^="productVarianceHidden"]').val(variance);
-            $(this).closest('.details').find('input[id^="productActualWeightHidden"]').val(actualWeight);
+            $(this).closest('.details').find('input[id^="productTotalPrice"]').val(variance.toFixed(2)).trigger('change');
+        });
 
-            //Update Top View Bin Weight
-            if (actualWeightId == 'productActualWeight1'){
-                $("#addModal").find('#bin1Weight').text(actualWeight).trigger('change');
-            }else if (actualWeightId == 'productActualWeight2'){
-                $("#addModal").find('#bin2Weight').text(actualWeight).trigger('change');
-            }
+        // Event delegation for order weight to calculate variance
+        $("#productTable").on('change', 'input[id^="productTotalPrice"]', function(){
+            var totalSum = 0;
 
-            // Update End Date if manual
-            $(this).closest('.details').find('input[id^="productEndDate"]').flatpickr({
-            
-                enableTime: true,          
-                dateFormat: "d/m/Y H:i",   
-                time_24hr: true,          
-                defaultDate: new Date(),
-                clickOpens: false
+            // Loop through each productTotalPrice input and sum up the values
+            $('input[id^="productTotalPrice"]').each(function(){
+                totalSum += parseFloat($(this).val()) || 0;
             });
+
+            // Set the total sum into the totalPrice input field
+            $('#totalPrice').val(totalSum.toFixed(2));
         });
 
         $(".add-product").click(function(){
             if(rowCount == 0){
                 rowCount++;
             }
-
-            // var weightType = $("#addModal").find('#weightType').val();
-
-            // if (rowCount > 2 && weightType == 'Dual Bins'){
-            //     alert("Cannot more than 2 bins for Dual Bins weight type.");
-            //     return;
-            // }
 
             var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
             if(manualWeight == 'false'){
@@ -2072,34 +2091,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
             $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
-            // $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
-            // $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
-            // $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
-            // $("#productTable").find('#productOrderWeight:last').attr('name', 'productOrderWeight['+rowCount+']').attr("id", "productOrderWeight" + rowCount);
-            // $("#productTable").find('#productBinName:last').attr('name', 'productBinName['+rowCount+']').attr("id", "productBinName" + rowCount);
-            // $("#productTable").find('#productActualWeight:last').attr('name', 'productActualWeight['+rowCount+']').attr("id", "productActualWeight" + rowCount).attr("readonly", readonly);
-            // $("#productTable").find('#productActualWeightHidden:last').attr('name', 'productActualWeightHidden['+rowCount+']').attr("id", "productActualWeightHidden" + rowCount);
-            // $("#productTable").find('#productStartDate:last').attr('name', 'productStartDate['+rowCount+']').attr("id", "productStartDate" + rowCount).flatpickr(
-            //     {
-            //         enableTime: true,          
-            //         dateFormat: "d/m/Y H:i",   
-            //         time_24hr: true,          
-            //         defaultDate: new Date(),
-            //         clickOpens: false
-            //     }
-            // )
-            // $("#productTable").find('#productEndDate:last').attr('name', 'productEndDate['+rowCount+']').attr("id", "productEndDate" + rowCount).flatpickr(
-            //     {
-            //         enableTime: true,          
-            //         dateFormat: "d/m/Y H:i",   
-            //         time_24hr: true,          
-            //         defaultDate: '',
-            //         clickOpens: false
-            //     }
-            // );
-            // $("#productTable").find('#productVariance:last').attr('name', 'productVariance['+rowCount+']').attr("id", "productVariance" + rowCount).prop("readonly", true);
-            // $("#productTable").find('#productVarianceHidden:last').attr('name', 'productVarianceHidden['+rowCount+']').attr("id", "productVarianceHidden" + rowCount);
-
             $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
             $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
             $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
@@ -2115,8 +2106,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getWeight.php', {userID: id}, function(data)
-        {
+
+        $.post('php/getWeight.php', {userID: id}, function(data){
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
@@ -2178,7 +2169,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#customerName').val(obj.message.customer_name);
                 $('#addModal').find('#driverCode').val(obj.message.driver_code); //
                 $('#addModal').find('#driverName').val(obj.message.driver_name); //
-                $('#addModal').find('#driverIC').val(obj.message.driver_ic); //
+                $('#addModal').find('#driverICNo').val(obj.message.driver_ic); //
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
                 $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
@@ -2193,15 +2184,15 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#remarks').val(obj.message.remarks); //
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
+                $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
-                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
+                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#estimateLoading').val(obj.message.estimate_loading); //
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
-                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
+                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
-                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate2(new Date(obj.message.tare_weight2_date)) : '');
+                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate3(new Date(obj.message.tare_weight2_date)) : '');
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
@@ -2237,6 +2228,34 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#sstPrice').val(obj.message.product_description);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+
+                $('#productTable').html('');
+                rowCount = 0;
+
+                if (obj.message.products.length > 0){
+                    for(var i = 0; i < obj.message.products.length; i++){
+                        var item = obj.message.products[i];
+                        var $addContents = $("#productDetail").clone();
+                        $("#productTable").append($addContents.html());
+
+                        $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#productTable").find('.details:last').attr("data-index", rowCount);
+                        $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+                        $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount).val(item.id);
+                        $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount).val(item.product_code);
+                        $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount).val(item.product_name);
+                        $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount).val(item.percentage);
+                        $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).val(item.item_weight);
+                        $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).val(item.unit_price);
+                        $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly).val(item.total_price);
+
+                        rowCount++;
+                    }
+                }
+
                 $('#addModal').modal('show');
             
                 $('#weightForm').validate({

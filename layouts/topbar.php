@@ -64,7 +64,7 @@ while($row2=mysqli_fetch_assoc($weighing2)){
 $count = count($salesList) + count($purchaseList) + count($localList);
 $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
 ?>
-<header id="page-topbar">
+<header id="page-topbar" style="background-color: #a8d190;">
     <div class="layout-width">
         <div class="navbar-header">
             <div class="d-flex">
@@ -528,7 +528,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                     </button>
                 </div-->
 
-                <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationsDropdown">
+                <!--div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationsDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                         id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                         aria-haspopup="true" aria-expanded="false">
@@ -641,7 +641,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                             </div>
                         </div>
                     </div>
-                </div>
+                </div-->
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
@@ -654,7 +654,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                         aria-labelledby="page-header-notifications-dropdown">
 
-                        <div class="dropdown-head bg-primary bg-pattern rounded-top">
+                        <div class="dropdown-head bg-pattern rounded-top" style="background-color: #548233;">
                             <div class="p-3">
                                 <div class="row align-items-center">
                                     <div class="col">
@@ -758,7 +758,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                     </div>
                 </div>
 
-                <div class="dropdown ms-sm-3 header-item topbar-user">
+                <div class="dropdown ms-sm-3 header-item topbar-user" style="background-color: #a8d190;">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
