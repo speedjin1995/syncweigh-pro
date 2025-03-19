@@ -29,12 +29,10 @@ if(isset($_POST['userID'])){
                 $message['order_date'] = $row['order_date'];
                 $message['order_no'] = $row['order_no'];
                 $message['so_no'] = $row['so_no'];
-                $message['delivery_date'] = $row['delivery_date'];
                 $message['agent_code'] = $row['agent_code'];
                 $message['destination_code'] = $row['destination_code'];
-                $message['deliver_to_name'] = $row['deliver_to_name'];
                 $message['product_code'] = $row['product_code'];
-                $message['order_load'] = $row['order_load'];
+                $message['plant_code'] = $row['plant_code'];
                 $message['order_quantity'] = $row['order_quantity'];
                 $message['remarks'] = $row['remarks'];
             }

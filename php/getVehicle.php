@@ -44,7 +44,7 @@ if(isset($_POST['userID'])){
                             "message" => 'There is a pending record for this vehicle'
                         ));  
                 }else{
-                    if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
+                    if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=? AND status='0'")) {
                         $update_stmt->bind_param('s', $id);
                         
                         // Execute the prepared query.
@@ -65,6 +65,9 @@ if(isset($_POST['userID'])){
                                 $message['vehicle_weight'] = $row['vehicle_weight'];
                                 $message['transporter_name'] = $row['transporter_name'];
                                 $message['transporter_code'] = $row['transporter_code'];
+                                $message['ex_del'] = $row['ex_del'];
+                                $message['customer_code'] = $row['customer_code'];
+                                $message['customer_name'] = $row['customer_name'];
                             }
                             
                             echo json_encode(
@@ -78,7 +81,7 @@ if(isset($_POST['userID'])){
             }
         }
     }else{
-        if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE id=?")) {
+        if ($update_stmt = $db->prepare("SELECT * FROM Vehicle WHERE id=? AND status='0'")) {
             $update_stmt->bind_param('s', $id);
             
             // Execute the prepared query.
@@ -99,6 +102,9 @@ if(isset($_POST['userID'])){
                     $message['vehicle_weight'] = $row['vehicle_weight'];
                     $message['transporter_name'] = $row['transporter_name'];
                     $message['transporter_code'] = $row['transporter_code'];
+                    $message['ex_del'] = $row['ex_del'];
+                    $message['customer_code'] = $row['customer_code'];
+                    $message['customer_name'] = $row['customer_name'];
                 }
                 
                 echo json_encode(

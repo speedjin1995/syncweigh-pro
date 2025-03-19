@@ -39,6 +39,10 @@ if($_POST['site'] != null && $_POST['site'] != '' && $_POST['site'] != '-'){
 	$searchQuery .= " and site_code = '".$_POST['site']."'";
 }
 
+if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+}
+
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
 	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
 }
@@ -49,9 +53,9 @@ if($searchValue != ''){
     company_name like '%".$searchValue."%' or 
     customer_code like '%".$searchValue."%' or 
     customer_name like '%".$searchValue."%' or 
+    plant_code like '%".$searchValue."%' or 
+    plant_name like '%".$searchValue."%' or 
     order_no like '%".$searchValue."%' or 
-    order_date like '%".$searchValue."%' or 
-    delivery_date like '%".$searchValue."%' or 
     so_no like '%".$searchValue."%' or
     modified_date like '%".$searchValue."%'
   )";
@@ -81,10 +85,12 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "company_name"=>$row['company_name'],
     "customer_code"=>$row['customer_code'],
     "customer_name"=>$row['customer_name'],
+    "plant_code"=>$row['plant_code'],
+    "plant_name"=>$row['plant_name'],
     "order_no"=>$row['order_no'],
-    "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
-    "delivery_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["delivery_date"])->format('d-m-Y'),
     "so_no"=>$row['so_no'],
+    "order_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
+    "balance"=>$row['balance'],
     "status"=>$row['status'],
     "modified_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y'),
   );

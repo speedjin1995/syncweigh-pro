@@ -14,6 +14,8 @@ $site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 ?>
 
 <head>
@@ -116,7 +118,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select">
+                                                            <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="Open">Open</option>
                                                                 <option value="Close">Close</option>
@@ -126,7 +128,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="companySearch" class="form-label">Company</label>
-                                                            <select id="companySearch" class="form-select" >
+                                                            <select id="companySearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowCompanyF=mysqli_fetch_assoc($company2)){ ?>
                                                                     <option value="<?=$rowCompanyF['company_code'] ?>"><?=$rowCompanyF['company_code']. ' - ' .$rowCompanyF['name'] ?></option>
@@ -137,7 +139,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="siteSearch" class="form-label">Site</label>
-                                                            <select id="siteSearch" class="form-select" >
+                                                            <select id="siteSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowSiteF=mysqli_fetch_assoc($site2)){ ?>
                                                                     <option value="<?=$rowSiteF['site_code'] ?>"><?=$rowSiteF['name'] ?></option>
@@ -147,8 +149,19 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
+                                                            <label for="plantSearch" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <select id="customerNoSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
@@ -190,8 +203,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="company" class="col-sm-4 col-form-label">Company</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="company" name="company">
-                                                                                            <option selected="-">-</option>
+                                                                                        <select class="form-control select2" style="width: 100%;" id="company" name="company" required>
                                                                                             <?php while($rowCompany=mysqli_fetch_assoc($company)){ ?>
                                                                                                 <option value="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>"><?=$rowCompany['name'] ?></option>
                                                                                             <?php } ?>
@@ -224,7 +236,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>                                                                            
+                                                                            </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="orderDate" class="col-sm-4 col-form-label">Order Date</label>
@@ -254,17 +266,6 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="deliveryDate" class="col-sm-4 col-form-label">Delivery Date</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="deliveryDate" name="deliveryDate">
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>    
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
                                                                                     <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control select2" style="width: 100%;" id="agent" name="agent">
@@ -273,14 +274,6 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                                                                 <option value="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>"><?=$rowAgent['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="deliverToName" class="col-sm-4 col-form-label">Deliver To Name</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="deliverToName" name="deliverToName" placeholder="Deliver To Name">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -312,9 +305,14 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="orderLoad" class="col-sm-4 col-form-label">Order Load</label>
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="orderLoad" name="orderLoad" required>
+                                                                                        <select class="form-control select2" style="width: 100%;" id="plant" name="plant">
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -345,6 +343,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                                             <input type="hidden" class="form-control" id="agentName" name="agentName">   
                                                                             <input type="hidden" class="form-control" id="destinationName" name="destinationName">
                                                                             <input type="hidden" class="form-control" id="productName" name="productName">
+                                                                            <input type="hidden" class="form-control" id="plantName" name="plantName">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -424,10 +423,12 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                                                                     <th>Company Name</th>
                                                                     <th>Customer Code</th>
                                                                     <th>Customer Name</th>
+                                                                    <th>Plant Code</th>
+                                                                    <th>Plant Name</th>
                                                                     <th>Order No.</th>
-                                                                    <th>Order Date</th>
-                                                                    <th>Delivery Date</th>
                                                                     <th>S/O No.</th>
+                                                                    <th>Order Date</th>
+                                                                    <th>Balance</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -525,11 +526,24 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
             });
         });
 
+        // Apply custom styling to Select2 elements in addModal
+        $('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
         var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
         var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+        var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
 
         table = $("#weightTable").DataTable({
@@ -547,6 +561,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                     status: statusI,
                     company: companyI,
                     site: siteI,
+                    plant: plantI,
                     customer: customerNoI,
                 } 
             },
@@ -555,10 +570,12 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                 { data: 'company_name' },
                 { data: 'customer_code' },
                 { data: 'customer_name' },
+                { data: 'plant_code' },
+                { data: 'plant_name' },
                 { data: 'order_no' },
-                { data: 'order_date' },
-                { data: 'delivery_date' },
                 { data: 'so_no' },
+                { data: 'order_date' },
+                { data: 'balance' },
                 { data: 'modified_date' },
                 {
                     data: 'id',
@@ -601,6 +618,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
             var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
 
             //Destroy the old Datatable
@@ -622,6 +640,7 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                         status: statusI,
                         company: companyI,
                         site: siteI,
+                        plant: plantI,
                         customer: customerNoI,
                     } 
                 },
@@ -630,10 +649,12 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                     { data: 'company_name' },
                     { data: 'customer_code' },
                     { data: 'customer_name' },
+                    { data: 'plant_code' },
+                    { data: 'plant_name' },
                     { data: 'order_no' },
-                    { data: 'order_date' },
-                    { data: 'delivery_date' },
                     { data: 'so_no' },
+                    { data: 'order_date' },
+                    { data: 'balance' },
                     { data: 'modified_date' },
                     {
                         data: 'id',
@@ -671,6 +692,28 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
         });
 
         $('#submitSO').on('click', function(){
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
+
             if($('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/salesOrder.php', $('#weightForm').serialize(), function(data){
@@ -748,21 +791,30 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 
         $('#addSalesOrder').on('click', function(){
             $('#addModal').find('#id').val("");
-            $('#addModal').find('#company').val("").trigger('change');
+            $('#addModal').find('#company').val($('#company option:first').val()).trigger('change');
             $('#addModal').find('#customer').val("").trigger('change');
             $('#addModal').find('#site').val("").trigger('change');
             $('#addModal').find('#orderDate').val("");
             $('#addModal').find('#orderNo').val("");
             $('#addModal').find('#soNo').val("");
-            $('#addModal').find('#deliveryDate').val("");
             $('#addModal').find('#agent').val("").trigger('change');
             $('#addModal').find('#destinationCode').val("").trigger('change');
-            $('#addModal').find('#deliverToName').val("");
             $('#addModal').find('#product').val("").trigger('change');
-            $('#addModal').find('#orderLoad').val("");
+            $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#orderQty').val("");
             $('#addModal').find('#remarks').val("");
             
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -835,6 +887,10 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
         $('#product').on('change', function(){
             $('#productName').val($('#product :selected').data('name'));
         });
+        
+        $('#plant').on('change', function(){
+            $('#plantName').val($('#plant :selected').data('name'));
+        });
 
     });
 
@@ -851,14 +907,23 @@ $product = $db->query("SELECT * FROM Product WHERE status = '0'");
                 $('#addModal').find('#orderDate').val(formatDate2(new Date(obj.message.order_date)));
                 $('#addModal').find('#orderNo').val(obj.message.order_no);
                 $('#addModal').find('#soNo').val(obj.message.so_no);
-                $('#addModal').find('#deliveryDate').val(formatDate2(new Date(obj.message.delivery_date)));
                 $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
-                $('#addModal').find('#deliverToName').val(obj.message.deliver_to_name);
                 $('#addModal').find('#product').val(obj.message.product_code).trigger('change');
-                $('#addModal').find('#orderLoad').val(obj.message.order_load);
+                $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
+
+                // Remove Validation Error Message
+                $('#addModal .is-invalid').removeClass('is-invalid');
+
+                $('#addModal .select2[required]').each(function () {
+                    var select2Field = $(this);
+                    var select2Container = select2Field.next('.select2-container');
+                    
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                });
 
                 $('#addModal').modal('show');
             
