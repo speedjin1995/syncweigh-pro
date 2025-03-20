@@ -3262,9 +3262,16 @@ else{
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
-                // Hide Capture Button When Edit
-                $('#addModal').find('#grossCapture').hide();
-                $('#addModal').find('#tareCapture').hide();
+                if(obj.message.is_complete == 'Y'){
+                    // Hide Capture Button When Edit
+                    $('#addModal').find('#grossCapture').hide();
+                    $('#addModal').find('#tareCapture').hide();
+                }
+                else{
+                    // Show Capture Button When Edit
+                    $('#addModal').find('#grossCapture').show();
+                    $('#addModal').find('#tareCapture').show();
+                }
 
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
