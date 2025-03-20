@@ -143,6 +143,14 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="driverPhone" class="col-sm-4 col-form-label">Driver Phone No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="driverPhone" name="driverPhone" placeholder="Driver Phone No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -191,6 +199,7 @@
                                                                     <th>Driver Code</th>
                                                                     <th>Driver Name</th>
                                                                     <th>Driver IC</th>
+                                                                    <th>Driver Phone No</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -265,6 +274,7 @@ $(function () {
             { data: 'driver_code' },
             { data: 'driver_name' },
             { data: 'driver_ic' },
+            { data: 'driver_phone' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -313,6 +323,7 @@ $(function () {
         $('#addModal').find('#driverCode').val("");
         $('#addModal').find('#driverName').val("");
         $('#addModal').find('#driverIC').val("");
+        $('#addModal').find('#driverPhone').val("");
         $('#addModal').modal('show');
         
         $('#driverForm').validate({
@@ -341,6 +352,7 @@ $(function () {
                 $('#addModal').find('#driverCode').val(obj.message.driver_code);
                 $('#addModal').find('#driverName').val(obj.message.driver_name);
                 $('#addModal').find('#driverIC').val(obj.message.driver_ic);
+                $('#addModal').find('#driverPhone').val(obj.message.driver_phone);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

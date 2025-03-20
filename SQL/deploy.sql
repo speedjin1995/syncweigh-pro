@@ -66,3 +66,11 @@ ALTER TABLE `Driver_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --         NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.deliver_to_name, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
 --     );
 -- END
+
+-- 20/03/2025 --
+
+ALTER TABLE `Driver` ADD `driver_phone` VARCHAR(50) NULL AFTER `driver_ic`;
+
+ALTER TABLE `Driver_Log` ADD `driver_phone` VARCHAR(50) NULL AFTER `driver_ic`;
+
+ALTER TABLE `Weight` ADD `driver_phone` VARCHAR(50) NULL AFTER `driver_ic`;

@@ -241,6 +241,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $driverCode = trim($_POST["driverCode"]);
     }
 
+    if (empty($_POST["driverPhone"])) {
+        $driverPhone = null;
+    } else {
+        $driverPhone = trim($_POST["driverPhone"]);
+    }
+
     if (empty($_POST["driverICNo"])) {
         $driverICNo = null;
     } else {
@@ -402,12 +408,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
         gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
-        product_description=?, total_price=?, is_approved=?, approved_reason=?, driver_code=?, driver_name=?, driver_ic=?, estimate_loading=? WHERE id=?"))
+        product_description=?, total_price=?, is_approved=?, approved_reason=?, driver_code=?, driver_name=?, driver_ic=?, driver_phone=?, estimate_loading=? WHERE id=?"))
         {
-            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
+            $update_stmt->bind_param('ssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
             $supplierCode, $supplierName, $productCode, $productName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
             $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
-            $isComplete, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $driverCode, $driverName, $driverICNo, $estimateLoading, $weightId);
+            $isComplete, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $driverCode, $driverName, $driverICNo, $driverPhone, $estimateLoading, $weightId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -453,8 +459,8 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                 $productUnitPrice = isset($_POST['productUnitPrice']) ? $_POST['productUnitPrice']: [];
                 $productTotalPrice = isset($_POST['productTotalPrice']) ? $_POST['productTotalPrice']: [];
 
-                if(isset($no) && $no != null && count($no) > 0){
-                    for ($i=1; $i <= count($no); $i++) {
+                if(isset($no) && $no != null && count($no) > 0){ 
+                    for ($i=0; $i < count($no); $i++) { 
                         if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){
                             if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_code=?, product_name=?, percentage=?, item_weight=?, unit_price=?, total_price=? WHERE id=?")){
                                 $product_stmt->bind_param('ssssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i], $weightProductId[$i]);
