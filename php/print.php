@@ -304,9 +304,19 @@ if(isset($_POST['userID'], $_POST["file"])){
                         <hr>
                         
                         <div class="container">
-                            <table class="info-table left-section">
-                                <tr><td class="label">Customer</td><td>:</td></td><td class="value">'.$customer.'</td></tr>
-                                <tr><td class="label">Address</td><td>:</td><td class="value">'.$customerA.'<br> '.$customerA2.'<br> '.$customerA3.'</td></tr>
+                            <table class="info-table left-section">';
+
+
+                        if ($row['transaction_status'] == 'Purchase'){
+                            $message .= '<tr><td class="label">Supplier</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
+                        }else{
+                            $message .= '<tr><td class="label">Customer</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
+                        }
+                        
+                    
+
+
+                        $message .= '<tr><td class="label">Address</td><td>:</td><td class="value">'.$customerA.'<br> '.$customerA2.'<br> '.$customerA3.'</td></tr>
                                 <tr><td class="label">Contact</td><td>:</td><td class="value">Tel: +6'.$customerP.' | Fax: +6'.$customerE.'</td></tr>
                             </table>
                             <table class="info-table right-section">
