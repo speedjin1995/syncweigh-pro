@@ -26,15 +26,17 @@
                 box-sizing: border-box; /* Ensure padding and borders are accounted for */
             }
             table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid black;
+                width: 100%;
+                border-collapse: collapse;
+                /* border: 1px solid black; */
             }
             th, td {
                 border: 1px solid black;
                 padding: 5px;
+                /* margin: 0; */
                 text-align: center;
                 vertical-align: top;
+                border-collapse: collapse;
             }
             td:nth-child(1), td:nth-child(2) {
                 text-align: left;
@@ -48,12 +50,33 @@
             .right-align td {
             text-align: right;
             }
-            .no-border td {
+            .no-border {
                 border: none;
             }
             .container {
                 display: flex;
                 justify-content: space-between;
+            }
+            /* .weight table {
+                width: 40%;
+                border-collapse: collapse;
+            }
+            .product table {
+                width: 60%;
+                border-collapse: collapse;
+            } */
+            .weight table, .product table {
+                width: 100%;
+                border-collapse: collapse;
+            }     
+            .weight td, .product td, .weight tr, .product tr {
+                /* width: 100%; */
+                border-collapse: collapse;
+            }         
+            .weight, .product {
+                padding: 0;
+                margin: 0;
+                vertical-align: top;
             }
             .left-section {
                 width: 40%;
@@ -132,75 +155,99 @@
         </table>
     </div>
     <br>
-    <table>
+    <table style="border: none;">
         <tr>
-            <th>Time</th>
-            <th colspan="2">Weight (kg)</th>
-            <th>Product Description</th>
-            <th>(%)</th>
-            <th>Weight (kg)</th>
-            <th>U/Price (RM)</th>
-            <th>Total Price (RM)</th>
-        </tr>
-        <tr>
-            <td>9:12:30 AM</td>
-            <td>IN</td>
-            <td class="right-align">9500</td>
-            <td class="left-align">1 All Metal</td>
-            <td>30</td>
-            <td>630</td>
-            <td class="right-align">1.20</td>
-            <td class="right-align">756.00</td>
-        </tr>
-        <tr>
-            <td>10:12:30 AM</td>
-            <td>OUT</td>
-            <td class="right-align">7380</td>
-            <td class="left-align">2 PNS</td>
-            <td>20</td>
-            <td>420</td>
-            <td class="right-align">1.10</td>
-            <td class="right-align">462.00</td>
-        </tr>
-        <tr>
-            <td colspan="2">Total Weight (kg)</td>
-            <td class="right-align">2120</td>
-            <td class="left-align">3 Premium</td>
-            <td>10</td>
-            <td>210</td>
-            <td class="right-align">0.80</td>
-            <td class="right-align">168.00</td>
-        </tr>
-        <tr>
-            <td colspan="2">Deduct (kg)</td>
-            <td class="right-align">20</td>
-            <td class="left-align">4 Tin</td>
-            <td>10</td>
-            <td>210</td>
-            <td class="right-align">1.00</td>
-            <td class="right-align">210.00</td>
-        </tr>
-        <tr>
-            <td colspan="2">Net Weight (kg)</td>
-            <td class="right-align">2100</td>
-            <td class="left-align">5 Aluminium</td>
-            <td>20</td>
-            <td>420</td>
-            <td class="right-align">1.30</td>
-            <td class="right-align">546.00</td>
-        </tr>
-        <tr>
-            <td colspan="3"></td>
-            <td class="left-align">6 Sampah</td>
-            <td>10</td>
-            <td>210</td>
-            <td class="right-align">-</td>
-            <td class="right-align">-</td>
-        </tr>
-        <tr>
-            <td colspan="6" class="no-border"></td>
-            <td>Total Amount</td>
-            <td class="right-align">1596.00</td>
+            <td class="weight">
+                <table style="border: none;">
+                    <tr>
+                        <th>Time</th>
+                        <th colspan="2">Weight (kg)</th>
+                    </tr> 
+                    <tr>
+                        <td>9:12:30 AM</td>
+                        <td>IN</td>
+                        <td class="right-align">9500</td>
+                    </tr>
+                    <tr>
+                        <td>10:12:30 AM</td>
+                        <td>OUT</td>
+                        <td class="right-align">7380</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Total Weight (kg)</td>
+                        <td class="right-align">2120</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Deduct (kg)</td>
+                        <td class="right-align">20</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Net Weight (kg)</td>
+                        <td class="right-align">2100</td>
+                    </tr>
+                    <!-- <tr>
+                        <td colspan="3"></td>
+                    </tr> -->
+                </table>
+            </td>
+            <td class="product">
+                <table style="border: none;">
+                    <tr>
+                        <th>Product Description</th>
+                        <th>(%)</th>
+                        <th>Weight (kg)</th>
+                        <th>U/Price (RM)</th>
+                        <th>Total Price (RM)</th>
+                    </tr>
+                    <tr>
+                        <td class="left-align">1 All Metal</td>
+                        <td>30</td>
+                        <td>630</td>
+                        <td class="right-align">1.20</td>
+                        <td class="right-align">756.00</td>
+                    </tr>
+                    <tr>
+                        <td class="left-align">2 PNS</td>
+                        <td>20</td>
+                        <td>420</td>
+                        <td class="right-align">1.10</td>
+                        <td class="right-align">462.00</td>
+                    </tr>
+                    <tr>
+                        <td class="left-align">3 Premium</td>
+                        <td>10</td>
+                        <td>210</td>
+                        <td class="right-align">0.80</td>
+                        <td class="right-align">168.00</td>
+                    </tr>
+                    <tr>
+                        <td class="left-align">4 Tin</td>
+                        <td>10</td>
+                        <td>210</td>
+                        <td class="right-align">1.00</td>
+                        <td class="right-align">210.00</td>
+                    </tr>
+                    <tr>
+                        <td class="left-align">5 Aluminium</td>
+                        <td>20</td>
+                        <td>420</td>
+                        <td class="right-align">1.30</td>
+                        <td class="right-align">546.00</td>
+                    </tr>
+                    <tr>
+                        <td class="left-align">6 Sampah</td>
+                        <td>10</td>
+                        <td>210</td>
+                        <td class="right-align">-</td>
+                        <td class="right-align">-</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="no-border"></td>
+                        <td>Total Amount</td>
+                        <td class="right-align">1596.00</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
     <p><strong>Remark:</strong></p>
