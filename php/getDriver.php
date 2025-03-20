@@ -26,6 +26,7 @@ if(isset($_POST['userID'])){
                 $message['driver_code'] = $row['driver_code'];
                 $message['driver_name'] = $row['driver_name'];
                 $message['driver_ic'] = $row['driver_ic'];
+                $message['driver_phone'] = $row['driver_phone'];
             }
             
             echo json_encode(

@@ -80,7 +80,7 @@
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="submit" class="btn btn-primary">
+                                                        <button type="submit" class="btn btn-success">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -143,6 +143,14 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="driverPhone" class="col-sm-4 col-form-label">Driver Phone No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="driverPhone" name="driverPhone" placeholder="Driver Phone No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -153,7 +161,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitDriver">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitDriver">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -177,7 +185,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addDriver" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addDriver" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Driver
                                                                 </button>
@@ -191,6 +199,7 @@
                                                                     <th>Driver Code</th>
                                                                     <th>Driver Name</th>
                                                                     <th>Driver IC</th>
+                                                                    <th>Driver Phone No</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -265,10 +274,11 @@ $(function () {
             { data: 'driver_code' },
             { data: 'driver_name' },
             { data: 'driver_ic' },
+            { data: 'driver_phone' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-primary btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                     return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                     '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                     '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
@@ -313,6 +323,7 @@ $(function () {
         $('#addModal').find('#driverCode').val("");
         $('#addModal').find('#driverName').val("");
         $('#addModal').find('#driverIC').val("");
+        $('#addModal').find('#driverPhone').val("");
         $('#addModal').modal('show');
         
         $('#driverForm').validate({
@@ -341,6 +352,7 @@ $(function () {
                 $('#addModal').find('#driverCode').val(obj.message.driver_code);
                 $('#addModal').find('#driverName').val(obj.message.driver_name);
                 $('#addModal').find('#driverIC').val(obj.message.driver_ic);
+                $('#addModal').find('#driverPhone').val(obj.message.driver_phone);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

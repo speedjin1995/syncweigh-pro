@@ -37,7 +37,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "id"=>$row['id'],
       "driver_code"=>$row['driver_code'],
       "driver_name"=>$row['driver_name'],
-      "driver_ic"=>$row['driver_ic']
+      "driver_ic"=>$row['driver_ic'],
+      "driver_phone"=>$row['driver_phone']
     );
 }
 
