@@ -700,7 +700,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                         </div><!-- end card -->
                                                                     </div>
                                                                 </div><!-- end col-xxl -->
-                                                                <div class="col-xxl-9 col-lg-9">
+                                                                <!-- <div class="col-xxl-9 col-lg-9">
                                                                     <div class="row">
                                                                         <label for="manualPrice" class="col-sm-4 col-form-label">Manual Price</label>
                                                                         <div class="col-sm-8">
@@ -716,9 +716,9 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     No
                                                                                 </label>
                                                                             </div>
-                                                                        </div><!-- end col -->
-                                                                    </div><!-- end row -->
-                                                                </div><!-- end col-xxl -->
+                                                                        </div>
+                                                                    </div>
+                                                                </div> -->
                                                             </div><!-- end row -->
                                                         </div><!-- end col -->
                                                         <div class="col-xxl-12 col-lg-12" id="multipleCard">
