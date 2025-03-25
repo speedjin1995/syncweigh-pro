@@ -1994,6 +1994,19 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
+
+            // Loop directly through productItemWeight fields
+            $('#productTable input[id^="productItemWeight"]').each(function() {
+                var row = $(this).closest('.details'); // Find the closest row
+                var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
+                var productItemWeight = (finalWeight * productPercentage) / 100;
+
+                // Update the productItemWeight field
+                $(this).val(productItemWeight.toFixed(2));
+
+                // Trigger change on productUnitPrice to recalculate dependent values
+                row.find('input[id^="productUnitPrice"]').trigger('change');
+            });
         });
 
         $('#orderWeight').on('change', function(){
@@ -2167,19 +2180,30 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         $("#productTable").on('change', 'input[id^="productPercentage"]', function(){
             // Retrieve the input's attributes
             var productPercentage = $(this).val();
-            var nettWeight = $('#nettWeight').val();
-            var productItemWeight = parseFloat(nettWeight) * (parseFloat(productPercentage) / 100);
+            var finalWeight = $('#finalWeight').val();
+            var productItemWeight = parseFloat(finalWeight) * (parseFloat(productPercentage) / 100);
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
+
+            // Check the total sum of all productPercentage inputs
+            var totalPercentage = 0;
+            $('input[id^="productPercentage"]').each(function() {
+                totalPercentage += parseFloat($(this).val()) || 0;
+            });
+
+            if (totalPercentage > 100) {
+                alert("Total percentage cannot exceed 100%!");
+                $(this).val(0); // Reset the input to prevent exceeding 100%
+            }
         });
 
         // Event delegation for order weight to calculate variance
         $("#productTable").on('change', 'input[id^="productUnitPrice"]', function(){
             // Retrieve the input's attributes
-            var unitPrice = $(this).val();
-            var productItemWeight = $(this).closest('.details').find('input[id^="productItemWeight"]').val();
+            var unitPrice = parseFloat($(this).val()) || 0;
+            var productItemWeight = parseFloat($(this).closest('.details').find('input[id^="productItemWeight"]').val()) || 0;
             var variance = parseFloat(unitPrice) * parseFloat(productItemWeight);
 
             // Update the respective inputs for variance
