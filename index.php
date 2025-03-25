@@ -1305,7 +1305,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             //     return;
             // }
 
-            // pass = true;
+            pass = true;
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
