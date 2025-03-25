@@ -1292,18 +1292,18 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 }
             }
 
-            let totalSum = 0;
+            // let totalSum = 0;
 
-            $('[id^="productPercentage"]').each(function() {
-                let value = parseFloat($(this).val()) || 0; // Convert value to a number, default to 0 if NaN
-                totalSum += value;
-            });
+            // $('[id^="productPercentage"]').each(function() {
+            //     let value = parseFloat($(this).val()) || 0; // Convert value to a number, default to 0 if NaN
+            //     totalSum += value;
+            // });
 
-            if(totalSum > 100){
-                alert("⚠️ Total percentage cannot exceed 100!");
-                event.preventDefault(); // Prevent default action (like form submission)
-                return;
-            }
+            // if(totalSum > 100){
+            //     alert("⚠️ Total percentage cannot exceed 100!");
+            //     event.preventDefault(); // Prevent default action (like form submission)
+            //     return;
+            // }
 
             // pass = true;
 
