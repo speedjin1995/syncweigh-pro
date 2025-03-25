@@ -350,7 +350,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <div class="col-sm-8">
                                                                                                 <select id="weightType" name="weightType" class="form-select">
                                                                                                     <option selected>Normal</option>
-                                                                                                    <option>Container</option>
+                                                                                                    <!-- <option>Container</option> -->
                                                                                                 </select>   
                                                                                             </div>
                                                                                         </div>
