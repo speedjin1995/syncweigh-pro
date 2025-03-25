@@ -350,7 +350,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <div class="col-sm-8">
                                                                                                 <select id="weightType" name="weightType" class="form-select">
                                                                                                     <option selected>Normal</option>
-                                                                                                    <option>Container</option>
+                                                                                                    <!-- <option>Container</option> -->
                                                                                                 </select>   
                                                                                             </div>
                                                                                         </div>
@@ -562,7 +562,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="reduceWeight" class="col-sm-4 col-form-label">Overall Reduce Weight</label>
                                                                                     <div class="col-sm-8">
@@ -570,6 +570,16 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                             <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                        </div><!-- end row -->
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverPhone">
+                                                                                <div class="row">
+                                                                                    <label for="driverPhone" class="col-sm-4 col-form-label">Driver Contact No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="driverPhone" name="driverPhone" placeholder="Driver Phone">
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -685,6 +695,27 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl --> 
                                                                         </div><!-- end row -->
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row" style="display:none;">
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row" style="display:none;">
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="finalWeight" class="col-sm-4 col-form-label">Final Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="finalWeight" name="finalWeight" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
+                                                                        </div><!-- end row -->
                                                                     </div><!-- end card body -->
                                                                 </div><!-- end card -->
                                                             </div><!-- end col -->
@@ -700,6 +731,29 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                         </div><!-- end card -->
                                                                     </div>
                                                                 </div><!-- end col-xxl -->
+                                                                <?php
+                                                                    if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
+                                                                        echo '<div class="col-xxl-9 col-lg-9">
+                                                                            <div class="row">
+                                                                                <label for="manualPrice" class="col-sm-4 col-form-label">Manual Price</label>
+                                                                                <div class="col-sm-8">
+                                                                                    <div class="form-check align-radio mr-2">
+                                                                                        <input class="form-check-input radio-manual-price" type="radio" name="manualPrice" id="manualPriceYes" value="true">
+                                                                                        <label class="form-check-label" for="manualPriceYes">
+                                                                                            Yes
+                                                                                        </label>
+                                                                                    </div>
+                                                                                    <div class="form-check align-radio">
+                                                                                        <input class="form-check-input radio-manual-price" type="radio" name="manualPrice" id="manualPriceNo" value="false" checked>
+                                                                                        <label class="form-check-label" for="manualPriceNo">
+                                                                                            No
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>';
+                                                                    }
+                                                                ?>
                                                                 <!-- <div class="col-xxl-9 col-lg-9">
                                                                     <div class="row">
                                                                         <label for="manualPrice" class="col-sm-4 col-form-label">Manual Price</label>
@@ -760,11 +814,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         
                                                         <input type="hidden" id="containerNo" name="containerNo">
                                                         <input type="hidden" id="bypassReason" name="bypassReason">
-                                                        <input type="hidden" id="finalWeight" name="finalWeight">
+                                                        <!-- <input type="hidden" id="finalWeight" name="finalWeight"> -->
                                                         <input type="hidden" id="customerCode" name="customerCode">
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
                                                         <input type="hidden" id="driverCode" name="driverCode">
-                                                        <input type="hidden" id="driverPhone" name="driverPhone">
+                                                        <!-- <input type="hidden" id="driverPhone" name="driverPhone"> -->
                                                         <input type="hidden" id="status" name="status">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
@@ -792,7 +846,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="row mb-12">
-                                                            <label for="nettWeight" class="col-sm-4 col-form-label">Password</label>
+                                                            <label for="password" class="col-sm-4 col-form-label">Password</label>
                                                             <div class="col-sm-8">
                                                                 <div class="input-group">
                                                                     <input type="text" class="form-control" id="passcode" name="passcode" placeholder="0" required>
@@ -1006,7 +1060,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control" id="productUnitPrice" name="productUnitPrice" style="background-color:white;" value="0" readonly required>
+                <input type="number" class="form-control input-readonly" id="productUnitPrice" name="productUnitPrice" value="0" readonly required>
             </td>
             <td>
                 <input type="number" class="form-control" id="productTotalPrice" name="productTotalPrice" style="background-color:white;" value="0" required>
@@ -1237,6 +1291,19 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     }
                 }
             }
+
+            // let totalSum = 0;
+
+            // $('[id^="productPercentage"]').each(function() {
+            //     let value = parseFloat($(this).val()) || 0; // Convert value to a number, default to 0 if NaN
+            //     totalSum += value;
+            // });
+
+            // if(totalSum > 100){
+            //     alert("⚠️ Total percentage cannot exceed 100!");
+            //     event.preventDefault(); // Prevent default action (like form submission)
+            //     return;
+            // }
 
             pass = true;
 
@@ -1834,7 +1901,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('[id^="productUnitPrice"]').removeAttr('readonly');
             }
             else{
-                $('[id^="productUnitPrice"]').attr('readonly', 'readonly');
+                $('[id^="productUnitPrice"]').attr('readonly', true);
             }
         });
 
@@ -1896,11 +1963,21 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
         $('#nettWeight').on('change', function(){
             var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
-            $('#currentWeight').text(current.toFixed(0));
-            $('#finalWeight').val(current.toFixed(0));
-            $('#currentWeight').trigger('change');
+            var reduce = $('#reduceWeight').val() ? parseFloat($('#reduceWeight').val()) : 0;
+            var final = Math.abs(nett1 - reduce);
+            // $('#currentWeight').text(current.toFixed(0));
+            $('#finalWeight').val(final.toFixed(0));
+            // $('#currentWeight').trigger('change');
+            $('#finalWeight').trigger('change');
+        });
+
+        $('#reduceWeight').on('change', function(){
+            var reduce = $(this).val() ? parseFloat($(this).val()) : 0;
+            var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
+            var final = Math.abs(nett1 - reduce);
+            // $('#currentWeight').text(current.toFixed(0));
+            $('#finalWeight').val(final.toFixed(0));
+            // $('#currentWeight').trigger('change');
             $('#finalWeight').trigger('change');
         });
 
@@ -1917,6 +1994,19 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
+
+            // Loop directly through productItemWeight fields
+            $('#productTable input[id^="productItemWeight"]').each(function() {
+                var row = $(this).closest('.details'); // Find the closest row
+                var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
+                var productItemWeight = (finalWeight * productPercentage) / 100;
+
+                // Update the productItemWeight field
+                $(this).val(productItemWeight.toFixed(2));
+
+                // Trigger change on productUnitPrice to recalculate dependent values
+                row.find('input[id^="productUnitPrice"]').trigger('change');
+            });
         });
 
         $('#orderWeight').on('change', function(){
@@ -2090,19 +2180,30 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         $("#productTable").on('change', 'input[id^="productPercentage"]', function(){
             // Retrieve the input's attributes
             var productPercentage = $(this).val();
-            var nettWeight = $('#nettWeight').val();
-            var productItemWeight = parseFloat(nettWeight) * (parseFloat(productPercentage) / 100);
+            var finalWeight = $('#finalWeight').val();
+            var productItemWeight = parseFloat(finalWeight) * (parseFloat(productPercentage) / 100);
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
+
+            // Check the total sum of all productPercentage inputs
+            var totalPercentage = 0;
+            $('input[id^="productPercentage"]').each(function() {
+                totalPercentage += parseFloat($(this).val()) || 0;
+            });
+
+            if (totalPercentage > 100) {
+                alert("Total percentage cannot exceed 100%!");
+                $(this).val(0); // Reset the input to prevent exceeding 100%
+            }
         });
 
         // Event delegation for order weight to calculate variance
         $("#productTable").on('change', 'input[id^="productUnitPrice"]', function(){
             // Retrieve the input's attributes
-            var unitPrice = $(this).val();
-            var productItemWeight = $(this).closest('.details').find('input[id^="productItemWeight"]').val();
+            var unitPrice = parseFloat($(this).val()) || 0;
+            var productItemWeight = parseFloat($(this).closest('.details').find('input[id^="productItemWeight"]').val()) || 0;
             var variance = parseFloat(unitPrice) * parseFloat(productItemWeight);
 
             // Update the respective inputs for variance
