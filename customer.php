@@ -279,6 +279,7 @@
                                                                     <th>Address Line 3</th>
                                                                     <th>Phone No</th>
                                                                     <th>Fax No</th>
+                                                                    <th>Status</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -388,6 +389,16 @@ $(function () {
             { data: 'address_line_3' },
             { data: 'phone_no' },
             { data: 'fax_no' },
+            { 
+                data: 'id',
+                render: function ( data, type, row ) {
+                    if (row.status == '1'){
+                        return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
+                    }else{
+                        return '';
+                    }
+                }
+            },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -626,26 +637,29 @@ function edit(id){
 
 function deactivate(id){
     $('#spinnerLoading').show();
-    $.post('php/deleteCustomer.php', {userID: id}, function(data){
-        var obj = JSON.parse(data);
-        
-        if(obj.status === 'success'){
-            table.ajax.reload();
-            $('#spinnerLoading').hide();
-            $("#successBtn").attr('data-toast-text', obj.message);
-            $("#successBtn").click();
-        }
-        else if(obj.status === 'failed'){
-            $('#spinnerLoading').hide();
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-        else{
-            $('#spinnerLoading').hide();
-            $("#failBtn").attr('data-toast-text', obj.message );
-            $("#failBtn").click();
-        }
-    });
+    if (confirm('Are you sure you want to cancel this item?')) {
+        $.post('php/deleteCustomer.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                table.ajax.reload();
+                $('#spinnerLoading').hide();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+        });
+    }
+    $('#spinnerLoading').hide();
 }
 
 function displayPreview(data) {
@@ -702,6 +716,36 @@ function displayPreview(data) {
 
     var previewTable = document.getElementById('previewTable');
     previewTable.innerHTML = htmlTable;
+}
+
+function reactivate(id) {
+  if (confirm('Do you want to reactivate this item?')) {
+    $('#spinnerLoading').show();
+    $.post('php/reactivateMasterData.php', {userID: id, type: "Customer"}, function(data){
+        var obj = JSON.parse(data);
+
+        if(obj.status === 'success'){
+            table.ajax.reload();
+            $('#spinnerLoading').hide();
+            $("#successBtn").attr('data-toast-text', obj.message);
+            $("#successBtn").click();
+        }
+        else if(obj.status === 'failed'){
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        else{
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+
+        $('#spinnerLoading').hide();
+    });
+  }
+
+  $('#spinnerLoading').hide();
 }
 
 $('#customerForm').validate({
