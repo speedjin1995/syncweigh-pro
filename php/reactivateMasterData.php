@@ -110,6 +110,288 @@ if(isset($_POST['userID'])){
 				)
 			);
 		}
+	}elseif ($type == 'Product') {
+		if ($stmt2 = $db->prepare("UPDATE Product SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						$insert_stmt->close();
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+				}
+	
+				$stmt2->close();
+				$db->close();
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
+	}elseif ($type == 'RawMat') {
+		if ($stmt2 = $db->prepare("UPDATE Raw_Mat SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						$insert_stmt->close();
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+				}
+	
+				$stmt2->close();
+				$db->close();
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
+	}elseif ($type == 'Supplier') {
+		if ($stmt2 = $db->prepare("UPDATE Supplier SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Supplier_Log (supplier_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						$insert_stmt->close();
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+				}
+	
+				$stmt2->close();
+				$db->close();
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
+	}elseif ($type == 'Vehicle') {
+		if ($stmt2 = $db->prepare("UPDATE Vehicle SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						$insert_stmt->close();
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+				}
+	
+				$stmt2->close();
+				$db->close();
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
+	}elseif ($type == 'Agents') {
+		if ($stmt2 = $db->prepare("UPDATE Agents SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Agents_Log (agent_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						$insert_stmt->close();
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+				}
+	
+				$stmt2->close();
+				$db->close();
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
+	}elseif ($type == 'Transporter') {
+		if ($stmt2 = $db->prepare("UPDATE Transporter SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Transporter_Log (transporter_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						$insert_stmt->close();
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+				}
+	
+				$stmt2->close();
+				$db->close();
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
 	}
 } 
 else{
