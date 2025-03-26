@@ -63,10 +63,54 @@ if(isset($_POST['userID'])){
 				)
 			);
 		}
-	}elseif ($type == 'Supplier') {
-
-	}
+	}elseif ($type == 'Destination') {
+		if ($stmt2 = $db->prepare("UPDATE Destination SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Destination_Log (destination_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						$insert_stmt->close();
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+				}
 	
+				$stmt2->close();
+				$db->close();
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
+	}
 } 
 else{
     echo json_encode(
