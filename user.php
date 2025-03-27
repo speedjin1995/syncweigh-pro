@@ -52,6 +52,12 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery Validate plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
     <!-- Select2 -->
     <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -124,6 +130,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                         <th>Email</th>
                                                         <th>Role</th>
                                                         <th>Plant Name</th>
+                                                        <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -251,9 +258,13 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
     <!-- Dashboard init -->
     <script src="assets/js/pages/dashboard-ecommerce.init.js"></script>   
+    <script src="assets/js/pages/form-validation.init.js"></script>
 
     <!-- App js -->
     <script src="assets/js/app.js"></script>
+
+    <!-- notifications init -->
+    <script src="assets/js/pages/notifications.init.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -262,7 +273,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <!-- <script src="assets/js/pages/datatables.init.js"></script> -->
+    <script src="assets/js/pages/datatables.init.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="plugins/select2/js/select2.full.min.js"></script>
 
@@ -277,7 +288,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
         });
         
-        var table = $("#usersTable").DataTable({
+        table = $("#usersTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
@@ -302,6 +313,16 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 { data: 'useremail' },
                 { data: 'role' },
                 { data: 'plant' },
+                { 
+                    data: 'id',
+                    render: function ( data, type, row ) {
+                        if (row.status == '1'){
+                            return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
+                        }else{
+                            return '';
+                        }
+                    }
+                },
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
@@ -462,25 +483,58 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteUser.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $.post('php/deleteUser.php', {userID: id}, function(data){
+                var obj = JSON.parse(data);
             
-            if(obj.status === 'success'){
-                toastr["success"](obj.message, "Success:");
-                $.get('users.php', function(data) {
-                    $('#mainContents').html(data);
+                if(obj.status === 'success'){
+                    table.ajax.reload();
                     $('#spinnerLoading').hide();
-                });
-            }
-            else if(obj.status === 'failed'){
-                toastr["error"](obj.message, "Failed:");
-                $('#spinnerLoading').hide();
-            }
-            else{
-                toastr["error"]("Something wrong when activate", "Failed:");
-                $('#spinnerLoading').hide();
-            }
-        });
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+
+        $('#spinnerLoading').hide();
+    }
+
+    function reactivate(id) {
+        if (confirm('Do you want to reactivate this item?')) {
+            $('#spinnerLoading').show();
+            $.post('php/reactivateMasterData.php', {userID: id, type: "User"}, function(data){
+                var obj = JSON.parse(data);
+
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+
+        $('#spinnerLoading').hide();
     }
     </script>
 

@@ -90,13 +90,6 @@ if(isset($_POST['userID'])){
 					}
 				}
 
-				echo json_encode(
-					array(
-						"status"=> "success", 
-						"message"=> "Deleted"
-					)
-				);
-
 				$stmt2->close();
 				$db->close();
 

@@ -67,7 +67,7 @@ if(isset($_POST['userID'])){
 			$stmt2->bind_param('ss', $del , $id);
 			
 			if($stmt2->execute()){
-				if ($insert_stmt = $db->prepare("INSERT INTO User_Log (user_id, action_id, action_by) VALUES (?, ?, ?)")) {
+				if ($insert_stmt = $db->prepare("INSERT INTO Users_Log (user_id, action_id, action_by) VALUES (?, ?, ?)")) {
 					$insert_stmt->bind_param('sss', $id, $action, $username);
 		
 					// Execute the prepared query.
