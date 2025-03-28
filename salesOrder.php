@@ -1007,7 +1007,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         }
     }
 
-    function displayPreview(data) {
+    unction displayPreview(data) {
         // Parse the Excel data
         var workbook = XLSX.read(data, { type: 'binary' });
 
@@ -1022,7 +1022,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         var headers = jsonData[0];
 
         // Ensure we handle cases where there may be less than 17 columns
-        while (headers.length < 17) {
+        while (headers.length < 22) {
             headers.push(''); // Adding empty headers to reach 17 columns
         }
 
@@ -1039,17 +1039,24 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             var rowData = jsonData[i];
 
             // Ensure we handle cases where there may be less than 17 cells in a row
-            while (rowData.length < 17) {
+            while (rowData.length < 22) {
                 rowData.push(''); // Adding empty cells to reach 17 columns
             }
 
-            for (var j = 0; j < 17; j++) {
+            for (var j = 0; j < 22; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 
                 // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
-                if (typeof cellData === 'number' && cellData > 0) {
-                    var excelDate = XLSX.SSF.parse_date_code(cellData);
+                if (typeof cellData === 'number' && cellData > 0 && j == 0) {
+                    var dateObj = XLSX.SSF.parse_date_code(cellData);
+                    if (dateObj) {
+                        // Format the date as DD/MM/YYYY
+                        var day = String(dateObj.d).padStart(2, '0');
+                        var month = String(dateObj.m).padStart(2, '0');
+                        var year = dateObj.y;
+                        formattedData = `${day}/${month}/${year}`;
+                    }
                 }
 
                 htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
