@@ -530,6 +530,7 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">PRODUCT</th>
                                                 <th style="font-size: 9px;">DESTINATION <br>CODE</th>
                                                 <th style="font-size: 9px;">DESTINATION</th>
+                                                <th style="font-size: 9px;">EX-QUARRY / DELIVERED</th>
                                                 <th style="font-size: 9px;">PO NO.</th>
                                                 <th style="font-size: 9px;">DO NO.</th>
                                                 <th style="font-size: 9px;">INCOMING <br>(MT)</th>
@@ -580,6 +581,14 @@ if(isset($_POST["file"])){
                                                 $formattedTareWeightDate = $tareWeightDate->format('H:i');
                                                 $transactionDate =  new DateTime($row['transaction_date']);
                                                 $formattedtransactionDate = $transactionDate->format('d/m/Y');
+                                                $exDel = '';
+                                                
+                                                if ($row['ex_del'] == 'EX'){
+                                                    $exDel = 'E';
+                                                }else{
+                                                    $exDel = 'D';
+                                                }
+                                                
                                                 
                                                 $message .= '<tr>
                                                     <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
@@ -602,6 +611,7 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination'] . '</td>
+                                                    <td style="font-size: 8px;">' . $exDel . '</td>
                                                     <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
                                                     <td style="font-size: 8px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
@@ -751,6 +761,7 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">PRODUCT</th>
                                                 <th style="font-size: 9px;">DESTINATION <br>CODE</th>
                                                 <th style="font-size: 9px;">DESTINATION</th>
+                                                <th style="font-size: 9px;">EX-QUARRY / DELIVERED</th>
                                                 <th style="font-size: 9px;">PO NO.</th>
                                                 <th style="font-size: 9px;">DO NO.</th>
                                                 <th style="font-size: 9px;">INCOMING <br>(MT)</th>
@@ -801,6 +812,14 @@ if(isset($_POST["file"])){
                                                 $formattedTareWeightDate = $tareWeightDate->format('H:i');
                                                 $transactionDate =  new DateTime($row['transaction_date']);
                                                 $formattedtransactionDate = $transactionDate->format('d/m/Y');
+                                                $exDel = '';
+                                                
+                                                if ($row['ex_del'] == 'EX'){
+                                                    $exDel = 'E';
+                                                }else{
+                                                    $exDel = 'D';
+                                                }
+                                                
                                                 
                                                 $message .= '<tr>
                                                     <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
@@ -823,6 +842,7 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination'] . '</td>
+                                                    <td style="font-size: 8px;">' . $exDel . '</td>
                                                     <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
                                                     <td style="font-size: 8px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
