@@ -24,27 +24,43 @@ if (!empty($data)) {
     }
 
     foreach ($data as $rows) {
-        $OrderDate = (isset($rows['DocDate']) && !empty($rows['DocDate']) && $rows['DocDate'] !== '' && $rows['DocDate'] !== null) ? DateTime::createFromFormat('Y-m-d', excelSerialToDate($rows['DocDate']))->format('Y-m-d H:i:s') : '';
-        $SONumber = (isset($rows['DocNo']) && !empty($rows['DocNo']) && $rows['DocNo'] !== '' && $rows['DocNo'] !== null) ? trim($rows['DocNo']) : '';
-        $OrderNumber = (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
-        $CustomerCode = (isset($rows['Code']) && !empty($rows['Code']) && $rows['Code'] !== '' && $rows['Code'] !== null) ? trim($rows['Code']) : '';
-        $CustomerName = (isset($rows['CompanyName']) && !empty($rows['CompanyName']) && $rows['CompanyName'] !== '' && $rows['CompanyName'] !== null) ? trim($rows['CompanyName']) : '';
+        $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('d/m/Y', $rows['DOCDATE'])->format('Y-m-d H:i:s') : '';
+        $SONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
+        $OrderNumber = (isset($rows['DOCNOEX']) && !empty($rows['DOCNOEX']) && $rows['DOCNOEX'] !== '' && $rows['DOCNOEX'] !== null) ? trim($rows['DOCNOEX']) : '';
+        $CustomerCode = (isset($rows['CODE']) && !empty($rows['CODE']) && $rows['CODE'] !== '' && $rows['CODE'] !== null) ? trim($rows['CODE']) : '';
+        $CustomerName = (isset($rows['COMPANYNAME']) && !empty($rows['COMPANYNAME']) && $rows['COMPANYNAME'] !== '' && $rows['COMPANYNAME'] !== null) ? trim($rows['COMPANYNAME']) : '';
+        $ExOrQuarry = (isset($rows['DOCREF1']) && !empty($rows['DOCREF1']) && $rows['DOCREF1'] !== '' && $rows['DOCREF1'] !== null) ? trim($rows['DOCREF1']) : '';
         $PlantCode = (isset($rows['PROJECT']) && !empty($rows['PROJECT']) && $rows['PROJECT'] !== '' && $rows['PROJECT'] !== null) ? trim($rows['PROJECT']) : '';
         $PlantName = '';
         if (!empty($PlantCode)) {
             $PlantName = searchPlantNameByCode($PlantCode, $db);
         }
-        $ProductCode = (isset($rows['ItemCode']) && !empty($rows['ItemCode']) && $rows['ItemCode'] !== '' && $rows['ItemCode'] !== null) ? trim($rows['ItemCode']) : '';
+        $AgentCode = (isset($rows['AGENT']) && !empty($rows['AGENT']) && $rows['AGENT'] !== '' && $rows['AGENT'] !== null) ? trim($rows['AGENT']) : '';
+        $AgentName = '';
+        if (!empty($AgentCode)) {
+            $AgentName = searchAgentNameByCode($AgentCode, $db);
+        }
+        $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
+        $DestinationCode = '';
+        if(!empty($DestinationName)){
+            $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
+        }
+        $TransporterCode = (isset($rows['SHIPPER']) && !empty($rows['SHIPPER']) && $rows['SHIPPER'] !== '' && $rows['SHIPPER'] !== null) ? trim($rows['SHIPPER']) : '';
+        $TransporterName = '';
+        if (!empty($TransporterCode)) {
+            $TransporterName = searchTransporterNameByCode($TransporterCode, $db);
+        }
+        $ProductCode = (isset($rows['ITEMCODE']) && !empty($rows['ITEMCODE']) && $rows['ITEMCODE'] !== '' && $rows['ITEMCODE'] !== null) ? trim($rows['ITEMCODE']) : '';
         $ProductName = (isset($rows['DESCRIPTION']) && !empty($rows['DESCRIPTION']) && $rows['DESCRIPTION'] !== '' && $rows['DESCRIPTION'] !== null) ? trim($rows['DESCRIPTION']) : '';
-        $OrderQuantity = (isset($rows['Qty']) && !empty($rows['Qty']) && $rows['Qty'] !== '' && $rows['Qty'] !== null) ? trim($rows['Qty']) : '';
+        $Vehicle = (isset($rows['DESCRIPTION2']) && !empty($rows['DESCRIPTION2']) && $rows['DESCRIPTION2'] !== '' && $rows['DESCRIPTION2'] !== null) ? trim($rows['DESCRIPTION2']) : '';
+        $OrderQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
         $unit = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? trim($rows['UOM']) : '';
         if ($unit == 'MT'){
-            $OrderQuantity = $OrderQuantity * 1000;
+            $OrderQuantity = (float)$OrderQuantity * 1000;
         }
-        $Remarks = !empty($rows['REMARK1']) ? trim($rows['REMARK1']) : '';
+        $Remarks = !empty($rows['REMARKS']) ? trim($rows['REMARKS']) : '';
         $status = 'Open';
         $actionId = 1;
-
         # Company Checking & Processing
         // if($CompanyCode != null && $CompanyCode != ''){
         //     $companyQuery = "SELECT * FROM Company WHERE company_code = '$CompanyCode'";
@@ -134,26 +150,26 @@ if (!empty($data)) {
         // }
 
         # Destination Checking & Processing
-        // if($DestinationCode != null && $DestinationCode != ''){
-        //     $destinationQuery = "SELECT * FROM Destination WHERE destination_code = '$DestinationCode'";
-        //     $destinationDetail = mysqli_query($db, $destinationQuery);
-        //     $destinationRow = mysqli_fetch_assoc($destinationDetail);
+        /*if($DestinationCode != null && $DestinationCode != ''){
+            $destinationQuery = "SELECT * FROM Destination WHERE destination_code = '$DestinationCode'";
+            $destinationDetail = mysqli_query($db, $destinationQuery);
+            $destinationRow = mysqli_fetch_assoc($destinationDetail);
             
-        //     if(empty($destinationRow)){
-        //         if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-        //             $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
-        //             $insert_destination->execute();
-        //             $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
-        //             $insert_destination->close();
+            if(empty($destinationRow)){
+                if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
+                    $insert_destination->execute();
+                    $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
+                    $insert_destination->close();
                     
-        //             if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-        //                 $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
-        //                 $insert_destination_log->execute();
-        //                 $insert_destination_log->close();
-        //             }    
-        //         }
-        //     }
-        // }
+                    if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
+                        $insert_destination_log->execute();
+                        $insert_destination_log->close();
+                    }    
+                }
+            }
+        }*/
 
         # Plant Checking & Processing
         if($PlantCode != null && $PlantCode != ''){
@@ -213,8 +229,8 @@ if (!empty($data)) {
                 //     $insert_stmt->close(); 
                 // }
 
-                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, order_date, order_no, so_no, plant_code, plant_name, product_code, product_name, order_quantity, balance, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $PlantCode, $PlantName, $ProductCode, $ProductName, $OrderQuantity, $OrderQuantity, $Remarks, $status, $uid, $uid);
+                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, order_date, order_no, so_no, plant_code, plant_name, product_code, product_name, destination_code, destination_name, transporter_code, transporter_name, agent_code, agent_name, exquarry_or_delivered, order_quantity, balance, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $PlantCode, $PlantName, $ProductCode, $ProductName, $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $AgentCode, $AgentName, $ExOrQuarry, $OrderQuantity, $OrderQuantity, $Remarks, $status, $uid, $uid);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }
