@@ -1007,7 +1007,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         }
     }
 
-    unction displayPreview(data) {
+    function displayPreview(data) {
         // Parse the Excel data
         var workbook = XLSX.read(data, { type: 'binary' });
 
