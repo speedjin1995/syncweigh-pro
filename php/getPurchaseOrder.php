@@ -33,6 +33,9 @@ if(isset($_POST['userID'])){
                 $message['destination_code'] = $row['destination_code'];
                 $message['raw_mat_code'] = $row['raw_mat_code'];
                 $message['plant_code'] = $row['plant_code'];
+                $message['transporter_code'] = $row['transporter_code'];
+                $message['veh_number'] = $row['veh_number'];
+                $message['exquarry_or_delivered'] = $row['exquarry_or_delivered'];
                 $message['order_quantity'] = $row['order_quantity'];
                 $message['remarks'] = $row['remarks'];
             }

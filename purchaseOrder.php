@@ -14,9 +14,11 @@ $site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 ?>
 
 <head>
@@ -161,6 +163,17 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
+                                                            <label for="rawMatSearch" class="form-label">Raw Material</label>
+                                                            <select id="rawMatSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
                                                             <label for="supplierNoSearch" class="form-label">Supplier No</label>
                                                             <select id="supplierNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
@@ -204,7 +217,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="company" class="col-sm-4 col-form-label">Company</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="company" name="company">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="company" name="company" required>
                                                                                             <?php while($rowCompany=mysqli_fetch_assoc($company)){ ?>
                                                                                                 <option value="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>"><?=$rowCompany['name'] ?></option>
                                                                                             <?php } ?>
@@ -216,7 +229,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="supplier" class="col-sm-4 col-form-label">Supplier</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="supplier" name="supplier">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="supplier" name="supplier" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                 <option value="<?=$rowSupplier['supplier_code'] ?>" data-name="<?=$rowSupplier['name'] ?>"><?=$rowSupplier['name'] ?></option>
@@ -229,7 +242,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="site" class="col-sm-4 col-form-label">Site</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="site" name="site">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="site" name="site" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
                                                                                                 <option value="<?=$rowSite['site_code'] ?>" data-name="<?=$rowSite['name'] ?>"><?=$rowSite['name'] ?></option>
@@ -269,7 +282,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="agent" name="agent">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="agent" name="agent" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
                                                                                                 <option value="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>"><?=$rowAgent['name'] ?></option>
@@ -282,7 +295,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="destinationCode" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="destinationCode" name="destinationCode">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="destinationCode" name="destinationCode" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
                                                                                                 <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
@@ -308,7 +321,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="plant" name="plant">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="plant" name="plant" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
@@ -321,11 +334,35 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="transporter" name="transporter">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="transporter" name="transporter" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                                <option value="<?=$rowTransporter['transporter_code'] ?>" data-name="<?=$rowTransporter['name'] ?>"><?=$rowTransporter['name'] ?></option>
                                                                                             <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="vehicle" class="col-sm-4 col-form-label">Vehicle</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="vehicle" name="vehicle" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowVehicle=mysqli_fetch_assoc($vehicle)){ ?>
+                                                                                                <option value="<?=$rowVehicle['veh_number'] ?>"><?=$rowVehicle['veh_number'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="exDel" class="col-sm-4 col-form-label">EX-Quarry / Delivered</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="exDel" name="exDel" required>
+                                                                                            <option value="E">E</option>
+                                                                                            <option value="D">D</option>
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
@@ -358,6 +395,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                             <input type="hidden" class="form-control" id="destinationName" name="destinationName">                                                                   
                                                                             <input type="hidden" class="form-control" id="rawMatName" name="rawMatName">                    
                                                                             <input type="hidden" class="form-control" id="plantName" name="plantName">                                               
+                                                                            <input type="hidden" class="form-control" id="transporterName" name="transporterName">                                               
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -439,6 +477,8 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                                                                     <th>Supplier Name</th>
                                                                     <th>Plant Code</th>
                                                                     <th>Plant Name</th>
+                                                                    <th>Raw Material Code</th>
+                                                                    <th>Raw Material Name</th>
                                                                     <!-- <th>Order No.</th> -->
                                                                     <th>P/O No.</th>
                                                                     <th>Order Date</th>
@@ -559,6 +599,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
         var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
+        var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -577,6 +618,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                     site: siteI,
                     plant: plantI,
                     supplier: supplierNoI,
+                    rawMaterial: rawMatI,
                 } 
             },
             'columns': [
@@ -586,6 +628,8 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                 { data: 'supplier_name' },
                 { data: 'plant_code' },
                 { data: 'plant_name' },
+                { data: 'raw_mat_code' },
+                { data: 'raw_mat_name' },
                 // { data: 'order_no' },
                 { data: 'po_no' },
                 { data: 'order_date' },
@@ -634,6 +678,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
             var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -656,6 +701,7 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                         site: siteI,
                         plant: plantI,
                         supplier: supplierNoI,
+                        rawMaterial: rawMatI,
                     } 
                 },
                 'columns': [
@@ -665,6 +711,8 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                     { data: 'supplier_name' },
                     { data: 'plant_code' },
                     { data: 'plant_name' },
+                    { data: 'raw_mat_code' },
+                    { data: 'raw_mat_name' },
                     // { data: 'order_no' },
                     { data: 'po_no' },
                     { data: 'order_date' },
@@ -815,6 +863,9 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
             $('#addModal').find('#destinationCode').val("").trigger('change');
             $('#addModal').find('#rawMat').val("").trigger('change');
             $('#addModal').find('#plant').val("").trigger('change');
+            $('#addModal').find('#transporter').val("").trigger('change');
+            $('#addModal').find('#vehicle').val("").trigger('change');
+            $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#orderQty').val("");
             $('#addModal').find('#remarks').val("");
 
@@ -905,6 +956,10 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
         $('#plant').on('change', function(){
             $('#plantName').val($('#plant :selected').data('name'));
         });
+
+        $('#transporter').on('change', function(){
+            $('#transporterName').val($('#transporter :selected').data('name'));
+        });
     });
 
     function edit(id){
@@ -924,6 +979,9 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
                 $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).trigger('change');
                 $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
+                $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
+                $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
+                $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
 

@@ -47,6 +47,10 @@ if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] 
 	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
 }
 
+if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMaterial'] != '-'){
+	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (
     company_code like '%".$searchValue."%' or 
@@ -55,6 +59,8 @@ if($searchValue != ''){
     supplier_name like '%".$searchValue."%' or 
     plant_code like '%".$searchValue."%' or 
     plant_name like '%".$searchValue."%' or 
+    raw_mat_code like '%".$searchValue."%' or 
+    raw_mat_name like '%".$searchValue."%' or 
     order_no like '%".$searchValue."%' or 
     po_no like '%".$searchValue."%' or
     order_date like '%".$searchValue."%' or 
@@ -88,6 +94,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "supplier_name"=>$row['supplier_name'],
     "plant_code"=>$row['plant_code'],
     "plant_name"=>$row['plant_name'],
+    "raw_mat_code"=>$row['raw_mat_code'],
+    "raw_mat_name"=>$row['raw_mat_name'],
     "order_no"=>$row['order_no'],
     "po_no"=>$row['po_no'],
     "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),

@@ -489,3 +489,38 @@ DELIMITER ;
 ALTER TABLE `Purchase_Order` ADD `transporter_code` VARCHAR(50) NULL AFTER `plant_name`, ADD `transporter_name` VARCHAR(100) NULL AFTER `transporter_code`, ADD `veh_number` VARCHAR(50) NULL AFTER `transporter_name`, ADD `exquarry_or_delivered` VARCHAR(3) NULL DEFAULT 'E' AFTER `veh_number`;
 
 ALTER TABLE `Purchase_Order_Log` ADD `transporter_code` VARCHAR(50) NULL AFTER `plant_name`, ADD `transporter_name` VARCHAR(100) NULL AFTER `transporter_code`, ADD `veh_number` VARCHAR(50) NULL AFTER `transporter_name`, ADD `exquarry_or_delivered` VARCHAR(3) NULL DEFAULT 'E' AFTER `veh_number`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_PO` AFTER INSERT ON `Purchase_Order`
+ FOR EACH ROW INSERT INTO Purchase_Order_Log (
+    company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_code, NEW.plant_name, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Purchase_Order table
+    INSERT INTO Purchase_Order_Log (
+        company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
+        agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_code, NEW.plant_name, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
