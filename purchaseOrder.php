@@ -16,7 +16,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
-
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 ?>
 
 <head>
@@ -311,6 +311,19 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                                         <select class="form-control select2" style="width: 100%;" id="plant" name="plant">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="transporter" name="transporter">
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
                                                                                                 <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
@@ -1021,9 +1034,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 17 columns
-        while (headers.length < 17) {
-            headers.push(''); // Adding empty headers to reach 17 columns
+        // Ensure we handle cases where there may be less than 22 columns
+        while (headers.length < 22) {
+            headers.push(''); // Adding empty headers to reach 22 columns
         }
 
         // Create HTML table headers
@@ -1038,12 +1051,12 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 17 cells in a row
-            while (rowData.length < 17) {
-                rowData.push(''); // Adding empty cells to reach 17 columns
+            // Ensure we handle cases where there may be less than 22 cells in a row
+            while (rowData.length < 22) {
+                rowData.push(''); // Adding empty cells to reach 22 columns
             }
 
-            for (var j = 0; j < 17; j++) {
+            for (var j = 0; j < 22; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 
