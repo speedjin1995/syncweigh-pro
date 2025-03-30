@@ -14,8 +14,12 @@ $site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+
 ?>
 
 <head>
@@ -154,6 +158,17 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="productSearch" class="form-label">Product</label>
+                                                            <select id="productSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
+                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -318,6 +333,43 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
+                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="transporter" name="transporter" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
+                                                                                                <option value="<?=$rowTransporter['transporter_code'] ?>" data-name="<?=$rowTransporter['name'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="vehicle" class="col-sm-4 col-form-label">Vehicle</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="vehicle" name="vehicle" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowVehicle=mysqli_fetch_assoc($vehicle)){ ?>
+                                                                                                <option value="<?=$rowVehicle['veh_number'] ?>"><?=$rowVehicle['veh_number'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="exDel" class="col-sm-4 col-form-label">EX-Quarry / Delivered</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="exDel" name="exDel" required>
+                                                                                            <option value="E">E</option>
+                                                                                            <option value="D">D</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
                                                                                     <label for="orderQty" class="col-sm-4 col-form-label">Order Quantity</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
@@ -344,6 +396,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                             <input type="hidden" class="form-control" id="destinationName" name="destinationName">
                                                                             <input type="hidden" class="form-control" id="productName" name="productName">
                                                                             <input type="hidden" class="form-control" id="plantName" name="plantName">
+                                                                            <input type="hidden" class="form-control" id="transporterName" name="transporterName">                                               
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -425,6 +478,8 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                                                                     <th>Customer Name</th>
                                                                     <th>Plant Code</th>
                                                                     <th>Plant Name</th>
+                                                                    <th>Product Code</th>
+                                                                    <th>Product Name</th>
                                                                     <th>Customer P/O No.</th>
                                                                     <th>S/O No.</th>
                                                                     <th>Order Date</th>
@@ -545,6 +600,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -563,6 +619,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                     site: siteI,
                     plant: plantI,
                     customer: customerNoI,
+                    product: productI,
                 } 
             },
             'columns': [
@@ -572,6 +629,8 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                 { data: 'customer_name' },
                 { data: 'plant_code' },
                 { data: 'plant_name' },
+                { data: 'product_code' },
+                { data: 'product_name' },
                 { data: 'order_no' },
                 { data: 'so_no' },
                 { data: 'order_date' },
@@ -620,6 +679,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -642,6 +702,7 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                         site: siteI,
                         plant: plantI,
                         customer: customerNoI,
+                        product: productI,
                     } 
                 },
                 'columns': [
@@ -651,6 +712,8 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                     { data: 'customer_name' },
                     { data: 'plant_code' },
                     { data: 'plant_name' },
+                    { data: 'product_code' },
+                    { data: 'product_name' },
                     { data: 'order_no' },
                     { data: 'so_no' },
                     { data: 'order_date' },
@@ -801,6 +864,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             $('#addModal').find('#destinationCode').val("").trigger('change');
             $('#addModal').find('#product').val("").trigger('change');
             $('#addModal').find('#plant').val("").trigger('change');
+            $('#addModal').find('#transporter').val("").trigger('change');
+            $('#addModal').find('#vehicle').val("").trigger('change');
+            $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#orderQty').val("");
             $('#addModal').find('#remarks').val("");
             
@@ -892,6 +958,10 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             $('#plantName').val($('#plant :selected').data('name'));
         });
 
+        $('#transporter').on('change', function(){
+            $('#transporterName').val($('#transporter :selected').data('name'));
+        });
+
     });
 
     function edit(id){
@@ -911,6 +981,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
                 $('#addModal').find('#product').val(obj.message.product_code).trigger('change');
                 $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
+                $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
+                $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
+                $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
 
@@ -1021,9 +1094,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 17 columns
+        // Ensure we handle cases where there may be less than 22 columns
         while (headers.length < 22) {
-            headers.push(''); // Adding empty headers to reach 17 columns
+            headers.push(''); // Adding empty headers to reach 22 columns
         }
 
         // Create HTML table headers
@@ -1038,9 +1111,9 @@ $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
             htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 17 cells in a row
+            // Ensure we handle cases where there may be less than 22 cells in a row
             while (rowData.length < 22) {
-                rowData.push(''); // Adding empty cells to reach 17 columns
+                rowData.push(''); // Adding empty cells to reach 22 columns
             }
 
             for (var j = 0; j < 22; j++) {
