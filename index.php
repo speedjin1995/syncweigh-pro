@@ -1503,7 +1503,10 @@ else{
                 } 
             },
             'columns': [
-                { data: 'transaction_id' },
+                { 
+                    data: 'transaction_id',
+                    class: 'transaction-column'
+                },                
                 { data: 'transaction_status' },
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },
@@ -1517,6 +1520,7 @@ else{
                 { data: 'nett_weight1' },
                 { 
                     data: 'id',
+                    class: 'action-button',
                     render: function (data, type, row) {
                         let buttons = `<div class="row g-1 d-flex">`;
 
@@ -1607,7 +1611,7 @@ else{
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -2219,7 +2223,10 @@ else{
                     } 
                 },
                 'columns': [
-                    { data: 'transaction_id' },
+                    { 
+                        data: 'transaction_id',
+                        class: 'transaction-column'
+                    },
                     { data: 'transaction_status' },
                     { data: 'customer' },
                     { data: 'lorry_plate_no1' },
@@ -2233,6 +2240,7 @@ else{
                     { data: 'nett_weight1' },
                     { 
                         data: 'id',
+                        class: 'action-button',
                         render: function (data, type, row) {
                             let buttons = `<div class="row g-1 d-flex">`;
 
