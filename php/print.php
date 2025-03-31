@@ -97,7 +97,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 
                 if($type == 'Sales' && $complete == 'Y'){
                     if($row['delivery_no'] == null || $row['delivery_no'] == ''){
-                        $deliverOrderNo = $plantCode.'/TEMP';
+                        $deliverOrderNo = $plantCode.'/DO';
                         $queryPlant = "SELECT do_no as curcount FROM Plant WHERE plant_code='$plantCode'";
         
                         if ($plant_stmt = $db->prepare($queryPlant)) {
@@ -250,7 +250,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </body></html>';
                 }
                 else{
-                    if($type == 'Sales'){
+                    if($type == 'Sales' || $type == 'Purchase'){
                         if ($prePrintStatus == 'N'){
                             $message = '<html>
                                             <head>
