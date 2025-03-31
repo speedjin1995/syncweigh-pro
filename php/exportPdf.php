@@ -514,7 +514,6 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">TRANSACTION <br>ID</th>
                                                 <th style="font-size: 9px;">TRANSACTION <br>DATE</th>
                                                 <th style="font-size: 9px;">TRANSACTION <br>STATUS</th>
-                                                <th style="font-size: 9px;">WEIGHT <br>TYPE</th>
                                                 <th style="font-size: 9px;">LORRY <br>NO.</th>';
                                                 
                                             if($_POST['status'] == 'Sales'){
@@ -530,7 +529,7 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">PRODUCT</th>
                                                 <th style="font-size: 9px;">DESTINATION <br>CODE</th>
                                                 <th style="font-size: 9px;">DESTINATION</th>
-                                                <th style="font-size: 9px;">EX-QUARRY / DELIVERED</th>
+                                                <th style="font-size: 9px;">EXQ/DEL</th>
                                                 <th style="font-size: 9px;">PO NO.</th>
                                                 <th style="font-size: 9px;">DO NO.</th>
                                                 <th style="font-size: 9px;">INCOMING <br>(MT)</th>
@@ -538,6 +537,7 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">NET <br>(MT)</th>
                                                 <th style="font-size: 9px;">IN TIME</th>
                                                 <th style="font-size: 9px;">OUT TIME</th>
+                                                <th style="font-size: 9px;">USER</th>
                                             </tr>
                                         </thead>
                                         <tbody>';
@@ -594,7 +594,6 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
                                                     <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
                                                     <td style="font-size: 8px;">' . $row['transaction_status'] . '</td>
-                                                    <td style="font-size: 8px;">' . $row['weight_type'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
                                                     
                                                     if($_POST['status'] == 'Sales'){
@@ -611,7 +610,7 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination'] . '</td>
-                                                    <td style="font-size: 8px;">' . $exDel . '</td>
+                                                    <td style="font-size: 8px; text-align: center;">' . $exDel . '</td>
                                                     <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
                                                     <td style="font-size: 8px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
@@ -619,6 +618,7 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . number_format($row['nett_weight1']/1000, 2) . '</td>
                                                     <td style="font-size: 8px;">' . $formattedGrossWeightDate . '</td>
                                                     <td style="font-size: 8px;">' . $formattedTareWeightDate . '</td>
+                                                    <td style="font-size: 8px; text-align: center;">' . $row['created_by'] . '</td>
                                                 </tr>';
                                         
                                                 // Calculate subtotals
@@ -745,7 +745,6 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">TRANSACTION <br>ID</th>
                                                 <th style="font-size: 9px;">TRANSACTION <br>DATE</th>
                                                 <th style="font-size: 9px;">TRANSACTION <br>STATUS</th>
-                                                <th style="font-size: 9px;">WEIGHT <br>TYPE</th>
                                                 <th style="font-size: 9px;">LORRY <br>NO.</th>';
                                                 
                                             if($_POST['status'] == 'Sales'){
@@ -761,7 +760,7 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">PRODUCT</th>
                                                 <th style="font-size: 9px;">DESTINATION <br>CODE</th>
                                                 <th style="font-size: 9px;">DESTINATION</th>
-                                                <th style="font-size: 9px;">EX-QUARRY / DELIVERED</th>
+                                                <th style="font-size: 9px;">EXQ/DEL</th>
                                                 <th style="font-size: 9px;">PO NO.</th>
                                                 <th style="font-size: 9px;">DO NO.</th>
                                                 <th style="font-size: 9px;">INCOMING <br>(MT)</th>
@@ -769,6 +768,7 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 9px;">NET <br>(MT)</th>
                                                 <th style="font-size: 9px;">IN TIME</th>
                                                 <th style="font-size: 9px;">OUT TIME</th>
+                                                <th style="font-size: 9px;">USER</th>
                                             </tr>
                                         </thead>
                                         <tbody>';
@@ -825,7 +825,6 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
                                                     <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
                                                     <td style="font-size: 8px;">' . $row['transaction_status'] . '</td>
-                                                    <td style="font-size: 8px;">' . $row['weight_type'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
                                                     
                                                     if($_POST['status'] == 'Sales'){
@@ -842,7 +841,7 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['destination'] . '</td>
-                                                    <td style="font-size: 8px;">' . $exDel . '</td>
+                                                    <td style="font-size: 8px; text-align: center;">' . $exDel . '</td>
                                                     <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
                                                     <td style="font-size: 8px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
@@ -850,6 +849,7 @@ if(isset($_POST["file"])){
                                                     <td style="font-size: 8px;">' . number_format($row['nett_weight1']/1000, 2) . '</td>
                                                     <td style="font-size: 8px;">' . $formattedGrossWeightDate . '</td>
                                                     <td style="font-size: 8px;">' . $formattedTareWeightDate . '</td>
+                                                    <td style="font-size: 8px; text-align: center;">' . $row['created_by'] . '</td>
                                                 </tr>';
                                         
                                                 // Calculate subtotals
