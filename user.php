@@ -203,7 +203,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <div class="row">
                                                     <label for="roles" class="col-sm-4 col-form-label">Role *</label>
                                                     <div class="col-sm-8">
-                                                        <select id="roles" name="roles" class="form-select">
+                                                        <select id="roles" name="roles" class="select2" required>
                                                             <option select="selected" value="">Please Select</option>
                                                             <?php while(mysqli_stmt_fetch($stmt2)){ ?>
                                                                 <option value="<?=$code ?>"><?=$name ?></option>
@@ -216,14 +216,14 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <div class="row">
                                                     <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
                                                     <div class="col-sm-8">
-                                                        <select id="plantId" name="plantId[]" class="select2" multiple="multiple">
+                                                        <select id="plantId" name="plantId[]" class="form-control" multiple="multiple">
                                                             <?php while(mysqli_stmt_fetch($stmt4)){ ?>
                                                                 <option value="<?=$pcode ?>"><?=$pname ?></option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
                                                 </div>
-                                            </div>                                            
+                                            </div>                                              
                                         </div>
                                     </div>
                                 </div>
@@ -279,13 +279,47 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
     <script>
     $(function () {
-        $('.select2').select2({
-            allowClear: true
-        });
-
         $('#selectAllCheckbox').on('change', function() {
             var checkboxes = $('#usersTable tbody input[type="checkbox"]');
             checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        // Initialize plantId elements in the modal
+        $('#addModal #plantId').select2({
+            allowClear: true,
+            multiple: true,
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        $("#plantId").on("select2:select change", function () {
+            $(".select2-selection__choice").css({
+                "background-color": "rgb(64, 81, 137)",
+                "color": "white"
+            });
+
+            $(".select2-selection__choice__remove").css({
+                "color": "white"
+            });
+        });
+
+
+        // Apply custom styling to Select2 elements in addModal
+        $('#addModal .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#addModal .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
         });
         
         table = $("#usersTable").DataTable({
@@ -337,6 +371,27 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
         });
         
         $('#submitMember').on('click', function(){
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
             if($('#memberForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/users.php', $('#memberForm').serialize(), function(data){
@@ -371,10 +426,18 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             $('#addModal').find('#name').val("");
             $('#addModal').find('#useremail').val("");
             $('#addModal').find('#roles').val("");
-            $('#addModal').find('#plantId').select2('destroy').val('').select2();
+            $('#addModal').find('#plantId').val('').trigger('change');
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
 
             $('#addModal').modal('show');
             
@@ -450,7 +513,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#name').val(obj.message.name);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
-                $('#addModal').find("select[name='plant[]']").val(obj.message.plant).trigger('change');
+                $("#addModal").find("#plantId").val(JSON.parse(obj.message.plant)).trigger("change");
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
