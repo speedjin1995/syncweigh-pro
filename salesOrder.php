@@ -1018,47 +1018,48 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter_name}</p>
                 <p><strong>VEHICLE NO:</strong> ${row.veh_number}</p>
                 <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
-                <p><strong>ORDER QUANTITY:</strong> ${row.order_quantity}</p>
-                <p><strong>BALANCE:</strong> ${row.balance}</p>
+                <p><strong>ORDER QUANTITY:</strong> ${row.order_quantity} KG</p>
+                <p><strong>BALANCE:</strong> ${row.balance} KG</p>
             </div>
-        </div>
-        <div class="row">
-            <table id="expandTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Transaction ID</th>
-                        <th>Product Code</th>
-                        <th>Product Name</th>
-                        <th>Delivery Order No</th>
-                        <th>Vehicle No</th>
-                        <th>Nett Weight</th>
-                        <th>Weighted By</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-        
-        if (row.weights.length > 0) {
-            for (var i = 0; i < row.weights.length; i++) {
-                var weights = row.weights;
+        </div>`;
 
-                returnString += `
-                    <tr>
-                        <td>${weights[i].transaction_id}</td>
-                        <td>${weights[i].product_code}</td>
-                        <td>${weights[i].product_name}</td>
-                        <td>${weights[i].delivery_no ?? ''}</td>
-                        <td>${weights[i].lorry_plate_no1}</td>
-                        <td>${weights[i].nett_weight1}</td>
-                        <td>${weights[i].created_by}</td>
-                    </tr>
-                `;
-            }
+        if (row.weights.length > 0) {
+            returnString += `<div class="row">
+                <table class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Product Code</th>
+                            <th>Product Name</th>
+                            <th>Delivery Order No</th>
+                            <th>Vehicle No</th>
+                            <th>Nett Weight</th>
+                            <th>Weighted By</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            
+                for (var i = 0; i < row.weights.length; i++) {
+                    var weights = row.weights;
+
+                    returnString += `
+                        <tr>
+                            <td>${weights[i].transaction_id}</td>
+                            <td>${weights[i].product_code}</td>
+                            <td>${weights[i].product_name}</td>
+                            <td>${weights[i].delivery_no}</td>
+                            <td>${weights[i].lorry_plate_no1}</td>
+                            <td>${weights[i].nett_weight1} KG</td>
+                            <td>${weights[i].created_by}</td>
+                        </tr>
+                    `;
+                }
+            returnString += `</tbody>
+                        </table>
+                    </div>`;
         }        
 
-        returnString += `</tbody>
-            </table>
-        </div>
-        `;
+        
         
         return returnString;
     }
