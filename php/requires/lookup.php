@@ -117,7 +117,7 @@ function searchDestinationCodeByName($value, $db) {
     $id = '0';
 
     if(isset($value)){
-        if ($select_stmt = $db->prepare("SELECT * FROM Destination WHERE destination_code=? AND status = '0'")) {
+        if ($select_stmt = $db->prepare("SELECT * FROM Destination WHERE name=? AND status = '0'")) {
             $select_stmt->bind_param('s', $value);
             $select_stmt->execute();
             $result = $select_stmt->get_result();

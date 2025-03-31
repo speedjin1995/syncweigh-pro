@@ -623,7 +623,10 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 } 
             },
             'columns': [
-                { data: 'company_code' },
+                { 
+                    data: 'company_code',
+                    class: 'company_column'
+                },
                 { data: 'company_name' },
                 { data: 'customer_code' },
                 { data: 'customer_name' },
@@ -638,6 +641,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 { data: 'modified_date' },
                 {
                     data: 'id',
+                    class: 'action-button',
                     render: function (data, type, row) {
                         let buttons = `
                             <div class="row g-1 d-flex">
@@ -706,7 +710,10 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     } 
                 },
                 'columns': [
-                    { data: 'company_code' },
+                    { 
+                        data: 'company_code',
+                        class: 'company_column'
+                    },
                     { data: 'company_name' },
                     { data: 'customer_code' },
                     { data: 'customer_name' },
@@ -721,6 +728,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     { data: 'modified_date' },
                     {
                         data: 'id',
+                        class: 'action-button',
                         render: function (data, type, row) {
                             let buttons = `
                                 <div class="row g-1 d-flex">
@@ -752,6 +760,31 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     }
                 ]
             });
+        });
+
+        // Add event listener for opening and closing details on row click
+        $('#weightTable tbody').on('click', 'tr', function (e) {
+            var tr = $(this); // The row that was clicked
+            var row = table.row(tr);
+
+            // Exclude specific td elements by checking the event target
+            if ($(e.target).closest('td').hasClass('company_column') || $(e.target).closest('td').hasClass('action-button')) {
+                return;
+            }
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                $.post('php/getSalesOrder.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
+                    var obj = JSON.parse(data);
+                    if (obj.status === 'success') {
+                        row.child(format(obj.message)).show();
+                        tr.addClass("shown");
+                    }
+                });
+            }
         });
 
         $('#submitSO').on('click', function(){
@@ -963,6 +996,72 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
         });
 
     });
+
+    function format (row) {
+        var returnString = `
+        <!-- Weighing Section -->
+        <div class="row">
+            <div class="col-6">
+                <p><strong>COMPANY:</strong> ${row.company_code} - ${row.company_name}</p>
+                <p><strong>CUSTOMER:</strong> ${row.customer_code} - ${row.customer_name}</p>
+                <p><strong>SITE:</strong> ${row.site_code} - ${row.site_name}</p>
+                <p><strong>AGENT:</strong> ${row.agent_code} - ${row.agent_name}</p>
+                <p><strong>DESTINATION:</strong> ${row.destination_code} - ${row.destination_name}</p>
+                <p><strong>PRODUCT:</strong> ${row.product_code} - ${row.product_name}</p>
+                <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
+                <p><strong>REMARKS:</strong> ${row.remarks}</p>
+            </div>
+            <div class="col-6">
+                <p><strong>ORDER DATE:</strong> ${row.order_date}</p>
+                <p><strong>CUSTOMER P/O No:</strong> ${row.order_no}</p>
+                <p><strong>S/O ORDER:</strong> ${row.so_no}</p>
+                <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter_name}</p>
+                <p><strong>VEHICLE NO:</strong> ${row.veh_number}</p>
+                <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
+                <p><strong>ORDER QUANTITY:</strong> ${row.order_quantity}</p>
+                <p><strong>BALANCE:</strong> ${row.balance}</p>
+            </div>
+        </div>
+        <div class="row">
+            <table id="expandTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Product Code</th>
+                        <th>Product Name</th>
+                        <th>Delivery Order No</th>
+                        <th>Vehicle No</th>
+                        <th>Nett Weight</th>
+                        <th>Weighted By</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        
+        if (row.weights.length > 0) {
+            for (var i = 0; i < row.weights.length; i++) {
+                var weights = row.weights;
+
+                returnString += `
+                    <tr>
+                        <td>${weights[i].transaction_id}</td>
+                        <td>${weights[i].product_code}</td>
+                        <td>${weights[i].product_name}</td>
+                        <td>${weights[i].delivery_no ?? ''}</td>
+                        <td>${weights[i].lorry_plate_no1}</td>
+                        <td>${weights[i].nett_weight1}</td>
+                        <td>${weights[i].created_by}</td>
+                    </tr>
+                `;
+            }
+        }        
+
+        returnString += `</tbody>
+            </table>
+        </div>
+        `;
+        
+        return returnString;
+    }
 
     function edit(id){
         $('#spinnerLoading').show();
