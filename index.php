@@ -55,16 +55,22 @@ if ($user != null && $user != ''){
 
 
 //$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$purchaseOrder = $db->query("SELECT * FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
+$salesOrder = $db->query("SELECT * FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
+$agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
+$site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
@@ -81,12 +87,6 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 else{
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
-
-
-$agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
-$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
-$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
-$site = $db->query("SELECT * FROM Site WHERE status = '0'");
 ?>
 
 <head>
@@ -189,18 +189,18 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Transaction Status</label>
-                                                            <select id="statusSearch" class="form-select">
+                                                            <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Local</option>
+                                                                <option value="Local">Public</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
@@ -217,7 +217,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
-                                                            <select id="invoiceNoSearch" class="form-select"  >
+                                                            <select id="invoiceNoSearch" class="form-select select2"  >
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
                                                                 <option value="Container">Container</option>
@@ -227,7 +227,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="batchNoSearch" class="form-label">Status</label>
-                                                            <select id="batchNoSearch" class="form-select">
+                                                            <select id="batchNoSearch" class="form-select select2">
                                                                 <option value="N" selected>Pending</option>
                                                                 <option value="Y">Complete</option>
                                                             </select>
@@ -236,7 +236,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="productSearch" class="form-select" >
+                                                            <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
@@ -247,7 +247,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3" id="rawMatSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Raw Material</label>
-                                                            <select id="rawMatSearch" class="form-select" >
+                                                            <select id="rawMatSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
                                                                     <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
@@ -258,7 +258,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                     <div class="col-3" id="plantSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Plant</label>
-                                                            <select id="plantSearch" class="form-select" >
+                                                            <select id="plantSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
@@ -337,7 +337,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Local</p>
+                                                    Public</p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -439,8 +439,23 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divPurchaseOrder">
                                                                                 <div class="row">
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder" placeholder="Purchase Order">
+                                                                                    <div class="col-sm-8" id="poSelect">
+                                                                                        <select class="form-select js-choice select2" id="purchaseOrder" name="purchaseOrder" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
+                                                                                                <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                        <input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;">
+                                                                                    </div>
+                                                                                    <div class="col-sm-8" id="soSelect">
+                                                                                        <select class="form-select js-choice select2" id="salesOrder" name="salesOrder" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                                                <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                        <input type="text" class="form-control" id="salesOrderEdit" name="salesOrderEdit" disabled style="display:none;">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -472,7 +487,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="weightType" name="weightType" class="form-select">
+                                                                                        <select id="weightType" name="weightType" class="form-select select2">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
                                                                                         </select>   
@@ -483,7 +498,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="customerType" class="col-sm-4 col-form-label">Customer Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="customerType" name="customerType" class="form-select">
+                                                                                        <select id="customerType" name="customerType" class="form-select select2">
                                                                                             <option>Cash</option>
                                                                                             <option selected>Normal</option>
                                                                                         </select>   
@@ -515,10 +530,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select">
+                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select select2">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Local</option>
+                                                                                            <option value="Local">Public</option>
                                                                                         </select>  
                                                                                     </div>
                                                                                 </div>
@@ -527,7 +542,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice" id="customerName" name="customerName" required>
+                                                                                        <select class="form-select js-choice select2" id="customerName" name="customerName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
                                                                                                 <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
@@ -540,7 +555,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="supplierName" name="supplierName" required>
+                                                                                        <select class="form-select select2" id="supplierName" name="supplierName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                 <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
@@ -588,7 +603,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row" id="productNameDisplay">
                                                                                     <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="productName" name="productName" required>
+                                                                                        <select class="form-select select2" id="productName" name="productName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
                                                                                                 <option 
@@ -608,7 +623,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row" id="rawMaterialDisplay" style="display:none;">
                                                                                     <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="rawMaterialName" name="rawMaterialName" required>
+                                                                                        <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
                                                                                                 <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
@@ -642,7 +657,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="transporter" name="transporter" required>
+                                                                                        <select class="form-select select2" id="transporter" name="transporter" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
                                                                                                 <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
@@ -668,7 +683,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="agent" name="agent" >
+                                                                                        <select class="form-select select2" id="agent" name="agent" >
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
                                                                                                 <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
@@ -681,7 +696,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="destination" name="destination" required>
+                                                                                        <select class="form-select select2" id="destination" name="destination" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
                                                                                                 <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
@@ -707,7 +722,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="indicatorId" class="col-sm-4 col-form-label">Indicator ID</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="indicatorId" name="indicatorId" class="form-select" >
+                                                                                        <select id="indicatorId" name="indicatorId" class="form-select select2" >
                                                                                             <option selected>ind12345</option>
                                                                                         </select>
                                                                                     </div>
@@ -760,7 +775,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="plant" name="plant" required>
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
@@ -800,7 +815,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="siteName" class="col-sm-4 col-form-label">Project</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="siteName" name="siteName">
+                                                                                        <select class="form-select select2" id="siteName" name="siteName">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
                                                                                                 <option value="<?=$rowSite['name'] ?>" data-code="<?=$rowSite['site_code'] ?>"><?=$rowSite['name'] ?></option>
@@ -844,13 +859,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                     <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
                                                                                     <div class="col-10 index-vehicle">
-                                                                                        <select class="form-select" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
+                                                                                        <select class="form-select select2" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                                                                                                 <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                    </div>
+                                                                                        <input type="text" class="form-control" id="vehiclePlateNo1Edit" name="vehiclePlateNo1Edit" hidden>
+                                                                                        </div>
                                                                                     <div class="invalid-feedback">
                                                                                         Please fill in the field.
                                                                                     </div>
@@ -927,7 +943,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                                     </div>
                                                                                     <input type="text" class="form-control" id="vehicleNoTxt2" name="vehicleNoTxt2" placeholder="Vehicle Plate No" style="display:none">
                                                                                     <div class="col-10 index-vehicle2">
-                                                                                        <select class="form-select" id="vehiclePlateNo2" name="vehiclePlateNo2">
+                                                                                        <select class="form-select select2" id="vehiclePlateNo2" name="vehiclePlateNo2">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowv2=mysqli_fetch_assoc($vehicles2)){ ?>
                                                                                                 <option value="<?=$rowv2['veh_number'] ?>" data-weight="<?=$rowv2['vehicle_weight'] ?>"><?=$rowv2['veh_number'] ?></option>
@@ -1128,6 +1144,61 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                         </div>
                                     </div>
 
+                                    <div class="modal fade" id="prePrintModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="prePrintForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Pre-print Sales Slip</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <label for="prePrint" class="col-sm-4 col-form-label">Pre-print Sales Slip</label>
+                                                            <div class="col-sm-8">
+                                                                <select id="prePrint" name="prePrint" class="form-select" required>
+                                                                    <option value="Y" selected>Yes</option>
+                                                                    <option value="N">No</option>
+                                                                </select>  
+                                                            </div>
+
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitPrePrint">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="modal fade" id="cancelModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="cancelForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Cancellation Reason</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <label>Cancellation Reason *</label>
+                                                                <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
+                                                            </div>
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="submitCancel">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!--div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="importModalScrollableTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                                             <div class="modal-content">
@@ -1166,7 +1237,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <a href="/template/Weight_Template.xlsx" download>
+                                                                <!--a href="/template/Weight_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                         Download Template 
@@ -1175,7 +1246,7 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                                                                 <button type="button" id="uploadExccl" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal">
                                                                     <i class="mdi mdi-file-excel align-middle me-1"></i>
                                                                     Import Orders
-                                                                </button>
+                                                                </button-->
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Weight
@@ -1349,6 +1420,43 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        // Initialize all Select2 elements in the search bar
+        $('#collapseSearch .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+        });
+
+        // Apply custom styling to Select2 elements in search bar
+        $('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        // Apply custom styling to Select2 elements in addModal
+        $('#addModal .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#addModal .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
         //Date picker
         <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
             echo '$("#fromDateSearch").flatpickr({
@@ -1364,7 +1472,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             });';
         }
         ?>
-        
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
@@ -1443,24 +1550,79 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 { 
                     data: 'id',
                     render: function (data, type, row) {
-                        let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                        '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                        let buttons = `<div class="row g-1 d-flex">`;
+
+                        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
+                            }
+                        }else {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-weight-hanging"></i>
+                                    </button>
+                                </div>`;
+                            }
+                        }
 
                         if (row.is_approved == 'Y') {
-                            dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                    <i class="fa-solid fa-print"></i>
+                                </button>
+                            </div>`;
                         }
 
                         if (row.is_approved == 'N') {
-                            dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Approve" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </div>`;
                         }
 
                         if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>`;
                         }
+                            
+                        buttons += `</div>`;
 
-                        dropdownMenu += '</ul></div>';
-                        return dropdownMenu;
+                        return buttons;
+
+                        // let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                        // if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                        //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                        // }
+
+                        // if (row.is_approved == 'Y') {
+                        //     dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                        // }
+
+                        // if (row.is_approved == 'N') {
+                        //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                        // }
+
+                        // if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                        //     dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        // }
+
+                        // dropdownMenu += '</ul></div>';
+                        // return dropdownMenu;
                     }
                 }
             ],
@@ -1469,6 +1631,31 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
             }   
+        });
+
+        // Add event listener for opening and closing details on row click
+        $('#weightTable tbody').on('click', 'tr', function (e) {
+            var tr = $(this); // The row that was clicked
+            var row = table.row(tr);
+
+            // Exclude specific td elements by checking the event target
+            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
+                return;
+            }
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
+                    var obj = JSON.parse(data);
+                    if (obj.status === 'success') {
+                        row.child(format(obj.message)).show();
+                        tr.addClass("shown");
+                    }
+                });
+            }
         });
 
         $('#submitWeight').on('click', function(){
@@ -1522,6 +1709,30 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
 
             pass = true;
+
+            var isValid = true;
+
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -1890,6 +2101,66 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             });
         });
 
+        $('#submitPrePrint').on('click', function(){
+            if($('#prePrintForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#prePrintModal').find('#id').val();
+                var prePrintStatus = $('#prePrintModal').find('#prePrint').val();
+
+                $.post('php/print.php', {userID: id, file: 'weight', prePrint: prePrintStatus}, function(data){
+                    var obj = JSON.parse(data);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        });
+
+        $('#submitCancel').on('click', function(){
+            if($('#cancelForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#cancelModal').find('#id').val();
+                $.post('php/deleteWeight.php', $('#cancelForm').serialize(), function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        $('#spinnerLoading').hide();
+                        $('#cancelModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        });
+
         $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
             if(data == "true"){
                 $('#indicatorConnected').addClass('bg-primary');
@@ -1995,24 +2266,78 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     { 
                         data: 'id',
                         render: function (data, type, row) {
-                            let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                            '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                            let buttons = `<div class="row g-1 d-flex">`;
+
+                            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>`;
+                                }
+                            }else {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-weight-hanging"></i>
+                                        </button>
+                                    </div>`;
+                                }
+                            }
 
                             if (row.is_approved == 'Y') {
-                                dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>`;
                             }
 
                             if (row.is_approved == 'N') {
-                                dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Approve" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                </div>`;
                             }
 
                             if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                                dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
                             }
+                                
+                            buttons += `</div>`;
 
-                            dropdownMenu += '</ul></div>';
-                            return dropdownMenu;
+                            return buttons;
+                            // let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
+
+                            // if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER') {
+                            //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
+                            // }
+
+                            // if (row.is_approved == 'Y') {
+                            //     dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
+                            // }
+
+                            // if (row.is_approved == 'N') {
+                            //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
+                            // }
+
+                            // if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                            //     dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            // }
+
+                            // dropdownMenu += '</ul></div>';
+                            // return dropdownMenu;
                         }
                 }
                 ],
@@ -2025,41 +2350,46 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
 
         $('#addWeight').on('click', function(){
+            // Show Capture Buttons When Add New
+            $('#addModal').find('#grossCapture').show();
+            $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
-            $('#addModal').find('#vehiclePlateNo1').val("");
-            $('#addModal').find('#vehiclePlateNo2').val("");
+            $('#addModal').find('#vehiclePlateNo1').val("").trigger('change');
+            $('#addModal').find('#vehiclePlateNo2').val("").trigger('change');
             $('#addModal').find('#supplierWeight').val("");
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
-            $('#addModal').find('#customerName').val("");
+            $('#addModal').find('#customerName').val("").trigger('change');
             $('#addModal').find('#supplierCode').val("");
-            $('#addModal').find('#supplierName').val("");
+            $('#addModal').find('#supplierName').val("").trigger('change');
             $('#addModal').find('#productCode').val("");
-            $('#addModal').find('#productName').val("");
+            $('#addModal').find('#productName').val("").trigger('change');
             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
             $('#addModal').find('#rawMaterialCode').val("");
-            $('#addModal').find('#rawMaterialName').val("");
+            $('#addModal').find('#rawMaterialName').val("").trigger('change');
             $('#addModal').find('#siteCode').val("");
-            $('#addModal').find('#siteName').val("");
+            $('#addModal').find('#siteName').val("").trigger('change');
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
-            $('#addModal').find('#purchaseOrder').val("");
+            $('#addModal').find('#purchaseOrder').val("").trigger('change');
+            $('#addModal').find('#salesOrder').val("").trigger('change');
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#transporterCode').val("");
-            $('#addModal').find('#transporter').val("");
+            $('#addModal').find('#transporter').val("").trigger('change');
             $('#addModal').find('#destinationCode').val("");
-            $('#addModal').find('#agent').val("");
+            $('#addModal').find('#agent').val("").trigger('change');
             $('#addModal').find('#agentCode').val("");
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
-            $('#addModal').find('#destination').val("");
+            $('#addModal').find('#destination').val("").trigger('change');
             $('#addModal').find('#otherRemarks').val("");
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             $('#addModal').find('#grossIncomingDate').val("");
             $('#addModal').find('#tareOutgoing').val("");
@@ -2097,6 +2427,22 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
+
+            // Show select and hide input readonly
+            $('#addModal').find('#salesOrderEdit').val("").hide();
+            $('#addModal').find('#purchaseOrderEdit').val("").hide();
+            $('#addModal').find('#salesOrder').next('.select2-container').show();
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
 
             $('#addModal').modal('show');
             
@@ -2184,10 +2530,10 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
         });
 
-        $('#manualVehicle').on('click', function(){
+        $('#manualVehicle').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
-                $('#vehiclePlateNo1').val('-');
+                $('#vehiclePlateNo1').val('-').trigger('change');
                 $('.index-vehicle').hide();
                 $('#vehicleNoTxt').show();
             }
@@ -2203,6 +2549,66 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             var x = $('#vehicleNoTxt').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
+
+            var exDel = $('input[name="exDel"]:checked').val();
+            if (exDel == 'true'){
+                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+                $('#addModal').find('#transporterCode').val('T01');
+                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var customerName = obj.message.customer_name;
+                        var customerCode = obj.message.customer_code;
+
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        $('#addModal').find('#customerCode').val(customerCode);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehicleNoTxt').val('');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }else{
+                $('#addModal').find('#customerName').val('').trigger('change');
+                $('#addModal').find('#customerCode').val('');
+
+                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var transporterName = obj.message.transporter_name;
+                        var transporterCode = obj.message.transporter_code;
+
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                        $('#addModal').find('#transporterCode').val(transporterCode);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehicleNoTxt').val('');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
         });
 
         $('#vehiclePlateNo1').on('change', function(){
@@ -2218,26 +2624,68 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }*/
 
             var vehicleNo1 = $(this).val();
-            $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
-                var obj = JSON.parse(data);
+            var vehicleNo1Edit = $('#vehiclePlateNo1Edit').val();
+            var exDel = $('input[name="exDel"]:checked').val();
+            if (vehicleNo1Edit == 'EDIT'){
+                return;
+            }else if (exDel == 'true'){
+                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+                $('#addModal').find('#transporterCode').val('T01');
+                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
+                    var obj = JSON.parse(data);
 
-                if (obj.status == 'success'){
-                    var transporterName = obj.message.transporter_name;
-                    var transporterCode = obj.message.transporter_code;
+                    if (obj.status == 'success'){
+                        var customerName = obj.message.customer_name;
+                        var customerCode = obj.message.customer_code;
 
-                    $('#addModal').find('#transporter').val(transporterName);
-                }
-                else if(obj.status === 'failed'){
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                }
-                else{
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                }
-            });
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        $('#addModal').find('#customerCode').val(customerCode);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehiclePlateNo1').val('').trigger('change');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }else{
+                $('#addModal').find('#customerName').val('').trigger('change');
+                $('#addModal').find('#customerCode').val('');
+
+                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var transporterName = obj.message.transporter_name;
+                        var transporterCode = obj.message.transporter_code;
+
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                        $('#addModal').find('#transporterCode').val(transporterCode);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehiclePlateNo1').val('').trigger('change');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
         });
 
         $('#vehiclePlateNo2').on('change', function(){
@@ -2454,10 +2902,14 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 ?>
                 
 
-                if ($(this).val() == "Purchase" || $(this).val() == "Purchase"){
+                if ($(this).val() == "Purchase"){
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
-                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
+                    // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
                     
+                    //Hide SO Select
+                    $('#divPurchaseOrder').find('#soSelect').hide();
+                    $('#divPurchaseOrder').find('#poSelect').show();
+
                     // Hide Pricing Fields
                     $('#unitPriceDisplay').hide();
                     $('#subTotalPriceDisplay').hide();
@@ -2465,7 +2917,11 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#totalPriceDisplay').hide();
                 }else{
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
-                    $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                    // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                    //Hide PO Select
+                    $('#divPurchaseOrder').find('#soSelect').show();
+                    $('#divPurchaseOrder').find('#poSelect').hide();
 
                     if (customerType == 'Cash'){
                         $('#unitPriceDisplay').show();
@@ -2491,7 +2947,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#rawMaterialDisplay').hide();
                 $('#productNameDisplay').show();
                 $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
-                $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                //Hide PO Select
+                $('#divPurchaseOrder').find('#soSelect').show();
+                $('#divPurchaseOrder').find('#poSelect').hide();
+
                 <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').hide();";
                 }
@@ -2566,11 +3027,52 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
 
         $('input[name="exDel"]').change(function() {
-            var selected = $(this).val();
-            if (selected == 'true'){
-                $("#transporter").val('Own Transportation').trigger('change');
+            var vehicleNo1 = $('#addModal').find('#vehiclePlateNo1').val();
+            var exDel = $('input[name="exDel"]:checked').val();
+            if (exDel == 'true'){
+                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+                $('#addModal').find('#transporterCode').val('T01');
+                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function(data){
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        var customerName = obj.message.customer_name;
+                        var customerCode = obj.message.customer_code;
+
+                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        $('#addModal').find('#customerCode').val(customerCode);
+                    }   
+                    else if(obj.status === 'failed'){
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
             }else{
-                $("#transporter").val('').trigger('change');
+                $('#addModal').find('#customerName').val('').trigger('change');
+                $('#addModal').find('#customerCode').val('');
+
+                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var transporterName = obj.message.transporter_name;
+                        var transporterCode = obj.message.transporter_code;
+
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                        $('#addModal').find('#transporterCode').val(transporterCode);
+                    }
+                    else if(obj.status === 'failed'){
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
             }
         });
 
@@ -2600,47 +3102,55 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 var obj = JSON.parse(data);
 
                 if (obj.status == 'success'){
-                    var customerName = obj.message.customer_name;
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
+                    var plantName = obj.message.plant_name;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
-                    var finalWeight = obj.message.final_weight;
-                    var previousRecordsTag = obj.message.previousRecordsTag;
+                    var balance = obj.message.balance;
+                    // var finalWeight = obj.message.final_weight;
+                    // var previousRecordsTag = obj.message.previousRecordsTag;
 
-                    $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+                    // Change Details
+                    $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                    $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    $('#addModal').find('#agent').val(agentName).trigger('change');
+                    $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                    $('#addModal').find('#plant').val(plantName).trigger('change');
+                    $('#addModal').find('#supplierWeight').val(orderSupplierWeight)
+                    $('#addModal').find('#balance').val(balance);
+                    // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
 
-                    if (previousRecordsTag){
-                        $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        $('#addModal').find('#productName').val(productName).trigger('change');
-                        $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+                    // if (previousRecordsTag){
+                    //     $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
 
-                        if (type == 'Purchase'){
-                            $('#addModal').find('#supplierWeight').val(orderSupplierWeight);
-                        }else{
-                            $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                        }
+                    //     // Hide or show insufficient balance
+                    //     if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }else{
+                    //     var weight = 0;
+                    //     if (type == 'Purchase'){
+                    //         weight = $('#addModal').find('#supplierWeight').val();
+                    //     }else{
+                    //         weight = $('#addModal').find('#orderWeight').val();
+                    //     }
 
-                        // Hide or show insufficient balance
-                        if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
-                    }else{
-                        var weight = 0;
-                        if (type == 'Purchase'){
-                            weight = $('#addModal').find('#supplierWeight').val();
-                        }else{
-                            weight = $('#addModal').find('#orderWeight').val();
-                        }
+                    //     $('#addModal').find('#balance').val(weight);
+                    //     // Hide or show insufficient balance
+                    //     if (weight <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }
 
-                        $('#addModal').find('#balance').val(weight);
-                        // Hide or show insufficient balance
-                        if (weight <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
-                    }
+                    $('#addModal').trigger('orderLoaded');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
@@ -2653,7 +3163,82 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $("#failBtn").click();
                 }
             });
+        });
 
+        $('#salesOrder').on('change', function (){
+            var salesOrder = $(this).val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            $.post('php/getOrderSupplier.php', {code: salesOrder, type: type}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
+                    var productName = obj.message.product_name;
+                    var plantName = obj.message.plant_name;
+                    var orderSupplierWeight = obj.message.order_supplier_weight;
+                    var balance = obj.message.balance;
+                    // var finalWeight = obj.message.final_weight;
+                    // var previousRecordsTag = obj.message.previousRecordsTag;
+
+                    $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                    $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    $('#addModal').find('#agent').val(agentName).trigger('change');
+                    $('#addModal').find('#productName').val(productName).trigger('change');
+                    $('#addModal').find('#plant').val(plantName).trigger('change');
+                    $('#addModal').find('#orderWeight').val(orderSupplierWeight);
+                    $('#addModal').find('#balance').val(balance);
+                    // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
+
+                    if (parseFloat(balance) <= 0) {
+                        $('#addModal').find('#insufficientBalDisplay').hide();
+                    } else {
+                        $('#addModal').find('#insufficientBalDisplay').show();
+                    }
+
+
+                    // if (previousRecordsTag){
+                    //     // $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
+
+                    //     // Hide or show insufficient balance
+                    //     if (parseFloat(balance) <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }else{
+                    //     var weight = 0;
+                    //     if (type == 'Purchase'){
+                    //         weight = $('#addModal').find('#supplierWeight').val();
+                    //     }else{
+                    //         weight = $('#addModal').find('#orderWeight').val();
+                    //     }
+
+                    //     $('#addModal').find('#balance').val(weight);
+                    //     // Hide or show insufficient balance
+                    //     if (weight <= 0) {
+                    //         $('#addModal').find('#insufficientBalDisplay').hide();
+                    //     } else {
+                    //         $('#addModal').find('#insufficientBalDisplay').show();
+                    //     }
+                    // }
+                    
+                    $('#addModal').trigger('orderLoaded');
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
         });
 
         <?php
@@ -2668,6 +3253,65 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
             }
         ?>
     });
+
+    function format (row) {
+        var returnString = `
+        <!-- Weighing Section -->
+        <div class="row">
+            <div class="col-2">
+                <p><strong>${row.name}</strong></p>
+                <p>${row.address_line_1}</p>
+                <p>${row.address_line_2}</p>
+                <p>${row.address_line_3}</p>
+                <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
+            </div>
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-3">
+                        <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
+                        <p><strong>DESTINATION NAME:</strong> ${row.destination_name}</p>
+                        <p><strong>SITE NAME:</strong> ${row.site_name}</p>
+                        <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
+
+                    if (row.transaction_status == 'Purchase'){
+                        returnString += `<p><strong>RAW MATERIAL NAME:</strong> ${row.product_rawmat_name}</p>`;
+                    }else{
+                        returnString += `<p><strong>PRODUCT NAME:</strong> ${row.product_rawmat_name}</p>`;
+                    }
+
+                    returnString += `</div>
+                    <div class="col-3">
+                        <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
+                        <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                        <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                        <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p> `;
+
+                    if (row.transaction_status == 'Purchase'){
+                        returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
+                    }else{
+                        returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
+                    }
+                    
+                    returnString += `</div>
+                    <div class="col-3">
+                        <p><strong>CREATED DATE:</strong> ${row.created_date}</p>
+                        <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
+                        <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
+                    </div>
+                    <div class="col-3">
+                        <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
+                        <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
+                        <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
+                        <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
+                        <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        
+        return returnString;
+    }
+
 
     function displayPreview(data) {
         // Parse the Excel data
@@ -2734,6 +3378,17 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
+                if(obj.message.is_complete == 'Y'){
+                    // Hide Capture Button When Edit
+                    $('#addModal').find('#grossCapture').hide();
+                    $('#addModal').find('#tareCapture').hide();
+                }
+                else{
+                    // Show Capture Button When Edit
+                    $('#addModal').find('#grossCapture').show();
+                    $('#addModal').find('#tareCapture').show();
+                }
+
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
@@ -2744,16 +3399,12 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').show();
-                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
-                    $('#addModal').find('#orderWeight').val("");
                     $('#divSupplierName').show();
                     $('#divOrderWeight').hide();
                     $('#divCustomerName').hide();
                 }
                 else{
                     $('#divOrderWeight').show();
-                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
-                    $('#addModal').find('#supplierWeight').val("");
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').hide();
                     $('#divSupplierName').hide();
@@ -2768,7 +3419,8 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#vehicleNoTxt').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
+                    $('#addModal').find('#vehiclePlateNo1Edit').val('EDIT');
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                     $('#manualVehicle').val(0);
                     $('#manualVehicle').prop("checked", false);
                     $('.index-vehicle').show();
@@ -2790,34 +3442,26 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                     $('#vehicleNoTxt2').hide();
                 }
                 
-                $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                $('#addModal').find('#customerName').val(obj.message.customer_name);
-                $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
                 if (obj.message.ex_del == 'EX'){
                     $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-                $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
-                $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name);
-                $('#addModal').find('#siteCode').val(obj.message.site_code);
-                $('#addModal').find('#siteName').val(obj.message.site_name);
+
+                if (obj.message.transaction_status == 'Purchase'){
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                }else{
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                }
+                
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
-                $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
-                $('#addModal').find('#transporter').val(obj.message.transporter);
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                $('#addModal').find('#agent').val(obj.message.agent_name);
-                $('#addModal').find('#agentCode').val(obj.message.agent_code);
-                $('#addModal').find('#plant').val(obj.message.plant_name);
-                $('#addModal').find('#plantCode').val(obj.message.plant_code);
-                $('#addModal').find('#destination').val(obj.message.destination);
+                $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
-                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1); console.lo
+                $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
@@ -2844,7 +3488,6 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
-                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#subTotalPrice').val(obj.message.sub_total);
@@ -2859,6 +3502,48 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+
+                // Load these field after PO/SO is loaded
+                $('#addModal').on('orderLoaded', function() {
+                    $('#addModal').find('#customerCode').val(obj.message.customer_code);
+                    $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
+                    $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
+                    $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change')
+                    $('#addModal').find('#siteCode').val(obj.message.site_code);
+                    $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
+                    $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
+                    $('#addModal').find('#agentCode').val(obj.message.agent_code);
+                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                    $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
+                    $('#addModal').find('#productCode').val(obj.message.product_code);
+                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
+                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
+                    $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                    $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
+                    $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                    $('#addModal').find('#plantCode').val(obj.message.plant_code);
+
+                    // Hide select and show input readonly
+                    if (obj.message.transaction_status == 'Purchase'){
+                        $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+                        $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    }else{
+                        $('#addModal').find('#salesOrder').next('.select2-container').hide();
+                        $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    }
+                });
+
+                // Remove Validation Error Message
+                $('#addModal .is-invalid').removeClass('is-invalid');
+
+                $('#addModal .select2[required]').each(function () {
+                    var select2Field = $(this);
+                    var select2Container = select2Field.next('.select2-container');
+                    
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                });
 
                 $('#addModal').modal('show');
             
@@ -2928,54 +3613,94 @@ $site = $db->query("SELECT * FROM Site WHERE status = '0'");
         });
     }
 
-    function deactivate(id){
-        $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+    function deactivate(id) {
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $('#cancelModal').find('#id').val(id);
+            $('#cancelModal').modal('show');
+
+            $('#cancelForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }
     }
 
-    function print(id) {
-        $('#prePrintModal').find('#prePrint').val("");
+    // function deactivate(id){
         
-        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
-            var obj = JSON.parse(data);
+    //     $('#spinnerLoading').show();
+    //     $.post('php/deleteWeight.php', {userID: id}, function(data){
+    //         var obj = JSON.parse(data);
+            
+    //         if(obj.status === 'success'){
+    //             table.ajax.reload();
+    //             $('#spinnerLoading').hide();
+    //             $("#successBtn").attr('data-toast-text', obj.message);
+    //             $("#successBtn").click();
+    //         }
+    //         else if(obj.status === 'failed'){
+    //             $('#spinnerLoading').hide();
+    //             $("#failBtn").attr('data-toast-text', obj.message );
+    //             $("#failBtn").click();
+    //         }
+    //         else{
+    //             $('#spinnerLoading').hide();
+    //             $("#failBtn").attr('data-toast-text', obj.message );
+    //             $("#failBtn").click();
+    //         }
+    //     });
+    // }
 
-            if(obj.status === 'success'){
-                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                printWindow.document.write(obj.message);
-                printWindow.document.close();
-                setTimeout(function(){
-                    printWindow.print();
-                    printWindow.close();
-                }, 500);
-            }
-            else if(obj.status === 'failed'){
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $("#failBtn").attr('data-toast-text', "Something wrong when print");
-                $("#failBtn").click();
-            }
-        });
+    function print(id, transactionStatus) {
+        if (transactionStatus == "Sales"){
+            $('#prePrintModal').find('#id').val(id);
+            $('#prePrintModal').find('#prePrint').val("");
+            $("#prePrintModal").modal("show");
+
+            $('#prePrintForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }else{
+            $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+                var obj = JSON.parse(data);
+
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                }
+                else if(obj.status === 'failed'){
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                    $("#failBtn").click();
+                }
+            });
+        }
     }
     </script>
 </body>

@@ -67,6 +67,15 @@ if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != 
     }
 }
 
+if(isset($_GET['supplier']) && $_GET['supplier'] != null && $_GET['supplier'] != '' && $_GET['supplier'] != '-'){
+    if($_GET["file"] == 'weight'){
+        $searchQuery .= " and Weight.supplier_code = '".$_POST['supplier']."'";
+    }
+    else{
+        $searchQuery .= " and count.supplier_code = '".$_POST['supplier']."'";
+    }
+}
+
 if($_GET['vehicle'] != null && $_GET['vehicle'] != '' && $_GET['vehicle'] != '-'){
     if($_GET["file"] == 'weight'){
         $searchQuery .= " and Weight.lorry_plate_no1 = '".$_GET['vehicle']."'";
@@ -94,10 +103,29 @@ if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'
     }
 }
 
+if(isset($_GET['rawMat']) && $_GET['rawMat'] != null && $_GET['rawMat'] != '' && $_GET['rawMat'] != '-'){
+    if($_GET["file"] == 'weight'){
+        $searchQuery .= " and Weight.raw_mat_code = '".$_GET['rawMat']."'";
+    }
+    else{
+        $searchQuery .= " and count.raw_mat_code = '".$_GET['rawMat']."'";
+    }
+}
+
+if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
+    if($_GET["file"] == 'weight'){
+        $searchQuery .= " and Weight.plant_code = '".$_GET['plant']."'";
+    }
+    else{
+        $searchQuery .= " and count.raw_mat_code = '".$_GET['plant']."'";
+    }
+}
+
 // Column names 
 $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
-    'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'PO NO.', 
-    'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 'NET WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
+    'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
+    'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 'NET WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+    'PLANT NAME', 'WEIGHTED BY'); 
 
 // Display column names as first row 
 $excelData = implode("\t", array_values($fields)) . "\n";
@@ -118,19 +146,36 @@ else{
 if($query->num_rows > 0){ 
     // Output each row of the data 
     while($row = $query->fetch_assoc()){ 
+        $lineData = []; // Ensure it starts as an empty array each iteration
+
         if($_GET["file"] == 'weight'){
-            $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
-            $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['destination_code'], 
-            $row['destination'], $row['purchase_order'], $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], $row['nett_weight1'], $row['gross_weight1_date'], 
-            $row['tare_weight1_date'], $row['manual_weight'], $row['created_by']);
-        }else{
+            $exDel = '';
+            
+            if ($row['ex_del'] == 'EX'){
+                $exDel = 'E';
+            }else{
+                $exDel = 'D';
+            }
+            
+            if($row['product_code'] != '501A-011'){
+                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
+                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['destination_code'], 
+                $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], 
+                $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], 
+                $row['created_by']);
+            }
+        }
+        else{
             $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],
             $row['totalPCS'], $row['moq'], $row['unitPrice'], $row['totalPrice'], $row['veh_number'], $row['lots_no'], $row['batchNo'], $row['invoiceNo']
             , $row['deliveryNo'], $row['purchaseNo'], $row['customer_name'], $row['packages'], $row['dateTime'], $row['remark'], $row['status'], $deleted);
         }
 
-        array_walk($lineData, 'filterData'); 
-        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+        # Added checking to fix duplicated issue
+        if (!empty($lineData)) {
+            array_walk($lineData, 'filterData'); 
+            $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+        }
     } 
 }else{ 
     $excelData .= 'No records found...'. "\n"; 

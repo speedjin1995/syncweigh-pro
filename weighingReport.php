@@ -9,12 +9,14 @@ $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
 
 $plantName = '-';
 
@@ -141,17 +143,28 @@ else{
                                                             <select id="statusSearch" class="form-select"  >
                                                                 <option value="Sales" selected>Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Local</option>
+                                                                <option value="Local">Public</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
                                                             <select id="customerNoSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="supplierSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="supplierSearch" class="form-label">Supplier No</label>
+                                                            <select id="supplierSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
+                                                                    <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -181,14 +194,25 @@ else{
                                                                 <option value="Normal">Normal</option>
                                                             </select>
                                                         </div>
-                                                    </div><!--end col-->                                               
-                                                    <div class="col-3">
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="productSearch" class="form-label">Product</label>
+                                                            <label for="ForminputState" class="form-label">Product</label>
                                                             <select id="productSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="rawMatSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="ForminputState" class="form-label">Raw Material</label>
+                                                            <select id="rawMatSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -286,7 +310,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Local</p>
+                                                    Public</p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -400,7 +424,8 @@ else{
                                                             <!-- <option value="CUSTOMER">Customer Report</option> -->
                                                             <option value="SUMMARY">Summary Report</option>
                                                             <option value="PRODUCT">Product Report</option>
-                                                            <option value="S&P">Sales and Purchase Report</option>
+                                                            <option value="S&P">Sales and Purchase Report - Product</option>
+                                                            <option value="S&PC">Sales and Purchase Report - Customer</option>
                                                         </select>   
                                                     </div>
                                                 </div>
@@ -409,10 +434,12 @@ else{
                                             <input type="hidden" class="form-control" id="toDate" name="toDate">                                   
                                             <input type="hidden" class="form-control" id="status" name="status">                                   
                                             <input type="hidden" class="form-control" id="customer" name="customer">     
+                                            <input type="hidden" class="form-control" id="supplier" name="supplier"> 
                                             <input type="hidden" class="form-control" id="vehicle" name="vehicle">     
                                             <input type="hidden" class="form-control" id="weighingType" name="weighingType">     
                                             <input type="hidden" class="form-control" id="customerType" name="customerType">     
-                                            <input type="hidden" class="form-control" id="product" name="product">     
+                                            <input type="hidden" class="form-control" id="product" name="product">  
+                                            <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
                                             <input type="hidden" class="form-control" id="destination" name="destination">     
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
                                             <input type="hidden" class="form-control" id="file" name="file">     
@@ -489,10 +516,11 @@ else{
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-        // var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
         var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
@@ -510,12 +538,13 @@ else{
                     toDate: toDateI,
                     status: statusI,
                     customer: customerNoI,
+                    supplier: supplierNoI,
                     vehicle: vehicleNoI,
-                    // invoice: invoiceNoI,
                     customerType: customerTypeI,
                     product: productI,
+                    rawMaterial: rawMatI,
                     destination: destinationI,
-                    plant: plantI,
+                    plant: plantI
                 } 
             },
             'columns': [
@@ -553,10 +582,11 @@ else{
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            // var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
@@ -578,12 +608,13 @@ else{
                         toDate: toDateI,
                         status: statusI,
                         customer: customerNoI,
+                        supplier: supplierNoI,
                         vehicle: vehicleNoI,
-                        // invoice: invoiceNoI,
                         customerType: customerTypeI,
                         product: productI,
+                        rawMaterial: rawMatI,
                         destination: destinationI,
-                        plant: plantI,
+                        plant: plantI
                     } 
                 },
                 'columns': [
@@ -624,10 +655,11 @@ else{
                     var toDateI = $('#toDateSearch').val();
                     var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
                     var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+                    var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
                     var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-                    // var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
                     var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
                     var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+                    var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
@@ -635,10 +667,11 @@ else{
                     $('#exportPdfForm').find('#toDate').val(toDateI);
                     $('#exportPdfForm').find('#status').val(statusI);
                     $('#exportPdfForm').find('#customer').val(customerNoI);
+                    $('#exportPdfForm').find('#supplier').val(supplierNoI);
                     $('#exportPdfForm').find('#vehicle').val(vehicleNoI);
-                    // $('#exportPdfForm').find('#weighingType').val();
                     $('#exportPdfForm').find('#customerType').val(customerTypeI);
                     $('#exportPdfForm').find('#product').val(productI);
+                    $('#exportPdfForm').find('#rawMat').val(rawMatI);
                     $('#exportPdfForm').find('#destination').val(destinationI);
                     $('#exportPdfForm').find('#plant').val(plantI);
                     $('#exportPdfForm').find('#file').val('weight');
@@ -694,13 +727,34 @@ else{
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             
             window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
-            "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
-            "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
+            "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+            "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
+            "&destination="+destinationI+"&plant="+plantI);
+        });
+
+        $('#statusSearch').on('change', function(){
+            var status = $(this).val();
+
+            if (status == 'Purchase' || status == 'Local'){
+                $('#productSearchDisplay').hide();
+                $('#rawMatSearchDisplay').show();
+                $('#customerSearchDisplay').hide();
+                $('#supplierSearchDisplay').show();
+            }else{
+                $('#productSearchDisplay').show();
+                $('#rawMatSearchDisplay').hide();
+                $('#customerSearchDisplay').show();
+                $('#supplierSearchDisplay').hide();
+            }
         });
     });
 

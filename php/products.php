@@ -80,52 +80,54 @@ if (isset($_POST['productCode'])) {
             }
             else{
                 # Product_RawMat 
-                $no = $_POST['no'];
-                $productRawMatId = $_POST['productRawMatId'];
-                $rawMats =  $_POST['rawMats'];
-                $rawMatWeight = $_POST['rawMatWeight'];
-                $deleteStatus = 1;
-                if(isset($no) && $no != null && count($no) > 0){
-                    # Delete all existing product rawmat records tied to the product id then reinsert
-                    if ($delete_stmt = $db->prepare("UPDATE Product_RawMat SET status=? WHERE product_id=?")){
-                        $delete_stmt->bind_param('ss', $deleteStatus, $productId);
-
-                        // Execute the prepared query.
-                        if (! $delete_stmt->execute()) {
-                            echo json_encode(
-                                array(
-                                    "status"=> "failed", 
-                                    "message"=> $delete_stmt->error
-                                )
-                            );
-                        }
-                        else{
-                            for ($i=1; $i <= count($no); $i++) {
-                                if(isset($no) && $no != null && count($no) > 0){
-                                    for ($i=1; $i <= count($no); $i++) { 
-                                        if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
-                                            $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
-                                            $product_stmt->execute();
-                                        }
-                                    }
-                
-                                    $product_stmt->close();
-                                }
-                
-                                // if(isset($productRawMatId[$i]) && $productRawMatId[$i] > 0){
-                                //     if ($product_stmt = $db->prepare("UPDATE Product_RawMat SET product_id=?, raw_mat_code=?, raw_mat_weight=? WHERE id=?")){
-                                //         $product_stmt->bind_param('ssss', $productId, $rawMats[$i], $rawMatWeight[$i], $productRawMatId[$i]);
-                                //         $product_stmt->execute();
-                                //     }
-                                // }else{
-                                //     if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
-                                //         $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
-                                //         $product_stmt->execute();
-                                //     }
-                                // }
+                if (isset($_POST['no'])){
+                    $no = $_POST['no'];
+                    $productRawMatId = $_POST['productRawMatId'];
+                    $rawMats =  $_POST['rawMats'];
+                    $rawMatWeight = $_POST['rawMatWeight'];
+                    $deleteStatus = 1;
+                    if(isset($no) && $no != null && count($no) > 0){
+                        # Delete all existing product rawmat records tied to the product id then reinsert
+                        if ($delete_stmt = $db->prepare("UPDATE Product_RawMat SET status=? WHERE product_id=?")){
+                            $delete_stmt->bind_param('ss', $deleteStatus, $productId);
+    
+                            // Execute the prepared query.
+                            if (! $delete_stmt->execute()) {
+                                echo json_encode(
+                                    array(
+                                        "status"=> "failed", 
+                                        "message"=> $delete_stmt->error
+                                    )
+                                );
                             }
-                        }
-                    } 
+                            else{
+                                for ($i=1; $i <= count($no); $i++) {
+                                    if(isset($no) && $no != null && count($no) > 0){
+                                        for ($i=1; $i <= count($no); $i++) { 
+                                            if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
+                                                $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
+                                                $product_stmt->execute();
+                                            }
+                                        }
+                    
+                                        $product_stmt->close();
+                                    }
+                    
+                                    // if(isset($productRawMatId[$i]) && $productRawMatId[$i] > 0){
+                                    //     if ($product_stmt = $db->prepare("UPDATE Product_RawMat SET product_id=?, raw_mat_code=?, raw_mat_weight=? WHERE id=?")){
+                                    //         $product_stmt->bind_param('ssss', $productId, $rawMats[$i], $rawMatWeight[$i], $productRawMatId[$i]);
+                                    //         $product_stmt->execute();
+                                    //     }
+                                    // }else{
+                                    //     if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
+                                    //         $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
+                                    //         $product_stmt->execute();
+                                    //     }
+                                    // }
+                                }
+                            }
+                        } 
+                    }
                 }
 
                 if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {

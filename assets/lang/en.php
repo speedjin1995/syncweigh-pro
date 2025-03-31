@@ -8,6 +8,10 @@
     $lang["t-myProfile"]="My Profile";
     $lang["t-changePassword"]="Change Password";
 
+    $lang["t-accounting"]="Accounting";
+    $lang["t-so"]="Sales Order";
+    $lang["t-po"]="Purchase Order";
+
     $lang["t-masterdata"]="Master Data";
     $lang["t-customer"]="Customer";
     $lang["t-supplier"]="Supplier";

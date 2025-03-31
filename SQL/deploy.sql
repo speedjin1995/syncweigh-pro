@@ -135,3 +135,351 @@ ALTER TABLE `Weight` ADD `unit_price` VARCHAR(10) NULL AFTER `indicator_id_2`;
 ALTER TABLE `Weight` ADD `customer_type` VARCHAR(100) NULL AFTER `weight_type`;
 
 ALTER TABLE `Users` ADD `name` VARCHAR(255) NULL AFTER `username`;
+
+-- 09/03/2025 --
+CREATE TABLE `Site_Log` (
+  `id` int(11) NOT NULL,
+  `site_code` varchar(50) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `address_line_1` varchar(255) DEFAULT NULL,
+  `address_line_2` varchar(255) DEFAULT NULL,
+  `address_line_3` varchar(255) DEFAULT NULL,
+  `phone_no` varchar(50) DEFAULT NULL,
+  `fax_no` varchar(50) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Site_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Site_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `Site_Log` ADD `site_id` INT(11) NOT NULL AFTER `id`;
+
+ALTER TABLE `Company_Log` ADD `company_code` VARCHAR(50) NOT NULL AFTER `company_id`;
+
+-- 11/03/2025 --
+
+CREATE TABLE `Purchase_Order` (
+  `id` int(11) NOT NULL,
+  `company_code` varchar(50) DEFAULT NULL,
+  `company_name` varchar(100) DEFAULT NULL,
+  `supplier_code` varchar(50) DEFAULT NULL,
+  `supplier_name` varchar(100) DEFAULT NULL,
+  `site_code` varchar(50) DEFAULT NULL,
+  `site_name` varchar(100) DEFAULT NULL,
+  `order_date` datetime DEFAULT NULL,
+  `order_no` varchar(50) DEFAULT NULL,
+  `po_no` varchar(50) DEFAULT NULL,
+  `delivery_date` datetime DEFAULT NULL,
+  `agent_code` varchar(50) DEFAULT NULL,
+  `agent_name` varchar(100) DEFAULT NULL,
+  `destination_code` varchar(50) DEFAULT NULL,
+  `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `raw_mat_code` varchar(50) DEFAULT NULL,
+  `raw_mat_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_date` timestamp NULL DEFAULT current_timestamp(),
+  `modified_by` varchar(50) DEFAULT NULL,
+  `modified_date` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` varchar(50) DEFAULT NULL,
+  `deleted` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELIMITER $$
+CREATE TRIGGER `TRG_INS_PO` AFTER INSERT ON `Purchase_Order` FOR EACH ROW INSERT INTO Purchase_Order_Log (
+    company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order` FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Purchase_Order table
+    INSERT INTO Purchase_Order_Log (
+        company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
+        agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+ALTER TABLE `Purchase_Order` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Purchase_Order` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Purchase_Order_Log` (
+  `id` int(11) NOT NULL,
+  `company_code` varchar(50) DEFAULT NULL,
+  `company_name` varchar(100) DEFAULT NULL,
+  `supplier_code` varchar(50) DEFAULT NULL,
+  `supplier_name` varchar(100) DEFAULT NULL,
+  `site_code` varchar(50) DEFAULT NULL,
+  `site_name` varchar(100) DEFAULT NULL,
+  `order_date` datetime DEFAULT NULL,
+  `order_no` varchar(50) DEFAULT NULL,
+  `po_no` varchar(50) DEFAULT NULL,
+  `delivery_date` datetime DEFAULT NULL,
+  `agent_code` varchar(50) DEFAULT NULL,
+  `agent_name` varchar(100) DEFAULT NULL,
+  `destination_code` varchar(50) DEFAULT NULL,
+  `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `raw_mat_code` varchar(50) DEFAULT NULL,
+  `raw_mat_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Purchase_Order_Log` ADD PRIMARY KEY (`id`); 
+
+ALTER TABLE `Purchase_Order_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Sales_Order` (
+  `id` int(11) NOT NULL,
+  `company_code` varchar(50) DEFAULT NULL,
+  `company_name` varchar(100) DEFAULT NULL,
+  `customer_code` varchar(50) DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `site_code` varchar(50) DEFAULT NULL,
+  `site_name` varchar(100) DEFAULT NULL,
+  `order_date` datetime DEFAULT NULL,
+  `order_no` varchar(50) DEFAULT NULL,
+  `so_no` varchar(50) DEFAULT NULL,
+  `delivery_date` datetime DEFAULT NULL,
+  `agent_code` varchar(50) DEFAULT NULL,
+  `agent_name` varchar(100) DEFAULT NULL,
+  `destination_code` varchar(50) DEFAULT NULL,
+  `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `product_code` varchar(50) DEFAULT NULL,
+  `product_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_date` timestamp NULL DEFAULT current_timestamp(),
+  `modified_by` varchar(50) DEFAULT NULL,
+  `modified_date` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` varchar(50) DEFAULT NULL,
+  `deleted` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELIMITER $$
+CREATE TRIGGER `TRG_INS_SO` AFTER INSERT ON `Sales_Order` FOR EACH ROW INSERT INTO Sales_Order_Log (
+    company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code,
+    agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `TRG_UPD_SO` BEFORE UPDATE ON `Sales_Order` FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Sales_Order_Log (
+        company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code,
+        agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, order_load, order_quantity, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.order_load, NEW.order_quantity, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+ALTER TABLE `Sales_Order` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Sales_Order` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Sales_Order_Log` (
+  `id` int(11) NOT NULL,
+  `company_code` varchar(50) DEFAULT NULL,
+  `company_name` varchar(100) DEFAULT NULL,
+  `customer_code` varchar(50) DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `site_code` varchar(50) DEFAULT NULL,
+  `site_name` varchar(100) DEFAULT NULL,
+  `order_date` datetime DEFAULT NULL,
+  `order_no` varchar(50) DEFAULT NULL,
+  `so_no` varchar(50) DEFAULT NULL,
+  `delivery_date` datetime DEFAULT NULL,
+  `agent_code` varchar(50) DEFAULT NULL,
+  `agent_name` varchar(100) DEFAULT NULL,
+  `destination_code` varchar(50) DEFAULT NULL,
+  `destination_name` varchar(100) DEFAULT NULL,
+  `deliver_to_name` varchar(255) DEFAULT NULL,
+  `product_code` varchar(50) DEFAULT NULL,
+  `product_name` varchar(100) DEFAULT NULL,
+  `order_load` varchar(100)	DEFAULT NULL,
+  `order_quantity` varchar(100)	DEFAULT NULL,
+  `remarks` varchar(255) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Sales_Order_Log` ADD PRIMARY KEY (`id`); 
+
+ALTER TABLE `Sales_Order_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 15/03/2025 --
+ALTER TABLE `Vehicle` ADD `ex_del` VARCHAR(10) NULL AFTER `transporter_name`, ADD `customer_code` VARCHAR(50) NULL AFTER `ex_del`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`;
+
+ALTER TABLE `Vehicle_Log` ADD `ex_del` VARCHAR(10) NULL AFTER `transporter_name`, ADD `customer_code` VARCHAR(50) NULL AFTER `ex_del`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`;
+
+
+-- 17/03/2025 --
+CREATE TABLE `Plant_Log` (
+  `id` int(11) NOT NULL,
+  `plant_id` int(11) NOT NULL,
+  `plant_code` varchar(50) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `address_line_1` varchar(255) DEFAULT NULL,
+  `address_line_2` varchar(255) DEFAULT NULL,
+  `address_line_3` varchar(255) DEFAULT NULL,
+  `phone_no` varchar(50) DEFAULT NULL,
+  `fax_no` varchar(50) DEFAULT NULL,
+  `sales` varchar(5) DEFAULT NULL,
+  `purchase` varchar(5) DEFAULT NULL,
+  `locals` varchar(5) DEFAULT NULL,
+  `do_no` varchar(5) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Plant_Log`
+ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Plant_Log`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 19/03/2025 --
+ALTER TABLE `Sales_Order` ADD `plant_code` VARCHAR(50) NULL AFTER `product_name`, ADD `plant_name` VARCHAR(100) NULL AFTER `plant_code`;
+
+ALTER TABLE `Sales_Order` ADD `balance` VARCHAR(100) NULL AFTER `order_quantity`;
+
+ALTER TABLE `Sales_Order_Log` ADD `plant_code` VARCHAR(50) NULL AFTER `product_name`, ADD `plant_name` VARCHAR(100) NULL AFTER `plant_code`;
+
+ALTER TABLE `Sales_Order_Log` ADD `balance` VARCHAR(100) NULL AFTER `order_quantity`;
+
+ALTER TABLE `Sales_Order_Log` CHANGE `agent_code` `agent_code` VARCHAR(50) NULL DEFAULT NULL;
+
+ALTER TABLE `Sales_Order_Log` CHANGE `agent_name` `agent_name` VARCHAR(100) NULL DEFAULT NULL;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_SO` AFTER INSERT ON `Sales_Order`
+ FOR EACH ROW INSERT INTO Sales_Order_Log (
+    company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code,
+    agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, plant_code, plant_name, order_load, order_quantity, balance, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.plant_code, NEW.plant_name, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_SO` BEFORE UPDATE ON `Sales_Order`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Sales_Order_Log (
+        company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code,
+        agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, plant_code, plant_name, order_load, order_quantity, balance, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.plant_code, NEW.plant_name, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+ALTER TABLE `Purchase_Order` ADD `plant_code` VARCHAR(50) NULL AFTER `raw_mat_name`, ADD `plant_name` VARCHAR(100) NULL AFTER `plant_code`;
+
+ALTER TABLE `Purchase_Order` ADD `balance` VARCHAR(100) NULL AFTER `order_quantity`;
+
+ALTER TABLE `Purchase_Order` CHANGE `order_load` `order_load` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `Purchase_Order_Log` ADD `plant_code` VARCHAR(50) NULL AFTER `raw_mat_name`, ADD `plant_name` VARCHAR(100) NULL AFTER `plant_code`;
+
+ALTER TABLE `Purchase_Order_Log` ADD `balance` VARCHAR(100) NULL AFTER `order_quantity`;
+
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_PO` AFTER INSERT ON `Purchase_Order`
+ FOR EACH ROW INSERT INTO Purchase_Order_Log (
+    company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, plant_code, plant_name, order_load, order_quantity, balance, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_code, NEW.plant_name, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Purchase_Order table
+    INSERT INTO Purchase_Order_Log (
+        company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
+        agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, plant_code, plant_name, order_load, order_quantity, balance, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_code, NEW.plant_name, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;

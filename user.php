@@ -90,6 +90,10 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                         <i class="ri-file-pdf-line align-middle me-1"></i>
                                                         Upload Excel
                                                     </button>
+                                                    <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
+                                                        <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                        Delete User
+                                                    </button>
                                                     <button type="button" id="addMembers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                         <i class="ri-add-circle-line align-middle me-1"></i>
                                                         Add New User
@@ -113,6 +117,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             <table id="usersTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                 <thead>
                                                     <tr>
+                                                        <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                         <th>Employee Code</th>
                                                         <th>Username</th>
                                                         <th>Name</th>
@@ -155,15 +160,15 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                     <div class="card-body">
                                         <div class="row">
                                             <input type="hidden" class="form-control" id="id" name="id"> 
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                     <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code </label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code">
+                                                        <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code" required>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                 <label for="username" class="col-sm-4 col-form-label">Username *</label>
                                                     <div class="col-sm-8">
@@ -171,7 +176,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                 <label for="name" class="col-sm-4 col-form-label">User Name *</label>
                                                     <div class="col-sm-8">
@@ -179,7 +184,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                 <label for="useremail" class="col-sm-4 col-form-label">User Email</label>
                                                     <div class="col-sm-8">
@@ -187,7 +192,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                     <label for="roles" class="col-sm-4 col-form-label">Role *</label>
                                                     <div class="col-sm-8">
@@ -200,7 +205,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                     <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
                                                     <div class="col-sm-8">
@@ -267,6 +272,11 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             allowClear: true
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#usersTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+        
         var table = $("#usersTable").DataTable({
             "responsive": true,
             "autoWidth": false,
@@ -277,6 +287,15 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 'url':'php/loadMembers.php'
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { data: 'employee_code' },
                 { data: 'username' },
                 { data: 'name' },
@@ -332,6 +351,10 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             $('#addModal').find('#useremail').val("");
             $('#addModal').find('#roles').val("");
             $('#addModal').find('#plantId').select2('destroy').val('').select2();
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
             $('#addModal').modal('show');
             
             $('#memberForm').validate({
@@ -353,8 +376,44 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
         });
 
-        $('#downloadTemplate').on('click', function(){
+        $('#multiDeactivate').on('click', function () {
+            $('#spinnerLoading').show();
+            var selectedIds = []; // An array to store the selected 'id' values
 
+            $("#usersTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $.post('php/deleteUser.php', {userID: selectedIds, type: 'MULTI'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            toastr["success"](obj.message, "Success:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            } 
+            else {
+                // Optionally, you can display a message or take another action if no IDs are selected
+                alert("Please select at least one user to delete.");
+                $('#spinnerLoading').hide();
+            }     
         });
     });
 
@@ -371,6 +430,10 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
                 $('#addModal').find("select[name='plant[]']").val(obj.message.plant).trigger('change');
+
+                // Remove Validation Error Message
+                $('#addModal .is-invalid').removeClass('is-invalid');
+
                 $('#addModal').modal('show');
                 
                 $('#memberForm').validate({

@@ -255,6 +255,10 @@
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
                                                                 </button>
+                                                                <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
+                                                                    <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                                    Delete Customer
+                                                                </button>
                                                                 <button type="button" id="addCustomers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add New Customer
@@ -266,6 +270,7 @@
                                                         <table id="customerTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Customer Code</th>
                                                                     <th>Company Reg No</th>
                                                                     <th>Company Name</th>
@@ -337,6 +342,25 @@
 var table;
 
 $(function () {
+    // Initialize all Select2 elements in the modal
+    $('#addModal .select2').select2({
+        allowClear: true,
+        placeholder: "Please Select",
+        dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+    });
+
+    // Apply custom styling to Select2 elements in addModal
+    $('#addModal .select2-container .select2-selection--single').css({
+        'padding-top': '4px',
+        'padding-bottom': '4px',
+        'height': 'auto'
+    });
+
+    $('#addModal .select2-container .select2-selection__arrow').css({
+        'padding-top': '33px',
+        'height': 'auto'
+    });
+
     table = $("#customerTable").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -347,6 +371,15 @@ $(function () {
             'url':'php/loadCustomers.php'
         },
         'columns': [
+            {
+                // Add a checkbox with a unique ID for each row
+                data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                className: 'select-checkbox',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                }
+            },
             { data: 'customer_code' },
             { data: 'company_reg_no' },
             { data: 'name' },
@@ -366,6 +399,11 @@ $(function () {
                 }
             }
         ]       
+    });
+
+    $('#selectAllCheckbox').on('change', function() {
+        var checkboxes = $('#customerTable tbody input[type="checkbox"]');
+        checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
     });
     
     // $.validator.setDefaults({
@@ -456,6 +494,10 @@ $(function () {
         $('#addModal').find('#addressLine4').val("");
         $('#addModal').find('#phoneNo').val("");
         $('#addModal').find('#faxNo').val("");
+
+        // Remove Validation Error Message
+        $('#addModal .is-invalid').removeClass('is-invalid');
+
         $('#addModal').modal('show');
         
         $('#customerForm').validate({
@@ -504,119 +546,163 @@ $(function () {
 
         reader.readAsBinaryString(file);
     });
+
+    $('#multiDeactivate').on('click', function () {
+        $('#spinnerLoading').show();
+        var selectedIds = []; // An array to store the selected 'id' values
+
+        $("#customerTable tbody input[type='checkbox']").each(function () {
+            if (this.checked) {
+                selectedIds.push($(this).val());
+            }
+        });
+
+        if (selectedIds.length > 0) {
+            if (confirm('Are you sure you want to cancel these items?')) {
+                $.post('php/deleteCustomer.php', {userID: selectedIds, type: 'MULTI'}, function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        toastr["success"](obj.message, "Success:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                });
+            }
+
+            $('#spinnerLoading').hide();
+        } 
+        else {
+            // Optionally, you can display a message or take another action if no IDs are selected
+            alert("Please select at least one customer to delete.");
+            $('#spinnerLoading').hide();
+        }     
+    });
 });
 
-    function edit(id){
-        $('#spinnerLoading').show();
-        $.post('php/getCustomer.php', {userID: id}, function(data)
-        {
-            var obj = JSON.parse(data);
-            if(obj.status === 'success'){
-                $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                $('#addModal').find('#companyName').val(obj.message.name);
-                $('#addModal').find('#companyRegNo').val(obj.message.company_reg_no);
-                $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
-                $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
-                $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
-                $('#addModal').find('#addressLine4').val(obj.message.address_line_4);
-                $('#addModal').find('#phoneNo').val(obj.message.phone_no);
-                $('#addModal').find('#faxNo').val(obj.message.fax_no);
-                $('#addModal').modal('show');
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
+function edit(id){
+    $('#spinnerLoading').show();
+    $.post('php/getCustomer.php', {userID: id}, function(data)
+    {
+        var obj = JSON.parse(data);
+        if(obj.status === 'success'){
+            $('#addModal').find('#id').val(obj.message.id);
+            $('#addModal').find('#customerCode').val(obj.message.customer_code);
+            $('#addModal').find('#companyName').val(obj.message.name);
+            $('#addModal').find('#companyRegNo').val(obj.message.company_reg_no);
+            $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
+            $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
+            $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
+            $('#addModal').find('#addressLine4').val(obj.message.address_line_4);
+            $('#addModal').find('#phoneNo').val(obj.message.phone_no);
+            $('#addModal').find('#faxNo').val(obj.message.fax_no);
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal').modal('show');
+        }
+        else if(obj.status === 'failed'){
             $('#spinnerLoading').hide();
-        });
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        else{
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        $('#spinnerLoading').hide();
+    });
+}
+
+function deactivate(id){
+    $('#spinnerLoading').show();
+    $.post('php/deleteCustomer.php', {userID: id}, function(data){
+        var obj = JSON.parse(data);
+        
+        if(obj.status === 'success'){
+            table.ajax.reload();
+            $('#spinnerLoading').hide();
+            $("#successBtn").attr('data-toast-text', obj.message);
+            $("#successBtn").click();
+        }
+        else if(obj.status === 'failed'){
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        else{
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+    });
+}
+
+function displayPreview(data) {
+    // Parse the Excel data
+    var workbook = XLSX.read(data, { type: 'binary' });
+
+    // Get the first sheet
+    var sheetName = workbook.SheetNames[0];
+    var sheet = workbook.Sheets[sheetName];
+
+    // Convert the sheet to an array of objects
+    var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    // Get the headers
+    var headers = jsonData[0];
+
+    // Ensure we handle cases where there may be less than 15 columns
+    while (headers.length < 9) {
+        headers.push(''); // Adding empty headers to reach 15 columns
     }
 
-    function deactivate(id){
-        $('#spinnerLoading').show();
-        $.post('php/deleteCustomer.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
-    }
+    // Create HTML table headers
+    var htmlTable = '<table style="width:100%;"><thead><tr>';
+    headers.forEach(function(header) {
+        htmlTable += '<th>' + header + '</th>';
+    });
+    htmlTable += '</tr></thead><tbody>';
 
-    function displayPreview(data) {
-        // Parse the Excel data
-        var workbook = XLSX.read(data, { type: 'binary' });
+    // Iterate over the data and create table rows
+    for (var i = 1; i < jsonData.length; i++) {
+        htmlTable += '<tr>';
+        var rowData = jsonData[i];
 
-        // Get the first sheet
-        var sheetName = workbook.SheetNames[0];
-        var sheet = workbook.Sheets[sheetName];
-
-        // Convert the sheet to an array of objects
-        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        // Get the headers
-        var headers = jsonData[0];
-
-        // Ensure we handle cases where there may be less than 15 columns
-        while (headers.length < 9) {
-            headers.push(''); // Adding empty headers to reach 15 columns
+        // Ensure we handle cases where there may be less than 15 cells in a row
+        while (rowData.length < 9) {
+            rowData.push(''); // Adding empty cells to reach 15 columns
         }
 
-        // Create HTML table headers
-        var htmlTable = '<table style="width:100%;"><thead><tr>';
-        headers.forEach(function(header) {
-            htmlTable += '<th>' + header + '</th>';
-        });
-        htmlTable += '</tr></thead><tbody>';
+        for (var j = 0; j < 9; j++) {
+            var cellData = rowData[j];
+            var formattedData = cellData;
 
-        // Iterate over the data and create table rows
-        for (var i = 1; i < jsonData.length; i++) {
-            htmlTable += '<tr>';
-            var rowData = jsonData[i];
-
-            // Ensure we handle cases where there may be less than 15 cells in a row
-            while (rowData.length < 9) {
-                rowData.push(''); // Adding empty cells to reach 15 columns
+            // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
+            if (typeof cellData === 'number' && cellData > 0) {
+                var excelDate = XLSX.SSF.parse_date_code(cellData);
             }
 
-            for (var j = 0; j < 9; j++) {
-                var cellData = rowData[j];
-                var formattedData = cellData;
-
-                // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
-                if (typeof cellData === 'number' && cellData > 0) {
-                    var excelDate = XLSX.SSF.parse_date_code(cellData);
-                }
-
-                htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
-            }
-            htmlTable += '</tr>';
+            htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
         }
-
-        htmlTable += '</tbody></table>';
-
-        var previewTable = document.getElementById('previewTable');
-        previewTable.innerHTML = htmlTable;
+        htmlTable += '</tr>';
     }
+
+    htmlTable += '</tbody></table>';
+
+    var previewTable = document.getElementById('previewTable');
+    previewTable.innerHTML = htmlTable;
+}
 
 $('#customerForm').validate({
     errorElement: 'span',

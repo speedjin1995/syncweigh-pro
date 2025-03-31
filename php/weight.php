@@ -250,10 +250,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     //}
 
-    if (empty($_POST["purchaseOrder"])) {
-        $purchaseOrder = null;
-    } else {
-        $purchaseOrder = trim($_POST["purchaseOrder"]);
+    if ($transactionStatus == 'Purchase'){
+        if (empty($_POST["purchaseOrder"])) {
+            $purchaseOrder = null;
+        } else {
+            $purchaseOrder = trim($_POST["purchaseOrder"]);
+        }
+    }else{
+        if (empty($_POST["salesOrder"])) {
+            $purchaseOrder = null;
+        } else {
+            $purchaseOrder = trim($_POST["salesOrder"]);
+        }
     }
 
     if (empty($_POST["containerNo"])) {
@@ -478,6 +486,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $noOfDrum = null;
     }
 
+    if(isset($_POST['balance']) && $_POST['balance'] != null && $_POST['balance'] != ''){
+        $prevBalance = $_POST['balance'];
+    }
+    else{
+        $prevBalance = 0;
+    }
+
     /*if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){
         // $inDate = new DateTime($_POST['grossIncomingDate']);
         // $inCDateTime = date_format($inDate,"Y-m-d H:i:s");
@@ -493,6 +508,48 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     if(! empty($weightId)){
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
+        
+        # Checking to find balance weight before edit
+        $record_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?");
+        $record_stmt->bind_param('s', $weightId);
+        $record_stmt->execute();
+        $record_result = $record_stmt->get_result();
+        $recordRow = $record_result->fetch_assoc();    
+        $beforeEditNettWeight = $recordRow['nett_weight1'];
+        $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
+        
+        # Update PO or SO table row balance
+        $currentBalance = $balanceBeforeEdit - $nettWeight;
+        if ($transactionStatus == 'Purchase'){
+            $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
+        }else{
+            $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
+        }
+
+        $poSo_stmt->bind_param('s', $purchaseOrder);
+        $poSo_stmt->execute();
+        $result = $poSo_stmt->get_result();
+        $poSoRow = $result->fetch_assoc();    
+        $poSoId = $poSoRow['id'];
+
+        if ($currentBalance <= 0){
+            $poSoStatus = 'Close'; //set status to close if current balance is less than equal 0
+        }else{
+            $poSoStatus = 'Open';
+        }
+
+        $poSo_stmt->close();
+
+        if ($transactionStatus == 'Purchase'){
+            $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE id=?");
+        }else{
+            $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE id=?");
+        }
+
+        $updatePoSoStmt->bind_param('sss', $currentBalance, $poSoStatus, $poSoId);
+        $updatePoSoStmt->execute();
+        $updatePoSoStmt->close();
+
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
         gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
@@ -602,6 +659,39 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     else{
                         $update_stmt->close();
                         //$db->close();
+
+                        # Update PO or SO table row balance
+                        $currentBalance = $prevBalance - $nettWeight;
+                        if ($transactionStatus == 'Purchase'){
+                            $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
+                        }else{
+                            $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
+                        }
+
+                        $poSo_stmt->bind_param('s', $purchaseOrder);
+                        $poSo_stmt->execute();
+                        $result = $poSo_stmt->get_result();
+                        $poSoRow = $result->fetch_assoc();    
+                        $poSoId = $poSoRow['id'];
+
+                        if ($currentBalance <= 0){
+                            $poSoStatus = 'Close'; //set status to close if current balance is less than equal 0
+                        }else{
+                            $poSoStatus = 'Open';
+                        }
+
+                        $poSo_stmt->close();
+
+                        if ($transactionStatus == 'Purchase'){
+                            $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE id=?");
+                        }else{
+                            $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE id=?");
+                        }
+
+                        $updatePoSoStmt->bind_param('sss', $currentBalance, $poSoStatus, $poSoId);
+                        $updatePoSoStmt->execute();
+    
+                        $updatePoSoStmt->close();
                         
                         echo json_encode(
                             array(
