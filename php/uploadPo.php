@@ -24,23 +24,40 @@ if (!empty($data)) {
     }
 
     foreach ($data as $rows) {
-        $OrderDate = (isset($rows['DocDate']) && !empty($rows['DocDate']) && $rows['DocDate'] !== '' && $rows['DocDate'] !== null) ? DateTime::createFromFormat('Y-m-d', excelSerialToDate($rows['DocDate']))->format('Y-m-d H:i:s') : '';
-        $PONumber = (isset($rows['DocNo']) && !empty($rows['DocNo']) && $rows['DocNo'] !== '' && $rows['DocNo'] !== null) ? trim($rows['DocNo']) : '';
-        $SupplierCode = (isset($rows['Code']) && !empty($rows['Code']) && $rows['Code'] !== '' && $rows['Code'] !== null) ? trim($rows['Code']) : '';
-        $SupplierName = (isset($rows['CompanyName']) && !empty($rows['CompanyName']) && $rows['CompanyName'] !== '' && $rows['CompanyName'] !== null) ? trim($rows['CompanyName']) : '';
+        $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('Y-m-d', excelSerialToDate($rows['DOCDATE']))->format('Y-m-d H:i:s') : '';
+        $PONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
+        $SupplierCode = (isset($rows['CODE']) && !empty($rows['CODE']) && $rows['CODE'] !== '' && $rows['CODE'] !== null) ? trim($rows['CODE']) : '';
+        $SupplierName = (isset($rows['COMPANYNAME']) && !empty($rows['COMPANYNAME']) && $rows['COMPANYNAME'] !== '' && $rows['COMPANYNAME'] !== null) ? trim($rows['COMPANYNAME']) : '';
+        $TransporterCode = (isset($rows['SHIPPER']) && !empty($rows['SHIPPER']) && $rows['SHIPPER'] !== '' && $rows['SHIPPER'] !== null) ? trim($rows['SHIPPER']) : '';
+        $TransporterName = '';
+        if (!empty($TransporterCode)) {
+            $TransporterName = searchTransporterNameByCode($TransporterCode, $db);
+        }
+        $AgentCode = (isset($rows['AGENT']) && !empty($rows['AGENT']) && $rows['AGENT'] !== '' && $rows['AGENT'] !== null) ? trim($rows['AGENT']) : '';
+        $AgentName = '';
+        if (!empty($AgentCode)) {
+            $AgentName = searchAgentNameByCode($AgentCode, $db);
+        }
+        $RawMaterialCode = (isset($rows['ITEMCODE']) && !empty($rows['ITEMCODE']) && $rows['ITEMCODE'] !== '' && $rows['ITEMCODE'] !== null) ? trim($rows['ITEMCODE']) : '';
+        $RawMaterialName = (isset($rows['DESCRIPTION']) && !empty($rows['DESCRIPTION']) && $rows['DESCRIPTION'] !== '' && $rows['DESCRIPTION'] !== null) ? trim($rows['DESCRIPTION']) : '';
+        $VehNumber = (isset($rows['DESCRIPTION2']) && !empty($rows['DESCRIPTION2']) && $rows['DESCRIPTION2'] !== '' && $rows['DESCRIPTION2'] !== null) ? trim($rows['DESCRIPTION2']) : '';
+        $Remarks = !empty($rows['REMARK1']) ? trim($rows['REMARK1']) : '';
+        $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
+        $DestinationCode = '';
+        if(!empty($DestinationName)){
+            $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
+        }
+        $ExOrDel = (isset($rows['DOCREF1']) && !empty($rows['DOCREF1']) && $rows['DOCREF1'] !== '' && $rows['DOCREF1'] !== null) ? trim($rows['DOCREF1']) : '';
+        $SupplierQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
+        $unit = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? trim($rows['UOM']) : '';
+        if ($unit == 'MT'){
+            $SupplierQuantity = $SupplierQuantity * 1000;
+        }
         $PlantCode = (isset($rows['PROJECT']) && !empty($rows['PROJECT']) && $rows['PROJECT'] !== '' && $rows['PROJECT'] !== null) ? trim($rows['PROJECT']) : '';
         $PlantName = '';
         if (!empty($PlantCode)) {
             $PlantName = searchPlantNameByCode($PlantCode, $db);
         }
-        $RawMaterialCode = (isset($rows['ItemCode']) && !empty($rows['ItemCode']) && $rows['ItemCode'] !== '' && $rows['ItemCode'] !== null) ? trim($rows['ItemCode']) : '';
-        $RawMaterialName = (isset($rows['DESCRIPTION']) && !empty($rows['DESCRIPTION']) && $rows['DESCRIPTION'] !== '' && $rows['DESCRIPTION'] !== null) ? trim($rows['DESCRIPTION']) : '';
-        $SupplierQuantity = (isset($rows['Qty']) && !empty($rows['Qty']) && $rows['Qty'] !== '' && $rows['Qty'] !== null) ? trim($rows['Qty']) : '';
-        $unit = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? trim($rows['UOM']) : '';
-        if ($unit == 'MT'){
-            $SupplierQuantity = $SupplierQuantity * 1000;
-        }
-        $Remarks = !empty($rows['REMARK1']) ? trim($rows['REMARK1']) : '';
         $status = 'Open';
         $actionId = 1;
 
@@ -88,71 +105,93 @@ if (!empty($data)) {
             }
         }
 
-        # Site Checking & Processing
-        // if($SiteCode != null && $SiteCode != ''){
-        //     $siteQuery = "SELECT * FROM Site WHERE site_code = '$SiteCode'";
-        //     $siteDetail = mysqli_query($db, $siteQuery);
-        //     $siteRow = mysqli_fetch_assoc($siteDetail);
+        # Transporter Checking & Processing
+        if($TransporterCode != null && $TransporterCode != ''){
+            $transporterQuery = "SELECT * FROM Transporter WHERE transporter_code = '$TransporterCode'";
+            $transporterDetail = mysqli_query($db, $transporterQuery);
+            $transporterSite = mysqli_fetch_assoc($transporterDetail);
             
-        //     if(empty($siteRow)){
-        //         if($insert_site = $db->prepare("INSERT INTO Site (site_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-        //             $insert_site->bind_param('ssss', $SiteCode, $SiteName, $uid, $uid);
-        //             $insert_site->execute();
-        //             $siteId = $insert_site->insert_id; // Get the inserted site ID
-        //             $insert_site->close();
+            if(empty($transporterSite)){
+                if($insert_transporter = $db->prepare("INSERT INTO Transporter (transporter_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_transporter->bind_param('ssss', $TransporterCode, $TransporterName, $uid, $uid);
+                    $insert_transporter->execute();
+                    $transporterId = $insert_transporter->insert_id; // Get the inserted transporter ID
+                    $insert_transporter->close();
                     
-        //             if ($insert_site_log = $db->prepare("INSERT INTO Site_Log (site_id, site_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-        //                 $insert_site_log->bind_param('sssss', $siteId, $SiteCode, $SiteName, $actionId, $uid);
-        //                 $insert_site_log->execute();
-        //                 $insert_site_log->close();
-        //             }    
-        //         }
-        //     }
-        // }
+                    if ($insert_transporter_log = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_transporter_log->bind_param('sssss', $transporterId, $TransporterCode, $TransporterName, $actionId, $uid);
+                        $insert_transporter_log->execute();
+                        $insert_transporter_log->close();
+                    }    
+                }
+            }
+        }
 
         # Agent Checking & Processing
-        // if($SalesrepCode != null && $SalesrepCode != ''){
-        //     $agentQuery = "SELECT * FROM Agents WHERE agent_code = '$SalesrepCode'";
-        //     $agentDetail = mysqli_query($db, $agentQuery);
-        //     $agentRow = mysqli_fetch_assoc($agentDetail);
+        if($AgentCode != null && $AgentCode != ''){
+            $agentQuery = "SELECT * FROM Agents WHERE agent_code = '$AgentCode'";
+            $agentDetail = mysqli_query($db, $agentQuery);
+            $agentRow = mysqli_fetch_assoc($agentDetail);
             
-        //     if(empty($agentRow)){
-        //         if($insert_agent = $db->prepare("INSERT INTO Agents (agent_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-        //             $insert_agent->bind_param('ssss', $SalesrepCode, $SalesrepName, $uid, $uid);
-        //             $insert_agent->execute();
-        //             $agentId = $insert_agent->insert_id; // Get the inserted agent ID
-        //             $insert_agent->close();
+            if(empty($agentRow)){
+                if($insert_agent = $db->prepare("INSERT INTO Agents (agent_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_agent->bind_param('ssss', $AgentCode, $AgentName, $uid, $uid);
+                    $insert_agent->execute();
+                    $agentId = $insert_agent->insert_id; // Get the inserted agent ID
+                    $insert_agent->close();
                     
-        //             if ($insert_agent_log = $db->prepare("INSERT INTO Agents_Log (agent_id, agent_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-        //                 $insert_agent_log->bind_param('sssss', $agentId, $SalesrepCode, $SalesrepName, $actionId, $uid);
-        //                 $insert_agent_log->execute();
-        //                 $insert_agent_log->close();
-        //             }    
-        //         }
-        //     }
-        // }
+                    if ($insert_agent_log = $db->prepare("INSERT INTO Agents_Log (agent_id, agent_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_agent_log->bind_param('sssss', $agentId, $AgentCode, $AgentName, $actionId, $uid);
+                        $insert_agent_log->execute();
+                        $insert_agent_log->close();
+                    }    
+                }
+            }
+        }
+        
+        # Vehicle Checking & Processing
+        if($VehNumber != null && $VehNumber != ''){
+            $vehQuery = "SELECT * FROM Vehicle WHERE veh_number = '$VehNumber'";
+            $vehDetail = mysqli_query($db, $vehQuery);
+            $vehRow = mysqli_fetch_assoc($vehDetail);
+            
+            if(empty($vehRow)){
+                if($insert_veh = $db->prepare("INSERT INTO Vehicle (veh_number, created_by, modified_by) VALUES (?, ?, ?)")) {
+                    $insert_veh->bind_param('sss', $VehNumber, $uid, $uid);
+                    $insert_veh->execute();
+                    $vehId = $insert_veh->insert_id; // Get the inserted vehicle ID
+                    $insert_veh->close();
+                    
+                    if ($insert_veh_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, action_id, action_by) VALUES (?, ?, ?, ?)")) {
+                        $insert_veh_log->bind_param('sssss', $vehId, $VehNumber, $actionId, $uid);
+                        $insert_veh_log->execute();
+                        $insert_veh_log->close();
+                    }    
+                }
+            }
+        }
         
         # Destination Checking & Processing
-        // if($DestinationCode != null && $DestinationCode != ''){
-        //     $destinationQuery = "SELECT * FROM Destination WHERE destination_code = '$DestinationCode'";
-        //     $destinationDetail = mysqli_query($db, $destinationQuery);
-        //     $destinationRow = mysqli_fetch_assoc($destinationDetail);
+        if($DestinationCode != null && $DestinationCode != ''){
+            $destinationQuery = "SELECT * FROM Destination WHERE destination_code = '$DestinationCode'";
+            $destinationDetail = mysqli_query($db, $destinationQuery);
+            $destinationRow = mysqli_fetch_assoc($destinationDetail);
             
-        //     if(empty($destinationRow)){
-        //         if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-        //             $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
-        //             $insert_destination->execute();
-        //             $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
-        //             $insert_destination->close();
+            if(empty($destinationRow)){
+                if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                    $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
+                    $insert_destination->execute();
+                    $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
+                    $insert_destination->close();
                     
-        //             if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-        //                 $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
-        //                 $insert_destination_log->execute();
-        //                 $insert_destination_log->close();
-        //             }    
-        //         }
-        //     }
-        // }
+                    if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                        $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
+                        $insert_destination_log->execute();
+                        $insert_destination_log->close();
+                    }    
+                }
+            }
+        }
 
         # Plant Checking & Processing
         if($PlantCode != null && $PlantCode != ''){
@@ -211,8 +250,8 @@ if (!empty($data)) {
                 //     $insert_stmt->close(); 
                 // }
 
-                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, order_date, po_no, raw_mat_code, raw_mat_name, plant_code, plant_name, order_quantity, balance, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $SupplierQuantity, $SupplierQuantity, $Remarks, $status, $uid, $uid);
+                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, order_date, po_no, agent_code, agent_name, destination_code, destination_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_quantity, balance, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrDel, $SupplierQuantity, $SupplierQuantity, $Remarks, $status, $uid, $uid);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }

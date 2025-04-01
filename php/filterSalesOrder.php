@@ -47,6 +47,10 @@ if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] 
 	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
 }
 
+if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
+	$searchQuery .= " and product_code = '".$_POST['product']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (
     company_code like '%".$searchValue."%' or 
@@ -55,6 +59,8 @@ if($searchValue != ''){
     customer_name like '%".$searchValue."%' or 
     plant_code like '%".$searchValue."%' or 
     plant_name like '%".$searchValue."%' or 
+    product_code like '%".$searchValue."%' or 
+    product_name like '%".$searchValue."%' or 
     order_no like '%".$searchValue."%' or 
     so_no like '%".$searchValue."%' or
     order_date like '%".$searchValue."%' or 
@@ -88,6 +94,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "customer_name"=>$row['customer_name'],
     "plant_code"=>$row['plant_code'],
     "plant_name"=>$row['plant_name'],
+    "product_code"=>$row['product_code'],
+    "product_name"=>$row['product_name'],
     "order_no"=>$row['order_no'],
     "so_no"=>$row['so_no'],
     "order_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),

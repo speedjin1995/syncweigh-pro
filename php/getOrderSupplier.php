@@ -42,6 +42,9 @@ if(isset($_POST['code'], $_POST['type'])){
                     $agentName = $row['agent_name'];
                     $productName = $row['raw_mat_name'];
                     $plantName = $row['plant_name'];
+                    $transporterName = $row['transporter_name'];
+                    $vehNo = $row['veh_number'];
+                    $exDel = $row['exquarry_or_delivered'];
                     $order_supplier_weight = $row['order_quantity'];
                     $balance = $row['balance'];
                 }
@@ -65,6 +68,9 @@ if(isset($_POST['code'], $_POST['type'])){
                 $message['agent_name'] = $agentName;
                 $message['product_name'] = $productName;
                 $message['plant_name'] = $plantName;
+                $message['transporter_name'] = $transporterName;
+                $message['veh_number'] = $vehNo;
+                $message['ex_del'] = $exDel;
                 $message['order_supplier_weight'] = $order_supplier_weight;
                 $message['balance'] = $balance;
                 // $message['final_weight'] = $finalWeight;
@@ -101,6 +107,9 @@ if(isset($_POST['code'], $_POST['type'])){
                     $agentName = $row['agent_name'];
                     $productName = $row['product_name'];
                     $plantName = $row['plant_name'];
+                    $transporterName = $row['transporter_name'];
+                    $vehNo = $row['veh_number'];
+                    $exDel = $row['exquarry_or_delivered'];
                     $order_supplier_weight = $row['order_quantity'];
                     $balance = $row['balance'];
                 }  
@@ -124,6 +133,9 @@ if(isset($_POST['code'], $_POST['type'])){
                 $message['agent_name'] = $agentName;
                 $message['product_name'] = $productName;
                 $message['plant_name'] = $plantName;
+                $message['transporter_name'] = $transporterName;
+                $message['veh_number'] = $vehNo;
+                $message['ex_del'] = $exDel;
                 $message['order_supplier_weight'] = $order_supplier_weight;
                 $message['balance'] = $balance;
                 // $message['final_weight'] = $finalWeight;

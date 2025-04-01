@@ -52,6 +52,12 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery Validate plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
     <!-- Select2 -->
     <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -82,10 +88,12 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     <h5 class="card-title mb-0">User Records</h5>
                                                 </div>
                                                 <div class="flex-shrink-0">
-                                                    <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
-                                                        <i class="ri-file-pdf-line align-middle me-1"></i>
-                                                        Download Template
-                                                    </button>
+                                                    <a href="template/User_Template.xlsx" download>
+                                                        <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
+                                                            <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                            Download Template
+                                                        </button>
+                                                    </a>
                                                     <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
                                                         <i class="ri-file-pdf-line align-middle me-1"></i>
                                                         Upload Excel
@@ -124,6 +132,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                         <th>Email</th>
                                                         <th>Role</th>
                                                         <th>Plant Name</th>
+                                                        <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -196,7 +205,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <div class="row">
                                                     <label for="roles" class="col-sm-4 col-form-label">Role *</label>
                                                     <div class="col-sm-8">
-                                                        <select id="roles" name="roles" class="form-select">
+                                                        <select id="roles" name="roles" class="select2" required>
                                                             <option select="selected" value="">Please Select</option>
                                                             <?php while(mysqli_stmt_fetch($stmt2)){ ?>
                                                                 <option value="<?=$code ?>"><?=$name ?></option>
@@ -209,14 +218,14 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <div class="row">
                                                     <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
                                                     <div class="col-sm-8">
-                                                        <select id="plantId" name="plantId[]" class="select2" multiple="multiple">
+                                                        <select id="plantId" name="plantId[]" class="form-control" multiple="multiple">
                                                             <?php while(mysqli_stmt_fetch($stmt4)){ ?>
                                                                 <option value="<?=$pcode ?>"><?=$pname ?></option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
                                                 </div>
-                                            </div>                                            
+                                            </div>                                              
                                         </div>
                                     </div>
                                 </div>
@@ -234,6 +243,27 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    <div class="modal fade" id="uploadModal">
+        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+            <div class="modal-content">
+                <form role="form" id="uploadForm">
+                    <div class="modal-header bg-gray-dark color-palette">
+                        <h4 class="modal-title">Upload Excel File</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="file" id="fileInput">
+                        <button type="button" id="previewButton">Preview Data</button>
+                        <div id="previewTable" style="overflow: auto;"></div>
+                    </div>
+                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="uploadUser">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <?php include 'layouts/customizer.php'; ?>
@@ -251,9 +281,13 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
     <!-- Dashboard init -->
     <script src="assets/js/pages/dashboard-ecommerce.init.js"></script>   
+    <script src="assets/js/pages/form-validation.init.js"></script>
 
     <!-- App js -->
     <script src="assets/js/app.js"></script>
+
+    <!-- notifications init -->
+    <script src="assets/js/pages/notifications.init.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -262,22 +296,56 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <!-- <script src="assets/js/pages/datatables.init.js"></script> -->
+    <script src="assets/js/pages/datatables.init.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="plugins/select2/js/select2.full.min.js"></script>
 
     <script>
     $(function () {
-        $('.select2').select2({
-            allowClear: true
-        });
-
         $('#selectAllCheckbox').on('change', function() {
             var checkboxes = $('#usersTable tbody input[type="checkbox"]');
             checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
         });
+
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        // Initialize plantId elements in the modal
+        $('#addModal #plantId').select2({
+            allowClear: true,
+            multiple: true,
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        $("#plantId").on("select2:select change", function () {
+            $(".select2-selection__choice").css({
+                "background-color": "rgb(64, 81, 137)",
+                "color": "white"
+            });
+
+            $(".select2-selection__choice__remove").css({
+                "color": "white"
+            });
+        });
+
+
+        // Apply custom styling to Select2 elements in addModal
+        $('#addModal .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#addModal .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
         
-        var table = $("#usersTable").DataTable({
+        table = $("#usersTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
@@ -305,6 +373,16 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
+                        if (row.status == '1'){
+                            return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
+                        }else{
+                            return '';
+                        }
+                    }
+                },
+                { 
+                    data: 'id',
+                    render: function ( data, type, row ) {
                         // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
@@ -316,6 +394,27 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
         });
         
         $('#submitMember').on('click', function(){
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
             if($('#memberForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/users.php', $('#memberForm').serialize(), function(data){
@@ -350,10 +449,18 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             $('#addModal').find('#name').val("");
             $('#addModal').find('#useremail').val("");
             $('#addModal').find('#roles').val("");
-            $('#addModal').find('#plantId').select2('destroy').val('').select2();
+            $('#addModal').find('#plantId').val('').trigger('change');
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
 
             $('#addModal').modal('show');
             
@@ -372,8 +479,83 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             });
         });
 
-        $('#uploadExcel').on('click', function(){
+        $('#uploadUser').on('click', function(){
+            $('#spinnerLoading').show();
+            var formData = $('#uploadForm').serializeArray();
+            var data = [];
+            var rowIndex = -1;
+            formData.forEach(function(field) {
+            var match = field.name.match(/([a-zA-Z0-9]+)\[(\d+)\]/);
+            if (match) {
+                var fieldName = match[1];
+                var index = parseInt(match[2], 10);
+                if (index !== rowIndex) {
+                rowIndex = index;
+                data.push({});
+                }
+                data[index][fieldName] = field.value;
+            }
+            });
 
+            // Send the JSON array to the server
+            $.ajax({
+                url: 'php/uploadUser.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    var obj = JSON.parse(response);
+                    if (obj.status === 'success') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                        window.location.reload();
+                    } 
+                    else if (obj.status === 'failed') {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    } 
+                    else {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                }
+            });
+        });
+
+        $('#uploadExcel').on('click', function(){
+            $('#uploadModal').modal('show');
+
+            $('#uploadForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+
+        $('#uploadModal').find('#previewButton').on('click', function(){
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                var data = e.target.result;
+                // Process data and display preview
+                displayPreview(data);
+            };
+
+            reader.readAsBinaryString(file);
         });
 
         $('#multiDeactivate').on('click', function () {
@@ -429,7 +611,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#name').val(obj.message.name);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
-                $('#addModal').find("select[name='plant[]']").val(obj.message.plant).trigger('change');
+                $("#addModal").find("#plantId").val(JSON.parse(obj.message.plant)).trigger("change");
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
@@ -462,25 +644,114 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteUser.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $.post('php/deleteUser.php', {userID: id}, function(data){
+                var obj = JSON.parse(data);
             
-            if(obj.status === 'success'){
-                toastr["success"](obj.message, "Success:");
-                $.get('users.php', function(data) {
-                    $('#mainContents').html(data);
+                if(obj.status === 'success'){
+                    table.ajax.reload();
                     $('#spinnerLoading').hide();
-                });
-            }
-            else if(obj.status === 'failed'){
-                toastr["error"](obj.message, "Failed:");
-                $('#spinnerLoading').hide();
-            }
-            else{
-                toastr["error"]("Something wrong when activate", "Failed:");
-                $('#spinnerLoading').hide();
-            }
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+
+        $('#spinnerLoading').hide();
+    }
+
+    function displayPreview(data) {
+        // Parse the Excel data
+        var workbook = XLSX.read(data, { type: 'binary' });
+
+        // Get the first sheet
+        var sheetName = workbook.SheetNames[0];
+        var sheet = workbook.Sheets[sheetName];
+
+        // Convert the sheet to an array of objects
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Get the headers
+        var headers = jsonData[0];
+
+        // Ensure we handle cases where there may be less than 5 columns
+        while (headers.length < 5) {
+            headers.push(''); // Adding empty headers to reach 5 columns
+        }
+
+        // Create HTML table headers
+        var htmlTable = '<table style="width:40%;"><thead><tr>';
+        headers.forEach(function(header) {
+            htmlTable += '<th>' + header + '</th>';
         });
+        htmlTable += '</tr></thead><tbody>';
+
+        // Iterate over the data and create table rows
+        for (var i = 1; i < jsonData.length; i++) {
+            htmlTable += '<tr>';
+            var rowData = jsonData[i];
+
+            // Ensure we handle cases where there may be less than 5 cells in a row
+            while (rowData.length < 5) {
+                rowData.push(''); // Adding empty cells to reach 5 columns
+            }
+
+            for (var j = 0; j < 5; j++) {
+                var cellData = rowData[j];
+                var formattedData = cellData;
+
+                // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
+                if (typeof cellData === 'number' && cellData > 0) {
+                    var excelDate = XLSX.SSF.parse_date_code(cellData);
+                }
+
+                htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
+            }
+            htmlTable += '</tr>';
+        }
+
+        htmlTable += '</tbody></table>';
+
+        var previewTable = document.getElementById('previewTable');
+        previewTable.innerHTML = htmlTable;
+    }
+
+    function reactivate(id) {
+        if (confirm('Do you want to reactivate this item?')) {
+            $('#spinnerLoading').show();
+            $.post('php/reactivateMasterData.php', {userID: id, type: "User"}, function(data){
+                var obj = JSON.parse(data);
+
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+
+        $('#spinnerLoading').hide();
     }
     </script>
 

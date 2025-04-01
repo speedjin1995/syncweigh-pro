@@ -27,12 +27,12 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Vehicle WHERE status = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from Vehicle WHERE status IN (0,1)".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Vehicle WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Vehicle WHERE status IN (0,1)".$searchQuery."order by status ASC, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -43,7 +43,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "vehicle_weight"=>$row['vehicle_weight'],
       "ex_del"=>$row['ex_del'],
       "transporter_name"=>$row['transporter_name'],
-      "customer_name"=>$row['customer_name']
+      "customer_name"=>$row['customer_name'],
+      "status"=>$row['status']
     );
 }
 

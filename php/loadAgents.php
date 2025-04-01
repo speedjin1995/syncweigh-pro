@@ -23,12 +23,12 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Agents WHERE status = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from Agents WHERE status IN (0,1)".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Agents WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Agents WHERE status IN (0,1)".$searchQuery."order by status ASC, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -37,7 +37,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "id"=>$row['id'],
       "agent_code"=>$row['agent_code'],
       "name"=>$row['name'],
-      "description"=>$row['description']
+      "description"=>$row['description'],
+      "status"=>$row['status']
     );
 }
 

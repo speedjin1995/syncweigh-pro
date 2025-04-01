@@ -1535,7 +1535,10 @@ else{
                 } 
             },
             'columns': [
-                { data: 'transaction_id' },
+                { 
+                    data: 'transaction_id',
+                    class: 'transaction-column'
+                },                
                 { data: 'transaction_status' },
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },
@@ -1549,6 +1552,7 @@ else{
                 { data: 'nett_weight1' },
                 { 
                     data: 'id',
+                    class: 'action-button',
                     render: function (data, type, row) {
                         let buttons = `<div class="row g-1 d-flex">`;
 
@@ -1639,7 +1643,7 @@ else{
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -2251,7 +2255,10 @@ else{
                     } 
                 },
                 'columns': [
-                    { data: 'transaction_id' },
+                    { 
+                        data: 'transaction_id',
+                        class: 'transaction-column'
+                    },
                     { data: 'transaction_status' },
                     { data: 'customer' },
                     { data: 'lorry_plate_no1' },
@@ -2265,6 +2272,7 @@ else{
                     { data: 'nett_weight1' },
                     { 
                         data: 'id',
+                        class: 'action-button',
                         render: function (data, type, row) {
                             let buttons = `<div class="row g-1 d-flex">`;
 
@@ -3108,6 +3116,9 @@ else{
                     var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
                     var plantName = obj.message.plant_name;
+                    var transporterName = obj.message.transporter_name;
+                    var vehNo = obj.message.veh_number;
+                    var exDel = obj.message.ex_del;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
                     var balance = obj.message.balance;
                     // var finalWeight = obj.message.final_weight;
@@ -3120,6 +3131,15 @@ else{
                     $('#addModal').find('#agent').val(agentName).trigger('change');
                     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
                     $('#addModal').find('#plant').val(plantName).trigger('change');
+                    $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                    $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+
+                    if(exDel == 'E'){
+                        $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                    }else{
+                        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                    }
+
                     $('#addModal').find('#supplierWeight').val(orderSupplierWeight)
                     $('#addModal').find('#balance').val(balance);
                     // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
@@ -3178,6 +3198,9 @@ else{
                     var agentName = obj.message.agent_name;
                     var productName = obj.message.product_name;
                     var plantName = obj.message.plant_name;
+                    var transporterName = obj.message.transporter_name;
+                    var vehNo = obj.message.veh_number;
+                    var exDel = obj.message.ex_del;
                     var orderSupplierWeight = obj.message.order_supplier_weight;
                     var balance = obj.message.balance;
                     // var finalWeight = obj.message.final_weight;
@@ -3189,6 +3212,15 @@ else{
                     $('#addModal').find('#agent').val(agentName).trigger('change');
                     $('#addModal').find('#productName').val(productName).trigger('change');
                     $('#addModal').find('#plant').val(plantName).trigger('change');
+                    $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                    $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+
+                    if(exDel == 'E'){
+                        $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                    }else{
+                        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                    }
+
                     $('#addModal').find('#orderWeight').val(orderSupplierWeight);
                     $('#addModal').find('#balance').val(balance);
                     // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
