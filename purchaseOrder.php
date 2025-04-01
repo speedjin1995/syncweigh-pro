@@ -1032,6 +1032,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                             <th>Vehicle No</th>
                             <th>Nett Weight</th>
                             <th>Weighted By</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -1048,6 +1049,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                             <td>${weights[i].lorry_plate_no1}</td>
                             <td>${weights[i].nett_weight1} KG</td>
                             <td>${weights[i].created_by}</td>
+                            <td>
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${weights[i].id}" onclick="print('${weights[i].id}')" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 }
@@ -1230,6 +1238,30 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 
         var previewTable = document.getElementById('previewTable');
         previewTable.innerHTML = htmlTable;
+    }
+
+    function print(id) {
+        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+            var obj = JSON.parse(data);
+
+            if(obj.status === 'success'){
+                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                printWindow.document.write(obj.message);
+                printWindow.document.close();
+                setTimeout(function(){
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            }
+            else if(obj.status === 'failed'){
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                $("#failBtn").click();
+            }
+        });
     }
 
     </script>

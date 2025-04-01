@@ -69,6 +69,7 @@ if(isset($_POST['userID'])){
 
                         while($weightRow = mysqli_fetch_assoc($weightRecords)) {
                             $weightData[] = array(
+                                "id" => $weightRow['id'],
                                 "transaction_id" => $weightRow['transaction_id'],
                                 "product_code" => $weightRow['product_code'],
                                 "product_name" => $weightRow['product_name'],
