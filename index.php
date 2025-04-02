@@ -158,6 +158,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
+                                                                <option value="Misc">Misc</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -188,7 +189,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" style="display:none;">
                                                         <div class="mb-3">
                                                             <label for="batchNoSearch" class="form-label">Status</label>
                                                             <select id="batchNoSearch" class="form-select">
@@ -399,6 +400,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                                     <option value="Sales" selected>Sales</option>
                                                                                                     <option value="Purchase">Purchase</option>
                                                                                                     <option value="Local">Local</option>
+                                                                                                    <option value="Misc">Misc</option>
                                                                                                 </select>  
                                                                                             </div>
                                                                                         </div>
