@@ -564,3 +564,7 @@ DELIMITER ;
 
 -- 31/03/2025 --
 ALTER TABLE `Users_Log` ADD `name` VARCHAR(255) NULL AFTER `username`, ADD `useremail` VARCHAR(255) NULL AFTER `name`;
+
+
+-- 02/04/2025 --
+ALTER TABLE `Users_Log` ADD `plant_id` TEXT NULL AFTER `password`;

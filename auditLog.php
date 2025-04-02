@@ -46,7 +46,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col">
-                        <div class="h-100">
+                        <div>
                             <div class="row mb-3 pb-1">
                                 <div class="col-12">
                                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
@@ -85,11 +85,18 @@
                                                             <option value="Customer" selected>Customer</option>
                                                             <option value="Destination">Destination</option>
                                                             <option value="Product">Product</option>
+                                                            <option value="Raw Materials">Raw Material</option>
                                                             <option value="Supplier">Supplier</option>
+                                                            <option value="Vehicle">Vehicle</option>
+                                                            <option value="Agent">Sales Representative</option>
                                                             <option value="Transporter">Transporter</option>
                                                             <option value="Unit">Unit</option>
                                                             <option value="User">User</option>
-                                                            <option value="Vehicle">Vehicle</option>
+                                                            <option value="Plant">Plant</option>
+                                                            <option value="Site">Site</option>
+                                                            <option value="Weight">Weighing</option>
+                                                            <option value="SO">Sales Order</option>
+                                                            <option value="PO">Purchase Order</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -111,10 +118,28 @@
                                                         <input type="text" class="form-control" placeholder="Product Code" name="productCode" id="productCode">
                                                     </div>
                                                 </div>
+                                                <div class="col-3 inputCode rawMatInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="rawMatCode" class="form-label">Raw Material Code</label>
+                                                        <input type="text" class="form-control" placeholder="Raw Material Code" name="rawMatCode" id="rawMatCode">
+                                                    </div>
+                                                </div>
                                                 <div class="col-3 inputCode supplierInput" style="display:none">
                                                     <div class="mb-3">
                                                         <label for="supplierCode" class="form-label">Supplier Code</label>
                                                         <input type="text" class="form-control" placeholder="Supplier Code" name="supplierCode" id="supplierCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode vehicleInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="vehicleNo" class="form-label">Vehicle No</label>
+                                                        <input type="text" class="form-control" placeholder="Vehicle No" name="vehicleNo" id="vehicleNo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode agentInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="agentCode" class="form-label">Sales Representative Code</label>
+                                                        <input type="text" class="form-control" placeholder="Sales Representative Code" name="agentCode" id="agentCode">
                                                     </div>
                                                 </div>
                                                 <div class="col-3 inputCode transporterInput" style="display:none">
@@ -123,22 +148,46 @@
                                                         <input type="text" class="form-control" placeholder="Transporter Code" name="transporterCode" id="transporterCode">
                                                     </div>
                                                 </div>
-                                                <div class="col-3 inputCode userInput" style="display:none">
-                                                    <div class="mb-3">
-                                                        <label for="userCode" class="form-label">User Code</label>
-                                                        <input type="text" class="form-control" placeholder="User Code" name="userCode" id="userCode">
-                                                    </div>
-                                                </div>
                                                 <div class="col-3 inputCode unitInput" style="display:none">
                                                     <div class="mb-3">
                                                         <label for="unit" class="form-label">Unit</label>
                                                         <input type="text" class="form-control" placeholder="Unit Code" name="unit" id="unit">
                                                     </div>
                                                 </div>
-                                                <div class="col-3 inputCode vehicleInput" style="display:none">
+                                                <div class="col-3 inputCode userInput" style="display:none">
                                                     <div class="mb-3">
-                                                        <label for="vehicleNo" class="form-label">Vehicle No</label>
-                                                        <input type="text" class="form-control" placeholder="Vehicle No" name="vehicleNo" id="vehicleNo">
+                                                        <label for="userCode" class="form-label">User Code</label>
+                                                        <input type="text" class="form-control" placeholder="User Code" name="userCode" id="userCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode plantInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="plantCode" class="form-label">Plant Code</label>
+                                                        <input type="text" class="form-control" placeholder="Plant Code" name="plantCode" id="plantCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode siteInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="siteCode" class="form-label">Site Code</label>
+                                                        <input type="text" class="form-control" placeholder="Site Code" name="siteCode" id="siteCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode weightInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="weight" class="form-label">Weighing Transaction ID</label>
+                                                        <input type="text" class="form-control" placeholder="Weighing Transaction ID" name="weight" id="weight">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode soInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="custPoNo" class="form-label">Customer P/O No</label>
+                                                        <input type="text" class="form-control" placeholder="Customer P/O No" name="custPoNo" id="custPoNo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode poInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="poNo" class="form-label">P/O No</label>
+                                                        <input type="text" class="form-control" placeholder="P/O No" name="poNo" id="poNo">
                                                     </div>
                                                 </div>
                                             </div>
@@ -381,10 +430,25 @@ $(function () {
             $('.inputCode').hide();
             $('.productInput').show();
         }
+        else if($(this).val() == "Raw Materials")
+        {
+            $('.inputCode').hide();
+            $('.rawMatInput').show();
+        }
         else if($(this).val() == "Supplier")
         {
             $('.inputCode').hide();
-            $('.productInput').show();
+            $('.supplierInput').show();
+        }
+        else if($(this).val() == "Vehicle")
+        {
+            $('.inputCode').hide();
+            $('.vehicleInput').show();
+        }
+        else if($(this).val() == "Agent")
+        {
+            $('.inputCode').hide();
+            $('.agentInput').show();
         }
         else if($(this).val() == "Transporter")
         {
@@ -401,11 +465,32 @@ $(function () {
             $('.inputCode').hide();
             $('.userInput').show();
         }
-        else if($(this).val() == "Vehicle")
+        else if($(this).val() == "Plant")
         {
             $('.inputCode').hide();
-            $('.vehicleInput').show();
+            $('.plantInput').show();
         }
+        else if($(this).val() == "Site")
+        {
+            $('.inputCode').hide();
+            $('.siteInput').show();
+        }
+        else if($(this).val() == "Weight")
+        {
+            $('.inputCode').hide();
+            $('.weightInput').show();
+        }
+        else if($(this).val() == "SO")
+        {
+            $('.inputCode').hide();
+            $('.soInput').show();
+        }
+        else if($(this).val() == "PO")
+        {
+            $('.inputCode').hide();
+            $('.poInput').show();
+        }
+        
     });
 
     var startDate = new Date();
@@ -420,74 +505,77 @@ $(function () {
         defaultDate: new Date(), 
         dateFormat: "y-m-d"
     });
-    
 
-        // Handle change event of the dropdown list
-        $('#searchLog').click(function() {
-            var selectedValue = $('#reportType').val();
-            // Call a function to update the DataTable based on the selected value
-            updateDataTable(selectedValue);
-        });
+    // Handle change event of the dropdown list
+    $('#searchLog').click(function() {
+        var selectedValue = $('#reportType').val();
+        // Call a function to update the DataTable based on the selected value
+        updateDataTable(selectedValue);
+    });
 
-        // Function to update the DataTable
-        function updateDataTable(selectedValue) {
+    // Function to update the DataTable
+    function updateDataTable(selectedValue) {
+        $.ajax({
+            url: "php/filterAuditLog.php",
+            type: "POST",
+            data: { 
+                selectedValue: selectedValue,
+                fromDateSearch: $('#fromDateSearch').val(),
+                toDateSearch: $('#toDateSearch').val(),
+                customerCode: $('#customerCode').val(),
+                destinationCode: $('#destinationCode').val(),
+                productCode: $('#productCode').val(),
+                rawMatCode: $('#rawMatCode').val(),
+                supplierCode: $('#supplierCode').val(),
+                vehicleNo: $('#vehicleNo').val(),
+                agentCode: $('#agentCode').val(),
+                transporterCode: $('#transporterCode').val(),
+                unit: $('#unit').val(),
+                userCode: $('#userCode').val(),
+                plantCode: $('#plantCode').val(),
+                siteCode: $('#siteCode').val(),
+                weight: $('#weight').val(),
+                custPoNo: $('#custPoNo').val(),
+                poNo: $('#poNo').val(),
+            },
+            success: function(data) {
 
-                $.ajax({
-                    url: "php/filterAuditLog.php",
-                    type: "POST",
-                    data: { 
-                        selectedValue: selectedValue,
-                        fromDateSearch: $('#fromDateSearch').val(),
-                        toDateSearch: $('#toDateSearch').val(),
-                        customerCode: $('#customerCode').val(),
-                        destinationCode: $('#destinationCode').val(),
-                        supplierCode: $('#supplierCode').val(),
-                        userCode: $('#userCode').val(),
-                        productCode: $('#productCode').val(),
-                        transporterCode: $('#transporterCode').val(),
-                        unit: $('#unit').val(),
-                        vehicleNo: $('#vehicleNo').val(),
-                    },
-                    success: function(data) {
+                if (table) {
+                    table.destroy();
+                }
+                // Once you receive the updated DataTable from the server, update the HTML table
+                var dataTable = data.dataTable;
+                var columnNames = data.columnNames;
 
-                        if (table) {
-                            table.destroy();
-                        }
-                        // Once you receive the updated DataTable from the server, update the HTML table
-                        var dataTable = data.dataTable;
-                        var columnNames = data.columnNames;
+                var headerRow = $("#headerRow");
+                headerRow.empty();
 
-                        var headerRow = $("#headerRow");
-                        headerRow.empty();
-
-                        // Update the column names
-                        $.each(columnNames, function(index, columnName) {
-                        var th = $("<th>").text(columnName);
-                        headerRow.append(th);
-                        });
-
-                        var tableBody = $("#dataTable tbody");
-                        tableBody.empty();
-
-                        $.each(dataTable, function(index, item) {
-                        var row = $("<tr>");
-                        $.each(columnNames, function(index, columnName) {
-                            var cell = $("<td>").text(item[columnName]);
-                            row.append(cell);
-                        });
-                        tableBody.append(row);
-                        });
-
-                        // table.draw();
-                        table = $("#dataTable").DataTable();
-                    },
-                    error: function(error) {
-                        console.log("Error occurred while fetching the updated DataTable.");
-                    }
+                // Update the column names
+                $.each(columnNames, function(index, columnName) {
+                var th = $("<th>").text(columnName);
+                headerRow.append(th);
                 });
-            
-        }
 
+                var tableBody = $("#dataTable tbody");
+                tableBody.empty();
+
+                $.each(dataTable, function(index, item) {
+                var row = $("<tr>");
+                $.each(columnNames, function(index, columnName) {
+                    var cell = $("<td>").text(item[columnName]);
+                    row.append(cell);
+                });
+                tableBody.append(row);
+                });
+
+                // table.draw();
+                table = $("#dataTable").DataTable();
+            },
+            error: function(error) {
+                console.log("Error occurred while fetching the updated DataTable.");
+            }
+        });
+    }
 });
 
 </script>
