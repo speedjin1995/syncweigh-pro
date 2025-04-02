@@ -64,6 +64,7 @@ if($searchValue != ''){
     order_no like '%".$searchValue."%' or 
     po_no like '%".$searchValue."%' or
     order_date like '%".$searchValue."%' or 
+    exquarry_or_delivered like '%".$searchValue."%' or 
     modified_date like '%".$searchValue."%'
   )";
 }
@@ -99,6 +100,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "order_no"=>$row['order_no'],
     "po_no"=>$row['po_no'],
     "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
+    "exquarry_or_delivered"=>$row['exquarry_or_delivered'],
     "balance"=>$row['balance'],
     "status"=>$row['status'],
     "modified_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y'),

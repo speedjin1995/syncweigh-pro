@@ -457,9 +457,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                         Download Template 
                                                                     </button>
                                                                 </a>
-                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Import Sales Orders
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
                                                                 </button>
                                                                 <button type="button" id="addSalesOrder" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
@@ -483,6 +487,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                     <th>Customer P/O No.</th>
                                                                     <th>S/O No.</th>
                                                                     <th>Order Date</th>
+                                                                    <th>EXQ/DEL</th>
                                                                     <th>Balance</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
@@ -637,6 +642,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 { data: 'order_no' },
                 { data: 'so_no' },
                 { data: 'order_date' },
+                { data: 'exquarry_or_delivered' },
                 { data: 'balance' },
                 { data: 'modified_date' },
                 {
@@ -724,6 +730,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     { data: 'order_no' },
                     { data: 'so_no' },
                     { data: 'order_date' },
+                    { data: 'exquarry_or_delivered' },
                     { data: 'balance' },
                     { data: 'modified_date' },
                     {
@@ -963,6 +970,21 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             reader.readAsBinaryString(file);
         });
 
+        $('#exportExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
+            var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            
+            window.open("php/exportSoPo.php?type=Sales&fromDate="+fromDateI+"&toDate="+toDateI+
+            "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
+            "&customer="+customerNoI+"&product="+productI);
+        });
+
         $('#company').on('change', function(){
             $('#companyName').val($('#company :selected').data('name'));
         });
@@ -1067,8 +1089,6 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     </div>`;
         }        
 
-        
-        
         return returnString;
     }
 
