@@ -456,9 +456,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                         Download Template 
                                                                     </button>
                                                                 </a>
-                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Import Purchase Orders
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
                                                                 </button>
                                                                 <button type="button" id="addPurchaseOrder" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
@@ -482,6 +486,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                     <!-- <th>Order No.</th> -->
                                                                     <th>P/O No.</th>
                                                                     <th>Order Date</th>
+                                                                    <th>EXQ/DEL</th>
                                                                     <th>Balance</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
@@ -636,6 +641,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 // { data: 'order_no' },
                 { data: 'po_no' },
                 { data: 'order_date' },
+                { data: 'exquarry_or_delivered' },
                 { data: 'balance' },
                 { data: 'modified_date' },
                 {
@@ -723,6 +729,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     // { data: 'order_no' },
                     { data: 'po_no' },
                     { data: 'order_date' },
+                    { data: 'exquarry_or_delivered' },
                     { data: 'balance' },
                     { data: 'modified_date' },
                     {
@@ -962,6 +969,21 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             reader.readAsBinaryString(file);
         });
 
+        $('#exportExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
+            var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+
+            window.open("php/exportSoPo.php?type=Purchase&fromDate="+fromDateI+"&toDate="+toDateI+
+            "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
+            "&customer="+supplierNoI+"&product="+rawMatI);
+        });
+
         $('#company').on('change', function(){
             $('#companyName').val($('#company :selected').data('name'));
         });
@@ -1032,6 +1054,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                             <th>Vehicle No</th>
                             <th>Nett Weight</th>
                             <th>Weighted By</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -1048,6 +1071,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                             <td>${weights[i].lorry_plate_no1}</td>
                             <td>${weights[i].nett_weight1} KG</td>
                             <td>${weights[i].created_by}</td>
+                            <td>
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${weights[i].id}" onclick="print('${weights[i].id}')" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 }
@@ -1230,6 +1260,30 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 
         var previewTable = document.getElementById('previewTable');
         previewTable.innerHTML = htmlTable;
+    }
+
+    function print(id) {
+        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+            var obj = JSON.parse(data);
+
+            if(obj.status === 'success'){
+                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                printWindow.document.write(obj.message);
+                printWindow.document.close();
+                setTimeout(function(){
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            }
+            else if(obj.status === 'failed'){
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                $("#failBtn").click();
+            }
+        });
     }
 
     </script>
