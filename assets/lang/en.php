@@ -21,6 +21,9 @@
     $lang["t-raw-mat"]="Raw Materials";
     $lang["t-site"]="Site";
     $lang["t-plant"]="Plant";
+    $lang["t-pending"]="Pending";
+    $lang["t-complete"]="Complete";
+    $lang["t-cancelled"]="Cancelled";
 
     $lang["t-report"]="Report";
     $lang["t-weighingReport"]="Weighing Report";
