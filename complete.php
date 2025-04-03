@@ -1192,7 +1192,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             'searching': true,
             'serverMethod': 'post',
             'ajax': {
-                'url':'php/filterWeight.php',
+                'url':'php/filterCompleteWeight.php',
                 'data': {
                     fromDate: fromDateI,
                     toDate: toDateI,
@@ -1634,57 +1634,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             }
         });
 
-        $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
-            if(data == "true"){
-                $('#indicatorConnected').addClass('bg-primary');
-                $('#checkingConnection').removeClass('bg-danger');
-                //$('#captureWeight').removeAttr('disabled');
-            }
-            else{
-                $('#indicatorConnected').removeClass('bg-primary');
-                $('#checkingConnection').addClass('bg-danger');
-                //$('#captureWeight').attr('disabled', true);
-            }
-        });
-
-        setInterval(function () {
-            $.post('http://127.0.0.1:5002/handshaking', function(data){
-                if(data != "Error"){
-                    console.log("Data Received:" + data);
-                    
-                    if(ind == 'X2S' || ind == 'X722'){
-                        var text = data.split(" ");
-                        var text2 = text[text.length - 1];
-                        text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
-                        $('#indicatorWeight').html(text2);
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
-                    }
-                    else if(ind == 'BX23'){
-                        var text = data.split(" ");
-                        let newArray = text.slice(1, -1);
-                        let newtext = newArray.join();
-                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
-                    }
-                    else if(ind == '205'){
-                        var text = data.split(" ");
-                        let newArray = text.slice(1, -1);
-                        let newtext = newArray.join();
-                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
-                    }
-                }
-                else{
-                    $('#indicatorWeight').html('0');
-                    $('#indicatorConnected').removeClass('bg-primary');
-                    $('#checkingConnection').addClass('bg-danger');
-                }
-            });
-        }, 500);
-
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
@@ -1707,7 +1656,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 'searching': true,
                 'serverMethod': 'post',
                 'ajax': {
-                    'url':'php/filterWeight.php',
+                    'url':'php/filterCompleteWeight.php',
                     'data': {
                         fromDate: fromDateI,
                         toDate: toDateI,

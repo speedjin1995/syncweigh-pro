@@ -1,7 +1,7 @@
 <!-- ========== App Menu ========== -->
-<div class="app-menu navbar-menu" style="background:#548233;">
+<div class="app-menu navbar-menu" style="background:#316b31;">
     <!-- LOGO -->
-    <div class="navbar-brand-box" style="background-color: white;">
+    <div class="navbar-brand-box" style="padding: 0;">
         <!-- Dark Logo-->
         <a href="index.php" class="logo logo-dark" style="background-color: white;">
             <span class="logo-sm">
@@ -36,22 +36,28 @@
                 <!--li class="nav-item">
                     <a href="dashboard.php" class="nav-link"><i class="mdi mdi-billboard"></i><?=$lang['t-billboard']?></a>
                 </li-->
+                <!--li class="nav-item">
+                    <a href="index.php" class="nav-link"><i class="ri-dashboard-2-line"></i><?=$lang['t-weighing']?></a>
+                </li-->                
                 <li class="nav-item">
-                    <a href="index.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
-                </li>                
-                <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                         aria-expanded="true" aria-controls="sidebarDashboards">
-                        <i class="ri-dashboard-2-line"></i> <span><?=$lang['t-weightweighing']?></span>
+                        <i class="mdi mdi-weight"></i> <span><?=$lang['t-weighing']?></span>
                     </a>
                     <div class="collapse show menu-dropdown" id="sidebarDashboards">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="weighing.php" class="nav-link"><?=$lang['t-weighing']?></a>
+                                <a href="index.php" class="nav-link"><?=$lang['t-pending']?></a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="complete.php" class="nav-link"><?=$lang['t-complete']?></a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="cancelled.php" class="nav-link"><?=$lang['t-cancelled']?></a>
                             </li>
                         </ul>
                     </div>
-                </li> -->
+                </li>
 
                 <?php
                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
@@ -85,14 +91,14 @@
                                     </li>                        
                                     <li class="nav-item">
                                         <a href="transporter.php" class="nav-link">'.$lang['t-transporter'].'</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="unit.php" class="nav-link">'.$lang['t-unit'].'</a>
-                                    </li>                           
+                                    </li>                 
                                     <li class="nav-item">
                                         <a href="user.php" class="nav-link">'.$lang['t-user'].'</a>
                                     </li>
                                     <!--li class="nav-item">
+                                        <a href="unit.php" class="nav-link">'.$lang['t-unit'].'</a>
+                                    </li> 
+                                    <li class="nav-item">
                                         <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
                                     </li>                                    
                                     <li class="nav-item">

@@ -64,7 +64,7 @@ while($row2=mysqli_fetch_assoc($weighing2)){
 $count = count($salesList) + count($purchaseList) + count($localList);
 $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
 ?>
-<header id="page-topbar" style="background-color: #a8d190;">
+<header id="page-topbar" style="background-color: #316b31;">
     <div class="layout-width">
         <div class="navbar-header">
             <div class="d-flex">
