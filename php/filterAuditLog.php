@@ -512,6 +512,48 @@ if($_POST['selectedValue'] == "SO")
     $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Product Code", "Product Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "Customer P/O No", "S/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Action", "Action By", "Event Date"];
 }
 
+if($_POST['selectedValue'] == "PO")
+{
+    ## Fetch records
+    $empQuery = "select * from Purchase_Order_Log".$searchQuery;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Company Code"=>$row['company_code'],
+        "Company Name"=>$row['company_name'],
+        "Supplier Code"=>$row['supplier_code'],
+        "Supplier Name"=>$row['supplier_name'],
+        "Site Code"=>$row['site_code'],
+        "Site Name"=>$row['site_name'],
+        "Sales Representative Code"=>$row['agent_code'],
+        "Sales Representative Name"=>$row['agent_name'],
+        "Destination Code"=>$row['destination_code'],
+        "Destination Name"=>$row['destination_name'],
+        "Raw Material Code"=>$row['raw_mat_code'],
+        "Raw Material Name"=>$row['raw_mat_name'],
+        "Plant Code"=>$row['plant_code'],
+        "Plant Name"=>$row['plant_name'],
+        "Transporter Code"=>$row['transporter_code'],
+        "Transporter Name"=>$row['transporter_name'],
+        "Vehicle No"=>$row['veh_number'],
+        "EXQ/Del"=>$row['exquarry_or_delivered'],
+        "P/O No"=>$row['po_no'],
+        "Order Date"=>$row['order_date'],
+        "Order Quantity"=>$row['order_quantity'],
+        "Balance"=>$row['balance'],
+        "Remarks"=>$row['remarks'],
+        "Action"=>searchActionNameById($row['action_id'], $db),
+        "Action By"=>$row['action_by'],
+        "Event Date"=>$row['event_date'],
+        );
+    }
+
+    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "P/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Action", "Action By", "Event Date"];
+}
+
 ## Response
 $response = [
     "columnNames" => $columnNames,

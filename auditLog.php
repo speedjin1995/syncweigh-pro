@@ -515,10 +515,71 @@ $(function () {
 
     // Function to update the DataTable
     function updateDataTable(selectedValue) {
+        // $.ajax({
+        //     url: "php/filterAuditLog.php",
+        //     type: "POST",
+        //     data: { 
+        //         selectedValue: selectedValue,
+        //         fromDateSearch: $('#fromDateSearch').val(),
+        //         toDateSearch: $('#toDateSearch').val(),
+        //         customerCode: $('#customerCode').val(),
+        //         destinationCode: $('#destinationCode').val(),
+        //         productCode: $('#productCode').val(),
+        //         rawMatCode: $('#rawMatCode').val(),
+        //         supplierCode: $('#supplierCode').val(),
+        //         vehicleNo: $('#vehicleNo').val(),
+        //         agentCode: $('#agentCode').val(),
+        //         transporterCode: $('#transporterCode').val(),
+        //         unit: $('#unit').val(),
+        //         userCode: $('#userCode').val(),
+        //         plantCode: $('#plantCode').val(),
+        //         siteCode: $('#siteCode').val(),
+        //         weight: $('#weight').val(),
+        //         custPoNo: $('#custPoNo').val(),
+        //         poNo: $('#poNo').val(),
+        //     },
+        //     success: function(data) {
+
+        //         if (table) {
+        //             table.destroy();
+        //         }
+        //         // Once you receive the updated DataTable from the server, update the HTML table
+        //         var dataTable = data.dataTable;
+        //         var columnNames = data.columnNames;
+
+        //         var headerRow = $("#headerRow");
+        //         headerRow.empty();
+
+        //         // Update the column names
+        //         $.each(columnNames, function(index, columnName) {
+        //         var th = $("<th>").text(columnName);
+        //         headerRow.append(th);
+        //         });
+
+        //         var tableBody = $("#dataTable tbody");
+        //         tableBody.empty();
+
+        //         $.each(dataTable, function(index, item) {
+        //         var row = $("<tr>");
+        //         $.each(columnNames, function(index, columnName) {
+        //             var cell = $("<td>").text(item[columnName]);
+        //             row.append(cell);
+        //         });
+        //         tableBody.append(row);
+        //         });
+
+        //         // table.draw();
+        //         table = $("#dataTable").DataTable();
+        //     },
+        //     error: function(error) {
+        //         console.log("Error occurred while fetching the updated DataTable.");
+        //     }
+        // });
+
         $.ajax({
             url: "php/filterAuditLog.php",
             type: "POST",
-            data: { 
+            data: {
                 selectedValue: selectedValue,
                 fromDateSearch: $('#fromDateSearch').val(),
                 toDateSearch: $('#toDateSearch').val(),
@@ -538,41 +599,30 @@ $(function () {
                 custPoNo: $('#custPoNo').val(),
                 poNo: $('#poNo').val(),
             },
-            success: function(data) {
-
-                if (table) {
-                    table.destroy();
+            dataType: "json",
+            success: function (response) {
+                if ($.fn.DataTable.isDataTable("#dataTable")) {
+                    $("#dataTable").DataTable().destroy();
                 }
-                // Once you receive the updated DataTable from the server, update the HTML table
-                var dataTable = data.dataTable;
-                var columnNames = data.columnNames;
 
-                var headerRow = $("#headerRow");
-                headerRow.empty();
+                // Generate column definitions dynamically
+                let columns = response.columnNames.map(column => ({
+                    data: column,
+                    title: column
+                })); console.log(columns);
 
-                // Update the column names
-                $.each(columnNames, function(index, columnName) {
-                var th = $("<th>").text(columnName);
-                headerRow.append(th);
+                // Initialize DataTable with dynamic columns
+                $("#dataTable").DataTable({
+                    data: response.dataTable,
+                    columns: columns,
+                    responsive: true,
+                    autoWidth: false,
+                    processing: true,
+                    searching: true
                 });
-
-                var tableBody = $("#dataTable tbody");
-                tableBody.empty();
-
-                $.each(dataTable, function(index, item) {
-                var row = $("<tr>");
-                $.each(columnNames, function(index, columnName) {
-                    var cell = $("<td>").text(item[columnName]);
-                    row.append(cell);
-                });
-                tableBody.append(row);
-                });
-
-                // table.draw();
-                table = $("#dataTable").DataTable();
             },
-            error: function(error) {
-                console.log("Error occurred while fetching the updated DataTable.");
+            error: function (error) {
+                console.error("Error fetching data:", error);
             }
         });
     }
