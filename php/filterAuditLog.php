@@ -443,31 +443,36 @@ if($_POST['selectedValue'] == "Site")
     $columnNames = ["Site Code", "Site Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
 }
 
-// if($_POST['selectedValue'] == "Weight")
-// {
-//     ## Fetch records
-//     $empQuery = "select * from Site_Log".$searchQuery;
-//     $empRecords = mysqli_query($db, $empQuery);
-//     $data = array();
+if($_POST['selectedValue'] == "Weight")
+{
+    ## Fetch records
+    $empQuery = "select * from Weight_Log".$searchQuery;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
 
-//     while($row = mysqli_fetch_assoc($empRecords)) {
-//         $data[] = array( 
-//         "id"=>$row['id'],
-//         "Site Code"=>$row['site_code'],
-//         "Site Name"=>$row['name'],
-//         "Address line 1"=>$row['address_line_1'],
-//         "Address line 2"=>$row['address_line_2'],
-//         "Address line 3"=>$row['address_line_3'],
-//         "Phone No"=>$row['phone_no'],
-//         "Fax No"=>$row['fax_no'],
-//         "Action"=>searchActionNameById($row['action_id'], $db),
-//         "Action By"=>$row['action_by'],
-//         "Event Date"=>$row['event_date'],
-//         );
-//     }
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+            "id"=>$row['id'],
+            "Transaction Id"=>$row['transaction_id'],
+            "Weight Status"=>$row['weight_type'],
+            "Customer/Supplier"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
+            "Vehicle"=>$row['lorry_plate_no1'],
+            "Product/Raw Material"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']),
+            "SO/PO"=>$row['purchase_order'],
+            "DO"=>$row['delivery_no'],
+            "Gross Incoming"=>$row['gross_weight1'],
+            "Incoming Date"=>$row['gross_weight1_date'],
+            "Tare Outgoing"=>$row['tare_weight1'],
+            "Outgoing Date"=>$row['tare_weight1_date'],
+            "Nett Weight"=>$row['nett_weight1'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+        );
+    }
 
-//     $columnNames = ["Site Code", "Site Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
-// }
+    $columnNames = ["Transaction Id", "Weight Status", "Customer/Supplier", "Vehicle", "Product/Raw Material", "SO/PO", "DO", "Gross Incoming", "Incoming Date", "Tare Outgoing", "Outgoing Date", "Nett Weight", "Action", "Action By", "Event Date"];
+}
 
 if($_POST['selectedValue'] == "SO")
 {
