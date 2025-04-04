@@ -33,6 +33,9 @@ if(isset($_POST['userID'])){
                 $message = array();
                 
                 foreach ($result->fetch_assoc() as $key => $row) {
+                    if ($row == null){
+                        $row = '';
+                    }
                     $message[$key] = $row;
                 }
 
