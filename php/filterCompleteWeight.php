@@ -78,11 +78,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0' and is_complete = 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0' and is_complete = 'Y'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] == 'ADMIN'){
     $username = $_SESSION["username"];
-    $empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and created_by='$username'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+    $empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and created_by='$username'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);

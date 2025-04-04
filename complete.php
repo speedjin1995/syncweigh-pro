@@ -193,7 +193,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="mb-3">
                                                             <label for="batchNoSearch" class="form-label">Status</label>
                                                             <select id="batchNoSearch" class="form-select">
-                                                                <option value="N" selected>Pending</option>
+                                                                <option selected>-</option>
+                                                                <option value="N">Pending</option>
                                                                 <option value="Y">Complete</option>
                                                             </select>
                                                         </div>
@@ -1162,7 +1163,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         //Date picker
         $('#fromDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: yesterday
+            // defaultDate: yesterday
+            defaultDate: new Date().fp_incr(-7)
         });
 
         $('#toDateSearch').flatpickr({
