@@ -413,7 +413,6 @@
 var table;
 
 $(function () {
-    
     $('#reportType').on('change', function(){
         if($(this).val() == "Customer")
         {
@@ -504,6 +503,33 @@ $(function () {
     $(".flatpickrEnd").flatpickr({
         defaultDate: new Date(), 
         dateFormat: "y-m-d"
+    });
+
+    // Add event listener for opening and closing details on row click
+    $('#dataTable tbody').on('click', 'tr', function (e) {
+        var tr = $(this); // The row that was clicked
+        var row = table.row(tr); 
+
+        // Exclude specific td elements by checking the event target
+        if ($(e.target).closest('td').hasClass('dtr-control') || $(e.target).closest('td').hasClass('action-button')) {
+            return;
+        }
+
+        if ($('#reportType').val() == 'Weight'){
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', type: 'Log' }, function (data) {
+                    var obj = JSON.parse(data);
+                    if (obj.status === 'success') {
+                        row.child(format(obj.message)).show();
+                        tr.addClass("shown");
+                    }
+                });
+            }
+        }        
     });
 
     // Handle change event of the dropdown list
@@ -609,10 +635,10 @@ $(function () {
                 let columns = response.columnNames.map(column => ({
                     data: column,
                     title: column
-                })); console.log(columns);
+                }));
 
                 // Initialize DataTable with dynamic columns
-                $("#dataTable").DataTable({
+                table = $("#dataTable").DataTable({
                     data: response.dataTable,
                     columns: columns,
                     responsive: true,
@@ -627,6 +653,64 @@ $(function () {
         });
     }
 });
+
+function format (row) {
+    var returnString = `
+    <!-- Weighing Section -->
+    <div class="row">
+        <div class="col-2">
+            <p><strong>${row.name}</strong></p>
+            <p>${row.address_line_1}</p>
+            <p>${row.address_line_2}</p>
+            <p>${row.address_line_3}</p>
+            <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
+        </div>
+        <div class="col-10">
+            <div class="row">
+                <div class="col-3">
+                    <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
+                    <p><strong>DESTINATION NAME:</strong> ${row.destination_name}</p>
+                    <p><strong>SITE NAME:</strong> ${row.site_name}</p>
+                    <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
+
+                if (row.transaction_status == 'Purchase'){
+                    returnString += `<p><strong>RAW MATERIAL NAME:</strong> ${row.product_rawmat_name}</p>`;
+                }else{
+                    returnString += `<p><strong>PRODUCT NAME:</strong> ${row.product_rawmat_name}</p>`;
+                }
+
+                returnString += `</div>
+                <div class="col-3">
+                    <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
+                    <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                    <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                    <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p> `;
+
+                if (row.transaction_status == 'Purchase'){
+                    returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
+                }else{
+                    returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
+                }
+                
+                returnString += `</div>
+                <div class="col-3">
+                    <p><strong>CREATED DATE:</strong> ${row.created_date}</p>
+                    <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
+                    <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
+                </div>
+                <div class="col-3">
+                    <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
+                    <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
+                    <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
+                    <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
+                    <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    
+    return returnString;
+}
 
 </script>
     </body>
