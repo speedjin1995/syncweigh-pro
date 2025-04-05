@@ -170,6 +170,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $transactionDate = DateTime::createFromFormat('d-m-Y', $_POST["transactionDate"])->format('Y-m-d H:i:s');
     }
 
+    if (empty($_POST["poSupplyWeight"])) {
+        $poSupplyWeight = null;
+    } else {
+        $poSupplyWeight = trim($_POST["poSupplyWeight"]);
+    }
+
     if (empty($_POST["supplierWeight"])) {
         $supplierWeight = null;
     } else {
@@ -515,14 +521,17 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $record_stmt->execute();
         $record_result = $record_stmt->get_result();
         $recordRow = $record_result->fetch_assoc();    
-        $beforeEditNettWeight = $recordRow['nett_weight1'];
-        $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
         
         # Update PO or SO table row balance
-        $currentBalance = $balanceBeforeEdit - $nettWeight;
         if ($transactionStatus == 'Purchase'){
+            $beforeEditNettWeight = $recordRow['supplier_weight'];
+            $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
+            $currentBalance = $balanceBeforeEdit - $supplierWeight;
             $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
         }else{
+            $beforeEditNettWeight = $recordRow['nett_weight1'];
+            $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
+            $currentBalance = $balanceBeforeEdit - $nettWeight;
             $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
         }
 
@@ -661,10 +670,11 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         //$db->close();
 
                         # Update PO or SO table row balance
-                        $currentBalance = $prevBalance - $nettWeight;
                         if ($transactionStatus == 'Purchase'){
+                            $currentBalance = $prevBalance - $supplierWeight;
                             $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
                         }else{
+                            $currentBalance = $prevBalance - $nettWeight;
                             $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
                         }
 
