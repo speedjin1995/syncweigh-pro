@@ -3,27 +3,27 @@
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Dark Logo-->
-        <!--a href="index.php" class="logo logo-dark">
+        <a href="index.php" class="logo logo-dark">
             <span class="logo-sm">
                 <img src="assets/images/logo-sm.png" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="" height="17">
+                <img src="assets/images/logo-lg.png" alt="" height="50">
             </span>
-        </a-->
+        </a>
         <!-- Light Logo-->
-        <!--a href="index.php" class="logo logo-light">
+        <a href="index.php" class="logo logo-light">
             <span class="logo-sm">
                 <img src="assets/images/logo-sm.png" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="" height="17">
+                <img src="assets/images/logo-lg.png" alt="" height="50">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
             id="vertical-hover">
             <i class="ri-record-circle-line"></i>
-        </button-->
+        </button>
     </div>
 
     <div id="scrollbar">
@@ -55,7 +55,7 @@
                         </ul>
                     </div>
                 </li> -->
-                <li class="nav-item">
+                <!--li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAccounting" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAccounting">
                         <i class="ri-pages-line"></i> <span><?=$lang['t-accounting']?></span>
@@ -70,8 +70,7 @@
                             </li>               
                         </ul>
                     </div>
-                </li>
-
+                </li-->
                 <?php
                     if($_SESSION["roles"] == 'MANAGER' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                         echo '<!--li class="nav-item">
@@ -94,32 +93,32 @@
                                         <a href="product.php" class="nav-link">'.$lang['t-product'].'</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="rawMaterial.php" class="nav-link">'.$lang['t-raw-mat'].'</a>
-                                    </li>
-                                    <li class="nav-item">
                                         <a href="supplier.php" class="nav-link">'.$lang['t-supplier'].'</a>
                                     </li>       
                                     <li class="nav-item">
                                         <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
-                                    </li>   
-                                    <li class="nav-item">
-                                        <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
-                                    </li>                   
+                                    </li>             
                                     <li class="nav-item">
                                         <a href="transporter.php" class="nav-link">'.$lang['t-transporter'].'</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="user.php" class="nav-link">'.$lang['t-user'].'</a>
+                                    </li>
+                                    <!--li class="nav-item">
                                         <a href="unit.php" class="nav-link">'.$lang['t-unit'].'</a>
                                     </li>                           
                                     <li class="nav-item">
-                                        <a href="user.php" class="nav-link">'.$lang['t-user'].'</a>
-                                    </li>
+                                        <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
+                                    </li> 
                                     <li class="nav-item">
                                         <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
                                     </li>                                    
                                     <li class="nav-item">
                                         <a href="site.php" class="nav-link">'.$lang['t-site'].'</a>
-                                    </li>                   
+                                    </li> 
+                                    <li class="nav-item">
+                                        <a href="rawMaterial.php" class="nav-link">'.$lang['t-raw-mat'].'</a>
+                                    </li-->                  
                                 </ul>
                             </div>
                         </li>';

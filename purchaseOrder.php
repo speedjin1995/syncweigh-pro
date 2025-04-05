@@ -185,7 +185,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                     </div><!--end col--> 
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-success" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -405,7 +405,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitPO">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitPO">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -428,7 +428,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                                                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-danger" id="uploadPo">Save changes</button>
+                                                        <button type="button" class="btn btn-success" id="uploadPo">Save changes</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -464,7 +464,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
-                                                                <button type="button" id="addPurchaseOrder" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addPurchaseOrder" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New P/O
                                                                 </button>
