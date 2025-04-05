@@ -135,7 +135,10 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <li class="nav-item">
-                                    <a href="weighingReport.php" class="nav-link"><?=$lang['t-weighingReport']?></a>
+                                    <a href="salesReport.php" class="nav-link"><?=$lang['t-soReport']?></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="purchaseReport.php" class="nav-link"><?=$lang['t-poReport']?></a>
                                 </li>
                                 <?php
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
