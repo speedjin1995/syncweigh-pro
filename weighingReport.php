@@ -14,6 +14,14 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$groupby = array(
+    "customer_code" => "Customer",
+    "supplier_code" => "Supplier",
+    "product_code" => "Product",
+    "lorry_plate_no1" => "Vehicle",
+    "destination-code" => "Destination",
+    "transporter_code" => "Transporter"
+)
 ?>
 
 <head>
@@ -251,6 +259,71 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                         </div><!-- end card body -->
                                     </div><!-- end card -->
                                 </div><!-- end col -->
+
+                                <div class="col-xl-3 col-md-6 export-pdf">
+                                    <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+                                            <div class="modal-content">
+                                                <form role="form" id="exportForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalScrollableTitle">Export PDF Group By Selection</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" id="id" name="id"/>
+                                                        <div class="row col-xxl-12 col-lg-12">
+                                                            <div class="col-4">
+                                                                <div class="mb-3">
+                                                                    <label for="group1" class="form-label">Group 1</label>
+                                                                    <select id="group1" class="form-select"  >
+                                                                        <option selected>-</option>
+                                                                        <?php foreach($groupby as $key => $value){ ?>
+                                                                            <option value="<?=$key ?>"><?=$value ?></option>
+                                                                        <?php } ?>
+                                                                        <!-- <option value="Sales">Sales</option>
+                                                                        <option value="Purchase">Purchase</option>
+                                                                        <option value="Local">Local</option> -->
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-4">
+                                                                <div class="mb-3">
+                                                                    <label for="group2" class="form-label">Group 2</label>
+                                                                    <select id="group2" class="form-select" >
+                                                                        <option selected>-</option>
+                                                                        <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
+                                                                            <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-4">
+                                                                <div class="mb-3">
+                                                                    <label for="group3" class="form-label">Group 3</label>
+                                                                    <select id="group3" class="form-select" >
+                                                                        <option selected>-</option>
+                                                                        <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
+                                                                            <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                        </div><!--end row-->
+                                                        <div class="mt-5"></div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="hstack gap-2 justify-content-end">
+                                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="button" class="btn btn-success" id="submitPdf">Print</button>
+                                                                </div>
+                                                            </div><!--end col-->  
+                                                        </div><!--end row-->
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- end col -->
                             </div> <!-- end row-->
 
 
@@ -267,7 +340,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <h5 class="card-title mb-0">Weighing Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <!-- <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal"> -->
+                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#exportModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export PDF
                                                                 </button>
@@ -491,7 +565,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             });
         });
 
-        $('#exportPdf').on('click', function(){
+        $('#submitPdf').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
