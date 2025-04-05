@@ -14,7 +14,7 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-  $searchQuery = " and (unit like '%".$searchValue."%')";
+  $searchQuery = " and (customer_code like '%".$searchValue."%' OR name like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
@@ -23,12 +23,12 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Customer WHERE status = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from Customer WHERE status IN (0,1)".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Customer WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Customer WHERE status IN (0,1)".$searchQuery."order by status ASC, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -41,8 +41,10 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "address_line_1"=>$row['address_line_1'],
       "address_line_2"=>$row['address_line_2'],
       "address_line_3"=>$row['address_line_3'],
+      "address_line_4"=>$row['address_line_4'],
       "phone_no"=>$row['phone_no'],
-      "fax_no"=>$row['fax_no']
+      "fax_no"=>$row['fax_no'],
+      "status"=>$row['status']
     );
 }
 

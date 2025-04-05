@@ -12,7 +12,7 @@ if(!isset($_SESSION['id'])){
 $id = $_SESSION['id'];
 
 // Processing form data when form is submitted
-if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
+if (isset($_POST['vehicleNo'])) {
 
     if (empty($_POST["id"])) {
         $vehicleId = null;
@@ -27,18 +27,52 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
     }
 
     if (empty($_POST["vehicleWeight"])) {
-        $vehicleWeight = null;
+        $vehicleWeight = 0;
     } else {
         $vehicleWeight = trim($_POST["vehicleWeight"]);
+    }
+
+    if (empty($_POST["exDel"])) {
+        $exDel = null;
+    } else {
+        if ($_POST["exDel"] == 'true'){
+            $exDel = 'EX';
+        }else{
+            $exDel = 'DEL';
+        }
+    }
+
+    if (empty($_POST["transporter"])) {
+        $transporter = null;
+    } else {
+        $transporter = trim($_POST["transporter"]);
+    }
+
+    if (empty($_POST["transporterCode"])) {
+        $transporterCode = null;
+    } else {
+        $transporterCode = trim($_POST["transporterCode"]);
+    }
+
+    if (empty($_POST["customer"])) {
+        $customer = null;
+    } else {
+        $customer = trim($_POST["customer"]);
+    }
+
+    if (empty($_POST["customerCode"])) {
+        $customerCode = null;
+    } else {
+        $customerCode = trim($_POST["customerCode"]);
     }
 
     if(! empty($vehicleId))
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Vehicle SET veh_number=?, vehicle_weight=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Vehicle SET veh_number=?, vehicle_weight=?, transporter_code=?, transporter_name=?, ex_del=?, customer_code=?, customer_name=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssss', $vehicleNo, $vehicleWeight, $username, $username, $vehicleId);
+            $update_stmt->bind_param('ssssssssss', $vehicleNo, $vehicleWeight, $transporterCode, $transporter, $exDel, $customerCode, $customer, $username, $username, $vehicleId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -50,8 +84,8 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssss', $vehicleId, $vehicleNo, $vehicleWeight, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, transporter_code, transporter_name, ex_del, customer_code, customer_name, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssss', $vehicleId, $vehicleNo, $vehicleWeight, $transporterCode, $transporter, $exDel, $customerCode, $customer, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -89,8 +123,8 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Vehicle (veh_number, vehicle_weight, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssss', $vehicleNo, $vehicleWeight, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Vehicle (veh_number, vehicle_weight, transporter_code, transporter_name, ex_del, customer_code, customer_name, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssss', $vehicleNo, $vehicleWeight, $transporterCode, $transporter, $exDel, $customerCode, $customer, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -109,12 +143,14 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
                     )
                 );
 
+                $vehicleId = $insert_stmt->insert_id;
+
                 $sel = mysqli_query($db,"select count(*) as allcount from Vehicle");
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssss', $totalRecords, $vehicleNo, $vehicleWeight, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, transporter_code, transporter_name, ex_del, customer_code, customer_name, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('ssssssssss', $vehicleId, $vehicleNo, $vehicleWeight, $transporterCode, $transporter, $exDel, $customerCode, $customer, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {

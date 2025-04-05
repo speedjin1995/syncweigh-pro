@@ -1,6 +1,7 @@
 <?php
 // Initialize the session
 session_start();
+require_once 'php/requires/lookup.php';
 
 // Check if the user is already logged in, if yes then redirect him to index page
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
@@ -34,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate credentials
     if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
-        $sql = "SELECT id, employee_code, username, password, role FROM Users WHERE username = ?";
+        $sql = "SELECT id, employee_code, username, password, role, plant_id FROM Users WHERE username = ?";
         
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
@@ -51,11 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Check if username exists, if yes then verify password
                 if (mysqli_stmt_num_rows($stmt) == 1) {
                     // Bind result variables
-                    mysqli_stmt_bind_result($stmt, $id, $code, $username, $hashed_password, $roles);
+                    mysqli_stmt_bind_result($stmt, $id, $code, $username, $hashed_password, $roles, $plant);
                     if (mysqli_stmt_fetch($stmt)) {
                         if (password_verify($password, $hashed_password)) {
-                            // Password is correct, so start a new session
-                            session_start();
+                            $plantlist = array();
 
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
@@ -63,6 +63,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["username"] = $username;
                             $_SESSION["roles"] = $roles;
                             $_SESSION['userID']=$code;
+
+                            if($plant != null){
+                                $plant_ids = json_decode($plant, true);
+                                $_SESSION['plant_id']=$plant_ids;
+
+                                for($i=0; $i<count($plant_ids); $i++){
+                                    $plantlist[] = searchPlantCodeById($plant_ids[$i], $link);
+                                }
+                            }
+                            else{
+                                $_SESSION['plant_id']=$plant;
+                            }
+
+                            $_SESSION['plant']=$plantlist;
 
                             // Redirect user to welcome page
                             header("location: index.php");
@@ -117,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- auth page content -->
             <div class="auth-page-content">
                 <div class="container">
-                    <div class="row">
+                    <!--div class="row">
                         <div class="col-lg-12">
                             <div class="text-center mt-sm-5 mb-4 text-white-50">
                                 <div>
@@ -129,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <p class="mt-3 fs-15 fw-medium">Synctronix Weighing System</p>
                             </div>
                         </div>
-                    </div>
+                    </div-->
                     <!-- end row -->
 
                     <div class="row justify-content-center">
@@ -176,8 +190,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     <h5 class="fs-13 mb-4 title">Sign In with</h5>
                                                 </div>
                                                 <div>
-                                                    <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><i class="ri-facebook-fill fs-16"></i></button>
-                                                    <button type="button" class="btn btn-primary btn-icon waves-effect waves-light"><i class="ri-google-fill fs-16"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><i class="ri-facebook-fill fs-16"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-icon waves-effect waves-light"><i class="ri-google-fill fs-16"></i></button>
                                                     <button type="button" class="btn btn-dark btn-icon waves-effect waves-light"><i class="ri-github-fill fs-16"></i></button>
                                                     <button type="button" class="btn btn-info btn-icon waves-effect waves-light"><i class="ri-twitter-fill fs-16"></i></button>
                                                 </div>

@@ -81,8 +81,8 @@ if (isset($_POST['siteCode'], $_POST['siteName'])) {
             }
             else{
 
-                /*if ($insert_stmt = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssss', $transporterId, $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Site_Log (site_id, site_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssss', $transporterId, $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -103,17 +103,7 @@ if (isset($_POST['siteCode'], $_POST['siteName'])) {
                         //     )
                         // );
                     }
-
-                    $update_stmt->close();
-                    $db->close();
-
-                    echo json_encode(
-                        array(
-                            "status"=> "success", 
-                            "message"=> "Updated Successfully!!" 
-                        )
-                    );
-                }*/
+                }
                 $update_stmt->close();
                 $db->close();
 
@@ -142,19 +132,10 @@ if (isset($_POST['siteCode'], $_POST['siteName'])) {
                 );
             }
             else{
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
-                    )
-                );
+                $siteId = $insert_stmt->insert_id; // Get the inserted plant ID
 
-                /*$sel = mysqli_query($db,"select count(*) as allcount from Transporter");
-                $records = mysqli_fetch_assoc($sel);
-                $totalRecords = $records['allcount'];
-
-                if ($insert_log = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssssssssss', $totalRecords, $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Site_Log (site_id, site_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('ssssssssss', $siteId, $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {
@@ -174,11 +155,19 @@ if (isset($_POST['siteCode'], $_POST['siteName'])) {
                         //     )
                         // );
                     }
-                }*/
+                }
 
                 $insert_stmt->close();
                 $db->close();
                 
+                
+                echo json_encode(
+                    array(
+                        "status"=> "success", 
+                        "message"=> "Added Successfully!!" 
+                    )
+                );
+
             }
         }
     }
