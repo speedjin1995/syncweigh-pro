@@ -3,6 +3,40 @@
 require_once 'db_connect.php';
 
 $searchQuery = "";
+$groupByFields = array();
+
+function rearrangeList($weightDetails) {
+    // global $mapOfHouses, $mapOfWeights, $totalSGross, $totalSCrate, $totalSReduce, $totalSNet, $totalSBirds, $totalSCages, $totalAGross, $totalACrate, $totalAReduce, $totalANet, $totalABirds, $totalACages, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages;
+    global $groupByFields, $mapOfWeights;
+
+    $result = array();
+
+    $groupby = array(
+        "customer_supplier_code" => "Customer/Supplier",
+        "product_code" => "Product",
+        "lorry_plate_no1" => "Vehicle",
+        "destination-code" => "Destination",
+        "transporter_code" => "Transporter"
+    );
+
+    foreach ($weightDetails as $row) {
+        $current = &$result;
+
+        // Loop through the group fields
+        foreach ($groupByFields as $field) {
+            $key = $row[$field];
+            if (!isset($current[$key])) {
+                $current[$key] = [];
+            }
+            $current = &$current[$key];
+        }
+
+        // Push the full row at the deepest level
+        $current[] = $row;
+    }
+
+    return $result;
+}
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $date = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
@@ -73,12 +107,24 @@ if(isset($_POST['product']) && $_POST['product'] != null && $_POST['product'] !=
     }
 }
 
+if(isset($_POST['groupOne']) && $_POST['groupOne'] != null && $_POST['groupOne'] != '' && $_POST['groupOne'] != '-'){
+    $groupByFields[] = $_POST['groupOne'];
+}
+
+if(isset($_POST['groupTwo']) && $_POST['groupTwo'] != null && $_POST['groupTwo'] != '' && $_POST['groupTwo'] != '-'){
+    $groupByFields[] = $_POST['groupTwo'];
+}
+
+if(isset($_POST['groupThree']) && $_POST['groupThree'] != null && $_POST['groupThree'] != '' && $_POST['groupThree'] != '-'){
+    $groupByFields[] = $_POST['groupThree'];
+}
+
 if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
         //i remove this because both(billboard and weight) also call this print page.
         //AND weight.pStatus = 'Pending'
 
-        if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
+        if ($select_stmt = $db->prepare("select Weight.*, IFNULL(customer_code, supplier_code) as customer_supplier_code, Weight_Product.* from Weight, Weight_Product WHERE Weight.id = Weight_Product.weight_id Weight.is_cancel = 'N'".$searchQuery)) {
             // Execute the prepared query.
             if (! $select_stmt->execute()) {
                 echo json_encode(
@@ -89,118 +135,123 @@ if(isset($_POST["file"])){
             }
             else{
                 $result = $select_stmt->get_result();
-                
-                $message = '<html>
-    <head>
-        <style>
-            @media print {
-                @page {
-                    margin-left: 0.5in;
-                    margin-right: 0.5in;
-                    margin-top: 0.1in;
-                    margin-bottom: 0.1in;
-                }
-                
-            } 
-                    
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                
-            } 
-            
-            .table th, .table td {
-                padding: 0.70rem;
-                vertical-align: top;
-                border-top: 1px solid #dee2e6;
-                
-            } 
-            
-            .table-bordered {
-                border: 1px solid #000000;
-                
-            } 
-            
-            .table-bordered th, .table-bordered td {
-                border: 1px solid #000000;
-                font-family: sans-serif;
-                font-size: 12px;
-                
-            } 
-            
-            .row {
-                display: flex;
-                flex-wrap: wrap;
-                margin-top: 20px;
-                margin-right: -15px;
-                margin-left: -15px;
-                
-            } 
-            
-            .col-md-4{
-                position: relative;
-                width: 33.333333%;
-            }
-        </style>
-    </head>
-    <body>
-        <table style="width:100%; border:1px solid black;"><thead>
-            <tr>
-                <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>ID</th>
-                <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>STATUS</th>
-                <th style="border:1px solid black;font-size: 11px;">WEIGHT <br>TYPE</th>
-                <th style="border:1px solid black;font-size: 11px;">LORRY <br>NO.</th>
-                <th style="border:1px solid black;font-size: 11px;">CUSTOMER</th>
-                <th style="border:1px solid black;font-size: 11px;">SUPPLIER</th>
-                <th style="border:1px solid black;font-size: 11px;">PRODUCT</th>
-                <th style="border:1px solid black;font-size: 11px;">PO NO.</th>
-                <th style="border:1px solid black;font-size: 11px;">DO NO.</th>
-                <th style="border:1px solid black;font-size: 11px;">GROSS</th>
-                <th style="border:1px solid black;font-size: 11px;">TARE</th>
-                <th style="border:1px solid black;font-size: 11px;">NET</th>
-            </tr></thead><tbody>';
-            
-            $totalGross = 0;
-            $totalTare = 0;
-            $totalNet = 0;
+                $data = $result->fetch_all(MYSQLI_ASSOC);
+                $rearrangedData = rearrangeList($data);
 
-            while ($row = $result->fetch_assoc()) {
-                $message .= '<tr>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['transaction_id'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['transaction_status'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['weight_type'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['lorry_plate_no1'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['customer_name'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['supplier_name'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['product_name'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['purchase_order'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['delivery_no'].'</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['gross_weight1'].' kg</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['tare_weight1'].' kg</td>
-                    <td style="border:1px solid black;font-size: 10px;">'.$row['nett_weight1'].' kg</td>
-                </tr>';
+                $message ='';
                 
-                $totalGross += (float)$row['gross_weight1'];
-                $totalTare += (float)$row['tare_weight1'];
-                $totalNet += (float)$row['nett_weight1'];
-            }
+//                 $message = '<html>
+//     <head>
+//         <style>
+//             @media print {
+//                 @page {
+//                     margin-left: 0.5in;
+//                     margin-right: 0.5in;
+//                     margin-top: 0.1in;
+//                     margin-bottom: 0.1in;
+//                 }
+                
+//             } 
+                    
+//             table {
+//                 width: 100%;
+//                 border-collapse: collapse;
+                
+//             } 
             
-            $message .= '</tbody><tfoot><tr>
-                <th style="border:1px solid black;font-size: 11px;" colspan="9">Total</th>
-                <th style="border:1px solid black;font-size: 11px;">'.$totalGross.' kg</th>
-                <th style="border:1px solid black;font-size: 11px;">'.$totalTare.' kg</th>
-                <th style="border:1px solid black;font-size: 11px;">'.$totalNet.' kg</th>
-            </tr>';
+//             .table th, .table td {
+//                 padding: 0.70rem;
+//                 vertical-align: top;
+//                 border-top: 1px solid #dee2e6;
+                
+//             } 
             
-        $message .= '</table>
-    </body>
-</html>';
+//             .table-bordered {
+//                 border: 1px solid #000000;
+                
+//             } 
+            
+//             .table-bordered th, .table-bordered td {
+//                 border: 1px solid #000000;
+//                 font-family: sans-serif;
+//                 font-size: 12px;
+                
+//             } 
+            
+//             .row {
+//                 display: flex;
+//                 flex-wrap: wrap;
+//                 margin-top: 20px;
+//                 margin-right: -15px;
+//                 margin-left: -15px;
+                
+//             } 
+            
+//             .col-md-4{
+//                 position: relative;
+//                 width: 33.333333%;
+//             }
+//         </style>
+//     </head>
+//     <body>
+//         <table style="width:100%; border:1px solid black;"><thead>
+//             <tr>
+//                 <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>ID</th>
+//                 <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>STATUS</th>
+//                 <th style="border:1px solid black;font-size: 11px;">WEIGHT <br>TYPE</th>
+//                 <th style="border:1px solid black;font-size: 11px;">LORRY <br>NO.</th>
+//                 <th style="border:1px solid black;font-size: 11px;">CUSTOMER</th>
+//                 <th style="border:1px solid black;font-size: 11px;">SUPPLIER</th>
+//                 <th style="border:1px solid black;font-size: 11px;">PRODUCT</th>
+//                 <th style="border:1px solid black;font-size: 11px;">PO NO.</th>
+//                 <th style="border:1px solid black;font-size: 11px;">DO NO.</th>
+//                 <th style="border:1px solid black;font-size: 11px;">GROSS</th>
+//                 <th style="border:1px solid black;font-size: 11px;">TARE</th>
+//                 <th style="border:1px solid black;font-size: 11px;">NET</th>
+//             </tr></thead><tbody>';
+            
+//             $totalGross = 0;
+//             $totalTare = 0;
+//             $totalNet = 0;
+
+//             while ($row = $result->fetch_assoc()) {
+//                 $message .= '<tr>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['transaction_id'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['transaction_status'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['weight_type'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['lorry_plate_no1'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['customer_name'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['supplier_name'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['product_name'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['purchase_order'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['delivery_no'].'</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['gross_weight1'].' kg</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['tare_weight1'].' kg</td>
+//                     <td style="border:1px solid black;font-size: 10px;">'.$row['nett_weight1'].' kg</td>
+//                 </tr>';
+                
+//                 $totalGross += (float)$row['gross_weight1'];
+//                 $totalTare += (float)$row['tare_weight1'];
+//                 $totalNet += (float)$row['nett_weight1'];
+//             }
+            
+//             $message .= '</tbody><tfoot><tr>
+//                 <th style="border:1px solid black;font-size: 11px;" colspan="9">Total</th>
+//                 <th style="border:1px solid black;font-size: 11px;">'.$totalGross.' kg</th>
+//                 <th style="border:1px solid black;font-size: 11px;">'.$totalTare.' kg</th>
+//                 <th style="border:1px solid black;font-size: 11px;">'.$totalNet.' kg</th>
+//             </tr>';
+            
+//         $message .= '</table>
+//     </body>
+// </html>';
 
 
                 echo json_encode(
                     array(
                         "status" => "success",
-                        "message" => $message
+                        "message" => $message,
+                        "array" => $rearrangedData
                     )
                 );
             }

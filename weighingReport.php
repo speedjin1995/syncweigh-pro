@@ -15,8 +15,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $groupby = array(
-    "customer_code" => "Customer",
-    "supplier_code" => "Supplier",
+    "customer_supplier_code" => "Customer/Supplier",
     "product_code" => "Product",
     "lorry_plate_no1" => "Vehicle",
     "destination-code" => "Destination",
@@ -276,23 +275,20 @@ $groupby = array(
                                                                 <div class="mb-3">
                                                                     <label for="group1" class="form-label">Group 1</label>
                                                                     <select id="group1" class="form-select"  >
-                                                                        <option selected>-</option>
+                                                                        <option value="-" selected>-</option>
                                                                         <?php foreach($groupby as $key => $value){ ?>
                                                                             <option value="<?=$key ?>"><?=$value ?></option>
                                                                         <?php } ?>
-                                                                        <!-- <option value="Sales">Sales</option>
-                                                                        <option value="Purchase">Purchase</option>
-                                                                        <option value="Local">Local</option> -->
                                                                     </select>
                                                                 </div>
                                                             </div><!--end col-->
                                                             <div class="col-4">
                                                                 <div class="mb-3">
                                                                     <label for="group2" class="form-label">Group 2</label>
-                                                                    <select id="group2" class="form-select" >
-                                                                        <option selected>-</option>
-                                                                        <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                            <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                    <select id="group2" class="form-select" disabled>
+                                                                        <option value="-" selected>-</option>
+                                                                        <?php foreach($groupby as $key => $value){ ?>
+                                                                            <option value="<?=$key ?>"><?=$value ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
@@ -300,10 +296,10 @@ $groupby = array(
                                                             <div class="col-4">
                                                                 <div class="mb-3">
                                                                     <label for="group3" class="form-label">Group 3</label>
-                                                                    <select id="group3" class="form-select" >
-                                                                        <option selected>-</option>
-                                                                        <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                            <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                    <select id="group3" class="form-select" disabled>
+                                                                        <option value="-" selected>-</option>
+                                                                        <?php foreach($groupby as $key => $value){ ?>
+                                                                            <option value="<?=$key ?>"><?=$value ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
@@ -574,6 +570,10 @@ $groupby = array(
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
 
+            var groupOneI = $('#group1').val();
+            var groupTwoI = $('#group2').val();
+            var groupThreeI = $('#group3').val();
+
             $.post('php/exportPdf.php', {
                 file: 'weight',
                 fromDate: fromDateI,
@@ -582,7 +582,10 @@ $groupby = array(
                 customer: customerNoI,
                 vehicle: vehicleNoI,
                 weighingType: invoiceNoI,
-                product: transactionStatusI
+                product: transactionStatusI,
+                groupOne: groupOneI,
+                groupTwo: groupTwoI,
+                groupThree: groupThreeI
             }, function(response){
                 var obj = JSON.parse(response);
 
@@ -620,6 +623,54 @@ $groupby = array(
             "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
             "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
         });
+    });
+
+    $('#group1').on('change', function () {
+        var selected = $(this).val();
+
+        $('#group2 option').each(function () {
+            $(this).show(); // Reset all options first
+
+            if ($(this).val() === selected && selected !== "") {
+                $(this).hide(); // Hide the selected option
+            }
+        });
+
+        if ($('#group2').val() === selected) {
+            $('#group2').val('-');
+        }
+
+        if (selected === "-") {
+            $('#group2').attr('disabled', 'disabled');
+            $('#group2').val('-');
+            $('#group2').trigger('change');
+        } else {
+            $('#group2').removeAttr('disabled');
+        }
+    });
+
+    $('#group2').on('change', function () {
+        var selected = $('#group1').val();
+        var selected2 = $(this).val();
+
+        $('#group3 option').each(function () {
+            $(this).show(); // Reset all options first
+
+            if (($(this).val() === selected && selected !== "") || ($(this).val() === selected2 && selected2 !== "")) {
+                $(this).hide(); // Hide the selected option
+            }
+        });
+
+        if ($('#group3').val() === selected || $('#group3').val() === selected2) {
+            $('#group3').val('-');
+        }
+
+        if (selected2 === "-") {
+            $('#group3').attr('disabled', 'disabled');
+            $('#group3').val('-');
+        } else {
+            $('#group3').removeAttr('disabled');
+        }
     });
 
     function edit(id){
