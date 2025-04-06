@@ -2205,13 +2205,23 @@ else{
                 if(data != "Error"){
                     console.log("Data Received:" + data);
                     
-                    if(ind == 'X2S' || ind == 'X722' || ind == 'BDI'){
+                    if(ind == 'X2S' || ind == 'X722'){
                         var text = data.split(" ");
                         var text2 = text[text.length - 1];
                         text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
                         $('#indicatorWeight').html(text2);
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
+                    }
+                    else if(ind == 'BDI'){
+                        if(data.includes("GS")){
+                            var text = data.split(" ");
+                            var text2 = text[text.length - 1];
+                            text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
+                            $('#indicatorWeight').html(text2);
+                            $('#indicatorConnected').addClass('bg-primary');
+                            $('#checkingConnection').removeClass('bg-danger');
+                        }
                     }
                     else if(ind == 'EX2001'){
                         var text = data.split(" ");
@@ -2226,7 +2236,7 @@ else{
                     $('#indicatorWeight').html('0');
                     $('#indicatorConnected').removeClass('bg-primary');
                     $('#checkingConnection').addClass('bg-danger');
-            }
+                }
             });
         }, 500);
 
