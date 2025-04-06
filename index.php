@@ -2205,7 +2205,7 @@ else{
                 if(data != "Error"){
                     console.log("Data Received:" + data);
                     
-                    if(ind == 'X2S' || ind == 'X722'){
+                    if(ind == 'X2S' || ind == 'X722' || ind == 'BDI'){
                         var text = data.split(" ");
                         var text2 = text[text.length - 1];
                         text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
@@ -2213,15 +2213,7 @@ else{
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                     }
-                    else if(ind == 'BX23'){
-                        var text = data.split(" ");
-                        let newArray = text.slice(1, -1);
-                        let newtext = newArray.join();
-                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
-                    }
-                    else if(ind == '205'){
+                    else if(ind == 'EX2001'){
                         var text = data.split(" ");
                         let newArray = text.slice(1, -1);
                         let newtext = newArray.join();
@@ -3668,7 +3660,7 @@ else{
     // }
 
     function print(id, transactionStatus) {
-        if (transactionStatus == "Sales"){
+        /*if (transactionStatus == "Sales"){
             $('#prePrintModal').find('#id').val(id);
             $('#prePrintModal').find('#prePrint').val("");
             $("#prePrintModal").modal("show");
@@ -3708,7 +3700,33 @@ else{
                     $("#failBtn").click();
                 }
             });
-        }
+        }*/
+        //var id = $('#prePrintModal').find('#id').val();
+        var prePrintStatus = 'N';
+
+        $.post('php/print.php', {userID: id, file: 'weight', prePrint: prePrintStatus}, function(data){
+            var obj = JSON.parse(data);
+
+            if(obj.status === 'success'){
+                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                printWindow.document.write(obj.message);
+                printWindow.document.close();
+                setTimeout(function(){
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+
+                $('#spinnerLoading').hide();
+            }
+            else if(obj.status === 'failed'){
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                $("#failBtn").click();
+            }
+        });
     }
     </script>
 </body>

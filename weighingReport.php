@@ -382,10 +382,7 @@ else{
                                     </div> <!-- end .h-100-->
                                 </div> <!-- end col -->
                             </div><!-- container-fluid -->
-                    
-
                         </div> <!-- end .h-100-->
-
                     </div> <!-- end col -->
                 </div>
                 <!-- container-fluid -->
