@@ -1663,15 +1663,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                     }
-                    else if(ind == 'BX23'){
-                        var text = data.split(" ");
-                        let newArray = text.slice(1, -1);
-                        let newtext = newArray.join();
-                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
+                    else if(ind == 'BDI'){
+                        if(data.includes("GS")){
+                            var text = data.split(" ");
+                            var text2 = text[text.length - 1];
+                            text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
+                            $('#indicatorWeight').html(text2);
+                            $('#indicatorConnected').addClass('bg-primary');
+                            $('#checkingConnection').removeClass('bg-danger');
+                        }
                     }
-                    else if(ind == '205'){
+                    else if(ind == 'EX2001'){
                         var text = data.split(" ");
                         let newArray = text.slice(1, -1);
                         let newtext = newArray.join();
