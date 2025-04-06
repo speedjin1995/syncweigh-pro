@@ -134,6 +134,9 @@
                     <div class="collapse menu-dropdown" id="sidebarReport">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
+                                <!-- <li class="nav-item">
+                                    <a href="weighingReport.php" class="nav-link"><?=$lang['t-weighingReport']?></a>
+                                </li> -->
                                 <li class="nav-item">
                                     <a href="salesReport.php" class="nav-link"><?=$lang['t-soReport']?></a>
                                 </li>

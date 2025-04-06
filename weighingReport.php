@@ -745,15 +745,23 @@ else{
             var status = $(this).val();
 
             if (status == 'Purchase' || status == 'Local'){
+                // Hide & reset customer then show supplier
+                $('#customerSearchDisplay').hide();
+                $('#customerSearchDisplay').find('#customerNoSearch').val('-').trigger('change');
+                $('#supplierSearchDisplay').show();
+                // Hide & reset product then show raw material
+                $('#productSearchDisplay').find('#productSearch').val('-').trigger('change');
                 $('#productSearchDisplay').hide();
                 $('#rawMatSearchDisplay').show();
-                $('#customerSearchDisplay').hide();
-                $('#supplierSearchDisplay').show();
             }else{
-                $('#productSearchDisplay').show();
-                $('#rawMatSearchDisplay').hide();
-                $('#customerSearchDisplay').show();
+                // Hide & reset supplier then show customer
+                $('#supplierSearchDisplay').find('#supplierSearch').val('-').trigger('change');
                 $('#supplierSearchDisplay').hide();
+                $('#customerSearchDisplay').show();
+                // Hide & reset raw material then show product
+                $('#rawMatSearchDisplay').find('#rawMatSearch').val('-').trigger('change');
+                $('#rawMatSearchDisplay').hide();
+                $('#productSearchDisplay').show();
             }
         });
     });

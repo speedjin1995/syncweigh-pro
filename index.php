@@ -64,6 +64,7 @@ $product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name A
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $purchaseOrder = $db->query("SELECT * FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
 $salesOrder = $db->query("SELECT * FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
@@ -197,13 +198,24 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
                                                             <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="supplierSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="supplierSearch" class="form-label">Supplier No</label>
+                                                            <select id="supplierSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowSF = mysqli_fetch_assoc($supplier2)){ ?>
+                                                                    <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -235,7 +247,7 @@ else{
                                                     </div><!--end col-->                                                
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Product</label>
+                                                            <label for="productSearch" class="form-label">Product</label>
                                                             <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
@@ -246,7 +258,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="rawMatSearchDisplay" style="display:none">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Raw Material</label>
+                                                            <label for="rawMatSearch" class="form-label">Raw Material</label>
                                                             <select id="rawMatSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
@@ -257,7 +269,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="plantSearchDisplay" style="display:none">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Plant</label>
+                                                            <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
@@ -1507,13 +1519,27 @@ else{
             var status = $(this).val();
 
             if (status == 'Purchase' || status == 'Local'){
+                // Hide & reset customer then show supplier
+                $('#customerSearchDisplay').hide();
+                $('#customerSearchDisplay').find('#customerNoSearch').val('-').trigger('change');
+                $('#supplierSearchDisplay').show();
+                // Hide & reset product then show raw material
+                $('#productSearchDisplay').find('#productSearch').val('-').trigger('change');
                 $('#productSearchDisplay').hide();
                 $('#rawMatSearchDisplay').show();
             }else{
-                $('#productSearchDisplay').show();
+                // Hide & reset supplier then show customer
+                $('#supplierSearchDisplay').find('#supplierSearch').val('-').trigger('change');
+                $('#supplierSearchDisplay').hide();
+                $('#customerSearchDisplay').show();
+                // Hide & reset raw material then show product
+                $('#rawMatSearchDisplay').find('#rawMatSearch').val('-').trigger('change');
                 $('#rawMatSearchDisplay').hide();
+                $('#productSearchDisplay').show();
             }
         });
+
+        $('#statusSearch').val('Sales').trigger('change');
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -3052,16 +3078,16 @@ else{
             var vehicleNo1 = $('#addModal').find('#vehiclePlateNo1').val();
             var exDel = $('input[name="exDel"]:checked').val();
             if (exDel == 'true'){
-                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
-                $('#addModal').find('#transporterCode').val('T01');
+                // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+                // $('#addModal').find('#transporterCode').val('T01');
                 $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function(data){
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
-                        var customerName = obj.message.customer_name;
-                        var customerCode = obj.message.customer_code;
+                        // var customerName = obj.message.customer_name;
+                        // var customerCode = obj.message.customer_code;
 
-                        $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        $('#addModal').find('#customerCode').val(customerCode);
+                        // $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        // $('#addModal').find('#customerCode').val(customerCode);
                     }   
                     else if(obj.status === 'failed'){
                         $("#failBtn").attr('data-toast-text', obj.message );
@@ -3073,18 +3099,18 @@ else{
                     }
                 });
             }else{
-                $('#addModal').find('#customerName').val('').trigger('change');
-                $('#addModal').find('#customerCode').val('');
+                // $('#addModal').find('#customerName').val('').trigger('change');
+                // $('#addModal').find('#customerCode').val('');
 
                 $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
-                        var transporterName = obj.message.transporter_name;
-                        var transporterCode = obj.message.transporter_code;
+                        // var transporterName = obj.message.transporter_name;
+                        // var transporterCode = obj.message.transporter_code;
 
-                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        $('#addModal').find('#transporterCode').val(transporterCode);
+                        // $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                        // $('#addModal').find('#transporterCode').val(transporterCode);
                     }
                     else if(obj.status === 'failed'){
                         $("#failBtn").attr('data-toast-text', obj.message );
@@ -3323,7 +3349,7 @@ else{
                 <div class="row">
                     <div class="col-3">
                         <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
-                        <p><strong>DESTINATION NAME:</strong> ${row.destination_name}</p>
+                        <p><strong>DESTINATION NAME:</strong> ${row.destination}</p>
                         <p><strong>SITE NAME:</strong> ${row.site_name}</p>
                         <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
 

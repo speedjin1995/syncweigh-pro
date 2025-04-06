@@ -102,10 +102,10 @@ if(isset($_POST['userID'])){
 
                             $message['product_rawmat_name'] = $row['product_name'];
 
-                        }
+                        } 
                         $message['transporter'] = $row['transporter'] ?? '';
                         $message['site_name'] = $row['site_name'] ?? '';
-                        $message['destination_name'] = $row['destination_name'] ?? '';
+                        $message['destination'] = $row['destination'] ?? '';
                         $message['plant_name'] = $row['plant_name'] ?? '';
                         $message['lorry_plate_no1'] = $row['lorry_plate_no1'] ?? '';
                         $message['transaction_id'] = $row['transaction_id'] ?? '';
