@@ -336,8 +336,9 @@ $groupby = array(
                                                                 <h5 class="card-title mb-0">Weighing Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <!-- <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal"> -->
-                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <!-- temporarily commented for the group by selection page -->
+                                                                <!-- <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#exportModal"> -->
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export PDF
                                                                 </button>
@@ -561,7 +562,9 @@ $groupby = array(
             });
         });
 
-        $('#submitPdf').on('click', function(){
+        $('#exportPdf').on('click', function(){
+        // Temporarily commented out for group by selection page
+        // $('#submitPdf').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';

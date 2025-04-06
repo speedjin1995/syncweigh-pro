@@ -15,7 +15,7 @@ function rearrangeList($weightDetails) {
         "customer_supplier_code" => "Customer/Supplier",
         "product_code" => "Product",
         "lorry_plate_no1" => "Vehicle",
-        "destination-code" => "Destination",
+        "destination_code" => "Destination",
         "transporter_code" => "Transporter"
     );
 
@@ -124,7 +124,7 @@ if(isset($_POST["file"])){
         //i remove this because both(billboard and weight) also call this print page.
         //AND weight.pStatus = 'Pending'
 
-        if ($select_stmt = $db->prepare("select Weight.*, IFNULL(customer_code, supplier_code) as customer_supplier_code, Weight_Product.* from Weight, Weight_Product WHERE Weight.id = Weight_Product.weight_id Weight.is_cancel = 'N'".$searchQuery)) {
+        if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
             // Execute the prepared query.
             if (! $select_stmt->execute()) {
                 echo json_encode(
@@ -135,66 +135,211 @@ if(isset($_POST["file"])){
             }
             else{
                 $result = $select_stmt->get_result();
-                $data = $result->fetch_all(MYSQLI_ASSOC);
-                $rearrangedData = rearrangeList($data);
+                
+                $message = '<html>
+    <head>
+        <style>
+            @page {
+                size: A4 landscape;
+                margin: 5mm;
+            }
 
-                $message ='';
-                
-//                 $message = '<html>
-//     <head>
-//         <style>
-//             @media print {
-//                 @page {
-//                     margin-left: 0.5in;
-//                     margin-right: 0.5in;
-//                     margin-top: 0.1in;
-//                     margin-bottom: 0.1in;
-//                 }
-                
-//             } 
+            @media print {
+                body {
+                    margin-top: 50mm; /* Adjust to match header height */
+                }
+
+                .content {
+                    page-break-before: always;
+                    margin-top: 65mm; /* Ensure it starts below the fixed header */
+                }
+
+                .details td {
+                    border: 0;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+
+                .section-break {
+                    page-break-before: always;
+                }
+            } 
                     
-//             table {
-//                 width: 100%;
-//                 border-collapse: collapse;
+            // table {
+            //     width: 100%;
+            //     border-collapse: collapse;
                 
-//             } 
+            // } 
             
-//             .table th, .table td {
-//                 padding: 0.70rem;
-//                 vertical-align: top;
-//                 border-top: 1px solid #dee2e6;
+            // .table th, .table td {
+            //     padding: 0.70rem;
+            //     vertical-align: top;
+            //     border-top: 1px solid #dee2e6;
                 
-//             } 
+            // } 
             
-//             .table-bordered {
-//                 border: 1px solid #000000;
+            // .table-bordered {
+            //     border: 1px solid #000000;
                 
-//             } 
+            // } 
             
-//             .table-bordered th, .table-bordered td {
-//                 border: 1px solid #000000;
-//                 font-family: sans-serif;
-//                 font-size: 12px;
+            // .table-bordered th, .table-bordered td {
+            //     border: 1px solid #000000;
+            //     font-family: sans-serif;
+            //     font-size: 12px;
                 
-//             } 
+            // } 
             
-//             .row {
-//                 display: flex;
-//                 flex-wrap: wrap;
-//                 margin-top: 20px;
-//                 margin-right: -15px;
-//                 margin-left: -15px;
+            // .row {
+            //     display: flex;
+            //     flex-wrap: wrap;
+            //     margin-top: 20px;
+            //     margin-right: -15px;
+            //     margin-left: -15px;
                 
-//             } 
+            // } 
             
-//             .col-md-4{
-//                 position: relative;
-//                 width: 33.333333%;
-//             }
-//         </style>
-//     </head>
-//     <body>
-//         <table style="width:100%; border:1px solid black;"><thead>
+            // .col-md-4{
+            //     position: relative;
+            //     width: 33.333333%;
+            // }
+        </style>
+    </head>
+    <body>';
+
+    while ($row = $result->fetch_assoc()) {
+        $message .= '<div class="container-full content">
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead style="border-bottom: 1px solid black;">
+                        <tr class="text-center" style="border-top: 1px solid black;">
+                            <th rowspan="2" class="text-start">Serial No.</th>
+                            <th rowspan="2">Part Code</th>
+                            <th rowspan="2" colspan="3">Products Description</th>
+                            <th rowspan="2">Percentage (%)</th>
+                            <th rowspan="2">Item Weight (kg)</th>
+                            <th rowspan="2">Unit Price (RM)</th>
+                            <th rowspan="2">Total Price (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="border:0; padding-bottom: 0;">
+                                <div class="fw-bold">
+                                    <span>
+                                        Customer <span>:</span> '.$row['customer_name'].
+                                        '<br>
+                                        Transporter <span>:</span> '.$row['transporter'].
+                                        '<br>
+                                        Destination <span>:</span> '.$row['destination'].
+                                        '<br>
+                                        Vehicle Plate No. <span>:</span> '.$row['lorry_plate_no1'].
+                                        '<br>
+                                        Driver Name <span>:</span> '.$row['driver_name'].
+                                        '<br>
+                                        Driver I/C No <span>:</span> '.$row['driver_ic'].
+                                        '<br>
+                                        Driver Contact No <span>:</span> '.$row['driver_phone'].
+                                    '</span>
+                                </div>
+                            </td>
+                            <td colspan="2" style="border:0; padding-bottom: 0;">
+                                <div class="fw-bold">
+                                    <span>
+                                        Transaction ID <span>:</span> '.$row['transaction_id'].
+                                        '<br>
+                                        Weight Type <span>:</span> '.$row['weight_type'].
+                                        '<br>
+                                        Transaction Status <span>:</span> '.$row['transaction_status'].
+                                        '<br>
+                                        Transaction Date <span>:</span> '.$row['transaction_date'].
+                                        '<br>
+                                        Purchase Order <span>:</span> '.$row['purchase_order'].
+                                        '<br>
+                                        Invoice No <span>:</span> '.$row['invoice_no'].
+                                        '<br>
+                                        Delivery No <span>:</span> '.$row['delivery_no'].
+                                    '</span>
+                                </div>
+                            </td>
+                            <td colspan="2" style="border:0; padding-bottom: 0;">
+                                <div class="fw-bold">
+                                    <span>
+                                        Incoming Weight (kg) <span>:</span> '.$row['gross_weight1'].
+                                        '<br>
+                                        Outgoing Weight <span>:</span> '.$row['tare_weight1'].
+                                        '<br>
+                                        Nett Weight <span>:</span> '.$row['nett_weight1'].
+                                        '<br>
+                                        Overall Reduce Weight <span>:</span> '.$row['reduce_weight'].
+                                        '<br>
+                                        Final Weight <span>:</span> '.$row['final_weight'].
+                                        '<br>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>';
+
+            if ($select_stmt2 = $db->prepare("select * Weight_Product WHERE weight_id = ?".$searchQuery)) {
+                $select_stmt2->bind_param('s', $row['id']);
+                // Execute the prepared query.
+                if (! $select_stmt2->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }
+                else{
+                    $result2 = $select_stmt2->get_result();
+
+                    $sub_total = 0;
+
+                    while ($row2 = $result2->fetch_assoc()) {
+
+                        $sub_total += $row2['total_price'];
+
+                        $message .= '<tr class="details">
+                            <td>'.$row2['id'].'</td>
+                            <td>'.$row2['product_code'].'</td>
+                            <td>'.$row2['product_name'].'</td>
+                            <td class="text-end">'.$row2['percentage'].'</td>
+                            <td class="text-end">'.$row2['item_weight'].'</td>
+                            <td class="text-end">'.$row2['unit_price'].'</td>
+                            <td class="text-end">'.$row2['total_price'].'</td>
+                        </tr>';
+                    }
+
+                    $message .= '<tr class="details fw-bold">
+                            <td colspan="6">Sub Total Price (RM)</td>
+                            <td colspan="2"></td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$sub_total.'</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<br>';
+
+                }
+            }
+            else{
+                echo json_encode(
+                    array(
+                        "status"=> "failed", 
+                        "message"=> "Please fill in all the fields"
+                    )
+                ); 
+            }
+
+    }
+
+            $message .= '</body>
+                    </html>';
+
+//         $message = '<table style="width:100%; border:1px solid black;"><thead>
 //             <tr>
 //                 <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>ID</th>
 //                 <th style="border:1px solid black;font-size: 11px;">TRANSACTION <br>STATUS</th>
@@ -250,8 +395,7 @@ if(isset($_POST["file"])){
                 echo json_encode(
                     array(
                         "status" => "success",
-                        "message" => $message,
-                        "array" => $rearrangedData
+                        "message" => $message
                     )
                 );
             }
