@@ -144,7 +144,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
                                                                                     <div class="col-sm-8">
@@ -280,7 +280,7 @@
                                                                     <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Vehicle No</th>
                                                                     <!--th>Vehicle Weight</th-->
-                                                                    <th>EX-Quarry/Delivered</th>
+                                                                    <!--th>EX-Quarry/Delivered</th-->
                                                                     <th>Transporter</th>
                                                                     <th>Customer</th>
                                                                     <th>Status</th>
@@ -387,7 +387,7 @@ $(function () {
             },
             { data: 'veh_number' },
             //{ data: 'vehicle_weight' },
-            { 
+            /*{ 
                 data: 'ex_del',
                 render: function ( data, type, row ) {
                     if (data == 'EX'){
@@ -396,27 +396,25 @@ $(function () {
                         return "Delivered";
                     }
                 }
-            },
+            },*/
             { data: 'transporter_name' },
             { data: 'customer_name' },
+            { data: 'status' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    if (row.status == '1'){
-                        return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
-                    }else{
-                        return '';
+                    if(row.status == 'Inactive'){
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
                     }
-                }
-            },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    else{
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    }
                 }
             }
         ]       

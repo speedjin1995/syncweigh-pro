@@ -44,7 +44,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "ex_del"=>$row['ex_del'],
       "transporter_name"=>$row['transporter_name'],
       "customer_name"=>$row['customer_name'],
-      "status"=>$row['status']
+      "status"=>(($row['status'] == '0') ? 'Active' : 'Inactive')
     );
 }
 

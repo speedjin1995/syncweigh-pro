@@ -143,7 +143,7 @@ else{
                                                             <select id="statusSearch" class="form-select"  >
                                                                 <option value="Sales" selected>Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Public</option>
+                                                                <option value="Local">Local</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -310,7 +310,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Public</p>
+                                                    Local</p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -704,7 +704,7 @@ else{
         });
 
         $('#exportPdf').on('click', function(){
-            $("#exportPdfModal").find('#reportType').val('');
+            /*$("#exportPdfModal").find('#reportType').val('');
             $("#exportPdfModal").modal("show");
 
             $('#exportPdfForm').validate({
@@ -719,6 +719,54 @@ else{
                 unhighlight: function (element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
                 }
+            });*/
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+
+            $('#exportPdfForm').find('#fromDate').val(fromDateI);
+            $('#exportPdfForm').find('#toDate').val(toDateI);
+            $('#exportPdfForm').find('#status').val(statusI);
+            $('#exportPdfForm').find('#customer').val(customerNoI);
+            $('#exportPdfForm').find('#supplier').val(supplierNoI);
+            $('#exportPdfForm').find('#vehicle').val(vehicleNoI);
+            $('#exportPdfForm').find('#customerType').val(customerTypeI);
+            $('#exportPdfForm').find('#product').val(productI);
+            $('#exportPdfForm').find('#rawMat').val(rawMatI);
+            $('#exportPdfForm').find('#destination').val(destinationI);
+            $('#exportPdfForm').find('#plant').val(plantI);
+            $('#exportPdfForm').find('#file').val('weight');
+            $('#exportPdfModal').modal('hide');
+
+            $.post('php/exportPdf.php', $('#exportPdfForm').serialize(), function(response){
+                var obj = JSON.parse(response);
+
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                }
+                else if(obj.status === 'failed'){
+                    toastr["error"](obj.message, "Failed:");
+                }
+                else{
+                    toastr["error"]("Something wrong when activate", "Failed:");
+                }
+            }).fail(function(error){
+                console.error("Error exporting PDF:", error);
+                alert("An error occurred while generating the PDF.");
             });
         });
 

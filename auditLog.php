@@ -88,15 +88,11 @@
                                                             <option value="Raw Materials">Raw Material</option>
                                                             <option value="Supplier">Supplier</option>
                                                             <option value="Vehicle">Vehicle</option>
-                                                            <option value="Agent">Sales Representative</option>
                                                             <option value="Transporter">Transporter</option>
-                                                            <option value="Unit">Unit</option>
                                                             <option value="User">User</option>
-                                                            <option value="Plant">Plant</option>
-                                                            <option value="Site">Site</option>
                                                             <option value="Weight">Weighing</option>
-                                                            <option value="SO">Sales Order</option>
-                                                            <option value="PO">Purchase Order</option>
+                                                            <option value="Agent">Sales Representative</option>
+                                                            <option value="Plant">Plant</option>
                                                         </select>
                                                     </div>
                                                 </div>

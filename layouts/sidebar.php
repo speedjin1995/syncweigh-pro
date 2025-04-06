@@ -93,6 +93,9 @@
                                         <a href="product.php" class="nav-link">'.$lang['t-product'].'</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="rawMaterial.php" class="nav-link">'.$lang['t-raw-mat'].'</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="supplier.php" class="nav-link">'.$lang['t-supplier'].'</a>
                                     </li>       
                                     <li class="nav-item">
@@ -106,19 +109,16 @@
                                     </li>
                                     <!--li class="nav-item">
                                         <a href="unit.php" class="nav-link">'.$lang['t-unit'].'</a>
-                                    </li>                           
+                                    </li-->                           
                                     <li class="nav-item">
                                         <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
                                     </li> 
                                     <li class="nav-item">
                                         <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
                                     </li>                                    
-                                    <li class="nav-item">
+                                    <!--li class="nav-item">
                                         <a href="site.php" class="nav-link">'.$lang['t-site'].'</a>
-                                    </li> 
-                                    <li class="nav-item">
-                                        <a href="rawMaterial.php" class="nav-link">'.$lang['t-raw-mat'].'</a>
-                                    </li-->                  
+                                    </li-->    
                                 </ul>
                             </div>
                         </li>';
@@ -134,11 +134,14 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <li class="nav-item">
+                                    <a href="weighingReport.php" class="nav-link"><?=$lang['t-weighingReport']?></a>
+                                </li-->
+                                <!--li class="nav-item">
                                     <a href="salesReport.php" class="nav-link"><?=$lang['t-soReport']?></a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="purchaseReport.php" class="nav-link"><?=$lang['t-poReport']?></a>
-                                </li>
+                                </li-->
                                 <?php
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                                         echo '<li class="nav-item">
