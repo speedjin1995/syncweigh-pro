@@ -145,15 +145,6 @@ if(isset($_POST["file"])){
             }
 
             @media print {
-                body {
-                    margin-top: 50mm; /* Adjust to match header height */
-                }
-
-                .content {
-                    page-break-before: always;
-                    margin-top: 65mm; /* Ensure it starts below the fixed header */
-                }
-
                 .details td {
                     border: 0;
                     padding-top: 0;
@@ -164,6 +155,20 @@ if(isset($_POST["file"])){
                     page-break-before: always;
                 }
             } 
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            thead {
+                border-top: 2px solid black;
+                border-bottom: 2px solid black;
+            }
+
+            #text-end {
+                text-align: right;
+            }
                     
             // table {
             //     width: 100%;
@@ -211,8 +216,8 @@ if(isset($_POST["file"])){
         $message .= '<div class="container-full content">
         <div class="row">
             <div class="table-responsive">
-                <table class="table">
-                    <thead style="border-bottom: 1px solid black;">
+                <table class="table" style="border-collapse: separate; border-spacing: 0;">
+                    <thead style="border: 2px solid black;">
                         <tr class="text-center" style="border-top: 1px solid black;">
                             <th rowspan="2" class="text-start">Serial No.</th>
                             <th rowspan="2">Part Code</th>
@@ -225,10 +230,19 @@ if(isset($_POST["file"])){
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="2" style="border:0; padding-bottom: 0;">
+                            <td colspan="3" style="border:0; padding-bottom: 0;">
                                 <div class="fw-bold">
-                                    <span>
-                                        Customer <span>:</span> '.$row['customer_name'].
+                                    <span>';
+
+                                    if($row['transaction_status'] == 'Sales') {
+                                        $name = 'Customer';
+                                        $value = $row['customer_name'];
+                                    } else {
+                                        $name = 'Supplier';
+                                        $value = $row['supplier_name'];
+                                    }
+                                        
+                                    $message .= $name.' <span>:</span> '.$value.
                                         '<br>
                                         Transporter <span>:</span> '.$row['transporter'].
                                         '<br>
@@ -244,7 +258,7 @@ if(isset($_POST["file"])){
                                     '</span>
                                 </div>
                             </td>
-                            <td colspan="2" style="border:0; padding-bottom: 0;">
+                            <td colspan="3" style="border:0; padding-bottom: 0;">
                                 <div class="fw-bold">
                                     <span>
                                         Transaction ID <span>:</span> '.$row['transaction_id'].
@@ -263,25 +277,25 @@ if(isset($_POST["file"])){
                                     '</span>
                                 </div>
                             </td>
-                            <td colspan="2" style="border:0; padding-bottom: 0;">
+                            <td colspan="3" style="border:0; padding-bottom: 0;">
                                 <div class="fw-bold">
                                     <span>
-                                        Incoming Weight (kg) <span>:</span> '.$row['gross_weight1'].
+                                        Incoming Weight (kg) <span>:</span> '.number_format($row['gross_weight1'], 2, '.', ',').
                                         '<br>
-                                        Outgoing Weight <span>:</span> '.$row['tare_weight1'].
+                                        Outgoing Weight (kg) <span>:</span> '.number_format($row['tare_weight1'], 2, '.', ',').
                                         '<br>
-                                        Nett Weight <span>:</span> '.$row['nett_weight1'].
+                                        Nett Weight <span>:</span> '.number_format($row['nett_weight1'], 2, '.', ',').
                                         '<br>
-                                        Overall Reduce Weight <span>:</span> '.$row['reduce_weight'].
+                                        Overall Reduce Weight <span>:</span> '.number_format($row['reduce_weight'], 2, '.', ',').
                                         '<br>
-                                        Final Weight <span>:</span> '.$row['final_weight'].
+                                        Final Weight <span>:</span> '.number_format($row['final_weight'], 2, '.', ',').
                                         '<br>
                                     </span>
                                 </div>
                             </td>
                         </tr>';
 
-            if ($select_stmt2 = $db->prepare("select * Weight_Product WHERE weight_id = ?".$searchQuery)) {
+            if ($select_stmt2 = $db->prepare("select * FROM Weight_Product WHERE weight_id = ?")) {
                 $select_stmt2->bind_param('s', $row['id']);
                 // Execute the prepared query.
                 if (! $select_stmt2->execute()) {
@@ -303,25 +317,25 @@ if(isset($_POST["file"])){
                         $message .= '<tr class="details">
                             <td>'.$row2['id'].'</td>
                             <td>'.$row2['product_code'].'</td>
-                            <td>'.$row2['product_name'].'</td>
+                            <td colspan="3">'.$row2['product_name'].'</td>
                             <td class="text-end">'.$row2['percentage'].'</td>
-                            <td class="text-end">'.$row2['item_weight'].'</td>
-                            <td class="text-end">'.$row2['unit_price'].'</td>
-                            <td class="text-end">'.$row2['total_price'].'</td>
+                            <td class="text-end">'.number_format($row2['item_weight'], 2, '.', ',').'</td>
+                            <td class="text-end">'.number_format($row2['unit_price'], 2, '.', ',').'</td>
+                            <td class="text-end">'.number_format($row2['total_price'], 2, '.', ',').'</td>
                         </tr>';
                     }
 
                     $message .= '<tr class="details fw-bold">
                             <td colspan="6">Sub Total Price (RM)</td>
                             <td colspan="2"></td>
-                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$sub_total.'</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.number_format($sub_total, 2, '.', ',').'</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-<br>';
+    <br>';
 
                 }
             }
