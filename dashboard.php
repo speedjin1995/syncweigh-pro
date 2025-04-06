@@ -1,6 +1,15 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
+<?php
+require_once "php/db_connect.php";
 
+$weighing3 = $db->query("SELECT * FROM Weight WHERE is_complete = 'N'");
+$weighingList2 = array();
+
+while($row3 = mysqli_fetch_assoc($weighing3)) {
+    array_push($weighingList2, $row3);
+}
+?>
 <head>
 
     <title>Weighing | Synctronix - Weighing System</title>
@@ -25,47 +34,55 @@
     <?php include 'layouts/head-css.php'; ?>
     <style>
     body {
-      margin: 0;
-      background-color: black;
-      font-family: Arial, sans-serif;
-      color: white;
+        margin: 0;
+        background-color: black;
+        font-family: Arial, sans-serif;
+        color: white;
     }
+
     table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: center;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
     }
+
     th, td {
-      border: 1px solid #333;
-      padding: 10px;
+        border: 1px solid #333;
+        padding: 10px;
     }
+
     .header {
-      background-color: green;
-      color: white;
-      font-size: 24px;
-      font-weight: bold;
+        background-color: green;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
     }
+
     .sub-header {
-      background-color: green;
-      color: white;
-      font-size: 18px;
+        background-color: green;
+        color: white;
+        font-size: 18px;
     }
+
     .counter {
-      background-color: black;
-      color: red;
-      font-size: 48px;
-      font-weight: bold;
+        background-color: black;
+        color: red;
+        font-size: 48px;
+        font-weight: bold;
     }
+
     .table-header {
-      background-color: #d3e4c2;
-      color: black;
-      font-weight: bold;
+        background-color: #d3e4c2;
+        color: black;
+        font-weight: bold;
     }
+
     .yellow {
-      color: yellow;
+        color: yellow;
     }
+    
     .red-row {
-      color: red;
+        color: red;
     }
   </style>
 </head>
@@ -85,14 +102,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th colspan="4" class="header" style="text-align: left;">VEHICLE PENDING IN WAREHOUSE</th>
-                        <th rowspan="2" class="counter">6</th>
+                        <th colspan="4" class="header">VEHICLE PENDING IN WAREHOUSE</th>
+                        <th rowspan="2" class="counter"><?= count($weighingList2) ?></th>
                     </tr><!-- Header row with title and count -->
                     <tr>
-                        <th colspan="4" class="sub-header" style="text-align: left;">AT : 05/03/2025 - 10:30:35AM</th>
+                        <th colspan="4" class="sub-header">AT : 05/03/2025 - 10:30:35AM</th>
                     </tr><!-- Sub-header row -->
                     <tr class="table-header">
-                        <td>PLATE</td>
+                        <td>PLATE NO.</td>
                         <td>DATE</td>
                         <td>TIME IN</td>
                         <td>STATUS</td>
@@ -100,49 +117,20 @@
                     </tr><!-- Table column headers -->
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>PPD 8877</td>
-                        <td>05/03/2025</td>
-                        <td>09:30:35AM</td>
-                        <td class="yellow">SALES</td>
-                        <td>48500 kg</td>
-                    </tr>
-                        <tr class="red-row">
-                        <td>BSS 4562</td>
-                        <td>06/03/2025</td>
-                        <td>09:00:00AM</td>
-                        <td>PURCHASE</td>
-                        <td>10000 kg</td>
-                    </tr>
-                    <tr>
-                        <td>ABC 4564</td>
-                        <td>07/03/2025</td>
-                        <td>09:52:35AM</td>
-                        <td class="yellow">PURCHASE</td>
-                        <td>10000 kg</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>WMS 6545</td>
-                        <td>08/03/2025</td>
-                        <td>09:27:42AM</td>
-                        <td class="yellow">PURCHASE</td>
-                        <td>10000 kg</td>
-                    </tr>
-                    <tr>
-                        <td>FBS 4566</td>
-                        <td>09/03/2025</td>
-                        <td>09:38:23AM</td>
-                        <td class="yellow">PURCHASE</td>
-                        <td>10000 kg</td>
-                    </tr>
-                    <tr>
-                        <td>FBS 4567</td>
-                        <td>10/03/2025</td>
-                        <td>09:31:42AM</td>
-                        <td class="yellow">PURCHASE</td>
-                        <td>10000 kg</td>
-                    </tr>
+                <?php foreach($weighingList2 as $row): ?>
+                <?php
+                    $isSales = strtolower($row['transaction_status']) === 'sales';
+                    $rowClass = !$isSales ? 'red-row' : '';
+                    $statusClass = $isSales ? 'yellow' : '';
+                ?>
+                <tr class="<?= $rowClass ?>">
+                    <td><?= htmlspecialchars($row['lorry_plate_no1']) ?></td>
+                    <td><?= date("d/m/Y", strtotime($row['transaction_date'])) ?></td>
+                    <td><?= date("h:i:sa", strtotime($row['transaction_date'])) ?></td>
+                    <td class="<?= $statusClass ?>"><?= strtoupper($row['transaction_status']) ?></td>
+                    <td><?= htmlspecialchars($row['gross_weight1']) ?> kg</td>
+                </tr>
+                <?php endforeach; ?>
                 </tbody>
             </table>
             <!-- End Page-content -->
