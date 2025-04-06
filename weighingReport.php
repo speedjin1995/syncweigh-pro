@@ -128,12 +128,13 @@ $groupby = array(
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
+                                                                <option value="Misc">Misc</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
+                                                            <label for="customerNoSearch" class="form-label" id="labelCustomer">Customer Name</label>
                                                             <select id="customerNoSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
@@ -625,6 +626,48 @@ $groupby = array(
             window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
             "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
+        });
+    });
+
+    $('#statusSearch').on('change', function () {
+        var status = $(this).val();
+
+        if(status == 'Sales' || status == '-') {
+            $('#labelCustomer').text('Customer Name');
+
+            <?php 
+            $options = [];
+            while($rowPF = mysqli_fetch_assoc($customer)){
+                $options[] = ['value' => $rowPF['customer_code'], 'text' => $rowPF['name']];
+            }
+            ?>
+            var options = <?= json_encode($options) ?>;
+        } else {
+            $('#labelCustomer').text('Supplier Name');
+
+            <?php 
+            $options = [];
+            while($rowPF = mysqli_fetch_assoc($supplier)){
+                $options[] = ['value' => $rowPF['supplier_code'], 'text' => $rowPF['name']];
+            }
+            ?>
+            var options = <?= json_encode($options) ?>;
+        }
+
+        var $select = $('#customerNoSearch');
+        $select.empty(); // clear existing options if needed
+
+        // Add default option
+        var $defaultOption = $('<option></option>')
+            .val('-')
+            .text('-');
+        $select.append($defaultOption);
+
+        options.forEach(function(opt) {
+            var $option = $('<option></option>')
+                .val(opt.value)
+                .text(opt.text);
+            $select.append($option);
         });
     });
 
