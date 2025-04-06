@@ -14,6 +14,13 @@ $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$groupby = array(
+    "customer_supplier_code" => "Customer/Supplier",
+    "product_code" => "Product",
+    "lorry_plate_no1" => "Vehicle",
+    "destination-code" => "Destination",
+    "transporter_code" => "Transporter"
+)
 ?>
 
 <head>
@@ -121,12 +128,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
+                                                                <option value="Misc">Misc</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
+                                                            <label for="customerNoSearch" class="form-label" id="labelCustomer">Customer Name</label>
                                                             <select id="customerNoSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
@@ -175,13 +183,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                             </div>
                             
                             <div class="row">
-                                <div class="col-xl-4 col-md-6">
+                                <div class="col-xl-3 col-md-6">
                                     <!-- card -->
-                                    <div class="card card-animate">
+                                    <div class="card card-animate card-success">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
+                                                    <p class="text-uppercase fw-medium text-truncate mb-0" style="color: black;">
                                                         Sales</p>
                                                 </div>
                                             </div>
@@ -192,8 +200,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     </h4>
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-success rounded fs-3">
-                                                        <i class="bx bx-dollar-circle text-success"></i>
+                                                    <span class="avatar-title bg-soft-danger rounded fs-3">
+                                                        <i class="bx bx-dollar-circle text-danger"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -201,13 +209,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-4 col-md-6">
+                                <div class="col-xl-3 col-md-6">
                                     <!-- card -->
-                                    <div class="card card-animate">
+                                    <div class="card card-animate card-warning">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
+                                                    <p class="text-uppercase fw-medium text-truncate mb-0" style="color: black;">
                                                         Purchase</p>
                                                 </div>
                                             </div>
@@ -226,13 +234,13 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-4 col-md-6">
+                                <div class="col-xl-3 col-md-6">
                                     <!-- card -->
-                                    <div class="card card-animate">
+                                    <div class="card card-animate card-info">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
+                                                    <p class="text-uppercase fw-medium text-truncate mb-0" style="color: black;">
                                                     Local</p>
                                                 </div>
                                             </div>
@@ -251,6 +259,94 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                         </div><!-- end card body -->
                                     </div><!-- end card -->
                                 </div><!-- end col -->
+
+                                <div class="col-xl-3 col-md-6">
+                                    <!-- card -->
+                                    <div class="card card-animate card-danger">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1 overflow-hidden">
+                                                    <p class="text-uppercase fw-medium text-truncate mb-0" style="color: black;">
+                                                    Misc</p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-end justify-content-between mt-4">
+                                                <div>
+                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
+                                                            class="counter-value" id="miscInfo">0</span>
+                                                    </h4>
+                                                </div>
+                                                <div class="avatar-sm flex-shrink-0">
+                                                    <span class="avatar-title bg-soft-warning rounded fs-3">
+                                                        <i class="bx bx-ruler text-warning"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div><!-- end card body -->
+                                    </div><!-- end card -->
+                                </div><!-- end col -->
+
+                                <div class="col-xl-3 col-md-6 export-pdf">
+                                    <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+                                            <div class="modal-content">
+                                                <form role="form" id="exportForm" class="needs-validation" novalidate autocomplete="off">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalScrollableTitle">Export PDF Group By Selection</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <input type="hidden" id="id" name="id"/>
+                                                        <div class="row col-xxl-12 col-lg-12">
+                                                            <div class="col-4">
+                                                                <div class="mb-3">
+                                                                    <label for="group1" class="form-label">Group 1</label>
+                                                                    <select id="group1" class="form-select"  >
+                                                                        <option value="-" selected>-</option>
+                                                                        <?php foreach($groupby as $key => $value){ ?>
+                                                                            <option value="<?=$key ?>"><?=$value ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-4">
+                                                                <div class="mb-3">
+                                                                    <label for="group2" class="form-label">Group 2</label>
+                                                                    <select id="group2" class="form-select" disabled>
+                                                                        <option value="-" selected>-</option>
+                                                                        <?php foreach($groupby as $key => $value){ ?>
+                                                                            <option value="<?=$key ?>"><?=$value ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-4">
+                                                                <div class="mb-3">
+                                                                    <label for="group3" class="form-label">Group 3</label>
+                                                                    <select id="group3" class="form-select" disabled>
+                                                                        <option value="-" selected>-</option>
+                                                                        <?php foreach($groupby as $key => $value){ ?>
+                                                                            <option value="<?=$key ?>"><?=$value ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                        </div><!--end row-->
+                                                        <div class="mt-5"></div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="hstack gap-2 justify-content-end">
+                                                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="button" class="btn btn-success" id="submitPdf">Print</button>
+                                                                </div>
+                                                            </div><!--end col-->  
+                                                        </div><!--end row-->
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- end col -->
                             </div> <!-- end row-->
 
 
@@ -268,6 +364,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <!-- temporarily commented for the group by selection page -->
+                                                                <!-- <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#exportModal"> -->
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export PDF
                                                                 </button>
@@ -492,6 +590,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         });
 
         $('#exportPdf').on('click', function(){
+        // Temporarily commented out for group by selection page
+        // $('#submitPdf').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -499,6 +599,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+
+            var groupOneI = $('#group1').val();
+            var groupTwoI = $('#group2').val();
+            var groupThreeI = $('#group3').val();
 
             $.post('php/exportPdf.php', {
                 file: 'weight',
@@ -508,7 +612,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 customer: customerNoI,
                 vehicle: vehicleNoI,
                 weighingType: invoiceNoI,
-                product: transactionStatusI
+                product: transactionStatusI,
+                groupOne: groupOneI,
+                groupTwo: groupTwoI,
+                groupThree: groupThreeI
             }, function(response){
                 var obj = JSON.parse(response);
 
@@ -546,6 +653,96 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
             "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
         });
+    });
+
+    $('#statusSearch').on('change', function () {
+        var status = $(this).val();
+
+        if(status == 'Sales' || status == '-') {
+            $('#labelCustomer').text('Customer Name');
+
+            <?php 
+            $options = [];
+            while($rowPF = mysqli_fetch_assoc($customer)){
+                $options[] = ['value' => $rowPF['customer_code'], 'text' => $rowPF['name']];
+            }
+            ?>
+            var options = <?= json_encode($options) ?>;
+        } else {
+            $('#labelCustomer').text('Supplier Name');
+
+            <?php 
+            $options = [];
+            while($rowPF = mysqli_fetch_assoc($supplier)){
+                $options[] = ['value' => $rowPF['supplier_code'], 'text' => $rowPF['name']];
+            }
+            ?>
+            var options = <?= json_encode($options) ?>;
+        }
+
+        var $select = $('#customerNoSearch');
+        $select.empty(); // clear existing options if needed
+
+        // Add default option
+        var $defaultOption = $('<option></option>')
+            .val('-')
+            .text('-');
+        $select.append($defaultOption);
+
+        options.forEach(function(opt) {
+            var $option = $('<option></option>')
+                .val(opt.value)
+                .text(opt.text);
+            $select.append($option);
+        });
+    });
+
+    $('#group1').on('change', function () {
+        var selected = $(this).val();
+
+        $('#group2 option').each(function () {
+            $(this).show(); // Reset all options first
+
+            if ($(this).val() === selected && selected !== "") {
+                $(this).hide(); // Hide the selected option
+            }
+        });
+
+        if ($('#group2').val() === selected) {
+            $('#group2').val('-');
+        }
+
+        if (selected === "-") {
+            $('#group2').attr('disabled', 'disabled');
+            $('#group2').val('-');
+            $('#group2').trigger('change');
+        } else {
+            $('#group2').removeAttr('disabled');
+        }
+    });
+
+    $('#group2').on('change', function () {
+        var selected = $('#group1').val();
+        var selected2 = $(this).val();
+
+        $('#group3 option').each(function () {
+            $(this).show(); // Reset all options first
+
+            if (($(this).val() === selected && selected !== "") || ($(this).val() === selected2 && selected2 !== "")) {
+                $(this).hide(); // Hide the selected option
+            }
+        });
+
+        if ($('#group3').val() === selected || $('#group3').val() === selected2) {
+            $('#group3').val('-');
+        }
+
+        if (selected2 === "-") {
+            $('#group3').attr('disabled', 'disabled');
+            $('#group3').val('-');
+        } else {
+            $('#group3').removeAttr('disabled');
+        }
     });
 
     function edit(id){

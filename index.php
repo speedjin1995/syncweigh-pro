@@ -32,12 +32,14 @@ $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$customer3 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 ?>
 
@@ -164,7 +166,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
+                                                            <label for="customerNoSearch" class="form-label" id="labelCustomer">Customer Name</label>
                                                             <select id="customerNoSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
@@ -1160,11 +1162,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        //Date picker
-        // $('#fromDateSearch').flatpickr({
-        //     dateFormat: "d-m-Y",
-        //     defaultDate: yesterday
-        // });
+        // Date picker
+        $('#fromDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: yesterday
+        });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
@@ -2181,6 +2183,48 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 echo 'approve('.$_GET['approve'].');';
             }
         ?>
+
+        $('#statusSearch').on('change', function () {
+            var status = $(this).val();
+
+            if(status == 'Sales' || status == '-') {
+                $('#labelCustomer').text('Customer Name');
+
+                <?php 
+                $options = [];
+                while($rowPF = mysqli_fetch_assoc($customer3)){
+                    $options[] = ['value' => $rowPF['customer_code'], 'text' => $rowPF['name']];
+                }
+                ?>
+                var options = <?= json_encode($options) ?>;
+            } else {
+                $('#labelCustomer').text('Supplier Name');
+
+                <?php 
+                $options = [];
+                while($rowPF = mysqli_fetch_assoc($supplier2)){
+                    $options[] = ['value' => $rowPF['supplier_code'], 'text' => $rowPF['name']];
+                }
+                ?>
+                var options = <?= json_encode($options) ?>;
+            }
+
+            var $select = $('#customerNoSearch');
+            $select.empty(); // clear existing options if needed
+
+            // Add default option
+            var $defaultOption = $('<option></option>')
+                .val('-')
+                .text('-');
+            $select.append($defaultOption);
+
+            options.forEach(function(opt) {
+                var $option = $('<option></option>')
+                    .val(opt.value)
+                    .text(opt.text);
+                $select.append($option);
+            });
+        });
 
         // Find and remove selected table rows
         $("#productTable").on('click', 'button[id^="remove"]', function () {
