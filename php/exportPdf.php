@@ -170,44 +170,40 @@ if(isset($_POST["file"])){
                 text-align: right;
             }
                     
-            // table {
-            //     width: 100%;
-            //     border-collapse: collapse;
+            table {
+                width: 100%;
+                border-collapse: collapse;
                 
-            // } 
+            } 
             
-            // .table th, .table td {
-            //     padding: 0.70rem;
-            //     vertical-align: top;
-            //     border-top: 1px solid #dee2e6;
-                
-            // } 
+            .table th, .table td {
+                padding: 0.70rem;
+                vertical-align: top;
+                border-top: 1px solid #dee2e6;
+            } 
             
-            // .table-bordered {
-            //     border: 1px solid #000000;
-                
-            // } 
+            .table-bordered {
+                border: 1px solid #000000;   
+            } 
             
-            // .table-bordered th, .table-bordered td {
-            //     border: 1px solid #000000;
-            //     font-family: sans-serif;
-            //     font-size: 12px;
-                
-            // } 
+            .table-bordered th, .table-bordered td {
+                border: 1px solid #000000;
+                font-family: sans-serif;
+                font-size: 12px;
+            } 
             
-            // .row {
-            //     display: flex;
-            //     flex-wrap: wrap;
-            //     margin-top: 20px;
-            //     margin-right: -15px;
-            //     margin-left: -15px;
-                
-            // } 
+            /*.row {
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: 20px;
+                margin-right: -15px;
+                margin-left: -15px;  
+            } 
             
-            // .col-md-4{
-            //     position: relative;
-            //     width: 33.333333%;
-            // }
+            .col-md-4{
+                position: relative;
+                width: 33.333333%;
+            }*/
         </style>
     </head>
     <body>';
@@ -216,7 +212,7 @@ if(isset($_POST["file"])){
         $message .= '<div class="container-full content">
         <div class="row">
             <div class="table-responsive">
-                <table class="table" style="border-collapse: separate; border-spacing: 0;">
+                <table class="table table-bordered">
                     <thead style="border: 2px solid black;">
                         <tr class="text-center" style="border-top: 1px solid black;">
                             <th rowspan="2" class="text-start">Serial No.</th>
@@ -307,15 +303,15 @@ if(isset($_POST["file"])){
                 }
                 else{
                     $result2 = $select_stmt2->get_result();
-
+                    $count = 0;
                     $sub_total = 0;
 
                     while ($row2 = $result2->fetch_assoc()) {
-
                         $sub_total += $row2['total_price'];
+                        $count++;
 
                         $message .= '<tr class="details">
-                            <td>'.$row2['id'].'</td>
+                            <td>'.$count.'</td>
                             <td>'.$row2['product_code'].'</td>
                             <td colspan="3">'.$row2['product_name'].'</td>
                             <td class="text-end">'.$row2['percentage'].'</td>
