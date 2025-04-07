@@ -150,16 +150,19 @@ if($_POST['selectedValue'] == "Customer")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $customerId = $row['customer_id'];
+        $customerData = searchCustomerAuditById($customerId, $db); 
+
         $data[] = array( 
         "id"=>$row['id'],
-        "Customer Code"=>$row['customer_code'],
-        "Company Reg No"=>$row['company_reg_no'],
-        "Company Name"=>$row['name'],
-        "Address line 1"=>$row['address_line_1'],
-        "Address line 2"=>$row['address_line_2'],
-        "Address line 3"=>$row['address_line_3'],
-        "Phone No"=>$row['phone_no'],
-        "Fax No"=>$row['fax_no'],
+        "Customer Code"=>$customerData['customer_code'],
+        "Company Reg No"=>$customerData['company_reg_no'],
+        "Company Name"=>$customerData['name'],
+        "Address line 1"=>$customerData['address_line_1'],
+        "Address line 2"=>$customerData['address_line_2'],
+        "Address line 3"=>$customerData['address_line_3'],
+        "Phone No"=>$customerData['phone_no'],
+        "Fax No"=>$customerData['fax_no'],
         "Action"=> searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
@@ -177,11 +180,14 @@ if($_POST['selectedValue'] == "Destination")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $destinationId = $row['destination_id'];
+        $destinationData = searchDestinationAuditById($destinationId, $db);
+
         $data[] = array( 
         "id"=>$row['id'],
-        "Destination Code"=>$row['destination_code'],
-        "Destination Name"=>$row['name'],
-        "Description"=>$row['description'],
+        "Destination Code"=>$destinationData['destination_code'],
+        "Destination Name"=>$destinationData['name'],
+        "Description"=>$destinationData['description'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],

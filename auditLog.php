@@ -627,9 +627,7 @@ $(function () {
             },
             dataType: "json",
             success: function (response) {
-                if ($.fn.DataTable.isDataTable("#dataTable")) {
-                    $("#dataTable").DataTable().destroy();
-                }
+                $("#dataTable").DataTable().destroy();
 
                 // Generate column definitions dynamically
                 let columns = response.columnNames.map(column => ({
@@ -654,7 +652,7 @@ $(function () {
     }
 });
 
-function format (row) { console.log(row);
+function format (row) {
     var custSupplier = '';
     var productRawMat = '';
     var orderSuppWeight = '';
