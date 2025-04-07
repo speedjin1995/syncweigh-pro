@@ -5,6 +5,7 @@
 //session_start();
 // Include config file
 require_once "layouts/config.php";
+require_once "php/db_connect.php";
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
@@ -21,137 +22,19 @@ mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
 mysqli_stmt_bind_result($stmt2, $code, $name);
 
-$employeeCode = $username = $useremail = $roles = "";
-$employeeCode_err = $username_err = $useremail_err = $roles_err = "";
-
-// Processing form data when form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty(trim($_POST["employeeCode"]))) {
-        $employeeCode_err = "Please enter employee code.";
-    } else {
-        $employeeCode = trim($_POST["employeeCode"]);
-    }
-
-    if (empty(trim($_POST["username"]))) {
-        $username_err = "Please enter your username.";
-    } else {
-        $username = trim($_POST["username"]);
-    }
-
-    if (empty(trim($_POST["useremail"]))) {
-        $useremail_err = "Please enter email.";
-    } else {
-        $useremail = trim($_POST["useremail"]);
-    }
-
-    if (empty(trim($_POST["roles"]))) {
-        $roles_err = "Please enter your roles.";
-    } else {
-        $roles = trim($_POST["roles"]);
-    }
-
-    if (empty($employeeCode_err) && empty($username_err) && empty($useremail_err) && empty($roles_err)) {
-        $sql2 = "SELECT * from Users WHERE employee_code = ?";
-        $action = "1";
-
-        if ($stmt = mysqli_prepare($link, $sql2)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_employeeCode);
-            $param_employeeCode = $employeeCode;
-
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1) {
-                    $sql = "UPDATE Users SET username=?, useremail=?, role=?, modified_by=? WHERE employee_code=?";
-                    $action = "2";
-
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt, "sssss", $param_username, $param_useremail, $param_role, $param_modified_by, $param_code);
-
-                        // Set parameters
-                        $param_code = $employeeCode;
-                        $param_useremail = $useremail;
-                        $param_username = $username;
-                        $param_role = $roles;
-                        $param_modified_by = $name;
-
-                        // Attempt to execute the prepared statement
-                        if (mysqli_stmt_execute($stmt)) {
-                            echo "Updated";
-                        } else {
-                            echo "Something went wrong. Please try again later.";
-                        }
-
-                        // Close statement
-                        mysqli_stmt_close($stmt);
-                    }
-                }
-                else{
-                    $action = "1";
-                    $sql = "INSERT INTO Users (employee_code, useremail, username, password, token, role, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt, "ssssssss", $param_code, $param_useremail, $param_username, $param_password, $param_token, $param_role, $param_created_by, $param_modified_by);
-
-                        // Set parameters
-                        $param_code = $employeeCode;
-                        $password = "123456";
-                        $param_useremail = $useremail;
-                        $param_username = $username;
-                        $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
-                        $param_token = bin2hex(random_bytes(50)); // generate unique token
-                        $param_role = $roles;
-                        $param_created_by = $name;
-                        $param_modified_by = $name;
-
-                        // Attempt to execute the prepared statement
-                        if (mysqli_stmt_execute($stmt)) {
-                            echo "Added";
-                        } else {
-                            echo "Something went wrong. Please try again later.";
-                        }
-
-                        // Close statement
-                        mysqli_stmt_close($stmt);
-                    }
-                }
-
-                if($action == "1"){
-                    $sql3 = "INSERT INTO Users_Log (employee_code, username, user_department, status, password, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-                    if ($stmt3 = mysqli_prepare($link, $sql3)) {
-                        // Bind variables to the prepared statement as parameters
-                        mysqli_stmt_bind_param($stmt3, "sssssss", $param_code, $param_username, $param_role, $param_status, $param_password, $param_action, $param_actionBy);
-
-                        // Set parameters
-                        $param_code = $employeeCode;
-                        $param_username = $username;
-                        $param_password = "123456"; // Creates a password hash
-                        $param_role = $roles;
-                        $param_status = "0";
-                        $param_action = $action;
-                        $param_actionBy = $name;
-
-                        // Attempt to execute the prepared statement
-                        if (mysqli_stmt_execute($stmt3)) {
-                            echo "Added";
-                        } else {
-                            echo "Something went wrong. Please try again later.";
-                        }
-
-                        // Close statement
-                        mysqli_stmt_close($stmt3);
-                    }
-                }
-                else{
-
-                }
-            }
-        }
-    }
+// Pull plants
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $query4 = "SELECT id, name FROM Plant WHERE status = '0' and plant_code IN ('$username')";
 }
+else{
+    $query4 = "SELECT id, name FROM Plant WHERE status = '0'";
+}
+
+$stmt4 = $link->prepare($query4);
+mysqli_stmt_execute($stmt4);
+mysqli_stmt_store_result($stmt4);
+mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 ?>
 
 <head>
@@ -169,6 +52,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!--datatable responsive css-->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery Validate plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+    <!-- Select2 -->
+    <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 
     <?php include 'layouts/head-css.php'; ?>
 
@@ -191,23 +83,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <div class="col-lg-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <div class="row">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h5 class="card-title mb-0">User Records</h5>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <!--a href="template/User_Template.xlsx" download>
+                                                        <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
+                                                            <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                            Download Template
+                                                        </button>
+                                                    </a>
+                                                    <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                        <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                        Upload Excel
+                                                    </button>
+                                                    <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
+                                                        <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                        Delete User
+                                                    </button-->
+                                                    <button type="button" id="addMembers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                        <i class="ri-add-circle-line align-middle me-1"></i>
+                                                        Add New User
+                                                    </button>
+                                                </div> 
+                                            </div> 
+
+                                            <!-- <div class="row">
                                                 <div class="col-10">
                                                     <h5 class="card-title mb-0">User Records</h5>
                                                 </div>
-                                                <div class="col-2">
-                                                    <button type="button" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-add-circle-line align-middle me-1"></i>Add New User</button>              
+                                                <div class="col-2 d-flex justify-content-end">
+                                                    <button type="button" id="addMembers" class="btn btn-md btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                        <i class="ri-add-circle-line align-middle me-1"></i>
+                                                        Add New User
+                                                    </button>              
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="card-body">
                                             <table id="usersTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                 <thead>
                                                     <tr>
+                                                        <!--th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th-->
                                                         <th>Employee Code</th>
-                                                        <th>User Name</th>
+                                                        <th>Username</th>
+                                                        <th>Name</th>
                                                         <th>Email</th>
                                                         <th>Role</th>
+                                                        <th>Plant Name</th>
+                                                        <th>Status</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -237,29 +162,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="memberForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <form id="memberForm" class="needs-validation" novalidate autocomplete="off">
                         <div class="row col-12">
                             <div class="col-12">
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-12">
+                                            <input type="hidden" class="form-control" id="id" name="id"> 
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
-                                                    <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code *</label>
+                                                    <label for="employeeCode" class="col-sm-4 col-form-label">Employee Code </label>
                                                     <div class="col-sm-8">
                                                         <input type="text" class="form-control" id="employeeCode" name="employeeCode" placeholder="Employee Code" required>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
-                                                <label for="username" class="col-sm-4 col-form-label">User Name *</label>
+                                                <label for="username" class="col-sm-4 col-form-label">Username *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="username" name="username" placeholder="User Name" required>
+                                                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
+                                                <div class="row">
+                                                <label for="name" class="col-sm-4 col-form-label">User Name *</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="name" name="name" placeholder="User Name" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                 <label for="useremail" class="col-sm-4 col-form-label">User Email</label>
                                                     <div class="col-sm-8">
@@ -267,11 +201,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12 mb-3">
                                                 <div class="row">
                                                     <label for="roles" class="col-sm-4 col-form-label">Role *</label>
                                                     <div class="col-sm-8">
-                                                        <select id="roles" name="roles" class="form-select" data-choices data-choices-sorting="true" >
+                                                        <select id="roles" name="roles" class="select2" required>
                                                             <option select="selected" value="">Please Select</option>
                                                             <?php while(mysqli_stmt_fetch($stmt2)){ ?>
                                                                 <option value="<?=$code ?>"><?=$name ?></option>
@@ -280,6 +214,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-12 mb-3">
+                                                <div class="row">
+                                                    <label for="plantId" class="col-sm-4 col-form-label">Plant</label>
+                                                    <div class="col-sm-8">
+                                                        <select id="plantId" name="plantId[]" class="form-control" multiple="multiple">
+                                                            <?php while(mysqli_stmt_fetch($stmt4)){ ?>
+                                                                <option value="<?=$pcode ?>"><?=$pname ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>                                              
                                         </div>
                                     </div>
                                 </div>
@@ -289,7 +235,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-success" id="submitMember">Submit</button>
+                                <button type="button" class="btn btn-danger" id="submitMember">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
@@ -297,6 +243,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    <div class="modal fade" id="uploadModal">
+        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+            <div class="modal-content">
+                <form role="form" id="uploadForm">
+                    <div class="modal-header bg-gray-dark color-palette">
+                        <h4 class="modal-title">Upload Excel File</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="file" id="fileInput">
+                        <button type="button" id="previewButton">Preview Data</button>
+                        <div id="previewTable" style="overflow: auto;"></div>
+                    </div>
+                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="uploadUser">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <?php include 'layouts/customizer.php'; ?>
@@ -314,9 +281,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Dashboard init -->
     <script src="assets/js/pages/dashboard-ecommerce.init.js"></script>   
+    <script src="assets/js/pages/form-validation.init.js"></script>
 
     <!-- App js -->
     <script src="assets/js/app.js"></script>
+
+    <!-- notifications init -->
+    <script src="assets/js/pages/notifications.init.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -325,10 +296,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <!--script src="assets/js/pages/datatables.init.js"></script-->
+    <script src="assets/js/pages/datatables.init.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="plugins/select2/js/select2.full.min.js"></script>
+
     <script>
     $(function () {
-        $("#usersTable").DataTable({
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#usersTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        // Initialize plantId elements in the modal
+        $('#addModal #plantId').select2({
+            allowClear: true,
+            multiple: true,
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        $("#plantId").on("select2:select change", function () {
+            $(".select2-selection__choice").css({
+                "background-color": "rgb(64, 81, 137)",
+                "color": "white"
+            });
+
+            $(".select2-selection__choice__remove").css({
+                "color": "white"
+            });
+        });
+
+
+        // Apply custom styling to Select2 elements in addModal
+        $('#addModal .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#addModal .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+        
+        table = $("#usersTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
@@ -338,14 +355,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'url':'php/loadMembers.php'
             },
             'columns': [
+                /*{
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },*/
                 { data: 'employee_code' },
                 { data: 'username' },
+                { data: 'name' },
                 { data: 'useremail' },
                 { data: 'role' },
+                { data: 'plant' },
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        if (row.status == '1'){
+                            return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
+                        }else{
+                            return '';
+                        }
+                    }
+                },
+                { 
+                    data: 'id',
+                    render: function ( data, type, row ) {
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                         '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
@@ -356,27 +394,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
         
         $('#submitMember').on('click', function(){
-        if($('#memberForm').valid()){
-            $('#spinnerLoading').show();
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
+            if($('#memberForm').valid()){
+                $('#spinnerLoading').show();
                 $.post('php/users.php', $('#memberForm').serialize(), function(data){
                     var obj = JSON.parse(data); 
-                    
+
                     if(obj.status === 'success'){
-                        $('#addModal').modal('hide');
-                        toastr["success"](obj.message, "Success:");
-                        
-                        $.get('users.php', function(data) {
-                            $('#mainContents').html(data);
-                            $('#spinnerLoading').hide();
-                        });
-                    }
-                    else if(obj.status === 'failed'){
-                        toastr["error"](obj.message, "Failed:");
+                        table.ajax.reload();
                         $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed')
+                    {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
                     }
                     else{
-                        toastr["error"]("Something wrong when edit", "Failed:");
                         $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Something wrong when edit');
+                        $("#failBtn").click();
                     }
                 });
             }
@@ -384,9 +444,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $('#addMembers').on('click', function(){
             $('#addModal').find('#id').val("");
+            $('#addModal').find('#employeeCode').val("");
             $('#addModal').find('#username').val("");
             $('#addModal').find('#name').val("");
-            $('#addModal').find('#userRole').val("");
+            $('#addModal').find('#useremail').val("");
+            $('#addModal').find('#roles').val("");
+            $('#addModal').find('#plantId').val('').trigger('change');
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
+
             $('#addModal').modal('show');
             
             $('#memberForm').validate({
@@ -403,6 +478,125 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             });
         });
+
+        $('#uploadUser').on('click', function(){
+            $('#spinnerLoading').show();
+            var formData = $('#uploadForm').serializeArray();
+            var data = [];
+            var rowIndex = -1;
+            formData.forEach(function(field) {
+            var match = field.name.match(/([a-zA-Z0-9]+)\[(\d+)\]/);
+            if (match) {
+                var fieldName = match[1];
+                var index = parseInt(match[2], 10);
+                if (index !== rowIndex) {
+                rowIndex = index;
+                data.push({});
+                }
+                data[index][fieldName] = field.value;
+            }
+            });
+
+            // Send the JSON array to the server
+            $.ajax({
+                url: 'php/uploadUser.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    var obj = JSON.parse(response);
+                    if (obj.status === 'success') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                        window.location.reload();
+                    } 
+                    else if (obj.status === 'failed') {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    } 
+                    else {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                }
+            });
+        });
+
+        $('#uploadExcel').on('click', function(){
+            $('#uploadModal').modal('show');
+
+            $('#uploadForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+
+        $('#uploadModal').find('#previewButton').on('click', function(){
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                var data = e.target.result;
+                // Process data and display preview
+                displayPreview(data);
+            };
+
+            reader.readAsBinaryString(file);
+        });
+
+        $('#multiDeactivate').on('click', function () {
+            $('#spinnerLoading').show();
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#usersTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $.post('php/deleteUser.php', {userID: selectedIds, type: 'MULTI'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            toastr["success"](obj.message, "Success:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            } 
+            else {
+                // Optionally, you can display a message or take another action if no IDs are selected
+                alert("Please select at least one user to delete.");
+                $('#spinnerLoading').hide();
+            }     
+        });
     });
 
     function edit(id){
@@ -411,10 +605,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){
+                $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#employeeCode').val(obj.message.employee_code);
                 $('#addModal').find('#username').val(obj.message.username);
+                $('#addModal').find('#name').val(obj.message.name);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
                 $('#addModal').find('#roles').val(obj.message.role_code);
+                $("#addModal").find("#plantId").val(JSON.parse(obj.message.plant)).trigger("change");
+
+                // Remove Validation Error Message
+                $('#addModal .is-invalid').removeClass('is-invalid');
+
                 $('#addModal').modal('show');
                 
                 $('#memberForm').validate({
@@ -443,25 +644,114 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteUser.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $.post('php/deleteUser.php', {userID: id}, function(data){
+                var obj = JSON.parse(data);
             
-            if(obj.status === 'success'){
-                toastr["success"](obj.message, "Success:");
-                $.get('users.php', function(data) {
-                    $('#mainContents').html(data);
+                if(obj.status === 'success'){
+                    table.ajax.reload();
                     $('#spinnerLoading').hide();
-                });
-            }
-            else if(obj.status === 'failed'){
-                toastr["error"](obj.message, "Failed:");
-                $('#spinnerLoading').hide();
-            }
-            else{
-                toastr["error"]("Something wrong when activate", "Failed:");
-                $('#spinnerLoading').hide();
-            }
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+
+        $('#spinnerLoading').hide();
+    }
+
+    function displayPreview(data) {
+        // Parse the Excel data
+        var workbook = XLSX.read(data, { type: 'binary' });
+
+        // Get the first sheet
+        var sheetName = workbook.SheetNames[0];
+        var sheet = workbook.Sheets[sheetName];
+
+        // Convert the sheet to an array of objects
+        var jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Get the headers
+        var headers = jsonData[0];
+
+        // Ensure we handle cases where there may be less than 5 columns
+        while (headers.length < 5) {
+            headers.push(''); // Adding empty headers to reach 5 columns
+        }
+
+        // Create HTML table headers
+        var htmlTable = '<table style="width:40%;"><thead><tr>';
+        headers.forEach(function(header) {
+            htmlTable += '<th>' + header + '</th>';
         });
+        htmlTable += '</tr></thead><tbody>';
+
+        // Iterate over the data and create table rows
+        for (var i = 1; i < jsonData.length; i++) {
+            htmlTable += '<tr>';
+            var rowData = jsonData[i];
+
+            // Ensure we handle cases where there may be less than 5 cells in a row
+            while (rowData.length < 5) {
+                rowData.push(''); // Adding empty cells to reach 5 columns
+            }
+
+            for (var j = 0; j < 5; j++) {
+                var cellData = rowData[j];
+                var formattedData = cellData;
+
+                // Check if cellData is a valid Excel date serial number and format it to DD/MM/YYYY
+                if (typeof cellData === 'number' && cellData > 0) {
+                    var excelDate = XLSX.SSF.parse_date_code(cellData);
+                }
+
+                htmlTable += '<td><input type="text" id="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+(i-1)+'" name="'+headers[j].replace(/[^a-zA-Z0-9]/g, '')+'['+(i-1)+']" value="' + (formattedData == null ? '' : formattedData) + '" /></td>';
+            }
+            htmlTable += '</tr>';
+        }
+
+        htmlTable += '</tbody></table>';
+
+        var previewTable = document.getElementById('previewTable');
+        previewTable.innerHTML = htmlTable;
+    }
+
+    function reactivate(id) {
+        if (confirm('Do you want to reactivate this item?')) {
+            $('#spinnerLoading').show();
+            $.post('php/reactivateMasterData.php', {userID: id, type: "User"}, function(data){
+                var obj = JSON.parse(data);
+
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+
+        $('#spinnerLoading').hide();
     }
     </script>
 
