@@ -122,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="text-center mt-sm-5 mb-4 text-white-50" style="margin-top: 0rem !important;!i;!;">
                                 <div>
                                     <a href="index.php" class="d-inline-block auth-logo">
-                                        <img src="assets/images/logo-lg.png" alt="assets/images/logo-lg.png" height="230">
+                                        <img src="assets/images/logo-lg.png" alt="assets/images/logo-lg.png" height="200">
                                     </a>
                                 </div>
                                 <p class="mt-3 fs-15 fw-medium"> </p>
