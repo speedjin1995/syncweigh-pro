@@ -335,12 +335,12 @@
                                                             <div>
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
-                                                            <!-- <div class="flex-shrink-0">
-                                                                <button type="button" id="addTransporter" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Transporter
+                                                            <div class="flex-shrink-0">
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
                                                                 </button>
-                                                            </div>  -->
+                                                            </div> 
                                                         </div> 
                                                     </div>
                                                     <div class="card-body">
@@ -654,6 +654,68 @@ $(function () {
             }
         });
     }
+
+    $('#exportExcel').on('click', function(){
+        var selectedValue = $('#reportType').val();
+        var fromDateSearch = $('#fromDateSearch').val();
+        var toDateSearch = $('#toDateSearch').val();
+        var customerCode = $('#customerCode').val();
+        var destinationCode = $('#destinationCode').val();
+        var productCode = $('#productCode').val();
+        var rawMatCode = $('#rawMatCode').val();
+        var supplierCode = $('#supplierCode').val();
+        var vehicleNo = $('#vehicleNo').val();
+        var agentCode = $('#agentCode').val();
+        var transporterCode = $('#transporterCode').val();
+        var unit = $('#unit').val();
+        var userCode = $('#userCode').val();
+        var plantCode = $('#plantCode').val();
+        var siteCode = $('#siteCode').val();
+        var weight = $('#weight').val();
+        var custPoNo = $('#custPoNo').val();
+        var poNo = $('#poNo').val();
+
+        window.open("php/exportAuditExcel.php?selectedValue="+selectedValue+"&fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+
+        "&customerCode="+customerCode+"&destinationCode="+destinationCode+"&productCode="+productCode+"&rawMatCode="+rawMatCode+"&supplierCode="+supplierCode+
+        "&vehicleNo="+vehicleNo+"&agentCode="+agentCode+"&transporterCode="+transporterCode+"&unit="+unit+"&userCode="+userCode+"&plantCode="+plantCode+
+        +"&siteCode="+siteCode+"&weight="+weight+"&custPoNo="+custPoNo+"&poNo="+poNo);
+    });
+
+    // $('#exportExcel').click(function() {
+    //     var selectedValue = $('#reportType').val();
+
+    //     $.ajax({
+    //         url: "php/exportAuditExcel.php",
+    //         type: "POST",
+    //         data: {
+    //             selectedValue: selectedValue,
+    //             fromDateSearch: $('#fromDateSearch').val(),
+    //             toDateSearch: $('#toDateSearch').val(),
+    //             customerCode: $('#customerCode').val(),
+    //             destinationCode: $('#destinationCode').val(),
+    //             productCode: $('#productCode').val(),
+    //             rawMatCode: $('#rawMatCode').val(),
+    //             supplierCode: $('#supplierCode').val(),
+    //             vehicleNo: $('#vehicleNo').val(),
+    //             agentCode: $('#agentCode').val(),
+    //             transporterCode: $('#transporterCode').val(),
+    //             unit: $('#unit').val(),
+    //             userCode: $('#userCode').val(),
+    //             plantCode: $('#plantCode').val(),
+    //             siteCode: $('#siteCode').val(),
+    //             weight: $('#weight').val(),
+    //             custPoNo: $('#custPoNo').val(),
+    //             poNo: $('#poNo').val(),
+    //         },
+    //         dataType: "json",
+    //         success: function (response) {
+    //             window.open(response, '_blank');
+    //         },
+    //         error: function (error) {
+    //             console.error("Error fetching data:", error);
+    //         }
+    //     });
+    // });
 });
 
 function format (row) {
