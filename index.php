@@ -5,6 +5,7 @@
 require_once "php/db_connect.php";
 
 $user = $_SESSION['id'];
+$plantId = $_SESSION['plant'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
 $stmt->execute();
@@ -27,6 +28,19 @@ if(($row = $result->fetch_assoc()) !== null){
     $indicator = $row['indicator'];
 }
 
+$plantName = '-';
+
+if($plantId != null && count($plantId) > 0){
+    $stmt2 = $db->prepare("SELECT * from Plant WHERE plant_code = ?");
+    $stmt2->bind_param('s', $plantId[0]);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+        
+    if(($row2 = $result2->fetch_assoc()) !== null){
+        $plantName = $row2['name'];
+    }
+}
+
 //   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
 $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
@@ -41,6 +55,22 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+}
+else{
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+}
+else{
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
 ?>
 
 <head>
@@ -208,6 +238,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="plantSearchDisplay">
+                                                        <div class="mb-3">
+                                                            <label for="plantSearch" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -614,6 +655,18 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div><!-- end row -->
                                                                     </div><!-- end card body -->
                                                                 </div><!-- end card -->
@@ -850,6 +903,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
                                                         <input type="hidden" id="driverCode" name="driverCode">
                                                         <!-- <input type="hidden" id="driverPhone" name="driverPhone"> -->
+                                                        <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="status" name="status">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
@@ -1155,6 +1209,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     var rowCount = $("#productTable").find(".details").length;
     
     $(function () {
+        var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
         const today = new Date();
         const tomorrow = new Date(today);
@@ -1178,6 +1233,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             defaultDate: today
         });
 
+        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+            $('#plantSearchDisplay').show();
+        }else{
+            $('#plantSearchDisplay').hide();
+        }
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -1186,6 +1247,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1205,6 +1267,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     invoice: invoiceNoI,
                     batch: batchNoI,
                     product: transactionStatusI,
+                    plant: plantNoI,
                 } 
             },
             'columns': [
@@ -1699,6 +1762,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -1722,6 +1786,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         invoice: invoiceNoI,
                         batch: batchNoI,
                         product: transactionStatusI,
+                        plant: plantNoI,
                     } 
                 },
                 'columns': [
@@ -1784,6 +1849,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#supplierCode').val("");
             $('#addModal').find('#supplierName').val("");
             $('#addModal').find('#productCode').val("");
+            $('#addModal').find('#plantCode').val("");
+            $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
             $('#addModal').find('#productName').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
@@ -2298,6 +2365,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#totalPrice').val(totalSum.toFixed(2));
         });
 
+        //plant
+        $('#plant').on('change', function(){
+            $('#plantCode').val($('#plant :selected').data('code'));
+        });
+
         $(".add-product").click(function(){
             if(rowCount == 0){
                 rowCount++;
@@ -2452,6 +2524,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
+                $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                $('#addModal').find('#plantCode').val(obj.message.plant_code);
 
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
                     $('#divWeightDifference').show();
