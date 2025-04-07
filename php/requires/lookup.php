@@ -23,6 +23,24 @@ function searchCustomerByCode($value, $db) {
     return $id;
 }
 
+function searchSupplierByCode($value, $db) {
+    $id = '0';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status='0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['name'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
 function searchPlantCodeById($value, $db) {
     $id = '0';
 
@@ -118,6 +136,24 @@ function searchProductNameByCode($value, $db) {
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Product WHERE product_code=? AND status = '0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['name'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
+function searchRawNameByCode($value, $db) {
+    $id = '';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=? AND status = '0'")) {
             $select_stmt->bind_param('s', $value);
             $select_stmt->execute();
             $result = $select_stmt->get_result();

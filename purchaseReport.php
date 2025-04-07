@@ -9,6 +9,7 @@ $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
@@ -42,7 +43,7 @@ else{
 
 <head>
 
-    <title>Sales Reports | Synctronix - Weighing System</title>
+    <title>Purchase Reports | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -141,11 +142,11 @@ else{
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select">
-                                                                <option value="Sales" selected>Sales</option>
+                                                                <option value="Purchase" selected>Purchase</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="customerSearchDisplay">
+                                                    <div class="col-3" id="customerSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
                                                             <select id="customerNoSearch" class="form-select" >
@@ -156,7 +157,7 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="supplierSearchDisplay" style="display:none">
+                                                    <div class="col-3" id="supplierSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="supplierSearch" class="form-label">Supplier No</label>
                                                             <select id="supplierSearch" class="form-select" >
@@ -193,7 +194,7 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="productSearchDisplay">
+                                                    <div class="col-3" id="productSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="productSearch" class="form-label">Product</label>
                                                             <select id="productSearch" class="form-select" >
@@ -204,7 +205,7 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="rawMatSearchDisplay" style="display:none">
+                                                    <div class="col-3" id="rawMatSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="rawMatSearch" class="form-label">Raw Material</label>
                                                             <select id="rawMatSearch" class="form-select" >
@@ -328,7 +329,6 @@ else{
                                 </div><!-- end col -->
                             </div> <!-- end row-->
                                                             
-
                             <div class="row">
                                 <div class="col">
                                     <div class="h-100">
@@ -339,16 +339,16 @@ else{
                                                     <div class="card-header">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Sales Weighing Records</h5>
+                                                                <h5 class="card-title mb-0">Purchase Weighing Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <button type="button" id="exportSummaryPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Summary Report
                                                                 </button>
-                                                                <button type="button" id="exportSalesPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="exportPurchasePdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
-                                                                    Export Sales Report
+                                                                    Export Purchase Report
                                                                 </button>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
@@ -363,10 +363,10 @@ else{
                                                                 <tr>
                                                                     <th>Transaction Id</th>
                                                                     <th>Status</th>
-                                                                    <th>Customer</th>
+                                                                    <th>Supplier</th>
                                                                     <th>Vehicle</th>
-                                                                    <th>Product</th>
-                                                                    <th>Customer P/O No</th>
+                                                                    <th>Raw Material</th>
+                                                                    <th>P/O No</th>
                                                                     <th>DO</th>
                                                                     <th>Incoming(Gross Weight)</th>
                                                                     <th>Incoming(Gross) Date Time</th>
@@ -463,16 +463,16 @@ else{
         </div><!-- /.modal-dialog -->
     </div>
     
-    <div class="modal fade" id="exportSoRepModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+    <div class="modal fade" id="exportPoRepModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable custom-xxl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Sales Report</h5>
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Purchase Report</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="exportSoRepForm" class="needs-validation" novalidate autocomplete="off">
+                    <form id="exportPoRepForm" class="needs-validation" novalidate autocomplete="off">
                         <div class="row col-12">
                             <div class="col-12">
                                 <div class="card bg-light">
@@ -485,8 +485,8 @@ else{
                                                         <label for="group1">Group 1</label>
                                                         <select id="group1" name="group1" class="form-select">
                                                             <option value=""></option>
-                                                            <option value="customer_code">Customer</option>
-                                                            <option value="product_code">Product</option>
+                                                            <option value="supplier_code">Supplier</option>
+                                                            <option value="raw_mat_code">Raw Material</option>
                                                             <option value="lorry_plate_no1">Vehicle</option>
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
@@ -497,8 +497,8 @@ else{
                                                         <label for="group2">Group 2</label>
                                                         <select id="group2" name="group2" class="form-select">
                                                             <option value=""></option>
-                                                            <option value="customer_code">Customer</option>
-                                                            <option value="product_code">Product</option>
+                                                            <option value="supplier_code">Supplier</option>
+                                                            <option value="raw_mat_code">Raw Material</option>
                                                             <option value="lorry_plate_no1">Vehicle</option>
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
@@ -510,8 +510,8 @@ else{
                                                         <label for="group3">Group 3</label>
                                                         <select id="group3" name="group3" class="form-select">
                                                             <option value=""></option>
-                                                            <option value="customer_code">Customer</option>
-                                                            <option value="product_code">Product</option>
+                                                            <option value="supplier_code">Supplier</option>
+                                                            <option value="raw_mat_code">Raw Material</option>
                                                             <option value="lorry_plate_no1">Vehicle</option>
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
@@ -790,10 +790,10 @@ else{
                         alert("An error occurred while generating the PDF.");
                     });
                 }
-                else if($('#exportSoRepModal').hasClass('show')){   
-                    var group1 = $('#exportSoRepModal').find('#group1').val();
-                    var group2 = $('#exportSoRepModal').find('#group2').val();
-                    var group3 = $('#exportSoRepModal').find('#group3').val();
+                else if($('#exportPoRepModal').hasClass('show')){   
+                    var group1 = $('#exportPoRepModal').find('#group1').val();
+                    var group2 = $('#exportPoRepModal').find('#group2').val();
+                    var group3 = $('#exportPoRepModal').find('#group3').val();
 
                     // Added checking to ensure previous group is selected
                     if (group2 && !group1) {
@@ -817,21 +817,21 @@ else{
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
-                    $('#exportSoRepForm').find('#fromDate').val(fromDateI);
-                    $('#exportSoRepForm').find('#toDate').val(toDateI);
-                    $('#exportSoRepForm').find('#status').val(statusI);
-                    $('#exportSoRepForm').find('#customer').val(customerNoI);
-                    $('#exportSoRepForm').find('#supplier').val(supplierNoI);
-                    $('#exportSoRepForm').find('#vehicle').val(vehicleNoI);
-                    $('#exportSoRepForm').find('#customerType').val(customerTypeI);
-                    $('#exportSoRepForm').find('#product').val(productI);
-                    $('#exportSoRepForm').find('#rawMat').val(rawMatI);
-                    $('#exportSoRepForm').find('#destination').val(destinationI);
-                    $('#exportSoRepForm').find('#plant').val(plantI);
-                    $('#exportSoRepForm').find('#type').val('Sales');
-                    $('#exportSoRepModal').modal('hide');
+                    $('#exportPoRepForm').find('#fromDate').val(fromDateI);
+                    $('#exportPoRepForm').find('#toDate').val(toDateI);
+                    $('#exportPoRepForm').find('#status').val(statusI);
+                    $('#exportPoRepForm').find('#customer').val(customerNoI);
+                    $('#exportPoRepForm').find('#supplier').val(supplierNoI);
+                    $('#exportPoRepForm').find('#vehicle').val(vehicleNoI);
+                    $('#exportPoRepForm').find('#customerType').val(customerTypeI);
+                    $('#exportPoRepForm').find('#product').val(productI);
+                    $('#exportPoRepForm').find('#rawMat').val(rawMatI);
+                    $('#exportPoRepForm').find('#destination').val(destinationI);
+                    $('#exportPoRepForm').find('#plant').val(plantI);
+                    $('#exportPoRepForm').find('#type').val('Purchase');
+                    $('#exportPoRepModal').modal('hide');
 
-                    $.post('php/exportSoPoReport.php', $('#exportSoRepForm').serialize(), function(response){
+                    $.post('php/exportSoPoReport.php', $('#exportPoRepForm').serialize(), function(response){
                         var obj = JSON.parse(response);
 
                         if(obj.status === 'success'){
@@ -876,14 +876,14 @@ else{
             });
         });
         
-        $('#exportSalesPdf').on('click', function(){
-            $("#exportSoRepModal").find('#group1').val('');
-            $("#exportSoRepModal").find('#group2').val('');
-            $("#exportSoRepModal").find('#group3').val('');
-            $("#exportSoRepModal").find('select[id^="group"] option').prop('disabled', false);
-            $("#exportSoRepModal").modal("show");
+        $('#exportPurchasePdf').on('click', function(){
+            $("#exportPoRepModal").find('#group1').val('');
+            $("#exportPoRepModal").find('#group2').val('');
+            $("#exportPoRepModal").find('#group3').val('');
+            $("#exportPoRepModal").find('select[id^="group"] option').prop('disabled', false);
+            $("#exportPoRepModal").modal("show");
 
-            $('#exportSoRepForm').validate({
+            $('#exportPoRepForm').validate({
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
@@ -1093,9 +1093,9 @@ else{
 
     function updateSelects() { //Function to disable duplicated group
         const selectedValues = [
-            $('#exportSoRepModal').find('#group1').val(),
-            $('#exportSoRepModal').find('#group2').val(),
-            $('#exportSoRepModal').find('#group3').val(),
+            $('#exportPoRepModal').find('#group1').val(),
+            $('#exportPoRepModal').find('#group2').val(),
+            $('#exportPoRepModal').find('#group3').val(),
         ];
 
         $('select[id^="group"]').each(function () {
