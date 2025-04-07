@@ -2419,44 +2419,37 @@ if ($user != null && $user != ''){
         var returnString = `
         <!-- Weighing Section -->
         <div class="row">
-            <div class="col-2">
+            <div class="col-6">
                 <p><strong>${row.name}</strong></p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
                 <p>${row.address_line_3}</p>
                 <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
             </div>
-            <div class="col-10">
-                <div class="row">
-                    <div class="col-3">
-                        <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
-                        <p><strong>DRIVER NAME:</strong> ${row.driver_name}</p>
-                        <p><strong>DRIVER I/C:</strong> ${row.driver_ic}</p>
-                        <p><strong>DRIVER CONTACT:</strong> ${row.driver_phone}</p>
-                        <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
-                    </div>
-                    <div class="col-3">
-                        <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
-                        <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
-                        <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
-                        <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
-                        <p><strong>PURCHASE NO:</strong> ${row.purchase_order}</p>
-                    </div>
-                    <div class="col-3">
-                        <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
-                        <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
-                    </div>
-                    <div class="col-3">
-                        <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
-                        <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
-                        <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
-                        <p><strong>REDUCE WEIGHT:</strong> ${row.reduce_weight}</p>
-                        <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
-                    </div>
-                </div>
+        </div><hr>
+        <div class="row">
+            <div class="col-4">
+                <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
+                <p><strong>DRIVER NAME:</strong> ${row.driver_name}</p>
+                <p><strong>DRIVER I/C:</strong> ${row.driver_ic}</p>
+                <p><strong>DRIVER CONTACT:</strong> ${row.driver_phone}</p>
+                <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
             </div>
-        </div>
-        <br>
+            <div class="col-4">
+                <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
+                <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
+                <p><strong>PURCHASE NO:</strong> ${row.purchase_order}</p>
+            </div>
+            <div class="col-4">
+                <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} (${row.gross_weight1_date})</p>
+                <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} (${row.tare_weight1_date})</p>
+                <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
+                <p><strong>REDUCE WEIGHT:</strong> ${row.reduce_weight}</p>
+                <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
+            </div>
+        </div><br>
         <!-- Product Section -->
         <div class="row">
             <div class="col-6">
