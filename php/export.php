@@ -26,8 +26,8 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 }
 
 if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_GET['fromDate']);
-    $formatted_date = $date->format('Y-m-d 00:00:00');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
+    $formatted_date = $dateTime->format('Y-m-d H:i');
 
     if($_GET["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
@@ -38,8 +38,8 @@ if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
 }
 
 if($_GET['toDate'] != null && $_GET['toDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_GET['toDate']);
-    $formatted_date = $date->format('Y-m-d 23:59:59');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
+    $formatted_date = $dateTime->format('Y-m-d H:i');
 
     if($_GET["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
