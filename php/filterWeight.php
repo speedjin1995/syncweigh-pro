@@ -57,9 +57,9 @@ if($searchValue != ''){
 
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Weight where status = '0'";
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $allQuery = "select count(*) as allcount from Weight where status = '0' and created_by='$username'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -68,9 +68,9 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 $filteredQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $filteredQuery = "select count(*) as allcount from Weight where status = '0' and created_by='$username'".$searchQuery;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -78,7 +78,12 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+}
 
 if($_SESSION["roles"] == 'ADMIN'){
     $username = $_SESSION["username"];
@@ -108,6 +113,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "transaction_status"=>$row['transaction_status'],
     "weight_type"=>$row['weight_type'],
     "transaction_date"=>$row['transaction_date'],
+    "plant_code"=>$row['plant_code'],
+    "plant_name"=>$row['plant_name'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],
     "lorry_plate_no2"=>$row['lorry_plate_no2'],
     "supplier_weight"=>$row['supplier_weight'],

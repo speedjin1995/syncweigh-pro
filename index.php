@@ -71,6 +71,18 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 else{
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
+
+$role = 'NORMAL';
+if ($user != null && $user != ''){
+    $stmt3 = $db->prepare("SELECT * from Users WHERE id = ?");
+    $stmt3->bind_param('s', $user);
+    $stmt3->execute();
+    $result3 = $stmt3->get_result();
+        
+    if(($row3 = $result3->fetch_assoc()) !== null){
+        $role = $row3['role'];
+    }
+}
 ?>
 
 <head>

@@ -78,6 +78,7 @@ if(isset($_POST['userID'])){
                     $message['nett_weight1'] = $row['nett_weight1'] ?? '';
                     $message['reduce_weight'] = $row['reduce_weight'] ?? '';
                     $message['final_weight'] = $row['final_weight'] ?? '';
+                    $message['plant_name'] = $row['plant_name'] ?? '';
 
                     # Values for Weight Product
                     $productCode = null;
@@ -172,6 +173,8 @@ if(isset($_POST['userID'])){
                     $message['driver_name'] = $row['driver_name'];
                     $message['driver_ic'] = $row['driver_ic'];
                     $message['estimate_loading'] = $row['estimate_loading'];
+                    $message['plant_code'] = $row['plant_code'];
+                    $message['plant_name'] = $row['plant_name'];
     
                     if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
                         $update_stmt2->bind_param('s', $row['lorry_plate_no1']);

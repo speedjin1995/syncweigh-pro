@@ -57,9 +57,9 @@ if($searchValue != ''){
 
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y'";
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and created_by='$username'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -68,9 +68,10 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y'".$searchQuery;
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and created_by='$username'".$searchQuery;
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -79,10 +80,9 @@ $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 $empQuery = "select * from Weight where status = '0' and is_complete = 'Y'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-
-if($_SESSION["roles"] == 'ADMIN'){
-    $username = $_SESSION["username"];
-    $empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and created_by='$username'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and plant_code IN ('$username')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);
