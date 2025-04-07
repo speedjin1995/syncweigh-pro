@@ -105,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="auth-page-wrapper pt-5">
             <!-- auth page bg -->
             <div class="auth-one-bg-position auth-one-bg"  id="auth-particles">
-                <div class="bg-overlay" style="background: green;opacity: 1;"></div>
+                <div class="bg-overlay" style="background: #316b31;opacity: 1;"></div>
                 
                 <div class="shape">
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1440 120">
@@ -122,11 +122,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="text-center mt-sm-5 mb-4 text-white-50">
                                 <div>
                                     <a href="index.php" class="d-inline-block auth-logo">
-                                        <img src="assets/images/logo-sm.png" alt="assets/images/logo-lg.png" height="230">
+                                        <img src="assets/images/logo-lg.png" alt="assets/images/logo-lg.png" height="230">
                                     </a>
                                 </div>
-                                <!--p class="mt-3 fs-15 fw-medium"> </p-->
-                                <!--p class="mt-3 fs-15 fw-medium">Synctronix Weighing System</p-->
+                                <p class="mt-3 fs-15 fw-medium"> </p>
+                                <p class="mt-3 fs-15 fw-medium">Tree R Wastage Management Sdn. Bhd.</p>
                             </div>
                         </div>
                     </div>
@@ -134,8 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="row justify-content-center">
                         <div class="col-md-8 col-lg-6 col-xl-5">
-                            <div class="card mt-4">
-                            
+                            <div class="card mt-4" style="margin-top: 0rem !important;!i;!;">
                                 <div class="card-body p-4"> 
                                     <div class="text-center mt-2">
                                         <h5 class="text-primary">Welcome Back !</h5>

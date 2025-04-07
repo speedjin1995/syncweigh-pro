@@ -6,6 +6,7 @@ $weighing2 = $db->query("SELECT * FROM Weight WHERE is_approved = 'N'");
 $salesList = array();
 $purchaseList = array();
 $localList = array();
+$miscList = array();
 $count = 0;
 
 $salesList2 = array();
@@ -23,6 +24,13 @@ while($row=mysqli_fetch_assoc($weighing)){
     }
     else if($row['transaction_status'] == 'Purchase'){
         $purchaseList[] = array(
+            "id" => $row['id'],
+            "transaction_id" => $row['transaction_id'],
+            "weight_type" => $row['weight_type']
+        );
+    }
+    else if($row['transaction_status'] == 'Misc'){
+        $miscList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
             "weight_type" => $row['weight_type']
@@ -61,7 +69,7 @@ while($row2=mysqli_fetch_assoc($weighing2)){
     }
 }
 
-$count = count($salesList) + count($purchaseList) + count($localList);
+$count = count($salesList) + count($purchaseList) + count($localList) + count($miscList);
 $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
 ?>
 <header id="page-topbar" style="background-color: #316b31;">
@@ -646,7 +654,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                         id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                        aria-haspopup="true" aria-expanded="false">
+                        aria-haspopup="true" aria-expanded="false" style="color: white;">
                         <i class='bx bx-bell fs-22'></i>
                         <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger"><?=$count ?>
                         <span class="visually-hidden">unread messages</span></span>
@@ -685,6 +693,12 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                                         <a class="nav-link" data-bs-toggle="tab" href="#alerts-tab" role="tab"
                                             aria-selected="false">
                                             Local <?php echo (count($localList) == 0 ? '' : '('.count($localList).')'); ?>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item waves-effect waves-light">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#alerts-tab" role="tab"
+                                            aria-selected="false">
+                                            Misc <?php echo (count($miscList) == 0 ? '' : '('.count($miscList).')'); ?>
                                         </a>
                                     </li>
                                 </ul>
@@ -737,6 +751,24 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                                                 <div class="flex-1">
                                                     <a href="index.php?weight=<?=$localList[$i]['id'] ?>" class="stretched-link">
                                                         <h6 class="mt-0 mb-2 lh-base">There is a <?=$localList[$i]['weight_type'] ?> weighing with <b><?=$localList[$i]['transaction_id'] ?></b>
+                                                            is <span class="text-secondary">Pending</span>
+                                                        </h6>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade p-4" id="alerts-tab" role="tabpanel" aria-labelledby="alerts-tab">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <?php for($i=0; $i<count($miscList); $i++){ ?>
+                                        <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                            <div class="d-flex">
+                                                <div class="flex-1">
+                                                    <a href="index.php?weight=<?=$miscList[$i]['id'] ?>" class="stretched-link">
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$miscList[$i]['weight_type'] ?> weighing with <b><?=$localList[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending</span>
                                                         </h6>
                                                     </a>
