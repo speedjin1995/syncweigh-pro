@@ -311,7 +311,7 @@ function searchDestinationAuditById($value, $db) {
 function searchProductAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Product WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -327,7 +327,7 @@ function searchProductAuditById($value, $db) {
 function searchRawMatAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -343,7 +343,7 @@ function searchRawMatAuditById($value, $db) {
 function searchSupplierAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -359,7 +359,7 @@ function searchSupplierAuditById($value, $db) {
 function searchVehicleAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Vehicle WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -375,7 +375,7 @@ function searchVehicleAuditById($value, $db) {
 function searchAgentAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Agents WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -391,7 +391,7 @@ function searchAgentAuditById($value, $db) {
 function searchTransporterAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Transporter WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -407,7 +407,7 @@ function searchTransporterAuditById($value, $db) {
 function searchUnitAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Unit WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -423,7 +423,7 @@ function searchUnitAuditById($value, $db) {
 function searchUserAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Users WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -439,7 +439,7 @@ function searchUserAuditById($value, $db) {
 function searchPlantAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();
@@ -455,7 +455,7 @@ function searchPlantAuditById($value, $db) {
 function searchSiteAuditById($value, $db) {
     $data = array();
 
-    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+    if ($select_stmt = $db->prepare("SELECT * FROM Site WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();

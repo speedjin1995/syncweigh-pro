@@ -410,7 +410,7 @@
 
 <script type="text/javascript">
 
-var table;
+let table;
 
 $(function () {
     $('#reportType').on('change', function(){
@@ -503,33 +503,6 @@ $(function () {
     $(".flatpickrEnd").flatpickr({
         defaultDate: new Date(), 
         dateFormat: "y-m-d"
-    });
-
-    // Add event listener for opening and closing details on row click
-    $('#dataTable tbody').on('click', 'tr', function (e) {
-        var tr = $(this); // The row that was clicked
-        var row = table.row(tr); 
-
-        // Exclude specific td elements by checking the event target
-        if ($(e.target).closest('td').hasClass('dtr-control') || $(e.target).closest('td').hasClass('action-button')) {
-            return;
-        }
-
-        if ($('#reportType').val() == 'Weight'){
-            if (row.child.isShown()) {
-                // This row is already open - close it
-                row.child.hide();
-                tr.removeClass('shown');
-            } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', type: 'Log' }, function (data) {
-                    var obj = JSON.parse(data);
-                    if (obj.status === 'success') {
-                        row.child(format(obj.message)).show();
-                        tr.addClass("shown");
-                    }
-                });
-            }
-        }        
     });
 
     // Handle change event of the dropdown list
@@ -627,7 +600,11 @@ $(function () {
             },
             dataType: "json",
             success: function (response) {
-                $("#dataTable").DataTable().destroy();
+                // Destroy and clean existing DataTable
+                if ($.fn.DataTable.isDataTable("#dataTable")) {
+                    $('#dataTable').DataTable().clear().destroy();
+                    $('#dataTable').empty(); // 💥 Important to reset the table headers
+                }
 
                 // Generate column definitions dynamically
                 let columns = response.columnNames.map(column => ({
@@ -643,6 +620,33 @@ $(function () {
                     autoWidth: false,
                     processing: true,
                     searching: true
+                });
+
+                // Enable expandable row for "Weight"
+                $('#dataTable tbody').on('click', 'tr', function (e) {
+                    var tr = $(this); // The row that was clicked
+                    var row = table.row(tr); 
+
+                    // Exclude specific td elements by checking the event target
+                    if ($(e.target).closest('td').hasClass('dtr-control') || $(e.target).closest('td').hasClass('action-button')) {
+                        return;
+                    }
+
+                    if ($('#reportType').val() == 'Weight'){
+                        if (row.child.isShown()) {
+                            // This row is already open - close it
+                            row.child.hide();
+                            tr.removeClass('shown');
+                        } else {
+                            $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', type: 'Log' }, function (data) {
+                                var obj = JSON.parse(data);
+                                if (obj.status === 'success') {
+                                    row.child(format(obj.message)).show();
+                                    tr.addClass("shown");
+                                }
+                            });
+                        }
+                    }        
                 });
             },
             error: function (error) {
