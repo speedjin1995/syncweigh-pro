@@ -93,7 +93,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "useremail"=>$row['useremail'],
     "role"=>$row['role_name'],
     "plant"=>$plant,
-    "status"=>$row['status']
+    "status"=>(($row['status'] == '0') ? 'Active' : 'Inactive')
   );
 }
 

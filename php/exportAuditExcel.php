@@ -1,148 +1,142 @@
 <?php
-## Database configuration
+
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
+// // Load the database configuration file 
+session_start();
+ 
+// Filter the excel data 
+function filterData(&$str){ 
+    $str = preg_replace("/\t/", "\\t", $str); 
+    $str = preg_replace("/\r?\n/", "\\n", $str); 
+    if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"'; 
+} 
 
-## Read value
-// $draw = $_POST['draw'];
-// $row = $_POST['start'];
-// $rowperpage = $_POST['length']; // Rows display per page
-// $columnIndex = $_POST['order'][0]['column']; // Column index
-// $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
-// $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
-// $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Search value
+// Excel file name for download 
+if($_GET["selectedValue"]){
+    $fileName = $_GET['selectedValue']."-audit-data_" . date('Y-m-d') . ".xls";
+}
 
 ## Search 
 $searchQuery = " ";
-
-if($_POST['fromDateSearch'] != null && $_POST['fromDateSearch'] != ''){
-    $fromDate = new DateTime($_POST['fromDateSearch']);
+if($_GET['fromDateSearch'] != null && $_GET['fromDateSearch'] != ''){
+    $fromDate = new DateTime($_GET['fromDateSearch']);
     $fromDateTime = date_format($fromDate,"Y-m-d 00:00:00");
     $searchQuery = " WHERE event_date >= '".$fromDateTime."'";
 }
 
-if($_POST['toDateSearch'] != null && $_POST['toDateSearch'] != ''){
-    $toDate = new DateTime($_POST['toDateSearch']);
+if($_GET['toDateSearch'] != null && $_GET['toDateSearch'] != ''){
+    $toDate = new DateTime($_GET['toDateSearch']);
     $toDateTime = date_format($toDate,"Y-m-d 23:59:59");
     $searchQuery .= " and event_date <= '".$toDateTime."'";
 }
 
-if($_POST['selectedValue'] == "Customer")
+if($_GET['selectedValue'] == "Customer")
 {
-    if($_POST['customerCode'] != null && $_POST['customerCode'] != '' && $_POST['customerCode'] != '-'){
-    $searchQuery .= " and customer_code = '".$_POST['customerCode']."'";
+    if($_GET['customerCode'] != null && $_GET['customerCode'] != '' && $_GET['customerCode'] != '-'){
+    $searchQuery .= " and customer_code = '".$_GET['customerCode']."'";
     }
 }
 
-if($_POST['selectedValue'] == "Destination")
+if($_GET['selectedValue'] == "Destination")
 {
-    if($_POST['destinationCode'] != null && $_POST['destinationCode'] != '' && $_POST['destinationCode'] != '-'){
-    $searchQuery .= " and destination_code = '".$_POST['destinationCode']."'";
+    if($_GET['destinationCode'] != null && $_GET['destinationCode'] != '' && $_GET['destinationCode'] != '-'){
+    $searchQuery .= " and destination_code = '".$_GET['destinationCode']."'";
     }
 }
 
-if($_POST['selectedValue'] == "Product")
+if($_GET['selectedValue'] == "Product")
 {
-    if($_POST['productCode'] != null && $_POST['productCode'] != ''){
-    $searchQuery .= " and product_code like '%".$_POST['productCode']."%'";
+    if($_GET['productCode'] != null && $_GET['productCode'] != ''){
+    $searchQuery .= " and product_code like '%".$_GET['productCode']."%'";
     }
 }
 
-if($_POST['selectedValue'] == "Raw Materials")
+if($_GET['selectedValue'] == "Raw Materials")
 {
-    if($_POST['rawMatCode'] != null && $_POST['rawMatCode'] != ''){
-    $searchQuery .= " and raw_mat_code like '%".$_POST['rawMatCode']."%'";
+    if($_GET['rawMatCode'] != null && $_GET['rawMatCode'] != ''){
+    $searchQuery .= " and raw_mat_code like '%".$_GET['rawMatCode']."%'";
     }
 }
 
-if($_POST['selectedValue'] == "Supplier")
+if($_GET['selectedValue'] == "Supplier")
 {
-    if($_POST['supplierCode'] != null && $_POST['supplierCode'] != '' && $_POST['supplierCode'] != '-'){
-    $searchQuery .= " and supplier_code = '".$_POST['supplierCode']."'";
+    if($_GET['supplierCode'] != null && $_GET['supplierCode'] != '' && $_GET['supplierCode'] != '-'){
+    $searchQuery .= " and supplier_code = '".$_GET['supplierCode']."'";
     }
 }
 
-if($_POST['selectedValue'] == "Vehicle")
+if($_GET['selectedValue'] == "Vehicle")
 {
-    if($_POST['vehicleNo'] != null && $_POST['vehicleNo'] != '' && $_POST['vehicleNo'] != '-'){
-    $searchQuery .= " and veh_number = '".$_POST['vehicleNo']."'";
+    if($_GET['vehicleNo'] != null && $_GET['vehicleNo'] != '' && $_GET['vehicleNo'] != '-'){
+    $searchQuery .= " and veh_number = '".$_GET['vehicleNo']."'";
     }
 }
 
-if($_POST['selectedValue'] == "Agent")
+if($_GET['selectedValue'] == "Agent")
 {
-    if($_POST['agentCode'] != null && $_POST['agentCode'] != '' && $_POST['agentCode'] != '-'){
-    $searchQuery .= " and agent_code = '".$_POST['agentCode']."'";
+    if($_GET['agentCode'] != null && $_GET['agentCode'] != '' && $_GET['agentCode'] != '-'){
+    $searchQuery .= " and agent_code = '".$_GET['agentCode']."'";
     }
 }
 
-if($_POST['selectedValue'] == "Transporter")
+if($_GET['selectedValue'] == "Transporter")
 {
-    if($_POST['transporterCode'] != null && $_POST['transporterCode'] != '' && $_POST['transporterCode'] != '-'){
-    $searchQuery .= " and transporter_code = '".$_POST['transporterCode']."'";
+    if($_GET['transporterCode'] != null && $_GET['transporterCode'] != '' && $_GET['transporterCode'] != '-'){
+    $searchQuery .= " and transporter_code = '".$_GET['transporterCode']."'";
     }
 }
 
-if($_POST['selectedValue'] == "Unit")
+if($_GET['selectedValue'] == "Unit")
 {
-    if($_POST['unit'] != null && $_POST['unit'] != '' && $_POST['unit'] != '-'){
-    $searchQuery .= " and unit = '".$_POST['unit']."'";
+    if($_GET['unit'] != null && $_GET['unit'] != '' && $_GET['unit'] != '-'){
+    $searchQuery .= " and unit = '".$_GET['unit']."'";
     }
 }
 
-if($_POST['selectedValue'] == "User")
+if($_GET['selectedValue'] == "User")
 {
-    if($_POST['userCode'] != null && $_POST['userCode'] != ''){
-    $searchQuery .= " and user_code like '%".$_POST['userCode']."%'";
+    if($_GET['userCode'] != null && $_GET['userCode'] != ''){
+    $searchQuery .= " and user_code like '%".$_GET['userCode']."%'";
     }
 }
 
-if($_POST['selectedValue'] == "Plant")
+if($_GET['selectedValue'] == "Plant")
 {
-    if($_POST['plantCode'] != null && $_POST['plantCode'] != ''){
-    $searchQuery .= " and plant_code like '%".$_POST['plantCode']."%'";
+    if($_GET['plantCode'] != null && $_GET['plantCode'] != ''){
+    $searchQuery .= " and plant_code like '%".$_GET['plantCode']."%'";
     }
 }
 
-if($_POST['selectedValue'] == "Site")
+if($_GET['selectedValue'] == "Site")
 {
-    if($_POST['siteCode'] != null && $_POST['siteCode'] != ''){
-    $searchQuery .= " and site_code like '%".$_POST['siteCode']."%'";
+    if($_GET['siteCode'] != null && $_GET['siteCode'] != ''){
+    $searchQuery .= " and site_code like '%".$_GET['siteCode']."%'";
     }
 }
 
-if($_POST['selectedValue'] == "Weight")
+if($_GET['selectedValue'] == "Weight")
 {
-    if($_POST['weight'] != null && $_POST['weight'] != ''){
-    $searchQuery .= " and transaction_id like '%".$_POST['weight']."%'";
+    if($_GET['weight'] != null && $_GET['weight'] != ''){
+    $searchQuery .= " and transaction_id like '%".$_GET['weight']."%'";
     }
 }
 
-if($_POST['selectedValue'] == "SO")
+if($_GET['selectedValue'] == "SO")
 {
-    if($_POST['custPoNo'] != null && $_POST['custPoNo'] != ''){
-    $searchQuery .= " and order_no like '%".$_POST['custPoNo']."%'";
+    if($_GET['custPoNo'] != null && $_GET['custPoNo'] != ''){
+    $searchQuery .= " and order_no like '%".$_GET['custPoNo']."%'";
     }
 }
 
-if($_POST['selectedValue'] == "PO")
+if($_GET['selectedValue'] == "PO")
 {
-    if($_POST['poNo'] != null && $_POST['poNo'] != ''){
-    $searchQuery .= " and po_no like '%".$_POST['poNo']."%'";
+    if($_GET['poNo'] != null && $_GET['poNo'] != ''){
+    $searchQuery .= " and po_no like '%".$_GET['poNo']."%'";
     }
 }
 
-## Total number of records without filtering
-// $sel = mysqli_query($db,"select count(*) as allcount from Customer_Log");
-// $records = mysqli_fetch_assoc($sel);
-// $totalRecords = $records['allcount'];
-
-// ## Total number of record with filtering
-// $sel = mysqli_query($db,"select count(*) as allcount from Customer_Log".$searchQuery);
-// $records = mysqli_fetch_assoc($sel);
-// $totalRecordwithFilter = $records['allcount'];
-
-if($_POST['selectedValue'] == "Customer")
+if($_GET['selectedValue'] == "Customer")
 {
     ## Fetch records
     $empQuery = "select * from Customer_Log".$searchQuery;
@@ -191,7 +185,7 @@ if($_POST['selectedValue'] == "Customer")
     $columnNames = ["Customer Code", "Company Reg No", "Company Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date", ];
 }
 
-if($_POST['selectedValue'] == "Destination")
+if($_GET['selectedValue'] == "Destination")
 {
     ## Fetch records
     $empQuery = "select * from Destination_Log".$searchQuery;
@@ -230,7 +224,7 @@ if($_POST['selectedValue'] == "Destination")
     $columnNames = ["Destination Code", "Destination Name", "Description", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Product")
+if($_GET['selectedValue'] == "Product")
 {
     ## Fetch records
     $empQuery = "select * from Product_Log".$searchQuery;
@@ -278,7 +272,7 @@ if($_POST['selectedValue'] == "Product")
     $columnNames = ["Product Code", "Product Name", "Product Price", "Description", "Variance Type", "High", "Low", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Raw Materials")
+if($_GET['selectedValue'] == "Raw Materials")
 {
     ## Fetch records
     $empQuery = "select * from Raw_Mat_Log".$searchQuery;
@@ -328,7 +322,7 @@ if($_POST['selectedValue'] == "Raw Materials")
     $columnNames = ["Raw Material Code", "Raw Material Name", "Raw Material Price", "Description", "Variance Type", "High", "Low", "Type", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Supplier")
+if($_GET['selectedValue'] == "Supplier")
 {
     ## Fetch records
     $empQuery = "select * from Supplier_Log".$searchQuery;
@@ -379,7 +373,7 @@ if($_POST['selectedValue'] == "Supplier")
     $columnNames = ["Supplier Code", "Company Reg No", "Supplier Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Vehicle")
+if($_GET['selectedValue'] == "Vehicle")
 {
     ## Fetch records
     $empQuery = "select * from Vehicle_Log".$searchQuery;
@@ -427,7 +421,7 @@ if($_POST['selectedValue'] == "Vehicle")
     $columnNames = ["Vehicle No", "Vehicle Weight", "Transporter Code", "Transporter Name", "EX-Quarry / Delivered", "Customer Code", "Customer Name", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Agent")
+if($_GET['selectedValue'] == "Agent")
 {
     ## Fetch records
     $empQuery = "select * from Agents_Log".$searchQuery;
@@ -466,7 +460,7 @@ if($_POST['selectedValue'] == "Agent")
     $columnNames = ["Sales Representative Code", "Sales Representative Name", "Description", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Transporter")
+if($_GET['selectedValue'] == "Transporter")
 {
     ## Fetch records
     $empQuery = "select * from Transporter_Log".$searchQuery;
@@ -516,7 +510,7 @@ if($_POST['selectedValue'] == "Transporter")
     $columnNames = ["Transporter Code", "Company Reg No", "Transporter Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Unit")
+if($_GET['selectedValue'] == "Unit")
 {
     ## Fetch records
     $empQuery = "select * from Unit_Log".$searchQuery;
@@ -551,7 +545,7 @@ if($_POST['selectedValue'] == "Unit")
     $columnNames = ["Unit", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "User")
+if($_GET['selectedValue'] == "User")
 {
     ## Fetch records
     $empQuery = "select * from Users_Log".$searchQuery;
@@ -595,7 +589,7 @@ if($_POST['selectedValue'] == "User")
 }
 
 
-if($_POST['selectedValue'] == "Plant")
+if($_GET['selectedValue'] == "Plant")
 {
     ## Fetch records
     $empQuery = "select * from Plant_Log".$searchQuery;
@@ -643,7 +637,7 @@ if($_POST['selectedValue'] == "Plant")
     $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Site")
+if($_GET['selectedValue'] == "Site")
 {
     ## Fetch records
     $empQuery = "select * from Site_Log".$searchQuery;
@@ -690,7 +684,7 @@ if($_POST['selectedValue'] == "Site")
     $columnNames = ["Site Code", "Site Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Weight")
+if($_GET['selectedValue'] == "Weight")
 {
     ## Fetch records
     $empQuery = "select * from Weight_Log".$searchQuery;
@@ -721,7 +715,7 @@ if($_POST['selectedValue'] == "Weight")
     $columnNames = ["Transaction Id", "Weight Status", "Customer/Supplier", "Vehicle", "Product/Raw Material", "SO/PO", "DO", "Gross Incoming", "Incoming Date", "Tare Outgoing", "Outgoing Date", "Nett Weight", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "SO")
+if($_GET['selectedValue'] == "SO")
 {
     ## Fetch records
     $empQuery = "select * from Sales_Order_Log".$searchQuery;
@@ -765,7 +759,7 @@ if($_POST['selectedValue'] == "SO")
     $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Product Code", "Product Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "Customer P/O No", "S/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "PO")
+if($_GET['selectedValue'] == "PO")
 {
     ## Fetch records
     $empQuery = "select * from Purchase_Order_Log".$searchQuery;
@@ -808,12 +802,35 @@ if($_POST['selectedValue'] == "PO")
     $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "P/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
-## Response
-$response = [
-    "columnNames" => $columnNames,
-    "dataTable" => $data
-];
+// Display column names as first row 
+$excelData = implode("\t", array_values($columnNames)) . "\n";
 
-header("Content-Type: application/json");
-echo json_encode($response);
+if(count($data) > 0){
+    
+    foreach ($data as $row){
+        unset($row['id']);
+        $lineData = []; // Ensure it starts as an empty array each iteration
+
+        foreach ($row as $rowData) { 
+            $lineData[] = $rowData; 
+        }
+
+        # Added checking to fix duplicated issue
+        if (!empty($lineData)) {
+            array_walk($lineData, 'filterData'); 
+            $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+        }
+    }
+}else{
+    $excelData .= 'No records found...'. "\n"; 
+}
+ 
+// Headers for download 
+header("Content-Type: application/vnd.ms-excel"); 
+header("Content-Disposition: attachment; filename=\"$fileName\""); 
+ 
+// Render excel data 
+echo $excelData;
+ 
+exit;
 ?>

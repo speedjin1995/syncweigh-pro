@@ -10,9 +10,9 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 }
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
-    $formatted_date = $date->format('Y-m-d 00:00:00');
-    $fromDate = $date->format('d/m/Y');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $fromDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
@@ -23,9 +23,9 @@ if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate']
 }
 
 if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_POST['toDate']);
-    $formatted_date = $date->format('Y-m-d 23:59:59');
-    $toDate = $date->format('d/m/Y');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $toDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";

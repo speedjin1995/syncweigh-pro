@@ -253,6 +253,13 @@ function searchNamebyId($value, $db) {
     return $id;
 }
 
+function excelSerialToDate($serial) {
+    // Excel date starts from 1900-01-01, subtract 1 for correct calculation
+    $baseDate = strtotime('1899-12-30');
+    return date('Y-m-d', strtotime("+$serial days", $baseDate));
+}
+
+####################################### Audit Log Lookup #######################################
 function searchActionNameById($value, $db) {
     $id = null;
 
@@ -269,9 +276,244 @@ function searchActionNameById($value, $db) {
     return $id;
 }
 
-function excelSerialToDate($serial) {
-    // Excel date starts from 1900-01-01, subtract 1 for correct calculation
-    $baseDate = strtotime('1899-12-30');
-    return date('Y-m-d', strtotime("+$serial days", $baseDate));
+function searchCustomerAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
 }
+
+function searchDestinationAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Destination WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchProductAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Product WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchRawMatAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchSupplierAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchVehicleAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Vehicle WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchAgentAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Agents WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchTransporterAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Transporter WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchUnitAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Unit WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchUserAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Users WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchPlantAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchSiteAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Site WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchWeightAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchSoAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchPoAuditById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
 ?>

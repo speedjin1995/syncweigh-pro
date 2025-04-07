@@ -588,12 +588,17 @@ else{
 
         //Date picker
         $('#fromDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
+            dateFormat: "d-m-Y H:i",
+            enableTime: true,
+            time_24hr: true,
             defaultDate: yesterday
         });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
+            dateFormat: "d-m-Y H:i",
+            enableTime: true,
+            time_24hr: true,
             defaultDate: today
         });
 
@@ -652,6 +657,7 @@ else{
                 { data: 'nett_weight1' },
                 { 
                     data: 'id',
+                    class: 'action-button',
                     render: function ( data, type, row ) {
                         // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
@@ -736,6 +742,31 @@ else{
                     $('#localInfo').text(settings.json.localTotal);
                 }   
             });
+        });
+
+        // Add event listener for opening and closing details on row click
+        $('#weightTable tbody').on('click', 'tr', function (e) {
+            var tr = $(this); // The row that was clicked
+            var row = table.row(tr);
+
+            // Exclude specific td elements by checking the event target
+            if ($(e.target).closest('td').hasClass('action-button')) {
+                return;
+            }
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
+                    var obj = JSON.parse(data);
+                    if (obj.status === 'success') {
+                        row.child(format(obj.message)).show();
+                        tr.addClass("shown");
+                    }
+                });
+            }
         });
 
         $.validator.setDefaults({
@@ -946,6 +977,64 @@ else{
             updateSelects();
         });
     });
+
+    function format (row) {
+        var returnString = `
+        <!-- Weighing Section -->
+        <div class="row">
+            <div class="col-2">
+                <p><strong>${row.name}</strong></p>
+                <p>${row.address_line_1}</p>
+                <p>${row.address_line_2}</p>
+                <p>${row.address_line_3}</p>
+                <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
+            </div>
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-3">
+                        <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
+                        <p><strong>DESTINATION NAME:</strong> ${row.destination}</p>
+                        <p><strong>SITE NAME:</strong> ${row.site_name}</p>
+                        <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
+
+                    if (row.transaction_status == 'Purchase'){
+                        returnString += `<p><strong>RAW MATERIAL NAME:</strong> ${row.product_rawmat_name}</p>`;
+                    }else{
+                        returnString += `<p><strong>PRODUCT NAME:</strong> ${row.product_rawmat_name}</p>`;
+                    }
+
+                    returnString += `</div>
+                    <div class="col-3">
+                        <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
+                        <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                        <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                        <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p> `;
+
+                    if (row.transaction_status == 'Purchase'){
+                        returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
+                    }else{
+                        returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
+                    }
+                    
+                    returnString += `</div>
+                    <div class="col-3">
+                        <p><strong>CREATED DATE:</strong> ${row.created_date}</p>
+                        <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
+                        <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
+                    </div>
+                    <div class="col-3">
+                        <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
+                        <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
+                        <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
+                        <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
+                        <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        
+        return returnString;
+    }
 
     function edit(id){
         $('#spinnerLoading').show();
