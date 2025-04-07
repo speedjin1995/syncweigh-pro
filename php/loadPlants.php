@@ -42,7 +42,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "address_line_3"=>$row['address_line_3'],
       "phone_no"=>$row['phone_no'],
       "fax_no"=>$row['fax_no'],
-      "status"=>$row['status']
+      "status"=>(($row['status'] == '0') ? 'Active' : 'Inactive')
     );
 }
 

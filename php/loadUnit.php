@@ -36,7 +36,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
       "id"=>$row['id'],
       "unit"=>$row['unit'],
-      "status"=>$row['status']
+      "status"=>(($row['status'] == '0') ? 'Active' : 'Inactive')
     );
 }
 

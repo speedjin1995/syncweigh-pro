@@ -40,7 +40,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "price"=>$row['price'],
       "description"=>$row['description'],
       "type"=>$row['type'],
-      "status"=>$row['status']
+      "status"=>(($row['status'] == '0') ? 'Active' : 'Inactive')
     );
 }
 
