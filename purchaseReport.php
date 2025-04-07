@@ -588,12 +588,17 @@ else{
 
         //Date picker
         $('#fromDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
+            dateFormat: "d-m-Y H:i",
+            enableTime: true,
+            time_24hr: true,
             defaultDate: yesterday
         });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
+            dateFormat: "d-m-Y H:i",
+            enableTime: true,
+            time_24hr: true,
             defaultDate: today
         });
 
