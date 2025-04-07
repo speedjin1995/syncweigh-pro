@@ -20,7 +20,35 @@ $groupby = array(
     "lorry_plate_no1" => "Vehicle",
     "destination-code" => "Destination",
     "transporter_code" => "Transporter"
-)
+);
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+}
+else{
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+}
+else{
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
+$role = 'NORMAL';
+if ($user != null && $user != ''){
+    $stmt3 = $db->prepare("SELECT * from Users WHERE id = ?");
+    $stmt3->bind_param('s', $user);
+    $stmt3->execute();
+    $result3 = $stmt3->get_result();
+        
+    if(($row3 = $result3->fetch_assoc()) !== null){
+        $role = $row3['role'];
+    }
+}
 ?>
 
 <head>
@@ -166,6 +194,17 @@ $groupby = array(
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="plantSearchDisplay">
+                                                        <div class="mb-3">
+                                                            <label for="plantSearch" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -478,6 +517,7 @@ $groupby = array(
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -496,6 +536,7 @@ $groupby = array(
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
                     product: transactionStatusI,
+                    plant: plantNoI,
                 } 
             },
             'columns': [
@@ -535,6 +576,7 @@ $groupby = array(
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -557,6 +599,7 @@ $groupby = array(
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
                         product: transactionStatusI,
+                        plant: plantNoI,
                     } 
                 },
                 'columns': [
@@ -599,6 +642,7 @@ $groupby = array(
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             var groupOneI = $('#group1').val();
             var groupTwoI = $('#group2').val();
@@ -613,6 +657,7 @@ $groupby = array(
                 vehicle: vehicleNoI,
                 weighingType: invoiceNoI,
                 product: transactionStatusI,
+                plant: plantNoI,
                 groupOne: groupOneI,
                 groupTwo: groupTwoI,
                 groupThree: groupThreeI
@@ -648,10 +693,11 @@ $groupby = array(
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             
             window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
-            "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
+            "&weighingType="+invoiceNoI+"&product="+transactionStatusI+"&plant="+plantNoI);
         });
     });
 

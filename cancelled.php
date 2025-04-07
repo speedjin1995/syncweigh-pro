@@ -5,6 +5,7 @@
 require_once "php/db_connect.php";
 
 $user = $_SESSION['id'];
+$plantId = $_SESSION['plant'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
 $stmt->execute();
@@ -41,6 +42,34 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+}
+else{
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+}
+else{
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+
+$role = 'NORMAL';
+if ($user != null && $user != ''){
+    $stmt3 = $db->prepare("SELECT * from Users WHERE id = ?");
+    $stmt3->bind_param('s', $user);
+    $stmt3->execute();
+    $result3 = $stmt3->get_result();
+        
+    if(($row3 = $result3->fetch_assoc()) !== null){
+        $role = $row3['role'];
+    }
+}
 ?>
 
 <head>
@@ -208,6 +237,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="plantSearchDisplay">
+                                                        <div class="mb-3">
+                                                            <label for="plantSearch" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -1155,6 +1195,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     var rowCount = $("#productTable").find(".details").length;
     
     $(function () {
+        var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
         const today = new Date();
         const tomorrow = new Date(today);
@@ -1179,6 +1220,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             defaultDate: today
         });
 
+        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+            $('#plantSearchDisplay').show();
+        }else{
+            $('#plantSearchDisplay').hide();
+        }
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -1187,6 +1234,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1206,6 +1254,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     invoice: invoiceNoI,
                     batch: batchNoI,
                     product: transactionStatusI,
+                    plant: plantNoI,
                 } 
             },
             'columns': [
@@ -1649,6 +1698,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -1672,6 +1722,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         invoice: invoiceNoI,
                         batch: batchNoI,
                         product: transactionStatusI,
+                        plant: plantNoI,
                     } 
                 },
                 'columns': [
