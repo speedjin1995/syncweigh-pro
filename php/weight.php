@@ -113,7 +113,7 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
     }
 
     if (empty($_POST["grossIncoming"])) {
-        $grossIncoming = null;
+        $grossIncoming = 0;
     } else {
         $grossIncoming = trim($_POST["grossIncoming"]);
     }
@@ -127,7 +127,7 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
     }
 
     if (empty($_POST["tareOutgoing"])) {
-        $tareOutgoing = null;
+        $tareOutgoing = 0;
     } else {
         $tareOutgoing = trim($_POST["tareOutgoing"]);
     }
@@ -140,7 +140,7 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
     }
 
     if (empty($_POST["nettWeight"])) {
-        $nettWeight = null;
+        $nettWeight = 0;
     } else {
         $nettWeight = trim($_POST["nettWeight"]);
     }
