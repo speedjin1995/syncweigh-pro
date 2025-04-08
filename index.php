@@ -1910,6 +1910,8 @@ if ($user != null && $user != ''){
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
+            $('#addModal').find('#productTable').html('');
+            rowCount = 0;
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
