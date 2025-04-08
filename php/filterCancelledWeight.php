@@ -51,6 +51,10 @@ if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != 
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
 }
 
+if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }

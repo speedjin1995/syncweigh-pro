@@ -107,6 +107,15 @@ if(isset($_POST['product']) && $_POST['product'] != null && $_POST['product'] !=
     }
 }
 
+if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+    if($_POST["file"] == 'weight'){
+        $searchQuery .= " and Weight.plant_code = '".$_POST['plant']."'";
+    }
+    else{
+        $searchQuery .= " and count.plant_code = '".$_POST['plant']."'";
+    }
+}
+
 if(isset($_POST['groupOne']) && $_POST['groupOne'] != null && $_POST['groupOne'] != '' && $_POST['groupOne'] != '-'){
     $groupByFields[] = $_POST['groupOne'];
 }

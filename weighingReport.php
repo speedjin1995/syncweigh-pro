@@ -128,7 +128,7 @@ if ($user != null && $user != ''){
 
                             <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
+                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #a8d190;">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
@@ -396,7 +396,7 @@ if ($user != null && $user != ''){
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="card">
-                                                    <div class="card-header">
+                                                    <div class="card-header" style="background-color: #a8d190;">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
                                                                 <h5 class="card-title mb-0">Weighing Records</h5>
