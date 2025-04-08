@@ -1562,7 +1562,6 @@ if ($user != null && $user != ''){
                             var obj = JSON.parse(data);
 
                             if(obj.status === 'success'){
-                                debugger;
                                 var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
                                 printWindow.document.write(obj.message);
                                 printWindow.document.close();
@@ -2323,7 +2322,6 @@ if ($user != null && $user != ''){
             var selectedOption = $(this).find(":selected"); // Get only the selected option within this select
             var text = selectedOption.data('code');  // Get data-code
             var price = selectedOption.data('price'); // Get data-price
-            debugger;
 
             // Update the respective input fields within the same row
             $(this).closest('.details').find('input[id^="products"]').val(text);
@@ -2387,12 +2385,12 @@ if ($user != null && $user != ''){
                 rowCount++;
             }
 
-            var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
-            if(manualWeight == 'false'){
+            var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
+            if(manualPrice == 'false'){
                 var readonly = true;
             }else{
                 var readonly = false;
-            }
+            }            
 
             var $addContents = $("#productDetail").clone();
             $("#productTable").append($addContents.html());
@@ -2408,7 +2406,7 @@ if ($user != null && $user != ''){
             $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
             $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
             $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount);
-            $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount);
+            $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
             $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
 
             rowCount++;
