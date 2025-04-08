@@ -549,14 +549,14 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                         # Insert into Weight_Product 
                         $no = isset($_POST['no']) ? $_POST['no']: [];
                         $productPartCode =  isset($_POST['productPartCode']) ? $_POST['productPartCode']: [];
-                        $products =isset($_POST['products']) ? $_POST['products']: [];
+                        $products = isset($_POST['products']) ? $_POST['products']: [];
                         $productPercentage = isset($_POST['productPercentage']) ? $_POST['productPercentage']: [];
                         $productItemWeight = isset($_POST['productItemWeight']) ? $_POST['productItemWeight']: [];
                         $productUnitPrice = isset($_POST['productUnitPrice']) ? $_POST['productUnitPrice']: [];
                         $productTotalPrice = isset($_POST['productTotalPrice']) ? $_POST['productTotalPrice']: [];
         
                         if(isset($no) && $no != null && count($no) > 0){
-                            for ($i=1; $i <= count($no); $i++) { 
+                            for ($i=0; $i < count($no); $i++) { 
                                 if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_code, product_name, percentage, item_weight, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)")){
                                     $product_stmt->bind_param('sssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i]);
                                     $product_stmt->execute();
