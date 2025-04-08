@@ -296,9 +296,17 @@
                                                                         Download Template 
                                                                     </button>
                                                                 </a>
-                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
+                                                                </button>
+                                                                <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-file-add-line align-middle me-1"></i>
+                                                                    Pull From SQL
                                                                 </button>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
@@ -665,6 +673,10 @@ $(function () {
                 $(element).removeClass('is-invalid');
             }
         });
+    });
+
+    $('#exportExcel').on('click', function(){
+        window.open("php/exportMasterData.php?selectedValue=Product");
     });
 
     $('#uploadModal').find('#previewButton').on('click', function(){

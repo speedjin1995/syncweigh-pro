@@ -211,9 +211,9 @@ if($_GET['selectedValue'] == "Destination")
         }else{
             $data[] = array( 
             "id"=>$row['id'],
-            "Destination Code"=>$supplierData['destination_code'],
-            "Destination Name"=>$supplierData['name'],
-            "Description"=>$supplierData['description'],
+            "Destination Code"=>$row['destination_code'],
+            "Destination Name"=>$row['name'],
+            "Description"=>$row['description'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
             "Event Date"=>$row['event_date'],
