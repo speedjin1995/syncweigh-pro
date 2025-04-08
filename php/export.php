@@ -89,6 +89,15 @@ if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'
     }
 }
 
+if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
+    if($_GET["file"] == 'weight'){
+        $searchQuery .= " and Weight.plant_code = '".$_GET['plant']."'";
+    }
+    else{
+        $searchQuery .= " and count.raw_mat_code = '".$_GET['plant']."'";
+    }
+}
+
 // Column names 
 $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
     'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 

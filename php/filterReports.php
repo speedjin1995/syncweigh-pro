@@ -1,6 +1,7 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+session_start();
 
 ## Read value
 $draw = $_POST['draw'];
@@ -46,22 +47,43 @@ if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != 
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
 }
 
+if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Weight where status = '0'");
+$allQuery = "select count(*) as allcount from Weight where status = '0'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')";
+}
+
+$sel = mysqli_query($db, $allQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from Weight where status = '0'".$searchQuery);
+$filterQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')".$searchQuery;
+}
+
+$sel = mysqli_query($db, $filterQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 $empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+}
+
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $salesCount = 0;

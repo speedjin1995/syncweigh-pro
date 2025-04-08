@@ -429,7 +429,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
+                                                                                            <label for="weightType" class="col-sm-4 col-form-label">Weight Type *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <select id="weightType" name="weightType" class="form-select">
                                                                                                     <option selected>Normal</option>
@@ -440,7 +440,7 @@ if ($user != null && $user != ''){
                                                                                     </div>
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
+                                                                                            <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <input type="text" class="form-control input-readonly" id="transactionId" name="transactionId" placeholder="Transaction ID" readonly>                                                                                  
                                                                                             </div>
@@ -450,7 +450,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
+                                                                                            <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <select id="transactionStatus" name="transactionStatus" class="form-select">
                                                                                                     <option value="Sales" selected>Sales</option>
@@ -463,12 +463,26 @@ if ($user != null && $user != ''){
                                                                                     </div>
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                            <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
                                                                                                 <div class="invalid-feedback">
                                                                                                     Please fill in the field.
                                                                                                 </div>    
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                        <div class="row">
+                                                                                            <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                            <div class="col-sm-8">
+                                                                                                <select class="form-select select2" id="plant" name="plant" required>
+                                                                                                    <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                        <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>        
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -667,18 +681,6 @@ if ($user != null && $user != ''){
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="plant" name="plant" required>
-                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
-                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>        
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div><!-- end row -->
                                                                     </div><!-- end card body -->
                                                                 </div><!-- end card -->

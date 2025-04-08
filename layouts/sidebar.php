@@ -32,7 +32,7 @@
             <div id="two-column-menu">
             </div>
             <ul class="navbar-nav" id="navbar-nav">
-                <li class="menu-title"><span><?=$lang['t-menu']?></span></li>
+                <!--li class="menu-title"><span><?=$lang['t-menu']?></span></li-->
                 <!--li class="nav-item">
                     <a href="dashboard.php" class="nav-link"><i class="mdi mdi-billboard"></i><?=$lang['t-billboard']?></a>
                 </li-->
