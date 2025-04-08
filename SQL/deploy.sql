@@ -74,3 +74,39 @@ ALTER TABLE `Driver` ADD `driver_phone` VARCHAR(50) NULL AFTER `driver_ic`;
 ALTER TABLE `Driver_Log` ADD `driver_phone` VARCHAR(50) NULL AFTER `driver_ic`;
 
 ALTER TABLE `Weight` ADD `driver_phone` VARCHAR(50) NULL AFTER `driver_ic`;
+
+-- 08/04/2025 --
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_PLANT` AFTER INSERT ON `Plant`
+ FOR EACH ROW INSERT INTO Plant_Log (
+    plant_id, plant_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, sales, purchase, locals, do_no, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.plant_code, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.sales, NEW.purchase, NEW.locals, NEW.do_no, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_PLANT` BEFORE UPDATE ON `Plant`
+FOR EACH ROW 
+BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Plant_Log table
+    INSERT INTO Plant_Log (
+        plant_id, plant_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, sales, purchase, locals, do_no, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.plant_code, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.sales, NEW.purchase, NEW.locals, NEW.do_no, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ; 

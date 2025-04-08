@@ -83,6 +83,7 @@
                                                         <label for="reportType" class="form-label">Status</label>
                                                         <select id="reportType" name="reportType" class="form-select" data-choices data-choices-sorting="true" >
                                                             <option value="Customer" selected>Customer</option>
+                                                            <option value="Driver">Driver</option>
                                                             <option value="Destination">Destination</option>
                                                             <option value="Product">Product</option>
                                                             <option value="Supplier">Supplier</option>
@@ -90,6 +91,7 @@
                                                             <option value="Unit">Unit</option>
                                                             <option value="User">User</option>
                                                             <option value="Vehicle">Vehicle</option>
+                                                            <option value="Plant">Plant</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -97,6 +99,12 @@
                                                     <div class="mb-3">
                                                         <label for="customerCode" class="form-label">Customer Code</label>
                                                         <input type="text" class="form-control" placeholder="Customer Code" name="customerCode" id="customerCode">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode driverInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="driverCode" class="form-label">Driver Code</label>
+                                                        <input type="text" class="form-control" placeholder="Driver Code" name="driverCode" id="driverCode">
                                                     </div>
                                                 </div>
                                                 <div class="col-3 inputCode destinationInput" style="display:none">
@@ -139,6 +147,12 @@
                                                     <div class="mb-3">
                                                         <label for="vehicleNo" class="form-label">Vehicle No</label>
                                                         <input type="text" class="form-control" placeholder="Vehicle No" name="vehicleNo" id="vehicleNo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode plantInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="plantCode" class="form-label">Plant Code</label>
+                                                        <input type="text" class="form-control" placeholder="Plant Code" name="plantCode" id="plantCode">
                                                     </div>
                                                 </div>
                                             </div>
@@ -371,6 +385,11 @@ $(function () {
             $('.inputCode').hide();
             $('.customerInput').show();
         }
+        if($(this).val() == "Driver")
+        {
+            $('.inputCode').hide();
+            $('.driverInput').show();
+        }
         else if($(this).val() == "Destination")
         {
             $('.inputCode').hide();
@@ -405,6 +424,11 @@ $(function () {
         {
             $('.inputCode').hide();
             $('.vehicleInput').show();
+        }
+        else if($(this).val() == "Plant")
+        {
+            $('.inputCode').hide();
+            $('.plantInput').show();
         }
     });
 
@@ -441,10 +465,12 @@ $(function () {
                         toDateSearch: $('#toDateSearch').val(),
                         customerCode: $('#customerCode').val(),
                         destinationCode: $('#destinationCode').val(),
+                        driverCode: $('#driverCode').val(),
                         supplierCode: $('#supplierCode').val(),
                         userCode: $('#userCode').val(),
                         productCode: $('#productCode').val(),
                         transporterCode: $('#transporterCode').val(),
+                        plantCode: $('#plantCode').val(),
                         unit: $('#unit').val(),
                         vehicleNo: $('#vehicleNo').val(),
                     },
