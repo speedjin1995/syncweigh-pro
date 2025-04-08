@@ -905,7 +905,7 @@ if ($user != null && $user != ''){
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <!--button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button-->
+                                                                <button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button>
                                                                 <button type="button" class="btn btn-success" id="submitWeight">Submit</button>
                                                             </div>
                                                         </div><!--end col-->

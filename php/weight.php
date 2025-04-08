@@ -584,33 +584,6 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                     );
                 }
 
-                // $sel = mysqli_query($db,"select count(*) as allcount from Vehicle");
-                // $records = mysqli_fetch_assoc($sel);
-                // $totalRecords = $records['allcount'];
-
-                // if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                //     $insert_log->bind_param('sssss', $totalRecords, $vehicleNo, $vehicleWeight, $action, $username);
-        
-                //     // Execute the prepared query.
-                //     if (! $insert_log->execute()) {
-                //         // echo json_encode(
-                //         //     array(
-                //         //         "status"=> "failed", 
-                //         //         "message"=> $insert_stmt->error
-                //         //     )
-                //         // );
-                //     }
-                //     else{
-                //         $insert_log->close();
-                //         // echo json_encode(
-                //         //     array(
-                //         //         "status"=> "success", 
-                //         //         "message"=> "Added Successfully!!" 
-                //         //     )
-                //         // );
-                //     }
-                // }
-
                 $insert_stmt->close();
                 $db->close();
             }
