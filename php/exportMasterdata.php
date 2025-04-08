@@ -207,175 +207,87 @@ if($_GET['selectedValue'] == "Transporter")
 if($_GET['selectedValue'] == "Unit")
 {
     ## Fetch records
-    $empQuery = "select * from Unit_Log".$searchQuery;
+    $empQuery = "select * from Unit WHERE status = '0'";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        if (empty($row['unit'])){
-            $unitId = $row['unit_id'];
-            $unitData = searchUnitAuditById($unitId, $db);
-
-            if (!empty($unitData)){
-                $data[] = array( 
-                "id"=>$row['id'],
-                "Unit"=>$unitData['unit'],
-                "Action"=>searchActionNameById($row['action_id'], $db),
-                "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
-                );
-            }
-        }else{
-            $data[] = array( 
-            "id"=>$row['id'],
-            "Unit"=>$row['unit'],
-            "Action"=>searchActionNameById($row['action_id'], $db),
-            "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
-            );
-        }
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Unit"=>$row['unit'],
+        );
     }
 
-    $columnNames = ["Unit", "Action", "Action By", "Event Date"];
+    $columnNames = ["Unit"];
 }
 
 if($_GET['selectedValue'] == "User")
 {
     ## Fetch records
-    $empQuery = "select * from Users_Log".$searchQuery;
+    $empQuery = "select * from Users WHERE status = '0'";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        if (empty($row['employee_code'])){
-            $userId = $row['user_id'];
-            $userData = searchUserAuditById($userId, $db);
-
-            if (!empty($userData)){
-                $data[] = array( 
-                "id"=>$row['id'],
-                "Employee Code"=>$userData['employee_code'],
-                "Username"=>$userData['username'],
-                "Name"=>$userData['name'],
-                "Email"=>$userData['useremail'],
-                "Role"=>$userData['role'],
-                "Action"=>searchActionNameById($row['action_id'], $db),
-                "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
-                );
-            }
-        }else{
-            $data[] = array( 
-            "id"=>$row['id'],
-            "Employee Code"=>$row['employee_code'],
-            "Username"=>$row['username'],
-            "Name"=>$row['name'],
-            "Email"=>$row['useremail'],
-            "Role"=>$row['user_department'],
-            "Action"=>searchActionNameById($row['action_id'], $db),
-            "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
-            );
-        }
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Employee Code"=>$row['employee_code'],
+        "Username"=>$row['username'],
+        "Name"=>$row['name'],
+        "Email"=>$row['useremail'],
+        "Role"=>$row['role'],
+        );
     }
 
-    $columnNames = ["Employee Code", "Username", "Name", "Email", "Role", "Action", "Action By", "Event Date"];
+    $columnNames = ["Employee Code", "Username", "Name", "Email", "Role"];
 }
 
 
 if($_GET['selectedValue'] == "Plant")
 {
     ## Fetch records
-    $empQuery = "select * from Plant_Log".$searchQuery;
+    $empQuery = "select * from Plant WHERE status = '0'";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        if (empty($row['plant_code'])){
-            $plantId = $row['plant_id'];
-            $plantData = searchPlantAuditById($plantId, $db);
-
-            if (!empty($plantData)){
-                $data[] = array( 
-                "id"=>$row['id'],
-                "Plant Code"=>$plantData['plant_code'],
-                "Plant Name"=>$plantData['name'],
-                "Address line 1"=>$plantData['address_line_1'],
-                "Address line 2"=>$plantData['address_line_2'],
-                "Address line 3"=>$plantData['address_line_3'],
-                "Phone No"=>$plantData['phone_no'],
-                "Fax No"=>$plantData['fax_no'],
-                "Action"=>searchActionNameById($row['action_id'], $db),
-                "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
-                );
-            }
-        }else{
-            $data[] = array( 
-            "id"=>$row['id'],
-            "Plant Code"=>$row['plant_code'],
-            "Plant Name"=>$row['name'],
-            "Address line 1"=>$row['address_line_1'],
-            "Address line 2"=>$row['address_line_2'],
-            "Address line 3"=>$row['address_line_3'],
-            "Phone No"=>$row['phone_no'],
-            "Fax No"=>$row['fax_no'],
-            "Action"=>searchActionNameById($row['action_id'], $db),
-            "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
-            );
-        }
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Plant Code"=>$row['plant_code'],
+        "Plant Name"=>$row['name'],
+        "Address line 1"=>$row['address_line_1'],
+        "Address line 2"=>$row['address_line_2'],
+        "Address line 3"=>$row['address_line_3'],
+        "Phone No"=>$row['phone_no'],
+        "Fax No"=>$row['fax_no'],
+        );
         
     }
 
-    $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
+    $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No"];
 }
 
 if($_GET['selectedValue'] == "Site")
 {
     ## Fetch records
-    $empQuery = "select * from Site_Log".$searchQuery;
+    $empQuery = "select * from Site WHERE status = '0'";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        if (empty($row['site_code'])){
-            $siteId = $row['site_id'];
-            $siteData = searchSiteAuditById($siteId, $db);
-
-            if (!empty($siteData)){
-                $data[] = array( 
-                "id"=>$row['id'],
-                "Site Code"=>$siteData['site_code'],
-                "Site Name"=>$siteData['name'],
-                "Address line 1"=>$siteData['address_line_1'],
-                "Address line 2"=>$siteData['address_line_2'],
-                "Address line 3"=>$siteData['address_line_3'],
-                "Phone No"=>$siteData['phone_no'],
-                "Fax No"=>$siteData['fax_no'],
-                "Action"=>searchActionNameById($row['action_id'], $db),
-                "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
-                );
-            }
-        }else{
-            $data[] = array( 
-            "id"=>$row['id'],
-            "Site Code"=>$row['site_code'],
-            "Site Name"=>$row['name'],
-            "Address line 1"=>$row['address_line_1'],
-            "Address line 2"=>$row['address_line_2'],
-            "Address line 3"=>$row['address_line_3'],
-            "Phone No"=>$row['phone_no'],
-            "Fax No"=>$row['fax_no'],
-            "Action"=>searchActionNameById($row['action_id'], $db),
-            "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
-            );
-        }
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Site Code"=>$row['site_code'],
+        "Site Name"=>$row['name'],
+        "Address line 1"=>$row['address_line_1'],
+        "Address line 2"=>$row['address_line_2'],
+        "Address line 3"=>$row['address_line_3'],
+        "Phone No"=>$row['phone_no'],
+        "Fax No"=>$row['fax_no'],
+        );
     }
 
-    $columnNames = ["Site Code", "Site Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
+    $columnNames = ["Site Code", "Site Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No"];
 }
 
 // Display column names as first row 
