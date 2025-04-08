@@ -33,6 +33,13 @@ if($_POST['selectedValue'] == "Customer")
     }
 }
 
+if($_POST['selectedValue'] == "Driver")
+{
+    if($_POST['driverCode'] != null && $_POST['driverCode'] != '' && $_POST['driverCode'] != '-'){
+    $searchQuery .= " and driver_code = '".$_POST['driverCode']."'";
+    }
+}
+
 if($_POST['selectedValue'] == "Destination")
 {
     if($_POST['destinationCode'] != null && $_POST['destinationCode'] != '' && $_POST['destinationCode'] != '-'){
@@ -82,6 +89,13 @@ if($_POST['selectedValue'] == "Vehicle")
     }
 }
 
+if($_POST['selectedValue'] == "Plant")
+{
+    if($_POST['plantCode'] != null && $_POST['plantCode'] != '' && $_POST['plantCode'] != '-'){
+    $searchQuery .= " and plant_code = '".$_POST['plantCode']."'";
+    }
+}
+
 ## Total number of records without filtering
 // $sel = mysqli_query($db,"select count(*) as allcount from Customer_Log");
 // $records = mysqli_fetch_assoc($sel);
@@ -118,6 +132,61 @@ if($_POST['selectedValue'] == "Customer")
     }
 
     $columnNames = ["Customer Id", "Customer Code", "Name", "Company Reg No", "Action Id", "Action By", "Event Date", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No"];
+}
+
+
+if($_POST['selectedValue'] == "Plant")
+{
+    ## Fetch records
+    $empQuery = "select * from Plant_Log".$searchQuery;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Plant Code"=>$row['plant_code'],
+        "Plant Name"=>$row['name'],
+        "Address line 1"=>$row['address_line_1'],
+        "Address line 2"=>$row['address_line_2'],
+        "Address line 3"=>$row['address_line_3'],
+        "Phone No"=>$row['phone_no'],
+        "Fax No"=>$row['fax_no'],
+        "Sales"=>$row['sales'],
+        "Purchase"=>$row['purchase'],
+        "Locals"=>$row['locals'],
+        "Do No"=>$row['do_no'],
+        "Action Id"=>$row['action_id'],
+        "Action By"=>$row['action_by'],
+        "Event Date"=>$row['event_date'],
+        );
+    }
+
+    $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Sales", "Purchase", "Locals", "Do No", "Action Id", "Action By", "Event Date"];
+}
+
+
+if($_POST['selectedValue'] == "Driver")
+{
+    ## Fetch records
+    $empQuery = "select * from Driver_Log".$searchQuery;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Driver Code"=>$row['destination_code'],
+        "Driver Name"=>$row['driver_name'],
+        "Driver IC"=>$row['driver_ic'],
+        "Driver Phone"=>$row['driver_phone'],
+        "Action Id"=>$row['action_id'],
+        "Action By"=>$row['action_by'],
+        "Event Date"=>$row['event_date'],
+        );
+    }
+
+    $columnNames = ["Driver Code", "Driver Name", "Driver IC", "Driver Phone", "Action Id", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "Destination")
