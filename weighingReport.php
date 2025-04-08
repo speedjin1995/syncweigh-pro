@@ -424,7 +424,7 @@ if ($user != null && $user != ''){
                                                                     <th>Weight Status</th>
                                                                     <th>Transaction Id</th>
                                                                     <th>Vehicle No</th>
-                                                                    <th>Product Description Detail</th>
+                                                                    <!--th>Product Description Detail</th-->
                                                                     <th>Incoming(Gross Weight)</th>
                                                                     <th>Incoming(Gross) Date Time</th>
                                                                     <th>Outgoing(Tare) Weight</th>
@@ -545,7 +545,7 @@ if ($user != null && $user != ''){
                 { data: 'weight_type' },
                 { data: 'transaction_id' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_description' },
+                //{ data: 'product_description' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
@@ -608,7 +608,7 @@ if ($user != null && $user != ''){
                     { data: 'weight_type' },
                     { data: 'transaction_id' },
                     { data: 'lorry_plate_no1' },
-                    { data: 'product_description' },
+                    //{ data: 'product_description' },
                     { data: 'gross_weight1' },
                     { data: 'gross_weight1_date' },
                     { data: 'tare_weight1' },
