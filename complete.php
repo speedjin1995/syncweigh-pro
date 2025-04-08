@@ -2333,16 +2333,17 @@ if ($user != null && $user != ''){
     function format (row) {
         var returnString = `
         <!-- Weighing Section -->
+        <!--div class="row">
+            
+        </div><hr-->
         <div class="row">
-            <div class="col-6">
+            <div class="col-4">
                 <p><strong>${row.name}</strong></p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
                 <p>${row.address_line_3}</p>
                 <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
             </div>
-        </div><hr>
-        <div class="row">
             <div class="col-4">
                 <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
                 <p><strong>DRIVER NAME:</strong> ${row.driver_name}</p>
@@ -2357,17 +2358,11 @@ if ($user != null && $user != ''){
                 <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
                 <p><strong>PURCHASE NO:</strong> ${row.purchase_order}</p>
             </div>
-            <div class="col-4">
-                <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} (${row.gross_weight1_date})</p>
-                <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} (${row.tare_weight1_date})</p>
-                <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
-                <p><strong>REDUCE WEIGHT:</strong> ${row.reduce_weight}</p>
-                <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
-            </div>
+            
         </div><br>
         <!-- Product Section -->
         <div class="row">
-            <div class="col-6">
+            <div class="col-8">
                 <table class="product-table" width="100%">
                     <thead>
                         <tr>
@@ -2427,6 +2422,13 @@ if ($user != null && $user != ''){
                     returnString += `
                     </tbody>
                 </table>
+            </div>
+            <div class="col-4">
+                <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} kg(${row.gross_weight1_date})</p>
+                <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} kg(${row.tare_weight1_date})</p>
+                <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} kg</p>
+                <p><strong>REDUCE WEIGHT:</strong> ${row.reduce_weight} kg</p>
+                <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight} kg</p>
             </div>
         </div>`;
         
