@@ -2383,10 +2383,6 @@ if ($user != null && $user != ''){
         });
 
         $(".add-product").click(function(){
-            if(rowCount == 0){
-                rowCount++;
-            }
-
             var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
             if(manualPrice == 'false'){
                 var readonly = true;
