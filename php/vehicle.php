@@ -130,7 +130,6 @@ if (isset($_POST['vehicleNo'])) {
         $vehicleRow = mysqli_fetch_assoc($vehicleDetail);
         $vehicleCount = (int) $vehicleRow['count'];
 
-
         if ($vehicleCount > 1){
             echo json_encode(
                 array(

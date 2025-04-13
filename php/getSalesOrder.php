@@ -58,6 +58,8 @@ if(isset($_POST['userID'])){
                     }
                     $message['order_quantity'] = $row['order_quantity'];
                     $message['balance'] = $row['balance'];
+                    $message['unit_price'] = $row['unit_price'];
+                    $message['total_price'] = $row['total_price'];
                     $message['remarks'] = $row['remarks'];
 
                     $weightData = array();
@@ -123,6 +125,8 @@ if(isset($_POST['userID'])){
                     $message['veh_number'] = $row['veh_number'];
                     $message['exquarry_or_delivered'] = $row['exquarry_or_delivered'];
                     $message['order_quantity'] = $row['order_quantity'];
+                    $message['unit_price'] = $row['unit_price'];
+                    $message['total_price'] = $row['total_price'];
                     $message['remarks'] = $row['remarks'];
                 }
                 
