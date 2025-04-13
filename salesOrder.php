@@ -958,6 +958,8 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#orderQty').val("");
+            $('#addModal').find('#unitPrice').val("");
+            $('#addModal').find('#totalPrice').val("");
             $('#addModal').find('#remarks').val("");
             
             // Remove Validation Error Message
