@@ -450,7 +450,24 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>                                                                
+                                    </div>   
+                                    <div class="modal fade" id="errorModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-gray-dark color-palette">
+                                                    <h4 class="modal-title">Error Log</h4>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <ol id="errorList" class="text-danger mt-2" style="padding-left: 20px;"></ol>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                                             
                                 </div>
                             </div> <!-- end row-->
 
@@ -492,8 +509,8 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Company Code</th>
-                                                                    <th>Company Name</th>
+                                                                    <!-- <th>Company Code</th>
+                                                                    <th>Company Name</th> -->
                                                                     <th>Customer Code</th>
                                                                     <th>Customer Name</th>
                                                                     <th>Plant Code</th>
@@ -644,12 +661,15 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 } 
             },
             'columns': [
+                // { 
+                //     data: 'company_code',
+                //     class: 'company_column'
+                // },
+                // { data: 'company_name' },
                 { 
-                    data: 'company_code',
-                    class: 'company_column'
+                    data: 'customer_code',
+                    class: 'customer_column' 
                 },
-                { data: 'company_name' },
-                { data: 'customer_code' },
                 { data: 'customer_name' },
                 { data: 'plant_code' },
                 { data: 'plant_name' },
@@ -732,12 +752,15 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     } 
                 },
                 'columns': [
+                    // { 
+                    //     data: 'company_code',
+                    //     class: 'company_column'
+                    // },
+                    // { data: 'company_name' },
                     { 
-                        data: 'company_code',
-                        class: 'company_column'
+                        data: 'customer_code',
+                        class: 'customer_column' 
                     },
-                    { data: 'company_name' },
-                    { data: 'customer_code' },
                     { data: 'customer_name' },
                     { data: 'plant_code' },
                     { data: 'plant_name' },
@@ -791,7 +814,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('company_column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('customer_column') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -898,9 +921,16 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     } 
                     else if (obj.status === 'failed') {
                         $('#spinnerLoading').hide();
-                        alert(obj.message);
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
+                        $('#uploadModal').modal('hide');
+                        // alert(obj.message);
+                        // $("#failBtn").attr('data-toast-text', obj.message );
+                        // $("#failBtn").click();
+                        $('#errorModal').find('#errorList').empty();
+                        var errorMessage = obj.message;
+                        for (var i = 0; i < errorMessage.length; i++) {
+                            $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                        }
+                        $('#errorModal').modal('show');
                     } 
                     else {
                         $('#spinnerLoading').hide();
@@ -1068,6 +1098,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 <p><strong>DESTINATION:</strong> ${row.destination_code} - ${row.destination_name}</p>
                 <p><strong>PRODUCT:</strong> ${row.product_code} - ${row.product_name}</p>
                 <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
+                <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
                 <p><strong>REMARKS:</strong> ${row.remarks}</p>
             </div>
             <div class="col-6">
@@ -1076,9 +1107,10 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 <p><strong>S/O ORDER:</strong> ${row.so_no}</p>
                 <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter_name}</p>
                 <p><strong>VEHICLE NO:</strong> ${row.veh_number}</p>
-                <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
                 <p><strong>ORDER QUANTITY:</strong> ${row.order_quantity} KG</p>
                 <p><strong>BALANCE:</strong> ${row.balance} KG</p>
+                <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
+                <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
             </div>
         </div>`;
 

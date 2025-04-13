@@ -58,8 +58,8 @@ if(isset($_POST['userID'])){
                     }
                     $message['order_quantity'] = $row['order_quantity'];
                     $message['balance'] = $row['balance'];
-                    $message['unit_price'] = $row['unit_price'];
-                    $message['total_price'] = $row['total_price'];
+                    $message['unit_price'] = $row['unit_price'] ?? 0;
+                    $message['total_price'] = $row['total_price'] ?? 0;
                     $message['remarks'] = $row['remarks'];
 
                     $weightData = array();

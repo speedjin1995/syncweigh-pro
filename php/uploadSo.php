@@ -23,6 +23,7 @@ if (!empty($data)) {
         $CompanyName = $companyRow['name'];
     }
 
+    $errorSoProductArray = [];
     foreach ($data as $rows) {
         $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('d/m/Y', $rows['DOCDATE'])->format('Y-m-d H:i:s') : '';
         $SONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
@@ -59,6 +60,7 @@ if (!empty($data)) {
         if (!empty($PlantCode)) {
             $PlantName = searchPlantNameByCode($PlantCode, $db);
         }
+        $UnitPrice = (isset($rows['UNITPRICE']) && !empty($rows['UNITPRICE']) && $rows['UNITPRICE'] !== '' && $rows['UNITPRICE'] !== null) ? (float) trim($rows['UNITPRICE']) : '';
         $status = 'Open';
         $actionId = 1;
 
@@ -186,7 +188,7 @@ if (!empty($data)) {
                     $insert_veh->close();
                     
                     if ($insert_veh_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, action_id, action_by) VALUES (?, ?, ?, ?)")) {
-                        $insert_veh_log->bind_param('sssss', $vehId, $VehNumber, $actionId, $uid);
+                        $insert_veh_log->bind_param('ssss', $vehId, $VehNumber, $actionId, $uid);
                         $insert_veh_log->execute();
                         $insert_veh_log->close();
                     }    
@@ -259,14 +261,14 @@ if (!empty($data)) {
                 }
             }
         }
-
         # Checking for existing Order No.
         if($OrderNumber != null && $OrderNumber != ''){
-            $soQuery = "SELECT * FROM Sales_Order WHERE order_no = '$OrderNumber' AND deleted = '0'";
+            $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$OrderNumber' AND product_code = '$ProductCode' AND deleted = '0'";
             $soDetail = mysqli_query($db, $soQuery);
             $soRow = mysqli_fetch_assoc($soDetail);
-
-            if(empty($soRow)){
+            $soCount = (int) $soRow['count'];
+            
+            if($soCount < 1){
                 # Old Code
                 // if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, order_load, order_quantity, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                 //     $insert_stmt->bind_param('sssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $SONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $DeliverToName, $ProductCode, $ProductName, $OrderLoad, $OrderQuantity, $Remarks, $status, $uid, $uid);
@@ -274,24 +276,43 @@ if (!empty($data)) {
                 //     $insert_stmt->close(); 
                 // }
 
-                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, order_date, order_no, so_no, agent_code, agent_name, destination_code, destination_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_quantity, balance, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $ProductCode, $ProductName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrQuarry, $OrderQuantity, $OrderQuantity, $Remarks, $status, $uid, $uid);
+                $TotalPrice = 0;
+                if (isset($UnitPrice) && !empty($UnitPrice) && isset($OrderQuantity) && !empty($OrderQuantity)){
+                    if ($unit == 'MT'){
+                        $orderQtyMt = $OrderQuantity/1000;
+                    }
+                    $TotalPrice = $UnitPrice * $orderQtyMt;
+                }
+
+                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, order_date, order_no, so_no, agent_code, agent_name, destination_code, destination_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_quantity, unit_price, total_price, balance, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $ProductCode, $ProductName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrQuarry, $OrderQuantity, $OrderQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $uid, $uid);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }
-
+            }else{
+                $errMsg = "Sales order for Customer P/O No: ".$OrderNumber." + Product: ".$ProductName." already exist.";
+                $errorSoProductArray[] = $errMsg;
             }
         }
     }
 
     $db->close();
 
-    echo json_encode(
-        array(
-            "status"=> "success", 
-            "message"=> "Added Successfully!!" 
-        )
-    );
+    if (!empty($errorSoProductArray)){
+        echo json_encode(
+            array(
+                "status"=> "failed", 
+                "message"=> $errorSoProductArray 
+            )
+        );
+    }else{
+        echo json_encode(
+            array(
+                "status"=> "success", 
+                "message"=> "Added Successfully!!" 
+            )
+        );
+    }
 } else {
     echo json_encode(
         array(
