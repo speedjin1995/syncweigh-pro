@@ -380,6 +380,22 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
+                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="unitPrice" name="unitPrice" placeholder="Unit Price">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="totalPrice" name="totalPrice" readonly>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
                                                                                     <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
                                                                                     <div class="col-sm-8">
                                                                                         <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Remarks"></textarea>
@@ -433,7 +449,24 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>                                                                
+                                    </div>  
+                                    <div class="modal fade" id="errorModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-gray-dark color-palette">
+                                                    <h4 class="modal-title">Error Log</h4>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <ol id="errorList" class="text-danger mt-2" style="padding-left: 20px;"></ol>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                                              
                                 </div>
                             </div> <!-- end row-->
 
@@ -475,8 +508,8 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Company Code</th>
-                                                                    <th>Company Name</th>
+                                                                    <!-- <th>Company Code</th>
+                                                                    <th>Company Name</th> -->
                                                                     <th>Supplier Code</th>
                                                                     <th>Supplier Name</th>
                                                                     <th>Plant Code</th>
@@ -627,12 +660,15 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 } 
             },
             'columns': [
+                // { 
+                //     data: 'company_code',
+                //     class: 'company_column'
+                // },
+                // { data: 'company_name' },
                 { 
-                    data: 'company_code',
-                    class: 'company_column'
+                    data: 'supplier_code', 
+                    class: 'supplier_column'
                 },
-                { data: 'company_name' },
-                { data: 'supplier_code' },
                 { data: 'supplier_name' },
                 { data: 'plant_code' },
                 { data: 'plant_name' },
@@ -715,12 +751,15 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     } 
                 },
                 'columns': [
+                    // { 
+                    //     data: 'company_code',
+                    //     class: 'company_column'
+                    // },
+                    // { data: 'company_name' },
                     { 
-                        data: 'company_code',
-                        class: 'company_column'
+                        data: 'supplier_code', 
+                        class: 'supplier_column'
                     },
-                    { data: 'company_name' },
-                    { data: 'supplier_code' },
                     { data: 'supplier_name' },
                     { data: 'plant_code' },
                     { data: 'plant_name' },
@@ -774,7 +813,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('company_column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('supplier_column') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -831,12 +870,14 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     else if(obj.status === 'failed')
                     {
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message);
                         $("#failBtn").click();
                     }
                     else
                     {
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message);
                         $("#failBtn").click();
                     }
@@ -879,11 +920,26 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     } 
                     else if (obj.status === 'failed') {
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message );
                         $("#failBtn").click();
                     } 
+                    else if (obj.status === 'error') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        // alert(obj.message);
+                        // $("#failBtn").attr('data-toast-text', obj.message );
+                        // $("#failBtn").click();
+                        $('#errorModal').find('#errorList').empty();
+                        var errorMessage = obj.message;
+                        for (var i = 0; i < errorMessage.length; i++) {
+                            $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                        }
+                        $('#errorModal').modal('show');
+                    } 
                     else {
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', 'Failed to save');
                         $("#failBtn").click();
                     }
@@ -907,6 +963,8 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#orderQty').val("");
+            $('#addModal').find('#unitPrice').val("");
+            $('#addModal').find('#totalPrice').val("");
             $('#addModal').find('#remarks').val("");
 
             // Remove Validation Error Message
@@ -1015,6 +1073,23 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
         $('#transporter').on('change', function(){
             $('#transporterName').val($('#transporter :selected').data('name'));
         });
+
+        $('#orderQty').on('change', function(){
+            var orderWeight = parseFloat($(this).val())/1000;
+            var unitPrice = parseFloat($('#unitPrice').val());
+            var totalPrice = (unitPrice * orderWeight).toFixed(2);
+
+            $('#totalPrice').val(totalPrice);
+        });
+
+
+        $('#unitPrice').on('change', function(){
+            var unitPrice = parseFloat($(this).val());
+            var orderWeight = parseFloat($('#orderQty').val())/1000;
+            var totalPrice = (unitPrice * orderWeight).toFixed(2);
+
+            $('#totalPrice').val(totalPrice);
+        });
     });
 
     function format (row) {
@@ -1111,6 +1186,8 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
+                $('#addModal').find('#unitPrice').val(obj.message.unit_price);
+                $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
 
                 // Remove Validation Error Message
@@ -1142,11 +1219,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             }
             else if(obj.status === 'failed'){
                 $('#spinnerLoading').hide();
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
             else{
                 $('#spinnerLoading').hide();
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
@@ -1168,11 +1247,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message);
                     $("#failBtn").click();
                 }
                 else{
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 }
@@ -1194,11 +1275,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message);
                     $("#failBtn").click();
                 }
                 else{
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 }
@@ -1276,10 +1359,12 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 }, 500);
             }
             else if(obj.status === 'failed'){
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
             else{
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', "Something wrong when print");
                 $("#failBtn").click();
             }

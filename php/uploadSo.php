@@ -301,7 +301,7 @@ if (!empty($data)) {
     if (!empty($errorSoProductArray)){
         echo json_encode(
             array(
-                "status"=> "failed", 
+                "status"=> "error", 
                 "message"=> $errorSoProductArray 
             )
         );

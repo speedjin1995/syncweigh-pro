@@ -58,6 +58,7 @@ if (!empty($data)) {
         if (!empty($PlantCode)) {
             $PlantName = searchPlantNameByCode($PlantCode, $db);
         }
+        $UnitPrice = (isset($rows['UNITPRICE']) && !empty($rows['UNITPRICE']) && $rows['UNITPRICE'] !== '' && $rows['UNITPRICE'] !== null) ? (float) trim($rows['UNITPRICE']) : '';
         $status = 'Open';
         $actionId = 1;
 
@@ -163,7 +164,7 @@ if (!empty($data)) {
                     $insert_veh->close();
                     
                     if ($insert_veh_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, action_id, action_by) VALUES (?, ?, ?, ?)")) {
-                        $insert_veh_log->bind_param('sssss', $vehId, $VehNumber, $actionId, $uid);
+                        $insert_veh_log->bind_param('ssss', $vehId, $VehNumber, $actionId, $uid);
                         $insert_veh_log->execute();
                         $insert_veh_log->close();
                     }    
@@ -239,34 +240,49 @@ if (!empty($data)) {
 
         # Checking for existing PO No.
         if($PONumber != null && $PONumber != ''){
-            $poQuery = "SELECT * FROM Purchase_Order WHERE po_no = '$PONumber' AND deleted = '0'";
+            $poQuery = "SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = '$PONumber' AND raw_mat_code = '$RawMaterialCode' AND deleted = '0'";
             $poDetail = mysqli_query($db, $poQuery);
             $poRow = mysqli_fetch_assoc($poDetail);
+            $poCount = (int) $poRow['count'];
+            
+            if($poCount < 1){
+                $TotalPrice = 0;
+                if (isset($UnitPrice) && !empty($UnitPrice) && isset($SupplierQuantity) && !empty($SupplierQuantity)){
+                    if ($unit == 'MT'){
+                        $supplierQtyMt = $SupplierQuantity/1000;
+                    }
+                    $TotalPrice = $UnitPrice * $supplierQtyMt;
+                }
 
-            if(empty($poRow)){
-                // if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, order_load, order_quantity, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                //     $insert_stmt->bind_param('sssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $SiteCode, $SiteName, $OrderDate, $OrderNumber, $PONumber, $DeliveryDate, $SalesrepCode, $SalesrepName, $DestinationCode, $DestinationName, $DeliverToName, $RawMaterialCode, $RawMaterialName, $SupplierLoad, $SupplierQuantity,$Remarks, $status, $uid, $uid);
-                //     $insert_stmt->execute();
-                //     $insert_stmt->close(); 
-                // }
-
-                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, order_date, po_no, agent_code, agent_name, destination_code, destination_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_quantity, balance, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrDel, $SupplierQuantity, $SupplierQuantity, $Remarks, $status, $uid, $uid);
+                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, order_date, po_no, agent_code, agent_name, destination_code, destination_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrDel, $SupplierQuantity, $SupplierQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $uid, $uid);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }
+            }else{
+                $errMsg = "Purchase order for P/O No: ".$PONumber." + Raw Material: ".$RawMaterialName." already exist.";
+                $errorSoProductArray[] = $errMsg;
             }
         }
     }
 
     $db->close();
 
-    echo json_encode(
-        array(
-            "status"=> "success", 
-            "message"=> "Added Successfully!!" 
-        )
-    );
+    if (!empty($errorSoProductArray)){
+        echo json_encode(
+            array(
+                "status"=> "error", 
+                "message"=> $errorSoProductArray 
+            )
+        );
+    }else{
+        echo json_encode(
+            array(
+                "status"=> "success", 
+                "message"=> "Added Successfully!!" 
+            )
+        );
+    }
 } else {
     echo json_encode(
         array(

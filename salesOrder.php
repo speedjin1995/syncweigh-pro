@@ -922,6 +922,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     else if (obj.status === 'failed') {
                         $('#spinnerLoading').hide();
                         $('#uploadModal').modal('hide');
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    } 
+                    else if (obj.status === 'error') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
                         // alert(obj.message);
                         // $("#failBtn").attr('data-toast-text', obj.message );
                         // $("#failBtn").click();
