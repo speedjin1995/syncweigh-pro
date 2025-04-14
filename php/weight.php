@@ -223,10 +223,10 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $reduceWeight = trim($_POST["reduceWeight"]);
     }
 
-    if (empty($_POST["otherRemarks"])) {
+    if (empty($_POST["remarks"])) {
         $otherRemarks = null;
     } else {
-        $otherRemarks = trim($_POST["otherRemarks"]);
+        $otherRemarks = trim($_POST["remarks"]);
     }
 
     if (empty($_POST["driverName"])) {

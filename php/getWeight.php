@@ -29,6 +29,13 @@ if(isset($_POST['userID'])){
             while ($row = $result->fetch_assoc()) {
                 if ($format == 'EXPANDABLE'){
                     $message['id'] = $row['id'];
+                    $message['name'] = '';
+                    $message['address_line_1'] = '';
+                    $message['address_line_2'] = '';
+                    $message['address_line_3'] = '';
+                    $message['phone_no'] = '';
+                    $message['fax_no'] = '';
+                    $message['cust_supp_tag'] = 'N'; // Tag to see if customer or supplier is selected
 
                     if ($row['transaction_status'] == 'Purchase'){
                         if ($customer_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
@@ -43,6 +50,7 @@ if(isset($_POST['userID'])){
                                 $message['address_line_3'] = $row2['address_line_3'];
                                 $message['phone_no'] = $row2['phone_no'];
                                 $message['fax_no'] = $row2['fax_no'];
+                                $message['cust_supp_tag'] = 'Y';
                             } 
                         }
                     }else{
@@ -58,6 +66,7 @@ if(isset($_POST['userID'])){
                                 $message['address_line_3'] = $row2['address_line_3'];
                                 $message['phone_no'] = $row2['phone_no'];
                                 $message['fax_no'] = $row2['fax_no'];
+                                $message['cust_supp_tag'] = 'Y';
                             }
                         } 
                     }
@@ -79,6 +88,7 @@ if(isset($_POST['userID'])){
                     $message['reduce_weight'] = $row['reduce_weight'] ?? '';
                     $message['final_weight'] = $row['final_weight'] ?? '';
                     $message['plant_name'] = $row['plant_name'] ?? '';
+                    $message['remarks'] = $row['remarks'] ?? '';
 
                     # Values for Weight Product
                     $productCode = null;
