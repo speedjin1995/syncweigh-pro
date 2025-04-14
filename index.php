@@ -66,8 +66,8 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
-$purchaseOrder = $db->query("SELECT * FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
-$salesOrder = $db->query("SELECT * FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
+$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
+$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
@@ -3042,6 +3042,77 @@ else{
             $('#subTotalPrice').val(subTotalPrice.toFixed(2));
             $('#sstPrice').val(sstPrice.toFixed(2));
             $('#totalPrice').val(totalPrice.toFixed(2));
+
+            var salesOrder = $('#addModal').find('#salesOrder').val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            var productName = $('#productName :selected').data('code');
+
+            $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
+                    var productName = obj.message.product_name;
+                    var plantName = obj.message.plant_name;
+                    var transporterName = obj.message.transporter_name;
+                    var vehNo = obj.message.veh_number;
+                    var exDel = obj.message.ex_del;
+                    var orderSupplierWeight = obj.message.order_supplier_weight;
+                    var balance = obj.message.balance;
+                    // var finalWeight = obj.message.final_weight;
+                    // var previousRecordsTag = obj.message.previousRecordsTag;
+
+                    // Change Details
+                    if (!$('#addModal').find('#customerName').val()) {
+                        $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#destination').val()) {
+                        $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#siteName').val()) {
+                        $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#agent').val()) {
+                        $('#addModal').find('#agent').val(agentName).trigger('change');
+                    }
+                    // if (!$('#addModal').find('#productName').val()) {
+                    //     $('#addModal').find('#productName').val(productName).trigger('change');
+                    // }
+                    if (!$('#addModal').find('#plant').val()) {
+                        $('#addModal').find('#plant').val(plantName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#transporter').val()) {
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                    }
+
+                    if (exDel == 'E') {
+                        $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                    } else {
+                        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                    }
+
+                    $('#addModal').find('#orderWeight').val(orderSupplierWeight)
+                    $('#addModal').find('#balance').val(balance);
+
+                    $('#addModal').trigger('orderLoaded');
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
         });
 
         //supplierName
@@ -3052,6 +3123,12 @@ else{
         //transporter
         $('#transporter').on('change', function(){
             $('#transporterCode').val($('#transporter :selected').data('code'));
+
+            if ($(this).val() == 'Own Transportation'){
+                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+            }else{
+                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+            }
         });
 
         //destination
@@ -3127,6 +3204,76 @@ else{
         //rawMaterialName
         $('#rawMaterialName').on('change', function(){
             $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
+            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            var rawMat = $('#rawMaterialName :selected').data('code');
+
+            $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat}, function (data){
+                var obj = JSON.parse(data);
+
+                if (obj.status == 'success'){
+                    var customerSupplierName = obj.message.customer_supplier_name;
+                    var destinationName = obj.message.destination_name;
+                    var siteName = obj.message.site_name;
+                    var agentName = obj.message.agent_name;
+                    var productName = obj.message.product_name;
+                    var plantName = obj.message.plant_name;
+                    var transporterName = obj.message.transporter_name;
+                    var vehNo = obj.message.veh_number;
+                    var exDel = obj.message.ex_del;
+                    var orderSupplierWeight = obj.message.order_supplier_weight;
+                    var balance = obj.message.balance;
+                    // var finalWeight = obj.message.final_weight;
+                    // var previousRecordsTag = obj.message.previousRecordsTag;
+
+                    // Change Details
+                    if (!$('#addModal').find('#supplierName').val()) {
+                        $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#destination').val()) {
+                        $('#addModal').find('#destination').val(destinationName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#siteName').val()) {
+                        $('#addModal').find('#siteName').val(siteName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#agent').val()) {
+                        $('#addModal').find('#agent').val(agentName).trigger('change');
+                    }
+                    // if (!$('#addModal').find('#rawMaterialName').val()) {
+                    //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                    // }
+                    if (!$('#addModal').find('#plant').val()) {
+                        $('#addModal').find('#plant').val(plantName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#transporter').val()) {
+                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                    }
+                    if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                    }
+
+                    if (exDel == 'E') {
+                        $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                    } else {
+                        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                    }
+
+                    $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight)
+                    $('#addModal').find('#balance').val(balance);
+
+                    $('#addModal').trigger('orderLoaded');
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
         });
 
         //siteName
@@ -3146,9 +3293,10 @@ else{
         $('#purchaseOrder').on('change', function (){
             var purchaseOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val();
+            var rawMat = $('#addModal').find('#rawMaterialName').val();
 
-            if (purchaseOrder){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type}, function (data){
+            if (purchaseOrder && rawMat){
+                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
@@ -3167,14 +3315,30 @@ else{
                         // var previousRecordsTag = obj.message.previousRecordsTag;
 
                         // Change Details
-                        $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
-                        $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        $('#addModal').find('#agent').val(agentName).trigger('change');
-                        $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                        $('#addModal').find('#plant').val(plantName).trigger('change');
-                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                        if (!$('#addModal').find('#supplierName').val()) {
+                            $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#destination').val()) {
+                            $('#addModal').find('#destination').val(destinationName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#siteName').val()) {
+                            $('#addModal').find('#siteName').val(siteName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#agent').val()) {
+                            $('#addModal').find('#agent').val(agentName).trigger('change');
+                        }
+                        // if (!$('#addModal').find('#rawMaterialName').val()) {
+                        //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                        // }
+                        if (!$('#addModal').find('#plant').val()) {
+                            $('#addModal').find('#plant').val(plantName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#transporter').val()) {
+                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                            $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                        }
 
                         if(exDel == 'E'){
                             $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
@@ -3225,18 +3389,46 @@ else{
                         $("#failBtn").click();
                     }
                 });
-            }else{
-                $('#addModal').trigger('orderLoaded');
+            }else if (purchaseOrder && !rawMat){
+                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#rawMaterialName').empty();
+
+                            var prodRawMat = obj.message;
+                            $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < prodRawMat.length; i++) {
+                                $('#addModal').find('#rawMaterialName').append(
+                                    `<option value=${prodRawMat[i].prodMatName} data-code=${prodRawMat[i].prodMatCode}>${prodRawMat[i].prodMatName}</option>`
+                                );                   
+                            }
+                        }
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
             }
         });
 
         $('#salesOrder').on('change', function (){
             var salesOrder = $(this).val(); 
             var type = $('#addModal').find('#transactionStatus').val(); 
-            if (salesOrder){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type}, function (data){
-                    var obj = JSON.parse(data);
+            var product = $('#addModal').find('#productName').val();
 
+            if (salesOrder && product){
+                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: product}, function (data){
+                    var obj = JSON.parse(data);
+                    
                     if (obj.status == 'success'){
                         var customerSupplierName = obj.message.customer_supplier_name;
                         var destinationName = obj.message.destination_name;
@@ -3252,14 +3444,30 @@ else{
                         // var finalWeight = obj.message.final_weight;
                         // var previousRecordsTag = obj.message.previousRecordsTag;
 
-                        $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
-                        $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        $('#addModal').find('#agent').val(agentName).trigger('change');
-                        $('#addModal').find('#productName').val(productName).trigger('change');
-                        $('#addModal').find('#plant').val(plantName).trigger('change');
-                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                        if (!$('#addModal').find('#customerName').val()) {
+                            $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#destination').val()) {
+                            $('#addModal').find('#destination').val(destinationName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#siteName').val()) {
+                            $('#addModal').find('#siteName').val(siteName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#agent').val()) {
+                            $('#addModal').find('#agent').val(agentName).trigger('change');
+                        }
+                        // if (!$('#addModal').find('#productName').val()) {
+                        //     $('#addModal').find('#productName').val(productName).trigger('change');
+                        // }
+                        if (!$('#addModal').find('#plant').val()) {
+                            $('#addModal').find('#plant').val(plantName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#transporter').val()) {
+                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                        }
+                        if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                            $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                        }
 
                         if(exDel == 'E'){
                             $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
@@ -3305,6 +3513,34 @@ else{
                         // }
                         
                         $('#addModal').trigger('orderLoaded');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }else if (salesOrder && !product){
+                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, format: 'getProdRaw'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#productName').empty();
+
+                            var prodRawMat = obj.message;
+                            $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < prodRawMat.length; i++) {
+                                $('#addModal').find('#productName').append(
+                                    `<option value=${prodRawMat[i].prodMatName} data-code=${prodRawMat[i].prodMatCode}>${prodRawMat[i].prodMatName}</option>`
+                                );                   
+                            }
+                        }
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
