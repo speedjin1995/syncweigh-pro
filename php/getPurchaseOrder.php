@@ -56,6 +56,8 @@ if(isset($_POST['userID'])){
                         $message['exquarry_or_delivered'] = 'DELIVERED';
                     }
                     $message['order_quantity'] = $row['order_quantity'];
+                    $message['unit_price'] = $row['unit_price'] ?? 0;
+                    $message['total_price'] = $row['total_price'] ?? 0;
                     $message['remarks'] = $row['remarks'] ?? '';
                     $message['balance'] = $row['balance'];
 
@@ -122,6 +124,8 @@ if(isset($_POST['userID'])){
                     $message['veh_number'] = $row['veh_number'];
                     $message['exquarry_or_delivered'] = $row['exquarry_or_delivered'];
                     $message['order_quantity'] = $row['order_quantity'];
+                    $message['unit_price'] = $row['unit_price'];
+                    $message['total_price'] = $row['total_price'];
                     $message['remarks'] = $row['remarks'];
                 }
                 
