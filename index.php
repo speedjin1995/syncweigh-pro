@@ -3099,8 +3099,6 @@ else{
 
                     $('#addModal').find('#orderWeight').val(orderSupplierWeight)
                     $('#addModal').find('#balance').val(balance);
-
-                    $('#addModal').trigger('orderLoaded');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
@@ -3260,8 +3258,6 @@ else{
 
                     $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight)
                     $('#addModal').find('#balance').val(balance);
-
-                    $('#addModal').trigger('orderLoaded');
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
@@ -3293,268 +3289,70 @@ else{
         $('#purchaseOrder').on('change', function (){
             var purchaseOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val();
-            var rawMat = $('#addModal').find('#rawMaterialName').val();
 
-            if (purchaseOrder && rawMat){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat}, function (data){
-                    var obj = JSON.parse(data);
+            $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
+                var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
+                if (obj.status == 'success'){
+                    if (obj.message.length > 0){
+                        $('#addModal').find('#rawMaterialName').empty();
 
-                        // Change Details
-                        if (!$('#addModal').find('#supplierName').val()) {
-                            $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#destination').val()) {
-                            $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#siteName').val()) {
-                            $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#agent').val()) {
-                            $('#addModal').find('#agent').val(agentName).trigger('change');
-                        }
-                        // if (!$('#addModal').find('#rawMaterialName').val()) {
-                        //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                        // }
-                        if (!$('#addModal').find('#plant').val()) {
-                            $('#addModal').find('#plant').val(plantName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#transporter').val()) {
-                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                            $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
-                        }
-
-                        if(exDel == 'E'){
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        }else{
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                        }
-
-                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight)
-                        $('#addModal').find('#balance').val(balance);
-                        // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
-
-                        // if (previousRecordsTag){
-                        //     $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        //     // Hide or show insufficient balance
-                        //     if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }else{
-                        //     var weight = 0;
-                        //     if (type == 'Purchase'){
-                        //         weight = $('#addModal').find('#supplierWeight').val();
-                        //     }else{
-                        //         weight = $('#addModal').find('#orderWeight').val();
-                        //     }
-
-                        //     $('#addModal').find('#balance').val(weight);
-                        //     // Hide or show insufficient balance
-                        //     if (weight <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }
-
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }else if (purchaseOrder && !rawMat){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        if (obj.message.length > 0){
-                            $('#addModal').find('#rawMaterialName').empty();
-
-                            var prodRawMat = obj.message;
-                            $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
-                            for (var i = 0; i < prodRawMat.length; i++) {
-                                $('#addModal').find('#rawMaterialName').append(
-                                    `<option value=${prodRawMat[i].prodMatName} data-code=${prodRawMat[i].prodMatCode}>${prodRawMat[i].prodMatName}</option>`
-                                );                   
-                            }
+                        var prodRawMat = obj.message;
+                        $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
+                        for (var i = 0; i < prodRawMat.length; i++) {
+                            $('#addModal').find('#rawMaterialName').append(
+                                `<option value=${prodRawMat[i].prodMatName} data-code=${prodRawMat[i].prodMatCode}>${prodRawMat[i].prodMatName}</option>`
+                            );                   
                         }
                     }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }
+
+                    $('#addModal').trigger('orderLoaded');
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
         });
 
         $('#salesOrder').on('change', function (){
             var salesOrder = $(this).val(); 
             var type = $('#addModal').find('#transactionStatus').val(); 
-            var product = $('#addModal').find('#productName').val();
+            $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, 
+                format: 'getProdRaw'}, function (data){
+                var obj = JSON.parse(data);
 
-            if (salesOrder && product){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: product}, function (data){
-                    var obj = JSON.parse(data);
-                    
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
+                if (obj.status == 'success'){
+                    if (obj.message.length > 0){
+                        $('#addModal').find('#productName').empty();
 
-                        if (!$('#addModal').find('#customerName').val()) {
-                            $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#destination').val()) {
-                            $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#siteName').val()) {
-                            $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#agent').val()) {
-                            $('#addModal').find('#agent').val(agentName).trigger('change');
-                        }
-                        // if (!$('#addModal').find('#productName').val()) {
-                        //     $('#addModal').find('#productName').val(productName).trigger('change');
-                        // }
-                        if (!$('#addModal').find('#plant').val()) {
-                            $('#addModal').find('#plant').val(plantName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#transporter').val()) {
-                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                            $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
-                        }
-
-                        if(exDel == 'E'){
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        }else{
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                        }
-
-                        $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                        $('#addModal').find('#balance').val(balance);
-                        // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
-
-                        if (parseFloat(balance) <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
-
-
-                        // if (previousRecordsTag){
-                        //     // $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        //     // Hide or show insufficient balance
-                        //     if (parseFloat(balance) <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }else{
-                        //     var weight = 0;
-                        //     if (type == 'Purchase'){
-                        //         weight = $('#addModal').find('#supplierWeight').val();
-                        //     }else{
-                        //         weight = $('#addModal').find('#orderWeight').val();
-                        //     }
-
-                        //     $('#addModal').find('#balance').val(weight);
-                        //     // Hide or show insufficient balance
-                        //     if (weight <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }
-                        
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }else if (salesOrder && !product){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, format: 'getProdRaw'}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        if (obj.message.length > 0){
-                            $('#addModal').find('#productName').empty();
-
-                            var prodRawMat = obj.message;
-                            $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
-                            for (var i = 0; i < prodRawMat.length; i++) {
-                                $('#addModal').find('#productName').append(
-                                    `<option value=${prodRawMat[i].prodMatName} data-code=${prodRawMat[i].prodMatCode}>${prodRawMat[i].prodMatName}</option>`
-                                );                   
-                            }
+                        var prodRawMat = obj.message;
+                        $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
+                        for (var i = 0; i < prodRawMat.length; i++) {
+                            $('#addModal').find('#productName').append(
+                                `<option value=${prodRawMat[i].prodMatName} data-code=${prodRawMat[i].prodMatCode}>${prodRawMat[i].prodMatName}</option>`
+                            );                   
                         }
                     }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }
-
+                    $('#addModal').trigger('orderLoaded');
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
         });
 
         <?php
@@ -3832,16 +3630,16 @@ else{
                     $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
                     $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
                     $('#addModal').find('#agentCode').val(obj.message.agent_code);
-                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
-                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
-                    $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
-                    $('#addModal').find('#productCode').val(obj.message.product_code);
                     $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
                     $('#addModal').find('#orderWeight').val(obj.message.order_weight);
                     $('#addModal').find('#destinationCode').val(obj.message.destination_code);
                     $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
                     $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
                     $('#addModal').find('#plantCode').val(obj.message.plant_code);
+                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                    $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
+                    $('#addModal').find('#productCode').val(obj.message.product_code);
 
                     // Hide select and show input readonly
                     // if (obj.message.transaction_status == 'Purchase'){
