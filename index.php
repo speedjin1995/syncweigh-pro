@@ -3181,7 +3181,11 @@ else{
         $('#supplierName').on('change', function(){
             $('#supplierCode').val($('#supplierName :selected').data('code'));
 
-            getSoPo();
+            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+
+            if (!purchaseOrder){
+                getSoPo();
+            }
         });
 
         //transporter
@@ -3216,7 +3220,11 @@ else{
             $('#customerCode').val($('#customerName :selected').data('code'));
             $('#custName').val($(this).val());
 
-            getSoPo();
+            var salesOrder = $('#addModal').find('#salesOrder').val();
+
+            if (!salesOrder){
+                getSoPo();
+            }
         });
 
         $('input[name="exDel"]').change(function() {
