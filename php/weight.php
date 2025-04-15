@@ -277,7 +277,11 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
 
     if (empty($_POST["customerName"])) {
-        $customerName = null;
+        if (empty($_POST["custName"])){
+            $customerName = null;
+        }else{
+            $customerName = trim($_POST["custName"]);
+        }
     } else {
         $customerName = trim($_POST["customerName"]);
     }
@@ -301,7 +305,11 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
 
     if (empty($_POST["transporter"])) {
-        $transporter = null;
+        if (empty($_POST["transporterName"])){
+            $transporter = null;
+        }else{
+            $transporter = trim($_POST["transporterName"]);
+        }
     } else {
         $transporter = trim($_POST["transporter"]);
     }
@@ -527,15 +535,21 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
             $beforeEditNettWeight = $recordRow['supplier_weight'];
             $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
             $currentBalance = $balanceBeforeEdit - $supplierWeight;
-            $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
+            $prodRawCode = $rawMaterialCode;
+            $prodRawName = $rawMaterialName;
+
+            $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND raw_mat_name=? AND status='Open' AND deleted='0'");
         }else{
             $beforeEditNettWeight = $recordRow['nett_weight1'];
             $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
             $currentBalance = $balanceBeforeEdit - $nettWeight;
-            $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
-        }
+            $prodRawCode = $productCode;
+            $prodRawName = $productName;
 
-        $poSo_stmt->bind_param('s', $purchaseOrder);
+            $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND product_name=? AND status='Open' AND deleted='0'");
+        }
+        
+        $poSo_stmt->bind_param('sss', $purchaseOrder, $prodRawCode, $prodRawName);
         $poSo_stmt->execute();
         $result = $poSo_stmt->get_result();
         $poSoRow = $result->fetch_assoc();    
@@ -672,13 +686,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         # Update PO or SO table row balance
                         if ($transactionStatus == 'Purchase'){
                             $currentBalance = $prevBalance - $supplierWeight;
-                            $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
+                            $prodRawCode = $rawMaterialCode;
+                            $prodRawName = $rawMaterialName;
+                
+                            $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND raw_mat_name=? AND status='Open' AND deleted='0'");
                         }else{
                             $currentBalance = $prevBalance - $nettWeight;
-                            $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
+                            $prodRawCode = $productCode;
+                            $prodRawName = $productName;
+                            $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND product_name=? AND status='Open' AND deleted='0'");
                         }
 
-                        $poSo_stmt->bind_param('s', $purchaseOrder);
+                        $poSo_stmt->bind_param('sss', $purchaseOrder, $prodRawCode, $prodRawName);
                         $poSo_stmt->execute();
                         $result = $poSo_stmt->get_result();
                         $poSoRow = $result->fetch_assoc();    
