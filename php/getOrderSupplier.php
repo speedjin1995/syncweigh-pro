@@ -3,18 +3,39 @@ require_once "db_connect.php";
 
 session_start();
 
-if(isset($_POST['code'], $_POST['type'])){
-	$code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);
+if(isset($_POST['type'])){
 	$type = filter_input(INPUT_POST, 'type', FILTER_SANITIZE_STRING);
-
+    $code = '';
     $format = '';
+    $material = '';
+
+    if (isset($_POST['code']) && $_POST['code'] != ''){
+        $code = $_POST['code'];
+    }
+
     if (isset($_POST['format']) && $_POST['format'] != ''){
         $format = $_POST['format'];
     }
 
-    $material = '';
     if (isset($_POST['material']) && $_POST['material'] != ''){
         $material = $_POST['material'];
+    }
+
+    $searchQuery = '';
+    if (isset($_POST['vehicle']) && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
+        $searchQuery .= " and veh_number = '".$_POST['vehicle']."'";
+    }
+
+    if (isset($_POST['transporter']) && $_POST['transporter'] != '' && $_POST['transporter'] != '-'){
+        $searchQuery .= " and transporter_name = '".$_POST['transporter']."'";
+    }
+
+    if (isset($_POST['customerSupplier']) && $_POST['customerSupplier'] != '' && $_POST['customerSupplier'] != '-'){
+        if ($type == 'Purchase'){
+            $searchQuery .= " and supplier_name = '".$_POST['customerSupplier']."'";
+        }else{
+            $searchQuery .= " and customer_name = '".$_POST['customerSupplier']."'";
+        }
     }
 
     if ($format == 'getProdRaw'){
@@ -70,6 +91,66 @@ if(isset($_POST['code'], $_POST['type'])){
                             "prodMatCode"=>$row['product_code'],
                             "prodMatName"=>$row['product_name'],
                         );
+                    }
+
+                    echo json_encode(
+                        array(
+                            "status" => "success",
+                            "message" => $message
+                        )
+                    );
+                }
+            }
+        }
+    }elseif($format == 'getSoPo'){
+        if ($type == 'Purchase'){
+            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE status='Open' AND deleted='0'".$searchQuery)) {
+                
+                // Execute the prepared query.
+                if (!$update_stmt->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }
+                else{
+                    $result = $update_stmt->get_result();
+                    $message = array();
+                    
+                    while ($row = $result->fetch_assoc()) {
+                        if (!in_array($row['po_no'], $message)) {
+                            $message[] = $row['po_no'];
+                        }
+                    }
+
+                    echo json_encode(
+                        array(
+                            "status" => "success",
+                            "message" => $message
+                        )
+                    );
+                }
+            }
+        }else{
+            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE status='Open' AND deleted='0'".$searchQuery)) {
+                
+                // Execute the prepared query.
+                if (!$update_stmt->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }
+                else{
+                    $result = $update_stmt->get_result();
+                    $message = array();
+                    
+                    while ($row = $result->fetch_assoc()) {
+                        if (!in_array($row['order_no'], $message)) {
+                            $message[] = $row['order_no'];
+                        }
                     }
 
                     echo json_encode(
