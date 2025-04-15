@@ -119,7 +119,9 @@ if(isset($_POST['type'])){
                     $message = array();
                     
                     while ($row = $result->fetch_assoc()) {
-                        $message[] = $row['po_no'];
+                        if (!in_array($row['po_no'], $message)) {
+                            $message[] = $row['po_no'];
+                        }
                     }
 
                     echo json_encode(
@@ -146,7 +148,9 @@ if(isset($_POST['type'])){
                     $message = array();
                     
                     while ($row = $result->fetch_assoc()) {
-                        $message[] = $row['order_no'];
+                        if (!in_array($row['order_no'], $message)) {
+                            $message[] = $row['order_no'];
+                        }
                     }
 
                     echo json_encode(

@@ -1438,7 +1438,9 @@ else{
 
     <script type="text/javascript">
     var table = null;
-    
+    let soPoTag = false;
+    let addNewTag = false;
+
     $(function () {
         var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
@@ -2399,7 +2401,9 @@ else{
             });
         });
 
-        $('#addWeight').on('click', function(){
+        $('#addWeight').on('click', function(){ 
+            addNewTag = true;
+
             // Show Capture Buttons When Add New
             $('#addModal').find('#grossCapture').show();
             $('#addModal').find('#tareCapture').show();
@@ -2453,33 +2457,30 @@ else{
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
 
-            // Load these field after PO/SO is loaded
-            $('#addModal').on('orderLoaded', function() {
-                $('#addModal').find('#customerCode').val("");
-                $('#addModal').find('#customerName').val("").trigger('change');
-                $('#addModal').find('#supplierCode').val("");
-                $('#addModal').find('#supplierName').val("").trigger('change');
-                $('#addModal').find('#siteCode').val("");
-                $('#addModal').find('#siteName').val("").trigger('change');
-                $('#addModal').find('#agent').val("").trigger('change');
-                $('#addModal').find('#agentCode').val("");
-                $('#addModal').find('#plantCode').val("");
-                $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
-                $('#addModal').find('#orderWeight').val("0");
-                $('#addModal').find('#supplierWeight').val("0");
-                $('#addModal').find('#transporterCode').val("");
-                $('#addModal').find('#transporter').val("").trigger('change');
-                $('#addModal').find('#destinationCode').val("");
-                $('#addModal').find('#destination').val("").trigger('change');
-                $('#addModal').find('#productCode').val("");
-                $('#addModal').find('#productName').val("").trigger('change');
-                $('#addModal').find('#productDescription').val("");
-                $('#addModal').find('#productHigh').val("");
-                $('#addModal').find('#productLow').val("");
-                $('#addModal').find('#productVariance').val("");
-                $('#addModal').find('#rawMaterialCode').val("");
-                $('#addModal').find('#rawMaterialName').val("").trigger('change');
-            });
+            $('#addModal').find('#customerCode').val("");
+            $('#addModal').find('#customerName').val("").trigger('change');
+            $('#addModal').find('#supplierCode').val("");
+            $('#addModal').find('#supplierName').val("").trigger('change');
+            $('#addModal').find('#siteCode').val("");
+            $('#addModal').find('#siteName').val("").trigger('change');
+            $('#addModal').find('#agent').val("").trigger('change');
+            $('#addModal').find('#agentCode').val("");
+            $('#addModal').find('#plantCode').val("");
+            $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
+            $('#addModal').find('#orderWeight').val("0");
+            $('#addModal').find('#supplierWeight').val("0");
+            $('#addModal').find('#transporterCode').val("");
+            $('#addModal').find('#transporter').val("").trigger('change');
+            $('#addModal').find('#destinationCode').val("");
+            $('#addModal').find('#destination').val("").trigger('change');
+            $('#addModal').find('#productCode').val("");
+            $('#addModal').find('#productName').val("").trigger('change');
+            $('#addModal').find('#productDescription').val("");
+            $('#addModal').find('#productHigh').val("");
+            $('#addModal').find('#productLow').val("");
+            $('#addModal').find('#productVariance').val("");
+            $('#addModal').find('#rawMaterialCode').val("");
+            $('#addModal').find('#rawMaterialName').val("").trigger('change');
 
             // Show select and hide input readonly
             $('#addModal').find('#salesOrderEdit').val("").hide();
@@ -2498,6 +2499,7 @@ else{
                 select2Container.next('.select2-error').remove(); // Remove error message
             });
 
+            addNewTag = false;
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -2715,35 +2717,61 @@ else{
 
                                     if (exDel == 'EX'){
                                         $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                                        if (transporterName){
-                                            $('#addModal').find('#transporter').attr('disabled', true);
-                                        }else{
-                                            $('#addModal').find('#transporter').attr('disabled', false);
+
+                                        if (!$('#addModal').find('#transporter').val()) {
+                                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                            if (transporterName){
+                                                $('#addModal').find('#transporter').attr('disabled', true);
+                                            }else{
+                                                $('#addModal').find('#transporter').attr('disabled', false);
+                                            }
+                                            $('#addModal').find('#transporterCode').val(transporterCode);
                                         }
-                                        $('#addModal').find('#transporterCode').val(transporterCode);
-                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
-                                        if (customerName){
-                                            $('#addModal').find('#customerName').attr('disabled', true);
-                                        }else{
-                                            $('#addModal').find('#customerName').attr('disabled', false);
+
+                                        if (!$('#addModal').find('#customerName').val()) {
+                                            $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                            if (customerName){
+                                                $('#addModal').find('#customerName').attr('disabled', true);
+                                            }else{
+                                                $('#addModal').find('#customerName').attr('disabled', false);
+                                            }
+                                            $('#addModal').find('#customerCode').val(customerCode);
                                         }
-                                        $('#addModal').find('#customerCode').val(customerCode);
                                     }else{
                                         $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                                        if (transporterName){
-                                            $('#addModal').find('#transporter').attr('disabled', true);
-                                        }else{
-                                            $('#addModal').find('#transporter').attr('disabled', false);
+
+                                        if (!$('#addModal').find('#transporter').val()) {
+                                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                            if (transporterName){
+                                                $('#addModal').find('#transporter').attr('disabled', true);
+                                            }else{
+                                                $('#addModal').find('#transporter').attr('disabled', false);
+                                            }
+                                            $('#addModal').find('#transporterCode').val(transporterCode);
                                         }
-                                        $('#addModal').find('#transporterCode').val(transporterCode);
-                                        $('#addModal').find('#customerName').val('').trigger('change');
-                                        $('#addModal').find('#customerName').attr('disabled', false);
-                                        $('#addModal').find('#customerCode').val('');
+
+                                        if (!$('#addModal').find('#customerName').val()) {
+                                            $('#addModal').find('#customerName').val('').trigger('change');
+                                            $('#addModal').find('#customerName').attr('disabled', false);
+                                            $('#addModal').find('#customerCode').val('');
+                                        }
                                     } 
                                 }
-                            }       
+                            }    
+                            
+                            if (transactionStatus == 'Purchase'){
+                                var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+
+                                if(!purchaseOrder && !soPoTag && !addNewTag){
+                                    getSoPo();
+                                }
+                            }else{
+                                var salesOrder = $('#addModal').find('#salesOrder').val();
+
+                                if(!salesOrder && !soPoTag && !addNewTag){
+                                    getSoPo();
+                                }
+                            }
                         }
                         else if(obj.status === 'error'){
                             alert(obj.message);
@@ -2762,7 +2790,6 @@ else{
                     });
                 }
                 
-                getSoPo();
                 // $('#addModal').find('#customerName').val('').trigger('change');
                 // $('#addModal').find('#customerCode').val('');
 
@@ -3172,8 +3199,9 @@ else{
                     }
                 });
             }else{
-                getSoPo();
-                $('#addModal').trigger('orderLoaded');
+                if (!soPoTag && !addNewTag){
+                    getSoPo();
+                }
             }
         });
 
@@ -3183,7 +3211,7 @@ else{
 
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
-            if (!purchaseOrder){
+            if (!purchaseOrder && !soPoTag && !addNewTag){
                 getSoPo();
             }
         });
@@ -3222,7 +3250,7 @@ else{
 
             var salesOrder = $('#addModal').find('#salesOrder').val();
 
-            if (!salesOrder){
+            if (!salesOrder && !soPoTag && !addNewTag){
                 getSoPo();
             }
         });
@@ -3352,8 +3380,9 @@ else{
                     }
                 });
             }else{
-                getSoPo();
-                $('#addModal').trigger('orderLoaded');
+                if (!soPoTag && !addNewTag){
+                    getSoPo();
+                }
             }
         });
 
@@ -3405,8 +3434,6 @@ else{
                         $("#failBtn").click();
                     }
                 });
-            }else{
-                $('#addModal').trigger('orderLoaded');
             }
         });
 
@@ -3443,10 +3470,7 @@ else{
                         $("#failBtn").click();
                     }
                 });
-            }else{
-                $('#addModal').trigger('orderLoaded');
             }
-            
         });
 
         <?php
@@ -3474,8 +3498,10 @@ else{
             vehicle = $('#addModal').find('#vehiclePlateNo1').val();
         }
 
+        soPoTag = true;
         if (transactionStatus == 'Purchase'){
             var customerSupplier = $('#addModal').find('#supplierName').val();
+            var options = $('#purchaseOrder option').clone();
 
             $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
                 var obj = JSON.parse(data);
@@ -3499,23 +3525,28 @@ else{
                                 );   
                             }           
                         }
+                    }else{
+                        $('#addModal').find('#purchaseOrder').empty().append(options);
                     }
 
-                    // $('#addModal').trigger('orderLoaded');
+                    soPoTag = false;
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
+                    soPoTag = false;
                 }
                 else{
                     $('#spinnerLoading').hide();
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
+                    soPoTag = false;
                 }
             });
         }else if (transactionStatus == 'Sales'){
             var customerSupplier = $('#addModal').find('#customerName').val();
+            var options = $('#salesOrder option').clone();
 
             $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
                 var obj = JSON.parse(data);
@@ -3539,17 +3570,23 @@ else{
                                 ); 
                             }                 
                         }
+                    }else{
+                        $('#addModal').find('#salesOrder').empty().append(options);
                     }
+
+                    soPoTag = false;
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
+                    soPoTag = false;
                 }
                 else{
                     $('#spinnerLoading').hide();
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
+                    soPoTag = false;
                 }
             });
         }
@@ -3672,7 +3709,7 @@ else{
         previewTable.innerHTML = htmlTable;
     }
 
-    function edit(id){
+    function edit(id){ 
         $('#spinnerLoading').show();
         $.post('php/getWeight.php', {userID: id}, function(data)
         {
@@ -3748,7 +3785,7 @@ else{
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-                debugger;
+
                 if (obj.message.transaction_status == 'Purchase'){
                     $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
                     $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
