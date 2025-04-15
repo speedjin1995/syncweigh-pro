@@ -2805,16 +2805,17 @@ else{
                                         var transporterName = obj.message[i].transporter_name;
                                         var transporterCode = obj.message[i].transporter_code;
 
-                                        if (customerName){
+                                        /*if (customerName){
                                             $('#addModal').find('#customerName').val(customerName).trigger('change');
-                                        }
+                                        }*/
 
                                         $('#addModal').find('#transporter').append(
                                             `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
                                         );           
                                     }
 
-                                }else{
+                                }
+                                else{
                                     var exDel = obj.message[0].ex_del;
                                     var customerName = obj.message[0].customer_name;
                                     var customerCode = obj.message[0].customer_code;
@@ -2846,7 +2847,8 @@ else{
                                             }
                                             $('#addModal').find('#customerCode').val(customerCode);
                                         }
-                                    }else{
+                                    }
+                                    else{
                                         $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
 
                                         if (!$('#addModal').find('#transporter').val()) {
