@@ -2605,52 +2605,98 @@ else{
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
 
-            var exDel = $('input[name="exDel"]:checked').val();
-            if (exDel == 'true'){
-                // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
-                // $('#addModal').find('#transporterCode').val('T01');
+            if (x){
                 $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
-                        // var customerName = obj.message.customer_name;
-                        // var customerCode = obj.message.customer_code;
+                        if (obj.message.length > 0){
+                            if (obj.message.length > 1){
+                                $('#addModal').find('#transporter').empty();
+                                $('#addModal').find('#transporter').append(`<option value="-" selected>-</option>`);
+                                for (var i = 0; i < obj.message.length; i++) {
+                                    var customerName = obj.message[i].customer_name;
+                                    var customerCode = obj.message[i].customer_code;
+                                    var transporterName = obj.message[i].transporter_name;
+                                    var transporterCode = obj.message[i].transporter_code;
 
-                        // $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        // $('#addModal').find('#customerCode').val(customerCode);
+                                    if (customerName){
+                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                    }
+
+                                    $('#addModal').find('#transporter').append(
+                                        `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
+                                    );           
+                                }
+
+                            }else{
+                                var exDel = obj.message[0].ex_del;
+                                var customerName = obj.message[0].customer_name;
+                                var customerCode = obj.message[0].customer_code;
+                                var transporterName = obj.message[0].transporter_name;
+                                var transporterCode = obj.message[0].transporter_code;
+
+                                if (exDel == 'EX'){
+                                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+
+                                    if (!$('#addModal').find('#transporter').val()) {
+                                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                        if (transporterName){
+                                            $('#addModal').find('#transporter').attr('disabled', true);
+                                        }else{
+                                            $('#addModal').find('#transporter').attr('disabled', false);
+                                        }
+                                        $('#addModal').find('#transporterCode').val(transporterCode);
+                                    }
+
+                                    if (!$('#addModal').find('#customerName').val()) {
+                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                        if (customerName){
+                                            $('#addModal').find('#customerName').attr('disabled', true);
+                                        }else{
+                                            $('#addModal').find('#customerName').attr('disabled', false);
+                                        }
+                                        $('#addModal').find('#customerCode').val(customerCode);
+                                    }
+                                }else{
+                                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+
+                                    if (!$('#addModal').find('#transporter').val()) {
+                                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                        if (transporterName){
+                                            $('#addModal').find('#transporter').attr('disabled', true);
+                                        }else{
+                                            $('#addModal').find('#transporter').attr('disabled', false);
+                                        }
+                                        $('#addModal').find('#transporterCode').val(transporterCode);
+                                    }
+
+                                    if (!$('#addModal').find('#customerName').val()) {
+                                        $('#addModal').find('#customerName').val('').trigger('change');
+                                        $('#addModal').find('#customerName').attr('disabled', false);
+                                        $('#addModal').find('#customerCode').val('');
+                                    }
+                                } 
+                            }
+                        }    
+                        
+                        if (transactionStatus == 'Purchase'){
+                            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+
+                            if(!purchaseOrder && !soPoTag && !addNewTag){
+                                getSoPo();
+                            }
+                        }else{
+                            var salesOrder = $('#addModal').find('#salesOrder').val();
+
+                            if(!salesOrder && !soPoTag && !addNewTag){
+                                getSoPo();
+                            }
+                        }
                     }
                     else if(obj.status === 'error'){
                         alert(obj.message);
-                        $('#vehicleNoTxt').val('');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }else{
-                // $('#addModal').find('#customerName').val('').trigger('change');
-                // $('#addModal').find('#customerCode').val('');
-
-                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        // var transporterName = obj.message.transporter_name;
-                        // var transporterCode = obj.message.transporter_code;
-
-                        // $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        // $('#addModal').find('#transporterCode').val(transporterCode);
-                    }
-                    else if(obj.status === 'error'){
-                        alert(obj.message);
-                        $('#vehicleNoTxt').val('');
+                        $('#vehiclePlateNo1').val('').trigger('change');
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -2664,6 +2710,65 @@ else{
                     }
                 });
             }
+            // var exDel = $('input[name="exDel"]:checked').val();
+            // if (exDel == 'true'){
+            //     // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+            //     // $('#addModal').find('#transporterCode').val('T01');
+            //     $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+            //         var obj = JSON.parse(data);
+
+            //         if (obj.status == 'success'){
+            //             // var customerName = obj.message.customer_name;
+            //             // var customerCode = obj.message.customer_code;
+
+            //             // $('#addModal').find('#customerName').val(customerName).trigger('change');
+            //             // $('#addModal').find('#customerCode').val(customerCode);
+            //         }
+            //         else if(obj.status === 'error'){
+            //             alert(obj.message);
+            //             $('#vehicleNoTxt').val('');
+            //         }
+            //         else if(obj.status === 'failed'){
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //         else{
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //     });
+            // }else{
+            //     // $('#addModal').find('#customerName').val('').trigger('change');
+            //     // $('#addModal').find('#customerCode').val('');
+
+            //     $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+            //         var obj = JSON.parse(data);
+
+            //         if (obj.status == 'success'){
+            //             // var transporterName = obj.message.transporter_name;
+            //             // var transporterCode = obj.message.transporter_code;
+
+            //             // $('#addModal').find('#transporter').val(transporterName).trigger('change');
+            //             // $('#addModal').find('#transporterCode').val(transporterCode);
+            //         }
+            //         else if(obj.status === 'error'){
+            //             alert(obj.message);
+            //             $('#vehicleNoTxt').val('');
+            //         }
+            //         else if(obj.status === 'failed'){
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //         else{
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //     });
+            // }
         });
 
         $('#vehiclePlateNo1').on('change', function(){
