@@ -28,10 +28,10 @@ if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''
     $toDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date <= '".$formatted_date."'";
     }
 }
 
