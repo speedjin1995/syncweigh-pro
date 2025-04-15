@@ -522,6 +522,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                     <th>Order Date</th>
                                                                     <th>EXQ/DEL</th>
                                                                     <th>Balance</th>
+                                                                    <th>Status</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -680,6 +681,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
                 { data: 'balance' },
+                { data: 'status' },
                 { data: 'modified_date' },
                 {
                     data: 'id',
@@ -771,6 +773,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
                     { data: 'balance' },
+                    { data: 'status' },
                     { data: 'modified_date' },
                     {
                         data: 'id',
