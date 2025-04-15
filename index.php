@@ -2875,13 +2875,14 @@ else{
                             if (transactionStatus == 'Purchase'){
                                 var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
-                                if(!purchaseOrder && !soPoTag && !addNewTag){
+                                if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
                                     getSoPo();
                                 }
-                            }else{
+                            }
+                            else{
                                 var salesOrder = $('#addModal').find('#salesOrder').val();
 
-                                if(!salesOrder && !soPoTag && !addNewTag){
+                                if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                     getSoPo();
                                 }
                             }

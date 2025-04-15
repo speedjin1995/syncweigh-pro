@@ -22,9 +22,9 @@ if(isset($_POST['type'])){
     }
 
     $searchQuery = '';
-    if (isset($_POST['vehicle']) && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
+    /*if (isset($_POST['vehicle']) && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
         $searchQuery .= " and veh_number = '".$_POST['vehicle']."'";
-    }
+    }*/
 
     if (isset($_POST['transporter']) && $_POST['transporter'] != '' && $_POST['transporter'] != '-'){
         $searchQuery .= " and transporter_name = '".$_POST['transporter']."'";
