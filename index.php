@@ -2602,6 +2602,7 @@ else{
             var x = $('#vehicleNoTxt').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
 
             if (x){
                 $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
@@ -2611,23 +2612,33 @@ else{
                         if (obj.message.length > 0){
                             if (obj.message.length > 1){
                                 $('#addModal').find('#transporter').empty();
-                                $('#addModal').find('#transporter').append(`<option value="-" selected>-</option>`);
+                                $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
+
+                                var deliveredTransporter;
+
                                 for (var i = 0; i < obj.message.length; i++) {
                                     var customerName = obj.message[i].customer_name;
                                     var customerCode = obj.message[i].customer_code;
                                     var transporterName = obj.message[i].transporter_name;
                                     var transporterCode = obj.message[i].transporter_code;
+                                    var exDel = obj.message[i].ex_del;
 
-                                    if (customerName){
-                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                    if (exDel == 'DEL'){
+                                        deliveredTransporter = transporterName;
                                     }
+
+                                    /*if (customerName){
+                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                    }*/
 
                                     $('#addModal').find('#transporter').append(
                                         `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
-                                    );           
+                                    );  
                                 }
 
-                            }else{
+                                $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
+                            }
+                            else{
                                 var exDel = obj.message[0].ex_del;
                                 var customerName = obj.message[0].customer_name;
                                 var customerCode = obj.message[0].customer_code;
@@ -2655,10 +2666,12 @@ else{
                                             $('#addModal').find('#custName').val(customerName);
                                         }else{
                                             $('#addModal').find('#customerName').attr('disabled', false);
+                                            $('#addModal').find('#custName').val(customerName);
                                         }
                                         $('#addModal').find('#customerCode').val(customerCode);
                                     }
-                                }else{
+                                }
+                                else{
                                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
 
                                     if (!$('#addModal').find('#transporter').val()) {
@@ -2668,6 +2681,7 @@ else{
                                             $('#addModal').find('#transporterName').val(transporterName);
                                         }else{
                                             $('#addModal').find('#transporter').attr('disabled', false);
+                                            
                                         }
                                         $('#addModal').find('#transporterCode').val(transporterCode);
                                     }
@@ -2684,13 +2698,14 @@ else{
                         if (transactionStatus == 'Purchase'){
                             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
-                            if(!purchaseOrder && !soPoTag && !addNewTag){
+                            if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
                                 getSoPo();
                             }
-                        }else{
+                        }
+                        else{
                             var salesOrder = $('#addModal').find('#salesOrder').val();
 
-                            if(!salesOrder && !soPoTag && !addNewTag){
+                            if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                 getSoPo();
                             }
                         }
@@ -2798,12 +2813,20 @@ else{
                             if (obj.message.length > 0){
                                 if (obj.message.length > 1){
                                     $('#addModal').find('#transporter').empty();
-                                    $('#addModal').find('#transporter').append(`<option value="-" selected>-</option>`);
+                                    $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
+
+                                    var deliveredTransporter;
+
                                     for (var i = 0; i < obj.message.length; i++) {
                                         var customerName = obj.message[i].customer_name;
                                         var customerCode = obj.message[i].customer_code;
                                         var transporterName = obj.message[i].transporter_name;
                                         var transporterCode = obj.message[i].transporter_code;
+                                        var exDel = obj.message[i].ex_del;
+
+                                        if (exDel == 'DEL'){
+                                            deliveredTransporter = transporterName;
+                                        }
 
                                         /*if (customerName){
                                             $('#addModal').find('#customerName').val(customerName).trigger('change');
@@ -2811,9 +2834,10 @@ else{
 
                                         $('#addModal').find('#transporter').append(
                                             `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
-                                        );           
+                                        );  
                                     }
 
+                                    $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
                                 }
                                 else{
                                     var exDel = obj.message[0].ex_del;
@@ -2881,6 +2905,7 @@ else{
                             }
                             else{
                                 var salesOrder = $('#addModal').find('#salesOrder').val();
+                                console.log($('#addModal').find('#customerName').val());
 
                                 if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                     getSoPo();
@@ -3374,6 +3399,7 @@ else{
         $('input[name="exDel"]').change(function() {
             var vehicleNo1 = $('#addModal').find('#vehiclePlateNo1').val();
             var exDel = $('input[name="exDel"]:checked').val();
+
             if (exDel == 'true'){
                 $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
                 $('#addModal').find('#transporterCode').val('T01');
@@ -3396,8 +3422,6 @@ else{
                 //     }
                 // });
             }else{
-                $('#addModal').find('#transporter').val('').trigger('change');
-                $('#addModal').find('#transporterCode').val('');
                 // $('#addModal').find('#customerName').val('').trigger('change');
                 // $('#addModal').find('#customerCode').val('');
 
@@ -3529,7 +3553,7 @@ else{
                             $('#addModal').find('#rawMaterialName').empty();
 
                             var prodRawMat = obj.message;
-                            $('#addModal').find('#rawMaterialName').append(`<option value="" selected>-</option>`);
+                            $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
                             for (var i = 0; i < prodRawMat.length; i++) {
                                 $('#addModal').find('#rawMaterialName').append(
                                     `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
@@ -3627,7 +3651,7 @@ else{
                         $('#addModal').find('#purchaseOrder').empty();
 
                         var soPo = obj.message;
-                        $('#addModal').find('#purchaseOrder').append(`<option value="" selected>-</option>`);
+                        $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
                         for (var i = 0; i < soPo.length; i++) {
                             if (soPo.length == 1){
                                 $('#addModal').find('#purchaseOrder').append(
@@ -3672,7 +3696,7 @@ else{
                         $('#addModal').find('#salesOrder').empty();
 
                         var soPo = obj.message;
-                        $('#addModal').find('#salesOrder').append(`<option value="" selected>-</option>`);
+                        $('#addModal').find('#salesOrder').append(`<option selected="-">-</option>`);
                         for (var i = 0; i < soPo.length; i++) {
                             if (soPo.length == 1){
                                 $('#addModal').find('#salesOrder').append(
