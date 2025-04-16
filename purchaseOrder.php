@@ -1077,6 +1077,17 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             $('#transporterName').val($('#transporter :selected').data('name'));
         });
 
+        $('#exDel').on('change', function(){
+            var exDel = $(this).val();
+
+            if (exDel == 'E'){
+                $('#transporter').val('T01').trigger('change');
+            }else{
+                $('#transporter').val('').trigger('change');
+            }
+
+        });
+        
         $('#orderQty').on('change', function(){
             var orderWeight = parseFloat($(this).val())/1000;
             var unitPrice = parseFloat($('#unitPrice').val());
