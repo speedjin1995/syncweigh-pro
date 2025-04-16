@@ -19,6 +19,7 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0'");
 ?>
 
 <head>
@@ -179,6 +180,17 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($supplier2)){ ?>
                                                                     <option value="<?=$rowPF['supplier_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col--> 
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="poSearch" class="form-label">PO No</label>
+                                                            <select id="poSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPo = mysqli_fetch_assoc($purchaseOrder)){ ?>
+                                                                    <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -639,6 +651,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
         var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+        var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -658,6 +671,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     plant: plantI,
                     supplier: supplierNoI,
                     rawMaterial: rawMatI,
+                    poNo: poI
                 } 
             },
             'columns': [
@@ -727,6 +741,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -750,6 +765,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                         plant: plantI,
                         supplier: supplierNoI,
                         rawMaterial: rawMatI,
+                        poNo: poI
                     } 
                 },
                 'columns': [
@@ -1087,7 +1103,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             }
 
         });
-        
+
         $('#orderQty').on('change', function(){
             var orderWeight = parseFloat($(this).val())/1000;
             var unitPrice = parseFloat($('#unitPrice').val());

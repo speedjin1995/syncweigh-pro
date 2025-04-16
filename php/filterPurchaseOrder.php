@@ -51,6 +51,10 @@ if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMa
 	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
 }
 
+if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
+	$searchQuery .= " and po_no = '".$_POST['poNo']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (
     company_code like '%".$searchValue."%' or 
