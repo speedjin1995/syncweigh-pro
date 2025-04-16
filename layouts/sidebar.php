@@ -123,6 +123,26 @@
                                 </ul>
                             </div>
                         </li>';
+                    }else{
+                        echo '<!--li class="nav-item">
+                            <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i></i>'.$lang['t-inventory'].'</a>
+                        </li--> 
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarMasterdata">
+                                <i class="ri-pages-line"></i> <span>'.$lang['t-masterdata'].'</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarMasterdata">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="destination.php" class="nav-link">'.$lang['t-destination'].'</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
+                                    </li>       
+                                </ul>
+                            </div>
+                        </li>';
                     }
                 ?>
 
