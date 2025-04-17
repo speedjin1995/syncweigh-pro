@@ -6,7 +6,7 @@ function convertDatetimeToDate($datetime){
 }
 
 function searchCustomerByCode($value, $db) {
-    $id = '0';
+    $id = '';
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status='0'")) {
@@ -24,7 +24,7 @@ function searchCustomerByCode($value, $db) {
 }
 
 function searchSupplierByCode($value, $db) {
-    $id = '0';
+    $id = '';
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status='0'")) {
@@ -42,7 +42,7 @@ function searchSupplierByCode($value, $db) {
 }
 
 function searchPlantCodeById($value, $db) {
-    $id = '0';
+    $id = '';
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {
@@ -60,7 +60,7 @@ function searchPlantCodeById($value, $db) {
 }
 
 function searchPlantNameById($value, $db) {
-    $id = '0';
+    $id = '';
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {
@@ -96,7 +96,7 @@ function searchPlantNameByCode($value, $db) {
 }
 
 function searchProjectByCode($value, $db) {
-    $id = '0';
+    $id = '';
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Site WHERE site_code=? AND status = '0'")) {
@@ -204,7 +204,7 @@ function searchDestinationNameByCode($value, $db) {
 }
 
 function searchDestinationCodeByName($value, $db) {
-    $id = '0';
+    $id = '';
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Destination WHERE name=? AND status = '0'")) {

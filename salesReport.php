@@ -17,6 +17,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 $plantName = '-';
 
@@ -148,7 +149,7 @@ else{
                                                     <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
@@ -159,7 +160,7 @@ else{
                                                     <div class="col-3" id="supplierSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="supplierSearch" class="form-label">Supplier No</label>
-                                                            <select id="supplierSearch" class="form-select" >
+                                                            <select id="supplierSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
                                                                     <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
@@ -186,7 +187,7 @@ else{
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="customerTypeSearch" class="form-label">Customer Type</label>
-                                                            <select id="customerTypeSearch" class="form-select">
+                                                            <select id="customerTypeSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="Cash">Cash</option>
                                                                 <option value="Normal">Normal</option>
@@ -196,7 +197,7 @@ else{
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="productSearch" class="form-label">Product</label>
-                                                            <select id="productSearch" class="form-select" >
+                                                            <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
@@ -207,7 +208,7 @@ else{
                                                     <div class="col-3" id="rawMatSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="rawMatSearch" class="form-label">Raw Material</label>
-                                                            <select id="rawMatSearch" class="form-select" >
+                                                            <select id="rawMatSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
                                                                     <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
@@ -218,7 +219,7 @@ else{
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="destinationSearch" class="form-label">Destination</label>
-                                                            <select id="destinationSearch" class="form-select" >
+                                                            <select id="destinationSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
                                                                     <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
@@ -229,7 +230,7 @@ else{
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
-                                                            <select id="plantSearch" class="form-select">
+                                                            <select id="plantSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
@@ -237,6 +238,17 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="soSearch" class="form-label">Customer P/O No</label>
+                                                            <select id="soSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <?php while($rowSo = mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                    <option value="<?=$rowSo['order_no'] ?>"><?=$rowSo['order_no'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col--> 
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -607,6 +619,27 @@ else{
             defaultDate: today
         });
 
+        $('.select2').each(function() {
+            $(this).select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                // Conditionally set dropdownParent based on the element’s location
+                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
+            });
+        });
+
+        // Apply custom styling to Select2 elements in addModal
+        $('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -618,6 +651,7 @@ else{
         var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -639,7 +673,8 @@ else{
                     product: productI,
                     rawMaterial: rawMatI,
                     destination: destinationI,
-                    plant: plantI
+                    plant: plantI,
+                    purchaseOrder: soI
                 } 
             },
             'columns': [
@@ -684,6 +719,7 @@ else{
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -709,7 +745,8 @@ else{
                         product: productI,
                         rawMaterial: rawMatI,
                         destination: destinationI,
-                        plant: plantI
+                        plant: plantI,
+                        purchaseOrder: soI
                     } 
                 },
                 'columns': [

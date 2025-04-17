@@ -19,6 +19,7 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 ?>
 
@@ -180,6 +181,17 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col--> 
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="soSearch" class="form-label">Customer P/O No</label>
+                                                            <select id="soSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <?php while($rowSo = mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                    <option value="<?=$rowSo['order_no'] ?>"><?=$rowSo['order_no'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -640,6 +652,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -659,6 +672,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     plant: plantI,
                     customer: customerNoI,
                     product: productI,
+                    soNo: soI
                 } 
             },
             'columns': [
@@ -728,6 +742,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -751,6 +766,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                         plant: plantI,
                         customer: customerNoI,
                         product: productI,
+                        soNo: soI
                     } 
                 },
                 'columns': [
@@ -1077,6 +1093,16 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 
         $('#transporter').on('change', function(){
             $('#transporterName').val($('#transporter :selected').data('name'));
+        });
+
+        $('#exDel').on('change', function(){
+            var exDel = $(this).val();
+
+            if (exDel == 'E'){
+                $('#transporter').val('T01').trigger('change');
+            }else{
+                $('#transporter').val('').trigger('change');
+            }
         });
 
         $('#orderQty').on('change', function(){

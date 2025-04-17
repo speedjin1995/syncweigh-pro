@@ -67,7 +67,9 @@ $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name 
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
+$purchaseOrder2 = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
+$salesOrder2 = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
@@ -274,6 +276,28 @@ else{
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="soSearchDisplay">
+                                                        <div class="mb-3">
+                                                            <label for="soSearch" class="form-label">Customer P/O No</label>
+                                                            <select id="soSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowSo=mysqli_fetch_assoc($salesOrder2)){ ?>
+                                                                    <option value="<?=$rowSo['order_no'] ?>"><?=$rowSo['order_no'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="poSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="poSearch" class="form-label">PO No</label>
+                                                            <select id="poSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPo=mysqli_fetch_assoc($purchaseOrder2)){ ?>
+                                                                    <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -1529,6 +1553,10 @@ else{
                 $('#productSearchDisplay').find('#productSearch').val('-').trigger('change');
                 $('#productSearchDisplay').hide();
                 $('#rawMatSearchDisplay').show();
+                // Hide & reset so then show po
+                $('#soSearchDisplay').find('#soSearch').val('-').trigger('change');
+                $('#soSearchDisplay').hide();
+                $('#poSearchDisplay').show();
             }else{
                 // Hide & reset supplier then show customer
                 $('#supplierSearchDisplay').find('#supplierSearch').val('-').trigger('change');
@@ -1538,6 +1566,10 @@ else{
                 $('#rawMatSearchDisplay').find('#rawMatSearch').val('-').trigger('change');
                 $('#rawMatSearchDisplay').hide();
                 $('#productSearchDisplay').show();
+                // Hide & reset po then show so
+                $('#poSearchDisplay').find('#poSearch').val('-').trigger('change');
+                $('#poSearchDisplay').hide();
+                $('#soSearchDisplay').show();
             }
         });
 
@@ -1553,6 +1585,8 @@ else{
         var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
         var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
+        var poSearchI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1574,6 +1608,8 @@ else{
                     product: productSearchI,
                     rawMaterial: rawMaterialI,
                     plant: plantNoI,
+                    soNo: soSearchI,
+                    poNo: poSearchI
                 } 
             },
             'columns': [
@@ -2269,6 +2305,8 @@ else{
             var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
             var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
+            var poSearchI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -2294,6 +2332,8 @@ else{
                         product: productSearchI,
                         rawMaterial: rawMaterialI,
                         plant: plantNoI,
+                        soNo: soSearchI,
+                        poNo: poSearchI
                     } 
                 },
                 'columns': [
@@ -2602,6 +2642,7 @@ else{
             var x = $('#vehicleNoTxt').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
 
             if (x){
                 $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
@@ -2611,23 +2652,33 @@ else{
                         if (obj.message.length > 0){
                             if (obj.message.length > 1){
                                 $('#addModal').find('#transporter').empty();
-                                $('#addModal').find('#transporter').append(`<option value="-" selected>-</option>`);
+                                $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
+
+                                var deliveredTransporter;
+
                                 for (var i = 0; i < obj.message.length; i++) {
                                     var customerName = obj.message[i].customer_name;
                                     var customerCode = obj.message[i].customer_code;
                                     var transporterName = obj.message[i].transporter_name;
                                     var transporterCode = obj.message[i].transporter_code;
+                                    var exDel = obj.message[i].ex_del;
 
-                                    if (customerName){
-                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                    if (exDel == 'DEL'){
+                                        deliveredTransporter = transporterName;
                                     }
+
+                                    /*if (customerName){
+                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                    }*/
 
                                     $('#addModal').find('#transporter').append(
                                         `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
-                                    );           
+                                    );  
                                 }
 
-                            }else{
+                                $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
+                            }
+                            else{
                                 var exDel = obj.message[0].ex_del;
                                 var customerName = obj.message[0].customer_name;
                                 var customerCode = obj.message[0].customer_code;
@@ -2655,10 +2706,12 @@ else{
                                             $('#addModal').find('#custName').val(customerName);
                                         }else{
                                             $('#addModal').find('#customerName').attr('disabled', false);
+                                            $('#addModal').find('#custName').val(customerName);
                                         }
                                         $('#addModal').find('#customerCode').val(customerCode);
                                     }
-                                }else{
+                                }
+                                else{
                                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
 
                                     if (!$('#addModal').find('#transporter').val()) {
@@ -2668,6 +2721,7 @@ else{
                                             $('#addModal').find('#transporterName').val(transporterName);
                                         }else{
                                             $('#addModal').find('#transporter').attr('disabled', false);
+                                            
                                         }
                                         $('#addModal').find('#transporterCode').val(transporterCode);
                                     }
@@ -2684,13 +2738,14 @@ else{
                         if (transactionStatus == 'Purchase'){
                             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
-                            if(!purchaseOrder && !soPoTag && !addNewTag){
+                            if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
                                 getSoPo();
                             }
-                        }else{
+                        }
+                        else{
                             var salesOrder = $('#addModal').find('#salesOrder').val();
 
-                            if(!salesOrder && !soPoTag && !addNewTag){
+                            if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                 getSoPo();
                             }
                         }
@@ -2798,12 +2853,20 @@ else{
                             if (obj.message.length > 0){
                                 if (obj.message.length > 1){
                                     $('#addModal').find('#transporter').empty();
-                                    $('#addModal').find('#transporter').append(`<option value="-" selected>-</option>`);
+                                    $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
+
+                                    var deliveredTransporter;
+
                                     for (var i = 0; i < obj.message.length; i++) {
                                         var customerName = obj.message[i].customer_name;
                                         var customerCode = obj.message[i].customer_code;
                                         var transporterName = obj.message[i].transporter_name;
                                         var transporterCode = obj.message[i].transporter_code;
+                                        var exDel = obj.message[i].ex_del;
+
+                                        if (exDel == 'DEL'){
+                                            deliveredTransporter = transporterName;
+                                        }
 
                                         /*if (customerName){
                                             $('#addModal').find('#customerName').val(customerName).trigger('change');
@@ -2811,9 +2874,10 @@ else{
 
                                         $('#addModal').find('#transporter').append(
                                             `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
-                                        );           
+                                        );  
                                     }
 
+                                    $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
                                 }
                                 else{
                                     var exDel = obj.message[0].ex_del;
@@ -2881,6 +2945,7 @@ else{
                             }
                             else{
                                 var salesOrder = $('#addModal').find('#salesOrder').val();
+                                console.log($('#addModal').find('#customerName').val());
 
                                 if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                     getSoPo();
@@ -3374,6 +3439,7 @@ else{
         $('input[name="exDel"]').change(function() {
             var vehicleNo1 = $('#addModal').find('#vehiclePlateNo1').val();
             var exDel = $('input[name="exDel"]:checked').val();
+
             if (exDel == 'true'){
                 $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
                 $('#addModal').find('#transporterCode').val('T01');
@@ -3396,8 +3462,6 @@ else{
                 //     }
                 // });
             }else{
-                $('#addModal').find('#transporter').val('').trigger('change');
-                $('#addModal').find('#transporterCode').val('');
                 // $('#addModal').find('#customerName').val('').trigger('change');
                 // $('#addModal').find('#customerCode').val('');
 
@@ -3529,7 +3593,7 @@ else{
                             $('#addModal').find('#rawMaterialName').empty();
 
                             var prodRawMat = obj.message;
-                            $('#addModal').find('#rawMaterialName').append(`<option value="" selected>-</option>`);
+                            $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
                             for (var i = 0; i < prodRawMat.length; i++) {
                                 $('#addModal').find('#rawMaterialName').append(
                                     `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
@@ -3627,7 +3691,7 @@ else{
                         $('#addModal').find('#purchaseOrder').empty();
 
                         var soPo = obj.message;
-                        $('#addModal').find('#purchaseOrder').append(`<option value="" selected>-</option>`);
+                        $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
                         for (var i = 0; i < soPo.length; i++) {
                             if (soPo.length == 1){
                                 $('#addModal').find('#purchaseOrder').append(
@@ -3672,7 +3736,7 @@ else{
                         $('#addModal').find('#salesOrder').empty();
 
                         var soPo = obj.message;
-                        $('#addModal').find('#salesOrder').append(`<option value="" selected>-</option>`);
+                        $('#addModal').find('#salesOrder').append(`<option selected="-">-</option>`);
                         for (var i = 0; i < soPo.length; i++) {
                             if (soPo.length == 1){
                                 $('#addModal').find('#salesOrder').append(

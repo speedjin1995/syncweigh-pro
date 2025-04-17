@@ -29,7 +29,11 @@ if (!empty($data)) {
         $SONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
         $OrderNumber = (isset($rows['DOCNOEX']) && !empty($rows['DOCNOEX']) && $rows['DOCNOEX'] !== '' && $rows['DOCNOEX'] !== null) ? trim($rows['DOCNOEX']) : '';
         $CustomerCode = (isset($rows['CODE']) && !empty($rows['CODE']) && $rows['CODE'] !== '' && $rows['CODE'] !== null) ? trim($rows['CODE']) : '';
-        $CustomerName = (isset($rows['COMPANYNAME']) && !empty($rows['COMPANYNAME']) && $rows['COMPANYNAME'] !== '' && $rows['COMPANYNAME'] !== null) ? trim($rows['COMPANYNAME']) : '';
+        $CustomerName = '';
+        if (!empty($CustomerCode)){
+            $CustomerName = searchCustomerByCode($CustomerCode, $db);
+        }
+        // $CustomerName = (isset($rows['COMPANYNAME']) && !empty($rows['COMPANYNAME']) && $rows['COMPANYNAME'] !== '' && $rows['COMPANYNAME'] !== null) ? trim($rows['COMPANYNAME']) : '';
         $TransporterCode = (isset($rows['SHIPPER']) && !empty($rows['SHIPPER']) && $rows['SHIPPER'] !== '' && $rows['SHIPPER'] !== null) ? trim($rows['SHIPPER']) : '';
         $TransporterName = '';
         if (!empty($TransporterCode)) {
@@ -41,7 +45,11 @@ if (!empty($data)) {
             $AgentName = searchAgentNameByCode($AgentCode, $db);
         }
         $ProductCode = (isset($rows['ITEMCODE']) && !empty($rows['ITEMCODE']) && $rows['ITEMCODE'] !== '' && $rows['ITEMCODE'] !== null) ? trim($rows['ITEMCODE']) : '';
-        $ProductName = (isset($rows['DESCRIPTION']) && !empty($rows['DESCRIPTION']) && $rows['DESCRIPTION'] !== '' && $rows['DESCRIPTION'] !== null) ? trim($rows['DESCRIPTION']) : '';
+        // $ProductName = (isset($rows['DESCRIPTION']) && !empty($rows['DESCRIPTION']) && $rows['DESCRIPTION'] !== '' && $rows['DESCRIPTION'] !== null) ? trim($rows['DESCRIPTION']) : '';
+        $ProductName = '';
+        if (!empty($ProductName)) {
+            $ProductName = searchProductNameByCode($ProductCode, $db);
+        }
         $VehNumber = (isset($rows['DESCRIPTION2']) && !empty($rows['DESCRIPTION2']) && $rows['DESCRIPTION2'] !== '' && $rows['DESCRIPTION2'] !== null) ? trim($rows['DESCRIPTION2']) : '';
         $Remarks = !empty($rows['REMARKS']) ? trim($rows['REMARKS']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
@@ -115,18 +123,22 @@ if (!empty($data)) {
             $customerRow = mysqli_fetch_assoc($customerDetail);
             
             if(empty($customerRow)){
-                if($insert_customer = $db->prepare("INSERT INTO Customer (customer_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_customer->bind_param('ssss', $CustomerCode, $CustomerName, $uid, $uid);
-                    $insert_customer->execute();
-                    $customerId = $insert_customer->insert_id; // Get the inserted customer ID
-                    $insert_customer->close();
+                // if($insert_customer = $db->prepare("INSERT INTO Customer (customer_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                //     $insert_customer->bind_param('ssss', $CustomerCode, $CustomerName, $uid, $uid);
+                //     $insert_customer->execute();
+                //     $customerId = $insert_customer->insert_id; // Get the inserted customer ID
+                //     $insert_customer->close();
                     
-                    if ($insert_customer_log = $db->prepare("INSERT INTO Customer_Log (customer_id, customer_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_customer_log->bind_param('sssss', $customerId, $CustomerCode, $CustomerName, $actionId, $uid);
-                        $insert_customer_log->execute();
-                        $insert_customer_log->close();
-                    }    
-                }
+                //     if ($insert_customer_log = $db->prepare("INSERT INTO Customer_Log (customer_id, customer_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                //         $insert_customer_log->bind_param('sssss', $customerId, $CustomerCode, $CustomerName, $actionId, $uid);
+                //         $insert_customer_log->execute();
+                //         $insert_customer_log->close();
+                //     }    
+                // }
+
+                $errMsg = "Customer: ".$CustomerCode." doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
             }
         }
 
@@ -137,18 +149,22 @@ if (!empty($data)) {
             $transporterSite = mysqli_fetch_assoc($transporterDetail);
             
             if(empty($transporterSite)){
-                if($insert_transporter = $db->prepare("INSERT INTO Transporter (transporter_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_transporter->bind_param('ssss', $TransporterCode, $TransporterName, $uid, $uid);
-                    $insert_transporter->execute();
-                    $transporterId = $insert_transporter->insert_id; // Get the inserted transporter ID
-                    $insert_transporter->close();
+                // if($insert_transporter = $db->prepare("INSERT INTO Transporter (transporter_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                //     $insert_transporter->bind_param('ssss', $TransporterCode, $TransporterName, $uid, $uid);
+                //     $insert_transporter->execute();
+                //     $transporterId = $insert_transporter->insert_id; // Get the inserted transporter ID
+                //     $insert_transporter->close();
                     
-                    if ($insert_transporter_log = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_transporter_log->bind_param('sssss', $transporterId, $TransporterCode, $TransporterName, $actionId, $uid);
-                        $insert_transporter_log->execute();
-                        $insert_transporter_log->close();
-                    }    
-                }
+                //     if ($insert_transporter_log = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                //         $insert_transporter_log->bind_param('sssss', $transporterId, $TransporterCode, $TransporterName, $actionId, $uid);
+                //         $insert_transporter_log->execute();
+                //         $insert_transporter_log->close();
+                //     }    
+                // }
+
+                $errMsg = "Transporter: ".$TransporterCode." doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
             }
         }
 
@@ -159,18 +175,22 @@ if (!empty($data)) {
             $agentRow = mysqli_fetch_assoc($agentDetail);
             
             if(empty($agentRow)){
-                if($insert_agent = $db->prepare("INSERT INTO Agents (agent_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_agent->bind_param('ssss', $AgentCode, $AgentName, $uid, $uid);
-                    $insert_agent->execute();
-                    $agentId = $insert_agent->insert_id; // Get the inserted agent ID
-                    $insert_agent->close();
+                // if($insert_agent = $db->prepare("INSERT INTO Agents (agent_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                //     $insert_agent->bind_param('ssss', $AgentCode, $AgentName, $uid, $uid);
+                //     $insert_agent->execute();
+                //     $agentId = $insert_agent->insert_id; // Get the inserted agent ID
+                //     $insert_agent->close();
                     
-                    if ($insert_agent_log = $db->prepare("INSERT INTO Agents_Log (agent_id, agent_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_agent_log->bind_param('sssss', $agentId, $AgentCode, $AgentName, $actionId, $uid);
-                        $insert_agent_log->execute();
-                        $insert_agent_log->close();
-                    }    
-                }
+                //     if ($insert_agent_log = $db->prepare("INSERT INTO Agents_Log (agent_id, agent_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                //         $insert_agent_log->bind_param('sssss', $agentId, $AgentCode, $AgentName, $actionId, $uid);
+                //         $insert_agent_log->execute();
+                //         $insert_agent_log->close();
+                //     }    
+                // }
+
+                $errMsg = "Sales Representative: ".$AgentCode." doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
             }
         }
         
@@ -181,18 +201,22 @@ if (!empty($data)) {
             $vehRow = mysqli_fetch_assoc($vehDetail);
             
             if(empty($vehRow)){
-                if($insert_veh = $db->prepare("INSERT INTO Vehicle (veh_number, created_by, modified_by) VALUES (?, ?, ?)")) {
-                    $insert_veh->bind_param('sss', $VehNumber, $uid, $uid);
-                    $insert_veh->execute();
-                    $vehId = $insert_veh->insert_id; // Get the inserted vehicle ID
-                    $insert_veh->close();
+                // if($insert_veh = $db->prepare("INSERT INTO Vehicle (veh_number, created_by, modified_by) VALUES (?, ?, ?)")) {
+                //     $insert_veh->bind_param('sss', $VehNumber, $uid, $uid);
+                //     $insert_veh->execute();
+                //     $vehId = $insert_veh->insert_id; // Get the inserted vehicle ID
+                //     $insert_veh->close();
                     
-                    if ($insert_veh_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, action_id, action_by) VALUES (?, ?, ?, ?)")) {
-                        $insert_veh_log->bind_param('ssss', $vehId, $VehNumber, $actionId, $uid);
-                        $insert_veh_log->execute();
-                        $insert_veh_log->close();
-                    }    
-                }
+                //     if ($insert_veh_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, action_id, action_by) VALUES (?, ?, ?, ?)")) {
+                //         $insert_veh_log->bind_param('ssss', $vehId, $VehNumber, $actionId, $uid);
+                //         $insert_veh_log->execute();
+                //         $insert_veh_log->close();
+                //     }    
+                // }
+                
+                $errMsg = "Vehicle: ".$VehNumber." doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
             }
         }
 
@@ -203,18 +227,22 @@ if (!empty($data)) {
             $destinationRow = mysqli_fetch_assoc($destinationDetail);
             
             if(empty($destinationRow)){
-                if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
-                    $insert_destination->execute();
-                    $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
-                    $insert_destination->close();
+                // if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                //     $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
+                //     $insert_destination->execute();
+                //     $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
+                //     $insert_destination->close();
                     
-                    if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
-                        $insert_destination_log->execute();
-                        $insert_destination_log->close();
-                    }    
-                }
+                //     if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                //         $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
+                //         $insert_destination_log->execute();
+                //         $insert_destination_log->close();
+                //     }    
+                // }
+
+                $errMsg = "Destination: ".$DestinationCode." doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
             }
         }
 
@@ -225,18 +253,22 @@ if (!empty($data)) {
             $plantRow = mysqli_fetch_assoc($plantDetail);
             
             if(empty($plantRow)){
-                if($insert_plant = $db->prepare("INSERT INTO Plant (plant_code, created_by, modified_by) VALUES (?, ?, ?)")) {
-                    $insert_plant->bind_param('sss', $PlantCode, $uid, $uid);
-                    $insert_plant->execute();
-                    $plantId = $insert_plant->insert_id; // Get the inserted plant ID
-                    $insert_plant->close();
+                // if($insert_plant = $db->prepare("INSERT INTO Plant (plant_code, created_by, modified_by) VALUES (?, ?, ?)")) {
+                //     $insert_plant->bind_param('sss', $PlantCode, $uid, $uid);
+                //     $insert_plant->execute();
+                //     $plantId = $insert_plant->insert_id; // Get the inserted plant ID
+                //     $insert_plant->close();
                     
-                    if ($insert_plant_log = $db->prepare("INSERT INTO Plant_Log (plant_id, plant_code, action_id, action_by) VALUES (?, ?, ?, ?)")) {
-                        $insert_plant_log->bind_param('ssss', $plantId, $PlantCode, $actionId, $uid);
-                        $insert_plant_log->execute();
-                        $insert_plant_log->close();
-                    }    
-                }
+                //     if ($insert_plant_log = $db->prepare("INSERT INTO Plant_Log (plant_id, plant_code, action_id, action_by) VALUES (?, ?, ?, ?)")) {
+                //         $insert_plant_log->bind_param('ssss', $plantId, $PlantCode, $actionId, $uid);
+                //         $insert_plant_log->execute();
+                //         $insert_plant_log->close();
+                //     }    
+                // }
+
+                $errMsg = "Plant: ".$PlantCode." doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
             }
         }
 
@@ -247,20 +279,25 @@ if (!empty($data)) {
             $productRow = mysqli_fetch_assoc($productDetail);
             
             if(empty($productRow)){
-                if($insert_product = $db->prepare("INSERT INTO Product (product_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_product->bind_param('ssss', $ProductCode, $ProductName, $uid, $uid);
-                    $insert_product->execute();
-                    $productId = $insert_product->insert_id; // Get the inserted destination ID
-                    $insert_product->close();
+                // if($insert_product = $db->prepare("INSERT INTO Product (product_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
+                //     $insert_product->bind_param('ssss', $ProductCode, $ProductName, $uid, $uid);
+                //     $insert_product->execute();
+                //     $productId = $insert_product->insert_id; // Get the inserted destination ID
+                //     $insert_product->close();
                     
-                    if ($insert_product_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                        $insert_product_log->bind_param('sssss', $productId, $ProductCode, $ProductName, $actionId, $uid);
-                        $insert_product_log->execute();
-                        $insert_product_log->close();
-                    }    
-                }
+                //     if ($insert_product_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
+                //         $insert_product_log->bind_param('sssss', $productId, $ProductCode, $ProductName, $actionId, $uid);
+                //         $insert_product_log->execute();
+                //         $insert_product_log->close();
+                //     }    
+                // }
+            
+                $errMsg = "Product: ".$ProductCode." doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
             }
         }
+
         # Checking for existing Order No.
         if($OrderNumber != null && $OrderNumber != ''){
             $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$OrderNumber' AND product_code = '$ProductCode' AND deleted = '0'";
