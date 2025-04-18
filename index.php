@@ -16,7 +16,7 @@ $baudrate = 9600;
 $databits = "8";
 $parity = "N";
 $stopbits = '1';
-$indicator = 'BX23';
+$indicator = 'X722';
     
 if(($row = $result->fetch_assoc()) !== null){
     //$role = $row['role_code'];
@@ -2654,7 +2654,7 @@ else{
                 $('#tareOutgoing').trigger('keyup');
             }*/
 
-            var vehicleNo1 = $(this).val();
+            /*var vehicleNo1 = $(this).val();
             var vehicleNo1Edit = $('#vehiclePlateNo1Edit').val();
             var exDel = $('input[name="exDel"]:checked').val();
             if (vehicleNo1Edit == 'EDIT'){
@@ -2718,7 +2718,7 @@ else{
                         $("#failBtn").click();
                     }
                 });
-            }
+            }*/
         });
 
         $('#vehiclePlateNo2').on('change', function(){
@@ -2806,6 +2806,17 @@ else{
             var current = Math.abs(nett1 - nett2);
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
+            $('#reduceWeight').trigger('change');
+            //$('#finalWeight').trigger('change');
+        });
+        
+        $('#reduceWeight').on('change', function(){
+            debugger;
+            var reduce = $(this).val() ? parseFloat($(this).val()) : 0;
+            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            var final = Math.abs(nett1 - reduce);
+            $('#currentWeight').text(final.toFixed(0));
+            $('#finalWeight').val(final.toFixed(0));
             $('#currentWeight').trigger('change');
             $('#finalWeight').trigger('change');
         });
@@ -2897,8 +2908,8 @@ else{
             var current = Math.abs(nett1 - nett2);
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
-            $('#currentWeight').trigger('change');
-            $('#finalWeight').trigger('change');
+            $('#reduceWeight').trigger('change');
+            //$('#finalWeight').trigger('change');
         });
 
         $('#currentWeight').on('change', function(){
@@ -2914,7 +2925,6 @@ else{
 
         $('#transactionStatus').on('change', function(){
             var customerType = $('#addModal').find('#customerType').val();
-            debugger;
 
             if($(this).val() == "Purchase" || $(this).val() == "Local"){
                 $('#divWeightDifference').show();
@@ -3070,7 +3080,7 @@ else{
             }
         });
 
-        $('#purchaseOrder').on('change', function (){
+        /*$('#purchaseOrder').on('change', function (){
             var purchaseOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val();
 
@@ -3246,7 +3256,7 @@ else{
                 });
             }
 
-        });
+        });*/
 
         <?php
             if(isset($_GET['weight'])){
@@ -3454,22 +3464,31 @@ else{
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-                debugger;
-                if (obj.message.transaction_status == 'Purchase'){
-                    $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
-                    $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
-                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
-                }else{
-                    $('#addModal').find('#salesOrder').next('.select2-container').hide();
-                    $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
-                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
-                }
                 
+                $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
+                $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
+                $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
+                $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change')
+                $('#addModal').find('#siteCode').val(obj.message.site_code);
+                $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
+                $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
+                $('#addModal').find('#agentCode').val(obj.message.agent_code);
+                $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
+                $('#addModal').find('#productCode').val(obj.message.product_code);
+                $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
+                $('#addModal').find('#orderWeight').val(obj.message.order_weight);
+                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
+                $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                $('#addModal').find('#plantCode').val(obj.message.plant_code);
+                
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
@@ -3514,7 +3533,7 @@ else{
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
 
                 // Load these field after PO/SO is loaded
-                $('#addModal').on('orderLoaded', function() {
+                /*$('#addModal').on('orderLoaded', function() {
                     $('#addModal').find('#customerCode').val(obj.message.customer_code);
                     $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
                     $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
@@ -3542,7 +3561,7 @@ else{
                     //     $('#addModal').find('#salesOrder').next('.select2-container').hide();
                     //     $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     // }
-                });
+                });*/
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
