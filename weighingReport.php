@@ -143,7 +143,7 @@ else{
                                                             <select id="statusSearch" class="form-select"  >
                                                                 <option value="Sales" selected>Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Public</option>
+                                                                <option value="Local">Local</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -241,7 +241,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-success" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -310,7 +310,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Public</p>
+                                                    Local</p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
@@ -382,10 +382,7 @@ else{
                                     </div> <!-- end .h-100-->
                                 </div> <!-- end col -->
                             </div><!-- container-fluid -->
-                    
-
                         </div> <!-- end .h-100-->
-
                     </div> <!-- end col -->
                 </div>
                 <!-- container-fluid -->
@@ -452,7 +449,7 @@ else{
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
+                                <button type="submit" class="btn btn-success" id="submit">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
@@ -563,7 +560,7 @@ else{
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                         '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
@@ -704,7 +701,7 @@ else{
         });
 
         $('#exportPdf').on('click', function(){
-            $("#exportPdfModal").find('#reportType').val('');
+            /*$("#exportPdfModal").find('#reportType').val('');
             $("#exportPdfModal").modal("show");
 
             $('#exportPdfForm').validate({
@@ -719,6 +716,54 @@ else{
                 unhighlight: function (element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
                 }
+            });*/
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+
+            $('#exportPdfForm').find('#fromDate').val(fromDateI);
+            $('#exportPdfForm').find('#toDate').val(toDateI);
+            $('#exportPdfForm').find('#status').val(statusI);
+            $('#exportPdfForm').find('#customer').val(customerNoI);
+            $('#exportPdfForm').find('#supplier').val(supplierNoI);
+            $('#exportPdfForm').find('#vehicle').val(vehicleNoI);
+            $('#exportPdfForm').find('#customerType').val(customerTypeI);
+            $('#exportPdfForm').find('#product').val(productI);
+            $('#exportPdfForm').find('#rawMat').val(rawMatI);
+            $('#exportPdfForm').find('#destination').val(destinationI);
+            $('#exportPdfForm').find('#plant').val(plantI);
+            $('#exportPdfForm').find('#file').val('weight');
+            $('#exportPdfModal').modal('hide');
+
+            $.post('php/exportPdf.php', $('#exportPdfForm').serialize(), function(response){
+                var obj = JSON.parse(response);
+
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                }
+                else if(obj.status === 'failed'){
+                    toastr["error"](obj.message, "Failed:");
+                }
+                else{
+                    toastr["error"]("Something wrong when activate", "Failed:");
+                }
+            }).fail(function(error){
+                console.error("Error exporting PDF:", error);
+                alert("An error occurred while generating the PDF.");
             });
         });
 

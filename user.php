@@ -102,7 +102,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                         <i class="fa-solid fa-ban align-middle me-1"></i>
                                                         Delete User
                                                     </button>
-                                                    <button type="button" id="addMembers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                    <button type="button" id="addMembers" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                         <i class="ri-add-circle-line align-middle me-1"></i>
                                                         Add New User
                                                     </button>
@@ -235,7 +235,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-danger" id="submitMember">Submit</button>
+                                <button type="button" class="btn btn-success" id="submitMember">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
@@ -258,7 +258,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                     </div>
                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-danger" id="uploadUser">Save changes</button>
+                        <button type="button" class="btn btn-success" id="uploadUser">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -383,7 +383,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                         '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +

@@ -87,7 +87,7 @@
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="submit" class="btn btn-danger">
+                                                        <button type="submit" class="btn btn-success">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -144,7 +144,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
                                                                                     <div class="col-sm-8">
@@ -207,7 +207,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitVehicle">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitVehicle">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -230,7 +230,7 @@
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                                                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-danger" id="uploadVehicle">Save changes</button>
+                                                        <button type="button" class="btn btn-success" id="uploadVehicle">Save changes</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -266,7 +266,7 @@
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Vehicle
                                                                 </button>
-                                                                <button type="button" id="addVehicle" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addVehicle" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Vehicle
                                                                 </button>
@@ -280,7 +280,7 @@
                                                                     <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Vehicle No</th>
                                                                     <!--th>Vehicle Weight</th-->
-                                                                    <th>EX-Quarry/Delivered</th>
+                                                                    <!--th>EX-Quarry/Delivered</th-->
                                                                     <th>Transporter</th>
                                                                     <th>Customer</th>
                                                                     <th>Status</th>
@@ -387,7 +387,7 @@ $(function () {
             },
             { data: 'veh_number' },
             //{ data: 'vehicle_weight' },
-            { 
+            /*{ 
                 data: 'ex_del',
                 render: function ( data, type, row ) {
                     if (data == 'EX'){
@@ -396,27 +396,25 @@ $(function () {
                         return "Delivered";
                     }
                 }
-            },
+            },*/
             { data: 'transporter_name' },
             { data: 'customer_name' },
+            { data: 'status' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    if (row.status == '1'){
-                        return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
-                    }else{
-                        return '';
+                    if(row.status == 'Inactive'){
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
                     }
-                }
-            },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    else{
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    }
                 }
             }
         ]       

@@ -516,7 +516,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $action = "2";
         
         # Checking to find balance weight before edit
-        $record_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?");
+        /*$record_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?");
         $record_stmt->bind_param('s', $weightId);
         $record_stmt->execute();
         $record_result = $record_stmt->get_result();
@@ -557,7 +557,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
         $updatePoSoStmt->bind_param('sss', $currentBalance, $poSoStatus, $poSoId);
         $updatePoSoStmt->execute();
-        $updatePoSoStmt->close();
+        $updatePoSoStmt->close();*/
 
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
@@ -670,7 +670,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         //$db->close();
 
                         # Update PO or SO table row balance
-                        if ($transactionStatus == 'Purchase'){
+                        /*if ($transactionStatus == 'Purchase'){
                             $currentBalance = $prevBalance - $supplierWeight;
                             $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
                         }else{
@@ -701,7 +701,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         $updatePoSoStmt->bind_param('sss', $currentBalance, $poSoStatus, $poSoId);
                         $updatePoSoStmt->execute();
     
-                        $updatePoSoStmt->close();
+                        $updatePoSoStmt->close();*/
                         
                         echo json_encode(
                             array(

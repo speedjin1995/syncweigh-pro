@@ -100,7 +100,7 @@
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="submit" class="btn btn-danger">
+                                                        <button type="submit" class="btn btn-success">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -215,7 +215,7 @@
                                                                     <div class="card-header p-2">
                                                                         <div class="d-flex justify-content-end">
                                                                             <div class="flex-shrink-0">
-                                                                                <button type="button" class="btn btn-danger add-material"><i class="ri-add-circle-line align-middle me-1"></i>Add Raw Material</button>
+                                                                                <button type="button" class="btn btn-success add-material"><i class="ri-add-circle-line align-middle me-1"></i>Add Raw Material</button>
                                                                             </div> 
                                                                         </div>
                                                                     </div>
@@ -244,7 +244,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitProduct">Submit</button>
+                                                                <button type="button" class="btn btn-success" id="submitProduct">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -268,7 +268,7 @@
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                                                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-danger" id="submitWeights">Save changes</button>
+                                                        <button type="button" class="btn btn-success" id="submitWeights">Save changes</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -304,7 +304,7 @@
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Product
                                                                 </button>
-                                                                <button type="button" id="addProduct" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addProduct" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Product
                                                                 </button>
@@ -394,7 +394,7 @@
                 <input type="number" class="form-control" id="rawMatWeight" name="rawMatWeight" style="background-color:white;" value="0">
             </td>
             <td class="d-flex" style="text-align:center">
-                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                <button class="btn btn-success" id="remove" style="background-color: #f06548;">
                     <i class="fa fa-times"></i>
                 </button>
             </td>
@@ -469,7 +469,7 @@ $(function () {
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
                     return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                     '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                     '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
