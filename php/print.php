@@ -81,7 +81,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $high = '';
                     $low = '';
 
-                    $transactionDate = date("d/m/Y", strtotime($originalDate));
+                    $transactionDate = date("d/m/Y", strtotime($row['transaction_date']));
                     $grossWeightTime = date("H:i:s", strtotime($row['gross_weight1_date']));
                     $tareWeightTime = date("H:i:s", strtotime($row['tare_weight1_date']));
 
