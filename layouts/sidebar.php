@@ -110,9 +110,9 @@
                                     <!--li class="nav-item">
                                         <a href="unit.php" class="nav-link">'.$lang['t-unit'].'</a>
                                     </li-->                           
-                                    <li class="nav-item">
+                                    <!--li class="nav-item">
                                         <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
-                                    </li> 
+                                    </li--> 
                                     <li class="nav-item">
                                         <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
                                     </li>                                    

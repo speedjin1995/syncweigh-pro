@@ -651,16 +651,11 @@ else{
                                                                             </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
+                                                                                    <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="agent" name="agent" >
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
-                                                                                                <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                         
+                                                                                        <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -683,41 +678,6 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>  
-                                                                            
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
-                                                                                <div class="row">
-                                                                                    <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="plant" name="plant" required>
-                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
-                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>        
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
-                                                                                <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
@@ -745,6 +705,44 @@ else{
                                                                                                No
                                                                                             </label>
                                                                                         </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="agent" name="agent" >
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
+                                                                                                <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                         
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
