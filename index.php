@@ -4181,7 +4181,7 @@ else{
     // }
 
     function print(id, transactionStatus) {
-        $.post('php/print.php', {userID: id, file: 'weight', , prePrint: 'Y'}, function(data){
+        $.post('php/print.php', {userID: id, file: 'weight', prePrint: 'Y'}, function(data){
             var obj = JSON.parse(data);
 
             if(obj.status === 'success'){
