@@ -85,8 +85,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $grossWeightTime = date("d/m/Y - H:i:s", strtotime($row['gross_weight1_date']));
                     $tareWeightTime = date("d/m/Y - H:i:s", strtotime($row['tare_weight1_date']));
 
+                    $orderSuppWeight = 0;
+                    $weightDifference = $row['weight_different'];
+
                     if($row['transaction_status'] == 'Sales'){
                         $cid = $row['customer_code'];
+                        $orderSuppWeight = $row['order_weight'];
                     
                         if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=?")) {
                             $update_stmt->bind_param('s', $cid);
@@ -128,7 +132,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                     }
                     else{
                         $cid = $row['supplier_code'];
-                    
+                        $orderSuppWeight = $row['supplier_weight'];
+
                         if ($update_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=?")) {
                             $update_stmt->bind_param('s', $cid);
                             
@@ -295,6 +300,18 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <p style="vertical-align: top; margin-left:50px;">
                                             <span style="font-size: 14px;">Weight Status: '.$row['transaction_status'].'</span><br>
                                             <span style="font-size: 14px;">D/O No: '.$row['delivery_no'].'</span><br>
+                                        </p>
+
+                                        <p style="vertical-align: top; margin-left:50px;"><br>';
+
+                                        if ($row['transaction_status'] == 'Sales'){
+                                            $message .= '<span style="font-size: 14px;">Order Weight: '.formatWeight($orderSuppWeight).' kg </span>';
+                                        }else{
+                                            $message .= '<span style="font-size: 14px;">Supply Weight: '.formatWeight($orderSuppWeight).' kg</span>';
+                                        }
+
+                                        $message .= '
+                                            <br><span style="font-size: 14px;">Variance: '.formatWeight($weightDifference).' kg</span>
                                         </p>
                                     </td>
                                 </tr>
