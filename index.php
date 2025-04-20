@@ -1961,7 +1961,7 @@ else{
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                        $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
                             var obj2 = JSON.parse(data);
 
                             if(obj2.status === 'success'){
@@ -1976,7 +1976,7 @@ else{
                                     
                                     setTimeout(function () {
                                         if (confirm("Do you need to reprint?")) {
-                                            $.post('php/print.php', { userID: obj.id, file: 'weight' }, function (data) {
+                                            $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
                                                 var obj = JSON.parse(data);
                                                 if (obj.status === 'success') {
                                                     var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
@@ -4182,15 +4182,37 @@ else{
 
     function print(id, transactionStatus) {
         $.post('php/print.php', {userID: id, file: 'weight', prePrint: 'Y'}, function(data){
-            var obj = JSON.parse(data);
+            var obj2 = JSON.parse(data);
 
-            if(obj.status === 'success'){
+            if(obj2.status === 'success'){
                 var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                printWindow.document.write(obj.message);
+                printWindow.document.write(obj2.message);
                 printWindow.document.close();
                 setTimeout(function(){
                     printWindow.print();
                     printWindow.close();
+                    table.ajax.reload();
+                    //window.location = 'index.php';
+                    
+                    setTimeout(function () {
+                        if (confirm("Do you need to reprint?")) {
+                            $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
+                                var obj = JSON.parse(data);
+                                if (obj.status === 'success') {
+                                    var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                    reprintWindow.document.write(obj.message);
+                                    reprintWindow.document.close();
+                                    setTimeout(function () {
+                                        reprintWindow.print();
+                                        reprintWindow.close();
+                                    }, 500);
+                                } 
+                                else {
+                                    window.location = 'index.php';
+                                }
+                            });
+                        }
+                    }, 500);
                 }, 500);
             }
             else if(obj.status === 'failed'){
