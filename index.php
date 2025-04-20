@@ -1926,8 +1926,9 @@ if ($user != null && $user != ''){
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find("#manualWeightNo").prop("checked", true);
-            $('#addModal').find("#manualWeightYes").prop("checked", false);
+            // $('#addModal').find("#manualWeightNo").prop("checked", true);
+            // $('#addModal').find("#manualWeightYes").prop("checked", false);
+            $('#addModal').find('#manualWeightNo').trigger('click');
             $('#addModal').find("#manualPriceNo").prop("checked", true);
             $('#addModal').find("#manualPriceYes").prop("checked", false);
             //$('#addModal').find('input[name="manualWeight"]').val("false");
