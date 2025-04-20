@@ -26,6 +26,9 @@
 </head>
 
 <?php include 'layouts/body.php'; ?>
+<?php 
+
+?>
 
 <div class="loading" id="spinnerLoading" style="display:none">
   <div class='mdi mdi-loading' style='transform:scale(0.79);'>
