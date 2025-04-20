@@ -402,6 +402,10 @@ if ($user != null && $user != ''){
                                                                 <h5 class="card-title mb-0">Weighing Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="exportSummaryPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Export Summary Report
+                                                                </button>
                                                                 <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <!-- temporarily commented for the group by selection page -->
                                                                 <!-- <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#exportModal"> -->
@@ -459,6 +463,67 @@ if ($user != null && $user != ''){
     </div>
     <!-- END layout-wrapper -->
 
+    <div class="modal fade" id="exportPdfModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Weighing Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="exportPdfForm" class="needs-validation" novalidate autocomplete="off">
+                        <div class="row col-12">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <input type="hidden" class="form-control" id="id" name="id"> 
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="reportType" class="col-sm-4 col-form-label">Report Type *</label>
+                                                    <div class="col-sm-8">
+                                                        <select id="reportType" name="reportType" class="form-select" required>
+                                                            <!-- <option value="CUSTOMER">Customer Report</option> -->
+                                                            <option value="SUMMARY">Summary Report</option>
+                                                            <option value="PRODUCT">Product Report</option>
+                                                            <!-- <option value="S&P">Sales and Purchase Report - Product</option>
+                                                            <option value="S&PC">Sales and Purchase Report - Customer</option> -->
+                                                        </select>   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="fromDate" name="fromDate">                                   
+                                            <input type="hidden" class="form-control" id="toDate" name="toDate">                                   
+                                            <input type="hidden" class="form-control" id="status" name="status">                                   
+                                            <input type="hidden" class="form-control" id="customer" name="customer">     
+                                            <input type="hidden" class="form-control" id="supplier" name="supplier"> 
+                                            <input type="hidden" class="form-control" id="vehicle" name="vehicle">     
+                                            <input type="hidden" class="form-control" id="weighingType" name="weighingType">     
+                                            <input type="hidden" class="form-control" id="customerType" name="customerType">     
+                                            <input type="hidden" class="form-control" id="product" name="product">  
+                                            <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
+                                            <input type="hidden" class="form-control" id="destination" name="destination">     
+                                            <input type="hidden" class="form-control" id="plant" name="plant">     
+                                            <input type="hidden" class="form-control" id="file" name="file">     
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-12">
+                            <div class="hstack gap-2 justify-content-end">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
+                            </div>
+                        </div><!--end col-->                                                               
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
     <?php include 'layouts/customizer.php'; ?>
     <?php include 'layouts/vendor-scripts.php'; ?>
     <!-- apexcharts -->
@@ -509,6 +574,8 @@ if ($user != null && $user != ''){
             dateFormat: "d-m-Y",
             defaultDate: today
         });
+
+        $('#plantSearch').val('PNG').trigger('change');
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -672,6 +739,56 @@ if ($user != null && $user != ''){
                         printWindow.print();
                         printWindow.close();
                     }, 500);
+                }
+                else if(obj.status === 'failed'){
+                    toastr["error"](obj.message, "Failed:");
+                }
+                else{
+                    toastr["error"]("Something wrong when activate", "Failed:");
+                }
+            }).fail(function(error){
+                console.error("Error exporting PDF:", error);
+                alert("An error occurred while generating the PDF.");
+            });
+        });
+
+        $('#exportSummaryPdf').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var productI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+
+            $.post('php/exportPdf.php', {
+                file: 'weight',
+                fromDate: fromDateI,
+                toDate: toDateI,
+                status: statusI,
+                customer: customerNoI,
+                supplier: supplierNoI,
+                vehicle: vehicleNoI,
+                weighingType: invoiceNoI,
+                product: productI,
+                plant: plantI,
+                type: 'summary'
+            }, function(response){
+                var obj = JSON.parse(response);
+
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                }
+                else if(obj.status === 'error'){
+                    alert(obj.message);
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
