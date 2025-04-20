@@ -6,42 +6,43 @@ require_once 'requires/lookup.php';
 $searchQuery = "";
 $groupByFields = array();
 
-function rearrangeList($weightDetails) {
-    // global $mapOfHouses, $mapOfWeights, $totalSGross, $totalSCrate, $totalSReduce, $totalSNet, $totalSBirds, $totalSCages, $totalAGross, $totalACrate, $totalAReduce, $totalANet, $totalABirds, $totalACages, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages;
-    global $groupByFields, $mapOfWeights;
+// function rearrangeList($weightDetails) {
+//     // global $mapOfHouses, $mapOfWeights, $totalSGross, $totalSCrate, $totalSReduce, $totalSNet, $totalSBirds, $totalSCages, $totalAGross, $totalACrate, $totalAReduce, $totalANet, $totalABirds, $totalACages, $totalGross, $totalCrate, $totalReduce, $totalNet, $totalCrates, $totalBirds, $totalMaleBirds, $totalMaleCages, $totalFemaleBirds, $totalFemaleCages, $totalMixedBirds, $totalMixedCages;
+//     global $groupByFields, $mapOfWeights;
 
-    $result = array();
+//     $result = array();
 
-    $groupby = array(
-        "customer_supplier_code" => "Customer/Supplier",
-        "product_code" => "Product",
-        "lorry_plate_no1" => "Vehicle",
-        "destination_code" => "Destination",
-        "transporter_code" => "Transporter"
-    );
+//     $groupby = array(
+//         "customer_supplier_code" => "Customer/Supplier",
+//         "product_code" => "Product",
+//         "lorry_plate_no1" => "Vehicle",
+//         "destination_code" => "Destination",
+//         "transporter_code" => "Transporter"
+//     );
 
-    foreach ($weightDetails as $row) {
-        $current = &$result;
+//     foreach ($weightDetails as $row) {
+//         $current = &$result;
 
-        // Loop through the group fields
-        foreach ($groupByFields as $field) {
-            $key = $row[$field];
-            if (!isset($current[$key])) {
-                $current[$key] = [];
-            }
-            $current = &$current[$key];
-        }
+//         // Loop through the group fields
+//         foreach ($groupByFields as $field) {
+//             $key = $row[$field];
+//             if (!isset($current[$key])) {
+//                 $current[$key] = [];
+//             }
+//             $current = &$current[$key];
+//         }
 
-        // Push the full row at the deepest level
-        $current[] = $row;
-    }
+//         // Push the full row at the deepest level
+//         $current[] = $row;
+//     }
 
-    return $result;
-}
+//     return $result;
+// }
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $date = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
     $formatted_date = $date->format('Y-m-d 00:00:00');
+    $fromDate = $date->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
@@ -54,6 +55,7 @@ if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate']
 if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''){
     $date = DateTime::createFromFormat('d-m-Y', $_POST['toDate']);
     $formatted_date = $date->format('Y-m-d 23:59:59');
+    $toDate = $date->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
@@ -117,21 +119,151 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
     }
 }
 
+// if(isset($_POST['groupOne']) && $_POST['groupOne'] != null && $_POST['groupOne'] != '' && $_POST['groupOne'] != '-'){
+//     $groupByFields[] = $_POST['groupOne'];
+// }
+
+// if(isset($_POST['groupTwo']) && $_POST['groupTwo'] != null && $_POST['groupTwo'] != '' && $_POST['groupTwo'] != '-'){
+//     $groupByFields[] = $_POST['groupTwo'];
+// }
+
+// if(isset($_POST['groupThree']) && $_POST['groupThree'] != null && $_POST['groupThree'] != '' && $_POST['groupThree'] != '-'){
+//     $groupByFields[] = $_POST['groupThree'];
+// }
+
 if(isset($_POST['groupOne']) && $_POST['groupOne'] != null && $_POST['groupOne'] != '' && $_POST['groupOne'] != '-'){
-    $groupByFields[] = $_POST['groupOne'];
+    if ($_POST['status'] == 'Purchase'){
+        $group1 = 'supplier_code';
+    }else{
+        $group1 = $_POST['groupOne'];
+    }
 }
 
 if(isset($_POST['groupTwo']) && $_POST['groupTwo'] != null && $_POST['groupTwo'] != '' && $_POST['groupTwo'] != '-'){
-    $groupByFields[] = $_POST['groupTwo'];
+    $group2 = $_POST['groupTwo'];
 }
 
+$group3 = null;
 if(isset($_POST['groupThree']) && $_POST['groupThree'] != null && $_POST['groupThree'] != '' && $_POST['groupThree'] != '-'){
-    $groupByFields[] = $_POST['groupThree'];
+    $group3 = $_POST['groupThree'];
 }
 
 $type = '';
 if(isset($_POST['type']) && $_POST['type'] != null && $_POST['type'] != '' && $_POST['type'] != '-'){
     $type = $_POST['type'];
+}
+
+function getWeightProductLookup(string $ids, $db): array {
+    $lookup = [];
+    $sql = "SELECT weight_id, product_code, product_name FROM Weight_Product WHERE weight_id IN ($ids)";
+    $result = $db->query($sql);
+
+    while ($row = $result->fetch_assoc()) {
+        $lookup[$row['weight_id']] = [
+            'product_code' => $row['product_code'],
+            'product_name' => $row['product_name'],
+        ];
+    }
+
+    return $lookup;
+}
+
+function rearrangeList(array $records, array $filteredGroupKeys, array $productLookup): array {
+    $grouped = [];
+
+    $filteredGroupKeys = array_filter($filteredGroupKeys, fn($key) => $key !== 'product_code');
+
+    foreach ($records as $record) {
+        $ref = &$grouped;
+
+        // Inject product_code from lookup via weight_id
+        $weightId = $record['id'] ?? null;
+
+        if ($weightId && isset($productLookup[$weightId])) {
+            $record['product_code'] = $productLookup[$weightId]['product_code'];
+            $record['product_name'] = $productLookup[$weightId]['product_name'];
+        } else {
+            $record['product_code'] = 'UNKNOWN';
+            $record['product_name'] = 'UNKNOWN';
+        }
+
+        // Add grouping levels based on provided groupKeys
+        foreach ($filteredGroupKeys as $key) {
+            if (empty($record[$key])) {
+                continue; // skip empty group value
+            }
+
+            $keyValue = $record[$key];
+
+            if (!isset($ref[$keyValue])) {
+                $ref[$keyValue] = [];
+            }
+
+            $ref = &$ref[$keyValue];
+        }
+
+        // Step 2: Group by product_code
+        $productKey = $record['product_code'];
+        if (!isset($ref[$productKey])) {
+            $ref[$productKey] = [];
+        }
+        $ref = &$ref[$productKey];
+
+        // Always group by transaction_date (formatting optional)
+        $dateKey = convertDatetimeToDate($record['transaction_date']) ?? 'UNKNOWN_DATE';
+
+        if (!isset($ref[$dateKey])) {
+            $ref[$dateKey] = [];
+        }
+
+        $ref[$dateKey][] = $record;
+
+        unset($ref); // break reference
+    }
+
+    return $grouped;
+}
+
+function addToHeaderGroup(&$headerGroup, $groupKey, $value) {
+    if (!isset($headerGroup[$groupKey])) {
+        $headerGroup[$groupKey] = [];
+    }
+
+    if (!in_array($value, $headerGroup[$groupKey])) {
+        $headerGroup[$groupKey][] = $value;
+    }
+}
+
+function callLookup($group, $groupValue, $db){
+    $value = '';
+    switch ($group) {
+        case 'Customer':
+            $value = searchCustomerByCode($groupValue, $db);
+            break;
+        case 'Supplier':
+            $value = searchSupplierByCode($groupValue, $db);
+            break;
+        case 'Product':
+            $value = searchProductNameByCode($groupValue, $db);
+            break;
+        case 'Raw Material':
+            $value = searchRawNameByCode($groupValue, $db);
+            break;
+        case 'Vehicle':
+            $value = $groupValue;
+            break;
+        case 'Destination':
+            $value = searchDestinationNameByCode($groupValue, $db);
+            break;
+        case 'Transporter':
+            $value = searchTransporterNameByCode($groupValue, $db);
+            break;
+        case 'Plant':
+            $value = searchPlantNameByCode($groupValue, $db);
+            break;
+    }
+    
+    return $value;
 }
 
 if(isset($_POST["file"])){
@@ -311,7 +443,736 @@ if(isset($_POST["file"])){
                     )
                 );
             }
-        }else{
+        }
+        elseif ($type == 'group'){
+            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
+                // Execute the prepared query.
+                if (! $select_stmt->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }
+                else{
+                    $result = $select_stmt->get_result();
+                    $weightData = [];
+                    $id = [];
+                    while ($row = $result->fetch_assoc()) {
+                        // Replace all null values with ''
+                        $cleanedRow = array_map(function($value) {
+                            return $value === null ? '' : $value;
+                        }, $row);
+    
+                        $weightData[] = $cleanedRow;
+                        $id[] = $row['id'];
+                    }
+                    
+                    if (count($id) > 0){
+                        $id = implode(',', $id);
+                    }
+    
+                    $groupList = [
+                        $group1, $group2, $group3            
+                    ];
+    
+                    // Clean groupKeys to remove any empty values
+                    $filteredGroupKeys = array_filter($groupList, fn($key) => !empty($key));
+                    $groupBy = "";
+                    $groupOrder = [];
+                    if (empty($filteredGroupKeys)){
+                        $groupBy = 'Date';
+                    }else{
+                        foreach ($filteredGroupKeys as $group) {
+                            if ($group == 'customer_code'){
+                                $groupBy .= '/Customer';
+                                $groupOrder[] = 'Customer';
+                            }elseif ($group == 'supplier_code') {
+                                $groupBy .= '/Supplier';
+                                $groupOrder[] = 'Supplier';
+                            }elseif($group == 'product_code'){
+                                $groupBy .= '/Product';
+                                $groupOrder[] = 'Product';
+                            }
+                        }
+                    }
+                    $groupBy = ltrim($groupBy, '/');
+
+                    $weightProductData = getWeightProductLookup($id, $db); 
+    
+                    $processedData = rearrangeList($weightData, $filteredGroupKeys, $weightProductData);
+    
+                    ################################################## Header Processing ##################################################
+                    $headerGrouping = [];
+                    
+                    if ($_POST['status'] == 'Purchase'){
+                        $defaultGroups = ['Supplier', 'Product', 'Vehicle', 'Destination', 'Transporter', 'Plant']; // Default group keys
+                    }else{
+                        $defaultGroups = ['Customer', 'Product', 'Vehicle', 'Destination', 'Transporter', 'Plant']; // Default group keys
+                    }
+                    // Initialize $headerGrouping with empty arrays
+                    foreach ($defaultGroups as $group) {
+                        $headerGroup[$group] = [];
+                    }
+    
+                    if (count($groupOrder) > 0){
+                        foreach ($processedData as $grp1 => $grp1Data) {
+                            # Group 1 Header Processing
+                            if (in_array($groupOrder[0], $defaultGroups)) {
+                                addToHeaderGroup($headerGroup, $groupOrder[0], $grp1);
+                            }
+        
+                            if(count($groupOrder) > 1 && !empty($grp1Data)){
+                                foreach ($grp1Data as $grp2 => $grp2Data) {
+                                    # Group 2 Header Processing
+                                    if (in_array($groupOrder[1], $defaultGroups)) {
+                                        addToHeaderGroup($headerGroup, $groupOrder[1], $grp2);
+                                    }
+        
+                                    if(count($groupOrder) > 2 && !empty($grp2Data)){
+                                        foreach ($grp2Data as $grp3 => $grp3Data) {
+                                            # Group 3 Header Processing
+                                            if (in_array($groupOrder[2], $defaultGroups)) {
+                                                addToHeaderGroup($headerGroup, $groupOrder[2], $grp3);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    ################################################## Row Processing ##################################################
+                    $groupCount = count($filteredGroupKeys)+1; // Add 1 for date group
+                    $compiledRowData = '';
+                    if($groupCount == 1){ 
+                        $grpNettWeight = 0;
+                        $totalNettWeight = 0;
+                        $grpTotalCount = 0;
+    
+                        foreach ($processedData as $date => $grpData) { 
+                            $rowData = '
+                                <tr>
+                                    <td colspan="17" style="border:0; padding-bottom: 0;">
+                                        <div class="fw-bold">
+                                            <span>
+                                                Date <span>:</span> '.$date.'
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ';
+    
+                            foreach ($grpData as $data){ 
+                                $grpNettWeight += $data['nett_weight1']/1000; 
+                                if ($data['ex_del'] == 'EX'){
+                                    $exDel = 'E';
+                                }else{
+                                    $exDel = 'D';
+                                }
+    
+                                $rowData .= '<tr class="details">
+                                    <td>'.$data['transaction_id'].'</td>
+                                    <td>'.$data['transporter_code'].'</td>
+                                    <td>'.$data['lorry_plate_no1'].'</td>
+                                    <td>'.$data['agent_code'].'</td>
+                                    <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
+                                    <td width="10%">'.$data['purchase_order'].'</td>
+                                    <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
+                                    <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
+                                    <td class="text-end">'.($data['gross_weight1']/1000).'</td>
+                                    <td class="text-end">'.($data['tare_weight1']/1000).'</td>
+                                    <td class="text-end">'.($data['nett_weight1']/1000).'</td>
+                                    <td class="text-end">0.00</td>
+                                    <td class="text-end">0.00</td>
+                                    <td class="text-end">0.00</td>
+                                    <td class="text-end">0.00</td>
+                                    <td class="text-end">0.00</td>
+                                    <td>'.$exDel.'</td>
+                                    <td>'.searchNamebyId($data['created_by'], $db).'</td>
+                                </tr>';                
+                            }
+    
+                            $rowData .= '
+                                <tr class="details fw-bold">
+                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grpData).'</td>
+                                    <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpNettWeight.'</td>
+                                    <td></td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                </tr>
+                                <tr style="height: 18.5px;"></tr>
+                            ';
+                            
+                            // Append this row block to full HTML
+                            $compiledRowData .= $rowData;
+    
+                            $grpTotalCount += count($grpData);
+                            $totalNettWeight += $grpNettWeight;
+                        }
+    
+                        $compiledRowData .= '
+                            <tr class="details fw-bold">
+                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
+                                <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
+                                <td></td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            </tr>
+                            <tr style="height: 18.5px;"></tr>         
+                        ';
+                    }elseif ($groupCount == 2) { 
+                        $grpTotalCount = 0;
+                        $dateNettWeight = 0;
+                        $totalNettWeight = 0;
+                        foreach ($processedData as $grp1 => $grp1Data) { 
+                            $rowData = '
+                                <tr>
+                                    <td colspan="17" style="border:0; padding-bottom: 0;">
+                                        <div class="fw-bold">
+                                            <span>
+                                                '.$groupOrder[0].' <span>:</span> '.$grp1.' &nbsp;&nbsp;&nbsp;&nbsp; '.callLookup($groupOrder[0], $grp1, $db).'
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            '; 
+                            $grp1Records = 0;
+                            $grp1NettWeight = 0;
+                            foreach ($grp1Data as $date => $dateData){
+                                $rowData .= '
+                                    <tr>
+                                        <td colspan="17" style="border:0; padding-bottom: 0;">
+                                            <div class="fw-bold">
+                                                <span>
+                                                    Date <span>:</span> '.$date.'
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                '; 
+    
+                                foreach ($dateData as $data){
+                                    $dateNettWeight += $data['nett_weight1']/1000;
+                                    if ($data['ex_del'] == 'EX'){
+                                        $exDel = 'E';
+                                    }else{
+                                        $exDel = 'D';
+                                    }
+    
+                                    $rowData .= '<tr class="details">
+                                        <td>'.$data['transaction_id'].'</td>
+                                        <td>'.$data['transporter_code'].'</td>
+                                        <td>'.$data['lorry_plate_no1'].'</td>
+                                        <td>'.$data['agent_code'].'</td>
+                                        <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
+                                        <td width="10%">'.$data['purchase_order'].'</td>
+                                        <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
+                                        <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
+                                        <td class="text-end">'.($data['gross_weight1']/1000).'</td>
+                                        <td class="text-end">'.($data['tare_weight1']/1000).'</td>
+                                        <td class="text-end">'.($data['nett_weight1']/1000).'</td>
+                                        <td class="text-end">0.00</td>
+                                        <td class="text-end">0.00</td>
+                                        <td class="text-end">0.00</td>
+                                        <td class="text-end">0.00</td>
+                                        <td class="text-end">0.00</td>
+                                        <td>'.$exDel.'</td>
+                                        <td>'.searchNamebyId($data['created_by'], $db).'</td>
+                                    </tr>';                
+                                }
+    
+                                $rowData .= '
+                                    <tr class="details fw-bold">
+                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
+                                        <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($dateData).'</td>
+                                        <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
+                                        <td></td>
+                                        <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    </tr>
+                                    <tr style="height: 18.5px;"></tr>      
+                                ';
+    
+                                $grp1Records += count($dateData);
+                                $grp1NettWeight += $dateNettWeight;
+                            }
+    
+                            $rowData .= '
+                                <tr class="details fw-bold">
+                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Records.'</td>
+                                    <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
+                                    <td></td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                </tr>
+                                <tr style="height: 18.5px;"></tr>   
+                            ';
+                            
+                            // Append this row block to full HTML
+                            $compiledRowData .= $rowData;
+    
+                            $grpTotalCount += $grp1Records;
+                            $totalNettWeight += $grp1NettWeight;
+                        }
+    
+                        $compiledRowData .= '
+                            <tr class="details fw-bold">
+                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
+                                <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
+                                <td></td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            </tr>
+                        ';
+                    }elseif ($groupCount == 3) {
+                        $companyCount = 0;
+                        $companyNettWeight = 0;
+                        $grp2Count = [];
+                        $grp2NettWeight = [];
+                        
+                        foreach ($processedData as $grp1 => $grp1Data){
+                            $rowData = '
+                                <tr>
+                                    <td colspan="17" style="border:0; padding-bottom: 0;">
+                                        <div class="fw-bold">
+                                            <span>
+                                                '.$groupOrder[0].' <span>:</span> '.$grp1.' &nbsp;&nbsp;&nbsp;&nbsp; '.callLookup($groupOrder[0], $grp1, $db).'
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            '; 
+    
+                            $grp1Count = 0;
+                            $grp1NettWeight = 0;
+                            foreach ($grp1Data as $grp2 => $grp2Data){
+                                $rowData .= '
+                                    <tr>
+                                        <td colspan="17" style="border:0; padding-top: 0; padding-bottom: 0;">
+                                            <div class="fw-bold">
+                                                <span>
+                                                    '.$groupOrder[1].' <span>:</span> '.$grp2.' &nbsp;&nbsp;&nbsp;&nbsp; '.callLookup($groupOrder[1], $grp2, $db).'
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                '; 
+    
+                                $grp2Count[$grp2] = 0;
+                                $grp2NettWeight[$grp2] = 0;
+    
+                                foreach ($grp2Data as $grp3 => $grp3Data){ 
+                                    $grp2Count[$grp2] += count($grp3Data);
+    
+                                    $rowData .= '
+                                        <tr>
+                                            <td colspan="17" style="border:0; padding-top: 0; padding-bottom: 0;">
+                                                <div class="fw-bold">
+                                                    <span>
+                                                    Date <span>:</span> '.$grp3.'
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    '; 
+    
+                                    $dateNettWeight = 0;
+                                    foreach ($grp3Data as $data){ 
+                                        $grp1Count++;
+                                        $dateNettWeight += $data['nett_weight1']/1000; 
+                                        if ($data['ex_del'] == 'EX'){
+                                            $exDel = 'E';
+                                        }else{
+                                            $exDel = 'D';
+                                        }
+        
+                                        $rowData .= '<tr class="details">
+                                            <td>'.$data['transaction_id'].'</td>
+                                            <td>'.$data['transporter_code'].'</td>
+                                            <td>'.$data['lorry_plate_no1'].'</td>
+                                            <td>'.$data['agent_code'].'</td>
+                                            <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
+                                            <td width="10%">'.$data['purchase_order'].'</td>
+                                            <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
+                                            <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
+                                            <td class="text-end">'.($data['gross_weight1']/1000).'</td>
+                                            <td class="text-end">'.($data['tare_weight1']/1000).'</td>
+                                            <td class="text-end">'.($data['nett_weight1']/1000).'</td>
+                                            <td class="text-end">0.00</td>
+                                            <td class="text-end">0.00</td>
+                                            <td class="text-end">0.00</td>
+                                            <td class="text-end">0.00</td>
+                                            <td class="text-end">0.00</td>
+                                            <td>'.$exDel.'</td>
+                                            <td>'.searchNamebyId($data['created_by'], $db).'</td>
+                                        </tr>';                
+                                    }
+    
+                                    $rowData .= '
+                                        <tr class="details fw-bold">
+                                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
+                                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grp3Data).'</td>
+                                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
+                                            <td></td>
+                                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        </tr>
+                                        <tr style="height: 18.5px;"></tr>      
+                                    ';
+    
+                                    $grp2NettWeight[$grp2] += $dateNettWeight;
+                                    $grp1NettWeight += $dateNettWeight;
+    
+                                }
+    
+                                $rowData .= '
+                                    <tr class="details fw-bold">
+                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
+                                        <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count[$grp2].'</td>
+                                        <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2NettWeight[$grp2].'</td>
+                                        <td></td>
+                                        <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    </tr>
+                                    <tr style="height: 18.5px;"></tr>
+                                ';
+                            }
+    
+                            $rowData .= '
+                                <tr class="details fw-bold">
+                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
+                                    <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
+                                    <td></td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                </tr>
+                                <tr style="height: 18.5px;"></tr>   
+                            ';
+    
+                            $companyCount += $grp1Count;
+                            $companyNettWeight += $grp1NettWeight;
+    
+                            $compiledRowData .= $rowData;
+                        }
+    
+                        $compiledRowData .= '
+                            <tr class="details fw-bold">
+                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
+                                <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
+                                <td></td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            </tr>
+                        ';
+                    }elseif($groupCount == 4){
+                        $companyCount = 0;
+                        $companyNettWeight = 0;
+    
+                        foreach ($processedData as $grp1 => $grp1Data) {
+                            $rowData = '
+                                <tr>
+                                    <td colspan="17" style="border:0; padding-bottom: 0;">
+                                        <div class="fw-bold">
+                                            <span>
+                                                '.$groupOrder[0].' <span>:</span> '.$grp1.' &nbsp;&nbsp;&nbsp;&nbsp; '.callLookup($groupOrder[0], $grp1, $db).'
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            '; 
+                        
+                            $grp1Count = 0;
+                            $grp1TotalNettWeight = 0;
+                        
+                            foreach ($grp1Data as $grp2 => $grp2Data) {
+                                $rowData .= '
+                                    <tr>
+                                        <td colspan="17" style="border:0; padding-top: 0; padding-bottom: 0;">
+                                            <div class="fw-bold">
+                                                <span>
+                                                    '.$groupOrder[1].' <span>:</span> '.$grp2.' &nbsp;&nbsp;&nbsp;&nbsp; '.callLookup($groupOrder[1], $grp2, $db).'
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                '; 
+                        
+                                $grp2Count = 0;
+                                $grp2TotalNettWeight = 0;
+                        
+                                foreach ($grp2Data as $grp3 => $grp3Data) { 
+                                    $rowData .= '
+                                        <tr>
+                                            <td colspan="17" style="border:0; padding-top: 0; padding-bottom: 0;">
+                                                <div class="fw-bold">
+                                                    <span>
+                                                    '.$groupOrder[2].' <span>:</span> '.$grp3.' &nbsp;&nbsp;&nbsp;&nbsp; '.callLookup($groupOrder[2], $grp3, $db).'
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    '; 
+                        
+                                    $grp3Count = 0;
+                                    $grp3TotalNettWeight = 0;
+                        
+                                    foreach ($grp3Data as $grp4 => $grp4Data) {
+                                        $rowData .= '
+                                            <tr>
+                                                <td colspan="17" style="border:0; padding-top: 0; padding-bottom: 0;">
+                                                    <div class="fw-bold">
+                                                        <span>
+                                                        Date <span>:</span> '.$grp4.'
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ';
+                        
+                                        $dateNettWeight = 0;
+                                        $grp4Count = 0;
+                        
+                                        foreach ($grp4Data as $data) {
+                                            $dateNettWeight += $data['nett_weight1'] / 1000;
+                                            $grp4Count++;
+                                            if ($data['ex_del'] == 'EX') {
+                                                $exDel = 'E';
+                                            } else {
+                                                $exDel = 'D';
+                                            }
+                        
+                                            $rowData .= '<tr class="details">
+                                                <td>'.$data['transaction_id'].'</td>
+                                                <td>'.$data['transporter_code'].'</td>
+                                                <td>'.$data['lorry_plate_no1'].'</td>
+                                                <td>'.$data['agent_code'].'</td>
+                                                <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
+                                                <td width="10%">'.$data['purchase_order'].'</td>
+                                                <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
+                                                <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
+                                                <td class="text-end">'.($data['gross_weight1'] / 1000).'</td>
+                                                <td class="text-end">'.($data['tare_weight1'] / 1000).'</td>
+                                                <td class="text-end">'.($data['nett_weight1'] / 1000).'</td>
+                                                <td class="text-end">0.00</td>
+                                                <td class="text-end">0.00</td>
+                                                <td class="text-end">0.00</td>
+                                                <td class="text-end">0.00</td>
+                                                <td class="text-end">0.00</td>
+                                                <td>'.$exDel.'</td>
+                                                <td>'.searchNamebyId($data['created_by'], $db).'</td>
+                                            </tr>';                
+                                        }
+                        
+                                        $rowData .= '
+                                            <tr class="details fw-bold">
+                                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp4.'</td>
+                                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4Count.'</td>
+                                                <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
+                                                <td></td>
+                                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                            </tr>
+                                            <tr style="height: 18.5px;"></tr>      
+                                        ';
+                        
+                                        $grp3TotalNettWeight += $dateNettWeight;
+                                        $grp3Count += $grp4Count;
+                                    }
+                        
+                                    $rowData .= '
+                                        <tr class="details fw-bold">
+                                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.callLookup($groupOrder[2], $grp3, $db).'</td>
+                                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3Count.'</td>
+                                            <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalNettWeight.'</td>
+                                            <td></td>
+                                            <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        </tr>
+                                        <tr style="height: 18.5px;"></tr>
+                                    ';
+                        
+                                    $grp2TotalNettWeight += $grp3TotalNettWeight;
+                                    $grp2Count += $grp3Count;
+                                }
+                        
+                                $rowData .= '
+                                    <tr class="details fw-bold">
+                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
+                                        <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count.'</td>
+                                        <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalNettWeight.'</td>
+                                        <td></td>
+                                        <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    </tr>
+                                    <tr style="height: 18.5px;"></tr>   
+                                ';
+                        
+                                $grp1TotalNettWeight += $grp2TotalNettWeight;
+                                $grp1Count += $grp2Count;
+                            }
+                        
+                            $rowData .= '
+                                <tr class="details fw-bold">
+                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
+                                    <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalNettWeight.'</td>
+                                    <td></td>
+                                    <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                </tr>
+                                <tr style="height: 18.5px;"></tr>   
+                            ';
+                            
+                            $companyNettWeight += $grp1TotalNettWeight;
+                            $companyCount += $grp1Count;
+                            $compiledRowData .= $rowData;
+                        }
+    
+                        $compiledRowData .= '
+                            <tr class="details fw-bold">
+                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
+                                <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
+                                <td></td>
+                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                            </tr>
+                        ';
+                    }
+    
+                    $message = '
+                        <html>
+                            <head>
+                                <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
+                                <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
+    
+                                <style>
+                                    @page {
+                                        size: A4 landscape;
+                                        margin: 5mm;
+                                    }
+    
+                                    @media print {
+                                        header {
+                                            top: 0;
+                                            width: 100%;
+                                            background: white;
+                                            z-index: 1000; /* High z-index to make sure header stays on top */
+                                        } 
+    
+                                        .details td {
+                                            border: 0;
+                                            padding-top: 0;
+                                            padding-bottom: 0;
+                                        }
+    
+                                        .section-break {
+                                            page-break-before: always;
+                                        }
+                                    }
+                                </style>
+                            </head>
+    
+                            <body>
+                                <header>
+                                    <div class="row">
+                                        <div class="d-flex justify-content-center">
+                                            <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <p>Sales Weighing Summary Report By '.$groupBy.'</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <p>
+                                            Start Date : '.$fromDate.' Last Date : '.$toDate.'
+                                            <br>
+                                            Start Customer / Last Customer : '.reset($headerGroup['Customer']).' / '.end($headerGroup['Customer']).'
+                                            <br>
+                                            Start Product / Last Product : '.reset($headerGroup['Product']).' / '.end($headerGroup['Product']).'
+                                        </p>
+                                    </div>
+                                </header>
+                                <div class="container-full content">
+                                    <div class="row">
+                                        <div>
+                                            <table class="table" style="font-size: 12px">
+                                                <thead style="border-bottom: 1px solid black;">
+                                                    <tr class="text-center" style="border-top: 1px solid black;">
+                                                        <th rowspan="2" class="text-start">Serial No.</th>
+                                                        <th rowspan="2">Transport</th>
+                                                        <th rowspan="2">Vehicle No.</th>
+                                                        <th rowspan="2">Salesman</th>
+                                                        <th rowspan="2">Date</th>
+                                                        <th rowspan="2">P/O No</th>
+                                                        <th colspan="2" class="pb-0 pt-0" style="border-bottom: none;">Time</th>
+                                                        <th colspan="3" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
+                                                        <th rowspan="2">Price <br>/Ton</th>
+                                                        <th rowspan="2">Trans Rate</th>
+                                                        <th rowspan="2">Ex_GST <br>(RM)</th>
+                                                        <th rowspan="2">GST 0% <br>(RM)</th>
+                                                        <th rowspan="2">Amount <br>(RM)</th>
+                                                        <th rowspan="2">E/D</th>
+                                                        <th rowspan="2"></th>
+                                                    </tr>
+                                                    <tr class="text-center">
+                                                        <th>In</th>
+                                                        <th>Out</th>
+                                                        <th>In</th>
+                                                        <th>Out</th>
+                                                        <th>Net</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                '.$compiledRowData.'
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </body>
+    
+                        </html>
+                    ';
+                    
+                    echo json_encode(
+                        array(
+                            "status" => "success",
+                            "message" => $message
+                        )
+                    );
+                }
+            }
+            else{
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Something Goes Wrong"
+                    ));
+            }
+        }
+        else{
             if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {

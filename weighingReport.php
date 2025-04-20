@@ -152,8 +152,7 @@ if ($user != null && $user != ''){
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select"  >
-                                                                <option selected>-</option>
-                                                                <option value="Sales">Sales</option>
+                                                                <option value="Sales" selected>Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
                                                                 <option value="Misc">Misc</option>
@@ -725,9 +724,12 @@ if ($user != null && $user != ''){
                 weighingType: invoiceNoI,
                 product: transactionStatusI,
                 plant: plantNoI,
-                groupOne: groupOneI,
-                groupTwo: groupTwoI,
-                groupThree: groupThreeI
+                groupOne: 'customer_code',
+                groupTwo: 'product_code',
+                // groupOne: groupOneI,
+                // groupTwo: groupTwoI,
+                // groupThree: groupThreeI,
+                type: 'group'
             }, function(response){
                 var obj = JSON.parse(response);
 
