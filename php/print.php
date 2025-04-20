@@ -293,123 +293,19 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <p style="vertical-align: top; margin-left:50px;"><br>';
 
                                         if ($row['transaction_status'] == 'Sales'){
-                                            $message .= '<span style="font-size: 14px;">Order Weight: '.formatWeight($orderSuppWeight).' kg </span>';
-                                        }else{
-                                            $message .= '<span style="font-size: 14px;">Supply Weight: '.formatWeight($orderSuppWeight).' kg</span>';
+                                            $message .= '<span style="font-size: 14px;">Order Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight) + ' kg' : '-').'</span>';
+                                        }
+                                        else{
+                                            $message .= '<span style="font-size: 14px;">Supply Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight) + ' kg' : '-').'</span>';
                                         }
 
                                         $message .= '
-                                            <br><span style="font-size: 14px;">Variance: '.formatWeight($weightDifference).' kg</span>
+                                            <br><span style="font-size: 14px;">Variance: '.($weightDifference ? formatWeight($weightDifference) + ' kg' : '-').'</span>
                                         </p>
                                     </td>
                                 </tr>
                             </table>';
                             
-                            # Old Code
-                            // $message .= '<hr>
-                            // <table style="width:100%">
-                            // <tr>
-                            //     <td style="width: 40%;">
-                            //         <p>
-                            //             <span style="font-weight: bold;font-size: 16px;">'.$customer.'</span><br>
-                            //         </p>
-                            //     </td>
-                            //     <td style="width: 20%;">
-                            //         <p>&nbsp;</p>
-                            //     </td>
-                            // </tr>
-                            // <tr>
-                            //     <td>
-                            //         <p>
-                            //             <span style="font-size: 12px;">'.$customerA.'</span><br>
-                            //             <span style="font-size: 12px;">'.$customerA2.'</span><br>
-                            //             <span style="font-size: 12px;">'.$customerA3.'</span><br>
-                            //             <span style="font-size: 12px;">TEL: '.$customerP.'/ FAX: '.$customerE.'</span>
-                            //         </p>
-                            //     </td>
-                            //     <td style="width: 20%;"></td>
-                            //     <td>
-                            //         <p>
-                            //             <span style="font-size: 12px;">Weight Date & Time : '.($row['gross_weight1_date'] ?? '').'</span><br>
-                            //             <span style="font-size: 12px;">User Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '.$row['created_by'].'</span><br>
-                            //         </p>
-                            //         <table style="width:100%; border:1px solid black;">
-                            //             <tr>';
-                            //         if($row['transaction_status'] == 'Sales'){
-                            //             $message .= '<th colspan="2" style="border:1px solid black; font-size: 14px;">Order Weight</th>
-                            //             <th colspan="2" style="border:1px solid black; font-size: 14px;">Variance Weight</th>
-                            //             <th style="border:1px solid black; font-size: 14px;">Variance</th>';
-                            //         }
-                            //         else{
-                            //             $message .= '<th colspan="2" style="border:1px solid black; font-size: 14px;">Supply Weight</th>
-                            //             <th colspan="2" style="border:1px solid black; font-size: 14px;">Variance Weight</th>
-                            //             <th style="border:1px solid black; font-size: 14px;">Variance</th>';
-                            //         }
-
-                            //         if($row['transaction_status'] == 'Sales'){
-                            //             $final = $row['final_weight'];
-                            //             $trueWeight = $row['order_weight'] ?? '0';
-                            //             $different = 0;
-
-                            //             if ($variance == 'W') {
-                            //                 if ($low !== null && ((float)$final < (float)$trueWeight - (float)$low || (float)$final > (float)$trueWeight + (float)$low)) {
-                            //                     $different = (float)$final < (float)$trueWeight - (float)$low;
-                            //                 } elseif ($high !== null && ((float)$final < (float)$trueWeight - (float)$high || (float)$final > (float)$trueWeight + (float)$high)) {
-                            //                     $different = (float)$final < (float)$trueWeight - (float)$high;
-                            //                 }
-                            //             } 
-                            //             elseif ($variance == 'P') {
-                            //                 if ($low !== null && ((float)$final < (float)$trueWeight * (1 - (float)$low / 100) || (float)$final > (float)$trueWeight * (1 + (float)$low / 100))) {
-                            //                     $different = (float)$final - (float)$trueWeight * (1 - (float)$low / 100);
-                            //                 } elseif ($high !== null && ((float)$final < (float)$trueWeight * (1 - (float)$high / 100) || (float)$final > (float)$trueWeight * (1 + (float)$high / 100))) {
-                            //                     $different = (float)$final - (float)$trueWeight * (1 - (float)$high / 100);
-                            //                 }
-                            //             }
-
-                            //             $message .= '</tr>
-                            //             <tr>
-                            //                 <td style="border:1px solid black;">'.($row['order_weight'] ?? '').'</td>
-                            //                 <td style="border:1px solid black;">kg</td>
-                            //                 <td style="border:1px solid black;">'.($row['weight_different'] ?? '').'</td>
-                            //                 <td style="border:1px solid black;">kg</td>
-                            //                 <td style="border:1px solid black;">'.$different.' '.($variance == "W" ? 'kg' : '%').'</td>
-                            //             </tr>';
-                            //         }
-                            //         else{
-                            //             $final = $row['final_weight'];
-                            //             $trueWeight = $row['supplier_weight'] ?? '0';
-                            //             $different = 0;
-
-                            //             if ($variance == 'W') {
-                            //                 if ($low !== null && ((float)$final < (float)$trueWeight - (float)$low || (float)$final > (float)$trueWeight + (float)$low)) {
-                            //                     $different = (float)$final < (float)$trueWeight - (float)$low;
-                            //                 } elseif ($high !== null && ((float)$final < (float)$trueWeight - (float)$high || (float)$final > (float)$trueWeight + (float)$high)) {
-                            //                     $different = (float)$final < (float)$trueWeight - (float)$high;
-                            //                 }
-                            //             } 
-                            //             elseif ($variance == 'P') {
-                            //                 if ($low !== null && ((float)$final < (float)$trueWeight * (1 - (float)$low / 100) || (float)$final > (float)$trueWeight * (1 + (float)$low / 100))) {
-                            //                     $different = (float)$final - (float)$trueWeight * (1 - (float)$low / 100);
-                            //                 } elseif ($high !== null && ((float)$final < (float)$trueWeight * (1 - (float)$high / 100) || (float)$final > (float)$trueWeight * (1 + (float)$high / 100))) {
-                            //                     $different = (float)$final - (float)$trueWeight * (1 - (float)$high / 100);
-                            //                 }
-                            //             }
-
-                            //             $message .= '</tr>
-                            //             <tr>
-                            //                 <td style="border:1px solid black;">'.($row['supplier_weight'] ?? '').'</td>
-                            //                 <td style="border:1px solid black;">kg</td>
-                            //                 <td style="border:1px solid black;">'.($row['weight_different'] ?? '').'</td>
-                            //                 <td style="border:1px solid black;">kg</td>
-                            //                 <td style="border:1px solid black;">'.$different.' '.($variance == "W" ? 'kg' : '%').'</td>
-                            //             </tr>';
-                            //         }
-                                            
-                            //         $message .= '</table>
-                            //     </td>
-                            // </tr>
-                            // </table>';
-
                             if($row['weight_type'] == 'Container'){
                                 $message .= '<table style="width:100%; border:0px solid black;">
                                     <tr>
@@ -438,7 +334,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <tr>
                                         <td colspan="4" >Destination: <span style="margin-left: 10px;font-size: 16px;">'.$row['destination'].'</span></td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">Final Weight</td>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.abs((int)formatWeight($row['nett_weight1']) - (int)formatWeight($row['nett_weight2'])).' kg</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight(abs((int)$row['nett_weight1'] - (int)$row['nett_weight2'])).' kg</td>
                                     </tr>
                                     <tr>
                                         <td colspan="4">Product Description: <span style="margin-left: 10px">'.$row['product_name'].'</span></td>
