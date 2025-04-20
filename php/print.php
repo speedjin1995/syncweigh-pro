@@ -293,14 +293,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <p style="vertical-align: top; margin-left:50px;"><br>';
 
                                         if ($row['transaction_status'] == 'Sales'){
-                                            $message .= '<span style="font-size: 14px;">Order Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight) + ' kg' : '-').'</span>';
+                                            $message .= '<span style="font-size: 14px;">Order Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
                                         }
                                         else{
-                                            $message .= '<span style="font-size: 14px;">Supply Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight) + ' kg' : '-').'</span>';
+                                            $message .= '<span style="font-size: 14px;">Supply Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
                                         }
 
                                         $message .= '
-                                            <br><span style="font-size: 14px;">Variance: '.($weightDifference ? formatWeight($weightDifference) + ' kg' : '-').'</span>
+                                            <br><span style="font-size: 14px;">Variance: '.($weightDifference ? formatWeight($weightDifference).' kg' : '-').'</span>
                                         </p>
                                     </td>
                                 </tr>
