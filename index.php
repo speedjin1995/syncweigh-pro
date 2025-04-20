@@ -1985,12 +1985,24 @@ else{
                                                     setTimeout(function () {
                                                         reprintWindow.print();
                                                         reprintWindow.close();
+                                                        <?php
+                                                            if(isset($_GET['weight'])){
+                                                                echo "window.location = 'index.php';";
+                                                            }
+                                                        ?>
                                                     }, 500);
                                                 } 
                                                 else {
                                                     window.location = 'index.php';
                                                 }
                                             });
+                                        }
+                                        else{
+                                            <?php
+                                                if(isset($_GET['weight'])){
+                                                    echo "window.location = 'index.php';";
+                                                }
+                                            ?>
                                         }
                                     }, 500);
                                 }, 500);
@@ -4192,7 +4204,6 @@ else{
                     printWindow.print();
                     printWindow.close();
                     table.ajax.reload();
-                    //window.location = 'index.php';
                     
                     setTimeout(function () {
                         if (confirm("Do you need to reprint?")) {
@@ -4205,12 +4216,24 @@ else{
                                     setTimeout(function () {
                                         reprintWindow.print();
                                         reprintWindow.close();
+                                        <?php
+                                            if(isset($_GET['weight'])){
+                                                echo "window.location = 'index.php';";
+                                            }
+                                        ?>
                                     }, 500);
                                 } 
                                 else {
                                     window.location = 'index.php';
                                 }
                             });
+                        }
+                        else{
+                            <?php
+                                if(isset($_GET['weight'])){
+                                    echo "window.location = 'index.php';";
+                                }
+                            ?>
                         }
                     }, 500);
                 }, 500);
