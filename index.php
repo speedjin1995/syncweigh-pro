@@ -1892,7 +1892,7 @@ if ($user != null && $user != ''){
             $('#addModal').find('#customerName').val("");
             $('#addModal').find('#driverCode').val("");
             $('#addModal').find('#driverName').val("");
-            $('#addModal').find('#driverIC').val("");
+            $('#addModal').find('#driverICNo').val("");
             $('#addModal').find('#supplierCode').val("");
             $('#addModal').find('#supplierName').val("");
             $('#addModal').find('#productCode').val("");
