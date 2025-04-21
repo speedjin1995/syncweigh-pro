@@ -2739,14 +2739,14 @@ else{
                             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
                             if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
-                                // getSoPo();
+                                getSoPo();
                             }
                         }
                         else{
                             var salesOrder = $('#addModal').find('#salesOrder').val();
 
                             if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
-                                // getSoPo();
+                                getSoPo();
                             }
                         }
                     }
@@ -2940,7 +2940,7 @@ else{
                                 var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
                                 if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
-                                    // getSoPo();
+                                    getSoPo();
                                 }
                             }
                             else{
@@ -2948,7 +2948,7 @@ else{
                                 console.log($('#addModal').find('#customerName').val());
 
                                 if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
-                                    // getSoPo();
+                                    getSoPo();
                                 }
                             }
                         }
@@ -3379,7 +3379,7 @@ else{
                 });
             }else{
                 if (!soPoTag && !addNewTag){
-                    // getSoPo();
+                    getSoPo();
                 }
             }
         });
@@ -3391,7 +3391,7 @@ else{
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
             if (!purchaseOrder && !soPoTag && !addNewTag){
-                // getSoPo();
+                getSoPo();
             }
         });
 
@@ -3432,7 +3432,7 @@ else{
             var salesOrder = $('#addModal').find('#salesOrder').val();
 
             if (!salesOrder && !soPoTag && !addNewTag){
-                // getSoPo();
+                getSoPo();
             }
         });
 
@@ -3561,7 +3561,7 @@ else{
                 });
             }else{
                 if (!soPoTag && !addNewTag){
-                    // getSoPo();
+                    getSoPo();
                 }
             }
         });
