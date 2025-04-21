@@ -103,11 +103,11 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "raw_mat_name"=>$row['raw_mat_name'],
     "order_no"=>$row['order_no'],
     "po_no"=>$row['po_no'],
-    "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
+    "order_date" => !empty($row["order_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y') : '',
     "exquarry_or_delivered"=>$row['exquarry_or_delivered'],
     "balance"=>$row['balance'],
     "status"=>$row['status'],
-    "modified_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y'),
+    "order_date" => !empty($row["order_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y') : '',
   );
 }
 
