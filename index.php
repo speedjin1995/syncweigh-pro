@@ -1462,6 +1462,7 @@ else{
     var table = null;
     let soPoTag = false;
     let addNewTag = false;
+    let isSyncing = false;
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -3409,16 +3410,23 @@ else{
 
         //transporter
         $('#transporter').on('change', function(){
+            if (isSyncing) return;
+
             $('#transporterCode').val($('#transporter :selected').data('code'));
             $('#transporterName').val($(this).val());
 
-            if ($(this).val() == 'Own Transportation'){
+            isSyncing = true;
+
+            if ($(this).val() == 'OWN TRANSPORTATION'){
                 $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                 // $(this).attr('disabled', true);
             }else{
                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 // $(this).attr('disabled', false);
             }
+
+            isSyncing = false;
+
         });
 
         //destination
@@ -3449,12 +3457,20 @@ else{
         });
 
         $('input[name="exDel"]').change(function() {
+            if (isSyncing) return;
+
             var vehicleNo1 = $('#addModal').find('#vehiclePlateNo1').val();
             var exDel = $('input[name="exDel"]:checked').val();
 
+            isSyncing = true;
+
             if (exDel == 'true'){
-                $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+                $('#addModal').find('#transporter').val('OWN TRANSPORTATION').trigger('change.select2');
                 $('#addModal').find('#transporterCode').val('T01');
+                $('#addModal').find('#transporterName').val('OWN TRANSPORTATION');
+
+                // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+                // $('#addModal').find('#transporterCode').val('T01');
                 // $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function(data){
                 //     var obj = JSON.parse(data);
                 //     if(obj.status === 'success'){
@@ -3497,6 +3513,8 @@ else{
                 //     }
                 // });
             }
+
+            isSyncing = false;
         });
 
         //rawMaterialName
