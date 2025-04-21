@@ -790,17 +790,11 @@ if(isset($_POST["file"])){
                                     foreach ($grp3Data as $data){ 
                                         $grp1Count++;
                                         $dateNettWeight += $data['nett_weight1']/1000; 
-                                        if ($data['ex_del'] == 'EX'){
-                                            $exDel = 'E';
-                                        }else{
-                                            $exDel = 'D';
-                                        }
         
                                         $rowData .= '<tr class="details">
                                             <td>'.$data['transaction_id'].'</td>
                                             <td>'.$data['transporter_code'].'</td>
                                             <td>'.$data['lorry_plate_no1'].'</td>
-                                            <td>'.$data['agent_code'].'</td>
                                             <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
                                             <td width="10%">'.$data['purchase_order'].'</td>
                                             <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
@@ -813,14 +807,13 @@ if(isset($_POST["file"])){
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
-                                            <td>'.$exDel.'</td>
                                             <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                         </tr>';                
                                     }
     
                                     $rowData .= '
                                         <tr class="details fw-bold">
-                                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
+                                            <td colspan="5" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grp3Data).'</td>
                                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
                                             <td></td>
@@ -838,7 +831,7 @@ if(isset($_POST["file"])){
     
                                 $rowData .= '
                                     <tr class="details fw-bold">
-                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
+                                        <td colspan="5" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count[$grp2].'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2NettWeight[$grp2].'</td>
                                         <td></td>
@@ -852,7 +845,7 @@ if(isset($_POST["file"])){
     
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                    <td colspan="5" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
                                     <td></td>
@@ -869,17 +862,17 @@ if(isset($_POST["file"])){
                             $compiledRowData .= $rowData;
                         }
     
-                        $compiledRowData .= '
-                            <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
-                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
-                                <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                                <td></td>
-                                <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
-                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
-                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
-                            </tr>
-                        ';
+                        // $compiledRowData .= '
+                        //     <tr class="details fw-bold">
+                        //         <td colspan="5" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                        //         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
+                        //         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
+                        //         <td></td>
+                        //         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        //         <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        //         <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
+                        //     </tr>
+                        // ';
                     }elseif($groupCount == 4){
                         $companyCount = 0;
                         $companyNettWeight = 0;
@@ -1123,7 +1116,6 @@ if(isset($_POST["file"])){
                                                         <th rowspan="2" class="text-start">Serial No.</th>
                                                         <th rowspan="2">Transport</th>
                                                         <th rowspan="2">Vehicle No.</th>
-                                                        <th rowspan="2">Salesman</th>
                                                         <th rowspan="2">Date</th>
                                                         <th rowspan="2">P/O No</th>
                                                         <th colspan="2" class="pb-0 pt-0" style="border-bottom: none;">Time</th>
@@ -1133,7 +1125,6 @@ if(isset($_POST["file"])){
                                                         <th rowspan="2">Ex_GST <br>(RM)</th>
                                                         <th rowspan="2">GST 0% <br>(RM)</th>
                                                         <th rowspan="2">Amount <br>(RM)</th>
-                                                        <th rowspan="2">E/D</th>
                                                         <th rowspan="2"></th>
                                                     </tr>
                                                     <tr class="text-center">
