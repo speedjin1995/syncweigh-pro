@@ -268,7 +268,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                 <div class="row">
                                                                                     <label for="orderDate" class="col-sm-4 col-form-label">Order Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="orderDate" name="orderDate">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="orderDate" name="orderDate" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>    

@@ -2703,10 +2703,10 @@ else{
                                     if (!$('#addModal').find('#transporter').val()) {
                                         $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                         if (transporterName){
-                                            $('#addModal').find('#transporter').attr('disabled', true);
+                                            // $('#addModal').find('#transporter').attr('disabled', true);
                                             $('#addModal').find('#transporterName').val(transporterName);
                                         }else{
-                                            $('#addModal').find('#transporter').attr('disabled', false);
+                                            // $('#addModal').find('#transporter').attr('disabled', false);
                                         }
                                         $('#addModal').find('#transporterCode').val(transporterCode);
                                     }
@@ -2714,10 +2714,10 @@ else{
                                     if (!$('#addModal').find('#customerName').val()) {
                                         $('#addModal').find('#customerName').val(customerName).trigger('change');
                                         if (customerName){
-                                            $('#addModal').find('#customerName').attr('disabled', true);
+                                            // $('#addModal').find('#customerName').attr('disabled', true);
                                             $('#addModal').find('#custName').val(customerName);
                                         }else{
-                                            $('#addModal').find('#customerName').attr('disabled', false);
+                                            // $('#addModal').find('#customerName').attr('disabled', false);
                                             $('#addModal').find('#custName').val(customerName);
                                         }
                                         $('#addModal').find('#customerCode').val(customerCode);
@@ -2729,10 +2729,10 @@ else{
                                     if (!$('#addModal').find('#transporter').val()) {
                                         $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                         if (transporterName){
-                                            $('#addModal').find('#transporter').attr('disabled', true);
+                                            // $('#addModal').find('#transporter').attr('disabled', true);
                                             $('#addModal').find('#transporterName').val(transporterName);
                                         }else{
-                                            $('#addModal').find('#transporter').attr('disabled', false);
+                                            // $('#addModal').find('#transporter').attr('disabled', false);
                                             
                                         }
                                         $('#addModal').find('#transporterCode').val(transporterCode);
@@ -2740,7 +2740,7 @@ else{
 
                                     if (!$('#addModal').find('#customerName').val()) {
                                         $('#addModal').find('#customerName').val('').trigger('change');
-                                        $('#addModal').find('#customerName').attr('disabled', false);
+                                        // $('#addModal').find('#customerName').attr('disabled', false);
                                         $('#addModal').find('#customerCode').val('');
                                     }
                                 } 
@@ -2904,10 +2904,10 @@ else{
                                         if (!$('#addModal').find('#transporter').val()) {
                                             $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                             if (transporterName){
-                                                $('#addModal').find('#transporter').attr('disabled', true);
+                                                // $('#addModal').find('#transporter').attr('disabled', true);
                                                 $('#addModal').find('#transporterName').val(transporterName);
                                             }else{
-                                                $('#addModal').find('#transporter').attr('disabled', false);
+                                                // $('#addModal').find('#transporter').attr('disabled', false);
                                             }
                                             $('#addModal').find('#transporterCode').val(transporterCode);
                                         }
@@ -2915,10 +2915,10 @@ else{
                                         if (!$('#addModal').find('#customerName').val()) {
                                             $('#addModal').find('#customerName').val(customerName).trigger('change');
                                             if (customerName){
-                                                $('#addModal').find('#customerName').attr('disabled', true);
+                                                // $('#addModal').find('#customerName').attr('disabled', true);
                                                 $('#addModal').find('#custName').val(customerName);
                                             }else{
-                                                $('#addModal').find('#customerName').attr('disabled', false);
+                                                // $('#addModal').find('#customerName').attr('disabled', false);
                                                 $('#addModal').find('#custName').val(customerName);
                                             }
                                             $('#addModal').find('#customerCode').val(customerCode);
@@ -2930,10 +2930,10 @@ else{
                                         if (!$('#addModal').find('#transporter').val()) {
                                             $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                             if (transporterName){
-                                                $('#addModal').find('#transporter').attr('disabled', true);
+                                                // $('#addModal').find('#transporter').attr('disabled', true);
                                                 $('#addModal').find('#transporterName').val(transporterName);
                                             }else{
-                                                $('#addModal').find('#transporter').attr('disabled', false);
+                                                // $('#addModal').find('#transporter').attr('disabled', false);
                                                 
                                             }
                                             $('#addModal').find('#transporterCode').val(transporterCode);
@@ -2941,7 +2941,7 @@ else{
 
                                         if (!$('#addModal').find('#customerName').val()) {
                                             $('#addModal').find('#customerName').val('').trigger('change');
-                                            $('#addModal').find('#customerName').attr('disabled', false);
+                                            // $('#addModal').find('#customerName').attr('disabled', false);
                                             $('#addModal').find('#customerCode').val('');
                                         }
                                     } 
@@ -3414,10 +3414,10 @@ else{
 
             if ($(this).val() == 'Own Transportation'){
                 $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
-                $(this).attr('disabled', true);
+                // $(this).attr('disabled', true);
             }else{
                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
-                $(this).attr('disabled', false);
+                // $(this).attr('disabled', false);
             }
         });
 
