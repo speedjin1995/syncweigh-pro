@@ -1573,7 +1573,7 @@ else{
             }
         });
 
-        $('#statusSearch').val('Sales').trigger('change');
+        //$('#statusSearch').val('Sales').trigger('change');
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -1635,14 +1635,14 @@ else{
                         let buttons = `<div class="row g-1 d-flex">`;
 
                         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                            if (row.is_complete != 'Y' ){
+                            //if (row.is_complete != 'Y' ){
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
                                         <i class="fas fa-pen"></i>
                                     </button>
                                 </div>`;
-                            }
+                            //}
                         }else {
                             if (row.is_complete != 'Y' ){
                                 buttons += `
@@ -2371,14 +2371,14 @@ else{
                             let buttons = `<div class="row g-1 d-flex">`;
 
                             if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                                if (row.is_complete != 'Y' ){
+                                //if (row.is_complete != 'Y' ){
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
                                             <i class="fas fa-pen"></i>
                                         </button>
                                     </div>`;
-                                }
+                                //}
                             }else {
                                 if (row.is_complete != 'Y' ){
                                     buttons += `

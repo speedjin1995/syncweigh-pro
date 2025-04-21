@@ -37,13 +37,13 @@ if(isset($_POST['userID'])){
                     }
                 }
 
-                if ($vehicleExist){
+                /*if ($vehicleExist){
                     echo json_encode(
                         array(
                             "status" => "error",
                             "message" => 'There is a pending record for this vehicle'
                         ));  
-                }else{
+                }else{*/
                     if ($update_stmt = $db->prepare("SELECT Vehicle.* FROM Vehicle WHERE veh_number=? AND status='0'")) {
                         $update_stmt->bind_param('s', $id);
                         
@@ -79,7 +79,7 @@ if(isset($_POST['userID'])){
                                 ));   
                         }
                     }
-                }
+                //}
             }
         }
     }else{
