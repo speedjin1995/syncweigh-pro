@@ -167,7 +167,7 @@ else{
 
                             <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
+                                    <div class="card-header fs-5 text-white" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #099885;">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
@@ -194,7 +194,8 @@ else{
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Local</option>
+                                                                <option value="Local">Internal Transfer</option>
+                                                                <option value="Misc">Miscellaneous</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -291,23 +292,24 @@ else{
                             </div>
                             
                             <div class="row">
-                                <div class="col-xl-4 col-md-6">
+                                <div class="col-xl-3 col-md-6">
                                     <!-- card -->
-                                    <div class="card card-animate">
+                                    <div class="card card-animate" style="background-color: #4CAF50;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Sales</p>
+                                                    <p class="text-uppercase fw-medium text-white text-truncate mb-0">
+                                                        Sales
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
                                                 <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="salesInfo">0</span>
+                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                                                        <span class="counter-value text-white" id="salesInfo">0</span>
                                                     </h4>
                                                 </div>
-                                                <div class="avatar-sm flex-shrink-0">
+                                                <div class="avatar-sm flex-shrink-0" style="background-color:white;">
                                                     <span class="avatar-title bg-soft-success rounded fs-3">
                                                         <i class="bx bx-dollar-circle text-success"></i>
                                                     </span>
@@ -317,22 +319,24 @@ else{
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-4 col-md-6">
+                                <div class="col-xl-3 col-md-6">
                                     <!-- card -->
-                                    <div class="card card-animate">
+                                    <div class="card card-animate" style="background-color: #FFC107;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Purchase</p>
+                                                    <p class="text-uppercase fw-medium text-white text-truncate mb-0">
+                                                        Purchase
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
                                                 <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="purchaseInfo">0</span></h4>
+                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                                                        <span class="counter-value text-white" id="purchaseInfo">0</span>
+                                                    </h4>
                                                 </div>
-                                                <div class="avatar-sm flex-shrink-0">
+                                                <div class="avatar-sm flex-shrink-0" style="background-color:white;">
                                                     <span class="avatar-title bg-soft-info rounded fs-3">
                                                         <i class="bx bx-shopping-bag text-info"></i>
                                                     </span>
@@ -342,23 +346,51 @@ else{
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-4 col-md-6">
+                                <div class="col-xl-3 col-md-6">
                                     <!-- card -->
-                                    <div class="card card-animate">
+                                    <div class="card card-animate" style="background-color: #81D4FA;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Local</p>
+                                                    <p class="text-uppercase fw-medium text-white text-truncate mb-0">
+                                                        Internal Transfer
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-end justify-content-between mt-4">
                                                 <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="localInfo">0</span>
+                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                                                        <span class="counter-value text-white" id="localInfo">0</span>
                                                     </h4>
                                                 </div>
-                                                <div class="avatar-sm flex-shrink-0">
+                                                <div class="avatar-sm flex-shrink-0" style="background-color:white;">
+                                                    <span class="avatar-title bg-soft-warning rounded fs-3">
+                                                        <i class="bx bx-user-circle text-warning"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div><!-- end card body -->
+                                    </div><!-- end card -->
+                                </div><!-- end col -->
+
+                                <div class="col-xl-3 col-md-6">
+                                    <!-- card -->
+                                    <div class="card card-animate" style="background-color: #9C27B0;">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1 overflow-hidden">
+                                                    <p class="text-white text-uppercase fw-medium text-truncate mb-0">
+                                                        Miscellaneous
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-end justify-content-between mt-4">
+                                                <div>
+                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">
+                                                        <span class="counter-value text-white" id="miscInfo">0</span>
+                                                    </h4>
+                                                </div>
+                                                <div class="avatar-sm flex-shrink-0" style="background-color:white;">
                                                     <span class="avatar-title bg-soft-warning rounded fs-3">
                                                         <i class="bx bx-user-circle text-warning"></i>
                                                     </span>
@@ -515,7 +547,8 @@ else{
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select select2">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Local</option>
+                                                                                            <option value="Local">Internal Transfer</option>
+                                                                                            <option value="Misc">Miscellaneous</option>
                                                                                         </select>  
                                                                                     </div>
                                                                                 </div>
@@ -1237,10 +1270,10 @@ else{
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="card">
-                                                    <div class="card-header">
+                                                    <div class="card-header" style="background-color: #099885;">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Previous Records</h5>
+                                                                <h5 class="card-title mb-0 text-white">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <!--a href="/template/Weight_Template.xlsx" download>
@@ -1519,7 +1552,7 @@ else{
             }
         });
 
-        $('#statusSearch').val('Sales').trigger('change');
+        // $('#statusSearch').val('Sales').trigger('change');
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -1654,6 +1687,7 @@ else{
                 $('#salesInfo').text(settings.json.salesTotal);
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
+                $('#miscInfo').text(settings.json.miscTotal);
             }   
         });
 
@@ -2375,6 +2409,7 @@ else{
                     $('#salesInfo').text(settings.json.salesTotal);
                     $('#purchaseInfo').text(settings.json.purchaseTotal);
                     $('#localInfo').text(settings.json.localTotal);
+                    $('#miscInfo').text(settings.json.miscTotal);
                 }   
             });
         });
