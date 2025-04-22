@@ -85,57 +85,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $grossWeightTime = date("d/m/Y - H:i:s", strtotime($row['gross_weight1_date']));
                     $tareWeightTime = date("d/m/Y - H:i:s", strtotime($row['tare_weight1_date']));
 
-
                     $orderSuppWeight = 0;
                     $weightDifference = $row['weight_different'];
 
                     $grossWeightTime2 = $row['gross_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['gross_weight2_date'])) : "";
                     $tareWeightTime2 = $row['tare_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['tare_weight2_date'])) : "";
 
+                    $transacationStatus = $row['transaction_status'] == 'Local' ? "Internal Transfer" : $row['transaction_status'];
 
-                    if($row['transaction_status'] == 'Sales'){
-                        $cid = $row['customer_code'];
-                        $orderSuppWeight = $row['order_weight'];
-                    
-                        if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=?")) {
-                            $update_stmt->bind_param('s', $cid);
-                            
-                            // Execute the prepared query.
-                            if ($update_stmt->execute()) {
-                                $result2 = $update_stmt->get_result();
-                                
-                                if ($row2 = $result2->fetch_assoc()) {
-                                    $customer = $row2['name'];
-                                    $customerR = $row2['company_reg_no'] ?? '';
-                                    $customerP = $row2['phone_no'] ?? '-';
-                                    $customerA = $row2['address_line_1'];
-                                    $customerA2 = $row2['address_line_2'];
-                                    $customerA3 = $row2['address_line_3'];
-                                    $customerE = $row2['fax_no'] ?? '-';
-                                }
-                            }
-                        }
-
-                        $pid = $row['product_code'];
-                    
-                        if ($update_stmt2 = $db->prepare("SELECT * FROM Product WHERE product_code=?")) {
-                            $update_stmt2->bind_param('s', $pid);
-                            
-                            // Execute the prepared query.
-                            if ($update_stmt2->execute()) {
-                                $result3 = $update_stmt2->get_result();
-                                
-                                if ($row3 = $result3->fetch_assoc()) {
-                                    $product = $row3['name'];
-                                    $variance = $row3['variance'] ?? '';
-                                    $high = $row3['high'] ?? '0';
-                                    $low = $row3['low'] ?? '0';
-                                    $price = $row3['price'] ??  '0.00';
-                                }
-                            }
-                        }
-                    }
-                    else{
+                    if($row['transaction_status'] == 'Purchase'){
                         $cid = $row['supplier_code'];
                         $orderSuppWeight = $row['supplier_weight'];
 
@@ -161,6 +119,48 @@ if(isset($_POST['userID'], $_POST["file"])){
                         $pid = $row['raw_mat_code'];
                     
                         if ($update_stmt2 = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=?")) {
+                            $update_stmt2->bind_param('s', $pid);
+                            
+                            // Execute the prepared query.
+                            if ($update_stmt2->execute()) {
+                                $result3 = $update_stmt2->get_result();
+                                
+                                if ($row3 = $result3->fetch_assoc()) {
+                                    $product = $row3['name'];
+                                    $variance = $row3['variance'] ?? '';
+                                    $high = $row3['high'] ?? '0';
+                                    $low = $row3['low'] ?? '0';
+                                    $price = $row3['price'] ??  '0.00';
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        $cid = $row['customer_code'];
+                        $orderSuppWeight = $row['order_weight'];
+                    
+                        if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=?")) {
+                            $update_stmt->bind_param('s', $cid);
+                            
+                            // Execute the prepared query.
+                            if ($update_stmt->execute()) {
+                                $result2 = $update_stmt->get_result();
+                                
+                                if ($row2 = $result2->fetch_assoc()) {
+                                    $customer = $row2['name'];
+                                    $customerR = $row2['company_reg_no'] ?? '';
+                                    $customerP = $row2['phone_no'] ?? '-';
+                                    $customerA = $row2['address_line_1'];
+                                    $customerA2 = $row2['address_line_2'];
+                                    $customerA3 = $row2['address_line_3'];
+                                    $customerE = $row2['fax_no'] ?? '-';
+                                }
+                            }
+                        }
+
+                        $pid = $row['product_code'];
+                    
+                        if ($update_stmt2 = $db->prepare("SELECT * FROM Product WHERE product_code=?")) {
                             $update_stmt2->bind_param('s', $pid);
                             
                             // Execute the prepared query.
@@ -246,8 +246,18 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         </p>
                                     </td>
                                     <td style="vertical-align: top;">
-                                        <p style="vertical-align: top; margin-left:50px;">
-                                            <span style="font-size: 20px; font-weight: bold;">Receiving Slip</span>
+                                        <p style="vertical-align: top; margin-left:50px;">';
+
+                                        if ($row['transaction_status'] == 'Local'){
+                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Internal Transfer</span>';
+                                        }elseif ($row['transaction_status'] == 'Misc') {
+                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Misc Slip</span>';
+                                        }else{
+                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Receiving Slip</span>';
+                                        }
+                                            
+
+                                    $message .= '        
                                             <br>
                                             <span style="font-size: 14px;">Ticket No: <b style="font-size: 16px;">'.$row['transaction_id'].'</b></span><br>
                                             <span style="font-size: 14px;">Date: '.$transactionDate.'</span><br>
@@ -258,26 +268,33 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <td>Placeholder for empty space</td>
                                 </tr>
                                 <tr style="border-top: 1px solid black;">
-                                    <td style="width: 60%;">';
+                                    <td style="width: 60%;">
+                                        <p style="margin-bottom: 10px">';
                                         if ($row['transaction_status'] == 'Sales'){
                                             $message .= '
-                                                <p style="margin-bottom: 10px">
-                                                    <span>Customer: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
-                                                    <span style="font-size: 14px;margin-left: 80px;">'.$customerA.' '.$customerA2.'</span><br>
-                                                    <span style="font-size: 14px;margin-left: 80px;">'.$customerA3.'</span><br>
-                                                </p>
+                                                <span>Customer: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
                                             ';
-                                        }else{
+                                        }
+                                        elseif ($row['transaction_status'] == 'Local') {
                                             $message .= '
-                                                <p style="margin-bottom: 10px">
-                                                    <span>Supplier: <span style="margin-left: 10px">'.$customer.'</span></span><br>
-                                                    <span style="font-size: 14px;margin-left: 80px;">'.$customerA.' '.$customerA2.'</span><br>
-                                                    <span style="font-size: 14px;margin-left: 80px;">'.$customerA3.'</span><br>
-                                                </p>
+                                                <span>Internal Transfer: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
+                                            ';
+                                        }
+                                        elseif ($row['transaction_status'] == 'Misc') {
+                                            $message .= '
+                                                <span>Misc Slip: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
+                                            ';
+                                        }
+                                        else{
+                                            $message .= '
+                                                <span>Supplier: <span style="margin-left: 10px">'.$customer.'</span></span><br>
                                             ';
                                         }
                                         
                                         $message .= '
+                                            <span style="font-size: 14px;margin-left: 80px;">'.$customerA.' '.$customerA2.'</span><br>
+                                            <span style="font-size: 14px;margin-left: 80px;">'.$customerA3.'</span><br>
+                                        </p>
                                         <p>
                                             <span>Driver: <span style="margin-left: 10px">'.$row["transporter"].'</span></span>
                                             <br>
@@ -286,7 +303,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     </td>
                                     <td style="vertical-align: top;">
                                         <p style="vertical-align: top; margin-left:50px;">
-                                            <span style="font-size: 14px;">Weight Status: '.$row['transaction_status'].'</span><br>
+                                            <span style="font-size: 14px;">Weight Status: '.$transacationStatus.'</span><br>
                                             <span style="font-size: 14px;">D/O No: '.$row['delivery_no'].'</span><br>
                                         </p>
 
@@ -496,7 +513,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     </tr>
                                 </table>';
                             }
-
                             
                             $message .= '<table style="margin-top:30px">
                                 <tr style="visibility: hidden; border:0px;">
