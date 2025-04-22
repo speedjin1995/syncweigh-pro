@@ -93,7 +93,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                     $transacationStatus = $row['transaction_status'] == 'Local' ? "Internal Transfer" : $row['transaction_status'];
 
-                    if($row['transaction_status'] == 'Purchase'){
+                    if($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
                         $cid = $row['supplier_code'];
                         $orderSuppWeight = $row['supplier_weight'];
 
@@ -272,28 +272,34 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <p style="margin-bottom: 10px">';
                                         if ($row['transaction_status'] == 'Sales'){
                                             $message .= '
-                                                <span>Customer: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;">Customer: <span style="margin-left: 8px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 70px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 70px;">'.$customerA3.'</span><br>
                                             ';
                                         }
                                         elseif ($row['transaction_status'] == 'Local') {
                                             $message .= '
-                                                <span>Internal Transfer: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;">Internal Transfer: <span style="margin-left: 5px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 105px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 105px;">'.$customerA3.'</span><br>
                                             ';
                                         }
                                         elseif ($row['transaction_status'] == 'Misc') {
                                             $message .= '
-                                                <span>Misc Slip: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;">Misc Slip: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 72px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 72px;">'.$customerA3.'</span><br>
                                             ';
                                         }
                                         else{
                                             $message .= '
-                                                <span>Supplier: <span style="margin-left: 10px">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;">Supplier: <span style="margin-left: 10px">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 65px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 65px;">'.$customerA3.'</span><br>
                                             ';
                                         }
                                         
                                         $message .= '
-                                            <span style="font-size: 14px;margin-left: 80px;">'.$customerA.' '.$customerA2.'</span><br>
-                                            <span style="font-size: 14px;margin-left: 80px;">'.$customerA3.'</span><br>
                                         </p>
                                         <p>
                                             <span>Driver: <span style="margin-left: 10px">'.$row["transporter"].'</span></span>

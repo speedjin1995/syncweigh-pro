@@ -89,6 +89,9 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 else if($status == 'Local'){
                     $queryPlant = "SELECT locals as curcount FROM Plant WHERE plant_code='$plantCode'";
                 }
+                else if($status == 'Misc'){
+                    $queryPlant = "SELECT misc as curcount FROM Plant WHERE plant_code='$plantCode'";
+                }
 
 				if ($update_stmt = $db->prepare($queryPlant)) {
 					// Execute the prepared query.
@@ -641,6 +644,9 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 }
                 else if($status == 'Local'){
                     $queryPlantU = "UPDATE Plant SET locals=? WHERE plant_code='$plantCode'";
+                }
+                else if($status == 'Misc'){
+                    $queryPlantU = "UPDATE Plant SET misc=? WHERE plant_code='$plantCode'";
                 }
                 
                 ///insert miscellaneous
