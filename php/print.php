@@ -21,7 +21,7 @@ function filterData(&$str){
 
 // Format Weight String
 function formatWeight($weight){
-    if ($weight != "0"){
+    if ($weight != 0){
         $formatted = number_format(ltrim($weight, '0'), 2, '.', ',');
         $formatted = preg_replace('/\.00$/', '', $formatted);    
     }else{
@@ -95,7 +95,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                     if($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
                         $cid = $row['supplier_code'];
-                        $orderSuppWeight = $row['supplier_weight'];
+                        $orderSuppWeight = floatval($row['supplier_weight']);
 
                         if ($update_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=?")) {
                             $update_stmt->bind_param('s', $cid);
@@ -137,7 +137,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     }
                     else{
                         $cid = $row['customer_code'];
-                        $orderSuppWeight = $row['order_weight'];
+                        $orderSuppWeight = floatval($row['order_weight']);
                     
                         if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=?")) {
                             $update_stmt->bind_param('s', $cid);

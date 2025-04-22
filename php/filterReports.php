@@ -27,8 +27,8 @@ if($_POST['toDate'] != null && $_POST['toDate'] != ''){
 	$searchQuery .= " and transaction_date <= '".$toDateTime."'";
 }
 
-if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
-	$searchQuery .= " and transaction_status = '".$_POST['status']."'";
+if($_POST['transactionStatus'] != null && $_POST['transactionStatus'] != '' && $_POST['transactionStatus'] != '-'){
+	$searchQuery .= " and transaction_status = '".$_POST['transactionStatus']."'";
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
@@ -63,14 +63,24 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
 }
 
+if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
+  if ($_POST['status'] == 'Complete'){
+    $searchQuery .= " and is_complete = 'Y'";
+  }elseif ($_POST['status'] == 'Cancelled'){
+    $searchQuery .= " and is_cancel = 'Y'";
+  }
+}else{
+  $searchQuery .= " and is_complete = 'Y'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
-$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'";
+$allQuery = "select count(*) as allcount from Weight where status = '0'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')";
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery); 
@@ -79,10 +89,10 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 
-$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -90,11 +100,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery); 
@@ -102,6 +112,7 @@ $data = array();
 $salesCount = 0;
 $purchaseCount = 0;
 $localCount = 0;
+$miscCount = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['transaction_status'] == 'Sales'){
@@ -109,6 +120,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   }
   else if($row['transaction_status'] == 'Purchase'){
     $purchaseCount++;
+  }
+  else if($row['transaction_status'] == 'Misc'){
+    $miscCount++;
   }
   else{
     $localCount++;
@@ -127,9 +141,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "customer_name"=>$row['customer_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
-    "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
-    "product_code"=>($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
-    "product_name"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
+    "customer"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['supplier_name'] : $row['customer_name']),
+    "product_code"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_code'] : $row['product_code']), 
+    "product_name"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_name'] : $row['product_name']), 
     "container_no"=>$row['container_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],
@@ -174,6 +188,7 @@ $response = array(
   "salesTotal" => $salesCount,
   "purchaseTotal" => $purchaseCount,
   "localTotal" => $localCount,
+  "miscTotal" => $miscCount,
   "sql" => $empQuery
 );
 
