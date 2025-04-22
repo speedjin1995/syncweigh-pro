@@ -98,6 +98,7 @@ $data = array();
 $salesCount = 0;
 $purchaseCount = 0;
 $localCount = 0;
+$miscCount = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['transaction_status'] == 'Sales'){
@@ -105,6 +106,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   }
   else if($row['transaction_status'] == 'Purchase'){
     $purchaseCount++;
+  }
+  else if($row['transaction_status'] == 'Misc'){
+    $miscCount++;
   }
   else{
     $localCount++;
@@ -127,9 +131,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "agent_name"=>$row['agent_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
-    "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
-    "product_code"=>($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
-    "product_name"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
+    "customer"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['supplier_name'] : $row['customer_name']),
+    "product_code"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_code'] : $row['product_code']), 
+    "product_name"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_name'] : $row['product_name']), 
     "container_no"=>$row['container_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],
@@ -176,7 +180,8 @@ $response = array(
   "aaData" => $data,
   "salesTotal" => $salesCount,
   "purchaseTotal" => $purchaseCount,
-  "localTotal" => $localCount
+  "localTotal" => $localCount,
+  "miscTotal" => $miscCount
 );
 
 echo json_encode($response);
