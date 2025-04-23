@@ -8,6 +8,7 @@ if(isset($_POST['type'])){
     $code = '';
     $format = '';
     $material = '';
+    $plant = '';
 
     if (isset($_POST['code']) && $_POST['code'] != ''){
         $code = $_POST['code'];
@@ -19,6 +20,10 @@ if(isset($_POST['type'])){
 
     if (isset($_POST['material']) && $_POST['material'] != ''){
         $material = $_POST['material'];
+    }
+
+    if (isset($_POST['plant']) && $_POST['plant'] != ''){
+        $plant = $_POST['plant'];
     }
 
     $searchQuery = '';
@@ -176,8 +181,8 @@ if(isset($_POST['type'])){
         $count = 1;
     
         if ($type == 'Purchase'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND status='Open' AND deleted='0'")) {
-                $update_stmt->bind_param('ss', $code, $material);
+            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND status='Open' AND deleted='0'")) {
+                $update_stmt->bind_param('sss', $code, $material, $plant);
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
@@ -241,8 +246,8 @@ if(isset($_POST['type'])){
                 }
             }
         }else{
-            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND status='Open' AND deleted='0'")) {
-                $update_stmt->bind_param('ss', $code, $material);
+            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=?  AND status='Open' AND deleted='0'")) {
+                $update_stmt->bind_param('sss', $code, $material, $plant);
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
