@@ -192,8 +192,8 @@ else{
                                                             <label for="statusSearch" class="form-label">Transaction Status</label>
                                                             <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
-                                                                <option value="Sales">Sales</option>
-                                                                <option value="Purchase">Purchase</option>
+                                                                <option value="Sales">Arrival</option>
+                                                                <option value="Purchase">Departure</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
                                                             </select>
@@ -299,7 +299,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Sales
+                                                        Arrival
                                                     </p>
                                                 </div>
                                             </div>
@@ -326,7 +326,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Purchase
+                                                        Departure
                                                     </p>
                                                 </div>
                                             </div>
@@ -545,8 +545,8 @@ else{
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select select2">
-                                                                                            <option value="Sales" selected>Sales</option>
-                                                                                            <option value="Purchase">Purchase</option>
+                                                                                            <option value="Sales" selected>Arrival</option>
+                                                                                            <option value="Purchase">Departure</option>
                                                                                             <option value="Local">Internal Transfer</option>
                                                                                             <option value="Misc">Miscellaneous</option>
                                                                                         </select>  

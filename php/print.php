@@ -91,7 +91,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $grossWeightTime2 = $row['gross_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['gross_weight2_date'])) : "";
                     $tareWeightTime2 = $row['tare_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['tare_weight2_date'])) : "";
 
-                    $transacationStatus = $row['transaction_status'] == 'Local' ? "Internal Transfer" : $row['transaction_status'];
+                    if ($row['transaction_status'] == 'Sales'){
+                        $transacationStatus = 'Arrival';
+                    }elseif ($row['transaction_status'] == 'Purchase'){
+                        $transacationStatus = 'Departure';
+                    }elseif ($row['transaction_status'] == 'Local'){
+                        $transacationStatus = 'Internal Transfer';
+                    }else {
+                        $transacationStatus = $row['transaction_status'];
+                    }
 
                     if($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
                         $cid = $row['supplier_code'];
@@ -256,7 +264,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             $message .= '<span style="font-size: 20px; font-weight: bold;">Receiving Slip</span>';
                                         }
                                             
-
                                     $message .= '        
                                             <br>
                                             <span style="font-size: 14px;">Ticket No: <b style="font-size: 16px;">'.$row['transaction_id'].'</b></span><br>

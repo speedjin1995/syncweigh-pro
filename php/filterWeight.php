@@ -101,23 +101,28 @@ $localCount = 0;
 $miscCount = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
+  $transactionStatus = '';
   if($row['transaction_status'] == 'Sales'){
     $salesCount++;
+    $transactionStatus = 'Arrival';
   }
   else if($row['transaction_status'] == 'Purchase'){
     $purchaseCount++;
+    $transactionStatus = 'Departure';
   }
   else if($row['transaction_status'] == 'Misc'){
     $miscCount++;
+    $transactionStatus = 'Miscellaneous';
   }
   else{
     $localCount++;
+    $transactionStatus = 'Internal Transfer';
   }
 
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
-    "transaction_status"=>$row['transaction_status'],
+    "transaction_status"=>$transactionStatus,
     "weight_type"=>$row['weight_type'],
     "transaction_date"=>$row['transaction_date'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],
