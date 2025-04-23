@@ -2264,12 +2264,14 @@ else{
                         $('#checkingConnection').removeClass('bg-danger');
                     }
                     else if(ind == 'D2008'){
-                        var text = data.split(",");
-                        var text2 = text[text.length - 1];
-                        text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
-                        $('#indicatorWeight').html(parseInt(text2).toString());
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
+                        if(data.includes("GS")){
+                            var text = data.split(",");
+                            var text2 = text[text.length - 1];
+                            text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
+                            $('#indicatorWeight').html(parseInt(text2).toString());
+                            $('#indicatorConnected').addClass('bg-primary');
+                            $('#checkingConnection').removeClass('bg-danger');
+                        }
                     }
                 }
                 else{
@@ -2437,14 +2439,14 @@ else{
             $('#addModal').find('#supplierWeight').val("");
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
-            $('#addModal').find('#customerName').val("").trigger('change');
+            $('#addModal').find('#customerName').val("-").trigger('change');
             $('#addModal').find('#supplierCode').val("");
-            $('#addModal').find('#supplierName').val("").trigger('change');
+            $('#addModal').find('#supplierName').val("-").trigger('change');
             $('#addModal').find('#productCode').val("");
-            $('#addModal').find('#productName').val("").trigger('change');
+            $('#addModal').find('#productName').val("-").trigger('change');
             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
             $('#addModal').find('#rawMaterialCode').val("");
-            $('#addModal').find('#rawMaterialName').val("").trigger('change');
+            $('#addModal').find('#rawMaterialName').val("-").trigger('change');
             $('#addModal').find('#siteCode').val("");
             $('#addModal').find('#siteName').val("").trigger('change');
             $('#addModal').find('#plantCode').val("");
@@ -2454,13 +2456,13 @@ else{
             $('#addModal').find('#salesOrder').val("").trigger('change');
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#transporterCode').val("");
-            $('#addModal').find('#transporter').val("").trigger('change');
+            $('#addModal').find('#transporter').val("-").trigger('change');
             $('#addModal').find('#destinationCode').val("");
             $('#addModal').find('#agent').val("").trigger('change');
             $('#addModal').find('#agentCode').val("");
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
-            $('#addModal').find('#destination').val("").trigger('change');
+            $('#addModal').find('#destination').val("-").trigger('change');
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
@@ -3449,7 +3451,7 @@ else{
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
-                $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
                 $('#addModal').find('#customerType').val(obj.message.customer_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
