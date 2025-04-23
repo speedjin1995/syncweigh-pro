@@ -148,6 +148,7 @@ if(isset($_POST['userID'])){
                         $message['site_code'] = $row['site_code'];
                         $message['site_name'] = $row['site_name'];
                         $message['container_no'] = $row['container_no'];
+                        $message['seal_no'] = $row['seal_no'];
                         $message['invoice_no'] = $row['invoice_no'];
                         $message['purchase_order'] = $row['purchase_order'];
                         $message['delivery_no'] = $row['delivery_no'];

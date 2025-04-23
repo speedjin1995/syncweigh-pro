@@ -553,6 +553,38 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="sealNo" class="col-sm-4 col-form-label">Seal No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="sealNo" name="sealNo" placeholder="Seal No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div>    
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
                                                                                 <div class="row">
                                                                                     <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
@@ -579,27 +611,25 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
+                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                             
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>    
+                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -636,41 +666,6 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
-                                                                                <div class="row">
-                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                             
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="transporter" name="transporter" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                          
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
                                                                                 <div class="row">
                                                                                     <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
@@ -694,14 +689,14 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
+                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="destination" name="destination" required>
+                                                                                        <select class="form-select select2" id="transporter" name="transporter" required>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
+                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>            
+                                                                                        </select>                                                                                          
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -743,13 +738,14 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
+                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="plant" name="plant" required>
-                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
-                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                        <select class="form-select select2" id="destination" name="destination" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
+                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>        
+                                                                                        </select>            
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -761,6 +757,18 @@ else{
                                                                                             <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -2451,6 +2459,7 @@ else{
             $('#addModal').find('#siteName').val("").trigger('change');
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#containerNo').val("");
+            $('#addModal').find('#sealNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("").trigger('change');
             $('#addModal').find('#salesOrder').val("").trigger('change');
@@ -3510,6 +3519,7 @@ else{
                 
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
+                $('#addModal').find('#sealNo').val(obj.message.seal_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
