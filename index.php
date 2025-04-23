@@ -3524,9 +3524,10 @@ else{
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
             var rawMat = $('#rawMaterialName :selected').data('code');
+            var plant = $('#addModal').find('#plantCode').val();
 
             if (purchaseOrder){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat}, function (data){
+                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
