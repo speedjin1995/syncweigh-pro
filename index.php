@@ -72,6 +72,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC")
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$container = $db->query("SELECT * FROM Weight_Container WHERE status = '0' AND is_complete = 'N' AND is_cancel = 'N'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
@@ -515,6 +516,7 @@ else{
                                                                                         <select id="weightType" name="weightType" class="form-select select2">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
+                                                                                            <option>Empty Container</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -883,6 +885,20 @@ else{
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                         <div class="row mb-3">
+                                                                            <label for="emptyContainerNo" class="col-sm-4 col-form-label">Empty Container No</label>
+                                                                            <div class="col-sm-8">
+                                                                                <select class="form-select select2" id="emptyContainerNo" name="emptyContainerNo">
+                                                                                    <option selected="-">-</option>
+                                                                                    <?php while($rowContainer=mysqli_fetch_assoc($container)){ ?>
+                                                                                        <option value="<?=$rowContainer['container_no'] ?>"><?=$rowContainer['container_no'] ?></option>
+                                                                                    <?php } ?>
+                                                                                </select>                   
+                                                                            </div>
+                                                                            <!-- <div class="input-group">
+                                                                                <input type="text" class="form-control" id="emptyContainerNo" name="emptyContainerNo" placeholder="Empty Container No">
+                                                                            </div> -->
+                                                                        </div>
+                                                                        <div class="row mb-3">
                                                                             <label for="vehiclePlateNo2" class="col-sm-4 col-form-label">Vehicle Plate No 2</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
@@ -905,7 +921,7 @@ else{
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
-                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">3.Gross Incoming</label>
+                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">Incoming</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming2" name="grossIncoming2" placeholder="0" readonly>
@@ -921,7 +937,7 @@ else{
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
-                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
+                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">Outgoing</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing2" name="tareOutgoing2" placeholder="0" readonly>
@@ -1328,6 +1344,65 @@ else{
                                     </div> <!-- end .h-100-->
                                 </div> <!-- end col -->
                             </div><!-- container-fluid -->
+
+                            <!-- Second Card for Empty Container -->
+                            <div class="row">
+                                <div class="col">
+                                    <div class="h-100">
+                                        <!--datatable--> 
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card">
+                                                    <div class="card-header" style="background-color: #099885;">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                <h5 class="card-title mb-0 text-white">Previous Empty Container Records</h5>
+                                                            </div>
+                                                            <div class="flex-shrink-0">
+                                                                <!--a href="/template/Weight_Template.xlsx" download>
+                                                                    <button type="button" class="btn btn-info waves-effect waves-light">
+                                                                        <i class="mdi mdi-file-import-outline align-middle me-1"></i>
+                                                                        Download Template 
+                                                                    </button>
+                                                                </a>
+                                                                <button type="button" id="uploadExccl" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal">
+                                                                    <i class="mdi mdi-file-excel align-middle me-1"></i>
+                                                                    Import Orders
+                                                                </button-->
+                                                                <!-- <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Weight
+                                                                </button> -->
+                                                            </div> 
+                                                        </div> 
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <table id="emptyContainerTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Transaction <br>Id</th>
+                                                                    <th>Weight <br> Status</th>
+                                                                    <th>Customer/ <br> Supplier</th>
+                                                                    <th>Vehicle</th>
+                                                                    <th>Product/ <br> Raw Material</th>
+                                                                    <th>SO/PO</th>
+                                                                    <th>DO</th>
+                                                                    <th>Gross <br>Incoming</th>
+                                                                    <th>Incoming <br>Date</th>
+                                                                    <th>Tare <br>Outgoing</th>
+                                                                    <th>Outgoing <br>Date</th>
+                                                                    <th>Nett <br>Weight</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!--end row-->
+                                    </div> <!-- end .h-100-->
+                                </div> <!-- end col -->
+                            </div><!-- container-fluid -->
                         </div> <!-- end .h-100-->
 
                     </div> <!-- end col -->
@@ -1457,7 +1532,8 @@ else{
 
     <script type="text/javascript">
     var table = null;
-    
+    var emptyContainerTable = null;
+
     $(function () {
         var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
@@ -1697,6 +1773,75 @@ else{
                 $('#localInfo').text(settings.json.localTotal);
                 $('#miscInfo').text(settings.json.miscTotal);
             }   
+        });
+
+        emptyContainerTable = $("#emptyContainerTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'searching': true,
+            'serverMethod': 'post',
+            'ajax': {
+                'url':'php/filterEmptyContainer.php',
+            },
+            'columns': [
+                { 
+                    data: 'transaction_id',
+                    class: 'transaction-column'
+                },                
+                { data: 'transaction_status' },
+                { data: 'customer' },
+                { data: 'lorry_plate_no1' },
+                { data: 'product_name' },
+                { data: 'purchase_order' },
+                { data: 'delivery_no' },
+                { data: 'gross_weight1' },
+                { data: 'gross_weight1_date' },
+                { data: 'tare_weight1' },
+                { data: 'tare_weight1_date' },
+                { data: 'nett_weight1' },
+                { 
+                    data: 'id',
+                    class: 'action-button',
+                    render: function (data, type, row) {
+                        let buttons = `<div class="row g-1 d-flex">`;
+
+                        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
+                            }
+                        }else {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data},'Y')" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-weight-hanging"></i>
+                                    </button>
+                                </div>`;
+                            }
+                        }
+
+                        if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>`;
+                        }
+                            
+                        buttons += `</div>`;
+
+                        return buttons;
+                    }
+                }
+            ]
         });
 
         // Add event listener for opening and closing details on row click
@@ -2578,12 +2723,14 @@ else{
         });
 
         $('#weightType').on('change', function(){
-            if($(this).val() == "Container")
-            {
+            var weightType = $(this).val();
+
+            if (weightType == 'Container'){
                 $('#containerCard').show();
-            }
-            else
-            {
+                $('#addModal').find('#containerNo').attr('required', true);
+            }else if (weightType == 'Empty Container'){
+                $('#containerCard').hide();
+            }else{
                 $('#containerCard').hide();
             }
         });
@@ -3132,6 +3279,34 @@ else{
             }
         });
 
+        //Empty Container No
+        $('#emptyContainerNo').on('change', function (){
+            var emptyContainerNo = $(this).val(); 
+
+            if (emptyContainerNo){
+                $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        $('#addModal').find('#containerNo').val(obj.message.container_no);
+                        $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no1).trigger('change');
+                        $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight1);
+                        $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight1_date);
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        });
+
         /*$('#purchaseOrder').on('change', function (){
             var purchaseOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val();
@@ -3440,9 +3615,17 @@ else{
         previewTable.innerHTML = htmlTable;
     }
 
-    function edit(id){
+    function edit(id, isContainer){
         $('#spinnerLoading').show();
-        $.post('php/getWeight.php', {userID: id}, function(data)
+
+        var type = '';
+        if (isContainer == 'Y'){
+            type = 'Container';
+        }else{
+            type = 'Weight'
+        }
+
+        $.post('php/getWeight.php', {userID: id, type: type}, function(data)
         {
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
