@@ -1510,21 +1510,10 @@ else{
             'height': 'auto'
         });
 
-        //Date picker
-        <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today,
-                minDate: today
-            });';
-        }
-        else{
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today
-            });';
-        }
-        ?>
+        $("#fromDateSearch").flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: today
+        });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
