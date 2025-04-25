@@ -24,7 +24,7 @@ if(isset($_POST['userID'])){
             while ($row = $result->fetch_assoc()) {
                 $message['container_no'] = $row['container_no'];
                 $message['gross_weight1'] = $row['gross_weight1'];
-                $message['gross_weight1_date'] = $row['gross_weight1_date'];
+                $message['gross_weight1_date'] = date("d/m/Y h:i:s A", strtotime($row['gross_weight1_date']));
                 $message['lorry_plate_no1'] = $row['lorry_plate_no1'];
             }
             

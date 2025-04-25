@@ -2655,6 +2655,7 @@ else{
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
+            $('#addModal').find('#emptyContainerNo').val("").trigger('change');
             $('#addModal').find('#insufficientBalDisplay').hide();
 
             // Show select and hide input readonly
@@ -2730,6 +2731,7 @@ else{
                 $('#addModal').find('#containerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
                 $('#containerCard').hide();
+                $('#addModal').find('#containerNo').attr('required', true);
             }else{
                 $('#containerCard').hide();
             }
@@ -3686,7 +3688,7 @@ else{
                     $('#vehicleNoTxt2').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
+                    $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2).trigger('change');
                     $('#manualVehicle2').val(0);
                     $('#manualVehicle2').prop("checked", false);
                     $('.index-vehicle2').show();
@@ -3767,6 +3769,7 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+                $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).trigger('change');
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {

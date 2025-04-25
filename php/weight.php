@@ -203,7 +203,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     else {
         $grossIncomingDate = trim(str_replace(["AM", "PM"], "", $_POST["grossIncomingDate"]));
         $grossIncomingDate = DateTime::createFromFormat('d/m/Y H:i:s', $grossIncomingDate)->format('Y-m-d H:i:s');
-    }
+    } 
     
     if (empty($_POST["tareOutgoing"])) {
         $tareOutgoing = 0;
@@ -247,7 +247,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     } else {
         $invoiceNo = trim($_POST["invoiceNo"]);
     }
-
 
     /*if ($transactionStatus == 'Sales'){
         $deliveryNo = $transactionId;
@@ -500,6 +499,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $prevBalance = 0;
     }
 
+    if(isset($_POST['emptyContainerNo']) && $_POST['emptyContainerNo'] != null && $_POST['emptyContainerNo'] != ''){
+        $emptyContainerNo = $_POST['emptyContainerNo'];
+    }
+    else{
+        $emptyContainerNo = null;
+    } 
+
     /*if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){
         // $inDate = new DateTime($_POST['grossIncomingDate']);
         // $inCDateTime = date_format($inDate,"Y-m-d H:i:s");
@@ -720,17 +726,46 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     //         //     )
                     //         // );
                     //     }
+
+                    // update empty container status
+                    if(!empty($emptyContainerNo)){
+                        if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
+                            $update_container->bind_param('ss', $isComplete, $emptyContainerNo);
+
+                            // Execute the prepared query.
+                            if (! $update_container->execute()) {
+                                echo json_encode(
+                                    array(
+                                        "status"=> "failed", 
+                                        "message"=> $update_container->error
+                                    )
+                                );
+                            }
+                            else
+                            {
+                                $update_container->close();
+
+                                echo json_encode(
+                                    array(
+                                        "status"=> "success", 
+                                        "message"=> "Updated Successfully!!",
+                                        "id"=>$weightId
+                                    )
+                                );
+                            }
+                        }
+                    }else{
+                        echo json_encode(
+                            array(
+                                "status"=> "success", 
+                                "message"=> "Updated Successfully!!",
+                                "id"=>$weightId
+                            )
+                        );
+                    }
     
                     $update_stmt->close();
                     $db->close();
-    
-                    echo json_encode(
-                        array(
-                            "status"=> "success", 
-                            "message"=> "Updated Successfully!!",
-                            "id"=>$weightId
-                        )
-                    );
                 }
                 
             }
@@ -823,14 +858,43 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             $updatePoSoStmt->execute();
         
                             $updatePoSoStmt->close();*/
-                            
-                            echo json_encode(
-                                array(
-                                    "status"=> "success", 
-                                    "message"=> "Added Successfully!!",
-                                    "id"=>$id
-                                )
-                            );
+
+                            // update empty container status
+                            if(!empty($emptyContainerNo)){
+                                if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
+                                    $update_container->bind_param('ss', $isComplete, $emptyContainerNo);
+    
+                                    // Execute the prepared query.
+                                    if (! $update_container->execute()) {
+                                        echo json_encode(
+                                            array(
+                                                "status"=> "failed", 
+                                                "message"=> $update_container->error
+                                            )
+                                        );
+                                    }
+                                    else
+                                    {
+                                        $update_container->close();
+
+                                        echo json_encode(
+                                            array(
+                                                "status"=> "success", 
+                                                "message"=> "Added Successfully!!",
+                                                "id"=>$id
+                                            )
+                                        );
+                                    }
+                                }
+                            }else{
+                                echo json_encode(
+                                    array(
+                                        "status"=> "success", 
+                                        "message"=> "Added Successfully!!",
+                                        "id"=>$id
+                                    )
+                                );
+                            }
                         }
                     } 
                     else{
