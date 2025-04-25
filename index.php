@@ -4004,12 +4004,12 @@ else{
                 }
 
                 if (obj.message.transaction_status == 'Purchase'){
-                    $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
-                    $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    // $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+                    // $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
                     $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
                 }else{
-                    $('#addModal').find('#salesOrder').next('.select2-container').hide();
-                    $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    // $('#addModal').find('#salesOrder').next('.select2-container').hide();
+                    // $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
                 }
                 
