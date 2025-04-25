@@ -3324,9 +3324,10 @@ else{
             var salesOrder = $('#addModal').find('#salesOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
             var productName = $('#productName :selected').data('code');
+            var plant = $('#addModal').find('#plantCode').val();
 
             if (salesOrder){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName}, function (data){
+                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
@@ -3523,9 +3524,10 @@ else{
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
             var rawMat = $('#rawMaterialName :selected').data('code');
+            var plant = $('#addModal').find('#plantCode').val();
 
             if (purchaseOrder){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat}, function (data){
+                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
@@ -3735,6 +3737,8 @@ else{
                                 );   
                             }           
                         }
+
+                        $('#addModal').find('#purchaseOrder').val("");
                     }else{
                         $('#addModal').find('#purchaseOrder').empty();
                     }
@@ -3780,6 +3784,9 @@ else{
                                 ); 
                             }                 
                         }
+
+                        $('#addModal').find('#salesOrder').val("");
+
                     }else{
                         $('#addModal').find('#salesOrder').empty();
                     }
