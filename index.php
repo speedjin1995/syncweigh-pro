@@ -3430,6 +3430,14 @@ else{
         //plant
         $('#plant').on('change', function(){
             $('#plantCode').val($('#plant :selected').data('code'));
+
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+
+            if (transactionStatus == 'Sales'){
+                $('#addModal').find('#productName').trigger('change');
+            }else if(transactionStatus == 'Purchase'){
+                $('#addModal').find('#rawMaterialName').trigger('change');
+            }
         });
 
         // SRP
