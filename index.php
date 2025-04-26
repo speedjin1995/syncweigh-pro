@@ -3577,7 +3577,7 @@ else{
                             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
                         }
 
-                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight)
+                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                         $('#addModal').find('#balance').val(balance);
                     }
                     else if(obj.status === 'failed'){
