@@ -3430,6 +3430,14 @@ else{
         //plant
         $('#plant').on('change', function(){
             $('#plantCode').val($('#plant :selected').data('code'));
+
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+
+            if (transactionStatus == 'Sales'){
+                $('#addModal').find('#productName').trigger('change');
+            }else if(transactionStatus == 'Purchase'){
+                $('#addModal').find('#rawMaterialName').trigger('change');
+            }
         });
 
         // SRP
@@ -3569,7 +3577,7 @@ else{
                             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
                         }
 
-                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight)
+                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                         $('#addModal').find('#balance').val(balance);
                     }
                     else if(obj.status === 'failed'){
