@@ -438,8 +438,8 @@ else{
                                                             <!-- <option value="CUSTOMER">Customer Report</option> -->
                                                             <option value="SUMMARY">Summary Report</option>
                                                             <option value="PRODUCT">Product Report</option>
-                                                            <!-- <option value="S&P">Sales and Purchase Report - Product</option>
-                                                            <option value="S&PC">Sales and Purchase Report - Customer</option> -->
+                                                            <option value="S&P">Overall Report - Product</option>
+                                                            <option value="S&PC">Overall Report - Customer</option>
                                                         </select>   
                                                     </div>
                                                 </div>

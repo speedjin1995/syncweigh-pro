@@ -561,7 +561,7 @@ else{
                                                                                                 <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                        <input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;">
+                                                                                        <!--input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;"-->
                                                                                     </div>
                                                                                     <div class="col-sm-8" id="soSelect">
                                                                                         <select class="form-select js-choice select2" id="salesOrder" name="salesOrder" required>
@@ -570,7 +570,7 @@ else{
                                                                                                 <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
-                                                                                        <input type="text" class="form-control" id="salesOrderEdit" name="salesOrderEdit" disabled style="display:none;">
+                                                                                        <!--input type="text" class="form-control" id="salesOrderEdit" name="salesOrderEdit" disabled style="display:none;"-->
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -4022,12 +4022,12 @@ else{
                 }
 
                 if (obj.message.transaction_status == 'Purchase'){
-                    // $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
-                    // $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+                    $//('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
                     $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
                 }else{
-                    // $('#addModal').find('#salesOrder').next('.select2-container').hide();
-                    // $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    //$('#addModal').find('#salesOrder').next('.select2-container').hide();
+                    //$('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
                 }
                 
