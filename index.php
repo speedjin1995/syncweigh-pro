@@ -1463,6 +1463,9 @@ else{
     let soPoTag = false;
     let addNewTag = false;
     let isSyncing = false;
+    let isEdit = false;
+    let salesOption = $('#salesOrder option').clone();
+    let purchaseOption = $('#purchaseOrder option').clone();
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -2443,6 +2446,7 @@ else{
 
         $('#addWeight').on('click', function(){ 
             addNewTag = true;
+            isEdit = false;
 
             // Show Capture Buttons When Add New
             $('#addModal').find('#grossCapture').show();
@@ -2947,7 +2951,6 @@ else{
                             }
                             else{
                                 var salesOrder = $('#addModal').find('#salesOrder').val();
-                                console.log($('#addModal').find('#customerName').val());
 
                                 if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                     getSoPo();
@@ -3606,71 +3609,86 @@ else{
             var type = $('#addModal').find('#transactionStatus').val();
 
             if (purchaseOrder){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
-                    var obj = JSON.parse(data);
+                if (isEdit){
+                    $('#addModal').find('#purchaseOrder').empty();
+                    $('#addModal').find('#purchaseOrder').append(purchaseOption);
+                    $('#addModal').find('#purchaseOrder').val(purchaseOrder);
+                    $('#addModal').trigger('orderLoaded');
+                }else{
+                    $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
+                        var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
-                        if (obj.message.length > 0){
-                            $('#addModal').find('#rawMaterialName').empty();
+                        if (obj.status == 'success'){
+                            if (obj.message.length > 0){
+                                $('#addModal').find('#rawMaterialName').empty();
 
-                            var prodRawMat = obj.message;
-                            $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
-                            for (var i = 0; i < prodRawMat.length; i++) {
-                                $('#addModal').find('#rawMaterialName').append(
-                                    `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
-                                );                   
+                                var prodRawMat = obj.message;
+                                $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
+                                for (var i = 0; i < prodRawMat.length; i++) {
+                                    $('#addModal').find('#rawMaterialName').append(
+                                        `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                    );                   
+                                }
                             }
-                        }
 
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                            $('#addModal').trigger('orderLoaded');
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
             }
         });
 
         $('#salesOrder').on('change', function (){
-            var salesOrder = $(this).val(); 
+            var salesOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val(); 
 
             if (salesOrder){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, format: 'getProdRaw'}, function (data){
-                    var obj = JSON.parse(data);
+                if (isEdit){
+                    $('#addModal').find('#salesOrder').empty();
+                    $('#addModal').find('#salesOrder').append(salesOption);
+                    $('#addModal').find('#salesOrder').val(salesOrder);
+                    $('#addModal').trigger('orderLoaded');
+                }else{
+                    $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, format: 'getProdRaw'}, function (data){
+                        var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
-                        if (obj.message.length > 0){
-                            $('#addModal').find('#productName').empty();
+                        if (obj.status == 'success'){
+                            if (obj.message.length > 0){
+                                $('#addModal').find('#productName').empty();
 
-                            var prodRawMat = obj.message;
-                            $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
-                            for (var i = 0; i < prodRawMat.length; i++) {
-                                $('#addModal').find('#productName').append(
-                                    `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
-                                );                   
+                                var prodRawMat = obj.message;
+                                $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
+                                for (var i = 0; i < prodRawMat.length; i++) {
+                                    $('#addModal').find('#productName').append(
+                                        `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                    );                   
+                                }
                             }
+
+                            $('#addModal').trigger('orderLoaded');
                         }
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
             }
         });
 
@@ -3702,99 +3720,109 @@ else{
         soPoTag = true;
         if (transactionStatus == 'Purchase'){
             var customerSupplier = $('#addModal').find('#supplierName').val();
-            var options = $('#purchaseOrder option').clone();
+            // var options = $('#purchaseOrder option').clone();
 
-            $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
-                var obj = JSON.parse(data);
+            if (isEdit){
+                $('#addModal').find('#purchaseOrder').empty();
+                $('#addModal').find('#purchaseOrder').append(purchaseOption);
+            }else{
+                $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
+                    var obj = JSON.parse(data);
 
-                if (obj.status == 'success'){
-                    if (obj.message.length > 0){
-                        $('#addModal').find('#purchaseOrder').empty();
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#purchaseOrder').empty();
 
-                        var soPo = obj.message;
-                        $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
-                        for (var i = 0; i < soPo.length; i++) {
-                            if (soPo.length == 1){
-                                $('#addModal').find('#purchaseOrder').append(
-                                    `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
-                                );   
+                            var soPo = obj.message;
+                            $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < soPo.length; i++) {
+                                if (soPo.length == 1){
+                                    $('#addModal').find('#purchaseOrder').append(
+                                        `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
+                                    );   
 
-                                $('#addModal').find('#purchaseOrder').trigger('change');
-                            }else{
-                                $('#addModal').find('#purchaseOrder').append(
-                                    `<option value="${soPo[i]}">${soPo[i]}</option>`
-                                );   
-                            }           
+                                    $('#addModal').find('#purchaseOrder').trigger('change');
+                                }else{
+                                    $('#addModal').find('#purchaseOrder').append(
+                                        `<option value="${soPo[i]}">${soPo[i]}</option>`
+                                    );   
+                                }           
+                            }
+
+                            $('#addModal').find('#purchaseOrder').val("");
+                        }else{
+                            $('#addModal').find('#purchaseOrder').empty();
                         }
 
-                        $('#addModal').find('#purchaseOrder').val("");
-                    }else{
-                        $('#addModal').find('#purchaseOrder').empty();
+                        soPoTag = false;
                     }
-
-                    soPoTag = false;
-                }
-                else if(obj.status === 'failed'){
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                    soPoTag = false;
-                }
-                else{
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                    soPoTag = false;
-                }
-            });
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                });
+            }
+            
         }else if (transactionStatus == 'Sales'){
             var customerSupplier = $('#addModal').find('#customerName').val();
-            var options = $('#salesOrder option').clone();
 
-            $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
-                var obj = JSON.parse(data);
+            if (isEdit){
+                $('#addModal').find('#salesOrder').empty();
+                $('#addModal').find('#salesOrder').append(salesOption);
+            }else{
+                $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
+                    var obj = JSON.parse(data);
 
-                if (obj.status == 'success'){
-                    if (obj.message.length > 0){
-                        $('#addModal').find('#salesOrder').empty();
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#salesOrder').empty();
 
-                        var soPo = obj.message;
-                        $('#addModal').find('#salesOrder').append(`<option selected="-">-</option>`);
-                        for (var i = 0; i < soPo.length; i++) {
-                            if (soPo.length == 1){
-                                $('#addModal').find('#salesOrder').append(
-                                    `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
-                                ); 
+                            var soPo = obj.message;
+                            $('#addModal').find('#salesOrder').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < soPo.length; i++) {
+                                if (soPo.length == 1){
+                                    $('#addModal').find('#salesOrder').append(
+                                        `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
+                                    ); 
 
-                                $('#addModal').find('#salesOrder').trigger('change');
-                            }else{
-                                $('#addModal').find('#salesOrder').append(
-                                    `<option value="${soPo[i]}">${soPo[i]}</option>`
-                                ); 
-                            }                 
+                                    $('#addModal').find('#salesOrder').trigger('change');
+                                }else{
+                                    $('#addModal').find('#salesOrder').append(
+                                        `<option value="${soPo[i]}">${soPo[i]}</option>`
+                                    ); 
+                                }                 
+                            }
+
+                            $('#addModal').find('#salesOrder').val("");
+
+                        }else{
+                            $('#addModal').find('#salesOrder').empty();
                         }
 
-                        $('#addModal').find('#salesOrder').val("");
-
-                    }else{
-                        $('#addModal').find('#salesOrder').empty();
+                        soPoTag = false;
                     }
-
-                    soPoTag = false;
-                }
-                else if(obj.status === 'failed'){
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                    soPoTag = false;
-                }
-                else{
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                    soPoTag = false;
-                }
-            });
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                });
+            }
         }
     }
 
@@ -3916,6 +3944,7 @@ else{
     }
 
     function edit(id){ 
+        isEdit = true;
         $('#spinnerLoading').show();
         $.post('php/getWeight.php', {userID: id}, function(data)
         {
@@ -4080,6 +4109,8 @@ else{
                     //     $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     // }
                 });
+                
+                isEdit = false;
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
