@@ -35,17 +35,19 @@ if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''
     }
 }
 
-if(isset($_POST['status']) && $_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
+if(isset($_POST['transactionStatus']) && $_POST['transactionStatus'] != null && $_POST['transactionStatus'] != '' && $_POST['transactionStatus'] != '-'){
     if($_POST["file"] == 'weight'){
-        if($_POST['status'] == 'Sales'){
-            $searchQuery .= " and Weight.transaction_status = '".$_POST['status']."'";
-        }
-        else{
-            $searchQuery .= " and Weight.transaction_status IN ('Purchase', 'Local')";
-        }
+        $searchQuery .= " and Weight.transaction_status = '".$_POST['transactionStatus']."'";
+
+        // if($_POST['status'] == 'Sales'){
+        //     $searchQuery .= " and Weight.transaction_status = '".$_POST['status']."'";
+        // }
+        // else{
+        //     $searchQuery .= " and Weight.transaction_status IN ('Purchase', 'Local')";
+        // }
     }
     else{
-        $searchQuery .= " and count.transaction_status = '".$_POST['status']."'";
+        $searchQuery .= " and count.transaction_status = '".$_POST['transactionStatus']."'";
     }	
 }
 
@@ -130,9 +132,20 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
     }
 }
 
+if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
+    if ($_POST['status'] == 'Complete'){
+        $searchQuery .= " and is_complete = 'Y'";
+    }elseif ($_POST['status'] == 'Cancelled'){
+        $searchQuery .= " and is_cancel = 'Y'";
+    }
+    }else{
+    $searchQuery .= " and is_complete = 'Y'";
+}
+
 if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
-        if ($select_stmt = $db->prepare("select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date')) {
+        var_dump("select * from Weight WHERE status = '0'".$searchQuery.' ORDER BY tare_weight1_date');
+        if ($select_stmt = $db->prepare("select * from Weight WHERE status = '0'".$searchQuery.' ORDER BY tare_weight1_date')) {
             // Execute the prepared query.
             if (! $select_stmt->execute()) {
                 echo json_encode(
@@ -206,7 +219,7 @@ if(isset($_POST["file"])){
                                             <th style="font-size: 9px;">TRANSACTION <br>STATUS</th>
                                             <th style="font-size: 9px;">LORRY <br>NO.</th>';
                                             
-                                        if($_POST['status'] == 'Sales'){
+                                        if($_POST['status'] == 'Sales' || $_POST['status'] == 'Misc'){
                                             $message .= '<th style="font-size: 9px;">CUSTOMER <br>CODE</th>';
                                             $message .= '<th style="font-size: 9px;">CUSTOMER</th>';
                                         }
@@ -236,14 +249,29 @@ if(isset($_POST["file"])){
                                     
                                     // Fetch data and group by product_name
                                     while ($row = $result->fetch_assoc()) {
-                                        $productName = ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']);
+                                        $productName = ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_name'] : $row['raw_mat_name']);
                                     
                                         if (!isset($groupedData[$productName])) {
                                             $groupedData[$productName] = [];
                                         }
-                                    
+
+                                        if($row['transaction_status'] == 'Sales'){
+                                            $transactionStatus = 'Arrival';
+                                        }
+                                        else if($row['transaction_status'] == 'Purchase'){
+                                            $transactionStatus = 'Departure';
+                                        }
+                                        else if($row['transaction_status'] == 'Misc'){
+                                            $transactionStatus = 'Miscellaneous';
+                                        }
+                                        else{
+                                            $transactionStatus = 'Internal Transfer';
+                                        }
+
+                                        $row['transactionStatus'] = $transactionStatus;
+
                                         $groupedData[$productName][] = $row;
-                                    }
+                                    } 
                                     
                                     // Initialize total values
                                     $grandTotalGross = 0;
@@ -282,10 +310,10 @@ if(isset($_POST["file"])){
                                             $message .= '<tr>
                                                 <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
                                                 <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
-                                                <td style="font-size: 8px;">' . $row['transaction_status'] . '</td>
+                                                <td style="font-size: 8px;">' . $row['transactionStatus'] . '</td>
                                                 <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
                                                 
-                                                if($_POST['status'] == 'Sales'){
+                                                if($_POST['status'] == 'Sales' || $_POST['status'] == 'Misc'){
                                                     $message .= '<td style="font-size: 8px;">' . $row['customer_code'] . '</td>';
                                                     $message .= '<td style="font-size: 8px;">' . $row['customer_name'] . '</td>';
                                                 }
@@ -295,8 +323,8 @@ if(isset($_POST["file"])){
                                                 }
                                                 
                                                 
-                                                $message .= '<td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']) . '</td>
-                                                <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                                $message .= '<td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] : $row['raw_mat_code']) . '</td>
+                                                <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                 <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
                                                 <td style="font-size: 8px;">' . $row['destination'] . '</td>
                                                 <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>

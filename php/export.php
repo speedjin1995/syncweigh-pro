@@ -49,12 +49,12 @@ if($_GET['toDate'] != null && $_GET['toDate'] != ''){
     }
 }
 
-if($_GET['status'] != null && $_GET['status'] != '' && $_GET['status'] != '-'){
+if($_GET['transactionStatus'] != null && $_GET['transactionStatus'] != '' && $_GET['transactionStatus'] != '-'){
     if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_status = '".$_GET['status']."'";
+        $searchQuery .= " and Weight.transaction_status = '".$_GET['transactionStatus']."'";
     }
     else{
-        $searchQuery .= " and count.transaction_status = '".$_GET['status']."'";
+        $searchQuery .= " and count.transaction_status = '".$_GET['transactionStatus']."'";
     }	
 }
 
@@ -121,6 +121,19 @@ if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_
     }
 }
 
+if(isset($_GET['status']) && $_GET['status'] != null && $_GET['status'] != '' && $_GET['status'] != '-'){
+    if($_GET["file"] == 'weight'){
+        if ($_GET['status'] == 'Complete'){
+            $searchQuery .= " and Weight.is_complete = 'Y'";
+        }elseif ($_GET['status'] == 'Cancelled'){
+            $searchQuery .= " and Weight.is_cancel = 'Y'";
+        }else{
+            $searchQuery .= " and Weight.is_complete = 'Y'";
+        }
+    }
+    
+}
+
 // Column names 
 $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
     'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
@@ -132,7 +145,7 @@ $excelData = implode("\t", array_values($fields)) . "\n";
 
 // Fetch records from database
 if($_GET["file"] == 'weight'){
-    $query = $db->query("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery);
+    $query = $db->query("select * from Weight WHERE status='0'".$searchQuery);
 }
 else{
     $query = $db->query("select count.id, count.serialNo, vehicles.veh_number, lots.lots_no, count.batchNo, count.invoiceNo, count.deliveryNo, 
@@ -156,9 +169,22 @@ if($query->num_rows > 0){
             }else{
                 $exDel = 'D';
             }
+
+            if($row['transaction_status'] == 'Sales'){
+                $transactionStatus = 'Arrival';
+            }
+            else if($row['transaction_status'] == 'Purchase'){
+                $transactionStatus = 'Departure';
+            }
+            else if($row['transaction_status'] == 'Misc'){
+                $transactionStatus = 'Miscellaneous';
+            }
+            else{
+                $transactionStatus = 'Internal Transfer';
+            }
             
             if($row['product_code'] != '501A-011'){
-                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
+                $lineData = array($row['transaction_id'], $transactionStatus, $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
                 $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['destination_code'], 
                 $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], 
                 $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], 

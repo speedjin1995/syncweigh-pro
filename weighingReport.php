@@ -142,8 +142,8 @@ else{
                                                             <label for="transactionStatusSearch" class="form-label">Transaction Status</label>
                                                             <select id="transactionStatusSearch" class="form-select">
                                                                 <option selected>-</option>
-                                                                <option value="Sales" selected>Sales</option>
-                                                                <option value="Purchase">Purchase</option>
+                                                                <option value="Sales" selected>Arrival</option>
+                                                                <option value="Purchase">Departure</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
                                                             </select>
@@ -245,8 +245,7 @@ else{
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select">
-                                                                <option selected>-</option>
-                                                                <option value="Complete">Complete</option>
+                                                                <option value="Complete" selected>Complete</option>
                                                                 <option value="Cancelled">Cancelled</option>
                                                             </select>
                                                         </div>
@@ -271,7 +270,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Sales
+                                                        Arrival
                                                     </p>
                                                 </div>
                                             </div>
@@ -298,7 +297,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Purchase
+                                                        Departure
                                                     </p>
                                                 </div>
                                             </div>
@@ -473,7 +472,7 @@ else{
                                             </div>
                                             <input type="hidden" class="form-control" id="fromDate" name="fromDate">                                   
                                             <input type="hidden" class="form-control" id="toDate" name="toDate">                                   
-                                            <input type="hidden" class="form-control" id="status" name="status">                                   
+                                            <input type="hidden" class="form-control" id="transactionStatus" name="transactionStatus">                                   
                                             <input type="hidden" class="form-control" id="customer" name="customer">     
                                             <input type="hidden" class="form-control" id="supplier" name="supplier"> 
                                             <input type="hidden" class="form-control" id="vehicle" name="vehicle">     
@@ -482,7 +481,8 @@ else{
                                             <input type="hidden" class="form-control" id="product" name="product">  
                                             <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
                                             <input type="hidden" class="form-control" id="destination" name="destination">     
-                                            <input type="hidden" class="form-control" id="plant" name="plant">     
+                                            <input type="hidden" class="form-control" id="plant" name="plant">   
+                                            <input type="hidden" class="form-control" id="status" name="status">                                     
                                             <input type="hidden" class="form-control" id="file" name="file">     
                                         </div>
                                     </div>
@@ -769,7 +769,7 @@ else{
             });*/
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
@@ -778,10 +778,11 @@ else{
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
 
             $('#exportPdfForm').find('#fromDate').val(fromDateI);
             $('#exportPdfForm').find('#toDate').val(toDateI);
-            $('#exportPdfForm').find('#status').val(statusI);
+            $('#exportPdfForm').find('#transactionStatus').val(transactionStatusI);
             $('#exportPdfForm').find('#customer').val(customerNoI);
             $('#exportPdfForm').find('#supplier').val(supplierNoI);
             $('#exportPdfForm').find('#vehicle').val(vehicleNoI);
@@ -790,6 +791,7 @@ else{
             $('#exportPdfForm').find('#rawMat').val(rawMatI);
             $('#exportPdfForm').find('#destination').val(destinationI);
             $('#exportPdfForm').find('#plant').val(plantI);
+            $('#exportPdfForm').find('#status').val(statusI);
             $('#exportPdfForm').find('#file').val('weight');
             $('#exportPdfModal').modal('hide');
 
@@ -820,7 +822,7 @@ else{
         $('#exportExcel').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
@@ -829,11 +831,12 @@ else{
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             
             window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
-            "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+            "&transactionStatus="+transactionStatusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
             "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
-            "&destination="+destinationI+"&plant="+plantI);
+            "&destination="+destinationI+"&plant="+plantI+"&status="+statusI);
         });
 
         $('#transactionStatusSearch').on('change', function(){
