@@ -3,6 +3,7 @@
 
 <?php
 require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
 
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
@@ -48,8 +49,6 @@ $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
@@ -58,18 +57,26 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);
+
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
 }
 else{
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 }
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);
+
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
 }
 else{
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 }
 
 $role = 'NORMAL';
