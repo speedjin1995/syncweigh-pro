@@ -595,7 +595,21 @@ else{
                 { data: 'transaction_status' },
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_name' },
+                { 
+                    data: 'product_name',
+                    render: function (data, type, row) {
+                        let product = '';
+
+                        if (row.product_code){
+                            product = row.product_code + ' - ' + row.product_name;
+                        }else{
+                            product = '-';
+
+                        }
+                        
+                        return product;
+                    }
+                },
                 { data: 'purchase_order' },
                 { data: 'delivery_no' },
                 { data: 'gross_weight1' },
@@ -668,7 +682,21 @@ else{
                     { data: 'transaction_status' },
                     { data: 'customer' },
                     { data: 'lorry_plate_no1' },
-                    { data: 'product_name' },
+                    { 
+                        data: 'product_name',
+                        render: function (data, type, row) {
+                            let product = '';
+
+                            if (row.product_code){
+                                product = row.product_code + ' - ' + row.product_name;
+                            }else{
+                                product = '-';
+
+                            }
+                            
+                            return product;
+                        }
+                    },
                     { data: 'purchase_order' },
                     { data: 'delivery_no' },
                     { data: 'gross_weight1' },
