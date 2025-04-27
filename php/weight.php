@@ -78,8 +78,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
 				if ($row2 = $result2->fetch_assoc()) {
 					//$id = $row2['misc_id'];
-					$transactionId .= $row2['prefix'];
-				}
+					$transactionId .= $row2['prefix'] . '/';
+				} 
 
                 $queryPlant = "SELECT sales as curcount FROM Plant WHERE plant_code='$plantCode'";
 
