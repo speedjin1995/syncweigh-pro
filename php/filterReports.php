@@ -89,6 +89,7 @@ $data = array();
 $salesCount = 0;
 $purchaseCount = 0;
 $localCount = 0;
+$miscCount = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['transaction_status'] == 'Sales'){
@@ -96,6 +97,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   }
   else if($row['transaction_status'] == 'Purchase'){
     $purchaseCount++;
+  }
+  else if($row['transaction_status'] == 'Misc'){
+    $miscCount++;
   }
   else{
     $localCount++;
@@ -159,7 +163,8 @@ $response = array(
   "aaData" => $data,
   "salesTotal" => $salesCount,
   "purchaseTotal" => $purchaseCount,
-  "localTotal" => $localCount
+  "localTotal" => $localCount,
+  "miscTotal" => $miscCount
 );
 
 echo json_encode($response);

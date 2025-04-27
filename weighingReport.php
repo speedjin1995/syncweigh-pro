@@ -631,6 +631,7 @@ if ($user != null && $user != ''){
                 $('#salesInfo').text(settings.json.salesTotal);
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
+                $('#miscInfo').text(settings.json.miscTotal);
             }   
         });
 
@@ -694,6 +695,7 @@ if ($user != null && $user != ''){
                     $('#salesInfo').text(settings.json.salesTotal);
                     $('#purchaseInfo').text(settings.json.purchaseTotal);
                     $('#localInfo').text(settings.json.localTotal);
+                    $('#miscInfo').text(settings.json.miscTotal);
                 }   
             });
         });
