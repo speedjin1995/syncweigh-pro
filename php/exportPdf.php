@@ -1091,7 +1091,7 @@ if(isset($_POST["file"])){
                                 <header>
                                     <div class="row">
                                         <div class="d-flex justify-content-center">
-                                            <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
+                                            <h5 class="fw-bold">TREE R WASTAGE MANAGEMENT SDN BHD</h5>
                                         </div>
                                         <div class="d-flex justify-content-center">
                                             <p>Sales Weighing Summary Report By '.$groupBy.'</p>
