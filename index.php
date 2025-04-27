@@ -2762,6 +2762,7 @@ else{
                 $('#addModal').find('#containerNo').attr('required', true);
             }else{
                 $('#containerCard').hide();
+                $('#addModal').find('#containerNo').attr('required', false);
             }
         });
 
