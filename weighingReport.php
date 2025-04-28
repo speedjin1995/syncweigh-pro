@@ -3,13 +3,12 @@
 
 <?php
 require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
 
 $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
@@ -24,18 +23,26 @@ $groupby = array(
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);
+
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
 }
 else{
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 }
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);
+
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
 }
 else{
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 }
 
 $role = 'NORMAL';
@@ -152,8 +159,7 @@ if ($user != null && $user != ''){
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select"  >
-                                                                <option selected>-</option>
-                                                                <option value="Sales">Sales</option>
+                                                                <option value="Sales" selected>Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
                                                                 <option value="Misc">Misc</option>
@@ -632,6 +638,7 @@ if ($user != null && $user != ''){
                 $('#salesInfo').text(settings.json.salesTotal);
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
+                $('#miscInfo').text(settings.json.miscTotal);
             }   
         });
 
@@ -695,6 +702,7 @@ if ($user != null && $user != ''){
                     $('#salesInfo').text(settings.json.salesTotal);
                     $('#purchaseInfo').text(settings.json.purchaseTotal);
                     $('#localInfo').text(settings.json.localTotal);
+                    $('#miscInfo').text(settings.json.miscTotal);
                 }   
             });
         });
@@ -725,9 +733,12 @@ if ($user != null && $user != ''){
                 weighingType: invoiceNoI,
                 product: transactionStatusI,
                 plant: plantNoI,
-                groupOne: groupOneI,
-                groupTwo: groupTwoI,
-                groupThree: groupThreeI
+                groupOne: 'customer_code',
+                groupTwo: 'product_code',
+                // groupOne: groupOneI,
+                // groupTwo: groupTwoI,
+                // groupThree: groupThreeI,
+                type: 'group'
             }, function(response){
                 var obj = JSON.parse(response);
 

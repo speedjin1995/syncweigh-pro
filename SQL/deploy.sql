@@ -272,3 +272,6 @@ BEGIN
 END
 $$
 DELIMITER ; 
+
+-- 27/04/25 --
+ALTER TABLE `product_log` ADD `plant` INT(5) NULL AFTER `low`;

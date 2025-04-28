@@ -3,6 +3,7 @@
 
 <?php
 require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
 
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
@@ -48,8 +49,6 @@ $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0'");
 $driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
@@ -58,18 +57,26 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);
+
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
 }
 else{
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
 }
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);
+
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
 }
 else{
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 }
 
 $role = 'NORMAL';
@@ -1344,6 +1351,7 @@ if ($user != null && $user != ''){
                 $('#salesInfo').text(settings.json.salesTotal);
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
+                $('#miscInfo').text(settings.json.miscTotal);
             }   
         });
 
@@ -1439,32 +1447,40 @@ if ($user != null && $user != ''){
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        <?php
-                            if(isset($_GET['weight'])){
-                                echo "window.location = 'index.php';";
-                            }
-                        ?>
-                        table.ajax.reload();
-                        window.location = 'index.php';
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
+
+                let productRow = $('#addModal').find($('#productTable tr'));
+
+                if (productRow.length > 0 ) {
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        var obj = JSON.parse(data); 
+                        if(obj.status === 'success'){
+                            <?php
+                                if(isset($_GET['weight'])){
+                                    echo "window.location = 'index.php';";
+                                }
+                            ?>
+                            table.ajax.reload();
+                            window.location = 'index.php';
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
+                        }
+                    });
+                }else{
+                    $('#spinnerLoading').hide();
+                    alert("Product cannot be empty. Please add product.");
+                }
             }
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
@@ -1874,6 +1890,7 @@ if ($user != null && $user != ''){
                     $('#salesInfo').text(settings.json.salesTotal);
                     $('#purchaseInfo').text(settings.json.purchaseTotal);
                     $('#localInfo').text(settings.json.localTotal);
+                    $('#miscInfo').text(settings.json.miscTotal);
                 }   
             });
         });
@@ -1892,7 +1909,7 @@ if ($user != null && $user != ''){
             $('#addModal').find('#customerName').val("");
             $('#addModal').find('#driverCode').val("");
             $('#addModal').find('#driverName').val("");
-            $('#addModal').find('#driverIC').val("");
+            $('#addModal').find('#driverICNo').val("");
             $('#addModal').find('#supplierCode').val("");
             $('#addModal').find('#supplierName').val("");
             $('#addModal').find('#productCode').val("");
@@ -1926,8 +1943,9 @@ if ($user != null && $user != ''){
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find("#manualWeightNo").prop("checked", true);
-            $('#addModal').find("#manualWeightYes").prop("checked", false);
+            // $('#addModal').find("#manualWeightNo").prop("checked", true);
+            // $('#addModal').find("#manualWeightYes").prop("checked", false);
+            $('#addModal').find('#manualWeightNo').trigger('click');
             $('#addModal').find("#manualPriceNo").prop("checked", true);
             $('#addModal').find("#manualPriceYes").prop("checked", false);
             //$('#addModal').find('input[name="manualWeight"]').val("false");

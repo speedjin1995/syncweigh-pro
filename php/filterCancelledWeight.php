@@ -60,10 +60,10 @@ if($searchValue != ''){
 }
 
 ## Total number of records without filtering
-$allQuery = "select count(*) as allcount from Weight where status = '1'";
+$allQuery = "select count(*) as allcount from Weight where status = '0' AND is_cancel = 'Y'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where status = '1' and plant_code IN ('$username')";
+  $allQuery = "select count(*) as allcount from Weight where status = '0' AND is_cancel = 'Y' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -71,10 +71,10 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount from Weight where status = '1'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where status = '0' AND is_cancel = 'Y'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where status = '1' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' AND is_cancel = 'Y' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -82,10 +82,10 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '1'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0' AND is_cancel = 'Y'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where status = '1' and plant_code IN ('$username')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where status = '0' and is_cancel = 'Y' and plant_code IN ('$username')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);
@@ -93,6 +93,7 @@ $data = array();
 $salesCount = 0;
 $purchaseCount = 0;
 $localCount = 0;
+$miscCount = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['transaction_status'] == 'Sales'){
@@ -100,6 +101,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   }
   else if($row['transaction_status'] == 'Purchase'){
     $purchaseCount++;
+  }
+  else if($row['transaction_status'] == 'Misc'){
+    $miscCount++;
   }
   else{
     $localCount++;
@@ -166,7 +170,8 @@ $response = array(
   "aaData" => $data,
   "salesTotal" => $salesCount,
   "purchaseTotal" => $purchaseCount,
-  "localTotal" => $localCount
+  "localTotal" => $localCount,
+  "miscTotal" => $miscCount
 );
 
 echo json_encode($response);

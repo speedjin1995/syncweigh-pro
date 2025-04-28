@@ -30,6 +30,7 @@ if(isset($_POST['userID'])){
                 $message['variance'] = $row['variance'];
                 $message['high'] = $row['high'];
                 $message['low'] = $row['low'];
+                $message['plant'] = $row['plant'];
             }
             
             echo json_encode(
