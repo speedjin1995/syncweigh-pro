@@ -58,11 +58,11 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
 
 <?php include 'layouts/body.php'; ?>
 
-<!-- <div class="loading" id="spinnerLoading" style="display:none">
+<div class="loading" id="spinnerLoading" style="display:none">
   <div class='mdi mdi-loading' style='transform:scale(0.79);'>
     <div></div>
   </div>
-</div> -->
+</div>
 
 <!-- Begin page -->
 <div id="layout-wrapper">
@@ -509,6 +509,10 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
+                                                                </button>
+                                                                <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-file-add-line align-middle me-1"></i>
+                                                                    Pull From SQL
                                                                 </button>
                                                                 <button type="button" id="addSalesOrder" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
@@ -1122,6 +1126,49 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             $('#totalPrice').val(totalPrice);
         });
 
+
+        $('#pullSql').on('click', function(){
+            $('#spinnerLoading').show();
+            // Send the JSON array to the server
+            $.ajax({
+                url: 'php/pullSalesOrder.php',
+                type: 'POST',
+                contentType: 'application/json',
+                success: function(response) {
+                    var obj = JSON.parse(response);
+                    if (obj.status === 'success') {
+                        $('#spinnerLoading').hide();
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                        window.location.reload();
+                    } 
+                    else if (obj.status === 'failed') {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        alert(obj.message);
+                    } 
+                    else if (obj.status === 'error') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        // alert(obj.message);
+                        // $("#failBtn").attr('data-toast-text', obj.message );
+                        // $("#failBtn").click();
+                        $('#errorModal').find('#errorList').empty();
+                        var errorMessage = obj.message;
+                        for (var i = 0; i < errorMessage.length; i++) {
+                            $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                        }
+                        $('#errorModal').modal('show');
+                    } 
+                    else {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                }
+            });
+        });
     });
 
     function format (row) {
