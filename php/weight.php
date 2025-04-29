@@ -461,7 +461,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $vehiclePlateNo1 = trim($_POST["vehicleNoTxt"]);
     }
 
-    if($weightType == 'Normal' && ($grossIncoming != null && $tareOutgoing != null)){
+    if(($weightType == 'Normal' || $weightType == 'Empty Container') && ($grossIncoming != null && $tareOutgoing != null)){
         $isComplete = 'Y';
     }
     else if($weightType == 'Container' && ($grossIncoming != null && $tareOutgoing != null && $grossIncoming2 != null && $tareOutgoing2 != null)){
@@ -497,14 +497,14 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     else{
         $prevBalance = 0;
-    }
-
-    if(isset($_POST['emptyContainerNo']) && $_POST['emptyContainerNo'] != null && $_POST['emptyContainerNo'] != ''){
-        $emptyContainerNo = $_POST['emptyContainerNo'];
-    }
-    else{
-        $emptyContainerNo = null;
     } 
+
+    // if(isset($_POST['emptyContainerNo']) && $_POST['emptyContainerNo'] != null && $_POST['emptyContainerNo'] != ''){
+    //     $emptyContainerNo = $_POST['emptyContainerNo'];
+    // }
+    // else{
+    //     $emptyContainerNo = null;
+    // } 
 
     /*if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){
         // $inDate = new DateTime($_POST['grossIncomingDate']);
@@ -728,41 +728,43 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     //     }
 
                     // update empty container status
-                    if(!empty($emptyContainerNo)){
-                        if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
-                            $update_container->bind_param('ss', $isComplete, $emptyContainerNo);
+                    // if(!empty($containerNo)){
+                    //     if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
+                    //         $update_container->bind_param('ss', $isComplete, $containerNo);
 
-                            // Execute the prepared query.
-                            if (! $update_container->execute()) {
-                                echo json_encode(
-                                    array(
-                                        "status"=> "failed", 
-                                        "message"=> $update_container->error
-                                    )
-                                );
-                            }
-                            else
-                            {
-                                $update_container->close();
+                    //         // Execute the prepared query.
+                    //         if (! $update_container->execute()) {
+                    //             echo json_encode(
+                    //                 array(
+                    //                     "status"=> "failed", 
+                    //                     "message"=> $update_container->error
+                    //                 )
+                    //             );
+                    //         }
+                    //         else
+                    //         {
+                    //             $update_container->close();
 
-                                echo json_encode(
-                                    array(
-                                        "status"=> "success", 
-                                        "message"=> "Updated Successfully!!",
-                                        "id"=>$weightId
-                                    )
-                                );
-                            }
-                        }
-                    }else{
-                        echo json_encode(
-                            array(
-                                "status"=> "success", 
-                                "message"=> "Updated Successfully!!",
-                                "id"=>$weightId
-                            )
-                        );
-                    }
+                    //             echo json_encode(
+                    //                 array(
+                    //                     "status"=> "success", 
+                    //                     "message"=> "Updated Successfully!!",
+                    //                     "id"=>$weightId
+                    //                 )
+                    //             );
+                    //         }
+                    //     }
+                    // }else{
+                        
+                    // }
+
+                    echo json_encode(
+                        array(
+                            "status"=> "success", 
+                            "message"=> "Updated Successfully!!",
+                            "id"=>$weightId
+                        )
+                    );
     
                     $update_stmt->close();
                     $db->close();
@@ -860,41 +862,43 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             $updatePoSoStmt->close();*/
 
                             // update empty container status
-                            if(!empty($emptyContainerNo)){
-                                if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
-                                    $update_container->bind_param('ss', $isComplete, $emptyContainerNo);
+                            // if(!empty($containerNo)){
+                            //     if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
+                            //         $update_container->bind_param('ss', $isComplete, $containerNo);
     
-                                    // Execute the prepared query.
-                                    if (! $update_container->execute()) {
-                                        echo json_encode(
-                                            array(
-                                                "status"=> "failed", 
-                                                "message"=> $update_container->error
-                                            )
-                                        );
-                                    }
-                                    else
-                                    {
-                                        $update_container->close();
+                            //         // Execute the prepared query.
+                            //         if (! $update_container->execute()) {
+                            //             echo json_encode(
+                            //                 array(
+                            //                     "status"=> "failed", 
+                            //                     "message"=> $update_container->error
+                            //                 )
+                            //             );
+                            //         }
+                            //         else
+                            //         {
+                            //             $update_container->close();
 
-                                        echo json_encode(
-                                            array(
-                                                "status"=> "success", 
-                                                "message"=> "Added Successfully!!",
-                                                "id"=>$id
-                                            )
-                                        );
-                                    }
-                                }
-                            }else{
-                                echo json_encode(
-                                    array(
-                                        "status"=> "success", 
-                                        "message"=> "Added Successfully!!",
-                                        "id"=>$id
-                                    )
-                                );
-                            }
+                            //             echo json_encode(
+                            //                 array(
+                            //                     "status"=> "success", 
+                            //                     "message"=> "Added Successfully!!",
+                            //                     "id"=>$id
+                            //                 )
+                            //             );
+                            //         }
+                            //     }
+                            // }else{
+                                
+                            // }
+
+                            echo json_encode(
+                                array(
+                                    "status"=> "success", 
+                                    "message"=> "Added Successfully!!",
+                                    "id"=>$id
+                                )
+                            );
                         }
                     } 
                     else{
