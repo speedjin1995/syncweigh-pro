@@ -72,7 +72,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC")
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
-$container = $db->query("SELECT * FROM Weight_Container WHERE status = '0' AND is_complete = 'N' AND is_cancel = 'N'");
+$container = $db->query("SELECT * FROM Weight_Container WHERE status = '0' AND is_complete = 'Y' AND is_cancel = 'N'");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
@@ -522,12 +522,24 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
+                                                                                <div class="row" id="containerDisplay">
+                                                                                    <label for="containerNoInput" class="col-sm-4 col-form-label">Container No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="containerNo" name="containerNo" placeholder="Container No">
+                                                                                        <input type="text" class="form-control" id="containerNoInput" name="containerNoInput" placeholder="Container No">
                                                                                     </div>
                                                                                 </div>
+                                                                                <div class="row" id="emptyContainerDisplay" style="display:none" >
+                                                                                    <label for="emptyContainerNo" class="col-sm-4 col-form-label">Container No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="emptyContainerNo" name="emptyContainerNo">
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowContainer=mysqli_fetch_assoc($container)){ ?>
+                                                                                                <option value="<?=$rowContainer['container_no'] ?>"><?=$rowContainer['container_no'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                   
+                                                                                    </div>
+                                                                                </div>
+                                                                                <input type="text" class="form-control" id="containerNo" name="containerNo" hidden>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
                                                                                 <div class="row">
@@ -884,20 +896,6 @@ else{
                                                             <div class="col-xxl-4 col-lg-4" id="containerCard" style="display:none;">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
-                                                                        <div class="row mb-3">
-                                                                            <label for="emptyContainerNo" class="col-sm-4 col-form-label">Empty Container No</label>
-                                                                            <div class="col-sm-8">
-                                                                                <select class="form-select select2" id="emptyContainerNo" name="emptyContainerNo">
-                                                                                    <option selected="-">-</option>
-                                                                                    <?php while($rowContainer=mysqli_fetch_assoc($container)){ ?>
-                                                                                        <option value="<?=$rowContainer['container_no'] ?>"><?=$rowContainer['container_no'] ?></option>
-                                                                                    <?php } ?>
-                                                                                </select>                   
-                                                                            </div>
-                                                                            <!-- <div class="input-group">
-                                                                                <input type="text" class="form-control" id="emptyContainerNo" name="emptyContainerNo" placeholder="Empty Container No">
-                                                                            </div> -->
-                                                                        </div>
                                                                         <div class="row mb-3">
                                                                             <label for="vehiclePlateNo2" class="col-sm-4 col-form-label">Vehicle Plate No 2</label>
                                                                             <div class="col-sm-8">
@@ -1380,13 +1378,9 @@ else{
                                                         <table id="emptyContainerTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Transaction <br>Id</th>
+                                                                    <th>Container <br>No</th>
                                                                     <th>Weight <br> Status</th>
-                                                                    <th>Customer/ <br> Supplier</th>
                                                                     <th>Vehicle</th>
-                                                                    <th>Product/ <br> Raw Material</th>
-                                                                    <th>SO/PO</th>
-                                                                    <th>DO</th>
                                                                     <th>Gross <br>Incoming</th>
                                                                     <th>Incoming <br>Date</th>
                                                                     <th>Tare <br>Outgoing</th>
@@ -1708,22 +1702,41 @@ else{
                         let buttons = `<div class="row g-1 d-flex">`;
 
                         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                            if (row.is_complete != 'Y' ){
+                            // if (row.is_complete != 'Y' ){
+                            if (row.weight_type == 'Empty Container'){
                                 buttons += `
                                 <div class="col-auto">
-                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
+                            }else{
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'N')" class="btn btn-warning btn-sm">
                                         <i class="fas fa-pen"></i>
                                     </button>
                                 </div>`;
                             }
+                            // }
                         }else {
                             if (row.is_complete != 'Y' ){
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                        <i class="fa-solid fa-weight-hanging"></i>
-                                    </button>
-                                </div>`;
+                                if (row.weight_type == 'Empty Container'){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-weight-hanging"></i>
+                                        </button>
+                                    </div>`;    
+                                }else{
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data}, 'N')" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-weight-hanging"></i>
+                                        </button>
+                                    </div>`;  
+                                }
+
                             }
                         }
 
@@ -1798,18 +1811,15 @@ else{
             'serverMethod': 'post',
             'ajax': {
                 'url':'php/filterEmptyContainer.php',
+                'data': {
+                    fromDate: fromDateI,
+                    toDate: toDateI
+                } 
             },
             'columns': [
-                { 
-                    data: 'transaction_id',
-                    class: 'transaction-column'
-                },                
+                { data: 'container_no' },                
                 { data: 'transaction_status' },
-                { data: 'customer' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_name' },
-                { data: 'purchase_order' },
-                { data: 'delivery_no' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
@@ -2463,6 +2473,7 @@ else{
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
+            $("#emptyContainerTable").DataTable().clear().destroy();
 
             //Create new Datatable
             table = $("#weightTable").DataTable({
@@ -2524,22 +2535,41 @@ else{
                             let buttons = `<div class="row g-1 d-flex">`;
 
                             if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                                if (row.is_complete != 'Y' ){
+                                // if (row.is_complete != 'Y' ){
+                                if (row.weight_type == 'Empty Container'){
                                     buttons += `
                                     <div class="col-auto">
-                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>`;
+                                }else{
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'N')" class="btn btn-warning btn-sm">
                                             <i class="fas fa-pen"></i>
                                         </button>
                                     </div>`;
                                 }
+                                // }
                             }else {
                                 if (row.is_complete != 'Y' ){
-                                    buttons += `
-                                    <div class="col-auto">
-                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                            <i class="fa-solid fa-weight-hanging"></i>
-                                        </button>
-                                    </div>`;
+                                    if (row.weight_type == 'Empty Container'){
+                                        buttons += `
+                                        <div class="col-auto">
+                                            <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
+                                                <i class="fa-solid fa-weight-hanging"></i>
+                                            </button>
+                                        </div>`;    
+                                    }else{
+                                        buttons += `
+                                        <div class="col-auto">
+                                            <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data}, 'N')" class="btn btn-warning btn-sm">
+                                                <i class="fa-solid fa-weight-hanging"></i>
+                                            </button>
+                                        </div>`;  
+                                    }
+
                                 }
                             }
 
@@ -2603,6 +2633,73 @@ else{
                     $('#miscInfo').text(settings.json.miscTotal);
                 }   
             });
+
+            //Create new Datatable for empty container
+            emptyContainerTable = $("#emptyContainerTable").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                'processing': true,
+                'serverSide': true,
+                'searching': true,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url':'php/filterEmptyContainer.php',
+                    'data': {
+                        fromDate: fromDateI,
+                        toDate: toDateI
+                    } 
+                },
+                'columns': [
+                    { data: 'container_no' },                
+                    { data: 'transaction_status' },
+                    { data: 'lorry_plate_no1' },
+                    { data: 'gross_weight1' },
+                    { data: 'gross_weight1_date' },
+                    { data: 'tare_weight1' },
+                    { data: 'tare_weight1_date' },
+                    { data: 'nett_weight1' },
+                    { 
+                        data: 'id',
+                        class: 'action-button',
+                        render: function (data, type, row) {
+                            let buttons = `<div class="row g-1 d-flex">`;
+
+                            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>`;
+                                }
+                            }else {
+                                if (row.is_complete != 'Y' ){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data},'Y')" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-weight-hanging"></i>
+                                        </button>
+                                    </div>`;
+                                }
+                            }
+
+                            if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
+                            }
+                                
+                            buttons += `</div>`;
+
+                            return buttons;
+                        }
+                    }
+                ]
+            });
         });
 
         $('#addWeight').on('click', function(){
@@ -2631,7 +2728,6 @@ else{
             $('#addModal').find('#siteCode').val("");
             $('#addModal').find('#siteName').val("").trigger('change');
             $('#addModal').find('#plantCode').val("");
-            $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#sealNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("").trigger('change');
@@ -2683,8 +2779,11 @@ else{
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
-            $('#addModal').find('#emptyContainerNo').val("").trigger('change');
             $('#addModal').find('#insufficientBalDisplay').hide();
+            $('#addModal').find('#containerNoInput').val("");
+            $('#addModal').find('#emptyContainerNo').val("").trigger('change');
+            $('#addModal').find('#containerNo').val("");
+
 
             // Show select and hide input readonly
             $('#addModal').find('#salesOrderEdit').val("").hide();
@@ -2756,13 +2855,16 @@ else{
 
             if (weightType == 'Container'){
                 $('#containerCard').show();
-                $('#addModal').find('#containerNo').attr('required', true);
+                $('#addModal').find('#emptyContainerDisplay').show();
+                $('#addModal').find('#containerDisplay').hide();
             }else if (weightType == 'Empty Container'){
                 $('#containerCard').hide();
-                $('#addModal').find('#containerNo').attr('required', true);
+                $('#addModal').find('#emptyContainerDisplay').hide();
+                $('#addModal').find('#containerDisplay').show();
             }else{
                 $('#containerCard').hide();
-                $('#addModal').find('#containerNo').attr('required', false);
+                $('#addModal').find('#emptyContainerDisplay').hide();
+                $('#addModal').find('#containerDisplay').show();
             }
         });
 
@@ -3312,17 +3414,21 @@ else{
 
         //Empty Container No
         $('#emptyContainerNo').on('change', function (){
-            var emptyContainerNo = $(this).val(); 
+            var emptyContainerNo = $(this).val();
+            $('#containerNo').val(emptyContainerNo);
 
             if (emptyContainerNo){
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
-                        $('#addModal').find('#containerNo').val(obj.message.container_no);
-                        $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no1).trigger('change');
-                        $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight1);
-                        $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight1_date);
+                        // $('#addModal').find('#containerNo').val(obj.message.container_no);
+                        $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
+                        $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
+                        $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
+                        $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
+                        $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
+                        $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -3336,6 +3442,11 @@ else{
                     }
                 });
             }
+        });
+
+        //Container No
+        $('#containerNoInput').on('change', function () {
+            $('#containerNo').val($(this).val());
         });
 
         /*$('#purchaseOrder').on('change', function (){
@@ -3732,7 +3843,6 @@ else{
                 }
                 
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
-                $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#sealNo').val(obj.message.seal_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
@@ -3798,7 +3908,10 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+                $('#addModal').find('#containerNoInput').val(obj.message.container_no); console.log(obj.message.container_no);
                 $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).trigger('change');
+                $('#addModal').find('#containerNo').val(obj.message.container_no);
+
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {

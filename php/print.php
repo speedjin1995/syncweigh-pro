@@ -257,9 +257,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <p style="vertical-align: top; margin-left:50px;">';
 
                                         if ($row['transaction_status'] == 'Local'){
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Internal Transfer</span>';
+                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Transfer Slip</span>';
                                         }elseif ($row['transaction_status'] == 'Misc') {
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Misc Slip</span>';
+                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Miscellaneous Slip</span>';
+                                        }elseif ($row['transaction_status'] == 'Sales') {
+                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Outgoing Slip</span>';
                                         }else{
                                             $message .= '<span style="font-size: 20px; font-weight: bold;">Receiving Slip</span>';
                                         }
