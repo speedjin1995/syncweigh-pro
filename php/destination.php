@@ -12,7 +12,7 @@ if(!isset($_SESSION['id'])){
 $id = $_SESSION['id'];
 
 // Processing form data when form is submitted
-if (isset($_POST['destinationCode'])) {
+if (isset($_POST['destinationName'])) {
 
     if (empty($_POST["id"])) {
         $destinationId = null;
@@ -20,8 +20,50 @@ if (isset($_POST['destinationCode'])) {
         $destinationId = trim($_POST["id"]);
     }
 
+    if (empty($_POST["destinationName"])) {
+        $destinationName = null;
+    } else {
+        $destinationName = trim($_POST["destinationName"]);
+    }
+
+    $misValue='';
     if (empty($_POST["destinationCode"])) {
         $destinationCode = null;
+        $code = 'destination';
+        $firstChar = substr($destinationName, 0, 1);
+        if (ctype_alpha($firstChar)) { //Check if letter is alphabet 
+            $firstChar = strtoupper($firstChar);
+        }
+
+        // Auto gen destination code
+        if($update_stmt2 = $db->prepare("SELECT * FROM Miscellaneous WHERE code=? AND name=?")){
+			$update_stmt2->bind_param('ss', $code, $firstChar);
+
+			if (! $update_stmt2->execute()) {
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Something went wrong when generating destination code"
+                    )
+                ); 
+            }
+            else{
+                $result2 = $update_stmt2->get_result();
+                $destinationCode = $firstChar."-";
+				if ($row2 = $result2->fetch_assoc()) {
+                    $charSize = strlen($row2['value']);
+                    $misValue = $row2['value'];
+
+                    for($i=0; $i<(5-(int)$charSize); $i++){
+                        $destinationCode.='0';  // S0000
+                    }
+            
+                    $destinationCode .= $misValue;  //S00009
+
+                    $misValue++;
+				}
+            }
+		}
     } else {
         $destinationCode = trim($_POST["destinationCode"]);
     }
@@ -30,12 +72,6 @@ if (isset($_POST['destinationCode'])) {
         $description = null;
     } else {
         $description = trim($_POST["description"]);
-    }
-
-    if (empty($_POST["destinationName"])) {
-        $destinationName = null;
-    } else {
-        $destinationName = trim($_POST["destinationName"]);
     }
     
     if(! empty($destinationId))
@@ -108,12 +144,31 @@ if (isset($_POST['destinationCode'])) {
                 );
             }
             else{
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
-                    )
-                );
+                // Update Miscellaneous 
+                if (!empty($misValue)){
+                    if ($update_miscellaneous = $db->prepare("UPDATE Miscellaneous SET value=? WHERE code=? AND name=?")) {
+                        $update_miscellaneous->bind_param('sss', $misValue, $code, $firstChar);
+    
+                        if (! $update_miscellaneous->execute()) {
+                            echo json_encode(
+                                array(
+                                    "status"=> "failed", 
+                                    "message"=> $update_miscellaneous->error
+                                )
+                            );
+                        }else{
+                            $update_miscellaneous->close();
+
+                            echo json_encode(
+                                array(
+                                    "status"=> "success", 
+                                    "message"=> "Added Successfully!!" 
+                                )
+                            );
+                        }                            
+    
+                    }
+                }
 
                 $sel = mysqli_query($db,"select count(*) as allcount from Destination");
                 $records = mysqli_fetch_assoc($sel);
