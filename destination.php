@@ -117,7 +117,7 @@
                                                                                 <div class="row">
                                                                                     <label for="destinationCode" class="col-sm-4 col-form-label">Destination Code</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="destinationCode" name="destinationCode" placeholder="Destination Code" required>
+                                                                                        <input type="text" class="form-control" id="destinationCode" name="destinationCode" placeholder="Destination Code" readonly>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>

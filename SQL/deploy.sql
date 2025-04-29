@@ -623,3 +623,44 @@ DELIMITER ;
 ALTER TABLE `Sales_Order` ADD `unit_price` VARCHAR(50) NULL AFTER `balance`, ADD `total_price` VARCHAR(50) NULL AFTER `unit_price`;
 
 ALTER TABLE `Purchase_Order` ADD `unit_price` VARCHAR(50) NULL AFTER `balance`, ADD `total_price` VARCHAR(50) NULL AFTER `unit_price`;
+
+-- 29/04/2025 --
+ALTER TABLE `miscellaneous` ADD `code` VARCHAR(50) NULL AFTER `value`;
+
+INSERT INTO `miscellaneous` (`code`, `name`, `value`) VALUES
+('destination', 'A', '1'),
+('destination', 'B', '1'),
+('destination', 'C', '1'),
+('destination', 'D', '1'),
+('destination', 'E', '1'),
+('destination', 'F', '1'),
+('destination', 'G', '1'),
+('destination', 'H', '1'),
+('destination', 'I', '1'),
+('destination', 'J', '1'),
+('destination', 'K', '1'),
+('destination', 'L', '1'),
+('destination', 'M', '1'),
+('destination', 'N', '1'),
+('destination', 'O', '1'),
+('destination', 'P', '1'),
+('destination', 'Q', '1'),
+('destination', 'R', '1'),
+('destination', 'S', '1'),
+('destination', 'T', '1'),
+('destination', 'U', '1'),
+('destination', 'V', '1'),
+('destination', 'W', '1'),
+('destination', 'X', '1'),
+('destination', 'Y', '1'),
+('destination', 'Z', '1'),
+('destination', '0', '1'),
+('destination', '1', '1'),
+('destination', '2', '1'),
+('destination', '3', '1'),
+('destination', '4', '1'),
+('destination', '5', '1'),
+('destination', '6', '1'),
+('destination', '7', '1'),
+('destination', '8', '1'),
+('destination', '9', '1')
