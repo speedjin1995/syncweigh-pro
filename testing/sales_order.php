@@ -1,6 +1,6 @@
 <?php
 // Define the Flask URL
-$url = "https://liger-optimal-blindly.ngrok-free.app/agents";
+$url = "https://sturgeon-still-falcon.ngrok-free.app/agents";
 
 // Initialize cURL session
 $curl = curl_init($url);

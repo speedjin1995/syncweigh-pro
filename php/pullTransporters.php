@@ -7,7 +7,7 @@ set_time_limit(300);
 session_start();
 $uid = $_SESSION['username'];
 
-$url = "https://liger-optimal-blindly.ngrok-free.app/shippers";
+$url = "https://sturgeon-still-falcon.ngrok-free.app/shippers";
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
