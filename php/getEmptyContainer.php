@@ -29,6 +29,23 @@ if(isset($_POST['userID'])){
                 $message['tare_weight1_date'] = date("d/m/Y h:i:s A", strtotime($row['tare_weight1_date']));
                 $message['lorry_plate_no1'] = $row['lorry_plate_no1'];
                 $message['nett_weight1'] = $row['nett_weight1'];
+
+                if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
+                    $update_stmt2->bind_param('s', $row['lorry_plate_no1']);
+                    $update_stmt2->execute();
+                    $result2 = $update_stmt2->get_result();
+                    
+                    if ($row2 = $result2->fetch_assoc()) {
+                        $message['vehicleNoTxt'] = null; // Replace "123" with the actual value if needed
+                    } 
+                    else {
+                        $message['vehicleNoTxt'] = $row['lorry_plate_no1']; // Debugging line
+                    }
+                } 
+                else {
+                    // Log error if the statement couldn't be prepared
+                    $message['vehicleNoTxt'] = $db->error;
+                }
             }
             
             echo json_encode(

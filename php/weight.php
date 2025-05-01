@@ -343,6 +343,10 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $vehiclePlateNo2 = trim($_POST["vehiclePlateNo2"]);
     }
 
+    if(filter_has_var(INPUT_POST,'manualVehicle2')) {
+        $vehiclePlateNo2 = trim($_POST["vehicleNoTxt2"]);
+    }
+
     if (empty($_POST["grossIncoming2"])) {
         $grossIncoming2 = null;
     } else {
@@ -499,14 +503,14 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $prevBalance = 0;
     } 
 
-    // if(isset($_POST['emptyContainerNo']) && $_POST['emptyContainerNo'] != null && $_POST['emptyContainerNo'] != ''){
-    //     $emptyContainerNo = $_POST['emptyContainerNo'];
-    // }
-    // else{
-    //     $emptyContainerNo = null;
-    // } 
+    /*if(isset($_POST['emptyContainerNo']) && $_POST['emptyContainerNo'] != null && $_POST['emptyContainerNo'] != ''){
+        $emptyContainerNo = $_POST['emptyContainerNo'];
+    }
+    else{
+        $emptyContainerNo = null;
+    } 
 
-    /*if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){
+    if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){
         // $inDate = new DateTime($_POST['grossIncomingDate']);
         // $inCDateTime = date_format($inDate,"Y-m-d H:i:s");
         $pStatus = "Pending";
@@ -636,52 +640,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         }  
     }else{
         if(! empty($weightId)){
-            // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
             $action = "2";
-            
-            # Checking to find balance weight before edit
-            /*$record_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?");
-            $record_stmt->bind_param('s', $weightId);
-            $record_stmt->execute();
-            $record_result = $record_stmt->get_result();
-            $recordRow = $record_result->fetch_assoc();    
-            
-            # Update PO or SO table row balance
-            if ($transactionStatus == 'Purchase'){
-                $beforeEditNettWeight = $recordRow['supplier_weight'];
-                $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
-                $currentBalance = $balanceBeforeEdit - $supplierWeight;
-                $poSo_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND status='Open' AND deleted='0'");
-            }else{
-                $beforeEditNettWeight = $recordRow['nett_weight1'];
-                $balanceBeforeEdit = $beforeEditNettWeight + $prevBalance;
-                $currentBalance = $balanceBeforeEdit - $nettWeight;
-                $poSo_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND status='Open' AND deleted='0'");
-            }
-    
-            $poSo_stmt->bind_param('s', $purchaseOrder);
-            $poSo_stmt->execute();
-            $result = $poSo_stmt->get_result();
-            $poSoRow = $result->fetch_assoc();    
-            $poSoId = $poSoRow['id'];
-    
-            if ($currentBalance <= 0){
-                $poSoStatus = 'Close'; //set status to close if current balance is less than equal 0
-            }else{
-                $poSoStatus = 'Open';
-            }
-    
-            $poSo_stmt->close();
-    
-            if ($transactionStatus == 'Purchase'){
-                $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE id=?");
-            }else{
-                $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE id=?");
-            }
-    
-            $updatePoSoStmt->bind_param('sss', $currentBalance, $poSoStatus, $poSoId);
-            $updatePoSoStmt->execute();
-            $updatePoSoStmt->close();*/
     
             if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
             product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, seal_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
@@ -702,69 +661,43 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         )
                     );
                 }
-                else
-                {
-                    // if ($insert_stmt = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                    //     $insert_stmt->bind_param('sssss', $vehicleId, $vehicleNo, $vehicleWeight, $action, $username);
-            
-                    //     // Execute the prepared query.
-                    //     if (! $insert_stmt->execute()) {
-                    //         // echo json_encode(
-                    //         //     array(
-                    //         //         "status"=> "failed", 
-                    //         //         "message"=> $insert_stmt->error
-                    //         //     )
-                    //         // );
-                    //     }
-                    //     else{
-                    //         $insert_stmt->close();
-                            
-                    //         // echo json_encode(
-                    //         //     array(
-                    //         //         "status"=> "success", 
-                    //         //         "message"=> "Added Successfully!!" 
-                    //         //     )
-                    //         // );
-                    //     }
-
+                else{
                     // update empty container status
-                    // if(!empty($containerNo)){
-                    //     if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
-                    //         $update_container->bind_param('ss', $isComplete, $containerNo);
+                    if(!empty($containerNo) && $weightType == 'Container'){
+                        if ($update_container = $db->prepare("UPDATE Weight_Container SET is_cancel=? WHERE container_no=? AND status='0'")){
+                           $update_container->bind_param('ss', $isComplete, $containerNo);
 
-                    //         // Execute the prepared query.
-                    //         if (! $update_container->execute()) {
-                    //             echo json_encode(
-                    //                 array(
-                    //                     "status"=> "failed", 
-                    //                     "message"=> $update_container->error
-                    //                 )
-                    //             );
-                    //         }
-                    //         else
-                    //         {
-                    //             $update_container->close();
+                           // Execute the prepared query.
+                           if (! $update_container->execute()) {
+                               echo json_encode(
+                                   array(
+                                       "status"=> "failed", 
+                                       "message"=> $update_container->error
+                                   )
+                               );
+                           }
+                           else
+                           {
+                               $update_container->close();
 
-                    //             echo json_encode(
-                    //                 array(
-                    //                     "status"=> "success", 
-                    //                     "message"=> "Updated Successfully!!",
-                    //                     "id"=>$weightId
-                    //                 )
-                    //             );
-                    //         }
-                    //     }
-                    // }else{
-                        
-                    // }
+                               echo json_encode(
+                                   array(
+                                       "status"=> "success", 
+                                       "message"=> "Updated Successfully!!",
+                                       "id"=>$weightId
+                                   )
+                               );
+                           }
+                        }
+                    }
 
-                    echo json_encode(
+                   /* echo json_encode(
                         array(
                             "status"=> "success", 
                             "message"=> "Updated Successfully!!",
                             "id"=>$weightId
                         )
-                    );
+                    );*/
     
                     $update_stmt->close();
                     $db->close();
