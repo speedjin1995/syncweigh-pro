@@ -15,10 +15,10 @@ if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate']
     $fromDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date >= '".$formatted_date."'";
     }
 }
 
@@ -579,7 +579,7 @@ if(isset($_POST["file"])){
                                                 $formattedGrossWeightDate = $grossWeightDate->format('H:i');
                                                 $tareWeightDate =  new DateTime($row['tare_weight1_date']);
                                                 $formattedTareWeightDate = $tareWeightDate->format('H:i');
-                                                $transactionDate =  new DateTime($row['transaction_date']);
+                                                $transactionDate =  new DateTime($row['tare_weight1_date']);
                                                 $formattedtransactionDate = $transactionDate->format('d/m/Y');
                                                 $exDel = '';
                                                 

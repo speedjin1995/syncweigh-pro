@@ -18,14 +18,14 @@ if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate']
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
     $formatted_date = $dateTime->format('Y-m-d H:i');
     $fromDate = $dateTime->format('d/m/Y');
-    $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
+    $searchQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
 }
 
 if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
     $formatted_date = $dateTime->format('Y-m-d H:i');
     $toDate = $dateTime->format('d/m/Y');
-    $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
+    $searchQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
 }
 
 if(isset($_POST['status']) && $_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
