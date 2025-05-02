@@ -66,7 +66,7 @@ if (!empty($data['data'])) {
             $insertStmt->close();
         }
 
-        $stmt->close();
+        //$stmt->close();
     }
 
     $db->close();
