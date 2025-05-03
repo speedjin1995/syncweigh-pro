@@ -1320,6 +1320,7 @@ else{
                                                             <thead>
                                                                 <tr>
                                                                     <th>Transaction <br>Id</th>
+                                                                    <th>Weight <br>Type</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Customer/ <br> Supplier</th>
                                                                     <th>Vehicle</th>
@@ -1670,6 +1671,7 @@ else{
                     data: 'transaction_id',
                     class: 'transaction-column'
                 },                
+                { data: 'weight_type' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },
@@ -2503,6 +2505,7 @@ else{
                         data: 'transaction_id',
                         class: 'transaction-column'
                     },
+                    { data: 'weight_type' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
                     { data: 'lorry_plate_no1' },
@@ -3372,8 +3375,22 @@ else{
         });
 
         //Container No
+        $('#containerNoInput').on('keyup', function(){
+            var x = $('#containerNoInput').val();
+            x = x.toUpperCase();
+            $('#containerNoInput').val(x);
+            $('#containerNo').val(x);
+        });
+        
         $('#containerNoInput').on('change', function () {
             $('#containerNo').val($(this).val());
+        });
+
+        //Seal No
+        $('#sealNo').on('keyup', function(){
+            var x = $('#sealNo').val();
+            x = x.toUpperCase();
+            $('#sealNo').val(x);
         });
 
         <?php
