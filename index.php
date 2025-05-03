@@ -728,7 +728,7 @@ else{
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3"  <?php 
-                                                                                if($_SESSION["roles"] != 'SADMIN'){
+                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN'){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -819,9 +819,9 @@ else{
                                                                                     <div class="input-group-text">
                                                                                         <input class="form-check-input mt-0" id="manualVehicle" name="manualVehicle" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                     </div>
-                                                                                    <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
+                                                                                    <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" >
                                                                                     <div class="col-10 index-vehicle">
-                                                                                        <select class="form-select select2" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
+                                                                                        <select class="form-select select2" id="vehiclePlateNo1" name="vehiclePlateNo1" >
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                                                                                                 <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
@@ -829,9 +829,9 @@ else{
                                                                                         </select>
                                                                                         <input type="text" class="form-control" id="vehiclePlateNo1Edit" name="vehiclePlateNo1Edit" hidden>
                                                                                         </div>
-                                                                                    <div class="invalid-feedback">
+                                                                                    <!--div class="invalid-feedback">
                                                                                         Please fill in the field.
-                                                                                    </div>
+                                                                                    </div-->
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1295,7 +1295,7 @@ else{
                                                     <div class="card-header" style="background-color: #099885;">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0 text-white">Previous Records</h5>
+                                                                <h5 class="card-title mb-0 text-white">Previous Records (Lorry)</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <!--a href="/template/Weight_Template.xlsx" download>
@@ -1354,7 +1354,7 @@ else{
                                                     <div class="card-header" style="background-color: #099885;">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0 text-white">Previous Empty Container Records</h5>
+                                                                <h5 class="card-title mb-0 text-white">Pending Empty Container Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <!--a href="/template/Weight_Template.xlsx" download>
@@ -2707,6 +2707,7 @@ else{
             $('#addModal').find('#grossCapture').show();
             $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
+            $('#addModal').find('#currentWeight').text("0");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
@@ -2743,6 +2744,7 @@ else{
             $('#addModal').find('#destination').val("-").trigger('change');
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             $('#addModal').find('#grossIncomingDate').val("");
             $('#addModal').find('#tareOutgoing').val("");
@@ -2974,98 +2976,6 @@ else{
             }
         });
 
-        $('#vehiclePlateNo1').on('change', function(){
-            //var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
-        
-            //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                //$('#grossIncoming').val(parseFloat(tare).toFixed(0));
-                //$('#grossIncoming').trigger('keyup');
-            /*}
-            else{
-                $('#tareOutgoing').val(parseFloat(tare).toFixed(0));
-                $('#tareOutgoing').trigger('keyup');
-            }*/
-
-            /*var vehicleNo1 = $(this).val();
-            var vehicleNo1Edit = $('#vehiclePlateNo1Edit').val();
-            var exDel = $('input[name="exDel"]:checked').val();
-            if (vehicleNo1Edit == 'EDIT'){
-                return;
-            }
-            else if (exDel == 'true'){
-                // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
-                // $('#addModal').find('#transporterCode').val('T01');
-                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        // var customerName = obj.message.customer_name;
-                        // var customerCode = obj.message.customer_code;
-
-                        // $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        // $('#addModal').find('#customerCode').val(customerCode);
-                    }
-                    else if(obj.status === 'error'){
-                        alert(obj.message);
-                        $('#vehiclePlateNo1').val('').trigger('change');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }
-            else{
-                // $('#addModal').find('#customerName').val('').trigger('change');
-                // $('#addModal').find('#customerCode').val('');
-
-                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        // var transporterName = obj.message.transporter_name;
-                        // var transporterCode = obj.message.transporter_code;
-
-                        // $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        // $('#addModal').find('#transporterCode').val(transporterCode);
-                    }
-                    else if(obj.status === 'error'){
-                        alert(obj.message);
-                        $('#vehiclePlateNo1').val('').trigger('change');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }*/
-        });
-
-        $('#vehiclePlateNo2').on('change', function(){
-            //var tare = $('#vehiclePlateNo2 :selected').data('weight') ? parseFloat($('#vehiclePlateNo2 :selected').data('weight')) : 0;
-        
-            //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
-                //$('#grossIncoming2').val(parseFloat(tare).toFixed(0));
-                //$('#grossIncoming2').trigger('keyup');
-            /*}
-            else{
-                $('#tareOutgoing2').val(parseFloat(tare).toFixed(0));
-                $('#tareOutgoing2').trigger('keyup');
-            }*/
-        });
-
         $('#manualVehicle2').on('click', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
@@ -3143,10 +3053,12 @@ else{
         });
         
         $('#reduceWeight').on('change', function(){
-            debugger;
+            var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
+            var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
+            var current = Math.abs(nett1 - nett2);
             var reduce = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-            var final = Math.abs(nett1 - reduce);
+            //var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            var final = Math.abs(current - reduce);
             $('#currentWeight').text(final.toFixed(0));
             $('#finalWeight').val(final.toFixed(0));
             $('#currentWeight').trigger('change');
@@ -3429,6 +3341,21 @@ else{
                         $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                         $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
                         $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+
+                        if(obj.message.vehicleNoTxt != null){
+                            $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
+                            $('#manualVehicle').val(1);
+                            $('#manualVehicle').prop("checked", true);
+                            $('.index-vehicle').hide();
+                            $('#vehicleNoTxt').show();
+                        }
+                        else{
+                            $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
+                            $('#manualVehicle').val(0);
+                            $('#manualVehicle').prop("checked", false);
+                            $('.index-vehicle').show();
+                            $('#vehicleNoTxt').hide();
+                        }
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -3448,184 +3375,6 @@ else{
         $('#containerNoInput').on('change', function () {
             $('#containerNo').val($(this).val());
         });
-
-        /*$('#purchaseOrder').on('change', function (){
-            var purchaseOrder = $(this).val();
-            var type = $('#addModal').find('#transactionStatus').val();
-
-            if (purchaseOrder){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
-
-                        // Change Details
-                        $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
-                        $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        $('#addModal').find('#agent').val(agentName).trigger('change');
-                        $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                        $('#addModal').find('#plant').val(plantName).trigger('change');
-                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
-
-                        if(exDel == 'E'){
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        }else{
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                        }
-
-                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight)
-                        $('#addModal').find('#balance').val(balance);
-                        // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
-
-                        // if (previousRecordsTag){
-                        //     $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        //     // Hide or show insufficient balance
-                        //     if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }else{
-                        //     var weight = 0;
-                        //     if (type == 'Purchase'){
-                        //         weight = $('#addModal').find('#supplierWeight').val();
-                        //     }else{
-                        //         weight = $('#addModal').find('#orderWeight').val();
-                        //     }
-
-                        //     $('#addModal').find('#balance').val(weight);
-                        //     // Hide or show insufficient balance
-                        //     if (weight <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }
-
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }else{
-                $('#addModal').trigger('orderLoaded');
-            }
-        });
-
-        $('#salesOrder').on('change', function (){
-            var salesOrder = $(this).val(); 
-            var type = $('#addModal').find('#transactionStatus').val(); 
-            if (salesOrder){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
-
-                        $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
-                        $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        $('#addModal').find('#agent').val(agentName).trigger('change');
-                        $('#addModal').find('#productName').val(productName).trigger('change');
-                        $('#addModal').find('#plant').val(plantName).trigger('change');
-                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
-
-                        if(exDel == 'E'){
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        }else{
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                        }
-
-                        $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                        $('#addModal').find('#balance').val(balance);
-                        // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
-
-                        if (parseFloat(balance) <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
-                        }
-
-
-                        // if (previousRecordsTag){
-                        //     // $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        //     // Hide or show insufficient balance
-                        //     if (parseFloat(balance) <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }else{
-                        //     var weight = 0;
-                        //     if (type == 'Purchase'){
-                        //         weight = $('#addModal').find('#supplierWeight').val();
-                        //     }else{
-                        //         weight = $('#addModal').find('#orderWeight').val();
-                        //     }
-
-                        //     $('#addModal').find('#balance').val(weight);
-                        //     // Hide or show insufficient balance
-                        //     if (weight <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }
-                        
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }
-
-        });*/
 
         <?php
             if(isset($_GET['weight'])){
