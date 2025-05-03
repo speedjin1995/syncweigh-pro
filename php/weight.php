@@ -689,15 +689,15 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                );
                            }
                         }
+                    }else{
+                        echo json_encode(
+                            array(
+                                "status"=> "success", 
+                                "message"=> "Updated Successfully!!",
+                                "id"=>$weightId
+                            )
+                        );
                     }
-
-                   /* echo json_encode(
-                        array(
-                            "status"=> "success", 
-                            "message"=> "Updated Successfully!!",
-                            "id"=>$weightId
-                        )
-                    );*/
     
                     $update_stmt->close();
                     $db->close();
