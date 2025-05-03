@@ -246,9 +246,8 @@ if(isset($_POST["file"])){
                                                             <td>0.00</td>
                                                         </tr>';
                                                 }
-                                                
-                                                $message .= '</tbody>
-                                                <tfoot>
+
+                                                $message .= '
                                                     <tr>
                                                         <td class="fw-bold">Company Total:</td>
                                                         <td>'.$totalRecords.'</td>
@@ -263,7 +262,9 @@ if(isset($_POST["file"])){
                                                         <td>0.00</td>
                                                         <td>0.00</td>
                                                     </tr>
-                                                </tfoot>
+                                                ';
+                                                
+                                                $message .= '</tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -400,9 +401,8 @@ if(isset($_POST["file"])){
                                                             <td>0.00</td>
                                                         </tr>';
                                                 }
-                                                
-                                                $message .= '</tbody>
-                                                <tfoot>
+
+                                                $message .= '
                                                     <tr>
                                                         <td class="fw-bold">Company Total:</td>
                                                         <td>'.$totalRecords.'</td>
@@ -417,7 +417,9 @@ if(isset($_POST["file"])){
                                                         <td>0.00</td>
                                                         <td>0.00</td>
                                                     </tr>
-                                                </tfoot>
+                                                ';
+                                                
+                                                $message .= '</tbody>
                                             </table>
                                         </div>
                                     </div>
