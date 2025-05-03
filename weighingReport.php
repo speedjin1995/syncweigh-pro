@@ -263,8 +263,7 @@ else{
                             </div>
                             
                             <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
+                                <!-- <div class="col-xl-3 col-md-6">
                                     <div class="card card-animate" style="background-color: #4CAF50;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -286,12 +285,11 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #FFC107;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -313,12 +311,11 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #81D4FA;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -340,12 +337,11 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #9C27B0;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -367,10 +363,9 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-                                
+                                        </div>
+                                    </div>
+                                </div> -->
                             </div> <!-- end row-->
 
 
