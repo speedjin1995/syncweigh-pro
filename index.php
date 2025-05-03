@@ -1376,6 +1376,7 @@ else{
                                                             <thead>
                                                                 <tr>
                                                                     <th>Container <br>No</th>
+                                                                    <th>Seal <br>No</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Vehicle</th>
                                                                     <th>Gross <br>Incoming</th>
@@ -1816,6 +1817,7 @@ else{
             },
             'columns': [
                 { data: 'container_no' },                
+                { data: 'seal_no' },                
                 { data: 'transaction_status' },
                 { data: 'lorry_plate_no1' },
                 { data: 'gross_weight1' },
@@ -2650,6 +2652,7 @@ else{
                 },
                 'columns': [
                     { data: 'container_no' },                
+                    { data: 'seal_no' },                
                     { data: 'transaction_status' },
                     { data: 'lorry_plate_no1' },
                     { data: 'gross_weight1' },
@@ -3340,6 +3343,7 @@ else{
                         $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                         $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
                         $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                        $('#addModal').find('#sealNo').val(obj.message.seal_no);
 
                         if(obj.message.vehicleNoTxt != null){
                             $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);

@@ -109,6 +109,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "product_code"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_code'] : $row['product_code']), 
     "product_name"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_name'] : $row['product_name']), 
     "container_no"=>$row['container_no'],
+    "seal_no"=>$row['seal_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],
     "delivery_no"=>$row['delivery_no'],
