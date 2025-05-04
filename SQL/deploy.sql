@@ -201,3 +201,12 @@ CREATE TABLE `Weight_Container_Log` (
 ALTER TABLE `Weight_Container_Log` ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `Weight_Container_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 03/05/2025 --
+UPDATE status SET `prefix` = 'D' WHERE status = 'Sales';
+
+UPDATE status SET `prefix` = 'R' WHERE status = 'Purchase';
+
+UPDATE status SET `prefix` = 'IT' WHERE status = 'Local';
+
+UPDATE status SET `prefix` = 'M' WHERE status = 'Misc';

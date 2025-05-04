@@ -11,6 +11,8 @@ if(!isset($_SESSION['id'])){
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
 
+$today = date('ym');
+
 // Processing form data when form is submitted
 if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
 , $_POST['manualWeight'], $_POST['plantCode'], $_POST['plant'], $_POST['exDel'], $_POST['loadDrum'])) {
@@ -81,6 +83,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 					$transactionId .= $row2['prefix'] . '/';
 				} 
 
+                $transactionId .= $today . '-';
+
                 $queryPlant = "SELECT sales as curcount FROM Plant WHERE plant_code='$plantCode'";
 
                 if($status == 'Purchase'){
@@ -110,7 +114,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 							$charSize = strlen($row['curcount']);
 							$misValue = $row['curcount'];
 		
-							for($i=0; $i<(5-(int)$charSize); $i++){
+							for($i=0; $i<(4-(int)$charSize); $i++){
 								$transactionId.='0';  // S0000
 							}
 					
