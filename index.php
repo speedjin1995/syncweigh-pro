@@ -421,6 +421,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
+                                                                                        <h3 class="ff-secondary fw-semibold text-white">Indicator Weight</h3>
                                                                                         <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="indicatorWeight">0</span> Kg</h2>
                                                                                     </div>
                                                                                     <div>
@@ -443,6 +444,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
+                                                                                        <h3 class="ff-secondary fw-semibold text-white">Final Weight</h3>
                                                                                         <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="currentWeight">0</span> Kg</h2>
                                                                                     </div>
                                                                                     <div>
@@ -1686,7 +1688,20 @@ else{
                 { data: 'weight_type' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
-                { data: 'lorry_plate_no1' },
+                { 
+                    data: 'lorry_plate_no1',
+                    render: function (data, type, row) {
+                        var vehicle = '';
+
+                        if (row.weight_type == 'Container'){
+                            vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
+                        }else{
+                            vehicle = row.lorry_plate_no1;
+                        }
+
+                        return vehicle;
+                    }
+                },
                 { data: 'product_code' },
                 { data: 'purchase_order' },
                 { data: 'delivery_no' },
@@ -2507,7 +2522,20 @@ else{
                     { data: 'weight_type' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
-                    { data: 'lorry_plate_no1' },
+                    { 
+                        data: 'lorry_plate_no1',
+                        render: function (data, type, row) {
+                            var vehicle = '';
+
+                            if (row.weight_type == 'Container'){
+                                vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
+                            }else{
+                                vehicle = row.lorry_plate_no1;
+                            }
+
+                            return vehicle;
+                        }
+                    },
                     { data: 'product_code' },
                     { data: 'purchase_order' },
                     { data: 'delivery_no' },

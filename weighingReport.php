@@ -589,7 +589,20 @@ else{
                 { data: 'transaction_id' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
-                { data: 'lorry_plate_no1' },
+                { 
+                    data: 'lorry_plate_no1',
+                    render: function (data, type, row) {
+                        var vehicle = '';
+
+                        if (row.weight_type == 'Container'){
+                            vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
+                        }else{
+                            vehicle = row.lorry_plate_no1;
+                        }
+
+                        return vehicle;
+                    }
+                },
                 { data: 'product_code' },
                 { data: 'purchase_order' },
                 { data: 'delivery_no' },
@@ -662,7 +675,20 @@ else{
                     { data: 'transaction_id' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
-                    { data: 'lorry_plate_no1' },
+                    { 
+                        data: 'lorry_plate_no1',
+                        render: function (data, type, row) {
+                            var vehicle = '';
+
+                            if (row.weight_type == 'Container'){
+                                vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
+                            }else{
+                                vehicle = row.lorry_plate_no1;
+                            }
+
+                            return vehicle;
+                        }
+                    },
                     { data: 'product_code' },
                     { data: 'purchase_order' },
                     { data: 'delivery_no' },
