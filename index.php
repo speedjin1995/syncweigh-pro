@@ -1542,6 +1542,7 @@ else{
     <script type="text/javascript">
     var table = null;
     var emptyContainerTable = null;
+    let clickTimer = null;
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -1894,18 +1895,47 @@ else{
                 return;
             }
 
-            if (row.child.isShown()) {
-                // This row is already open - close it
-                row.child.hide();
-                tr.removeClass('shown');
-            } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
-                    var obj = JSON.parse(data);
-                    if (obj.status === 'success') {
-                        row.child(format(obj.message)).show();
-                        tr.addClass("shown");
-                    }
-                });
+            // Clear any previous timer if have
+            if (clickTimer) {
+                clearTimeout(clickTimer);
+                clickTimer = null;
+            }
+
+            // Delay to detect double-click
+            clickTimer = setTimeout(function () {
+                if (row.child.isShown()) {
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
+                        var obj = JSON.parse(data);
+                        if (obj.status === 'success') {
+                            row.child(format(obj.message)).show();
+                            tr.addClass("shown");
+                        }
+                    });
+                }
+
+                clickTimer = null; // Reset after execution
+            }, 250); // Delay to distinguish from double-click
+        });
+
+        // Add event listener for double click
+        $('#weightTable tbody').on('dblclick', 'tr', function (e) {
+            if (clickTimer) {
+                clearTimeout(clickTimer); // Cancel single-click
+                clickTimer = null;
+            }
+
+            var row = table.row(this);
+            var id = row.data().id;
+            var weightType = row.data().weight_type;
+
+            // run edit function
+            if (weightType == 'Empty Container'){
+                edit(id, 'Y');
+            }else{
+                edit(id, 'N');
             }
         });
 
