@@ -151,6 +151,8 @@ if(isset($_POST['userID'])){
                             $message['site_name'] = $row['site_name'];
                             $message['container_no'] = $row['container_no'];
                             $message['seal_no'] = $row['seal_no'];
+                            $message['container_no2'] = $row['container_no2'];
+                            $message['seal_no2'] = $row['seal_no2'];
                             $message['invoice_no'] = $row['invoice_no'];
                             $message['purchase_order'] = $row['purchase_order'];
                             $message['delivery_no'] = $row['delivery_no'];
@@ -345,6 +347,8 @@ if(isset($_POST['userID'])){
                             $message['site_name'] = $row['site_name'];
                             $message['container_no'] = $row['container_no'];
                             $message['seal_no'] = $row['seal_no'];
+                            $message['container_no2'] = $row['container_no2'];
+                            $message['seal_no2'] = $row['seal_no2'];
                             $message['invoice_no'] = $row['invoice_no'];
                             $message['purchase_order'] = $row['purchase_order'];
                             $message['delivery_no'] = $row['delivery_no'];
