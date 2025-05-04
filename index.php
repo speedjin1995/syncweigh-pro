@@ -1757,12 +1757,14 @@ else{
                         }
 
                         if (row.is_approved == 'Y') {
-                            buttons += `
-                            <div class="col-auto">
-                                <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
-                                    <i class="fa-solid fa-print"></i>
-                                </button>
-                            </div>`;
+                            if (row.weight_type != 'Empty Container'){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>`;
+                            }
                         }
 
                         if (row.is_approved == 'N') {
@@ -2620,12 +2622,14 @@ else{
                             }
 
                             if (row.is_approved == 'Y') {
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
-                                        <i class="fa-solid fa-print"></i>
-                                    </button>
-                                </div>`;
+                                if (row.weight_type != 'Empty Container'){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                            <i class="fa-solid fa-print"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
 
                             if (row.is_approved == 'N') {
