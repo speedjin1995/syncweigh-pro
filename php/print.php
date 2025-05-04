@@ -383,13 +383,20 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <table style="width:100%; border:0px solid black;">
                                     <tr>
                                         <th style="border:1px solid black;font-size: 18px;text-align: center;">Vehicle No</th>
-                                        <th style="border:1px solid black;font-size: 18px;text-align: center;">Product Description</th>
+                                        <th style="border:1px solid black;font-size: 18px;text-align: center;">Product Code</th>
                                         <th style="border:1px solid black;font-size: 18px;text-align: center;">Date/Time</th>
                                         <th colspan="2" style="border:1px solid black;font-size: 18px;text-align: center;">Weight (kg)</th>
                                     </tr>
                                     <tr>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['lorry_plate_no1'].'</td>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['product_name'].'</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['lorry_plate_no1'].'</td>';
+
+                                        if ($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
+                                            $message .= '<td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['raw_mat_code'].'</td>';
+                                        }else{
+                                            $message .= '<td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['product_code'].'</td>';
+                                        }
+
+                                    $message .= '    
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$grossWeightTime.'</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">1st Weight</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['gross_weight1']).' kg</td>

@@ -278,7 +278,7 @@ if(isset($_POST['userID'])){
                                     } 
                                 }
     
-                                $message['product_rawmat_name'] = $row['raw_mat_name'];
+                                $message['product_rawmat_name'] = $row['raw_mat_code'];
     
                             }else{
                                 if ($customer_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
@@ -296,7 +296,7 @@ if(isset($_POST['userID'])){
                                     }
                                 } 
     
-                                $message['product_rawmat_name'] = $row['product_name'];
+                                $message['product_rawmat_name'] = $row['product_code'];
     
                             }
                             $message['transporter'] = $row['transporter'] ?? '';
