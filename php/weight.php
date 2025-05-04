@@ -59,6 +59,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         }
     }
 
+    if (empty($_POST["weightType"])) {
+        $weightType = 'Normal';
+    } else {
+        $weightType = trim($_POST["weightType"]);
+    }
+
     if (empty($_POST["transactionId"])) {
         $status = $_POST['transactionStatus'];
 
@@ -80,10 +86,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
 				if ($row2 = $result2->fetch_assoc()) {
 					//$id = $row2['misc_id'];
-					$transactionId .= $row2['prefix'] . '/';
-				} 
 
-                $transactionId .= $today . '-';
+                    if ($weightType == 'Container'){
+                        $transactionId .= 'C/'.$row2['prefix'] . '/'.$today . '-';
+                    }else{
+                        $transactionId .= $row2['prefix'] . '/' .$today . '-';
+                    }
+				} 
 
                 $queryPlant = "SELECT sales as curcount FROM Plant WHERE plant_code='$plantCode'";
 
@@ -157,12 +166,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $totalPrice = '0.00';
     } else {
         $totalPrice = trim($_POST["totalPrice"]);
-    }
-
-    if (empty($_POST["weightType"])) {
-        $weightType = 'Normal';
-    } else {
-        $weightType = trim($_POST["weightType"]);
     }
 
     if (empty($_POST["customerType"])) {

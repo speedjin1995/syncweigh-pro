@@ -207,10 +207,26 @@ UPDATE status SET `prefix` = 'D' WHERE status = 'Sales';
 
 UPDATE status SET `prefix` = 'R' WHERE status = 'Purchase';
 
-UPDATE status SET `prefix` = 'IT' WHERE status = 'Local';
+UPDATE status SET `prefix` = 'I' WHERE status = 'Local';
 
 UPDATE status SET `prefix` = 'M' WHERE status = 'Misc';
 
 ALTER TABLE `Weight` ADD `container_no2` VARCHAR(50) NULL AFTER `seal_no`, ADD `seal_no2` VARCHAR(50) NULL AFTER `container_no2`;
 
 ALTER TABLE `Weight_Container` ADD `container_no2` VARCHAR(50) NULL AFTER `seal_no`, ADD `seal_no2` VARCHAR(50) NULL AFTER `container_no2`;
+
+ALTER TABLE `weight` ADD `gross_weight_by1` VARCHAR(50) NULL AFTER `gross_weight1_date`;
+
+ALTER TABLE `weight` ADD `tare_weight_by1` VARCHAR(50) NULL AFTER `tare_weight1_date`;
+
+ALTER TABLE `weight` ADD `gross_weight_by2` VARCHAR(50) NULL AFTER `gross_weight2_date`;
+
+ALTER TABLE `weight` ADD `tare_weight_by2` VARCHAR(50) NULL AFTER `tare_weight2_date`;
+
+ALTER TABLE `Weight_Container` ADD `gross_weight_by1` VARCHAR(50) NULL AFTER `gross_weight1_date`;
+
+ALTER TABLE `Weight_Container` ADD `tare_weight_by1` VARCHAR(50) NULL AFTER `tare_weight1_date`;
+
+ALTER TABLE `Weight_Container` ADD `gross_weight_by2` VARCHAR(50) NULL AFTER `gross_weight2_date`;
+
+ALTER TABLE `Weight_Container` ADD `tare_weight_by2` VARCHAR(50) NULL AFTER `tare_weight2_date`;
