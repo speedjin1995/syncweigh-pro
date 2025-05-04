@@ -25,8 +25,10 @@ if(isset($_POST['userID'])){
                 $message['container_no'] = $row['container_no'];
                 $message['gross_weight1'] = $row['gross_weight1'];
                 $message['gross_weight1_date'] = date("d/m/Y h:i:s A", strtotime($row['gross_weight1_date']));
+                $message['gross_weight_by1'] = $row['gross_weight_by1'];
                 $message['tare_weight1'] = $row['tare_weight1'];
                 $message['tare_weight1_date'] = date("d/m/Y h:i:s A", strtotime($row['tare_weight1_date']));
+                $message['tare_weight_by1'] = $row['tare_weight_by1'];
                 $message['lorry_plate_no1'] = $row['lorry_plate_no1'];
                 $message['nett_weight1'] = $row['nett_weight1'];
                 $message['seal_no'] = $row['seal_no'];

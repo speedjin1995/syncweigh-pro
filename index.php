@@ -5,6 +5,7 @@
 require_once "php/db_connect.php";
 
 $user = $_SESSION['id'];
+$username = $_SESSION["username"];
 $plantId = $_SESSION['plant'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
@@ -1112,6 +1113,10 @@ else{
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                         <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
+                                                        <input type="hidden" id="grossWeightBy1" name="grossWeightBy1">
+                                                        <input type="hidden" id="tareWeightBy1" name="tareWeightBy1">
+                                                        <input type="hidden" id="grossWeightBy2" name="grossWeightBy2">
+                                                        <input type="hidden" id="tareWeightBy2" name="tareWeightBy2">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -3076,6 +3081,7 @@ else{
             $('#nettWeight').val(nett.toFixed(0));
             $('#grossIncomingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
+            $('#grossWeightBy1').val('<?php echo $username; ?>');
         });
 
         $('#grossCapture').on('click', function(){
@@ -3091,6 +3097,7 @@ else{
             $('#nettWeight').val(nett.toFixed(0));
             $('#tareOutgoingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
+            $('#tareWeightBy1').val('<?php echo $username; ?>');
         });
 
         $('#tareCapture').on('click', function(){
@@ -3180,6 +3187,7 @@ else{
             $('#nettWeight2').val(nett.toFixed(0));
             $('#grossIncomingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
+            $('#grossWeightBy2').val('<?php echo $username; ?>');
         });
 
         $('#grossCapture2').on('click', function(){
@@ -3195,6 +3203,7 @@ else{
             $('#nettWeight2').val(nett.toFixed(0));
             $('#tareOutgoingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
+            $('#tareWeightBy2').val('<?php echo $username; ?>');
         });
 
         $('#tareCapture2').on('click', function(){
@@ -3390,13 +3399,15 @@ else{
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
                     var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
+                    if (obj.status == 'success'){ console.log(obj.message);
                         // $('#addModal').find('#containerNo').val(obj.message.container_no);
                         $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                         $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                         $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
+                        $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
                         $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                         $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
+                        $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                         $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                         $('#addModal').find('#sealNo').val(obj.message.seal_no);
 
@@ -3716,13 +3727,17 @@ else{
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
+                $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
+                $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
+                $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2); console.log(obj.message.gross_weight_by2);
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
                 $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate3(new Date(obj.message.tare_weight2_date)) : '');
+                $('#addModal').find('#tareWeightBy2').val(obj.message.tare_weight_by2);
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
@@ -3755,7 +3770,7 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
-                $('#addModal').find('#containerNoInput').val(obj.message.container_no); console.log(obj.message.container_no);
+                $('#addModal').find('#containerNoInput').val(obj.message.container_no);
                 $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).trigger('change');
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#containerNo2').val(obj.message.container_no2);
