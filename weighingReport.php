@@ -142,8 +142,8 @@ else{
                                                             <label for="transactionStatusSearch" class="form-label">Transaction Status</label>
                                                             <select id="transactionStatusSearch" class="form-select">
                                                                 <option selected>-</option>
-                                                                <option value="Sales" selected>Arrival</option>
-                                                                <option value="Purchase">Departure</option>
+                                                                <option value="Sales" selected>Departure</option>
+                                                                <option value="Purchase">Receiving</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
                                                             </select>
@@ -269,7 +269,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Arrival
+                                                        Departure
                                                     </p>
                                                 </div>
                                             </div>
@@ -295,7 +295,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Departure
+                                                        Receiving
                                                     </p>
                                                 </div>
                                             </div>

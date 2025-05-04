@@ -171,10 +171,10 @@ if($query->num_rows > 0){
             }
 
             if($row['transaction_status'] == 'Sales'){
-                $transactionStatus = 'Arrival';
+                $transactionStatus = 'Departure';
             }
             else if($row['transaction_status'] == 'Purchase'){
-                $transactionStatus = 'Departure';
+                $transactionStatus = 'Receiving';
             }
             else if($row['transaction_status'] == 'Misc'){
                 $transactionStatus = 'Miscellaneous';

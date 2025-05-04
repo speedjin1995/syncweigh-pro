@@ -67,7 +67,8 @@ if(isset($_POST['userID'])){
                         if ($format == 'EXPANDABLE'){
                             $message['id'] = $row['id'];
     
-                            if ($row['transaction_status'] == 'Purchase'){
+
+                            if ($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
                                 if ($customer_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
                                     $customer_stmt->bind_param('s', $row['supplier_code']);
                                     $customer_stmt->execute();
@@ -254,7 +255,14 @@ if(isset($_POST['userID'])){
                         if ($format == 'EXPANDABLE'){
                             $message['id'] = $row['id'];
     
-                            if ($row['transaction_status'] == 'Purchase'){
+                            $message['name'] = '';
+                            $message['address_line_1'] = '';
+                            $message['address_line_2'] = '';
+                            $message['address_line_3'] = '';
+                            $message['phone_no'] = '';
+                            $message['fax_no'] = '';
+
+                            if ($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
                                 if ($customer_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
                                     $customer_stmt->bind_param('s', $row['supplier_code']);
                                     $customer_stmt->execute();

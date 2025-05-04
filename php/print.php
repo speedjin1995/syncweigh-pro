@@ -92,13 +92,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $tareWeightTime2 = $row['tare_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['tare_weight2_date'])) : "";
 
                     if ($row['transaction_status'] == 'Sales'){
-                        $transacationStatus = 'Arrival';
-                    }elseif ($row['transaction_status'] == 'Purchase'){
                         $transacationStatus = 'Departure';
+                    }elseif ($row['transaction_status'] == 'Purchase'){
+                        $transacationStatus = 'Receiving';
                     }elseif ($row['transaction_status'] == 'Local'){
                         $transacationStatus = 'Internal Transfer';
                     }else {
-                        $transacationStatus = $row['transaction_status'];
+                        $transacationStatus = 'Miscellaneous';
                     }
 
                     if($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
@@ -254,20 +254,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         </p>
                                     </td>
                                     <td style="vertical-align: top;">
-                                        <p style="vertical-align: top; margin-left:50px;">';
-
-                                        if ($row['transaction_status'] == 'Local'){
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Transfer Slip</span>';
-                                        }elseif ($row['transaction_status'] == 'Misc') {
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Miscellaneous Slip</span>';
-                                        }elseif ($row['transaction_status'] == 'Sales') {
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Outgoing Slip</span>';
-                                        }else{
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Receiving Slip</span>';
-                                        }
-                                            
-                                    $message .= '        
-                                            <br>
+                                        <p style="vertical-align: top; margin-left:50px;">
+                                            <span style="font-size: 20px; font-weight: bold;">'. $transacationStatus .' Slip</span><br>
                                             <span style="font-size: 14px;">Ticket No: <b style="font-size: 16px;">'.$row['transaction_id'].'</b></span><br>
                                             <span style="font-size: 14px;">Date: '.$transactionDate.'</span><br>
                                         </p>
