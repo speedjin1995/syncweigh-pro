@@ -342,14 +342,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                             if($row['weight_type'] == 'Container'){
                                 $message .= '<table style="width:100%; border:0px solid black;">
                                     <tr>
-                                        <th style="border:1px solid black;font-size: 16px;text-align: center;"></th>
                                         <th style="border:1px solid black;font-size: 16px;text-align: center;">Incoming Date/Time</th>
                                         <th style="border:1px solid black;font-size: 16px;text-align: center;">Outgoing Date/Time</th>
-                                        <th colspan="2"style="border:1px solid black;font-size: 16px;text-align: center;">Prime Mover No. & Weight (kg)</th>
+                                        <th colspan="2" style="border:1px solid black;font-size: 16px;text-align: center;">Prime Mover No. & Weight (kg)</th>
                                         <th style="border:1px solid black;font-size: 16px;text-align: center;">Weight (kg)</th>
                                     </tr>
                                     <tr>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">IN</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$grossWeightTime.'</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$tareWeightTime.'</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['lorry_plate_no1'].'</td>
@@ -357,7 +355,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['tare_weight1']).' kg</td>
                                     </tr>
                                     <tr>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">OUT</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$grossWeightTime2.'</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$tareWeightTime2.'</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['lorry_plate_no2'].'</td>
@@ -365,17 +362,17 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['tare_weight2']).' kg</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4">Remarks: <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
+                                        <td colspan="3">Remarks: <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">Final Weight</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight(abs((int)$row['nett_weight1'] - (int)$row['nett_weight2'])).' kg</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4"></td>
+                                        <td colspan="3"></td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">Reduce Weight</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['reduce_weight']).' kg</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4"></td>
+                                        <td colspan="3"></td>
                                         <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">Nett Weight</td>
                                         <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">'.formatWeight($row['final_weight']).' kg</td>
                                     </tr>
