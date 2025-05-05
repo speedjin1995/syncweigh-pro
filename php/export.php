@@ -157,13 +157,13 @@ if($query->num_rows > 0){
                 $exDel = 'D';
             }
             
-            if($row['product_code'] != '501A-011'){
+            //if($row['product_code'] != '501A-011'){
                 $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
                 $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['destination_code'], 
                 $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], 
                 $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], 
                 $row['created_by']);
-            }
+            //}
         }
         else{
             $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],

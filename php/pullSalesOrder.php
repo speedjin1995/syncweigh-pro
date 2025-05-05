@@ -10,7 +10,7 @@ $startDate = '6/1/2025'; // Hardcoded or dynamic as needed
 $endDate = date('n/j/Y'); // Today’s date in m/d/Y format, e.g., 4/29/2025
 //$endDate = '6/30/2025';
 
-$url = "https://liger-optimal-blindly.ngrok-free.app/sales_orders?start_date=$endDate&end_date=$endDate";
+$url = "https://sturgeon-still-falcon.ngrok-free.app/sales_orders?start_date=$endDate&end_date=$endDate";
 
 
 $curl = curl_init($url);

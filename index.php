@@ -521,24 +521,13 @@ else{
                                                                             </div>  
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="weightType" name="weightType" class="form-select select2">
                                                                                             <option selected>Normal</option>
                                                                                             <option>Container</option>
-                                                                                        </select>   
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="customerType" class="col-sm-4 col-form-label">Customer Type</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select id="customerType" name="customerType" class="form-select select2">
-                                                                                            <option>Cash</option>
-                                                                                            <option selected>Normal</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -589,13 +578,12 @@ else{
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
+                                                                                    <label for="customerType" class="col-sm-4 col-form-label">Customer Type</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select select2">
-                                                                                            <option value="Sales" selected>Sales</option>
-                                                                                            <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Public</option>
-                                                                                        </select>  
+                                                                                        <select id="customerType" name="customerType" class="form-select select2">
+                                                                                            <option>Cash</option>
+                                                                                            <option selected>Normal</option>
+                                                                                        </select>   
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -658,12 +646,13 @@ else{
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                    <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
-                                                                                        <div class="invalid-feedback">
-                                                                                            Please fill in the field.
-                                                                                        </div>    
+                                                                                        <select id="transactionStatus" name="transactionStatus" class="form-select select2">
+                                                                                            <option value="Sales" selected>Sales</option>
+                                                                                            <option value="Purchase">Purchase</option>
+                                                                                            <option value="Local">Public</option>
+                                                                                        </select>  
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -708,6 +697,17 @@ else{
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Please fill in the field.
+                                                                                        </div>    
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
                                                                                     <div class="col-sm-8">
@@ -3319,70 +3319,75 @@ else{
             var plant = $('#addModal').find('#plantCode').val();
 
             if (salesOrder){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
-
-                        // Change Details
-                        if (!$('#addModal').find('#customerName').val()) {
-                            $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                //if (!isEdit){
+                    $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
+                        var obj = JSON.parse(data);
+    
+                        if (obj.status == 'success'){
+                            var customerSupplierName = obj.message.customer_supplier_name;
+                            var destinationName = obj.message.destination_name;
+                            var siteName = obj.message.site_name;
+                            var agentName = obj.message.agent_name;
+                            var productName = obj.message.product_name;
+                            var plantName = obj.message.plant_name;
+                            var transporterName = obj.message.transporter_name;
+                            var vehNo = obj.message.veh_number;
+                            var exDel = obj.message.ex_del;
+                            var orderSupplierWeight = obj.message.order_supplier_weight;
+                            var balance = obj.message.balance;
+                            // var finalWeight = obj.message.final_weight;
+                            // var previousRecordsTag = obj.message.previousRecordsTag;
+    
+                            // Change Details
+                            if (!$('#addModal').find('#customerName').val()) {
+                                $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#destination').val()) {
+                                $('#addModal').find('#destination').val(destinationName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#siteName').val()) {
+                                $('#addModal').find('#siteName').val(siteName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#agent').val()) {
+                                $('#addModal').find('#agent').val(agentName).trigger('change');
+                            }
+                            // if (!$('#addModal').find('#productName').val()) {
+                            //     $('#addModal').find('#productName').val(productName).trigger('change');
+                            // }
+                            if (!$('#addModal').find('#plant').val()) {
+                                $('#addModal').find('#plant').val(plantName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                            }
+    
+                            if (exDel == 'E') {
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                            } else {
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                            }
+    
+                            $('#addModal').find('#orderWeight').val(orderSupplierWeight)
+                            $('#addModal').find('#balance').val(balance);
                         }
-                        if (!$('#addModal').find('#destination').val()) {
-                            $('#addModal').find('#destination').val(destinationName).trigger('change');
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
                         }
-                        if (!$('#addModal').find('#siteName').val()) {
-                            $('#addModal').find('#siteName').val(siteName).trigger('change');
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
                         }
-                        if (!$('#addModal').find('#agent').val()) {
-                            $('#addModal').find('#agent').val(agentName).trigger('change');
-                        }
-                        // if (!$('#addModal').find('#productName').val()) {
-                        //     $('#addModal').find('#productName').val(productName).trigger('change');
-                        // }
-                        if (!$('#addModal').find('#plant').val()) {
-                            $('#addModal').find('#plant').val(plantName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#transporter').val()) {
-                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                            $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
-                        }
-
-                        if (exDel == 'E') {
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        } else {
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                        }
-
-                        $('#addModal').find('#orderWeight').val(orderSupplierWeight)
-                        $('#addModal').find('#balance').val(balance);
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                    });
+                /*}
+                else{
+                    $('#addModal').trigger('orderLoaded');
+                }*/
             }else{
                 if (!soPoTag && !addNewTag){
                     getSoPo();
@@ -3438,6 +3443,36 @@ else{
             }else if(transactionStatus == 'Purchase'){
                 $('#addModal').find('#rawMaterialName').trigger('change');
             }
+        });
+        
+        $('#addModal').on('orderLoaded', function(e, data) {
+            $('#addModal').find('#customerCode').val(data.customer_code);
+            $('#addModal').find('#customerName').val(data.customer_name).trigger('change');
+            $('#addModal').find('#supplierCode').val(data.supplier_code);
+            $('#addModal').find('#supplierName').val(data.supplier_name).trigger('change');
+            $('#addModal').find('#siteCode').val(data.site_code);
+            $('#addModal').find('#siteName').val(data.site_name).trigger('change');
+            $('#addModal').find('#agent').val(data.agent_name).trigger('change');
+            $('#addModal').find('#agentCode').val(data.agent_code);
+            $('#addModal').find('#supplierWeight').val(data.supplier_weight);
+            $('#addModal').find('#orderWeight').val(data.order_weight);
+            $('#addModal').find('#destinationCode').val(data.destination_code);
+            $('#addModal').find('#destination').val(data.destination).trigger('change');
+            $('#addModal').find('#plant').val(data.plant_name).trigger('change');
+            $('#addModal').find('#plantCode').val(data.plant_code);
+            $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
+            $('#addModal').find('#rawMaterialName').val(data.raw_mat_name).trigger('change');
+            $('#addModal').find('#productName').val(data.product_name).trigger('change');
+            $('#addModal').find('#productCode').val(data.product_code);
+        
+            // Optional: Show read-only fields instead of dropdown if needed
+            // if (data.transaction_status === 'Purchase') {
+            //     $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+            //     $('#addModal').find('#purchaseOrderEdit').val(data.purchase_order).show();
+            // } else {
+            //     $('#addModal').find('#salesOrder').next('.select2-container').hide();
+            //     $('#addModal').find('#salesOrderEdit').val(data.purchase_order).show();
+            // }
         });
 
         // SRP
@@ -3527,71 +3562,77 @@ else{
             var plant = $('#addModal').find('#plantCode').val();
 
             if (purchaseOrder){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
-
-                        // Change Details
-                        if (!$('#addModal').find('#supplierName').val()) {
-                            $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                //if (!isEdit){
+                    $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
+                        var obj = JSON.parse(data);
+    
+                        if (obj.status == 'success'){
+                            var customerSupplierName = obj.message.customer_supplier_name;
+                            var destinationName = obj.message.destination_name;
+                            var siteName = obj.message.site_name;
+                            var agentName = obj.message.agent_name;
+                            var productName = obj.message.product_name;
+                            var plantName = obj.message.plant_name;
+                            var transporterName = obj.message.transporter_name;
+                            var vehNo = obj.message.veh_number;
+                            var exDel = obj.message.ex_del;
+                            var orderSupplierWeight = obj.message.order_supplier_weight;
+                            var balance = obj.message.balance;
+                            // var finalWeight = obj.message.final_weight;
+                            // var previousRecordsTag = obj.message.previousRecordsTag;
+    
+                            // Change Details
+                            if (!$('#addModal').find('#supplierName').val()) {
+                                $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#destination').val()) {
+                                $('#addModal').find('#destination').val(destinationName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#siteName').val()) {
+                                $('#addModal').find('#siteName').val(siteName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#agent').val()) {
+                                $('#addModal').find('#agent').val(agentName).trigger('change');
+                            }
+                            // if (!$('#addModal').find('#rawMaterialName').val()) {
+                            //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                            // }
+                            if (!$('#addModal').find('#plant').val()) {
+                                $('#addModal').find('#plant').val(plantName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                            }
+    
+                            if (exDel == 'E') {
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                            } else {
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                            }
+    
+                            $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
+                            $('#addModal').find('#balance').val(balance);
                         }
-                        if (!$('#addModal').find('#destination').val()) {
-                            $('#addModal').find('#destination').val(destinationName).trigger('change');
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
                         }
-                        if (!$('#addModal').find('#siteName').val()) {
-                            $('#addModal').find('#siteName').val(siteName).trigger('change');
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
                         }
-                        if (!$('#addModal').find('#agent').val()) {
-                            $('#addModal').find('#agent').val(agentName).trigger('change');
-                        }
-                        // if (!$('#addModal').find('#rawMaterialName').val()) {
-                        //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                        // }
-                        if (!$('#addModal').find('#plant').val()) {
-                            $('#addModal').find('#plant').val(plantName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#transporter').val()) {
-                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        }
-                        if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                            $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
-                        }
-
-                        if (exDel == 'E') {
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        } else {
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                        }
-
-                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
-                        $('#addModal').find('#balance').val(balance);
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }else{
+                    });
+                /*}
+                else{
+                    $('#addModal').trigger('orderLoaded');
+                }*/
+            }
+            else{
                 if (!soPoTag && !addNewTag){
                     getSoPo();
                 }
@@ -3621,7 +3662,7 @@ else{
                     $('#addModal').find('#purchaseOrder').empty();
                     $('#addModal').find('#purchaseOrder').append(purchaseOption);
                     $('#addModal').find('#purchaseOrder').val(purchaseOrder);
-                    $('#addModal').trigger('orderLoaded');
+                    //$('#addModal').trigger('orderLoaded');
                 }else{
                     $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
                         var obj = JSON.parse(data);
@@ -3639,7 +3680,7 @@ else{
                                 }
                             }
 
-                            $('#addModal').trigger('orderLoaded');
+                            //$('#addModal').trigger('orderLoaded');
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -3665,7 +3706,7 @@ else{
                     $('#addModal').find('#salesOrder').empty();
                     $('#addModal').find('#salesOrder').append(salesOption);
                     $('#addModal').find('#salesOrder').val(salesOrder);
-                    $('#addModal').trigger('orderLoaded');
+                    //$('#addModal').trigger('orderLoaded');
                 }else{
                     $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, format: 'getProdRaw'}, function (data){
                         var obj = JSON.parse(data);
@@ -3683,7 +3724,7 @@ else{
                                 }
                             }
 
-                            $('#addModal').trigger('orderLoaded');
+                            //$('#addModal').trigger('orderLoaded');
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -4094,9 +4135,21 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+                
+                if (obj.message.transaction_status == 'Purchase'){
+                    //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+                    $//('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').trigger('orderLoaded', [obj.message]);
+                }else{
+                    //$('#addModal').find('#salesOrder').next('.select2-container').hide();
+                    //$('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').trigger('orderLoaded', [obj.message]);
+                }
 
                 // Load these field after PO/SO is loaded
-                $('#addModal').on('orderLoaded', function() {
+                /*$('#addModal').on('orderLoaded', function() {
                     $('#addModal').find('#customerCode').val(obj.message.customer_code);
                     $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
                     $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
@@ -4124,7 +4177,7 @@ else{
                     //     $('#addModal').find('#salesOrder').next('.select2-container').hide();
                     //     $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     // }
-                });
+                });*/
                 
                 isEdit = false;
 
