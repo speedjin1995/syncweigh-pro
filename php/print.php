@@ -244,7 +244,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                         <body>
                             <table style="width:100%;">
                                 <tr>
-                                    <td style="width: 60%;">
+                                    <td style="width: 65%;">
                                         <p>
                                             <span style="font-weight: bold;font-size: 18px;">'.$compname.'</span><br><br>
                                             <span style="font-size: 14px;">'.$compaddress.'</span><br>
