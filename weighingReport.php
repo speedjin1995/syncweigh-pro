@@ -142,8 +142,8 @@ else{
                                                             <label for="transactionStatusSearch" class="form-label">Transaction Status</label>
                                                             <select id="transactionStatusSearch" class="form-select">
                                                                 <option selected>-</option>
-                                                                <option value="Sales" selected>Arrival</option>
-                                                                <option value="Purchase">Departure</option>
+                                                                <option value="Sales" selected>Departure</option>
+                                                                <option value="Purchase">Receiving</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
                                                             </select>
@@ -263,14 +263,13 @@ else{
                             </div>
                             
                             <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
+                                <!-- <div class="col-xl-3 col-md-6">
                                     <div class="card card-animate" style="background-color: #4CAF50;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Arrival
+                                                        Departure
                                                     </p>
                                                 </div>
                                             </div>
@@ -286,18 +285,17 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #FFC107;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Departure
+                                                        Receiving
                                                     </p>
                                                 </div>
                                             </div>
@@ -313,12 +311,11 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #81D4FA;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -340,12 +337,11 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #9C27B0;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -367,10 +363,9 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-                                
+                                        </div>
+                                    </div>
+                                </div> -->
                             </div> <!-- end row-->
 
 
@@ -594,22 +589,21 @@ else{
                 { data: 'transaction_id' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
-                { data: 'lorry_plate_no1' },
                 { 
-                    data: 'product_name',
+                    data: 'lorry_plate_no1',
                     render: function (data, type, row) {
-                        let product = '';
+                        var vehicle = '';
 
-                        if (row.product_code){
-                            product = row.product_code + ' - ' + row.product_name;
+                        if (row.weight_type == 'Container'){
+                            vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
                         }else{
-                            product = '-';
-
+                            vehicle = row.lorry_plate_no1;
                         }
-                        
-                        return product;
+
+                        return vehicle;
                     }
                 },
+                { data: 'product_code' },
                 { data: 'purchase_order' },
                 { data: 'delivery_no' },
                 { data: 'gross_weight1' },
@@ -681,22 +675,21 @@ else{
                     { data: 'transaction_id' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
-                    { data: 'lorry_plate_no1' },
                     { 
-                        data: 'product_name',
+                        data: 'lorry_plate_no1',
                         render: function (data, type, row) {
-                            let product = '';
+                            var vehicle = '';
 
-                            if (row.product_code){
-                                product = row.product_code + ' - ' + row.product_name;
+                            if (row.weight_type == 'Container'){
+                                vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
                             }else{
-                                product = '-';
-
+                                vehicle = row.lorry_plate_no1;
                             }
-                            
-                            return product;
+
+                            return vehicle;
                         }
                     },
+                    { data: 'product_code' },
                     { data: 'purchase_order' },
                     { data: 'delivery_no' },
                     { data: 'gross_weight1' },

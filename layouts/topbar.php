@@ -6,11 +6,13 @@ $weighing2 = $db->query("SELECT * FROM Weight WHERE is_approved = 'N'");
 $salesList = array();
 $purchaseList = array();
 $localList = array();
+$miscList = array();
 $count = 0;
 
 $salesList2 = array();
 $purchaseList2 = array();
 $localList2 = array();
+$miscList2 = array();
 $count2 = 0;
 
 while($row=mysqli_fetch_assoc($weighing)){
@@ -28,8 +30,15 @@ while($row=mysqli_fetch_assoc($weighing)){
             "weight_type" => $row['weight_type']
         );
     }
-    else{
+    else if($row['transaction_status'] == 'Local'){
         $localList[] = array(
+            "id" => $row['id'],
+            "transaction_id" => $row['transaction_id'],
+            "weight_type" => $row['weight_type']
+        );
+    }
+    else{
+        $miscList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
             "weight_type" => $row['weight_type']
@@ -52,8 +61,15 @@ while($row2=mysqli_fetch_assoc($weighing2)){
             "weight_type" => $row2['weight_type']
         );
     }
-    else{
+    else if($row2['transaction_status'] == 'Local'){
         $localList2[] = array(
+            "id" => $row2['id'],
+            "transaction_id" => $row2['transaction_id'],
+            "weight_type" => $row2['weight_type']
+        );
+    }
+    else{
+        $miscList2[] = array(
             "id" => $row2['id'],
             "transaction_id" => $row2['transaction_id'],
             "weight_type" => $row2['weight_type']
@@ -61,8 +77,8 @@ while($row2=mysqli_fetch_assoc($weighing2)){
     }
 }
 
-$count = count($salesList) + count($purchaseList) + count($localList);
-$count2 = count($salesList2) + count($purchaseList2) + count($localList2);
+$count = count($salesList) + count($purchaseList) + count($localList) + count($miscList);
+$count2 = count($salesList2) + count($purchaseList2) + count($localList2) + count($miscList2);
 ?>
 <header id="page-topbar">
     <div class="layout-width">
@@ -672,19 +688,25 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                                     <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link active" data-bs-toggle="tab" href="#all-noti-tab" role="tab"
                                             aria-selected="true">
-                                            Sales <?php echo (count($salesList) == 0 ? '' : '('.count($salesList).')'); ?>
+                                            Departure <?php echo (count($salesList) == 0 ? '' : '('.count($salesList).')'); ?>
                                         </a>
                                     </li>
                                     <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link" data-bs-toggle="tab" href="#messages-tab" role="tab"
                                             aria-selected="false">
-                                            Purchase <?php echo (count($purchaseList) == 0 ? '' : '('.count($purchaseList).')'); ?>
+                                            Receiving <?php echo (count($purchaseList) == 0 ? '' : '('.count($purchaseList).')'); ?>
                                         </a>
                                     </li>
                                     <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link" data-bs-toggle="tab" href="#alerts-tab" role="tab"
                                             aria-selected="false">
-                                            Local <?php echo (count($localList) == 0 ? '' : '('.count($localList).')'); ?>
+                                            Internal Transfer <?php echo (count($localList) == 0 ? '' : '('.count($localList).')'); ?>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item waves-effect waves-light">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#misc-tab" role="tab"
+                                            aria-selected="false">
+                                            Miscellaneous <?php echo (count($miscList) == 0 ? '' : '('.count($miscList).')'); ?>
                                         </a>
                                     </li>
                                 </ul>
@@ -737,6 +759,24 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                                                 <div class="flex-1">
                                                     <a href="index.php?weight=<?=$localList[$i]['id'] ?>" class="stretched-link">
                                                         <h6 class="mt-0 mb-2 lh-base">There is a <?=$localList[$i]['weight_type'] ?> weighing with <b><?=$localList[$i]['transaction_id'] ?></b>
+                                                            is <span class="text-secondary">Pending</span>
+                                                        </h6>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade p-4" id="misc-tab" role="tabpanel" aria-labelledby="misc-tab">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <?php for($i=0; $i<count($miscList); $i++){ ?>
+                                        <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                            <div class="d-flex">
+                                                <div class="flex-1">
+                                                    <a href="index.php?weight=<?=$miscList[$i]['id'] ?>" class="stretched-link">
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$miscList[$i]['weight_type'] ?> weighing with <b><?=$miscList[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending</span>
                                                         </h6>
                                                     </a>

@@ -144,7 +144,6 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
 
 if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
-        var_dump("select * from Weight WHERE status = '0'".$searchQuery.' ORDER BY tare_weight1_date');
         if ($select_stmt = $db->prepare("select * from Weight WHERE status = '0'".$searchQuery.' ORDER BY tare_weight1_date')) {
             // Execute the prepared query.
             if (! $select_stmt->execute()) {
@@ -256,10 +255,10 @@ if(isset($_POST["file"])){
                                         }
 
                                         if($row['transaction_status'] == 'Sales'){
-                                            $transactionStatus = 'Arrival';
+                                            $transactionStatus = 'Departure';
                                         }
                                         else if($row['transaction_status'] == 'Purchase'){
-                                            $transactionStatus = 'Departure';
+                                            $transactionStatus = 'REceiving';
                                         }
                                         else if($row['transaction_status'] == 'Misc'){
                                             $transactionStatus = 'Miscellaneous';

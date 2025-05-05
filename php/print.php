@@ -92,13 +92,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $tareWeightTime2 = $row['tare_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['tare_weight2_date'])) : "";
 
                     if ($row['transaction_status'] == 'Sales'){
-                        $transacationStatus = 'Arrival';
-                    }elseif ($row['transaction_status'] == 'Purchase'){
                         $transacationStatus = 'Departure';
+                    }elseif ($row['transaction_status'] == 'Purchase'){
+                        $transacationStatus = 'Receiving';
                     }elseif ($row['transaction_status'] == 'Local'){
                         $transacationStatus = 'Internal Transfer';
                     }else {
-                        $transacationStatus = $row['transaction_status'];
+                        $transacationStatus = 'Miscellaneous';
                     }
 
                     if($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
@@ -254,21 +254,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         </p>
                                     </td>
                                     <td style="vertical-align: top;">
-                                        <p style="vertical-align: top; margin-left:50px;">';
-
-                                        if ($row['transaction_status'] == 'Local'){
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Transfer Slip</span>';
-                                        }elseif ($row['transaction_status'] == 'Misc') {
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Miscellaneous Slip</span>';
-                                        }elseif ($row['transaction_status'] == 'Sales') {
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Outgoing Slip</span>';
-                                        }else{
-                                            $message .= '<span style="font-size: 20px; font-weight: bold;">Receiving Slip</span>';
-                                        }
-                                            
-                                    $message .= '        
-                                            <br>
+                                        <p style="vertical-align: top; margin-left:50px;">
+                                            <span style="font-size: 20px; font-weight: bold;">'. $transacationStatus .' Slip</span><br>
                                             <span style="font-size: 14px;">Ticket No: <b style="font-size: 16px;">'.$row['transaction_id'].'</b></span><br>
+                                            <span style="font-size: 14px;">D/O No: '.$row['delivery_no'].'</span><br>
                                             <span style="font-size: 14px;">Date: '.$transactionDate.'</span><br>
                                         </p>
                                     </td>
@@ -277,62 +266,60 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <td>Placeholder for empty space</td>
                                 </tr>
                                 <tr style="border-top: 1px solid black;">
-                                    <td style="width: 60%;">
-                                        <p style="margin-bottom: 10px">';
+                                    <td style="vertical-align: top; width: 60%;">
+                                        <p style="margin-top: 5px;">';
                                         if ($row['transaction_status'] == 'Sales'){
                                             $message .= '
-                                                <span style="font-size: 14px;">Customer: <span style="margin-left: 8px;">'.$customer.'</span></span><br>
-                                                <span style="font-size: 14px;margin-left: 70px;">'.$customerA.' '.$customerA2.'</span><br>
-                                                <span style="font-size: 14px;margin-left: 70px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;">Customer Name: <span style="margin-left: 5px; font-size: 14px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 105px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 105px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 105px;"></span><br>
                                             ';
                                         }
                                         elseif ($row['transaction_status'] == 'Local') {
                                             $message .= '
-                                                <span style="font-size: 14px;">Internal Transfer: <span style="margin-left: 5px;">'.$customer.'</span></span><br>
-                                                <span style="font-size: 14px;margin-left: 105px;">'.$customerA.' '.$customerA2.'</span><br>
-                                                <span style="font-size: 14px;margin-left: 105px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;">Transfer To: <span style="margin-left: 7px; font-size: 14px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 80px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 80px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 80px;"></span><br>
                                             ';
                                         }
                                         elseif ($row['transaction_status'] == 'Misc') {
                                             $message .= '
-                                                <span style="font-size: 14px;">Misc Slip: <span style="margin-left: 10px;">'.$customer.'</span></span><br>
-                                                <span style="font-size: 14px;margin-left: 72px;">'.$customerA.' '.$customerA2.'</span><br>
-                                                <span style="font-size: 14px;margin-left: 72px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;">Miscellaneous Slip: <span style="margin-left: 10px; font-size: 14px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 125px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 125px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 125px;"></span><br>
                                             ';
                                         }
                                         else{
                                             $message .= '
-                                                <span style="font-size: 14px;">Supplier: <span style="margin-left: 10px">'.$customer.'</span></span><br>
-                                                <span style="font-size: 14px;margin-left: 65px;">'.$customerA.' '.$customerA2.'</span><br>
-                                                <span style="font-size: 14px;margin-left: 65px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;">Supplier Name: <span style="margin-left: 8px; font-size: 14px;">'.$customer.'</span></span><br>
+                                                <span style="font-size: 14px;margin-left: 100px;">'.$customerA.' '.$customerA2.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 100px;">'.$customerA3.'</span><br>
+                                                <span style="font-size: 14px;margin-left: 100px;"></span><br>
                                             ';
                                         }
-                                        
                                         $message .= '
-                                        </p>
-                                        <p>
-                                            <span>Driver: <span style="margin-left: 10px">'.$row["transporter"].'</span></span>
-                                            <br>
-                                            <span>I/C No: <span style="margin-left: 10px"></span></span>
                                         </p>
                                     </td>
                                     <td style="vertical-align: top;">
-                                        <p style="vertical-align: top; margin-left:50px;">
-                                            <span style="font-size: 14px;">Weight Status: '.$transacationStatus.'</span><br>
-                                            <span style="font-size: 14px;">D/O No: '.$row['delivery_no'].'</span><br>
+                                        <p style="vertical-align: top; margin-top: 5px; margin-left:50px;">';
+                                            if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
+                                                $message .= '<span style="font-size: 14px;">Order Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
+                                            }
+                                            else{
+                                                $message .= '<span style="font-size: 14px;">Supply Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
+                                            }
+                                        $message .='    
+                                            <br><span style="font-size: 14px;">Variance: '.($weightDifference ? formatWeight($weightDifference).' kg' : '-').'</span><br>
+                                            <span style="font-size: 14px;">Transporter: '.$row["transporter"].'</span><br>
+                                            <span style="font-size: 14px;">Destination: '.$row["destination"].'</span><br>
                                         </p>
 
                                         <p style="vertical-align: top; margin-left:50px;"><br>';
 
-                                        if ($row['transaction_status'] == 'Sales'){
-                                            $message .= '<span style="font-size: 14px;">Order Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
-                                        }
-                                        else{
-                                            $message .= '<span style="font-size: 14px;">Supply Weight: '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
-                                        }
-
                                         $message .= '
-                                            <br><span style="font-size: 14px;">Variance: '.($weightDifference ? formatWeight($weightDifference).' kg' : '-').'</span>
                                         </p>
                                     </td>
                                 </tr>
@@ -392,35 +379,56 @@ if(isset($_POST['userID'], $_POST["file"])){
                             }
                             else{
                                 $message .= '<br> 
+                                <table style="width:100%; border:0px solid black; margin-top:-20px; margin-bottom: 10px;">
+                                    <tr>
+                                        <th style="border:1px solid black;font-size: 16px;text-align: center;">Container No.1</th>
+                                        <th style="border:1px solid black;font-size: 16px;text-align: center;">Seal No.1</th>
+                                        <th style="border:1px solid black;font-size: 16px;text-align: center;">Container No.1</th>
+                                        <th style="border:1px solid black;font-size: 16px;text-align: center;">Seal No.2</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:1px solid black;font-size: 14px;">'.(!empty($row["container_no"]) ? $row["container_no"] : '&nbsp;').'</td>
+                                        <td style="border:1px solid black;font-size: 14px;">'.$row["seal_no"].'</td>
+                                        <td style="border:1px solid black;font-size: 14px;">'.$row["container_no2"].'</td>
+                                        <td style="border:1px solid black;font-size: 14px;">'.$row["seal_no2"].'</td>
+                                    </tr>
+                                </table>
                                 <table style="width:100%; border:0px solid black;">
                                     <tr>
                                         <th style="border:1px solid black;font-size: 18px;text-align: center;">Vehicle No</th>
-                                        <th style="border:1px solid black;font-size: 18px;text-align: center;">Product Description</th>
+                                        <th style="border:1px solid black;font-size: 18px;text-align: center;">Product Code</th>
                                         <th style="border:1px solid black;font-size: 18px;text-align: center;">Date/Time</th>
                                         <th colspan="2" style="border:1px solid black;font-size: 18px;text-align: center;">Weight (kg)</th>
                                     </tr>
                                     <tr>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['lorry_plate_no1'].'</td>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['product_name'].'</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['lorry_plate_no1'].'</td>';
+
+                                        if ($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
+                                            $message .= '<td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['raw_mat_code'].'</td>';
+                                        }else{
+                                            $message .= '<td style="border:1px solid black;font-size: 16px;text-align: center;">'.$row['product_code'].'</td>';
+                                        }
+
+                                    $message .= '    
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$grossWeightTime.'</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">1st Weight</td>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['gross_weight1']).' kg</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: right;">'.formatWeight($row['gross_weight1']).' kg</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" >Destination: <span style="margin-left: 10px;font-size: 16px;">'.$row['destination'].'</span></td>
+                                        <td colspan="2" ></td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">'.$tareWeightTime.'</td>
                                         <td style="border:1px solid black;font-size: 16px;text-align: center;">2nd Weight</td>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['tare_weight1']).' kg</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: right;">'.formatWeight($row['tare_weight1']).' kg</td>
                                     </tr>
                                     <tr>
                                         <td colspan="3">Remarks: <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">Less Wastage</td>
-                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['reduce_weight']).' kg</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">Reduce Weight</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: right;">'.formatWeight($row['reduce_weight']).' kg</td>
                                     </tr>
                                     <tr>
                                         <td colspan="3"></td>
                                         <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">Nett Weight</td>
-                                        <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">'.formatWeight($row['final_weight']).' kg</td>
+                                        <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: right;">'.formatWeight($row['final_weight']).' kg</td>
                                     </tr>
                                 </table>';
                             }
@@ -433,17 +441,20 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <th colspan="2" width="30%">Weight (kg)</th>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align: top;">
+                                    <td style="vertical-align: top; font-size: 14px;">
+                                        <hr width="80%" style="margin-left: 0; text-align: left;">
+                                        <span>1st Weight by : '.$row['gross_weight_by1'].'</span><br>
+                                        <span>2nd Weight by : '.$row['tare_weight_by1'].'</span>
+                                    </td>
+                                    <td style="vertical-align: top; font-size: 14px;">
                                         <hr width="80%" style="margin-left: 0; text-align: left;">
                                         <span>Acknowledge By <br> Administrator</span>
                                     </td>
-                                    <td style="vertical-align: top;">
+                                    <td style="vertical-align: top; font-size: 14px;">
                                         <hr width="80%" style="margin-left: 0; text-align: left;">
-                                        <span>Issued By</span>
-                                    </td>
-                                    <td style="vertical-align: top;">
-                                        <hr width="80%" style="margin-left: 0; text-align: left;">
-                                        <span>Received By</span>
+                                        <span>Received By</span><br>
+                                        <span>Name: </span><br>
+                                        <span>I/C: </span>
                                     </td>
                                 <tr>
                             </table>

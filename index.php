@@ -5,6 +5,7 @@
 require_once "php/db_connect.php";
 
 $user = $_SESSION['id'];
+$username = $_SESSION["username"];
 $plantId = $_SESSION['plant'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
@@ -193,8 +194,8 @@ else{
                                                             <label for="statusSearch" class="form-label">Transaction Status</label>
                                                             <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
-                                                                <option value="Sales">Arrival</option>
-                                                                <option value="Purchase">Departure</option>
+                                                                <option value="Sales">Departure</option>
+                                                                <option value="Purchase">Receiving</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
                                                             </select>
@@ -293,14 +294,13 @@ else{
                             </div>
                             
                             <div class="row">
-                                <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
+                                <!-- <div class="col-xl-3 col-md-6">
                                     <div class="card card-animate" style="background-color: #4CAF50;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Arrival
+                                                        Departure
                                                     </p>
                                                 </div>
                                             </div>
@@ -316,18 +316,17 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #FFC107;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Departure
+                                                        Receiving
                                                     </p>
                                                 </div>
                                             </div>
@@ -343,12 +342,11 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #81D4FA;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -370,12 +368,11 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate" style="background-color: #9C27B0;">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
@@ -397,10 +394,10 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-
+                                        </div>
+                                    </div>
+                                </div> -->
+                                
                                 <div class="col-xl-3 col-md-6 add-new-weight">
                                     <!-- <button type="button" class="btn btn-lg btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i
                                             class="ri-add-circle-line align-middle me-1"></i>
@@ -425,6 +422,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
+                                                                                        <h3 class="ff-secondary fw-semibold text-white">Indicator Weight</h3>
                                                                                         <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="indicatorWeight">0</span> Kg</h2>
                                                                                     </div>
                                                                                     <div>
@@ -447,6 +445,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
+                                                                                        <h3 class="ff-secondary fw-semibold text-white">Final Weight</h3>
                                                                                         <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="currentWeight">0</span> Kg</h2>
                                                                                     </div>
                                                                                     <div>
@@ -559,8 +558,8 @@ else{
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select select2">
-                                                                                            <option value="Sales" selected>Arrival</option>
-                                                                                            <option value="Purchase">Departure</option>
+                                                                                            <option value="Sales" selected>Departure</option>
+                                                                                            <option value="Purchase">Receiving</option>
                                                                                             <option value="Local">Internal Transfer</option>
                                                                                             <option value="Misc">Miscellaneous</option>
                                                                                         </select>  
@@ -599,29 +598,11 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
+                                                                                    <label for="containerNo2" class="col-sm-4 col-form-label">Container No 2</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice select2" id="customerName" name="customerName" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierName" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="supplierName" name="supplierName" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
-                                                                                                <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                        
+                                                                                        <input type="text" class="form-control" id="containerNo2" name="containerNo2" placeholder="Container No 2">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -636,7 +617,6 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                             
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -648,35 +628,10 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" id="productNameDisplay">
-                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
+                                                                                <div class="row">
+                                                                                    <label for="sealNo2" class="col-sm-4 col-form-label">Seal No 2</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="productName" name="productName" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                                                                                                <option 
-                                                                                                    value="<?=$rowProduct['name'] ?>" 
-                                                                                                    data-price="<?=$rowProduct['price'] ?>" 
-                                                                                                    data-code="<?=$rowProduct['product_code'] ?>" 
-                                                                                                    data-high="<?=$rowProduct['high'] ?>" 
-                                                                                                    data-low="<?=$rowProduct['low'] ?>" 
-                                                                                                    data-variance="<?=$rowProduct['variance'] ?>" 
-                                                                                                    data-description="<?=$rowProduct['description'] ?>">
-                                                                                                    <?=$rowProduct['name'] ?>
-                                                                                                </option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                        
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="row" id="rawMaterialDisplay" style="display:none;">
-                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>           
+                                                                                        <input type="text" class="form-control" id="sealNo2" name="sealNo2" placeholder="Seal No 2">
                                                                                     </div>
                                                                                 </div>
                                                                             </div> 
@@ -701,16 +656,29 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
                                                                                 <div class="row">
-                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                    <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="transporter" name="transporter" required>
+                                                                                        <select class="form-select js-choice select2" id="customerName" name="customerName" required>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
+                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>                                                                                          
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierName" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="supplierName" name="supplierName" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                        
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -751,15 +719,35 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
+                                                                                <div class="row" id="productNameDisplay">
+                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="destination" name="destination" required>
+                                                                                        <select class="form-select select2" id="productName" name="productName" required>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
+                                                                                                <option 
+                                                                                                    value="<?=$rowProduct['name'] ?>" 
+                                                                                                    data-price="<?=$rowProduct['price'] ?>" 
+                                                                                                    data-code="<?=$rowProduct['product_code'] ?>" 
+                                                                                                    data-high="<?=$rowProduct['high'] ?>" 
+                                                                                                    data-low="<?=$rowProduct['low'] ?>" 
+                                                                                                    data-variance="<?=$rowProduct['variance'] ?>" 
+                                                                                                    data-description="<?=$rowProduct['description'] ?>">
+                                                                                                    <?=$rowProduct['name'] ?>
+                                                                                                </option>
                                                                                             <?php } ?>
-                                                                                        </select>            
+                                                                                        </select>                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row" id="rawMaterialDisplay" style="display:none;">
+                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>           
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -774,6 +762,8 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                        </div>
+                                                                        <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
@@ -786,8 +776,32 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="transporter" name="transporter" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
+                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                          
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="destination" name="destination" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
+                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>            
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
@@ -1099,6 +1113,10 @@ else{
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                         <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
+                                                        <input type="hidden" id="grossWeightBy1" name="grossWeightBy1">
+                                                        <input type="hidden" id="tareWeightBy1" name="tareWeightBy1">
+                                                        <input type="hidden" id="grossWeightBy2" name="grossWeightBy2">
+                                                        <input type="hidden" id="tareWeightBy2" name="tareWeightBy2">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -1320,6 +1338,7 @@ else{
                                                             <thead>
                                                                 <tr>
                                                                     <th>Transaction <br>Id</th>
+                                                                    <th>Weight <br>Type</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Customer/ <br> Supplier</th>
                                                                     <th>Vehicle</th>
@@ -1379,6 +1398,7 @@ else{
                                                             <thead>
                                                                 <tr>
                                                                     <th>Container <br>No</th>
+                                                                    <th>Seal <br>No</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Vehicle</th>
                                                                     <th>Gross <br>Incoming</th>
@@ -1527,6 +1547,7 @@ else{
     <script type="text/javascript">
     var table = null;
     var emptyContainerTable = null;
+    let clickTimer = null;
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -1670,24 +1691,24 @@ else{
                     data: 'transaction_id',
                     class: 'transaction-column'
                 },                
+                { data: 'weight_type' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
-                { data: 'lorry_plate_no1' },
                 { 
-                    data: 'product_name',
+                    data: 'lorry_plate_no1',
                     render: function (data, type, row) {
-                        let product = '';
+                        var vehicle = '';
 
-                        if (row.product_code){
-                            product = row.product_code + ' - ' + row.product_name;
+                        if (row.weight_type == 'Container'){
+                            vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
                         }else{
-                            product = '-';
-
+                            vehicle = row.lorry_plate_no1;
                         }
-                        
-                        return product;
+
+                        return vehicle;
                     }
                 },
+                { data: 'product_code' },
                 { data: 'purchase_order' },
                 { data: 'delivery_no' },
                 { data: 'gross_weight1' },
@@ -1741,12 +1762,14 @@ else{
                         }
 
                         if (row.is_approved == 'Y') {
-                            buttons += `
-                            <div class="col-auto">
-                                <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
-                                    <i class="fa-solid fa-print"></i>
-                                </button>
-                            </div>`;
+                            if (row.weight_type != 'Empty Container'){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>`;
+                            }
                         }
 
                         if (row.is_approved == 'N') {
@@ -1818,6 +1841,7 @@ else{
             },
             'columns': [
                 { data: 'container_no' },                
+                { data: 'seal_no' },                
                 { data: 'transaction_status' },
                 { data: 'lorry_plate_no1' },
                 { data: 'gross_weight1' },
@@ -1878,18 +1902,47 @@ else{
                 return;
             }
 
-            if (row.child.isShown()) {
-                // This row is already open - close it
-                row.child.hide();
-                tr.removeClass('shown');
-            } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
-                    var obj = JSON.parse(data);
-                    if (obj.status === 'success') {
-                        row.child(format(obj.message)).show();
-                        tr.addClass("shown");
-                    }
-                });
+            // Clear any previous timer if have
+            if (clickTimer) {
+                clearTimeout(clickTimer);
+                clickTimer = null;
+            }
+
+            // Delay to detect double-click
+            clickTimer = setTimeout(function () {
+                if (row.child.isShown()) {
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
+                        var obj = JSON.parse(data);
+                        if (obj.status === 'success') {
+                            row.child(format(obj.message)).show();
+                            tr.addClass("shown");
+                        }
+                    });
+                }
+
+                clickTimer = null; // Reset after execution
+            }, 250); // Delay to distinguish from double-click
+        });
+
+        // Add event listener for double click
+        $('#weightTable tbody').on('dblclick', 'tr', function (e) {
+            if (clickTimer) {
+                clearTimeout(clickTimer); // Cancel single-click
+                clickTimer = null;
+            }
+
+            var row = table.row(this);
+            var id = row.data().id;
+            var weightType = row.data().weight_type;
+
+            // run edit function
+            if (weightType == 'Empty Container'){
+                edit(id, 'Y');
+            }else{
+                edit(id, 'N');
             }
         });
 
@@ -2503,24 +2556,24 @@ else{
                         data: 'transaction_id',
                         class: 'transaction-column'
                     },
+                    { data: 'weight_type' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
-                    { data: 'lorry_plate_no1' },
                     { 
-                        data: 'product_name',
+                        data: 'lorry_plate_no1',
                         render: function (data, type, row) {
-                            let product = '';
+                            var vehicle = '';
 
-                            if (row.product_code){
-                                product = row.product_code + ' - ' + row.product_name;
+                            if (row.weight_type == 'Container'){
+                                vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
                             }else{
-                                product = '-';
-
+                                vehicle = row.lorry_plate_no1;
                             }
-                            
-                            return product;
+
+                            return vehicle;
                         }
                     },
+                    { data: 'product_code' },
                     { data: 'purchase_order' },
                     { data: 'delivery_no' },
                     { data: 'gross_weight1' },
@@ -2574,12 +2627,14 @@ else{
                             }
 
                             if (row.is_approved == 'Y') {
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
-                                        <i class="fa-solid fa-print"></i>
-                                    </button>
-                                </div>`;
+                                if (row.weight_type != 'Empty Container'){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                            <i class="fa-solid fa-print"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
 
                             if (row.is_approved == 'N') {
@@ -2651,6 +2706,7 @@ else{
                 },
                 'columns': [
                     { data: 'container_no' },                
+                    { data: 'seal_no' },                
                     { data: 'transaction_status' },
                     { data: 'lorry_plate_no1' },
                     { data: 'gross_weight1' },
@@ -2761,8 +2817,9 @@ else{
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find("#manualWeightNo").prop("checked", true);
-            $('#addModal').find("#manualWeightYes").prop("checked", false);
+            // $('#addModal').find("#manualWeightNo").prop("checked", true);
+            // $('#addModal').find("#manualWeightYes").prop("checked", false);
+            $('#addModal').find('#manualWeightNo').trigger('click');
             //$('#addModal').find('input[name="manualWeight"]').val("false");
             //$('#addModal').find('#indicatorId').val("");
             $('#addModal').find('#weighbridge').val("");
@@ -2785,7 +2842,8 @@ else{
             $('#addModal').find('#containerNoInput').val("");
             $('#addModal').find('#emptyContainerNo').val("").trigger('change');
             $('#addModal').find('#containerNo').val("");
-
+            $('#addModal').find('#containerNo2').val("");
+            $('#addModal').find('#sealNo2').val("");
 
             // Show select and hide input readonly
             $('#addModal').find('#salesOrderEdit').val("").hide();
@@ -2859,14 +2917,18 @@ else{
                 $('#containerCard').show();
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
+                $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
                 $('#containerCard').hide();
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
+                $('#addModal').find('#containerNoInput').attr('required', true);
             }else{
                 $('#containerCard').hide();
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
+                $('#addModal').find('#containerNoInput').attr('required', false);
+                $('#addModal').find('#emptyContainerNo').attr('required', false);
             }
         });
 
@@ -3019,6 +3081,7 @@ else{
             $('#nettWeight').val(nett.toFixed(0));
             $('#grossIncomingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
+            $('#grossWeightBy1').val('<?php echo $username; ?>');
         });
 
         $('#grossCapture').on('click', function(){
@@ -3034,6 +3097,7 @@ else{
             $('#nettWeight').val(nett.toFixed(0));
             $('#tareOutgoingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
+            $('#tareWeightBy1').val('<?php echo $username; ?>');
         });
 
         $('#tareCapture').on('click', function(){
@@ -3123,6 +3187,7 @@ else{
             $('#nettWeight2').val(nett.toFixed(0));
             $('#grossIncomingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
+            $('#grossWeightBy2').val('<?php echo $username; ?>');
         });
 
         $('#grossCapture2').on('click', function(){
@@ -3138,6 +3203,7 @@ else{
             $('#nettWeight2').val(nett.toFixed(0));
             $('#tareOutgoingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
+            $('#tareWeightBy2').val('<?php echo $username; ?>');
         });
 
         $('#tareCapture2').on('click', function(){
@@ -3333,14 +3399,17 @@ else{
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
                     var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
+                    if (obj.status == 'success'){ console.log(obj.message);
                         // $('#addModal').find('#containerNo').val(obj.message.container_no);
                         $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                         $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                         $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
+                        $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
                         $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                         $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
+                        $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                         $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                        $('#addModal').find('#sealNo').val(obj.message.seal_no);
 
                         if(obj.message.vehicleNoTxt != null){
                             $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
@@ -3372,8 +3441,36 @@ else{
         });
 
         //Container No
+        $('#containerNoInput').on('keyup', function(){
+            var x = $('#containerNoInput').val();
+            x = x.toUpperCase();
+            $('#containerNoInput').val(x);
+            $('#containerNo').val(x);
+        });
+        
         $('#containerNoInput').on('change', function () {
             $('#containerNo').val($(this).val());
+        });
+
+        //Seal No
+        $('#sealNo').on('keyup', function(){
+            var x = $('#sealNo').val();
+            x = x.toUpperCase();
+            $('#sealNo').val(x);
+        });
+
+        //Container No 2
+        $('#containerNo2').on('keyup', function(){
+            var x = $('#containerNo2').val();
+            x = x.toUpperCase();
+            $('#containerNo2').val(x);
+        });
+
+        //Seal No 2
+        $('#sealNo2').on('keyup', function(){
+            var x = $('#sealNo2').val();
+            x = x.toUpperCase();
+            $('#sealNo2').val(x);
         });
 
         <?php
@@ -3390,6 +3487,18 @@ else{
     });
 
     function format (row) {
+        var transactionStatus = '';
+
+        if (row.transaction_status == 'Sales') {
+            transactionStatus = 'Departure';
+        } else if (row.transaction_status == 'Purchase') {
+            transactionStatus = 'Receiving';
+        } else if (row.transaction_status == 'Local') {
+            transactionStatus = 'Internal Transfer';
+        } else {
+            transactionStatus = 'Miscellaneous';
+        }
+
         var returnString = `
         <!-- Weighing Section -->
         <div class="row">
@@ -3404,20 +3513,20 @@ else{
                 <div class="row">
                     <div class="col-3">
                         <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
-                        <p><strong>DESTINATION NAME:</strong> ${row.destination}</p>
+                        <p><strong>DESTINATION NAME:</strong> ${row.destination_name}</p>
                         <p><strong>SITE NAME:</strong> ${row.site_name}</p>
                         <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
 
                     if (row.transaction_status == 'Purchase'){
-                        returnString += `<p><strong>RAW MATERIAL NAME:</strong> ${row.product_rawmat_name}</p>`;
+                        returnString += `<p><strong>PURCHASE PRODUCT:</strong> ${row.product_rawmat_name}</p>`;
                     }else{
-                        returnString += `<p><strong>PRODUCT NAME:</strong> ${row.product_rawmat_name}</p>`;
+                        returnString += `<p><strong>SALES PRODUCT:</strong> ${row.product_rawmat_name}</p>`;
                     }
 
                     returnString += `</div>
                     <div class="col-3">
                         <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
-                        <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                        <p><strong>WEIGHT STATUS:</strong> ${transactionStatus}</p>
                         <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
                         <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p> `;
 
@@ -3618,13 +3727,17 @@ else{
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
+                $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
+                $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
+                $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2); console.log(obj.message.gross_weight_by2);
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
                 $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate3(new Date(obj.message.tare_weight2_date)) : '');
+                $('#addModal').find('#tareWeightBy2').val(obj.message.tare_weight_by2);
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
@@ -3657,10 +3770,11 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
-                $('#addModal').find('#containerNoInput').val(obj.message.container_no); console.log(obj.message.container_no);
+                $('#addModal').find('#containerNoInput').val(obj.message.container_no);
                 $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).trigger('change');
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
-
+                $('#addModal').find('#containerNo2').val(obj.message.container_no2);
+                $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {
