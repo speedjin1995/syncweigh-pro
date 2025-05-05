@@ -332,10 +332,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <th style="border:1px solid black;font-size: 16px;text-align: center;">Seal No.2</th>
                                 </tr>
                                 <tr>
-                                    <td style="border:1px solid black;font-size: 14px;">'.(!empty($row["container_no"]) ? $row["container_no"] : '&nbsp;').'</td>
-                                    <td style="border:1px solid black;font-size: 14px;">'.$row["seal_no"].'</td>
-                                    <td style="border:1px solid black;font-size: 14px;">'.$row["container_no2"].'</td>
-                                    <td style="border:1px solid black;font-size: 14px;">'.$row["seal_no2"].'</td>
+                                    <td style="border:1px solid black;font-size: 14px;text-align: center;">'.(!empty($row["container_no"]) ? $row["container_no"] : '&nbsp;').'</td>
+                                    <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row["seal_no"].'</td>
+                                    <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row["container_no2"].'</td>
+                                    <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row["seal_no2"].'</td>
                                 </tr>
                             </table>';
                             
