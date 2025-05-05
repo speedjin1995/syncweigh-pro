@@ -1316,6 +1316,14 @@ else{
                                                                 <h5 class="card-title mb-0 text-white">Previous Records (Lorry)</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Export PDF
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-warning waves-effect waves-light" >
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
+                                                                </button>
                                                                 <!--a href="/template/Weight_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
@@ -2897,6 +2905,94 @@ else{
             };
 
             reader.readAsBinaryString(file);
+        });
+
+        $('#exportPdf').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+            var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+
+            if (batchNoI == 'N'){
+                batchNoI = 'Pending';
+            }else if (batchNoI == 'Y'){
+                batchNoI = 'Complete';
+            }
+
+            if (batchNoI == 'Pending'){
+                $.post('php/exportPdf.php', {
+                    fromDate : fromDateI,
+                    toDate : fromDateI,
+                    transactionStatus : statusI,
+                    customer : customerNoI,
+                    supplier : supplierNoI,
+                    vehicle : vehicleNoI,
+                    weighingType : invoiceNoI,
+                    status : batchNoI,
+                    product : productSearchI,
+                    rawMat : rawMaterialI,
+                    plant : plantNoI,
+                    file : 'weight'
+                }, function(response){
+                    var obj = JSON.parse(response);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                    }
+                }).fail(function(error){
+                    console.error("Error exporting PDF:", error);
+                    alert("An error occurred while generating the PDF.");
+                });
+            }else{
+                alert("Please change status to Pending before generating PDF.");
+            }
+        });
+
+        $('#exportExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+            var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            
+            if (batchNoI == 'N'){
+                batchNoI = 'Pending';
+            }else if (batchNoI == 'Y'){
+                batchNoI = 'Complete';
+            }
+
+            if (batchNoI == 'Pending'){
+                window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI);
+            }else{
+                alert("Please change status to Pending before generating Excel.");
+            }
         });
 
         $('#weightType').on('change', function(){

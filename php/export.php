@@ -127,6 +127,8 @@ if(isset($_GET['status']) && $_GET['status'] != null && $_GET['status'] != '' &&
             $searchQuery .= " and Weight.is_complete = 'Y'";
         }elseif ($_GET['status'] == 'Cancelled'){
             $searchQuery .= " and Weight.is_cancel = 'Y'";
+        }elseif ($_GET['status'] == 'Pending'){
+            $searchQuery .= " and is_complete='N' AND is_cancel='N'";
         }else{
             $searchQuery .= " and Weight.is_complete = 'Y'";
         }
