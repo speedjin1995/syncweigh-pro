@@ -30,6 +30,7 @@ if(isset($_POST['userID'])){
                 $message['variance'] = $row['variance'];
                 $message['high'] = $row['high'];
                 $message['low'] = $row['low'];
+                $message['basic_uom'] = $row['basic_uom'];
             }
 
             // retrieve products
@@ -50,6 +51,26 @@ if(isset($_POST['userID'])){
             }
 
             $message['rawMats'] = $rawMats;
+
+            // retrieve products
+            $empQuery = "SELECT * FROM Product_UOM WHERE product_id = $id AND status = '0' ORDER BY id ASC";
+            $empRecords = mysqli_query($db, $empQuery);
+            $prodUom = array();
+            $prodUomCount = 1;
+
+            while($row2 = mysqli_fetch_assoc($empRecords)) {
+                $prodUom[] = array(
+                    "no" => $prodUomCount,
+                    "id" => $row2['id'],
+                    "product_id" => $row2['product_id'],
+                    "unit_id" => $row2['unit_id'],
+                    "rate" => $row2['rate'],
+                );
+                $prodUomCount++;
+            }
+
+            $message['prodUom'] = $prodUom;
+
             
             echo json_encode(
                 array(

@@ -1,6 +1,7 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -39,6 +40,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "name"=>$row['name'],
       "price"=>$row['price'],
       "description"=>$row['description'],
+      "basic_uom"=>searchUnitById($row['basic_uom'], $db),
       "status"=>(($row['status'] == '0') ? 'Active' : 'Inactive')
     );
 }

@@ -664,3 +664,20 @@ INSERT INTO `miscellaneous` (`code`, `name`, `value`) VALUES
 ('destination', '7', '1'),
 ('destination', '8', '1'),
 ('destination', '9', '1')
+
+-- 06/05/2025 --
+ALTER TABLE `product` ADD `basic_uom` INT(5) NULL AFTER `low`;
+
+ALTER TABLE `product_log` ADD `basic_uom` INT(5) NULL AFTER `low`;
+
+CREATE TABLE `product_uom` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `unit_id` int(11) DEFAULT NULL,
+  `rate` varchar(50) DEFAULT NULL,
+  `status` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `product_uom` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `product_uom` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
