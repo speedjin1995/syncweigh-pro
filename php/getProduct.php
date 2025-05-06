@@ -52,7 +52,7 @@ if(isset($_POST['userID'])){
 
             $message['rawMats'] = $rawMats;
 
-            // retrieve products
+            // retrieve uom
             $empQuery = "SELECT * FROM Product_UOM WHERE product_id = $id AND status = '0' ORDER BY id ASC";
             $empRecords = mysqli_query($db, $empQuery);
             $prodUom = array();
