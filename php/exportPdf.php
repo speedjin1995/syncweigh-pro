@@ -137,9 +137,12 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
         $searchQuery .= " and is_complete = 'Y'";
     }elseif ($_POST['status'] == 'Cancelled'){
         $searchQuery .= " and is_cancel = 'Y'";
+    }elseif ($_POST['status'] == 'Pending'){
+        $searchQuery .= " and is_complete='N' AND is_cancel='N'";
     }
-    }else{
-    $searchQuery .= " and is_complete = 'Y'";
+    else{
+        $searchQuery .= " and is_complete = 'Y'";
+    }
 }
 
 if(isset($_POST["file"])){

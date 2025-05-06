@@ -107,7 +107,7 @@ if(isset($_POST['userID'])){
                             }
                             $message['transporter'] = $row['transporter'] ?? '';
                             $message['site_name'] = $row['site_name'] ?? '';
-                            $message['destination_name'] = $row['destination_name'] ?? '';
+                            $message['destination'] = $row['destination'] ?? '';
                             $message['plant_name'] = $row['plant_name'] ?? '';
                             $message['lorry_plate_no1'] = $row['lorry_plate_no1'] ?? '';
                             $message['transaction_id'] = $row['transaction_id'] ?? '';
@@ -307,20 +307,34 @@ if(isset($_POST['userID'])){
                             }
                             $message['transporter'] = $row['transporter'] ?? '';
                             $message['site_name'] = $row['site_name'] ?? '';
-                            $message['destination_name'] = $row['destination_name'] ?? '';
+                            $message['destination'] = $row['destination'] ?? '';
                             $message['plant_name'] = $row['plant_name'] ?? '';
-                            $message['lorry_plate_no1'] = $row['lorry_plate_no1'] ?? '';
                             $message['transaction_id'] = $row['transaction_id'] ?? '';
                             $message['transaction_status'] = $row['transaction_status'] ?? '';
                             $message['invoice_no'] = $row['invoice_no'] ?? '';
                             $message['delivery_no'] = $row['delivery_no'] ?? '';
+                            $message['container_no'] = $row['container_no'] ?? '';
+                            $message['seal_no'] = $row['seal_no'] ?? '';
+                            $message['container_no2'] = $row['container_no2'] ?? '';
+                            $message['seal_no2'] = $row['seal_no2'] ?? '';
                             $message['purchase_order'] = $row['purchase_order'] ?? '';
-                            $message['gross_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['gross_weight1_date']));
-                            $message['tare_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['tare_weight1_date']));
-                            $message['created_date'] = date("d/m/Y - h:i:sa", strtotime($row['created_date']));
+                            $message['created_date'] = $row['created_date'] ? date("d/m/Y - h:i:sa", strtotime($row['created_date'])) : '';
+                            $message['lorry_plate_no1'] = $row['lorry_plate_no1'] ?? '';
                             $message['gross_weight1'] = $row['gross_weight1'] ?? '';
+                            $message['gross_weight1_date'] = !empty($row['gross_weight1_date']) ? date("d/m/Y - h:i:sa", strtotime($row['gross_weight1_date'])) : '';
+                            $message['gross_weight_by1'] = $row['gross_weight_by1'] ?? '';
                             $message['tare_weight1'] = $row['tare_weight1'] ?? '';
+                            $message['tare_weight1_date'] = !empty($row['tare_weight1_date']) ? date("d/m/Y - h:i:sa", strtotime($row['tare_weight1_date'])) : '';
+                            $message['tare_weight_by1'] = $row['tare_weight_by1'] ?? '';
                             $message['nett_weight1'] = $row['nett_weight1'] ?? '';
+                            $message['lorry_plate_no2'] = $row['lorry_plate_no2'] ?? '';
+                            $message['gross_weight2'] = $row['gross_weight2'] ?? '';
+                            $message['gross_weight2_date'] = !empty($row['gross_weight2_date']) ? date("d/m/Y - h:i:sa", strtotime($row['gross_weight2_date'])) : '';
+                            $message['gross_weight_by2'] = $row['gross_weight_by2'] ?? '';
+                            $message['tare_weight2'] = $row['tare_weight2'] ?? '';
+                            $message['tare_weight2_date'] = !empty($row['tare_weight2_date']) ? date("d/m/Y - h:i:sa", strtotime($row['tare_weight2_date'])) : '';
+                            $message['tare_weight_by2'] = $row['tare_weight_by2'] ?? '';
+                            $message['nett_weight2'] = $row['nett_weight2'] ?? '';
                             $message['reduce_weight'] = $row['reduce_weight'] ?? '';
                             $message['final_weight'] = $row['final_weight'] ?? '';
                         }else{

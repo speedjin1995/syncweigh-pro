@@ -1316,6 +1316,14 @@ else{
                                                                 <h5 class="card-title mb-0 text-white">Previous Records (Lorry)</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Export PDF
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-warning waves-effect waves-light" >
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
+                                                                </button>
                                                                 <!--a href="/template/Weight_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
@@ -1341,15 +1349,20 @@ else{
                                                                     <th>Weight <br>Type</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Customer/ <br> Supplier</th>
+                                                                    <th>Container No</th>
+                                                                    <th>Seal No</th>
                                                                     <th>Vehicle</th>
-                                                                    <th>Product</th>
-                                                                    <th>SO/PO</th>
-                                                                    <th>DO</th>
                                                                     <th>Gross <br>Incoming</th>
                                                                     <th>Incoming <br>Date</th>
                                                                     <th>Tare <br>Outgoing</th>
                                                                     <th>Outgoing <br>Date</th>
                                                                     <th>Nett <br>Weight</th>
+                                                                    <th>Vehicle 2</th>
+                                                                    <th>Gross <br>Incoming 2</th>
+                                                                    <th>Incoming <br>Date 2</th>
+                                                                    <th>Tare <br>Outgoing 2</th>
+                                                                    <th>Outgoing <br>Date 2</th>
+                                                                    <th>Nett <br>Weight 2</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -1694,28 +1707,20 @@ else{
                 { data: 'weight_type' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
-                { 
-                    data: 'lorry_plate_no1',
-                    render: function (data, type, row) {
-                        var vehicle = '';
-
-                        if (row.weight_type == 'Container'){
-                            vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
-                        }else{
-                            vehicle = row.lorry_plate_no1;
-                        }
-
-                        return vehicle;
-                    }
-                },
-                { data: 'product_code' },
-                { data: 'purchase_order' },
-                { data: 'delivery_no' },
+                { data: 'container_no' },
+                { data: 'seal_no' },
+                { data: 'lorry_plate_no1' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
                 { data: 'tare_weight1_date' },
                 { data: 'nett_weight1' },
+                { data: 'lorry_plate_no2' },
+                { data: 'gross_weight2' },
+                { data: 'gross_weight2_date' },
+                { data: 'tare_weight2' },
+                { data: 'tare_weight2_date' },
+                { data: 'nett_weight2' },
                 { 
                     data: 'id',
                     class: 'action-button',
@@ -2559,28 +2564,20 @@ else{
                     { data: 'weight_type' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
-                    { 
-                        data: 'lorry_plate_no1',
-                        render: function (data, type, row) {
-                            var vehicle = '';
-
-                            if (row.weight_type == 'Container'){
-                                vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
-                            }else{
-                                vehicle = row.lorry_plate_no1;
-                            }
-
-                            return vehicle;
-                        }
-                    },
-                    { data: 'product_code' },
-                    { data: 'purchase_order' },
-                    { data: 'delivery_no' },
+                    { data: 'container_no' },
+                    { data: 'seal_no' },
+                    { data: 'lorry_plate_no1' },
                     { data: 'gross_weight1' },
                     { data: 'gross_weight1_date' },
                     { data: 'tare_weight1' },
                     { data: 'tare_weight1_date' },
                     { data: 'nett_weight1' },
+                    { data: 'lorry_plate_no2' },
+                    { data: 'gross_weight2' },
+                    { data: 'gross_weight2_date' },
+                    { data: 'tare_weight2' },
+                    { data: 'tare_weight2_date' },
+                    { data: 'nett_weight2' },
                     { 
                         data: 'id',
                         class: 'action-button',
@@ -2908,6 +2905,94 @@ else{
             };
 
             reader.readAsBinaryString(file);
+        });
+
+        $('#exportPdf').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+            var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+
+            if (batchNoI == 'N'){
+                batchNoI = 'Pending';
+            }else if (batchNoI == 'Y'){
+                batchNoI = 'Complete';
+            }
+
+            if (batchNoI == 'Pending'){
+                $.post('php/exportPdf.php', {
+                    fromDate : fromDateI,
+                    toDate : fromDateI,
+                    transactionStatus : statusI,
+                    customer : customerNoI,
+                    supplier : supplierNoI,
+                    vehicle : vehicleNoI,
+                    weighingType : invoiceNoI,
+                    status : batchNoI,
+                    product : productSearchI,
+                    rawMat : rawMaterialI,
+                    plant : plantNoI,
+                    file : 'weight'
+                }, function(response){
+                    var obj = JSON.parse(response);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                    }
+                }).fail(function(error){
+                    console.error("Error exporting PDF:", error);
+                    alert("An error occurred while generating the PDF.");
+                });
+            }else{
+                alert("Please change status to Pending before generating PDF.");
+            }
+        });
+
+        $('#exportExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+            var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            
+            if (batchNoI == 'N'){
+                batchNoI = 'Pending';
+            }else if (batchNoI == 'Y'){
+                batchNoI = 'Complete';
+            }
+
+            if (batchNoI == 'Pending'){
+                window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI);
+            }else{
+                alert("Please change status to Pending before generating Excel.");
+            }
         });
 
         $('#weightType').on('change', function(){
@@ -3399,7 +3484,7 @@ else{
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
                     var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){ console.log(obj.message);
+                    if (obj.status == 'success'){ 
                         // $('#addModal').find('#containerNo').val(obj.message.container_no);
                         $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                         $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
@@ -3500,58 +3585,76 @@ else{
         }
 
         var returnString = `
-        <!-- Weighing Section -->
+        <!-- Customer Section -->
         <div class="row">
-            <div class="col-2">
+            <div class="col-6">
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Customer/Supplier</strong></span><br>
                 <p><strong>${row.name}</strong></p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
                 <p>${row.address_line_3}</p>
                 <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
             </div>
-            <div class="col-10">
-                <div class="row">
-                    <div class="col-3">
-                        <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
-                        <p><strong>DESTINATION NAME:</strong> ${row.destination_name}</p>
-                        <p><strong>SITE NAME:</strong> ${row.site_name}</p>
-                        <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
-
-                    if (row.transaction_status == 'Purchase'){
-                        returnString += `<p><strong>PURCHASE PRODUCT:</strong> ${row.product_rawmat_name}</p>`;
-                    }else{
-                        returnString += `<p><strong>SALES PRODUCT:</strong> ${row.product_rawmat_name}</p>`;
-                    }
-
-                    returnString += `</div>
-                    <div class="col-3">
-                        <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
-                        <p><strong>WEIGHT STATUS:</strong> ${transactionStatus}</p>
-                        <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
-                        <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p> `;
-
-                    if (row.transaction_status == 'Purchase'){
-                        returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
-                    }else{
-                        returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
-                    }
-                    
-                    returnString += `</div>
-                    <div class="col-3">
-                        <p><strong>CREATED DATE:</strong> ${row.created_date}</p>
-                        <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
-                        <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
-                    </div>
-                    <div class="col-3">
-                        <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
-                        <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
-                        <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
-                        <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
-                        <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
-                    </div>
-                </div>
+        </div>
+        <hr>
+        <!-- Delivery Order Section -->
+        <div class="row">
+            <p><span><strong style="font-size:120%; text-decoration: underline;">Delivery Order Information</strong></span><br>
+            <div class="col-6">
+                <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
+                <p><strong>DESTINATION NAME:</strong> ${row.destination}</p>
+                <p><strong>SITE NAME:</strong> ${row.site_name}</p>
+                <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
+                if (row.transaction_status == 'Purchase' || row.transaction_status == 'Local'){
+                    returnString += `<p><strong>PURCHASE PRODUCT:</strong> ${row.product_rawmat_name}</p>`;
+                }else{
+                    returnString += `<p><strong>SALES PRODUCT:</strong> ${row.product_rawmat_name}</p>`;
+                }
+        
+            returnString += `
+                <p><strong>CONTAINER NO:</strong> ${row.container_no}</p>
+                <p><strong>SEAL NO:</strong> ${row.seal_no}</p>
             </div>
-        </div>`;
+            <div class="col-6">
+                <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
+                <p><strong>WEIGHT STATUS:</strong> ${transactionStatus}</p>
+                <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
+                <p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>
+                <p><strong>CONTAINER NO 2:</strong> ${row.container_no2}</p>
+                <p><strong>SEAL NO 2:</strong> ${row.seal_no2}</p>
+            </div>
+        </div>
+        <hr>
+
+        <!-- Weighing Section -->
+        <div class="row">
+            <p><span><strong style="font-size:120%; text-decoration: underline;">Weighing Information</strong></span><br>
+            <!-- Normal -->
+            <div class="col-6">
+                <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
+                <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
+                <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
+                <p><strong>IN WEIGH BY:</strong> ${row.gross_weight_by1}</p>
+                <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
+                <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
+                <p><strong>OUT WEIGH BY:</strong> ${row.tare_weight_by1}</p>
+                <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
+                <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
+            </div>
+            <!-- Container -->
+            <div class="col-6">
+                <p><strong>VEHICLE PLATE 2:</strong> ${row.lorry_plate_no2}</p>
+                <p><strong>IN WEIGHT 2:</strong> ${row.gross_weight2}</p>
+                <p><strong>IN DATE / TIME 2:</strong> ${row.gross_weight2_date}</p>
+                <p><strong>IN WEIGH BY 2:</strong> ${row.gross_weight_by2}</p>
+                <p><strong>OUT WEIGHT 2:</strong> ${row.tare_weight2}</p>
+                <p><strong>OUT DATE / TIME 2:</strong> ${row.tare_weight2_date}</p>
+                <p><strong>OUT WEIGH BY 2:</strong> ${row.tare_weight_by2}</p>
+                <p><strong>NETT WEIGHT 2:</strong> ${row.nett_weight2}</p>            
+                </div>
+        </div>
+        `;
         
         return returnString;
     }
@@ -3701,7 +3804,6 @@ else{
                 }
                 
                 $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
-                $('#addModal').find('#sealNo').val(obj.message.seal_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
@@ -3734,7 +3836,7 @@ else{
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
-                $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2); console.log(obj.message.gross_weight_by2);
+                $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2);
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
                 $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate3(new Date(obj.message.tare_weight2_date)) : '');
                 $('#addModal').find('#tareWeightBy2').val(obj.message.tare_weight_by2);
@@ -3771,9 +3873,10 @@ else{
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
                 $('#addModal').find('#containerNoInput').val(obj.message.container_no);
-                $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).trigger('change');
+                $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).select2('destroy').select2();
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#containerNo2').val(obj.message.container_no2);
+                $('#addModal').find('#sealNo').val(obj.message.seal_no);
                 $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
 
                 // Load these field after PO/SO is loaded
@@ -3806,6 +3909,25 @@ else{
                     //     $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     // }
                 });*/
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
