@@ -36,7 +36,7 @@ if (isset($_POST['destinationName'])) {
         }
 
         // Auto gen destination code
-        if($update_stmt2 = $db->prepare("SELECT * FROM Miscellaneous WHERE code=? AND name=?")){
+        if($update_stmt2 = $db->prepare("SELECT * FROM miscellaneous WHERE code=? AND name=?")){
 			$update_stmt2->bind_param('ss', $code, $firstChar);
 
 			if (! $update_stmt2->execute()) {
@@ -146,7 +146,7 @@ if (isset($_POST['destinationName'])) {
             else{
                 // Update Miscellaneous 
                 if (!empty($misValue)){
-                    if ($update_miscellaneous = $db->prepare("UPDATE Miscellaneous SET value=? WHERE code=? AND name=?")) {
+                    if ($update_miscellaneous = $db->prepare("UPDATE miscellaneous SET value=? WHERE code=? AND name=?")) {
                         $update_miscellaneous->bind_param('sss', $misValue, $code, $firstChar);
     
                         if (! $update_miscellaneous->execute()) {

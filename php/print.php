@@ -59,6 +59,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $loadingChitNo = $row['transaction_id'];
                 $lorryNo = $row['lorry_plate_no1'];
                 $poNo = $row['purchase_order'];
+                $weightType = $row['weight_type'];
                 $doNo = $row['delivery_no'];
                 $exDel = $row['ex_del'] === 'EX' ? 'E' : 'D';
                 $complete = $row['is_complete'];
@@ -69,6 +70,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $grossWeight = number_format($row['gross_weight1']);
                 $tareWeight = number_format($row['tare_weight1']);
                 $nettWeight = number_format($row['nett_weight1']);
+                $grossWeight2 = number_format($row['gross_weight2']);
+                $tareWeight2 = number_format($row['tare_weight2']);
+                $nettWeight2 = number_format($row['nett_weight2']);
                 $supplierWeight =  number_format($row['supplier_weight']);
                 $weightDifference = number_format($row['weight_different']);
                 $sysdate = date("d-m-Y");
@@ -148,7 +152,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $deliverOrderNo = $row['delivery_no'];
                 }
                 
-                if($type == 'Sales'){
+                if($type == 'Sales' || $type == 'Local'){
                     $customerCode = $row['customer_code'];
                     $customerName = $row['customer_name'];
                 }
@@ -223,7 +227,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <p>VEHICLE NO.<span style="margin-left: 48px;">:</span>'.$lorryNo.'</p>
                                             <p>PRODUCT<span style="margin-left: 62px;">:</span>'.$productCode. ' ' . $productName .'</p>
                                             <p>PLANT NO.<span style="margin-left: 59px;">:</span></p>
-                                            <p>WEIGHT IN<span style="margin-left: 57px;">:</span>'.$grossWeight.' KG</p>
+                                            <p>WEIGHT IN<span style="margin-left: 57px;">:</span>'.($weightType == 'Normal' ? $grossWeight : ((float)$grossWeight + (float)$grossWeight2)).' KG</p>
                                         </div>
                                         <div class="col-4 body_1 mt-2">
                                             <p>LOADING CHIT NO.<span style="margin-left: 10px;">:</span>'.$loadingChitNo.'</p>
@@ -607,11 +611,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                             <span style="margin-left: -60px;font-size: 13px;">'.$formattedTareWeightDate.'</span>
                                                                         </td>
                                                                         <td style="border: 0; text-align: center;" width="50%">
-                                                                            <br><span style="font-size: 13px;">'.$grossWeight.'</span>
+                                                                            <br><span style="font-size: 13px;">'.($weightType == 'Normal' ? $grossWeight : ((float)$grossWeight + (float)$grossWeight2)).'</span>
                                                                             <br>
-                                                                            <span style="font-size: 13px;">'.$tareWeight.'</span>
+                                                                            <span style="font-size: 13px;">'.($weightType == 'Normal' ? $tareWeight : ((float)$tareWeight + (float)$tareWeight2)).'</span>
                                                                             <hr style="width:30%; margin-left: auto; margin-right: auto; margin-top: 5px;">
-                                                                            <div style="margin-top: -10px;font-size: 13px;">'.$nettWeight.'</div>
+                                                                            <div style="margin-top: -10px;font-size: 13px;">'.($weightType == 'Normal' ? $nettWeight : ((float)$nettWeight + (float)$nettWeight2)).'</div>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -719,9 +723,9 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                                         <div class="row body2">
                                             <div class="col-6 body_2 mt-2 mb-2">
-                                                <p>WEIGHT IN <span style="margin-left: 26px;">(KG)</span><span>:</span>'.$grossWeight.'</p>
-                                                <p>WEIGHT OUT<span style="margin-left: 15px;">(KG)</span><span>:</span>'.$tareWeight.'</p>
-                                                <p>NET WEIGHT<span style="margin-left: 16px;">(KG)</span><span>:</span>'.$nettWeight.'</p>
+                                                <p>WEIGHT IN <span style="margin-left: 26px;">(KG)</span><span>:</span>'.($weightType == 'Normal' ? $grossWeight : number_format((float)$row['gross_weight1'] + (float)$row['gross_weight2'])).'</p>
+                                                <p>WEIGHT OUT<span style="margin-left: 15px;">(KG)</span><span>:</span>'.($weightType == 'Normal' ? $tareWeight : number_format((float)$row['tare_weight1'] + (float)$row['tare_weight2'])).'</p>
+                                                <p>NET WEIGHT<span style="margin-left: 16px;">(KG)</span><span>:</span>'.($weightType == 'Normal' ? $nettWeight : number_format((float)$row['nett_weight1'] + (float)$row['nett_weight2'])).'</p>
                                             </div>
                                             <div class="col-6 body_2 mt-2 mb-2">
                                                 <p>TIME IN<span style="margin-left: 26px;">:</span>'.$formattedGrossWeightDate.'</p>
