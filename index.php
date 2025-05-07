@@ -1005,7 +1005,7 @@ else{
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
-                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">3.Gross Incoming</label>
+                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">Incoming</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming2" name="grossIncoming2" placeholder="0" readonly>
@@ -1021,7 +1021,7 @@ else{
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
-                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
+                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">Outgoing</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing2" name="tareOutgoing2" placeholder="0" readonly>
@@ -1537,7 +1537,7 @@ else{
         $('#statusSearch').on('change', function(){
             var status = $(this).val();
 
-            if (status == 'Purchase' || status == 'Local'){
+            if (status == 'Purchase'){
                 // Hide & reset customer then show supplier
                 $('#customerSearchDisplay').hide();
                 $('#customerSearchDisplay').find('#customerNoSearch').val('-').trigger('change');
@@ -1743,7 +1743,7 @@ else{
             var completed = 'N';
             var pass = true;
 
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+            if($('#transactionStatus').val() == "Purchase"){
                 trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
             }
             else{
@@ -1902,7 +1902,7 @@ else{
             var completed = 'N';
             var pass = true;
 
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+            if($('#transactionStatus').val() == "Purchase"){
                 trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
             }
             else{
@@ -2468,6 +2468,7 @@ else{
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             $('#addModal').find('#grossIncomingDate').val("");
             $('#addModal').find('#tareOutgoing').val("");
@@ -3098,7 +3099,7 @@ else{
             var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
             var nett2 = 0;
 
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+            if($('#transactionStatus').val() == "Purchase"){
                 nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
             }
             else{
@@ -3199,7 +3200,7 @@ else{
         $('#transactionStatus').on('change', function(){
             var customerType = $('#addModal').find('#customerType').val();
 
-            if($(this).val() == "Purchase" || $(this).val() == "Local"){
+            if($(this).val() == "Purchase"){
                 $('#divWeightDifference').show();
                 $('#divSupplierWeight').show();
                 $('#addModal').find('#orderWeight').val("");
@@ -3251,6 +3252,44 @@ else{
                         $('#sstDisplay').hide();
                         $('#totalPriceDisplay').hide();
                     }
+                }
+            }
+            else if($(this).val() == "Local"){
+                $('#divOrderWeight').show();
+                $('#addModal').find('#orderWeight').val("0");
+                $('#addModal').find('#supplierWeight').val("");
+                $('#divWeightDifference').show();
+                $('#divSupplierWeight').hide();
+                $('#divSupplierName').hide();
+                $('#divCustomerName').show();
+                $('#rawMaterialDisplay').hide();
+                $('#productNameDisplay').show();
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                $('#addModal').find('#divPoSupplyWeight').hide();
+
+                //Hide PO Select
+                $('#divPurchaseOrder').find('#soSelect').show();
+                $('#divPurchaseOrder').find('#poSelect').hide();
+
+                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                    echo "$('#doDisplay').show();";
+                }
+                else{
+                    echo "//$('#doDisplay').show();";
+                }
+                ?>
+
+                if (customerType == 'Cash'){
+                    $('#unitPriceDisplay').show();
+                    $('#subTotalPriceDisplay').show();
+                    $('#sstDisplay').show();
+                    $('#totalPriceDisplay').show();
+                }else{
+                    $('#unitPriceDisplay').hide();
+                    $('#subTotalPriceDisplay').hide();
+                    $('#sstDisplay').hide();
+                    $('#totalPriceDisplay').hide();
                 }
             }
             else{
@@ -4021,11 +4060,11 @@ else{
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
-                $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
                 $('#addModal').find('#customerType').val(obj.message.customer_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
-                if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
+                if(obj.message.transaction_status == "Purchase"){
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').show();
                     $('#divSupplierName').show();
