@@ -326,7 +326,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                         <select class="form-control select2" style="width: 100%;" id="product" name="product" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                                                                                                <option value="<?=$rowProduct['product_code'] ?>" data-name="<?=$rowProduct['name'] ?>"><?=$rowProduct['name'] ?></option>
+                                                                                                <option value="<?=$rowProduct['product_code'] ?>" data-name="<?=$rowProduct['name'] ?>" data-id="<?=$rowProduct['id'] ?>"><?=$rowProduct['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -668,13 +668,11 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             defaultDate: ''
         });
 
-        $('.select2').each(function() {
-            $(this).select2({
-                allowClear: true,
-                placeholder: "Please Select",
-                // Conditionally set dropdownParent based on the element’s location
-                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
-            });
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
         });
 
         // Apply custom styling to Select2 elements in addModal
@@ -1028,7 +1026,12 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             $('#addModal').find('#transporter').val("").trigger('change');
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
+            $('#addModal').find('#convertedOrderQty').val("");
+            $('#addModal').find('#convertedQtyUnit').val(2);
+            $('#addModal').find('#balance').val("");
+            $('#addModal').find('#balanceUnit').text("KG");
             $('#addModal').find('#orderQty').val("");
+            $('#addModal').find('#convertedBal').val("");
             $('#addModal').find('#unitPrice').val("");
             $('#addModal').find('#totalPrice').val("");
             $('#addModal').find('#remarks').val("");
@@ -1130,6 +1133,8 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
         
         $('#product').on('change', function(){
             $('#productName').val($('#product :selected').data('name'));
+
+            $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
         });
         
         $('#plant').on('change', function(){
@@ -1150,17 +1155,19 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             }
         });
 
-        // $('#orderQty').on('change', function(){
-        //     var orderWeight = parseFloat($(this).val())/1000;
-        //     var unitPrice = parseFloat($('#unitPrice').val());
-        //     var totalPrice = (unitPrice * orderWeight).toFixed(2);
+        $('#orderQty').on('change', function(){
+            var orderWeight = parseFloat($(this).val())/1000;
+            var unitPrice = parseFloat($('#unitPrice').val());
+            var totalPrice = (unitPrice * orderWeight).toFixed(2);
             
-        //     $('#totalPrice').val(totalPrice);
-        // });
+            $('#totalPrice').val(totalPrice);
+        });
 
         $('#convertedQtyUnit').on('change', function(){
             var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
 
+            $('#balanceUnit').text(convertedUnitName);
+            $('#convertedOrderQty').trigger('change');
         });
 
         $('#convertedOrderQty').on('change', function(){
@@ -1169,9 +1176,40 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
 
             $('#balanceUnit').text(convertedUnitName);
-            console.log(convertedOrderWeight);
-            console.log(convertedUnit);
-            
+            $('#balance').val(convertedOrderWeight);
+
+            if (convertedUnit == 2){
+                $('#orderQty').val(convertedOrderWeight);
+                $('#convertedBal').val(convertedOrderWeight);
+            }else{
+                // Call to backend to get conversion rate
+                var productCode = $('#product :selected').data('id');
+
+                if (productCode && convertedUnit && convertedOrderWeight){
+                    $.post('php/getProdRawMatUOM.php', {userID: productCode, unitID: convertedUnit, type: 'SO'}, function(data)
+                    {
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            // Processing for order quantity (KG)
+                            var rate = parseFloat(obj.message.rate);
+                            var orderQty = convertedOrderWeight * rate;
+
+                            $('#orderQty').val(orderQty).trigger('change');
+                            $('#convertedBal').val(orderQty);
+                        }
+                        else if(obj.status === 'failed'){
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
         });
 
 
@@ -1306,9 +1344,9 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
     function edit(id){
         $('#spinnerLoading').show();
         $.post('php/getSalesOrder.php', {userID: id}, function(data)
-        {
+        { 
             var obj = JSON.parse(data);
-            if(obj.status === 'success'){
+            if(obj.status === 'success'){ console.log(obj.message);
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#company').val(obj.message.company_code).trigger('change');
                 $('#addModal').find('#customer').val(obj.message.customer_code).trigger('change');
@@ -1324,6 +1362,9 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
+                $('#addModal').find('#balance').val(obj.message.convertedBal);
+                $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
+                $('#addModal').find('#convertedQtyUnit').val(obj.message.converted_unit).trigger('change');
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#remarks').val(obj.message.remarks);

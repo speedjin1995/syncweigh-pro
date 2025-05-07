@@ -163,10 +163,34 @@ if (isset($_POST['orderNo'])) {
         $orderLoad = trim($_POST["orderLoad"]);
     }
 
+    if (empty($_POST["convertedOrderQty"])) {
+        $convertedOrderQty = null;
+    } else {
+        $convertedOrderQty = trim($_POST["convertedOrderQty"]);
+    }
+
+    if (empty($_POST["convertedQtyUnit"])) {
+        $convertedQtyUnit = null;
+    } else {
+        $convertedQtyUnit = trim($_POST["convertedQtyUnit"]);
+    }
+
+    if (empty($_POST["balance"])) {
+        $balance = null;
+    } else {
+        $balance = trim($_POST["balance"]);
+    }
+
     if (empty($_POST["orderQty"])) {
         $orderQty = null;
     } else {
         $orderQty = trim($_POST["orderQty"]);
+    }
+
+    if (empty($_POST["convertedBal"])) {
+        $convertedBal = null;
+    } else {
+        $convertedBal = trim($_POST["convertedBal"]);
     }
 
     if (empty($_POST["unitPrice"])) {
@@ -189,9 +213,9 @@ if (isset($_POST['orderNo'])) {
 
     if(!empty($poId))
     {
-        if ($update_stmt = $db->prepare("UPDATE Sales_Order SET company_code=?, company_name=?, customer_code=?, customer_name=?, site_code=?, site_name=?, order_date=?, order_no=?, so_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, deliver_to_name=?, product_code=?, product_name=?, plant_code=?, plant_name=?, transporter_code=?, transporter_name=?, veh_number=?, exquarry_or_delivered=?, order_load=?, order_quantity=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Sales_Order SET company_code=?, company_name=?, customer_code=?, customer_name=?, site_code=?, site_name=?, order_date=?, order_no=?, so_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, deliver_to_name=?, product_code=?, product_name=?, plant_code=?, plant_name=?, transporter_code=?, transporter_name=?, veh_number=?, exquarry_or_delivered=?, order_load=?, converted_order_qty=?, converted_balance=?, converted_unit=?, order_quantity=?, balance=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssssssssssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $productCode, $productName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $orderQty, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
+            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $productCode, $productName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
