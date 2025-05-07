@@ -532,9 +532,9 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="emptyContainerNo" name="emptyContainerNo">
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowContainer=mysqli_fetch_assoc($container)){ ?>
+                                                                                            <?php /*while($rowContainer=mysqli_fetch_assoc($container)){ ?>
                                                                                                 <option value="<?=$rowContainer['container_no'] ?>"><?=$rowContainer['container_no'] ?></option>
-                                                                                            <?php } ?>
+                                                                                            <?php }*/ ?>
                                                                                         </select>                   
                                                                                     </div>
                                                                                 </div>
@@ -2183,9 +2183,9 @@ else{
                                     printWindow.print();
                                     printWindow.close();
                                     table.ajax.reload();
-                                    //window.location = 'index.php';
+                                    window.location = 'index.php';
                                     
-                                    setTimeout(function () {
+                                    /*setTimeout(function () {
                                         if (confirm("Do you need to reprint?")) {
                                             $.post('php/print.php', { userID: obj.id, file: 'weight' }, function (data) {
                                                 var obj = JSON.parse(data);
@@ -2203,7 +2203,7 @@ else{
                                                 }
                                             });
                                         }
-                                    }, 500);
+                                    }, 500);*/
                                 }, 500);
                             }
                             else if(obj.status === 'failed'){
@@ -2926,7 +2926,7 @@ else{
                 batchNoI = 'Complete';
             }
 
-            if (batchNoI == 'Pending'){
+            //if (batchNoI == 'Pending'){
                 $.post('php/exportPdf.php', {
                     fromDate : fromDateI,
                     toDate : fromDateI,
@@ -2962,9 +2962,9 @@ else{
                     console.error("Error exporting PDF:", error);
                     alert("An error occurred while generating the PDF.");
                 });
-            }else{
+            /*}else{
                 alert("Please change status to Pending before generating PDF.");
-            }
+            }*/
         });
 
         $('#exportExcel').on('click', function(){
@@ -2986,28 +2986,63 @@ else{
                 batchNoI = 'Complete';
             }
 
-            if (batchNoI == 'Pending'){
+            //if (batchNoI == 'Pending'){
                 window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
                 "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI);
-            }else{
+            /*}else{
                 alert("Please change status to Pending before generating Excel.");
-            }
+            }*/
         });
 
         $('#weightType').on('change', function(){
             var weightType = $(this).val();
+            var transaType = $('#transactionStatus').val();
 
             if (weightType == 'Container'){
+                $.post('php/getContainers.php', {userID: transaType}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#emptyContainerNo').empty();
+                            $('#addModal').find('#emptyContainerNo').append(`<option selected="-">-</option>`);
+
+                            var deliveredTransporter;
+
+                            for (var i = 0; i < obj.message.length; i++) {
+                                var id = obj.message[i].id;
+                                var container_no = obj.message[i].container_no;
+
+                                $('#addModal').find('#emptyContainerNo').append(
+                                    '<option value="'+container_no+'">'+container_no+'</option>'
+                                );  
+                            }
+                        }
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+
                 $('#containerCard').show();
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
+                $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
                 $('#containerCard').hide();
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', true);
+                $('#addModal').find('#emptyContainerNo').attr('required', false);
             }else{
                 $('#containerCard').hide();
                 $('#addModal').find('#emptyContainerDisplay').hide();
@@ -3320,6 +3355,41 @@ else{
 
         $('#transactionStatus').on('change', function(){
             var customerType = $('#addModal').find('#customerType').val();
+            var weightType = $('#addModal').find('#weightType').val();
+
+            if(weightType == 'Container'){
+                $.post('php/getContainers.php', {userID: $(this).val()}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#emptyContainerNo').empty();
+                            $('#addModal').find('#emptyContainerNo').append(`<option selected="-">-</option>`);
+
+                            var deliveredTransporter;
+
+                            for (var i = 0; i < obj.message.length; i++) {
+                                var id = obj.message[i].id;
+                                var container_no = obj.message[i].container_no;
+
+                                $('#addModal').find('#emptyContainerNo').append(
+                                    '<option value="'+container_no+'">'+container_no+'</option>'
+                                );  
+                            }
+                        }
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
 
             if($(this).val() == "Purchase" || $(this).val() == "Local"){
                 $('#divWeightDifference').show();
