@@ -3843,6 +3843,7 @@ else{
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
+                $('#addModal').find('#currentWeight').text(obj.message.final_weight);
 
                 if(obj.message.manual_weight == 'true'){
                     $("#manualWeightYes").prop("checked", true);
