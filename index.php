@@ -66,6 +66,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
 $purchaseOrder2 = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
@@ -678,22 +679,27 @@ else{
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                 <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>                                                                                        
+                                                                                        </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
+                                                                                    <label for="basicUOM" class="col-sm-4 col-form-label">Basic UOM</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="basicUOM" name="basicUOM" placeholder="0">
+                                                                                            <div class="input-group-text">
+                                                                                                <select class="form-select" id="basicUomUnit" name="basicUomUnit" required>
+                                                                                                    <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
+                                                                                                        <option value="<?=$rowUnit['id'] ?>" data-unit="<?=$rowUnit['unit']?>"><?=$rowUnit['unit'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>     
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
-                                                                                    <span class="col-sm-4"></span>
-                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
-                                                                                </div>
-                                                                            </div>  
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -735,15 +741,16 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
+                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
+                                                                                    <span class="col-sm-4"></span>
+                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -774,12 +781,12 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
+                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
@@ -833,20 +840,20 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
+                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>  
+                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
-                                                                        <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
                                                                                 <div class="row">
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
@@ -874,17 +881,17 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -911,7 +918,18 @@ else{
                                                                                         </select>        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>                         
+                                                                            </div>   
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                      
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -973,6 +991,17 @@ else{
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="nettWeight" name="nettWeight" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="convertedNettWeight" class="col-sm-4 col-form-label">Converted Nett Weight</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="number" class="form-control input-readonly" id="convertedNettWeight" name="convertedNettWeight" placeholder="0" readonly>
+                                                                                    <div class="input-group-text">
+                                                                                        Kg
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
