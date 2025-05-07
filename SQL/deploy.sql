@@ -697,3 +697,8 @@ CREATE TABLE `Raw_Mat_UOM` (
 ALTER TABLE `Raw_Mat_UOM` ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `Raw_Mat_UOM` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 07/05/2025 --
+ALTER TABLE `Sales_Order` ADD `converted_order_qty` VARCHAR(100) NULL AFTER `balance`, ADD `converted_balance` VARCHAR(100) NULL AFTER `converted_order_qty`;
+
+ALTER TABLE `Sales_Order` ADD `converted_unit` INT(11) NULL AFTER `converted_balance`;

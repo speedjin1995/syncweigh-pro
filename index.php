@@ -3357,7 +3357,7 @@ else{
             var productName = $('#productName :selected').data('code');
             var plant = $('#addModal').find('#plantCode').val();
 
-            if (salesOrder){
+            if (salesOrder && plant){
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
                         var obj = JSON.parse(data);
@@ -3404,9 +3404,9 @@ else{
                             }
     
                             if (exDel == 'E') {
-                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                             } else {
-                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                             }
     
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight)
@@ -3428,9 +3428,9 @@ else{
                     $('#addModal').trigger('orderLoaded');
                 }*/
             }else{
-                if (!soPoTag && !addNewTag){
-                    getSoPo();
-                }
+                // if (!soPoTag && !addNewTag){
+                //     getSoPo();
+                // }
             }
         });
 
@@ -3792,6 +3792,8 @@ else{
             }
         ?>
     });
+
+
 
     function getSoPo(){
         var transactionStatus = $('#addModal').find('#transactionStatus').val();

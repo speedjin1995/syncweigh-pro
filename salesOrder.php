@@ -19,6 +19,8 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 ?>
@@ -382,10 +384,49 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Order Quantity</label>
+                                                                                    <label for="convertedQtyUnit" class="col-sm-4 col-form-label">Order Quantity</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required>
+                                                                                            <input type="number" class="form-control" id="convertedOrderQty" name="convertedOrderQty" required>
+                                                                                            <div class="input-group-text">
+                                                                                                <select class="form-control" style="width: 100%;" id="convertedQtyUnit" name="convertedQtyUnit" required>
+                                                                                                    <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
+                                                                                                        <option value="<?=$rowUnit['id'] ?>" data-unit="<?=$rowUnit['unit']?>"><?=$rowUnit['unit'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="balance" name="balance" required readonly>
+                                                                                            <div class="input-group-text" id="balanceUnit">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Converted Order Quantity</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required readonly>
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="convertedBal" class="col-sm-4 col-form-label">Converted Balance</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="convertedBal" name="convertedBal" required readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div>
@@ -1109,12 +1150,28 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             }
         });
 
-        $('#orderQty').on('change', function(){
-            var orderWeight = parseFloat($(this).val())/1000;
-            var unitPrice = parseFloat($('#unitPrice').val());
-            var totalPrice = (unitPrice * orderWeight).toFixed(2);
+        // $('#orderQty').on('change', function(){
+        //     var orderWeight = parseFloat($(this).val())/1000;
+        //     var unitPrice = parseFloat($('#unitPrice').val());
+        //     var totalPrice = (unitPrice * orderWeight).toFixed(2);
             
-            $('#totalPrice').val(totalPrice);
+        //     $('#totalPrice').val(totalPrice);
+        // });
+
+        $('#convertedQtyUnit').on('change', function(){
+            var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
+
+        });
+
+        $('#convertedOrderQty').on('change', function(){
+            var convertedOrderWeight = parseFloat($(this).val());
+            var convertedUnit = $('#convertedQtyUnit').val();
+            var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
+
+            $('#balanceUnit').text(convertedUnitName);
+            console.log(convertedOrderWeight);
+            console.log(convertedUnit);
+            
         });
 
 
