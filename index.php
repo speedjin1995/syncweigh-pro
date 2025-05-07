@@ -522,13 +522,13 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row" id="containerDisplay">
-                                                                                    <label for="containerNoInput" class="col-sm-4 col-form-label">Container No</label>
+                                                                                    <label for="containerNoInput" class="col-sm-4 col-form-label">Container No 1</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="containerNoInput" name="containerNoInput" placeholder="Container No">
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row" id="emptyContainerDisplay" style="display:none" >
-                                                                                    <label for="emptyContainerNo" class="col-sm-4 col-form-label">Container No</label>
+                                                                                    <label for="emptyContainerNo" class="col-sm-4 col-form-label">Container No 1</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="emptyContainerNo" name="emptyContainerNo">
                                                                                             <option selected="-">-</option>
@@ -568,7 +568,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="sealNo" class="col-sm-4 col-form-label">Seal No</label>
+                                                                                    <label for="sealNo" class="col-sm-4 col-form-label">Seal No 1</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="sealNo" name="sealNo" placeholder="Seal No">
                                                                                     </div>
@@ -720,7 +720,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row" id="productNameDisplay">
-                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
+                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="productName" name="productName" required>
                                                                                             <option selected="-">-</option>
@@ -733,7 +733,7 @@ else{
                                                                                                     data-low="<?=$rowProduct['low'] ?>" 
                                                                                                     data-variance="<?=$rowProduct['variance'] ?>" 
                                                                                                     data-description="<?=$rowProduct['description'] ?>">
-                                                                                                    <?=$rowProduct['name'] ?>
+                                                                                                    <?=$rowProduct['product_code'] ?>
                                                                                                 </option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
@@ -745,7 +745,7 @@ else{
                                                                                         <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
+                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['raw_mat_code'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>           
                                                                                     </div>
