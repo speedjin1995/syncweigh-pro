@@ -81,9 +81,7 @@ if(isset($_POST['userID'])){
                                     $message['fax_no'] = $row2['fax_no'] ?? '';
                                 } 
                             }
-
                             $message['product_rawmat_name'] = $row['raw_mat_name'];
-
                         }else{
                             if ($customer_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
                                 $customer_stmt->bind_param('s', $row['customer_code']);
@@ -101,7 +99,6 @@ if(isset($_POST['userID'])){
                             } 
 
                             $message['product_rawmat_name'] = $row['product_name'];
-
                         } 
                         $message['transporter'] = $row['transporter'] ?? '';
                         $message['site_name'] = $row['site_name'] ?? '';
@@ -131,7 +128,11 @@ if(isset($_POST['userID'])){
                         $message['lorry_plate_no1'] = $row['lorry_plate_no1'];
                         $message['lorry_plate_no2'] = $row['lorry_plate_no2'];
                         $message['supplier_weight'] = $row['supplier_weight'];
+                        $message['converted_supplier_weight'] = $row['converted_supplier_weight'];
+                        $message['converted_supplier_weight_unit'] = $row['converted_supplier_weight_unit'];
                         $message['order_weight'] = $row['order_weight'];
+                        $message['converted_order_weight'] = $row['converted_order_weight'];
+                        $message['converted_order_weight_unit'] = $row['converted_order_weight_unit'];
                         $message['customer_code'] = $row['customer_code'];
                         $message['customer_name'] = $row['customer_name'];
                         $message['plant_code'] = $row['plant_code'];
@@ -161,6 +162,7 @@ if(isset($_POST['userID'])){
                         $message['tare_weight1'] = $row['tare_weight1'];
                         $message['tare_weight1_date'] = $row['tare_weight1_date'];
                         $message['nett_weight1'] = $row['nett_weight1'];
+                        $message['converted_nett_weight1'] = $row['converted_nett_weight1'];
                         $message['gross_weight2'] = $row['gross_weight2'];
                         $message['gross_weight2_date'] = $row['gross_weight2_date'];
                         $message['tare_weight2'] = $row['tare_weight2'];

@@ -61,10 +61,27 @@ if(isset($_POST['type'])){
                     $message = array();
                     
                     while ($row = $result->fetch_assoc()) {
+                        $rawMatCode = $row['raw_mat_code'];
+                        $rawMatName = $row['raw_mat_name']; 
+
+                        // Query for raw mat
+                        $rawMatId = '';
+                        if (isset($rawMatCode)){
+                            $rawMatQuery = "SELECT * FROM Raw_Mat WHERE raw_mat_code = '$rawMatCode' AND status = '0'";
+                            $rawMatRecords = mysqli_query($db, $rawMatQuery);
+                            $rawMatRow = mysqli_fetch_assoc($rawMatRecords);
+                            
+                            if(!empty($rawMatRow)){
+                              $rawMatId = $rawMatRow['id'];
+                            }
+                        }
+                        
                         $message[] = array(
-                            "prodMatCode"=>$row['raw_mat_code'],
-                            "prodMatName"=>$row['raw_mat_name'],
+                            "prodMatId"=>$rawMatId,
+                            "prodMatCode"=>$rawMatCode,
+                            "prodMatName"=>$rawMatName,
                         );
+                        
                     }
 
                     echo json_encode(
@@ -92,12 +109,28 @@ if(isset($_POST['type'])){
                     $message = array();
                     
                     while ($row = $result->fetch_assoc()) {
+                        $productCode = $row['product_code'];
+                        $productName = $row['product_name']; 
+
+                        // Query for product
+                        $productId = '';
+                        if (isset($productCode)){
+                            $prodQuery = "SELECT * FROM Product WHERE product_code = '$productCode' AND status = '0'";
+                            $prodRecords = mysqli_query($db, $prodQuery);
+                            $prodRow = mysqli_fetch_assoc($prodRecords);
+                            
+                            if(!empty($prodRow)){
+                              $productId = $prodRow['id'];
+                            }
+                        }
+                        
                         $message[] = array(
-                            "prodMatCode"=>$row['product_code'],
-                            "prodMatName"=>$row['product_name'],
+                            "prodMatId"=>$productId,
+                            "prodMatCode"=>$productCode,
+                            "prodMatName"=>$productName,
                         );
                     }
-
+                    
                     echo json_encode(
                         array(
                             "status" => "success",
@@ -177,6 +210,9 @@ if(isset($_POST['type'])){
         $plantName = '';
         $balance = 0;
         $order_supplier_weight = 0;
+        $converted_order_supplier_weight = 0;
+        $converted_order_supplier_unit = 0;
+
         // $previousRecordsTag = true;
         $count = 1;
     
@@ -208,6 +244,8 @@ if(isset($_POST['type'])){
                         $exDel = $row['exquarry_or_delivered'];
                         $order_supplier_weight = $row['order_quantity'];
                         $balance = $row['balance'];
+                        $converted_order_supplier_weight = $row['converted_order_qty'];
+                        $converted_order_supplier_unit = $row['converted_unit'];
                     }
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -234,6 +272,8 @@ if(isset($_POST['type'])){
                     $message['ex_del'] = $exDel;
                     $message['order_supplier_weight'] = $order_supplier_weight;
                     $message['balance'] = $balance;
+                    $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
+                    $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     
@@ -273,6 +313,8 @@ if(isset($_POST['type'])){
                         $exDel = $row['exquarry_or_delivered'];
                         $order_supplier_weight = $row['order_quantity'];
                         $balance = $row['balance'];
+                        $converted_order_supplier_weight = $row['converted_order_qty'];
+                        $converted_order_supplier_unit = $row['converted_unit'];
                     }  
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -299,6 +341,8 @@ if(isset($_POST['type'])){
                     $message['ex_del'] = $exDel;
                     $message['order_supplier_weight'] = $order_supplier_weight;
                     $message['balance'] = $balance;
+                    $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
+                    $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     

@@ -596,6 +596,7 @@ else{
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
                                                                                                 <option 
                                                                                                     value="<?=$rowProduct['name'] ?>" 
+                                                                                                    data-id="<?=$rowProduct['id'] ?>" 
                                                                                                     data-price="<?=$rowProduct['price'] ?>" 
                                                                                                     data-code="<?=$rowProduct['product_code'] ?>" 
                                                                                                     data-high="<?=$rowProduct['high'] ?>" 
@@ -613,8 +614,8 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
+                                                                                            <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                                                                                                <option value="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>"><?=$rowRawMat['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>           
                                                                                     </div>
@@ -684,16 +685,21 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
+                                                                                    <label for="basicUOM" class="col-sm-4 col-form-label">Basic UOM</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="basicUOM" name="basicUOM" placeholder="Basic UOM">
+                                                                                            <div class="input-group-text">
+                                                                                                <select class="form-select" id="basicUOMUnit" name="basicUOMUnit" required>
+                                                                                                    <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
+                                                                                                        <option value="<?=$rowUnit['id'] ?>" data-unit="<?=$rowUnit['unit']?>"><?=$rowUnit['unit'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>   
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
-                                                                                    <span class="col-sm-4"></span>
-                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
-                                                                                </div>
-                                                                            </div>  
+                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -735,17 +741,18 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
+                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
+                                                                                    <span class="col-sm-4"></span>
+                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
+                                                                                </div>
+                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -774,12 +781,12 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
+                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
@@ -833,20 +840,20 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
+                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>  
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
-                                                                        <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
                                                                                 <div class="row">
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
@@ -874,17 +881,17 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div>  
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -911,7 +918,18 @@ else{
                                                                                         </select>        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>                         
+                                                                            </div>      
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                   
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -973,6 +991,15 @@ else{
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="nettWeight" name="nettWeight" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3">
+                                                                            <label for="convertedNettWeight" class="col-sm-4 col-form-label">Converted Nett Weight</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="number" class="form-control input-readonly" id="convertedNettWeight" name="convertedNettWeight" placeholder="0" readonly>
+                                                                                    <div class="input-group-text" id="convertedNettWeightUnit">Kg</div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -2500,6 +2527,8 @@ else{
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
+            $('#addModal').find('#basicUOM').val(0);
+            $('#addModal').find('#basicUOMUnit').val(2);
             $('#addModal').find('#insufficientBalDisplay').hide();
 
             $('#addModal').find('#customerCode').val("");
@@ -3093,6 +3122,49 @@ else{
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
             $('#finalWeight').trigger('change');
+
+            // Logic for Converted UOM
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+            var prodRawCode = '';
+            var type = '';
+            if(transactionStatus == 'Sales'){
+                prodRawId = $('#addModal').find('#productName :selected').data('id');
+                type = 'SO';
+            }else if (transactionStatus == 'Purchase'){
+                prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
+                type = 'PO';
+            }
+
+            var convertedUnit = $('#addModal').find('#basicUOMUnit').val();
+            var nettWeight = $('#addModal').find('#nettWeight').val();
+            console.log(prodRawId);
+            console.log(convertedUnit);
+            console.log(nettWeight);
+
+            if (prodRawId && convertedUnit && nettWeight){ console.log("HERE");
+                $.post('php/getProdRawMatUOM.php', {userID: prodRawId, unitID: convertedUnit, type: type}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        // Processing for order quantity (KG)
+                        var rate = parseFloat(obj.message.rate);
+                        var convertedNettWeight = nettWeight * rate;
+
+                        $('#addModal').find('#convertedNettWeight').val(convertedNettWeight);
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
+
         });
 
         $('#finalWeight').on('change', function(){
@@ -3357,7 +3429,7 @@ else{
             var productName = $('#productName :selected').data('code');
             var plant = $('#addModal').find('#plantCode').val();
 
-            if (salesOrder && plant){
+            if (salesOrder && plant && productName){
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
                         var obj = JSON.parse(data);
@@ -3373,7 +3445,9 @@ else{
                             var vehNo = obj.message.veh_number;
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
-                            var balance = obj.message.balance;
+                            var balance = obj.message.balance; 
+                            var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
+                            var convertedOrderSupplierUnit = obj.message.converted_order_supplier_unit;
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3411,6 +3485,8 @@ else{
     
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight)
                             $('#addModal').find('#balance').val(balance);
+                            $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight)
+                            $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -3485,6 +3561,7 @@ else{
         });
         
         $('#addModal').on('orderLoaded', function(e, data) {
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
             $('#addModal').find('#customerCode').val(data.customer_code);
             $('#addModal').find('#customerName').val(data.customer_name).trigger('change');
             $('#addModal').find('#supplierCode').val(data.supplier_code);
@@ -3495,6 +3572,13 @@ else{
             $('#addModal').find('#agentCode').val(data.agent_code);
             $('#addModal').find('#supplierWeight').val(data.supplier_weight);
             $('#addModal').find('#orderWeight').val(data.order_weight);
+            if (transactionStatus == 'Sales'){
+                $('#addModal').find('#basicUOM').val(data.converted_order_weight);
+                $('#addModal').find('#basicUOMUnit').val(data.converted_order_weight_unit).trigger('change');
+            }else{
+                $('#addModal').find('#basicUOM').val(data.converted_supplier_weight);
+                $('#addModal').find('#basicUOMUnit').val(data.converted_supplier_weight_unit).trigger('change');
+            }
             $('#addModal').find('#destinationCode').val(data.destination_code);
             $('#addModal').find('#destination').val(data.destination).trigger('change');
             $('#addModal').find('#plant').val(data.plant_name).trigger('change');
@@ -3600,7 +3684,7 @@ else{
             var rawMat = $('#rawMaterialName :selected').data('code');
             var plant = $('#addModal').find('#plantCode').val();
 
-            if (purchaseOrder){
+            if (purchaseOrder && plant && rawMat){
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
                         var obj = JSON.parse(data);
@@ -3617,6 +3701,8 @@ else{
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
                             var balance = obj.message.balance;
+                            var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
+                            var convertedOrderSupplierUnit = obj.message.converted_order_supplier_unit;
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3654,6 +3740,8 @@ else{
     
                             $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                             $('#addModal').find('#balance').val(balance);
+                            $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
+                            $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -3714,7 +3802,7 @@ else{
                                 $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
                                 for (var i = 0; i < prodRawMat.length; i++) {
                                     $('#addModal').find('#rawMaterialName').append(
-                                        `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
                                     );                   
                                 }
                             }
@@ -3758,7 +3846,7 @@ else{
                                 $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
                                 for (var i = 0; i < prodRawMat.length; i++) {
                                     $('#addModal').find('#productName').append(
-                                        `<option value="${prodRawMat[i].prodMatName}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
                                     );                   
                                 }
                             }
@@ -3780,6 +3868,12 @@ else{
             }
         });
 
+        //basicUOMUnit
+        $('#basicUOMUnit').on('change', function(){
+            var unit = $('#basicUOMUnit :selected').data('unit');
+            $('#convertedNettWeightUnit').text(unit);
+        });
+
         <?php
             if(isset($_GET['weight'])){
                 echo 'edit('.$_GET['weight'].');';
@@ -3792,8 +3886,6 @@ else{
             }
         ?>
     });
-
-
 
     function getSoPo(){
         var transactionStatus = $('#addModal').find('#transactionStatus').val();
@@ -4140,6 +4232,7 @@ else{
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                $('#addModal').find('#convertedNettWeight').val(obj.message.converted_nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
@@ -4168,6 +4261,7 @@ else{
                 $('#addModal').find('#sstPrice').val(obj.message.sst);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+                $('#addModal').find('#currentWeight').text(obj.message.final_weight);
 
                 if (obj.message.load_drum == 'LOAD'){
                     $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
