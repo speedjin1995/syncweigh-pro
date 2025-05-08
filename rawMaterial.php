@@ -304,7 +304,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <!--a href="template/Raw_Mat_Template.xlsx" download>
+                                                                <a href="template/Raw_Mat_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                         Download Template 
@@ -317,7 +317,7 @@
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
-                                                                </button-->
+                                                                </button>
                                                                 <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
@@ -326,10 +326,10 @@
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Raw Material
                                                                 </button>
-                                                                <!--button type="button" id="addProduct" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addProduct" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Raw Materials
-                                                                </button-->
+                                                                </button>
                                                             </div> 
                                                         </div> 
                                                     </div>

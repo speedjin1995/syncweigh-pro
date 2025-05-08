@@ -199,7 +199,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <!--a href="template/Sale_Rep_Template.xlsx" download>
+                                                                <a href="template/Sale_Rep_Template.xlsx" download>
                                                                     <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
                                                                         <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                         Download Template
@@ -212,7 +212,7 @@
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
-                                                                </button-->
+                                                                </button>
                                                                 <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
@@ -221,10 +221,10 @@
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Sales Rep
                                                                 </button>
-                                                                <!--button type="button" id="addDestination" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addDestination" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New SRP
-                                                                </button-->
+                                                                </button>
                                                             </div> 
                                                         </div> 
                                                     </div>

@@ -214,10 +214,6 @@
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
-                                                                <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
-                                                                    <i class="ri-file-add-line align-middle me-1"></i>
-                                                                    Pull From SQL
-                                                                </button>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Destination
