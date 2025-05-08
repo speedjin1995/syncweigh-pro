@@ -168,7 +168,8 @@ if($query->num_rows > 0){
             
             if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
                 $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
-                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['destination_code'], 
+                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
+                ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), $row['product_description'], $row['destination_code'], 
                 $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), 
                 number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                 $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], 
@@ -200,7 +201,8 @@ if($query->num_rows > 0){
                 }
 
                 $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
-                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['destination_code'], 
+                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
+                ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), $row['product_description'], $row['destination_code'], 
                 $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), 
                 number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                 $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], 
