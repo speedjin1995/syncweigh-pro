@@ -56,8 +56,11 @@ if(isset($_POST['userID'])){
                     }else{
                         $message['exquarry_or_delivered'] = 'DELIVERED';
                     }
-                    $message['order_quantity'] = $row['order_quantity'];
-                    $message['balance'] = $row['balance'];
+                    $message['converted_order_qty'] = $row['converted_order_qty'] ?? '';
+                    $message['converted_balance'] = $row['converted_balance'] ?? '';
+                    $message['converted_unit'] = $row['converted_unit'] ?? '';
+                    $message['order_quantity'] = $row['order_quantity'] ?? '';
+                    $message['balance'] = $row['balance'] ?? '';
                     $message['unit_price'] = $row['unit_price'] ?? 0;
                     $message['total_price'] = $row['total_price'] ?? 0;
                     $message['remarks'] = $row['remarks'];
@@ -124,7 +127,11 @@ if(isset($_POST['userID'])){
                     $message['transporter_code'] = $row['transporter_code'];
                     $message['veh_number'] = $row['veh_number'];
                     $message['exquarry_or_delivered'] = $row['exquarry_or_delivered'];
+                    $message['converted_order_qty'] = $row['converted_order_qty'];
+                    $message['converted_balance'] = $row['converted_balance'];
+                    $message['converted_unit'] = $row['converted_unit'];
                     $message['order_quantity'] = $row['order_quantity'];
+                    $message['balance'] = $row['balance'];
                     $message['unit_price'] = $row['unit_price'];
                     $message['total_price'] = $row['total_price'];
                     $message['remarks'] = $row['remarks'];

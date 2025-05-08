@@ -1,6 +1,12 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    require_once "php/db_connect.php";
+    $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+    $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -184,6 +190,18 @@
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
+                                                                                    <label for="basicUom" class="col-sm-4 col-form-label">UOM</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select id="basicUom" name="basicUom" class="form-select select2" >
+                                                                                            <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
+                                                                                                <option value="<?=$rowUnit['id'] ?>"><?=$rowUnit['unit'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
                                                                                     <label for="type" class="col-sm-4 col-form-label">Type</label>
                                                                                     <div class="col-sm-8"> 
                                                                                         <select class="form-control select2" style="width: 100%;" id="type" name="type" required>
@@ -191,6 +209,41 @@
                                                                                             <option value="Bitumen">Bitumen</option>
                                                                                             <option value="Raw Material">Raw Material</option>
                                                                                         </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="row col-12">
+                                                                                <div class="col-xxl-12 col-lg-12">
+                                                                                    <div class="card bg-light">
+                                                                                        <div class="card-header">
+                                                                                            <div class="d-flex justify-content-between">
+                                                                                                <div>
+                                                                                                    <h5 class="card-title mb-0">UOM Conversion</h5>
+                                                                                                </div>
+                                                                                                <div class="flex-shrink-0">
+                                                                                                    <button type="button" class="btn btn-danger add-uom"><i class="ri-add-circle-line align-middle me-1"></i>Add UOM</button>
+                                                                                                </div> 
+                                                                                            </div> 
+                                                                                        </div>
+
+                                                                                        <div class="card-body">
+                                                                                            <div class="row">
+                                                                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                                    <table class="table table-primary">
+                                                                                                        <thead>
+                                                                                                            <tr>
+                                                                                                                <th width="10%">No</th>
+                                                                                                                <th>UOM</th>
+                                                                                                                <th>Rate</th>
+                                                                                                                <th>Action</th>
+                                                                                                            </tr>
+                                                                                                        </thead>
+                                                                                                        <tbody id="uomTable"></tbody>
+                                                                                                    </table>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -289,6 +342,7 @@
                                                                     <th>Raw Material Name</th>
                                                                     <th>Raw Material Price</th>
                                                                     <th>Description</th>
+                                                                    <th>Basic UOM</th>
                                                                     <th>Type</th>
                                                                     <th>Status</th>
                                                                     <th>Action</th>
@@ -347,11 +401,35 @@
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
 
-
+    <script type="text/html" id="uomDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="uomNo" name="uomNo" readonly>
+                <input type="text" class="form-control" id="uomId" name="uomId" hidden>
+            </td>
+            <td>
+                <select class="form-control select2" style="width: 100%; background-color:white;" id="uom" name="uom">
+                    <?php while($unitRow=mysqli_fetch_assoc($unit2)){ ?>
+                        <option value="<?=$unitRow['id'] ?>"><?=$unitRow['unit']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="rate" name="rate" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
 
 <script type="text/javascript">
 
 var table;
+var uomRowCount = $("#uomTable").find(".details").length;
+var uomNoCount = 1;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -401,6 +479,7 @@ $(function () {
             { data: 'name' },
             { data: 'price' },
             { data: 'description' },
+            { data: 'basic_uom' },
             { data: 'type' },
             { data: 'status' },
             { 
@@ -533,6 +612,7 @@ $(function () {
         $('#addModal').find('#varianceType').val("").trigger('change');
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
+        $('#addModal').find('#basicUom').val("").trigger('change');
         $('#addModal').find('#type').val("").trigger('change');
 
         // Remove Validation Error Message
@@ -616,6 +696,50 @@ $(function () {
         });
     });
 
+    // Find and remove selected table rows
+    $("#uomTable").on('click', 'button[id^="remove"]', function () {
+        $(this).parents("tr").remove();
+
+        $("#uomTable tr").each(function (index) {
+            $(this).find('input[name^="uomNo"]').val(index + 1);
+        });
+
+        uomNoCount = ($("#uomTable").find(".details").length)+1; //Fixed for no issue
+    });
+
+    $(".add-uom").click(function(){
+        var $addContents = $("#uomDetail").clone();
+        $("#uomTable").append($addContents.html());
+
+        $("#uomTable").find('.details:last').attr("id", "detail" + uomRowCount);
+        $("#uomTable").find('.details:last').attr("data-index", uomRowCount);
+        $("#uomTable").find('#remove:last').attr("id", "remove" + uomRowCount);
+
+        $("#uomTable").find('#uomNo:last').attr('name', 'uomNo['+uomRowCount+']').attr("id", "uomNo" + uomRowCount).val(uomNoCount);
+        $("#uomTable").find('#uomId:last').attr('name', 'uomId['+uomRowCount+']').attr("id", "uomId" + uomRowCount);
+        $("#uomTable").find('#uom:last').attr('name', 'uom['+uomRowCount+']').attr("id", "uom" + uomRowCount).select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#uomTable') // Prevents dropdown cutoff inside modals/tables
+        });
+        $("#uomTable").find('#rate:last').attr('name', 'rate['+uomRowCount+']').attr("id", "rate" + uomRowCount);
+    
+        // Apply custom styling to Select2 elements in addModal
+        $('#uomTable .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#uomTable .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
+        uomRowCount++;
+        uomNoCount++;
+    });
+
     $('#uploadModal').find('#previewButton').on('click', function(){
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];
@@ -686,6 +810,47 @@ function edit(id){
             $('#addModal').find('#high').val(obj.message.high);
             $('#addModal').find('#low').val(obj.message.low);
             $('#addModal').find('#type').val(obj.message.type).trigger('change');
+            $('#addModal').find('#basicUom').val(obj.message.basic_uom).trigger('change');
+
+            $('#uomTable').html('');
+            uomRowCount = 0;
+            uomNoCount = 1;
+
+            if (obj.message.rawMatUom.length > 0){
+                for(var i = 0; i < obj.message.rawMatUom.length; i++){
+                    var item = obj.message.rawMatUom[i];
+                    var $addContents = $("#uomDetail").clone();
+                    $("#uomTable").append($addContents.html());
+
+                    $("#uomTable").find('.details:last').attr("id", "detail" + uomRowCount);
+                    $("#uomTable").find('.details:last').attr("data-index", uomRowCount);
+                    $("#uomTable").find('#remove:last').attr("id", "remove" + uomRowCount);
+
+                    $("#uomTable").find('#uomNo:last').attr('name', 'uomNo['+uomRowCount+']').attr("id", "uomNo" + uomRowCount).val(item.no);
+                    $("#uomTable").find('#uomId:last').attr('name', 'uomId['+uomRowCount+']').attr("id", "uomId" + uomRowCount).val(item.id);
+                    $("#uomTable").find('#uom:last').attr('name', 'uom['+uomRowCount+']').attr("id", "uom" + uomRowCount).val(item.unit_id).select2({
+                        allowClear: true,
+                        placeholder: "Please Select",
+                        dropdownParent: $('#uomTable') // Prevents dropdown cutoff inside modals/tables
+                    });
+                    $("#uomTable").find('#rate:last').attr('name', 'rate['+uomRowCount+']').attr("id", "rate" + uomRowCount).val(item.rate);
+
+                    // Apply custom styling to Select2 elements in addModal
+                    $('#uomTable .select2-container .select2-selection--single').css({
+                        'padding-top': '4px',
+                        'padding-bottom': '4px',
+                        'height': 'auto'
+                    });
+
+                    $('#uomTable .select2-container .select2-selection__arrow').css({
+                        'padding-top': '33px',
+                        'height': 'auto'
+                    });
+
+                    uomRowCount++;
+                    uomNoCount++;
+                }
+            }
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');

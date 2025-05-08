@@ -68,13 +68,19 @@ if (isset($_POST['productCode'])) {
         $type = trim($_POST["type"]);
     }
 
+    if (empty($_POST["basicUom"])) {
+        $basicUom = null;
+    } else {
+        $basicUom = trim($_POST["basicUom"]);
+    }
+
     if(! empty($productId))
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Raw_Mat SET raw_mat_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, type=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Raw_Mat SET raw_mat_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, basic_uom=?, type=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssss', $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $type, $username, $username, $productId);
+            $update_stmt->bind_param('ssssssssssss', $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $basicUom, $type, $username, $username, $productId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -86,8 +92,43 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, price, description, variance, high, low, type, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssss', $productId, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $type, $action, $username);
+                # Raw_Mat_UOM
+                if (isset($_POST['uomNo'])){
+                    $uomNo = $_POST['uomNo'];
+                    $uomId = $_POST['uomId'];
+                    $uom =  $_POST['uom'];
+                    $rate = $_POST['rate'];
+                    $deleteStatus = 1;
+                    if(isset($uomNo) && $uomNo != null && count($uomNo) > 0){
+                        # Delete all existing product uom records tied to the product id then reinsert
+                        if ($delete_stmt = $db->prepare("UPDATE Raw_Mat_UOM SET status=? WHERE raw_mat_id=?")){
+                            $delete_stmt->bind_param('ss', $deleteStatus, $productId);
+    
+                            // Execute the prepared query.
+                            if (! $delete_stmt->execute()) {
+                                echo json_encode(
+                                    array(
+                                        "status"=> "failed", 
+                                        "message"=> $delete_stmt->error
+                                    )
+                                );
+                            }
+                            else{
+
+                                foreach ($uomNo as $key => $no) {
+                                    if ($product_stmt = $db->prepare("INSERT INTO Raw_Mat_UOM (raw_mat_id, unit_id, rate) VALUES (?, ?, ?)")){
+                                        $product_stmt->bind_param('sss', $productId, $uom[$key], $rate[$key]);
+                                        $product_stmt->execute();
+                                    }
+                                }
+                                $product_stmt->close();
+                            }
+                        } 
+                    }
+                }
+
+                if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, price, description, variance, high, low, basic_uom, type, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssss', $productId, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $basicUom, $type, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -125,8 +166,8 @@ if (isset($_POST['productCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat (raw_mat_code, name, price, description, variance, high, low, type, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssss', $productCode, $productName,  $productPrice, $description, $varianceType, $high, $low, $type, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat (raw_mat_code, name, price, description, variance, high, low, basic_uom, type, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssss', $productCode, $productName,  $productPrice, $description, $varianceType, $high, $low, $basicUom, $type, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -145,12 +186,47 @@ if (isset($_POST['productCode'])) {
                     )
                 );
 
+                # Raw_Mat_UOM
+                if (isset($_POST['uomNo'])){
+                    $uomNo = $_POST['uomNo'];
+                    $uomId = $_POST['uomId'];
+                    $uom =  $_POST['uom'];
+                    $rate = $_POST['rate'];
+                    $deleteStatus = 1;
+                    if(isset($uomNo) && $uomNo != null && count($uomNo) > 0){
+                        # Delete all existing product uom records tied to the product id then reinsert
+                        if ($delete_stmt = $db->prepare("UPDATE Raw_Mat_UOM SET status=? WHERE raw_mat_id=?")){
+                            $delete_stmt->bind_param('ss', $deleteStatus, $productId);
+    
+                            // Execute the prepared query.
+                            if (! $delete_stmt->execute()) {
+                                echo json_encode(
+                                    array(
+                                        "status"=> "failed", 
+                                        "message"=> $delete_stmt->error
+                                    )
+                                );
+                            }
+                            else{
+
+                                foreach ($uomNo as $key => $no) {
+                                    if ($product_stmt = $db->prepare("INSERT INTO Raw_Mat_UOM (raw_mat_id, unit_id, rate) VALUES (?, ?, ?)")){
+                                        $product_stmt->bind_param('sss', $productId, $uom[$key], $rate[$key]);
+                                        $product_stmt->execute();
+                                    }
+                                }
+                                $product_stmt->close();
+                            }
+                        } 
+                    }
+                }
+                
                 $sel = mysqli_query($db,"select count(*) as allcount from Product");
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, price, description, variance, high, low, type, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssssssssss', $totalRecords, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $type, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Raw_Mat_Log (raw_mat_id, raw_mat_code, name, price, description, variance, high, low, basic_uom, type, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('ssssssssssss', $totalRecords, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $basicUom,  $type, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {

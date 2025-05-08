@@ -19,6 +19,8 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0'");
 ?>
 
@@ -322,8 +324,8 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control select2" style="width: 100%;" id="rawMat" name="rawMat" required>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRowMat['raw_mat_code'] ?>" data-name="<?=$rowRowMat['name'] ?>"><?=$rowRowMat['name'] ?></option>
+                                                                                            <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                                                                                                <option value="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>"><?=$rowRawMat['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -381,10 +383,49 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Supplier Quantity</label>
+                                                                                    <label for="convertedOrderQty" class="col-sm-4 col-form-label">Supplier Quantity</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required>
+                                                                                            <input type="number" class="form-control" id="convertedOrderQty" name="convertedOrderQty" required>
+                                                                                            <div class="input-group-text">
+                                                                                                <select class="form-control" style="width: 100%;" id="convertedQtyUnit" name="convertedQtyUnit" required>
+                                                                                                    <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
+                                                                                                        <option value="<?=$rowUnit['id'] ?>" data-unit="<?=$rowUnit['unit']?>"><?=$rowUnit['unit'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="balance" name="balance" required readonly>
+                                                                                            <div class="input-group-text" id="balanceUnit">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Converted Supplier Quantity</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required readonly>
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="convertedBal" class="col-sm-4 col-form-label">Converted Balance</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="convertedBal" name="convertedBal" required readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div>
@@ -626,13 +667,11 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             defaultDate: ''
         });
 
-        $('.select2').each(function() {
-            $(this).select2({
-                allowClear: true,
-                placeholder: "Please Select",
-                // Conditionally set dropdownParent based on the element’s location
-                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
-            });
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
         });
 
         // Apply custom styling to Select2 elements in addModal
@@ -985,7 +1024,12 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             $('#addModal').find('#transporter').val("").trigger('change');
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
+            $('#addModal').find('#convertedOrderQty').val("");
+            $('#addModal').find('#convertedQtyUnit').val(2);
+            $('#addModal').find('#balance').val("");
+            $('#addModal').find('#balanceUnit').text("KG");
             $('#addModal').find('#orderQty').val("");
+            $('#addModal').find('#convertedBal').val("");
             $('#addModal').find('#unitPrice').val("");
             $('#addModal').find('#totalPrice').val("");
             $('#addModal').find('#remarks').val("");
@@ -1087,6 +1131,8 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#rawMat').on('change', function(){
             $('#rawMatName').val($('#rawMat :selected').data('name'));
+
+            $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
         });
 
         $('#plant').on('change', function(){
@@ -1116,6 +1162,62 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             $('#totalPrice').val(totalPrice);
         });
 
+        $('#orderQty').on('change', function(){
+            var orderWeight = parseFloat($(this).val())/1000;
+            var unitPrice = parseFloat($('#unitPrice').val());
+            var totalPrice = (unitPrice * orderWeight).toFixed(2);
+            
+            $('#totalPrice').val(totalPrice);
+        });
+
+        $('#convertedQtyUnit').on('change', function(){
+            var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
+
+            $('#balanceUnit').text(convertedUnitName);
+            $('#convertedOrderQty').trigger('change');
+        });
+
+        $('#convertedOrderQty').on('change', function(){
+            var convertedOrderWeight = parseFloat($(this).val());
+            var convertedUnit = $('#convertedQtyUnit').val();
+            var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
+
+            $('#balanceUnit').text(convertedUnitName);
+            $('#balance').val(convertedOrderWeight);
+
+            if (convertedUnit == 2){
+                $('#orderQty').val(convertedOrderWeight);
+                $('#convertedBal').val(convertedOrderWeight);
+            }else{
+                // Call to backend to get conversion rate
+                var rawMatCode = $('#rawMat :selected').data('id');
+
+                if (rawMatCode && convertedUnit && convertedOrderWeight){
+                    $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, unitID: convertedUnit, type: 'PO'}, function(data)
+                    {
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            // Processing for order quantity (KG)
+                            var rate = parseFloat(obj.message.rate);
+                            var orderQty = convertedOrderWeight * rate;
+
+                            $('#orderQty').val(orderQty).trigger('change');
+                            $('#convertedBal').val(orderQty);
+                        }
+                        else if(obj.status === 'failed'){
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        });
 
         $('#unitPrice').on('change', function(){
             var unitPrice = parseFloat($(this).val());
@@ -1263,6 +1365,9 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
+                $('#addModal').find('#balance').val(obj.message.convertedBal);
+                $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
+                $('#addModal').find('#convertedQtyUnit').val(obj.message.converted_unit).trigger('change');
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
