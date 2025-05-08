@@ -235,7 +235,8 @@ else{
                                                             <select id="invoiceNoSearch" class="form-select select2"  >
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
-                                                                <option value="Container">Container</option>
+                                                                <option value="Container">Primer Mover</option>
+                                                                <option value="Empty Container">Primer Mover + Container</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -279,6 +280,24 @@ else{
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="transactionIdSearch" class="form-label">Transaction ID</label>
+                                                            <input type="text" class="form-control" id="transactionIdSearch" name="transactionIdSearch" placeholder="Transaction ID">                                                                                  
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="containerNoSearch" class="form-label">Container No</label>
+                                                            <input type="text" class="form-control" id="containerNoSearch" name="containerNoSearch" placeholder="Container No">                                                                                  
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="sealNoSearch" class="form-label">Seal No</label>
+                                                            <input type="text" class="form-control" id="sealNoSearch" name="sealNoSearch" placeholder="Seal No">                                                                                  
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
@@ -514,8 +533,8 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <select id="weightType" name="weightType" class="form-select select2">
                                                                                             <option selected>Normal</option>
-                                                                                            <option>Container</option>
-                                                                                            <option>Empty Container</option>
+                                                                                            <option value="Container">Primer Mover</option>
+                                                                                            <option value="Empty Container">Primer Mover + Container</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -1676,6 +1695,9 @@ else{
         var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
         var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
+        var containerNoI = $('#containerNoSearch').val() ? $('#containerNoSearch').val() : '';
+        var sealNoI = $('#sealNoSearch').val() ? $('#sealNoSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1697,6 +1719,9 @@ else{
                     product: productSearchI,
                     rawMaterial: rawMaterialI,
                     plant: plantNoI,
+                    transactionId: transactionIdI,
+                    containerNo: containerNoI,
+                    sealNo: sealNoI
                 } 
             },
             'columns': [
@@ -1903,7 +1928,7 @@ else{
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button') || row.data().weight_type =='Primer Mover + Container') {
                 return;
             }
 
@@ -2528,6 +2553,9 @@ else{
             var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
             var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
+            var containerNoI = $('#containerNoSearch').val() ? $('#containerNoSearch').val() : '';
+            var sealNoI = $('#sealNoSearch').val() ? $('#sealNoSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -2554,6 +2582,9 @@ else{
                         product: productSearchI,
                         rawMaterial: rawMaterialI,
                         plant: plantNoI,
+                        transactionId: transactionIdI,
+                        containerNo: containerNoI,
+                        sealNo: sealNoI
                     } 
                 },
                 'columns': [
@@ -3643,6 +3674,7 @@ else{
 
     function format (row) {
         var transactionStatus = '';
+        var weightType = '';
 
         if (row.transaction_status == 'Sales') {
             transactionStatus = 'Departure';
@@ -3652,6 +3684,14 @@ else{
             transactionStatus = 'Internal Transfer';
         } else {
             transactionStatus = 'Miscellaneous';
+        }
+
+        if(row.weight_type == 'Container'){
+            weightType = 'Primer Mover';
+        }else if(row.weight_type == 'Empty Container'){
+            weightType = 'Primer Mover + Container';
+        }else{
+            weightType = row.weight_type;
         }
 
         var returnString = `
@@ -3688,7 +3728,7 @@ else{
             <div class="col-6">
                 <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
                 <p><strong>WEIGHT STATUS:</strong> ${transactionStatus}</p>
-                <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                <p><strong>WEIGHT TYPE:</strong> ${weightType}</p>
                 <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
                 <p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>
                 <p><strong>CONTAINER NO 2:</strong> ${row.container_no2}</p>

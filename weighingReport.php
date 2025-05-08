@@ -177,17 +177,17 @@ else{
                                                             <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
                                                         </div>
                                                     </div><!--end col-->
-                                                    <!--<div class="col-3">
+                                                    <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
-                                                                <option value="Container">Container</option>
+                                                                <option value="Container">Primer Mover</option>
                                                             </select>
                                                         </div>
-                                                    </div>--><!--end col-->                                               
-                                                    <div class="col-3">
+                                                    </div><!--end col-->                                               
+                                                    <!--<div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="customerTypeSearch" class="form-label">Customer Type</label>
                                                             <select id="customerTypeSearch" class="form-select">
@@ -196,7 +196,7 @@ else{
                                                                 <option value="Normal">Normal</option>
                                                             </select>
                                                         </div>
-                                                    </div><!--end col-->
+                                                    </div>--><!--end col-->
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
@@ -397,18 +397,24 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Transaction Id</th>
-                                                                    <th>Status</th>
+                                                                    <th>Transaction <br>Id</th>
+                                                                    <th>Weight <br>Type</th>
+                                                                    <th>Weight <br> Status</th>
                                                                     <th>Customer/ <br> Supplier</th>
+                                                                    <th>Container No</th>
+                                                                    <th>Seal No</th>
                                                                     <th>Vehicle</th>
-                                                                    <th>Product</th>
-                                                                    <th>SO/PO</th>
-                                                                    <th>DO</th>
-                                                                    <th>Incoming(Gross Weight)</th>
-                                                                    <th>Incoming(Gross) Date Time</th>
-                                                                    <th>Outgoing(Tare) Weight</th>
-                                                                    <th>Outgoing(Tare) Date Time</th>
-                                                                    <th>Total Nett Weight</th>
+                                                                    <th>Gross <br>Incoming</th>
+                                                                    <th>Incoming <br>Date</th>
+                                                                    <th>Tare <br>Outgoing</th>
+                                                                    <th>Outgoing <br>Date</th>
+                                                                    <th>Nett <br>Weight</th>
+                                                                    <th>Vehicle 2</th>
+                                                                    <th>Gross <br>Incoming 2</th>
+                                                                    <th>Incoming <br>Date 2</th>
+                                                                    <th>Tare <br>Outgoing 2</th>
+                                                                    <th>Outgoing <br>Date 2</th>
+                                                                    <th>Nett <br>Weight 2</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -554,6 +560,7 @@ else{
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+        var weightTypeI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
         var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
         var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
@@ -577,6 +584,7 @@ else{
                     customer: customerNoI,
                     supplier: supplierNoI,
                     vehicle: vehicleNoI,
+                    weightType: weightTypeI,
                     customerType: customerTypeI,
                     product: productI,
                     rawMaterial: rawMatI,
@@ -587,30 +595,23 @@ else{
             },
             'columns': [
                 { data: 'transaction_id' },
+                { data: 'weight_type' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
-                { 
-                    data: 'lorry_plate_no1',
-                    render: function (data, type, row) {
-                        var vehicle = '';
-
-                        if (row.weight_type == 'Container'){
-                            vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
-                        }else{
-                            vehicle = row.lorry_plate_no1;
-                        }
-
-                        return vehicle;
-                    }
-                },
-                { data: 'product_code' },
-                { data: 'purchase_order' },
-                { data: 'delivery_no' },
+                { data: 'container_no' },
+                { data: 'seal_no' },
+                { data: 'lorry_plate_no1' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
                 { data: 'tare_weight1_date' },
                 { data: 'nett_weight1' },
+                { data: 'lorry_plate_no2' },
+                { data: 'gross_weight2' },
+                { data: 'gross_weight2_date' },
+                { data: 'tare_weight2' },
+                { data: 'tare_weight2_date' },
+                { data: 'nett_weight2' },
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
@@ -636,6 +637,7 @@ else{
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var weightTypeI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
@@ -663,6 +665,7 @@ else{
                         customer: customerNoI,
                         supplier: supplierNoI,
                         vehicle: vehicleNoI,
+                        weightType: weightTypeI,
                         customerType: customerTypeI,
                         product: productI,
                         rawMaterial: rawMatI,
@@ -673,30 +676,23 @@ else{
                 },
                 'columns': [
                     { data: 'transaction_id' },
+                    { data: 'weight_type' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
-                    { 
-                        data: 'lorry_plate_no1',
-                        render: function (data, type, row) {
-                            var vehicle = '';
-
-                            if (row.weight_type == 'Container'){
-                                vehicle = row.lorry_plate_no1+'<br>'+row.lorry_plate_no2;    
-                            }else{
-                                vehicle = row.lorry_plate_no1;
-                            }
-
-                            return vehicle;
-                        }
-                    },
-                    { data: 'product_code' },
-                    { data: 'purchase_order' },
-                    { data: 'delivery_no' },
+                    { data: 'container_no' },
+                    { data: 'seal_no' },
+                    { data: 'lorry_plate_no1' },
                     { data: 'gross_weight1' },
                     { data: 'gross_weight1_date' },
                     { data: 'tare_weight1' },
                     { data: 'tare_weight1_date' },
                     { data: 'nett_weight1' },
+                    { data: 'lorry_plate_no2' },
+                    { data: 'gross_weight2' },
+                    { data: 'gross_weight2_date' },
+                    { data: 'tare_weight2' },
+                    { data: 'tare_weight2_date' },
+                    { data: 'nett_weight2' },
                     { 
                         data: 'id',
                         render: function ( data, type, row ) {
@@ -794,6 +790,7 @@ else{
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var weightTypeI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
@@ -807,7 +804,9 @@ else{
             $('#exportPdfForm').find('#customer').val(customerNoI);
             $('#exportPdfForm').find('#supplier').val(supplierNoI);
             $('#exportPdfForm').find('#vehicle').val(vehicleNoI);
+            $('#exportPdfForm').find('#weighingType').val(weightTypeI);
             $('#exportPdfForm').find('#customerType').val(customerTypeI);
+            $('#exportPdfForm').find('#weightType').val(customerTypeI);
             $('#exportPdfForm').find('#product').val(productI);
             $('#exportPdfForm').find('#rawMat').val(rawMatI);
             $('#exportPdfForm').find('#destination').val(destinationI);
@@ -847,6 +846,7 @@ else{
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var weightTypeI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
@@ -856,7 +856,7 @@ else{
             
             window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
             "&transactionStatus="+transactionStatusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-            "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
+            "&weighingType="+weightTypeI+"&product="+productI+"&rawMat="+rawMatI+
             "&destination="+destinationI+"&plant="+plantI+"&status="+statusI);
         });
 

@@ -59,6 +59,18 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
 }
 
+if($_POST['transactionId'] != null && $_POST['transactionId'] != '' && $_POST['transactionId'] != '-'){
+	$searchQuery .= " and transaction_id like '%".$_POST['transactionId']."%'";
+}
+
+if($_POST['containerNo'] != null && $_POST['containerNo'] != '' && $_POST['containerNo'] != '-'){
+	$searchQuery .= " and (container_no like '%".$_POST['containerNo']."%' OR container_no2 like '%".$_POST['containerNo']."%')";
+}
+
+if($_POST['sealNo'] != null && $_POST['sealNo'] != '' && $_POST['sealNo'] != '-'){
+	$searchQuery .= " and (seal_no like '%".$_POST['sealNo']."%' OR seal_no2 like '%".$_POST['sealNo']."%')";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
@@ -101,7 +113,7 @@ if ($_POST['batch'] == 'N') { //if pending
   if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
     $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')";
-  }
+  } 
 
   $sel = mysqli_query($db, $allQuery);
   $records = mysqli_fetch_assoc($sel);
@@ -126,7 +138,7 @@ if ($_POST['batch'] == 'N') { //if pending
     $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
   }
 }
-
+// var_dump($empQuery);
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $salesCount = 0;
@@ -153,11 +165,19 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $transactionStatus = 'Internal Transfer';
   }
 
+  if($row['weight_type'] == 'Container'){
+    $weightType = 'Primer Mover';
+  }elseif($row['weight_type'] == 'Empty Container'){
+    $weightType = 'Primer Mover + Container';
+  }else{
+    $weightType = $row['weight_type'];
+  }
+
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
     "transaction_status"=>$transactionStatus,
-    "weight_type"=>$row['weight_type'],
+    "weight_type"=>$weightType,
     "transaction_date"=>$row['transaction_date'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],
     "lorry_plate_no2"=>$row['lorry_plate_no2'],

@@ -47,6 +47,10 @@ if($_POST['customerType'] != null && $_POST['customerType'] != '' && $_POST['cus
 	$searchQuery .= " and customer_type = '".$_POST['customerType']."'";
 }
 
+if($_POST['weightType'] != null && $_POST['weightType'] != '' && $_POST['weightType'] != '-'){
+	$searchQuery .= " and weight_type = '".$_POST['weightType']."'";
+}
+
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
 }
@@ -133,11 +137,19 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $transactionStatus = 'Internal Transfer';
   }
 
+  if($row['weight_type'] == 'Container'){
+    $weightType = 'Primer Mover';
+  }elseif($row['weight_type'] == 'Empty Container'){
+    $weightType = 'Primer Mover + Container';
+  }else{
+    $weightType = $row['weight_type'];
+  }
+
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
     "transaction_status"=>$transactionStatus,
-    "weight_type"=>$row['weight_type'],
+    "weight_type"=>$weightType,
     "transaction_date"=>$row['transaction_date'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],
     "lorry_plate_no2"=>$row['lorry_plate_no2'],
@@ -150,6 +162,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "product_code"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_code'] : $row['product_code']), 
     "product_name"=>($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local' ? $row['raw_mat_name'] : $row['product_name']), 
     "container_no"=>$row['container_no'],
+    "seal_no"=>$row['seal_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],
     "delivery_no"=>$row['delivery_no'],
