@@ -1287,6 +1287,7 @@ else{
                                                                 <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
                                                             </div>
                                                             <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                            <input type="hidden" class="form-control" id="isEmptyContainer" name="isEmptyContainer">                                   
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
@@ -1754,7 +1755,7 @@ else{
 
                         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
                             // if (row.is_complete != 'Y' ){
-                            if (row.weight_type == 'Empty Container'){
+                            if (row.weight_type == 'Primer Mover + Container'){
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
@@ -1772,7 +1773,7 @@ else{
                             // }
                         }else {
                             if (row.is_complete != 'Y' ){
-                                if (row.weight_type == 'Empty Container'){
+                                if (row.weight_type == 'Primer Mover + Container'){
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
@@ -1792,7 +1793,7 @@ else{
                         }
 
                         if (row.is_approved == 'Y') {
-                            if (row.weight_type != 'Empty Container'){
+                            if (row.weight_type != 'Primer Mover + Container'){
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
@@ -1812,12 +1813,21 @@ else{
                         }
 
                         if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                            buttons += `
-                            <div class="col-auto">
-                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>`;
+                            if (row.weight_type == 'Primer Mover + Container'){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data}, 'Y')" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
+                            }else{
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data}, 'N')" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`;
+                            }
                         }
                             
                         buttons += `</div>`;
@@ -2617,7 +2627,7 @@ else{
 
                             if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
                                 // if (row.is_complete != 'Y' ){
-                                if (row.weight_type == 'Empty Container'){
+                                if (row.weight_type == 'Primer Mover + Container'){
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
@@ -2635,7 +2645,7 @@ else{
                                 // }
                             }else {
                                 if (row.is_complete != 'Y' ){
-                                    if (row.weight_type == 'Empty Container'){
+                                    if (row.weight_type == 'Primer Mover + Container'){
                                         buttons += `
                                         <div class="col-auto">
                                             <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
@@ -2655,7 +2665,7 @@ else{
                             }
 
                             if (row.is_approved == 'Y') {
-                                if (row.weight_type != 'Empty Container'){
+                                if (row.weight_type != 'Primer Mover + Container'){
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
@@ -2675,12 +2685,21 @@ else{
                             }
 
                             if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                </div>`;
+                                if (row.weight_type == 'Primer Mover + Container'){
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data}, 'Y')" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>`;
+                                }else{
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data}, 'N')" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
                                 
                             buttons += `</div>`;
@@ -4119,9 +4138,10 @@ else{
         });
     }
 
-    function deactivate(id) {
+    function deactivate(id, isEmptyContainer) {
         if (confirm('Are you sure you want to cancel this item?')) {
             $('#cancelModal').find('#id').val(id);
+            $('#cancelModal').find('#isEmptyContainer').val(isEmptyContainer);
             $('#cancelModal').modal('show');
 
             $('#cancelForm').validate({
