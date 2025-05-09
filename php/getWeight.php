@@ -284,7 +284,7 @@ if(isset($_POST['userID'])){
                                     } 
                                 }
     
-                                $message['product_rawmat_name'] = $row['raw_mat_code'];
+                                $message['product_rawmat_name'] = $row['raw_mat_code'] ?? '';
     
                             }else{
                                 if ($customer_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
@@ -302,7 +302,7 @@ if(isset($_POST['userID'])){
                                     }
                                 } 
     
-                                $message['product_rawmat_name'] = $row['product_code'];
+                                $message['product_rawmat_name'] = $row['product_code'] ?? '';
     
                             }
                             $message['transporter'] = $row['transporter'] ?? '';
@@ -311,6 +311,7 @@ if(isset($_POST['userID'])){
                             $message['plant_name'] = $row['plant_name'] ?? '';
                             $message['transaction_id'] = $row['transaction_id'] ?? '';
                             $message['transaction_status'] = $row['transaction_status'] ?? '';
+                            $message['weight_type'] = $row['weight_type'] ?? '';
                             $message['invoice_no'] = $row['invoice_no'] ?? '';
                             $message['delivery_no'] = $row['delivery_no'] ?? '';
                             $message['container_no'] = $row['container_no'] ?? '';
