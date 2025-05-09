@@ -395,7 +395,7 @@ $(function () {
                     if (row.status == '1'){
                         return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
                     }else{
-                        return '';
+                        return 'Active';
                     }
                 }
             },
