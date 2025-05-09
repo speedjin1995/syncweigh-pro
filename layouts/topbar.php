@@ -729,7 +729,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2) + coun
                                     <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link active" data-bs-toggle="tab" href="#all-noti-tab" role="tab"
                                             aria-selected="true">
-                                            Departure <?php echo (count($salesList) == 0 ? '' : '('.count($salesList).')'); ?>
+                                            Dispatch <?php echo (count($salesList) == 0 ? '' : '('.count($salesList).')'); ?>
                                         </a>
                                     </li>
                                     <li class="nav-item waves-effect waves-light">
@@ -869,7 +869,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2) + coun
                                     <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link active" data-bs-toggle="tab" href="#all-noti-tab" role="tab"
                                             aria-selected="true">
-                                            Departure <?php echo (count($salesContainerList) == 0 ? '' : '('.count($salesContainerList).')'); ?>
+                                            Dispatch <?php echo (count($salesContainerList) == 0 ? '' : '('.count($salesContainerList).')'); ?>
                                         </a>
                                     </li>
                                     <li class="nav-item waves-effect waves-light">

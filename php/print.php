@@ -92,7 +92,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $tareWeightTime2 = $row['tare_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['tare_weight2_date'])) : "";
 
                     if ($row['transaction_status'] == 'Sales'){
-                        $transacationStatus = 'Departure';
+                        $transacationStatus = 'Dispatch';
                     }elseif ($row['transaction_status'] == 'Purchase'){
                         $transacationStatus = 'Receiving';
                     }elseif ($row['transaction_status'] == 'Local'){

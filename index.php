@@ -194,7 +194,7 @@ else{
                                                             <label for="statusSearch" class="form-label">Transaction Status</label>
                                                             <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
-                                                                <option value="Sales">Departure</option>
+                                                                <option value="Sales">Dispatch</option>
                                                                 <option value="Purchase">Receiving</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
@@ -319,7 +319,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Departure
+                                                        Dispatch
                                                     </p>
                                                 </div>
                                             </div>
@@ -577,7 +577,7 @@ else{
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select select2">
-                                                                                            <option value="Sales" selected>Departure</option>
+                                                                                            <option value="Sales" selected>Dispatch</option>
                                                                                             <option value="Purchase">Receiving</option>
                                                                                             <option value="Local">Internal Transfer</option>
                                                                                             <option value="Misc">Miscellaneous</option>
@@ -3696,7 +3696,7 @@ else{
         var weightType = '';
 
         if (row.transaction_status == 'Sales') {
-            transactionStatus = 'Departure';
+            transactionStatus = 'Dispatch';
         } else if (row.transaction_status == 'Purchase') {
             transactionStatus = 'Receiving';
         } else if (row.transaction_status == 'Local') {

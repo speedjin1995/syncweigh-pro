@@ -122,7 +122,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $transactionStatus = '';
   if($row['transaction_status'] == 'Sales'){
     $salesCount++;
-    $transactionStatus = 'Departure';
+    $transactionStatus = 'Dispatch';
   }
   else if($row['transaction_status'] == 'Purchase'){
     $purchaseCount++;
