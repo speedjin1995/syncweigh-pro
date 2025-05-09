@@ -151,7 +151,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
+                                                            <label for="customerNoSearch" class="form-label">Customer Name</label>
                                                             <select id="customerNoSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
@@ -162,7 +162,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="supplierSearchDisplay" style="display:none">
                                                         <div class="mb-3">
-                                                            <label for="supplierSearch" class="form-label">Supplier No</label>
+                                                            <label for="supplierSearch" class="form-label">Supplier Name</label>
                                                             <select id="supplierSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
@@ -199,7 +199,7 @@ else{
                                                     </div>--><!--end col-->
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Product</label>
+                                                            <label for="ForminputState" class="form-label">Product Code</label>
                                                             <select id="productSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
@@ -210,7 +210,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="rawMatSearchDisplay" style="display:none">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Raw Material</label>
+                                                            <label for="ForminputState" class="form-label">Raw Material Code</label>
                                                             <select id="rawMatSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>

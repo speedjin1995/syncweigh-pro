@@ -497,7 +497,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
+                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">P/O No.</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder">
                                                                                     </div>
@@ -739,7 +739,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row" id="productNameDisplay">
-                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product</label>
+                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Code</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="productName" name="productName" required>
                                                                                             <option selected="-">-</option>
@@ -759,7 +759,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row" id="rawMaterialDisplay" style="display:none;">
-                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
+                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material Code</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
