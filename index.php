@@ -840,7 +840,7 @@ else{
                                                             </div>
                                                         </div>
                                                         <div class="row col-12">
-                                                            <div class="col-xxl-4 col-lg-4">
+                                                            <div class="col-xxl-4 col-lg-4" id="normalCard">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                         <div class="row mb-3">
@@ -2813,6 +2813,7 @@ else{
             $('#addModal').find('#currentWeight').text("0");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
+            $('#addModal').find('#emptyContainerNo').val("").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
@@ -2887,7 +2888,6 @@ else{
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
             $('#addModal').find('#containerNoInput').val("");
-            $('#addModal').find('#emptyContainerNo').val("").trigger('change');
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#containerNo2').val("");
             $('#addModal').find('#sealNo2').val("");
@@ -3082,6 +3082,7 @@ else{
                     }
                 });
 
+                $('#normalCard').hide();
                 $('#containerCard').show();
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
@@ -3089,11 +3090,13 @@ else{
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
                 $('#containerCard').hide();
+                $('#normalCard').show();
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', true);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
             }else{
+                $('#normalCard').show();
                 $('#containerCard').hide();
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
@@ -3600,7 +3603,9 @@ else{
             var emptyContainerNo = $(this).val();
             $('#containerNo').val(emptyContainerNo);
 
-            if (emptyContainerNo){
+            if (emptyContainerNo == '-'){
+                $('#normalCard').hide();
+            } else if (emptyContainerNo) { 
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
                     var obj = JSON.parse(data);
 
@@ -3630,6 +3635,8 @@ else{
                             $('.index-vehicle').show();
                             $('#vehicleNoTxt').hide();
                         }
+
+                        $('#normalCard').show();
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -3642,6 +3649,8 @@ else{
                         $("#failBtn").click();
                     }
                 });
+            }else{
+                $('#normalCard').hide();
             }
         });
 
@@ -3676,6 +3685,20 @@ else{
             var x = $('#sealNo2').val();
             x = x.toUpperCase();
             $('#sealNo2').val(x);
+        });
+
+        //Container No Search
+        $('#containerNoSearch').on('keyup', function(){
+            var x = $('#containerNoSearch').val();
+            x = x.toUpperCase();
+            $('#containerNoSearch').val(x);
+        });
+
+        //Seal No Search
+        $('#sealNoSearch').on('keyup', function(){
+            var x = $('#sealNoSearch').val();
+            x = x.toUpperCase();
+            $('#sealNoSearch').val(x);
         });
 
         <?php
