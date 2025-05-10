@@ -92,7 +92,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $tareWeightTime2 = $row['tare_weight2_date'] != null ? date("d/m/Y - H:i:s", strtotime($row['tare_weight2_date'])) : "";
 
                     if ($row['transaction_status'] == 'Sales'){
-                        $transacationStatus = 'Departure';
+                        $transacationStatus = 'Dispatch';
                     }elseif ($row['transaction_status'] == 'Purchase'){
                         $transacationStatus = 'Receiving';
                     }elseif ($row['transaction_status'] == 'Local'){
@@ -258,15 +258,16 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <span style="font-size: 16px; font-weight: bold;">'. $transacationStatus .' Slip</span><br>
                                             <span style="font-size: 14px;">Ticket No: <b style="font-size: 14px;">'.$row['transaction_id'].'</b></span><br>
                                             <span style="font-size: 14px;">D/O No: '.$row['delivery_no'].'</span><br>
+                                            <span style="font-size: 14px;">P/O No: '.$row['purchase_order'].'</span><br>
                                             <span style="font-size: 14px;">Date: '.$transactionDate.'</span><br>
                                         </p>
                                     </td>
                                 </tr>
                                 <tr style="visibility:hidden;">
-                                    <td>Placeholder for empty space</td>
+                                    <td style="height: 5px">Placeholder for empty space</td>
                                 </tr>
                                 <tr style="border-top: 1px solid black;">
-                                    <td style="vertical-align: top; width: 60%;">
+                                    <td style="vertical-align: top; width: 65%;">
                                         <p style="margin-top: 5px;">';
                                         if ($row['transaction_status'] == 'Sales'){
                                             $message .= '
@@ -324,7 +325,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     </td>
                                 </tr>
                             </table>
-                            <table style="width:100%; border:0px solid black; margin-top:-20px; margin-bottom: 10px;">
+                            <table style="width:100%; border:0px solid black; margin-top:-20px; margin-bottom: 0px;">
                                 <tr>
                                     <th style="border:1px solid black;font-size: 14px;text-align: center;">Container No.1</th>
                                     <th style="border:1px solid black;font-size: 14px;text-align: center;">Seal No.1</th>
@@ -340,8 +341,23 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </table>';
                             
                             if($row['weight_type'] == 'Container'){
-                                $message .= '<table style="width:100%; border:0px solid black;">
-                                    <tr>
+                                $message .= '<table style="width:100%; border:0px solid black;">';
+
+                                if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
+                                    $message .= '
+                                        <tr>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['product_code'].' - '.$row['product_name'].'</td>
+                                        </tr>
+                                    ';
+                                }else{
+                                    $message .= '
+                                        <tr>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Raw Material Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
+                                        </tr>
+                                    ';
+                                }
+
+                                $message .= '<tr>
                                         <th style="border:1px solid black;font-size: 14px;text-align: center;">Incoming Date/Time</th>
                                         <th style="border:1px solid black;font-size: 14px;text-align: center;">Outgoing Date/Time</th>
                                         <th colspan="2" style="border:1px solid black;font-size: 14px;text-align: center;">Prime Mover No. & Weight (kg)</th>
@@ -393,7 +409,23 @@ if(isset($_POST['userID'], $_POST["file"])){
                             }
                             else{
                                 $message .= '<br> 
-                                <table style="width:100%; border:0px solid black;">
+                                <table style="width:100%; border:0px solid black; margin-top: -20px;"> ';
+
+                                if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
+                                    $message .= '
+                                        <tr>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['product_code'].' - '.$row['product_name'].'</td>
+                                        </tr>
+                                    ';
+                                }else{
+                                    $message .= '
+                                        <tr>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Raw Material Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
+                                        </tr>
+                                    ';
+                                }
+
+                                $message .= '
                                     <tr>
                                         <th style="border:1px solid black;font-size: 18px;text-align: center;">Vehicle No</th>
                                         <th style="border:1px solid black;font-size: 18px;text-align: center;">Product Code</th>
@@ -433,13 +465,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 </table>';
                             }
                             
-                            $message .= '<table style="margin-top:30px">
-                                <tr style="visibility: hidden; border:0px;">
+                            $message .= '<table style="margin-top:55px">
+                                <!--<tr style="visibility: hidden; border:0px;">
                                     <th width="24%">Vehicle No</th>
                                     <th width="23%">Product</th>
                                     <th width="23%">Time</th>
                                     <th colspan="2" width="30%">Weight (kg)</th>
-                                </tr>
+                                </tr>-->
                                 <tr>
                                     <td style="vertical-align: top; font-size: 14px;">
                                         <hr width="80%" style="margin-left: 0; text-align: left;">

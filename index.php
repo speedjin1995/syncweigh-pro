@@ -194,7 +194,7 @@ else{
                                                             <label for="statusSearch" class="form-label">Transaction Status</label>
                                                             <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
-                                                                <option value="Sales">Departure</option>
+                                                                <option value="Sales">Dispatch</option>
                                                                 <option value="Purchase">Receiving</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
@@ -234,7 +234,7 @@ else{
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select select2"  >
                                                                 <option selected>-</option>
-                                                                <option value="Normal">Normal</option>
+                                                                <option value="Normal">Normal Weighing</option>
                                                                 <option value="Container">Primer Mover</option>
                                                                 <option value="Empty Container">Primer Mover + Container</option>
                                                             </select>
@@ -319,7 +319,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Departure
+                                                        Dispatch
                                                     </p>
                                                 </div>
                                             </div>
@@ -497,7 +497,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
+                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">P/O No.</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="purchaseOrder" name="purchaseOrder">
                                                                                     </div>
@@ -532,7 +532,7 @@ else{
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="weightType" name="weightType" class="form-select select2">
-                                                                                            <option selected>Normal</option>
+                                                                                            <option value="Normal" selected>Normal Weighing</option>
                                                                                             <option value="Container">Primer Mover</option>
                                                                                             <option value="Empty Container">Primer Mover + Container</option>
                                                                                         </select>   
@@ -577,7 +577,7 @@ else{
                                                                                     <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select select2">
-                                                                                            <option value="Sales" selected>Departure</option>
+                                                                                            <option value="Sales" selected>Dispatch</option>
                                                                                             <option value="Purchase">Receiving</option>
                                                                                             <option value="Local">Internal Transfer</option>
                                                                                             <option value="Misc">Miscellaneous</option>
@@ -739,7 +739,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row" id="productNameDisplay">
-                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product</label>
+                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Code</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="productName" name="productName" required>
                                                                                             <option selected="-">-</option>
@@ -759,7 +759,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row" id="rawMaterialDisplay" style="display:none;">
-                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
+                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material Code</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
@@ -840,7 +840,7 @@ else{
                                                             </div>
                                                         </div>
                                                         <div class="row col-12">
-                                                            <div class="col-xxl-4 col-lg-4">
+                                                            <div class="col-xxl-4 col-lg-4" id="normalCard">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
                                                                         <div class="row mb-3">
@@ -2813,6 +2813,7 @@ else{
             $('#addModal').find('#currentWeight').text("0");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
+            $('#addModal').find('#emptyContainerNo').val("").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
@@ -2887,7 +2888,6 @@ else{
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
             $('#addModal').find('#containerNoInput').val("");
-            $('#addModal').find('#emptyContainerNo').val("").trigger('change');
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#containerNo2').val("");
             $('#addModal').find('#sealNo2').val("");
@@ -3082,6 +3082,7 @@ else{
                     }
                 });
 
+                $('#normalCard').hide();
                 $('#containerCard').show();
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
@@ -3089,11 +3090,13 @@ else{
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
                 $('#containerCard').hide();
+                $('#normalCard').show();
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', true);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
             }else{
+                $('#normalCard').show();
                 $('#containerCard').hide();
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
@@ -3600,7 +3603,9 @@ else{
             var emptyContainerNo = $(this).val();
             $('#containerNo').val(emptyContainerNo);
 
-            if (emptyContainerNo){
+            if (emptyContainerNo == '-'){
+                $('#normalCard').hide();
+            } else if (emptyContainerNo) { 
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
                     var obj = JSON.parse(data);
 
@@ -3630,6 +3635,8 @@ else{
                             $('.index-vehicle').show();
                             $('#vehicleNoTxt').hide();
                         }
+
+                        $('#normalCard').show();
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -3642,6 +3649,8 @@ else{
                         $("#failBtn").click();
                     }
                 });
+            }else{
+                $('#normalCard').hide();
             }
         });
 
@@ -3678,6 +3687,20 @@ else{
             $('#sealNo2').val(x);
         });
 
+        //Container No Search
+        $('#containerNoSearch').on('keyup', function(){
+            var x = $('#containerNoSearch').val();
+            x = x.toUpperCase();
+            $('#containerNoSearch').val(x);
+        });
+
+        //Seal No Search
+        $('#sealNoSearch').on('keyup', function(){
+            var x = $('#sealNoSearch').val();
+            x = x.toUpperCase();
+            $('#sealNoSearch').val(x);
+        });
+
         <?php
             if(isset($_GET['weight'])){
                 echo 'edit('.$_GET['weight'].');';
@@ -3696,7 +3719,7 @@ else{
         var weightType = '';
 
         if (row.transaction_status == 'Sales') {
-            transactionStatus = 'Departure';
+            transactionStatus = 'Dispatch';
         } else if (row.transaction_status == 'Purchase') {
             transactionStatus = 'Receiving';
         } else if (row.transaction_status == 'Local') {
@@ -3709,6 +3732,8 @@ else{
             weightType = 'Primer Mover';
         }else if(row.weight_type == 'Empty Container'){
             weightType = 'Primer Mover + Container';
+        }else if(row.weight_type == 'Normal'){
+            weightType = 'Normal Weighing';
         }else{
             weightType = row.weight_type;
         }

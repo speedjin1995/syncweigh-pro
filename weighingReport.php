@@ -142,7 +142,7 @@ else{
                                                             <label for="transactionStatusSearch" class="form-label">Transaction Status</label>
                                                             <select id="transactionStatusSearch" class="form-select">
                                                                 <option selected>-</option>
-                                                                <option value="Sales" selected>Departure</option>
+                                                                <option value="Sales" selected>Dispatch</option>
                                                                 <option value="Purchase">Receiving</option>
                                                                 <option value="Local">Internal Transfer</option>
                                                                 <option value="Misc">Miscellaneous</option>
@@ -151,7 +151,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
+                                                            <label for="customerNoSearch" class="form-label">Customer Name</label>
                                                             <select id="customerNoSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
@@ -162,7 +162,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="supplierSearchDisplay" style="display:none">
                                                         <div class="mb-3">
-                                                            <label for="supplierSearch" class="form-label">Supplier No</label>
+                                                            <label for="supplierSearch" class="form-label">Supplier Name</label>
                                                             <select id="supplierSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
@@ -182,7 +182,7 @@ else{
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
                                                                 <option selected>-</option>
-                                                                <option value="Normal">Normal</option>
+                                                                <option value="Normal">Normal Weighing</option>
                                                                 <option value="Container">Primer Mover</option>
                                                             </select>
                                                         </div>
@@ -199,7 +199,7 @@ else{
                                                     </div>--><!--end col-->
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Product</label>
+                                                            <label for="ForminputState" class="form-label">Product Code</label>
                                                             <select id="productSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
@@ -210,7 +210,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3" id="rawMatSearchDisplay" style="display:none">
                                                         <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Raw Material</label>
+                                                            <label for="ForminputState" class="form-label">Raw Material Code</label>
                                                             <select id="rawMatSearch" class="form-select" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
@@ -269,7 +269,7 @@ else{
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
                                                     <p class="text-uppercase fw-medium text-white text-truncate mb-0">
-                                                        Departure
+                                                        Dispatch
                                                     </p>
                                                 </div>
                                             </div>
@@ -1004,7 +1004,7 @@ else{
             var obj = JSON.parse(data);
 
             if(obj.status === 'success'){
-                var printWindow = window.open('', '', 'height=400,width=800');
+                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
                 printWindow.document.write(obj.message);
                 printWindow.document.close();
                 setTimeout(function(){
