@@ -1936,6 +1936,7 @@ else{
         $('#weightTable tbody').on('click', 'tr', function (e) {
             var tr = $(this); // The row that was clicked
             var row = table.row(tr);
+            if (!row.data()) return; // <-- Exit early if row data is not available
 
             // Exclude specific td elements by checking the event target
             if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button') || row.data().weight_type =='Primer Mover + Container') {
@@ -2081,11 +2082,13 @@ else{
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message );
                         $("#failBtn").click();
                     }
                     else{
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', 'Failed to save');
                         $("#failBtn").click();
                     }
@@ -3211,7 +3214,7 @@ else{
             }
         });
 
-        $('#manualVehicle2').on('click', function(){
+        $('#manualVehicle2').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo2').val('-');
@@ -4027,8 +4030,15 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+                // Load container data and update the emptyContainerNo field if it's a container
+                if(obj.message.weight_type == 'Container' && obj.message.container_no){
+                    loadContainerData(function() {
+                        // Callback to ensure the dropdown is updated before setting the value
+                        $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).trigger('change');
+                    });
+                }
+
                 $('#addModal').find('#containerNoInput').val(obj.message.container_no);
-                $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).select2('destroy').select2();
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#containerNo2').val(obj.message.container_no2);
                 $('#addModal').find('#sealNo').val(obj.message.seal_no);
@@ -4122,6 +4132,39 @@ else{
                 $("#failBtn").click();
             }
             $('#spinnerLoading').hide();
+        });
+    }
+
+    function loadContainerData(callback) {
+        var transactionStatus = $('#transactionStatus').val();
+        $.post('php/getContainers.php', {userID: transactionStatus}, function (data){
+            var obj = JSON.parse(data);
+
+            if (obj.status == 'success'){
+                if (obj.message.length > 0){
+                    $('#addModal').find('#emptyContainerNo').empty();
+                    $('#addModal').find('#emptyContainerNo').append('<option selected="-">-</option>');
+
+                    // Populate container numbers
+                    for (var i = 0; i < obj.message.length; i++) {
+                        var id = obj.message[i].id;
+                        var container_no = obj.message[i].container_no;
+
+                        $('#addModal').find('#emptyContainerNo').append(
+                            '<option value="'+container_no+'">'+container_no+'</option>'
+                        );
+                    }
+
+                    // Execute the callback to finalize the process
+                    if (callback) {
+                        callback();
+                    }
+                }
+            } else {
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
         });
     }
 
