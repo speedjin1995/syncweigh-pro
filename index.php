@@ -3085,22 +3085,19 @@ else{
                     }
                 });
 
-                $('#normalCard').hide();
-                $('#containerCard').show();
+                handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
                 $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
-                $('#containerCard').hide();
-                $('#normalCard').show();
+                handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', true);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
             }else{
-                $('#normalCard').show();
-                $('#containerCard').hide();
+                handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', false);
@@ -3607,6 +3604,12 @@ else{
             $('#containerNo').val(emptyContainerNo);
 
             if (emptyContainerNo == '-'){
+                $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+                $('#addModal').find('#grossIncoming').val(0);
+                $('#addModal').find('#grossIncomingDate').val("");
+                $('#addModal').find('#tareOutgoing').val(0);
+                $('#addModal').find('#tareOutgoingDate').val("");
+                $('#addModal').find('#nettWeight').val(0);
                 $('#normalCard').hide();
             } else if (emptyContainerNo) { 
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
@@ -3653,6 +3656,12 @@ else{
                     }
                 });
             }else{
+                $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+                $('#addModal').find('#grossIncoming').val(0);
+                $('#addModal').find('#grossIncomingDate').val("");
+                $('#addModal').find('#tareOutgoing').val(0);
+                $('#addModal').find('#tareOutgoingDate').val("");
+                $('#addModal').find('#nettWeight').val(0);
                 $('#normalCard').hide();
             }
         });
@@ -3716,6 +3725,37 @@ else{
             }
         ?>
     });
+
+    function handleWeightType(weightType){
+        if (weightType == 'Container'){
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#grossIncoming').val(0);
+            $('#addModal').find('#grossIncomingDate').val("");
+            $('#addModal').find('#tareOutgoing').val(0);
+            $('#addModal').find('#tareOutgoingDate').val("");
+            $('#addModal').find('#nettWeight').val(0);
+            $('#normalCard').hide();
+            $('#containerCard').show();
+        }else if(weightType == 'Empty Container'){
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
+            $('#addModal').find('#grossIncoming2').val(0);
+            $('#addModal').find('#grossIncomingDate2').val("");
+            $('#addModal').find('#tareOutgoing2').val(0);
+            $('#addModal').find('#tareOutgoingDate2').val("");
+            $('#addModal').find('#nettWeight2').val(0);
+            $('#containerCard').hide();
+            $('#normalCard').show();
+        }else{
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
+            $('#addModal').find('#grossIncoming2').val(0);
+            $('#addModal').find('#grossIncomingDate2').val("");
+            $('#addModal').find('#tareOutgoing2').val(0);
+            $('#addModal').find('#tareOutgoingDate2').val("");
+            $('#addModal').find('#nettWeight2').val(0);
+            $('#normalCard').show();
+            $('#containerCard').hide();
+        }
+    }
 
     function format (row) {
         var transactionStatus = '';
