@@ -3616,7 +3616,25 @@ else{
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){ 
-                        // $('#addModal').find('#containerNo').val(obj.message.container_no);
+                        $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
+                        $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
+                        $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
+                        $('#addModal').find('#sealNo').val(obj.message.seal_no);
+                        $('#addModal').find('#containerNo2').val(obj.message.container_no2);
+                        $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
+
+                        if (obj.message.transaction_status == 'Sales' || obj.message.transaction_status == 'Misc'){
+                            $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
+                            $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
+                        }else{
+                            $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change');
+                            $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                        }
+                        $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                        $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
+                        $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
+
+                        
                         $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                         $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                         $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
@@ -3625,7 +3643,6 @@ else{
                         $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
                         $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                         $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
-                        $('#addModal').find('#sealNo').val(obj.message.seal_no);
 
                         if(obj.message.vehicleNoTxt != null){
                             $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
@@ -3641,7 +3658,8 @@ else{
                             $('.index-vehicle').show();
                             $('#vehicleNoTxt').hide();
                         }
-
+                        
+                        
                         $('#normalCard').show();
                     }
                     else if(obj.status === 'failed'){
@@ -4070,19 +4088,40 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
-                // Load container data and update the emptyContainerNo field if it's a container
-                if(obj.message.weight_type == 'Container' && obj.message.container_no){
-                    loadContainerData(function() {
-                        // Callback to ensure the dropdown is updated before setting the value
-                        $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).trigger('change');
-                    });
-                }
-
                 $('#addModal').find('#containerNoInput').val(obj.message.container_no);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#containerNo2').val(obj.message.container_no2);
                 $('#addModal').find('#sealNo').val(obj.message.seal_no);
                 $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
+
+                // Load container data and update the emptyContainerNo field if it's a container
+                if(obj.message.weight_type == 'Container' && obj.message.container_no){
+                    loadContainerData(function() {
+                        $('#normalCard').show();
+
+                        // Callback to ensure the dropdown is updated before setting the value
+                        $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).select2('destroy').select2();
+
+                        // Initialize all Select2 elements in the modal
+                        $('#addModal .select2').select2({
+                            allowClear: true,
+                            placeholder: "Please Select",
+                            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                        });
+
+                        // Apply custom styling to Select2 elements in addModal
+                        $('#addModal .select2-container .select2-selection--single').css({
+                            'padding-top': '4px',
+                            'padding-bottom': '4px',
+                            'height': 'auto'
+                        });
+
+                        $('#addModal .select2-container .select2-selection__arrow').css({
+                            'padding-top': '33px',
+                            'height': 'auto'
+                        });
+                    });
+                }
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {
