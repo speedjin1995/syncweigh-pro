@@ -182,7 +182,7 @@ else{
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
                                                                 <option selected>-</option>
-                                                                <option value="Normal">Normal</option>
+                                                                <option value="Normal">Normal Weighing</option>
                                                                 <option value="Container">Primer Mover</option>
                                                             </select>
                                                         </div>

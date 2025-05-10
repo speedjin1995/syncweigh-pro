@@ -234,7 +234,7 @@ else{
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select select2"  >
                                                                 <option selected>-</option>
-                                                                <option value="Normal">Normal</option>
+                                                                <option value="Normal">Normal Weighing</option>
                                                                 <option value="Container">Primer Mover</option>
                                                                 <option value="Empty Container">Primer Mover + Container</option>
                                                             </select>
@@ -532,7 +532,7 @@ else{
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="weightType" name="weightType" class="form-select select2">
-                                                                                            <option selected>Normal</option>
+                                                                                            <option value="Normal" selected>Normal Weighing</option>
                                                                                             <option value="Container">Primer Mover</option>
                                                                                             <option value="Empty Container">Primer Mover + Container</option>
                                                                                         </select>   
@@ -3709,6 +3709,8 @@ else{
             weightType = 'Primer Mover';
         }else if(row.weight_type == 'Empty Container'){
             weightType = 'Primer Mover + Container';
+        }else if(row.weight_type == 'Normal'){
+            weightType = 'Normal Weighing';
         }else{
             weightType = row.weight_type;
         }
