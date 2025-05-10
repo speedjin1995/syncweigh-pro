@@ -1,10 +1,25 @@
 <?php
 require_once "php/db_connect.php";
 
-$normalWeighing = $db->query("SELECT * FROM Weight WHERE is_complete = 'N' AND is_cancel='N' AND weight_type = 'Normal'");
-$containerWeighing = $db->query("SELECT * FROM Weight WHERE is_complete = 'N' AND is_cancel='N' AND weight_type = 'Container'");
+## Fetch records
+// Lorry SQL
+$lorryWeighingSQL = "(select * from Weight where status = '0' AND is_complete = 'N' AND is_cancel='N') UNION ALL (select * from Weight_Container where status = '0' AND is_complete = 'N' AND is_cancel='N')";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $normalWeighingSQL = "(select * from Weight where status = '0' AND is_complete = 'N' AND is_cancel='N' AND plant_code IN ('$username')) UNION ALL (select * from Weight_Container where status = '0' AND is_complete = 'N' AND is_cancel='N' AND plant_code IN ('$username'))";
+}
+$normalWeighing = $db->query($lorryWeighingSQL);
+
+// Container SQL
+$containerWeighingSQL = "select * from Weight_Container where status = '0' AND is_complete = 'Y' AND is_cancel='N'";
+if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $normalWeighingSQL = "select * from Weight_Container where status = '0' AND is_complete = 'Y' AND is_cancel='N' AND plant_code IN ('$username'))";
+}
+$containerWeighing = $db->query($containerWeighingSQL);
+
 $weighing2 = $db->query("SELECT * FROM Weight WHERE is_approved = 'N'");
-# Normal
+# Lorry
 $salesList = array();
 $purchaseList = array();
 $localList = array();
@@ -24,63 +39,81 @@ $miscList2 = array();
 $count2 = 0;
 
 while($row=mysqli_fetch_assoc($normalWeighing)){
+    $weightType = '';
+    if ($row['weight_type'] == 'Empty Container') {
+        $weightType = 'Primer Mover + Container';
+    } elseif ($row['weight_type'] == 'Container') {
+        $weightType = 'Primer Mover';
+    } else {
+        $weightType = $row['weight_type'];
+    }
+
     if($row['transaction_status'] == 'Sales'){
         $salesList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
     else if($row['transaction_status'] == 'Purchase'){
         $purchaseList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
     else if($row['transaction_status'] == 'Local'){
         $localList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
     else{
         $miscList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
 }
 
 while($row=mysqli_fetch_assoc($containerWeighing)){
+    $weightType = '';
+    if ($row['weight_type'] == 'Empty Container') {
+        $weightType = 'Primer Mover + Container';
+    } elseif ($row['weight_type'] == 'Container') {
+        $weightType = 'Primer Mover';
+    } else {
+        $weightType = $row['weight_type'];
+    }
+
     if($row['transaction_status'] == 'Sales'){
         $salesContainerList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
     else if($row['transaction_status'] == 'Purchase'){
         $purchaseContainerList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
     else if($row['transaction_status'] == 'Local'){
         $localContainerList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
     else{
         $miscContainerList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
-            "weight_type" => $row['weight_type']
+            "weight_type" => $weightType
         );
     }
 }
@@ -700,7 +733,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2) + coun
                 </div-->
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
-                    <span class="fw-bold">NW</span>
+                    <span class="fw-bold">LW</span>
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                         id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                         aria-haspopup="true" aria-expanded="false">
@@ -715,7 +748,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2) + coun
                             <div class="p-3">
                                 <div class="row align-items-center">
                                     <div class="col">
-                                        <h6 class="m-0 fs-16 fw-semibold text-white"> Pending Normal Weighing </h6>
+                                        <h6 class="m-0 fs-16 fw-semibold text-white"> Pending Lorry Weighing </h6>
                                     </div>
                                     <div class="col-auto dropdown-tabs">
                                         <span class="badge badge-soft-light fs-13"> <?=$count ?> New</span>
