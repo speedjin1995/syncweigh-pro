@@ -15,6 +15,10 @@ if(isset($_POST['userID'], $_POST['type'])){
         $action = $_POST['action'];
     }
 
+    if (isset($_POST['unitID']) && $_POST['unitID'] != ''){
+        $unitID = $_POST['unitID'];
+    }
+
     if ($action == 'getBasicUOM'){
         if ($type == 'SO'){
             if ($update_stmt = $db->prepare("SELECT * FROM Product WHERE product_code=? AND status=?")) {

@@ -417,7 +417,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
-                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="indicatorWeight">0</span> Kg</h2>
+                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="indicatorWeight">0</span> KG</h2>
                                                                                     </div>
                                                                                     <!--div class="connected-align">
                                                                                         <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
@@ -443,7 +443,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
-                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="currentWeight">0</span> Kg</h2>
+                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="currentWeight">0</span> KG</h2>
                                                                                     </div>
                                                                                     <div>
                                                                                         <div class="avatar-sm flex-shrink-0">
@@ -504,7 +504,7 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text" id="orderWeightUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -515,7 +515,7 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text" id="supplierWeightUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -570,7 +570,7 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control input-readonly" id="poSupplyWeight" name="poSupplyWeight" placeholder="P/O Supply Weight" readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text" id="poSupplyWeightUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -628,7 +628,7 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -639,7 +639,7 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -686,17 +686,11 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="basicUOM" class="col-sm-4 col-form-label">Basic UOM</label>
+                                                                                    <label for="basicUOM" class="col-sm-4 col-form-label">Converted Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="basicUOM" name="basicUOM" placeholder="Basic UOM">
-                                                                                            <div class="input-group-text">
-                                                                                                <select class="form-select" id="basicUOMUnit" name="basicUOMUnit" required>
-                                                                                                    <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
-                                                                                                        <option value="<?=$rowUnit['id'] ?>" data-unit="<?=$rowUnit['unit']?>"><?=$rowUnit['unit'] ?></option>
-                                                                                                    <?php } ?>
-                                                                                                </select>   
-                                                                                            </div>
+                                                                                            <input type="number" class="form-control input-readonly" id="basicUOM" name="basicUOM" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -746,7 +740,10 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="balance" class="col-sm-4 col-form-label">Balance</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
+                                                                                        <div class="input-group">
+                                                                                            <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
+                                                                                            <div class="input-group-text">KG</div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
@@ -954,7 +951,7 @@ else{
                                                                                         <input class="form-check-input mt-0" id="manual" name="manual" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                     </div>                                                                                             -->
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
@@ -975,7 +972,7 @@ else{
                                                                                         <input class="form-check-input mt-0" id="manualOutgoing" name="manualOutgoing" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                     </div>                                                                                                -->
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>                                                                                       
                                                                             </div>
@@ -991,7 +988,7 @@ else{
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="nettWeight" name="nettWeight" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1000,7 +997,7 @@ else{
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="convertedNettWeight" name="convertedNettWeight" placeholder="0" readonly>
-                                                                                    <div class="input-group-text" id="convertedNettWeightUnit">Kg</div>
+                                                                                    <div class="input-group-text" id="convertedNettWeightUnit">KG</div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1037,7 +1034,7 @@ else{
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming2" name="grossIncoming2" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="grossCapture2"><i class="mdi mdi-sync" type="button"></i></button>
                                                                                 </div>
                                                                             </div>
@@ -1053,7 +1050,7 @@ else{
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing2" name="tareOutgoing2" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="tareCapture2" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
@@ -1069,7 +1066,7 @@ else{
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="nettWeight2" name="nettWeight2" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>                                                                    
@@ -1116,6 +1113,7 @@ else{
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                         <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
+                                                        <input type="hidden" id="orderWeightUnitId" name="orderWeightUnitId">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -3136,20 +3134,17 @@ else{
                 type = 'PO';
             }
 
-            var convertedUnit = $('#addModal').find('#basicUOMUnit').val();
-            var nettWeight = $('#addModal').find('#nettWeight').val();
-            console.log(prodRawId);
-            console.log(convertedUnit);
-            console.log(nettWeight);
+            var convertedUnit = $('#addModal').find('#orderWeightUnitId').val();
+            var nettWeight = $('#addModal').find('#nettWeight').val(); console.log(convertedUnit);
 
-            if (prodRawId && convertedUnit && nettWeight){ console.log("HERE");
+            if (prodRawId && convertedUnit && nettWeight){
                 $.post('php/getProdRawMatUOM.php', {userID: prodRawId, unitID: convertedUnit, type: type}, function(data)
                 {
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
                         // Processing for order quantity (KG)
                         var rate = parseFloat(obj.message.rate);
-                        var convertedNettWeight = nettWeight * rate;
+                        var convertedNettWeight = nettWeight/rate;
 
                         $('#addModal').find('#convertedNettWeight').val(convertedNettWeight);
                     }
@@ -3170,53 +3165,61 @@ else{
 
         $('#finalWeight').on('change', function(){
             var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett2 = 0;
+            var nett2 = parseFloat($('#addModal').find('#basicUOM').val());;
 
-            if($('#transactionStatus').val() == "Purchase"){
-                nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
-            }
-            else{
-                nett2 = parseFloat($('#addModal').find('#orderWeight').val());
-            }
+            // if($('#transactionStatus').val() == "Purchase"){
+            //     nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
+            // }
+            // else{
+            //     nett2 = parseFloat($('#addModal').find('#orderWeight').val());
+            // }
             
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
         });
 
         $('#orderWeight').on('change', function(){
-            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var current = nett1 - nett2;
-            $('#weightDifference').val(current.toFixed(0));
+            var orderWeight = $(this).val();
 
-            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+            $('#basicUOM').val(orderWeight).trigger('change');
 
-            if (previousRecordsTag == 'false'){
-                $('#addModal').find('#balance').val($(this).val());
-                if ($(this).val() <= 0) {
-                    $('#addModal').find('#insufficientBalDisplay').hide();
-                } else {
-                    $('#addModal').find('#insufficientBalDisplay').show();
-                }
-            }
+            // var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            // var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
+            // var current = nett1 - nett2;
+            // $('#weightDifference').val(current.toFixed(0));
+
+            // var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+            // if (previousRecordsTag == 'false'){
+            //     $('#addModal').find('#balance').val($(this).val());
+            //     if ($(this).val() <= 0) {
+            //         $('#addModal').find('#insufficientBalDisplay').hide();
+            //     } else {
+            //         $('#addModal').find('#insufficientBalDisplay').show();
+            //     }
+            // }
         });
 
         $('#supplierWeight').on('change', function(){
-            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var current = nett1 - nett2;
-            $('#weightDifference').val(current.toFixed(0));
-            
-            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+            var supplierWeight = $(this).val();
 
-            if (previousRecordsTag == 'false'){
-                $('#addModal').find('#balance').val($(this).val());
-                if ($(this).val() <= 0) {
-                    $('#addModal').find('#insufficientBalDisplay').hide();
-                } else {
-                    $('#addModal').find('#insufficientBalDisplay').show();
-                }
-            }
+            $('#basicUOM').val(supplierWeight).trigger('change');
+
+            // var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            // var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
+            // var current = nett1 - nett2;
+            // $('#weightDifference').val(current.toFixed(0));
+            
+            // var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+            // if (previousRecordsTag == 'false'){
+            //     $('#addModal').find('#balance').val($(this).val());
+            //     if ($(this).val() <= 0) {
+            //         $('#addModal').find('#insufficientBalDisplay').hide();
+            //     } else {
+            //         $('#addModal').find('#insufficientBalDisplay').show();
+            //     }
+            // }
         });
 
         $('#grossIncoming2').on('keyup', function(){
@@ -3449,6 +3452,7 @@ else{
                             var balance = obj.message.balance; 
                             var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
                             var convertedOrderSupplierUnit = obj.message.converted_order_supplier_unit;
+                            var convertedOrderSupplierUnitId = obj.message.converted_order_supplier_unitId;
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3484,10 +3488,13 @@ else{
                                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                             }
     
-                            $('#addModal').find('#orderWeight').val(orderSupplierWeight)
+                            $('#addModal').find('#orderWeightUnit').text(convertedOrderSupplierUnit);
+                            $('#addModal').find('#convertedNettWeightUnit').text(convertedOrderSupplierUnit);
+                            $('#addModal').find('#orderWeightUnitId').val(convertedOrderSupplierUnitId);
+                            $('#addModal').find('#orderWeight').val(convertedOrderSupplierWeight).trigger('change');
                             $('#addModal').find('#balance').val(balance);
-                            $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight)
-                            $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
+                            // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
+                            // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -3704,6 +3711,7 @@ else{
                             var balance = obj.message.balance;
                             var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
                             var convertedOrderSupplierUnit = obj.message.converted_order_supplier_unit;
+                            var convertedOrderSupplierUnitId = obj.message.converted_order_supplier_unitId;
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3738,11 +3746,15 @@ else{
                             } else {
                                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
                             }
-    
-                            $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
+                            
+                            $('#addModal').find('#supplierWeightUnit').text(convertedOrderSupplierUnit);
+                            $('#addModal').find('#convertedNettWeightUnit').text(convertedOrderSupplierUnit);
+                            $('#addModal').find('#poSupplyWeightUnit').text(convertedOrderSupplierUnit);
+                            $('#addModal').find('#orderWeightUnitId').val(convertedOrderSupplierUnitId);
+                            $('#addModal').find('#poSupplyWeight').val(convertedOrderSupplierWeight);
                             $('#addModal').find('#balance').val(balance);
-                            $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
-                            $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
+                            // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
+                            // $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -3869,10 +3881,99 @@ else{
             }
         });
 
-        //basicUOMUnit
-        $('#basicUOMUnit').on('change', function(){
-            var unit = $('#basicUOMUnit :selected').data('unit');
-            $('#convertedNettWeightUnit').text(unit);
+        //basicUOM
+        $('#basicUOM').on('change', function(){
+            var value = $(this).val();
+            var transactionStatus = $('#transactionStatus').val();
+            var unit = $('#orderWeightUnitId').val();
+            var prodRawMatCode = '';
+
+            if (transactionStatus == 'Purchase'){
+                prodRawMatCode = $('#rawMaterialName :selected').data('id');
+            }else{
+                prodRawMatCode = $('#productName :selected').data('id');
+            }
+            
+            if (unit == 2){
+                $('#basicUOM').val(value);
+                var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+                var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
+                var current = nett1 - nett2;
+                $('#weightDifference').val(current.toFixed(0));
+
+                var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+                if (previousRecordsTag == 'false'){
+                    $('#addModal').find('#balance').val($(this).val());
+                    if ($(this).val() <= 0) {
+                        $('#addModal').find('#insufficientBalDisplay').hide();
+                    } else {
+                        $('#addModal').find('#insufficientBalDisplay').show();
+                    }
+                }
+            }else{
+                // Call to backend to get conversion rate
+                if (value && prodRawMatCode){
+                    if (transactionStatus == 'Purchase'){
+                        $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'PO'}, function(data)
+                        {
+                            var obj = JSON.parse(data);
+                            if(obj.status === 'success'){
+                                var rate = parseFloat(obj.message.rate);
+                                var orderQty = value/rate;
+
+                                $('#basicUOM').val(orderQty);
+                            }
+                            else if(obj.status === 'failed'){
+                                alert(obj.message);
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
+                            }
+                            else{
+                                alert(obj.message);
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
+                            }
+                        });
+                    }else{
+                        $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'SO'}, function(data)
+                        {
+                            var obj = JSON.parse(data);
+                            if(obj.status === 'success'){
+                                var rate = parseFloat(obj.message.rate);
+                                var orderQty = value/rate;
+
+                                $('#basicUOM').val(orderQty);
+                                var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+                                var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
+                                var current = nett1 - nett2;
+                                $('#weightDifference').val(current.toFixed(0));
+
+                                var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+                                if (previousRecordsTag == 'false'){
+                                    $('#addModal').find('#balance').val($(this).val());
+                                    if ($(this).val() <= 0) {
+                                        $('#addModal').find('#insufficientBalDisplay').hide();
+                                    } else {
+                                        $('#addModal').find('#insufficientBalDisplay').show();
+                                    }
+                                }
+                            }
+                            else if(obj.status === 'failed'){
+                                alert(obj.message);
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
+                            }
+                            else{
+                                alert(obj.message);
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
+                            }
+                        });
+                    }
+                }
+            }
         });
 
         <?php

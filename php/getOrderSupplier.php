@@ -1,5 +1,6 @@
 <?php
 require_once "db_connect.php";
+require_once "requires/lookup.php";
 
 session_start();
 
@@ -245,7 +246,8 @@ if(isset($_POST['type'])){
                         $order_supplier_weight = $row['order_quantity'];
                         $balance = $row['balance'];
                         $converted_order_supplier_weight = $row['converted_order_qty'];
-                        $converted_order_supplier_unit = $row['converted_unit'];
+                        $converted_order_supplier_unit = searchUnitById($row['converted_unit'], $db);
+                        $converted_order_supplier_unitId = $row['converted_unit'];
                     }
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -274,6 +276,7 @@ if(isset($_POST['type'])){
                     $message['balance'] = $balance;
                     $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
                     $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
+                    $message['converted_order_supplier_unitId'] = $converted_order_supplier_unitId;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     
@@ -314,7 +317,8 @@ if(isset($_POST['type'])){
                         $order_supplier_weight = $row['order_quantity'];
                         $balance = $row['balance'];
                         $converted_order_supplier_weight = $row['converted_order_qty'];
-                        $converted_order_supplier_unit = $row['converted_unit'];
+                        $converted_order_supplier_unit = searchUnitById($row['converted_unit'], $db);
+                        $converted_order_supplier_unitId = $row['converted_unit'];
                     }  
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -343,6 +347,7 @@ if(isset($_POST['type'])){
                     $message['balance'] = $balance;
                     $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
                     $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
+                    $message['converted_order_supplier_unitId'] = $converted_order_supplier_unitId;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     
