@@ -384,17 +384,11 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="convertedQtyUnit" class="col-sm-4 col-form-label">Order Quantity</label>
+                                                                                    <label for="convertedOrderQty" class="col-sm-4 col-form-label">Order Quantity</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="convertedOrderQty" name="convertedOrderQty" required>
-                                                                                            <div class="input-group-text">
-                                                                                                <select class="form-control" style="width: 100%;" id="convertedQtyUnit" name="convertedQtyUnit" required>
-                                                                                                    <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
-                                                                                                        <option value="<?=$rowUnit['id'] ?>" data-unit="<?=$rowUnit['unit']?>"><?=$rowUnit['unit'] ?></option>
-                                                                                                    <?php } ?>
-                                                                                                </select>
-                                                                                            </div>
+                                                                                            <div class="input-group-text" id="convertedQtyUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -405,7 +399,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="balance" name="balance" required readonly>
-                                                                                            <div class="input-group-text" id="balanceUnit">Kg</div>
+                                                                                            <div class="input-group-text" id="balanceUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -416,7 +410,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="orderQty" name="orderQty" required readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -427,7 +421,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="convertedBal" name="convertedBal" required readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -466,6 +460,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                             <input type="hidden" class="form-control" id="productName" name="productName">
                                                                             <input type="hidden" class="form-control" id="plantName" name="plantName">
                                                                             <input type="hidden" class="form-control" id="transporterName" name="transporterName">                                               
+                                                                            <input type="hidden" class="form-control" id="convertedOrderQtyUnit" name="convertedOrderQtyUnit">                                               
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1027,7 +1022,8 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#convertedOrderQty').val("");
-            $('#addModal').find('#convertedQtyUnit').val(2);
+            $('#addModal').find('#convertedQtyUnit').val("KG");
+            $('#addModal').find('#convertedOrderQtyUnit').val('');
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#balanceUnit').text("KG");
             $('#addModal').find('#orderQty').val("");
@@ -1133,8 +1129,35 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
         
         $('#product').on('change', function(){
             $('#productName').val($('#product :selected').data('name'));
+            var productCode = $(this).val();
 
-            $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+            if (productCode){
+                $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO', action: 'getBasicUOM'}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        // Change Basic UOM
+                        var basicUom = obj.message.basic_uom;
+
+                        $('#convertedQtyUnit').text(basicUom);
+                        $('#balanceUnit').text(basicUom);
+                        $('#convertedOrderQtyUnit').val(obj.message.basic_uom_id);
+                        $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }else{
+                $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+            }
         });
         
         $('#plant').on('change', function(){
@@ -1172,44 +1195,37 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
 
         $('#convertedOrderQty').on('change', function(){
             var convertedOrderWeight = parseFloat($(this).val());
-            var convertedUnit = $('#convertedQtyUnit').val();
-            var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
+            var productCode = $('#product :selected').data('id');
+            var unitId = $('#convertedOrderQtyUnit').val(); 
 
-            $('#balanceUnit').text(convertedUnitName);
-            $('#balance').val(convertedOrderWeight);
+            $('#balance').val(convertedOrderWeight); // update balance value
 
-            if (convertedUnit == 2){
-                $('#orderQty').val(convertedOrderWeight);
-                $('#convertedBal').val(convertedOrderWeight);
-            }else{
-                // Call to backend to get conversion rate
-                var productCode = $('#product :selected').data('id');
+            // Call to backend to get conversion rate
+            if (productCode && convertedOrderWeight){
+                $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        // Processing for order quantity (KG)
+                        var rate = parseFloat(obj.message.rate);
+                        var orderQty = convertedOrderWeight/rate;
 
-                if (productCode && convertedUnit && convertedOrderWeight){
-                    $.post('php/getProdRawMatUOM.php', {userID: productCode, unitID: convertedUnit, type: 'SO'}, function(data)
-                    {
-                        var obj = JSON.parse(data);
-                        if(obj.status === 'success'){
-                            // Processing for order quantity (KG)
-                            var rate = parseFloat(obj.message.rate);
-                            var orderQty = convertedOrderWeight * rate;
-
-                            $('#orderQty').val(orderQty).trigger('change');
-                            $('#convertedBal').val(orderQty);
-                        }
-                        else if(obj.status === 'failed'){
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                    });
-                }
+                        $('#orderQty').val(orderQty).trigger('change');
+                        $('#convertedBal').val(orderQty);
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
             }
+            
         });
 
 
@@ -1346,7 +1362,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
         $.post('php/getSalesOrder.php', {userID: id}, function(data)
         { 
             var obj = JSON.parse(data);
-            if(obj.status === 'success'){ console.log(obj.message);
+            if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#company').val(obj.message.company_code).trigger('change');
                 $('#addModal').find('#customer').val(obj.message.customer_code).trigger('change');

@@ -169,10 +169,10 @@ if (isset($_POST['orderNo'])) {
         $convertedOrderQty = trim($_POST["convertedOrderQty"]);
     }
 
-    if (empty($_POST["convertedQtyUnit"])) {
+    if (empty($_POST["convertedOrderQtyUnit"])) {
         $convertedQtyUnit = null;
     } else {
-        $convertedQtyUnit = trim($_POST["convertedQtyUnit"]);
+        $convertedQtyUnit = trim($_POST["convertedOrderQtyUnit"]);
     }
 
     if (empty($_POST["balance"])) {
