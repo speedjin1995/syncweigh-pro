@@ -7,6 +7,7 @@ if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
     $format = 'MODAL';
     $type = 'Weight';
+    $acctType = '';
 
     if (isset($_POST['format']) && $_POST['format'] != ''){
         $format = $_POST['format'];
@@ -14,6 +15,10 @@ if(isset($_POST['userID'])){
 
     if (isset($_POST['type']) && $_POST['type'] != ''){
         $type = $_POST['type'];
+    }
+
+    if (isset($_POST['acctType']) && $_POST['acctType'] != ''){
+        $acctType = $_POST['acctType'];
     }
 
     if ($format == 'EXPANDABLE' && $type == 'Log'){
@@ -118,6 +123,36 @@ if(isset($_POST['userID'])){
                         $message['nett_weight1'] = $row['nett_weight1'] ?? '';
                         $message['reduce_weight'] = $row['reduce_weight'] ?? '';
                         $message['final_weight'] = $row['final_weight'] ?? '';
+                        $message['converted_order_weight'] = $row['converted_order_weight'] ?? 0;
+
+                        if ($acctType == 'DO'){
+                            $soNo = $row['purchase_order'];
+                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND is_complete = 'Y' AND status = '0'";
+                            $doRecords = mysqli_query($db, $doQuery);
+                            $weighingData = array();
+
+                            while($row = mysqli_fetch_assoc($doRecords)) {
+                                $weighingData[] = array( 
+                                    "id"=>$row['id'],
+                                    "transaction_id"=>$row['transaction_id'],
+                                    "transaction_status"=>$row['transaction_status'],
+                                    "customer_name"=>$row['customer_name'],
+                                    "lorry_plate_no1"=>$row['lorry_plate_no1'],
+                                    "product_name"=>$row['product_name'],
+                                    "delivery_no"=>$row['delivery_no'] ?? '',
+                                    "gross_weight1"=>$row['gross_weight1'],
+                                    "gross_weight1_date"=>$row['gross_weight1_date'],
+                                    "tare_weight1"=>$row['tare_weight1'],
+                                    "tare_weight1_date"=>$row['tare_weight1_date'],
+                                    "nett_weight1"=>$row['nett_weight1']        
+                                );
+                            }
+
+                            $message['weights'] = $weighingData;
+
+                        }elseif ($acctType == 'GR') {
+                            # code...
+                        }
                     }else{
                         $message['id'] = $row['id'];
                         $message['transaction_id'] = $row['transaction_id'];
