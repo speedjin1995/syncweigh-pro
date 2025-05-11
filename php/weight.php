@@ -284,7 +284,18 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
 
     if (empty($_POST["containerNo"])) {
-        $containerNo = null;
+        if ($weightType == 'Container'){
+            echo json_encode(
+                array(
+                    "status"=> "failed", 
+                    "message"=> "Container No cannot be empty"
+                )
+            );
+
+            exit;
+        }else{
+            $containerNo = null;
+        }
     } else {
         $containerNo = trim($_POST["containerNo"]);
     }

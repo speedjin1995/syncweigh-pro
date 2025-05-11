@@ -22,7 +22,28 @@ if(isset($_POST['userID'])){
             $message = array();
             
             while ($row = $result->fetch_assoc()) {
+                $message['transaction_status'] = $row['transaction_status'];
+                $message['customer_code'] = $row['customer_code'];
+                $message['customer_name'] = $row['customer_name'];
+                $message['supplier_code'] = $row['supplier_code'];
+                $message['supplier_name'] = $row['supplier_name'];
+                $message['invoice_no'] = $row['invoice_no'];
+                $message['delivery_no'] = $row['delivery_no'];
+                $message['purchase_order'] = $row['delivery_no'];
                 $message['container_no'] = $row['container_no'];
+                $message['seal_no'] = $row['seal_no'];
+                $message['container_no2'] = $row['container_no2'];
+                $message['seal_no2'] = $row['seal_no2'];
+                $message['product_code'] = $row['product_code'];
+                $message['product_name'] = $row['product_name'];
+                $message['raw_mat_code'] = $row['raw_mat_code'];
+                $message['raw_mat_name'] = $row['raw_mat_name'];
+                $message['plant_code'] = $row['plant_code'];
+                $message['plant_name'] = $row['plant_name'];
+                $message['transporter_code'] = $row['transporter_code'];
+                $message['transporter'] = $row['transporter'];
+                $message['destination_code'] = $row['destination_code'];
+                $message['destination'] = $row['destination'];
                 $message['gross_weight1'] = $row['gross_weight1'];
                 $message['gross_weight1_date'] = date("d/m/Y h:i:s A", strtotime($row['gross_weight1_date']));
                 $message['gross_weight_by1'] = $row['gross_weight_by1'];
@@ -31,7 +52,6 @@ if(isset($_POST['userID'])){
                 $message['tare_weight_by1'] = $row['tare_weight_by1'];
                 $message['lorry_plate_no1'] = $row['lorry_plate_no1'];
                 $message['nett_weight1'] = $row['nett_weight1'];
-                $message['seal_no'] = $row['seal_no'];
 
                 if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
                     $update_stmt2->bind_param('s', $row['lorry_plate_no1']);

@@ -329,7 +329,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <tr>
                                     <th style="border:1px solid black;font-size: 14px;text-align: center;">Container No.1</th>
                                     <th style="border:1px solid black;font-size: 14px;text-align: center;">Seal No.1</th>
-                                    <th style="border:1px solid black;font-size: 14px;text-align: center;">Container No.1</th>
+                                    <th style="border:1px solid black;font-size: 14px;text-align: center;">Container No.2</th>
                                     <th style="border:1px solid black;font-size: 14px;text-align: center;">Seal No.2</th>
                                 </tr>
                                 <tr>
@@ -352,7 +352,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 }else{
                                     $message .= '
                                         <tr>
-                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Raw Material Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
                                         </tr>
                                     ';
                                 }
@@ -420,7 +420,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 }else{
                                     $message .= '
                                         <tr>
-                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Raw Material Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
                                         </tr>
                                     ';
                                 }

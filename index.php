@@ -1936,6 +1936,7 @@ else{
         $('#weightTable tbody').on('click', 'tr', function (e) {
             var tr = $(this); // The row that was clicked
             var row = table.row(tr);
+            if (!row.data()) return; // <-- Exit early if row data is not available
 
             // Exclude specific td elements by checking the event target
             if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button') || row.data().weight_type =='Primer Mover + Container') {
@@ -2081,11 +2082,13 @@ else{
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message );
                         $("#failBtn").click();
                     }
                     else{
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', 'Failed to save');
                         $("#failBtn").click();
                     }
@@ -3082,22 +3085,19 @@ else{
                     }
                 });
 
-                $('#normalCard').hide();
-                $('#containerCard').show();
+                handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
                 $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
-                $('#containerCard').hide();
-                $('#normalCard').show();
+                handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', true);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
             }else{
-                $('#normalCard').show();
-                $('#containerCard').hide();
+                handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', false);
@@ -3211,7 +3211,7 @@ else{
             }
         });
 
-        $('#manualVehicle2').on('click', function(){
+        $('#manualVehicle2').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo2').val('-');
@@ -3604,13 +3604,37 @@ else{
             $('#containerNo').val(emptyContainerNo);
 
             if (emptyContainerNo == '-'){
+                $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+                $('#addModal').find('#grossIncoming').val(0);
+                $('#addModal').find('#grossIncomingDate').val("");
+                $('#addModal').find('#tareOutgoing').val(0);
+                $('#addModal').find('#tareOutgoingDate').val("");
+                $('#addModal').find('#nettWeight').val(0);
                 $('#normalCard').hide();
             } else if (emptyContainerNo) { 
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){ 
-                        // $('#addModal').find('#containerNo').val(obj.message.container_no);
+                        $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
+                        $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
+                        $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
+                        $('#addModal').find('#sealNo').val(obj.message.seal_no);
+                        $('#addModal').find('#containerNo2').val(obj.message.container_no2);
+                        $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
+
+                        if (obj.message.transaction_status == 'Sales' || obj.message.transaction_status == 'Misc'){
+                            $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
+                            $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
+                        }else{
+                            $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change');
+                            $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                        }
+                        $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                        $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
+                        $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
+
+                        
                         $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
                         $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                         $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
@@ -3619,7 +3643,6 @@ else{
                         $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
                         $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                         $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
-                        $('#addModal').find('#sealNo').val(obj.message.seal_no);
 
                         if(obj.message.vehicleNoTxt != null){
                             $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
@@ -3635,7 +3658,8 @@ else{
                             $('.index-vehicle').show();
                             $('#vehicleNoTxt').hide();
                         }
-
+                        
+                        
                         $('#normalCard').show();
                     }
                     else if(obj.status === 'failed'){
@@ -3650,6 +3674,12 @@ else{
                     }
                 });
             }else{
+                $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+                $('#addModal').find('#grossIncoming').val(0);
+                $('#addModal').find('#grossIncomingDate').val("");
+                $('#addModal').find('#tareOutgoing').val(0);
+                $('#addModal').find('#tareOutgoingDate').val("");
+                $('#addModal').find('#nettWeight').val(0);
                 $('#normalCard').hide();
             }
         });
@@ -3713,6 +3743,37 @@ else{
             }
         ?>
     });
+
+    function handleWeightType(weightType){
+        if (weightType == 'Container'){
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#grossIncoming').val(0);
+            $('#addModal').find('#grossIncomingDate').val("");
+            $('#addModal').find('#tareOutgoing').val(0);
+            $('#addModal').find('#tareOutgoingDate').val("");
+            $('#addModal').find('#nettWeight').val(0);
+            $('#normalCard').hide();
+            $('#containerCard').show();
+        }else if(weightType == 'Empty Container'){
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
+            $('#addModal').find('#grossIncoming2').val(0);
+            $('#addModal').find('#grossIncomingDate2').val("");
+            $('#addModal').find('#tareOutgoing2').val(0);
+            $('#addModal').find('#tareOutgoingDate2').val("");
+            $('#addModal').find('#nettWeight2').val(0);
+            $('#containerCard').hide();
+            $('#normalCard').show();
+        }else{
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
+            $('#addModal').find('#grossIncoming2').val(0);
+            $('#addModal').find('#grossIncomingDate2').val("");
+            $('#addModal').find('#tareOutgoing2').val(0);
+            $('#addModal').find('#tareOutgoingDate2').val("");
+            $('#addModal').find('#nettWeight2').val(0);
+            $('#normalCard').show();
+            $('#containerCard').hide();
+        }
+    }
 
     function format (row) {
         var transactionStatus = '';
@@ -4028,11 +4089,39 @@ else{
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
                 $('#addModal').find('#containerNoInput').val(obj.message.container_no);
-                $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).select2('destroy').select2();
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#containerNo2').val(obj.message.container_no2);
                 $('#addModal').find('#sealNo').val(obj.message.seal_no);
                 $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
+
+                // Load container data and update the emptyContainerNo field if it's a container
+                if(obj.message.weight_type == 'Container' && obj.message.container_no){
+                    loadContainerData(function() {
+                        $('#normalCard').show();
+
+                        // Callback to ensure the dropdown is updated before setting the value
+                        $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).select2('destroy').select2();
+
+                        // Initialize all Select2 elements in the modal
+                        $('#addModal .select2').select2({
+                            allowClear: true,
+                            placeholder: "Please Select",
+                            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                        });
+
+                        // Apply custom styling to Select2 elements in addModal
+                        $('#addModal .select2-container .select2-selection--single').css({
+                            'padding-top': '4px',
+                            'padding-bottom': '4px',
+                            'height': 'auto'
+                        });
+
+                        $('#addModal .select2-container .select2-selection__arrow').css({
+                            'padding-top': '33px',
+                            'height': 'auto'
+                        });
+                    });
+                }
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {
@@ -4122,6 +4211,39 @@ else{
                 $("#failBtn").click();
             }
             $('#spinnerLoading').hide();
+        });
+    }
+
+    function loadContainerData(callback) {
+        var transactionStatus = $('#transactionStatus').val();
+        $.post('php/getContainers.php', {userID: transactionStatus}, function (data){
+            var obj = JSON.parse(data);
+
+            if (obj.status == 'success'){
+                if (obj.message.length > 0){
+                    $('#addModal').find('#emptyContainerNo').empty();
+                    $('#addModal').find('#emptyContainerNo').append('<option selected="-">-</option>');
+
+                    // Populate container numbers
+                    for (var i = 0; i < obj.message.length; i++) {
+                        var id = obj.message[i].id;
+                        var container_no = obj.message[i].container_no;
+
+                        $('#addModal').find('#emptyContainerNo').append(
+                            '<option value="'+container_no+'">'+container_no+'</option>'
+                        );
+                    }
+
+                    // Execute the callback to finalize the process
+                    if (callback) {
+                        callback();
+                    }
+                }
+            } else {
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
         });
     }
 
