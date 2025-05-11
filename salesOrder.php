@@ -1200,32 +1200,36 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
 
             $('#balance').val(convertedOrderWeight); // update balance value
 
-            // Call to backend to get conversion rate
-            if (productCode && convertedOrderWeight){
-                $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
-                {
-                    var obj = JSON.parse(data);
-                    if(obj.status === 'success'){
-                        // Processing for order quantity (KG)
-                        var rate = parseFloat(obj.message.rate);
-                        var orderQty = convertedOrderWeight/rate;
+            if (unitId == 2){
+                $('#orderQty').val(convertedOrderWeight);
+                $('#convertedBal').val(convertedOrderWeight);
+            }else{
+                // Call to backend to get conversion rate
+                if (productCode && convertedOrderWeight){
+                    $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
+                    {
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            // Processing for order quantity (KG)
+                            var rate = parseFloat(obj.message.rate);
+                            var orderQty = convertedOrderWeight/rate;
 
-                        $('#orderQty').val(orderQty).trigger('change');
-                        $('#convertedBal').val(orderQty);
-                    }
-                    else if(obj.status === 'failed'){
-                        alert(obj.message);
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        alert(obj.message);
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                            $('#orderQty').val(orderQty).trigger('change');
+                            $('#convertedBal').val(orderQty);
+                        }
+                        else if(obj.status === 'failed'){
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
             }
-            
         });
 
 

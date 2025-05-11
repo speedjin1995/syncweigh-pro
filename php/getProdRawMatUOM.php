@@ -45,8 +45,8 @@ if(isset($_POST['userID'], $_POST['type'])){
                 }
             }
         }elseif($type == 'PO'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?")) {
-                $update_stmt->bind_param('sss', $id, $unitID, $status);
+            if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=? AND status=?")) {
+                $update_stmt->bind_param('ss', $id, $status);
                 
                 // Execute the prepared query.
                 if (! $update_stmt->execute()) {
@@ -61,10 +61,8 @@ if(isset($_POST['userID'], $_POST['type'])){
                     $message = array();
                     
                     while ($row = $result->fetch_assoc()) {
-                        $message['id'] = $row['id'];
-                        $message['raw_mat_id'] = $row['raw_mat_id'];
-                        $message['unit_id'] = $row['unit_id'];
-                        $message['rate'] = $row['rate'];
+                        $message['basic_uom'] = searchUnitById($row['basic_uom'], $db);
+                        $message['basic_uom_id'] = $row['basic_uom'];
                     }
                     
                     echo json_encode(
