@@ -686,7 +686,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="basicUOM" class="col-sm-4 col-form-label">Converted Weight</label>
+                                                                                    <label for="basicUOM" class="col-sm-4 col-form-label">Converted Order/Supply Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control input-readonly" id="basicUOM" name="basicUOM" placeholder="0" readonly>
