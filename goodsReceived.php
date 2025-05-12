@@ -375,7 +375,7 @@ else{
                 { data: 'product_name' },
                 { data: 'purchase_order' },
                 { data: 'tare_weight1_date' },
-                { data: 'supplier_weight' },
+                { data: 'po_supply_weight' },
                 // { 
                 //     data: 'id',
                 //     class: 'action-button',
@@ -436,7 +436,7 @@ else{
                     { data: 'product_name' },
                     { data: 'purchase_order' },
                     { data: 'tare_weight1_date' },
-                    { data: 'supplier_weight' },
+                    { data: 'po_supply_weight' },
                     // { 
                     //     data: 'id',
                     //     class: 'action-button',
@@ -648,9 +648,9 @@ else{
         <div class="row">
             <p><span><strong style="font-size:120%; text-decoration: underline;">Delivery Order Information</strong></span><br>
             <div class="col-6">
-                <p><strong>SALES ORDER:</strong> ${row.purchase_order}</p>
+                <p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>
                 <p><strong>PRODUCT:</strong> ${row.product_rawmat_name}</p>
-                <p><strong>TOTAL DELIVERY AMOUNT:</strong> ${row.converted_order_weight} KG</p>
+                <p><strong>TOTAL RECEIVED AMOUNT:</strong> ${row.po_supply_weight} KG</p>
             </div>
             <div class="col-6">
                 <p><strong>DELIVERY DATE:</strong> ${row.tare_weight1_date}</p>

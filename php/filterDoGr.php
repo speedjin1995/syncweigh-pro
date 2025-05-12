@@ -111,6 +111,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "delivery_no"=>$row['delivery_no'],
     "order_weight"=>$row['order_weight'],
     "supplier_weight"=>$row['supplier_weight'],
+    "po_supply_weight"=>$row['po_supply_weight'],
     "tare_weight1_date"=>$row['tare_weight1_date'],
     "created_date"=>$row['created_date'],
     "created_by"=>$row['created_by'],

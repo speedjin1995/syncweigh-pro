@@ -650,7 +650,7 @@ else{
             <div class="col-6">
                 <p><strong>SALES ORDER:</strong> ${row.purchase_order}</p>
                 <p><strong>PRODUCT:</strong> ${row.product_rawmat_name}</p>
-                <p><strong>TOTAL DELIVERY AMOUNT:</strong> ${row.converted_order_weight} KG</p>
+                <p><strong>TOTAL DELIVERY AMOUNT:</strong> ${row.order_weight} KG</p>
             </div>
             <div class="col-6">
                 <p><strong>DELIVERY DATE:</strong> ${row.tare_weight1_date}</p>
