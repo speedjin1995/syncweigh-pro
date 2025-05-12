@@ -151,7 +151,29 @@ if(isset($_POST['userID'])){
                             $message['weights'] = $weighingData;
 
                         }elseif ($acctType == 'GR') {
-                            # code...
+                            $poNo = $row['purchase_order'];
+                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND is_complete = 'Y' AND status = '0'";
+                            $grRecords = mysqli_query($db, $grQuery);
+                            $weighingData = array();
+
+                            while($row = mysqli_fetch_assoc($grRecords)) {
+                                $weighingData[] = array( 
+                                    "id"=>$row['id'],
+                                    "transaction_id"=>$row['transaction_id'],
+                                    "transaction_status"=>$row['transaction_status'],
+                                    "supplier_name"=>$row['supplier_name'],
+                                    "lorry_plate_no1"=>$row['lorry_plate_no1'],
+                                    "raw_mat_name"=>$row['raw_mat_name'],
+                                    "delivery_no"=>$row['delivery_no'] ?? '',
+                                    "gross_weight1"=>$row['gross_weight1'],
+                                    "gross_weight1_date"=>$row['gross_weight1_date'],
+                                    "tare_weight1"=>$row['tare_weight1'],
+                                    "tare_weight1_date"=>$row['tare_weight1_date'],
+                                    "nett_weight1"=>$row['nett_weight1']        
+                                );
+                            }
+
+                            $message['weights'] = $weighingData;
                         }
                     }else{
                         $message['id'] = $row['id'];

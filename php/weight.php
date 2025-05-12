@@ -562,13 +562,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
             if ($isComplete == 'Y' && $isCancel == 'N'){
                 if($transactionStatus == 'Purchase'){
-                    $soPoQuantity = $poSupplyWeight;
+                    $soPoQuantity = $convertedSupplierWeight;
                     $orderSuppWeight = $supplierWeight;
                     $prodRawCode = $rawMaterialCode;
                     $prodRawName = $rawMaterialName;
                     $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                 }elseif($transactionStatus == 'Sales'){
-                    $soPoQuantity = $orderWeight;
+                    $soPoQuantity = $convertedOrderWeight;
                     $orderSuppWeight = $nettWeight;
                     $prodRawCode = $productCode;
                     $prodRawName = $productName;
@@ -596,7 +596,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 } else {
                     // No records found
                     $currentBalance = $soPoQuantity - $orderSuppWeight;
-                }    
+                }    var_dump($currentBalance);die;
             
                 $poSoStatus = ($currentBalance <= 0) ? 'Close' : 'Open';
 
@@ -649,7 +649,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         }
     }
     else{
-        $action = "1";
+        $action = "1"; 
 
         if ($insert_stmt = $db->prepare("INSERT INTO Weight (transaction_id, transaction_status, weight_type, customer_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, converted_supplier_weight, converted_supplier_weight_unit, order_weight, converted_order_weight, converted_order_weight_unit, customer_code, customer_name, supplier_code, supplier_name,
         product_code, product_name, ex_del, raw_mat_code, raw_mat_name, site_code, site_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1, converted_nett_weight1,
@@ -704,27 +704,27 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
                             if ($isComplete == 'Y' && $isCancel == 'N'){
                                 if($transactionStatus == 'Purchase'){
-                                    $soPoQuantity = $poSupplyWeight;
+                                    $soPoQuantity = $convertedSupplierWeight;
                                     $orderSuppWeight = $supplierWeight;
                                     $prodRawCode = $rawMaterialCode;
                                     $prodRawName = $rawMaterialName;
                                     $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                                 }elseif($transactionStatus == 'Sales'){
-                                    $soPoQuantity = $orderWeight;
+                                    $soPoQuantity = $convertedOrderWeight;
                                     $orderSuppWeight = $nettWeight;
                                     $prodRawCode = $productCode;
                                     $prodRawName = $productName;
                                     $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND product_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                                 }
-
+                
                                 # Weighing Details
                                 $weighing_stmt->bind_param('ssssss', $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant, $id);
                                 $weighing_stmt->execute();
                                 $result = $weighing_stmt->get_result();
-
+                
                                 if ($result->num_rows > 0) {
                                     $orderSuppWeights = 0;
-
+                
                                     while ($row = $result->fetch_assoc()) {
                                         if ($row['transaction_status'] == 'Purchase'){
                                             $orderSuppWeights += $row['supplier_weight'];
@@ -732,7 +732,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                             $orderSuppWeights += $row['nett_weight1'];
                                         }
                                     }
-
+                
                                     $orderSuppWeights = $orderSuppWeights + $orderSuppWeight;
                                     $currentBalance = $soPoQuantity - $orderSuppWeights;
                                 } else {
@@ -741,16 +741,16 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 }
                             
                                 $poSoStatus = ($currentBalance <= 0) ? 'Close' : 'Open';
-        
+                
                                 if ($transactionStatus == 'Purchase'){
                                     $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=?");
                                 }elseif($transactionStatus == 'Sales'){
                                     $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE order_no=? AND product_code=? AND product_name=? AND plant_code=? AND plant_name=?");
                                 }
-        
+                
                                 $updatePoSoStmt->bind_param('sssssss', $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant);
                                 $updatePoSoStmt->execute();
-            
+                
                                 $updatePoSoStmt->close();
                             }
                         }

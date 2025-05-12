@@ -83,7 +83,7 @@ $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-// var_dump($empQuery);
+//var_dump($empQuery);
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
   $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
@@ -101,6 +101,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "transaction_date"=>$row['transaction_date'],
     "customer_code"=>$row['customer_code'],
     "customer_name"=>$row['customer_name'],
+    "supplier_name"=>$row['supplier_name'],
     "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
     "product_code"=>($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
     "product_name"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
@@ -108,7 +109,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "plant_code"=>$row['plant_code'],
     "plant_name"=>$row['plant_name'],
     "delivery_no"=>$row['delivery_no'],
-    "converted_order_weight"=>$row['converted_order_weight'],
+    "order_weight"=>$row['order_weight'],
+    "supplier_weight"=>$row['supplier_weight'],
     "tare_weight1_date"=>$row['tare_weight1_date'],
     "created_date"=>$row['created_date'],
     "created_by"=>$row['created_by'],

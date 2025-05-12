@@ -17,7 +17,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
-$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
+$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0' ORDER BY po_no ASC");
 
 $plantName = '-';
 
@@ -43,7 +43,7 @@ else{
 
 <head>
 
-    <title>Sales Reports | Synctronix - Weighing System</title>
+    <title>Goods Received | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -138,24 +138,24 @@ else{
                                                             <input type="date" class="form-control" data-provider="flatpickr" id="toDateSearch">
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="customerSearchDisplay">
+                                                    <div class="col-3" id="supplierSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select select2" >
+                                                            <label for="supplierSearch" class="form-label">Supplier</label>
+                                                            <select id="supplierSearch" class="form-select" >
                                                                 <option selected>-</option>
-                                                                <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
+                                                                    <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="productSearchDisplay">
+                                                    <div class="col-3" id="rawMatSearchDisplay">
                                                         <div class="mb-3">
-                                                            <label for="productSearch" class="form-label">Product</label>
-                                                            <select id="productSearch" class="form-select select2" >
+                                                            <label for="ForminputState" class="form-label">Raw Material</label>
+                                                            <select id="rawMatSearch" class="form-select" >
                                                                 <option selected>-</option>
-                                                                <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -173,11 +173,11 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="soSearch" class="form-label">Customer P/O No</label>
-                                                            <select id="soSearch" class="form-select select2">
+                                                            <label for="poSearch" class="form-label">PO No</label>
+                                                            <select id="poSearch" class="form-select select2" >
                                                                 <option selected>-</option>
-                                                                <?php while($rowSo = mysqli_fetch_assoc($salesOrder)){ ?>
-                                                                    <option value="<?=$rowSo['order_no'] ?>"><?=$rowSo['order_no'] ?></option>
+                                                                <?php while($rowPo = mysqli_fetch_assoc($purchaseOrder)){ ?>
+                                                                    <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -204,7 +204,7 @@ else{
                                                     <div class="card-header">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Delivery Order Records</h5>
+                                                                <h5 class="card-title mb-0">Goods Received Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <!-- <button type="button" id="exportPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
@@ -226,12 +226,12 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Customer</th>
+                                                                    <th>Supplier</th>
                                                                     <th>Plant</th>
-                                                                    <th>Product</th>
-                                                                    <th>Sales Order</th>
-                                                                    <th>Delivery Date</th>
-                                                                    <th>Total Delivery <br> Amount (KG)</th>
+                                                                    <th>Raw Material</th>
+                                                                    <th>Purchase Order</th>
+                                                                    <th>Received Date</th>
+                                                                    <th>Total Received <br> Amount (KG)</th>
                                                                     <!-- <th>Action</th> -->
                                                                 </tr>
                                                             </thead>
@@ -340,13 +340,13 @@ else{
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
-        var statusI = 'Sales';
+        var statusI = 'Purchase';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
         var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
         var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-        var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
+        var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -366,16 +366,16 @@ else{
                     product: productI,
                     rawMaterial: rawMatI,
                     plant: plantI,
-                    purchaseOrder: soI
+                    purchaseOrder: poI
                 } 
             },
             'columns': [                
-                { data: 'customer_name' },
+                { data: 'supplier_name' },
                 { data: 'plant_name' },
                 { data: 'product_name' },
                 { data: 'purchase_order' },
                 { data: 'tare_weight1_date' },
-                { data: 'order_weight' },
+                { data: 'supplier_weight' },
                 // { 
                 //     data: 'id',
                 //     class: 'action-button',
@@ -403,7 +403,7 @@ else{
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-            var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
+            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -427,16 +427,16 @@ else{
                         product: productI,
                         rawMaterial: rawMatI,
                         plant: plantI,
-                        purchaseOrder: soI
+                        purchaseOrder: poI
                     } 
                 },
                 'columns': [
-                    { data: 'customer_name' },
+                    { data: 'supplier_name' },
                     { data: 'plant_name' },
                     { data: 'product_name' },
                     { data: 'purchase_order' },
                     { data: 'tare_weight1_date' },
-                    { data: 'order_weight' },
+                    { data: 'supplier_weight' },
                     // { 
                     //     data: 'id',
                     //     class: 'action-button',
@@ -471,7 +471,7 @@ else{
                 row.child.hide();
                 tr.removeClass('shown');
             } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', acctType: 'DO' }, function (data) {
+                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', acctType: 'GR' }, function (data) {
                     var obj = JSON.parse(data);
                     if (obj.status === 'success') {
                         row.child(format(obj.message)).show();
@@ -664,9 +664,9 @@ else{
                     <tr>
                         <th>Transaction ID</th>
                         <th>Weight Status</th>
-                        <th>Customer</th>
+                        <th>Supplier</th>
                         <th>Vehicle</th>
-                        <th>Product</th>
+                        <th>Raw Material</th>
                         <th>DO</th>
                         <th>Gross Incoming</th>
                         <th>Incoming Date</th>
@@ -684,9 +684,9 @@ else{
                         <tr>
                             <td>${weights[i].transaction_id}</td>
                             <td>${weights[i].transaction_status}</td>
-                            <td>${weights[i].customer_name}</td>
+                            <td>${weights[i].supplier_name}</td>
                             <td>${weights[i].lorry_plate_no1}</td>
-                            <td>${weights[i].product_name}</td>
+                            <td>${weights[i].raw_mat_name}</td>
                             <td>${weights[i].delivery_no}</td>
                             <td>${weights[i].gross_weight1} KG</td>
                             <td>${weights[i].gross_weight1_date}</td>
