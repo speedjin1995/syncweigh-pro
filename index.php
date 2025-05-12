@@ -686,13 +686,17 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="basicUOM" class="col-sm-4 col-form-label">Converted Order/Supply Weight</label>
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="basicUOM" name="basicUOM" placeholder="0" readonly>
+                                                                                            <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
                                                                                             <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
+                                                                                    <span class="col-sm-4"></span>
+                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
                                                                                 </div>
                                                                             </div> 
                                                                         </div>
@@ -736,21 +740,17 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
+                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
-                                                                                            <div class="input-group-text">KG</div>
+                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
-                                                                                    <span class="col-sm-4"></span>
-                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
-                                                                                </div>
-                                                                            </div> 
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -779,12 +779,12 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
+                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
@@ -838,17 +838,17 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
+                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
@@ -879,12 +879,12 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
@@ -917,17 +917,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>      
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
-                                                                                <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>                   
+                                                                                             
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -989,15 +979,6 @@ else{
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="nettWeight" name="nettWeight" placeholder="0" readonly>
                                                                                     <div class="input-group-text">KG</div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mb-3">
-                                                                            <label for="convertedNettWeight" class="col-sm-4 col-form-label">Converted Nett Weight</label>
-                                                                            <div class="col-sm-8">
-                                                                                <div class="input-group">
-                                                                                    <input type="number" class="form-control input-readonly" id="convertedNettWeight" name="convertedNettWeight" placeholder="0" readonly>
-                                                                                    <div class="input-group-text" id="convertedNettWeightUnit">KG</div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1113,7 +1094,6 @@ else{
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                         <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
-                                                        <input type="hidden" id="orderWeightUnitId" name="orderWeightUnitId">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -2526,8 +2506,6 @@ else{
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
-            $('#addModal').find('#basicUOM').val(0);
-            $('#addModal').find('#basicUOMUnit').val(2);
             $('#addModal').find('#insufficientBalDisplay').hide();
 
             $('#addModal').find('#customerCode').val("");
@@ -3122,104 +3100,96 @@ else{
             $('#currentWeight').trigger('change');
             $('#finalWeight').trigger('change');
 
-            // Logic for Converted UOM
-            var transactionStatus = $('#addModal').find('#transactionStatus').val();
-            var prodRawCode = '';
-            var type = '';
-            if(transactionStatus == 'Sales'){
-                prodRawId = $('#addModal').find('#productName :selected').data('id');
-                type = 'SO';
-            }else if (transactionStatus == 'Purchase'){
-                prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
-                type = 'PO';
-            }
+            // // Logic for Converted UOM
+            // var transactionStatus = $('#addModal').find('#transactionStatus').val();
+            // var prodRawCode = '';
+            // var type = '';
+            // if(transactionStatus == 'Sales'){
+            //     prodRawId = $('#addModal').find('#productName :selected').data('id');
+            //     type = 'SO';
+            // }else if (transactionStatus == 'Purchase'){
+            //     prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
+            //     type = 'PO';
+            // }
 
-            var convertedUnit = $('#addModal').find('#orderWeightUnitId').val();
-            var nettWeight = $('#addModal').find('#nettWeight').val(); console.log(convertedUnit);
+            // var convertedUnit = $('#addModal').find('#orderWeightUnitId').val();
+            // var nettWeight = $('#addModal').find('#nettWeight').val(); console.log(convertedUnit);
 
-            if (prodRawId && convertedUnit && nettWeight){
-                $.post('php/getProdRawMatUOM.php', {userID: prodRawId, unitID: convertedUnit, type: type}, function(data)
-                {
-                    var obj = JSON.parse(data);
-                    if(obj.status === 'success'){
-                        // Processing for order quantity (KG)
-                        var rate = parseFloat(obj.message.rate);
-                        var convertedNettWeight = nettWeight/rate;
+            // if (prodRawId && convertedUnit && nettWeight){
+            //     $.post('php/getProdRawMatUOM.php', {userID: prodRawId, unitID: convertedUnit, type: type}, function(data)
+            //     {
+            //         var obj = JSON.parse(data);
+            //         if(obj.status === 'success'){
+            //             // Processing for order quantity (KG)
+            //             var rate = parseFloat(obj.message.rate);
+            //             var convertedNettWeight = nettWeight/rate;
 
-                        $('#addModal').find('#convertedNettWeight').val(convertedNettWeight);
-                    }
-                    else if(obj.status === 'failed'){
-                        alert(obj.message);
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        alert(obj.message);
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }
+            //             $('#addModal').find('#convertedNettWeight').val(convertedNettWeight);
+            //         }
+            //         else if(obj.status === 'failed'){
+            //             alert(obj.message);
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //         else{
+            //             alert(obj.message);
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //     });
+            // }
 
         });
 
         $('#finalWeight').on('change', function(){
             var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett2 = parseFloat($('#addModal').find('#basicUOM').val());;
+            var nett2 = 0;
 
-            // if($('#transactionStatus').val() == "Purchase"){
-            //     nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
-            // }
-            // else{
-            //     nett2 = parseFloat($('#addModal').find('#orderWeight').val());
-            // }
+            if($('#transactionStatus').val() == "Purchase"){
+                nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
+            }
+            else{
+                nett2 = parseFloat($('#addModal').find('#orderWeight').val());
+            }
             
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
         });
 
         $('#orderWeight').on('change', function(){
-            var orderWeight = $(this).val();
+            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
+            var current = nett1 - nett2;
+            $('#weightDifference').val(current.toFixed(0));
 
-            $('#basicUOM').val(orderWeight).trigger('change');
+            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
 
-            // var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-            // var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            // var current = nett1 - nett2;
-            // $('#weightDifference').val(current.toFixed(0));
-
-            // var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
-
-            // if (previousRecordsTag == 'false'){
-            //     $('#addModal').find('#balance').val($(this).val());
-            //     if ($(this).val() <= 0) {
-            //         $('#addModal').find('#insufficientBalDisplay').hide();
-            //     } else {
-            //         $('#addModal').find('#insufficientBalDisplay').show();
-            //     }
-            // }
+            if (previousRecordsTag == 'false'){
+                $('#addModal').find('#balance').val($(this).val());
+                if ($(this).val() <= 0) {
+                    $('#addModal').find('#insufficientBalDisplay').hide();
+                } else {
+                    $('#addModal').find('#insufficientBalDisplay').show();
+                }
+            }
         });
 
         $('#supplierWeight').on('change', function(){
-            var supplierWeight = $(this).val();
-
-            $('#basicUOM').val(supplierWeight).trigger('change');
-
-            // var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-            // var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            // var current = nett1 - nett2;
-            // $('#weightDifference').val(current.toFixed(0));
+            var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
+            var current = nett1 - nett2;
+            $('#weightDifference').val(current.toFixed(0));
             
-            // var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+            var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
 
-            // if (previousRecordsTag == 'false'){
-            //     $('#addModal').find('#balance').val($(this).val());
-            //     if ($(this).val() <= 0) {
-            //         $('#addModal').find('#insufficientBalDisplay').hide();
-            //     } else {
-            //         $('#addModal').find('#insufficientBalDisplay').show();
-            //     }
-            // }
+            if (previousRecordsTag == 'false'){
+                $('#addModal').find('#balance').val($(this).val());
+                if ($(this).val() <= 0) {
+                    $('#addModal').find('#insufficientBalDisplay').hide();
+                } else {
+                    $('#addModal').find('#insufficientBalDisplay').show();
+                }
+            }
         });
 
         $('#grossIncoming2').on('keyup', function(){
@@ -3450,9 +3420,6 @@ else{
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
                             var balance = obj.message.balance; 
-                            var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
-                            var convertedOrderSupplierUnit = obj.message.converted_order_supplier_unit;
-                            var convertedOrderSupplierUnitId = obj.message.converted_order_supplier_unitId;
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3488,10 +3455,7 @@ else{
                                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                             }
     
-                            $('#addModal').find('#orderWeightUnit').text(convertedOrderSupplierUnit);
-                            $('#addModal').find('#convertedNettWeightUnit').text(convertedOrderSupplierUnit);
-                            $('#addModal').find('#orderWeightUnitId').val(convertedOrderSupplierUnitId);
-                            $('#addModal').find('#orderWeight').val(convertedOrderSupplierWeight).trigger('change');
+                            $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
                             $('#addModal').find('#balance').val(balance);
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
@@ -3569,7 +3533,6 @@ else{
         });
         
         $('#addModal').on('orderLoaded', function(e, data) {
-            var transactionStatus = $('#addModal').find('#transactionStatus').val();
             $('#addModal').find('#customerCode').val(data.customer_code);
             $('#addModal').find('#customerName').val(data.customer_name).trigger('change');
             $('#addModal').find('#supplierCode').val(data.supplier_code);
@@ -3580,13 +3543,6 @@ else{
             $('#addModal').find('#agentCode').val(data.agent_code);
             $('#addModal').find('#supplierWeight').val(data.supplier_weight);
             $('#addModal').find('#orderWeight').val(data.order_weight);
-            if (transactionStatus == 'Sales'){
-                $('#addModal').find('#basicUOM').val(data.converted_order_weight);
-                $('#addModal').find('#basicUOMUnit').val(data.converted_order_weight_unit).trigger('change');
-            }else{
-                $('#addModal').find('#basicUOM').val(data.converted_supplier_weight);
-                $('#addModal').find('#basicUOMUnit').val(data.converted_supplier_weight_unit).trigger('change');
-            }
             $('#addModal').find('#destinationCode').val(data.destination_code);
             $('#addModal').find('#destination').val(data.destination).trigger('change');
             $('#addModal').find('#plant').val(data.plant_name).trigger('change');
@@ -3709,9 +3665,6 @@ else{
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
                             var balance = obj.message.balance;
-                            var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
-                            var convertedOrderSupplierUnit = obj.message.converted_order_supplier_unit;
-                            var convertedOrderSupplierUnitId = obj.message.converted_order_supplier_unitId;
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3742,16 +3695,12 @@ else{
                             }
     
                             if (exDel == 'E') {
-                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                             } else {
-                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                             }
                             
-                            $('#addModal').find('#supplierWeightUnit').text(convertedOrderSupplierUnit);
-                            $('#addModal').find('#convertedNettWeightUnit').text(convertedOrderSupplierUnit);
-                            $('#addModal').find('#poSupplyWeightUnit').text(convertedOrderSupplierUnit);
-                            $('#addModal').find('#orderWeightUnitId').val(convertedOrderSupplierUnitId);
-                            $('#addModal').find('#poSupplyWeight').val(convertedOrderSupplierWeight);
+                            $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                             $('#addModal').find('#balance').val(balance);
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
@@ -3773,9 +3722,9 @@ else{
                 }*/
             }
             else{
-                if (!soPoTag && !addNewTag){
-                    getSoPo();
-                }
+                // if (!soPoTag && !addNewTag){
+                //     getSoPo();
+                // }
             }
         });
 
@@ -3882,99 +3831,99 @@ else{
         });
 
         //basicUOM
-        $('#basicUOM').on('change', function(){
-            var value = $(this).val();
-            var transactionStatus = $('#transactionStatus').val();
-            var unit = $('#orderWeightUnitId').val();
-            var prodRawMatCode = '';
+        // $('#basicUOM').on('change', function(){
+        //     var value = $(this).val();
+        //     var transactionStatus = $('#transactionStatus').val();
+        //     var unit = $('#orderWeightUnitId').val();
+        //     var prodRawMatCode = '';
 
-            if (transactionStatus == 'Purchase'){
-                prodRawMatCode = $('#rawMaterialName :selected').data('id');
-            }else{
-                prodRawMatCode = $('#productName :selected').data('id');
-            }
+        //     if (transactionStatus == 'Purchase'){
+        //         prodRawMatCode = $('#rawMaterialName :selected').data('id');
+        //     }else{
+        //         prodRawMatCode = $('#productName :selected').data('id');
+        //     }
             
-            if (unit == 2){
-                $('#basicUOM').val(value);
-                var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-                var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
-                var current = nett1 - nett2;
-                $('#weightDifference').val(current.toFixed(0));
+        //     if (unit == 2){
+        //         $('#basicUOM').val(value);
+        //         var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+        //         var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
+        //         var current = nett1 - nett2;
+        //         $('#weightDifference').val(current.toFixed(0));
 
-                var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+        //         var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
 
-                if (previousRecordsTag == 'false'){
-                    $('#addModal').find('#balance').val($(this).val());
-                    if ($(this).val() <= 0) {
-                        $('#addModal').find('#insufficientBalDisplay').hide();
-                    } else {
-                        $('#addModal').find('#insufficientBalDisplay').show();
-                    }
-                }
-            }else{
-                // Call to backend to get conversion rate
-                if (value && prodRawMatCode){
-                    if (transactionStatus == 'Purchase'){
-                        $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'PO'}, function(data)
-                        {
-                            var obj = JSON.parse(data);
-                            if(obj.status === 'success'){
-                                var rate = parseFloat(obj.message.rate);
-                                var orderQty = value/rate;
+        //         if (previousRecordsTag == 'false'){
+        //             $('#addModal').find('#balance').val($(this).val());
+        //             if ($(this).val() <= 0) {
+        //                 $('#addModal').find('#insufficientBalDisplay').hide();
+        //             } else {
+        //                 $('#addModal').find('#insufficientBalDisplay').show();
+        //             }
+        //         }
+        //     }else{
+        //         // Call to backend to get conversion rate
+        //         if (value && prodRawMatCode){
+        //             if (transactionStatus == 'Purchase'){
+        //                 $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'PO'}, function(data)
+        //                 {
+        //                     var obj = JSON.parse(data);
+        //                     if(obj.status === 'success'){
+        //                         var rate = parseFloat(obj.message.rate);
+        //                         var orderQty = value/rate;
 
-                                $('#basicUOM').val(orderQty);
-                            }
-                            else if(obj.status === 'failed'){
-                                alert(obj.message);
-                                $("#failBtn").attr('data-toast-text', obj.message );
-                                $("#failBtn").click();
-                            }
-                            else{
-                                alert(obj.message);
-                                $("#failBtn").attr('data-toast-text', obj.message );
-                                $("#failBtn").click();
-                            }
-                        });
-                    }else{
-                        $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'SO'}, function(data)
-                        {
-                            var obj = JSON.parse(data);
-                            if(obj.status === 'success'){
-                                var rate = parseFloat(obj.message.rate);
-                                var orderQty = value/rate;
+        //                         $('#basicUOM').val(orderQty);
+        //                     }
+        //                     else if(obj.status === 'failed'){
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                     else{
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                 });
+        //             }else{
+        //                 $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'SO'}, function(data)
+        //                 {
+        //                     var obj = JSON.parse(data);
+        //                     if(obj.status === 'success'){
+        //                         var rate = parseFloat(obj.message.rate);
+        //                         var orderQty = value/rate;
 
-                                $('#basicUOM').val(orderQty);
-                                var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
-                                var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
-                                var current = nett1 - nett2;
-                                $('#weightDifference').val(current.toFixed(0));
+        //                         $('#basicUOM').val(orderQty);
+        //                         var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+        //                         var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
+        //                         var current = nett1 - nett2;
+        //                         $('#weightDifference').val(current.toFixed(0));
 
-                                var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+        //                         var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
 
-                                if (previousRecordsTag == 'false'){
-                                    $('#addModal').find('#balance').val($(this).val());
-                                    if ($(this).val() <= 0) {
-                                        $('#addModal').find('#insufficientBalDisplay').hide();
-                                    } else {
-                                        $('#addModal').find('#insufficientBalDisplay').show();
-                                    }
-                                }
-                            }
-                            else if(obj.status === 'failed'){
-                                alert(obj.message);
-                                $("#failBtn").attr('data-toast-text', obj.message );
-                                $("#failBtn").click();
-                            }
-                            else{
-                                alert(obj.message);
-                                $("#failBtn").attr('data-toast-text', obj.message );
-                                $("#failBtn").click();
-                            }
-                        });
-                    }
-                }
-            }
-        });
+        //                         if (previousRecordsTag == 'false'){
+        //                             $('#addModal').find('#balance').val($(this).val());
+        //                             if ($(this).val() <= 0) {
+        //                                 $('#addModal').find('#insufficientBalDisplay').hide();
+        //                             } else {
+        //                                 $('#addModal').find('#insufficientBalDisplay').show();
+        //                             }
+        //                         }
+        //                     }
+        //                     else if(obj.status === 'failed'){
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                     else{
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                 });
+        //             }
+        //         }
+        //     }
+        // });
 
         <?php
             if(isset($_GET['weight'])){
