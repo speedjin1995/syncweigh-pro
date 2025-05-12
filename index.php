@@ -1629,29 +1629,19 @@ else{
         });
 
         //Date picker
-        <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today,
-                minDate: today
-            });';
-        }
-        else{
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today
-            });';
-        }
-        ?>
+        $('#fromDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: ''
+        });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: today
+            defaultDate: ''
         });
 
         $('#transactionDate').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: today
+            defaultDate: ''
         });
 
         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
