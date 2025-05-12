@@ -66,8 +66,14 @@
                                 <a href="salesOrder.php" class="nav-link"><?=$lang['t-so']?></a>
                             </li>
                             <li class="nav-item">
+                                <a href="deliveryOrder.php" class="nav-link"><?=$lang['t-do']?></a>
+                            </li>   
+                            <li class="nav-item">
                                 <a href="purchaseOrder.php" class="nav-link"><?=$lang['t-po']?></a>
-                            </li>               
+                            </li>  
+                            <li class="nav-item">
+                                <a href="goodsReceived.php" class="nav-link"><?=$lang['t-gr']?></a>
+                            </li>             
                         </ul>
                     </div>
                 </li>

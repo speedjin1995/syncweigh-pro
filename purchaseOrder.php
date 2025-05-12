@@ -387,13 +387,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="convertedOrderQty" name="convertedOrderQty" required>
-                                                                                            <div class="input-group-text">
-                                                                                                <select class="form-control" style="width: 100%;" id="convertedQtyUnit" name="convertedQtyUnit" required>
-                                                                                                    <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
-                                                                                                        <option value="<?=$rowUnit['id'] ?>" data-unit="<?=$rowUnit['unit']?>"><?=$rowUnit['unit'] ?></option>
-                                                                                                    <?php } ?>
-                                                                                                </select>
-                                                                                            </div>
+                                                                                            <div class="input-group-text" id="convertedQtyUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -404,7 +398,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="balance" name="balance" required readonly>
-                                                                                            <div class="input-group-text" id="balanceUnit">Kg</div>
+                                                                                            <div class="input-group-text" id="balanceUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -415,7 +409,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="orderQty" name="orderQty" required readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -426,7 +420,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="convertedBal" name="convertedBal" required readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -464,7 +458,8 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                             <input type="hidden" class="form-control" id="destinationName" name="destinationName">                                                                   
                                                                             <input type="hidden" class="form-control" id="rawMatName" name="rawMatName">                    
                                                                             <input type="hidden" class="form-control" id="plantName" name="plantName">                                               
-                                                                            <input type="hidden" class="form-control" id="transporterName" name="transporterName">                                               
+                                                                            <input type="hidden" class="form-control" id="transporterName" name="transporterName">
+                                                                            <input type="hidden" class="form-control" id="convertedOrderQtyUnit" name="convertedOrderQtyUnit">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1025,7 +1020,8 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#convertedOrderQty').val("");
-            $('#addModal').find('#convertedQtyUnit').val(2);
+            $('#addModal').find('#convertedQtyUnit').val("KG");
+            $('#addModal').find('#convertedOrderQtyUnit').val('');
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#balanceUnit').text("KG");
             $('#addModal').find('#orderQty').val("");
@@ -1131,8 +1127,35 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#rawMat').on('change', function(){
             $('#rawMatName').val($('#rawMat :selected').data('name'));
+            var rawMatCode = $(this).val();
 
-            $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+            if (rawMatCode){
+                $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, type: 'PO', action: 'getBasicUOM'}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        // Change Basic UOM
+                        var basicUom = obj.message.basic_uom;
+
+                        $('#convertedQtyUnit').text(basicUom);
+                        $('#balanceUnit').text(basicUom);
+                        $('#convertedOrderQtyUnit').val(obj.message.basic_uom_id);
+                        $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }else{
+                $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+            }
         });
 
         $('#plant').on('change', function(){
@@ -1179,27 +1202,24 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#convertedOrderQty').on('change', function(){
             var convertedOrderWeight = parseFloat($(this).val());
-            var convertedUnit = $('#convertedQtyUnit').val();
-            var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
+            var rawMatCode = $('#rawMat :selected').data('id');
+            var unitId = $('#convertedOrderQtyUnit').val(); 
 
-            $('#balanceUnit').text(convertedUnitName);
-            $('#balance').val(convertedOrderWeight);
+            $('#balance').val(convertedOrderWeight); // update balance value
 
-            if (convertedUnit == 2){
+            if (unitId == 2){
                 $('#orderQty').val(convertedOrderWeight);
                 $('#convertedBal').val(convertedOrderWeight);
             }else{
                 // Call to backend to get conversion rate
-                var rawMatCode = $('#rawMat :selected').data('id');
-
-                if (rawMatCode && convertedUnit && convertedOrderWeight){
-                    $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, unitID: convertedUnit, type: 'PO'}, function(data)
+                if (rawMatCode && convertedOrderWeight){
+                    $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, type: 'PO'}, function(data)
                     {
                         var obj = JSON.parse(data);
                         if(obj.status === 'success'){
                             // Processing for order quantity (KG)
                             var rate = parseFloat(obj.message.rate);
-                            var orderQty = convertedOrderWeight * rate;
+                            var orderQty = convertedOrderWeight/rate;
 
                             $('#orderQty').val(orderQty).trigger('change');
                             $('#convertedBal').val(orderQty);

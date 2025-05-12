@@ -10,7 +10,9 @@
 
     $lang["t-accounting"]="Accounting";
     $lang["t-so"]="Sales Order";
+    $lang["t-do"]="Delivery Order";
     $lang["t-po"]="Purchase Order";
+    $lang["t-gr"]="Goods Received";
 
     $lang["t-masterdata"]="Master Data";
     $lang["t-customer"]="Customer";
