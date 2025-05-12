@@ -1629,29 +1629,19 @@ else{
         });
 
         //Date picker
-        <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today,
-                minDate: today
-            });';
-        }
-        else{
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today
-            });';
-        }
-        ?>
+        $('#fromDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: ''
+        });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: today
+            defaultDate: ''
         });
 
         $('#transactionDate').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: today
+            defaultDate: ''
         });
 
         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
@@ -4098,6 +4088,18 @@ else{
                 if(obj.message.weight_type == 'Container' && obj.message.container_no){
                     loadContainerData(function() {
                         $('#normalCard').show();
+
+                        // Check if container value exist in the select tag
+                        var emptyContainerExists = $('#addModal').find('#emptyContainerNo option').filter(function() {
+                            return $(this).val() === obj.message.container_no;
+                        }).length > 0;
+
+                        if (!emptyContainerExists){
+                            // Append missing empty container no
+                            $('#addModal').find('#emptyContainerNo').append(
+                                '<option value="'+obj.message.container_no+'">'+obj.message.container_no+'</option>'
+                            );
+                        }
 
                         // Callback to ensure the dropdown is updated before setting the value
                         $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).select2('destroy').select2();
