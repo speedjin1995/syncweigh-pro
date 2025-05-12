@@ -4099,6 +4099,18 @@ else{
                     loadContainerData(function() {
                         $('#normalCard').show();
 
+                        // Check if container value exist in the select tag
+                        var emptyContainerExists = $('#addModal').find('#emptyContainerNo option').filter(function() {
+                            return $(this).val() === obj.message.container_no;
+                        }).length > 0;
+
+                        if (!emptyContainerExists){
+                            // Append missing empty container no
+                            $('#addModal').find('#emptyContainerNo').append(
+                                '<option value="'+obj.message.container_no+'">'+obj.message.container_no+'</option>'
+                            );
+                        }
+
                         // Callback to ensure the dropdown is updated before setting the value
                         $('#addModal').find('#emptyContainerNo').val(obj.message.container_no).select2('destroy').select2();
 
