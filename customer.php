@@ -128,7 +128,19 @@
                                                                                 <div class="row">
                                                                                     <label for="companyRegNo" class="col-sm-4 col-form-label">Company Reg No</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" placeholder="Company Reg No">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-4">
+                                                                                                <input type="text" class="form-control" id="companyRegNo" name="companyRegNo">
+                                                                                            </div>
+                                                                                            <div class="col-sm-8">
+                                                                                                <div class="row">
+                                                                                                    <label for="newRegNo" class="col-sm-4 col-form-label">New Reg No</label>
+                                                                                                    <div class="col-sm-8">
+                                                                                                        <input type="text" class="form-control" id="newRegNo" name="newRegNo" required>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -136,7 +148,7 @@
                                                                                 <div class="row">
                                                                                     <label for="companyName" class="col-sm-4 col-form-label">Company Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Customer Code">
+                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Customer Name">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -177,6 +189,30 @@
                                                                                     <label for="faxNo" class="col-sm-4 col-form-label">Fax No</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="faxNo" name="faxNo" placeholder="Fax No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="contactName" class="col-sm-4 col-form-label">Contact Name</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="contactName" name="contactName" placeholder="Contact Name">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="icNo" class="col-sm-4 col-form-label">I/C No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="icNo" name="icNo" placeholder="I/C No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="tinNo" class="col-sm-4 col-form-label">Tin No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="tinNo" name="tinNo" placeholder="Tin No">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -229,12 +265,16 @@
                                                                 <tr>
                                                                     <th>Customer Code</th>
                                                                     <th>Company Reg No</th>
+                                                                    <th>New Reg No</th>
                                                                     <th>Company Name</th>
                                                                     <th>Address Line 1</th>
                                                                     <th>Address Line 2</th>
                                                                     <th>Address Line 3</th>
                                                                     <th>Phone No</th>
                                                                     <th>Fax No</th>
+                                                                    <th>Contact Name</th>
+                                                                    <th>I/C No</th>
+                                                                    <th>Tin No</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -310,12 +350,16 @@ $(function () {
         'columns': [
             { data: 'customer_code' },
             { data: 'company_reg_no' },
+            { data: 'new_reg_no' },
             { data: 'name' },
             { data: 'address_line_1' },
             { data: 'address_line_2' },
             { data: 'address_line_3' },
             { data: 'phone_no' },
             { data: 'fax_no' },
+            { data: 'contact_name' },
+            { data: 'ic_no' },
+            { data: 'tin_no' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -364,11 +408,15 @@ $(function () {
         $('#addModal').find('#customerCode').val("");
         $('#addModal').find('#companyName').val("");
         $('#addModal').find('#companyRegNo').val("");
+        $('#addModal').find('#newRegNo').val("");
         $('#addModal').find('#addressLine1').val("");
         $('#addModal').find('#addressLine2').val("");
         $('#addModal').find('#addressLine3').val("");
         $('#addModal').find('#phoneNo').val("");
         $('#addModal').find('#faxNo').val("");
+        $('#addModal').find('#contactName').val("");
+        $('#addModal').find('#icNo').val("");
+        $('#addModal').find('#tinNo').val("");
         $('#addModal').modal('show');
         
         $('#customerForm').validate({
@@ -397,11 +445,15 @@ $(function () {
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
                 $('#addModal').find('#companyName').val(obj.message.name);
                 $('#addModal').find('#companyRegNo').val(obj.message.company_reg_no);
+                $('#addModal').find('#newRegNo').val(obj.message.new_reg_no);
                 $('#addModal').find('#addressLine1').val(obj.message.address_line_1);
                 $('#addModal').find('#addressLine2').val(obj.message.address_line_2);
                 $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
                 $('#addModal').find('#phoneNo').val(obj.message.phone_no);
                 $('#addModal').find('#faxNo').val(obj.message.fax_no);
+                $('#addModal').find('#contactName').val(obj.message.contact_name);
+                $('#addModal').find('#icNo').val(obj.message.ic_no);
+                $('#addModal').find('#tinNo').val(obj.message.tin_no);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
@@ -442,19 +494,19 @@ $(function () {
         });
     }
 
-$('#customerForm').validate({
-    errorElement: 'span',
-    errorPlacement: function (error, element) {
-      error.addClass('invalid-feedback');
-      element.closest('.form-group').append(error);
-    },
-    highlight: function (element, errorClass, validClass) {
-      $(element).addClass('is-invalid');
-    },
-    unhighlight: function (element, errorClass, validClass) {
-      $(element).removeClass('is-invalid');
-    }
-  });
+    $('#customerForm').validate({
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+        }
+    });
 </script>
     </body>
 
