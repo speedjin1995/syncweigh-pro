@@ -511,8 +511,8 @@ $(function () {
     $('input[name="exDel"]').change(function() {
         var exDel = $('input[name="exDel"]:checked').val();
         if (exDel == 'true'){ //ex-quarry
-            $('#transporter').val('Own Transportation').trigger('change');
-            $('#transporter').val('Own Transportation').attr('disabled', true);
+            $('#transporter').val('OWN TRANSPORTATION').trigger('change');
+            $('#transporter').val('OWN TRANSPORTATION').attr('disabled', true);
             $('#customer').val('').attr('disabled', false).trigger('change');
         }else{ // delivered
             $('#transporter').val('').attr('disabled', false).trigger('change');
