@@ -255,7 +255,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     </td>
                                     <td style="vertical-align: top;">
                                         <p style="vertical-align: top; margin-left:50px;">
-                                            <span style="font-size: 16px; font-weight: bold;">'. $transacationStatus .' Slip</span><br>
+                                            <span style="font-size: 16px; font-weight: bold;">'. $transacationStatus .' Slip</span><br><br>
                                             <span style="font-size: 14px;">Ticket No: <b style="font-size: 14px;">'.$row['transaction_id'].'</b></span><br>
                                             <span style="font-size: 14px;">D/O No: '.$row['delivery_no'].'</span><br>
                                             <span style="font-size: 14px;">P/O No: '.$row['purchase_order'].'</span><br>
@@ -346,13 +346,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
                                     $message .= '
                                         <tr>
-                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['product_code'].' - '.$row['product_name'].'</td>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code : '.$row['product_code'].'</td>
                                         </tr>
                                     ';
                                 }else{
                                     $message .= '
                                         <tr>
-                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code : '.$row['raw_mat_code'].'</td>
                                         </tr>
                                     ';
                                 }
@@ -381,12 +381,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <td style="border:1px solid black;font-size: 14px;text-align: center;">'.formatWeight($row['nett_weight2']).' kg</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4">Remarks: <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
+                                        <td colspan="4"></td>
                                         <td style="border:1px solid black;font-size: 14px;text-align: center;">Final Weight</td>
                                         <td style="border:1px solid black;font-size: 14px;text-align: center;">'.formatWeight(abs((int)$row['nett_weight1'] - (int)$row['nett_weight2'])).' kg</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4"></td>
+                                        <td colspan="4">Remarks: <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
                                         <td style="border:1px solid black;font-size: 14px;text-align: center;">Reduce Weight</td>
                                         <td style="border:1px solid black;font-size: 14px;text-align: center;">'.formatWeight($row['reduce_weight']).' kg</td>
                                     </tr>
@@ -414,13 +414,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
                                     $message .= '
                                         <tr>
-                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['product_code'].' - '.$row['product_name'].'</td>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code : '.$row['product_code'].'</td>
                                         </tr>
                                     ';
                                 }else{
                                     $message .= '
                                         <tr>
-                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code/Name : '.$row['raw_mat_code'].' - '.$row['raw_mat_name'].'</td>
+                                            <td colspan="6" style="border:1px solid black; text-align: left; font-size: 14px;">Product Code : '.$row['raw_mat_code'].'</td>
                                         </tr>
                                     ';
                                 }

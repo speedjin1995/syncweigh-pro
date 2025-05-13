@@ -1908,7 +1908,7 @@ else{
                         if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
                             buttons += `
                             <div class="col-auto">
-                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data}, 'Y')" class="btn btn-danger btn-sm">
                                     <i class="fa fa-times"></i>
                                 </button>
                             </div>`;
@@ -2463,6 +2463,7 @@ else{
                     
                     if(obj.status === 'success'){
                         table.ajax.reload();
+                        emptyContainerTable.ajax.reload();
                         $('#spinnerLoading').hide();
                         $('#cancelModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);
@@ -2783,7 +2784,7 @@ else{
                             if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
                                 buttons += `
                                 <div class="col-auto">
-                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data}, 'Y')" class="btn btn-danger btn-sm">
                                         <i class="fa fa-times"></i>
                                     </button>
                                 </div>`;
