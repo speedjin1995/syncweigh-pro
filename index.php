@@ -1246,17 +1246,17 @@ if ($user != null && $user != ''){
         // Date picker
         $('#fromDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: yesterday
+            defaultDate: ''
         });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: today
+            defaultDate: ''
         });
 
         $('#transactionDate').flatpickr({
             dateFormat: "d-m-Y",
-            defaultDate: today
+            defaultDate: ''
         });
 
         $('#selectAllCheckbox').on('change', function() {
