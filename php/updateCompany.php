@@ -9,17 +9,24 @@ if(!isset($_SESSION['id'])){
 	$username = $_SESSION["username"];
 }
 
-if(isset($_POST['companyRegNo'], $_POST['companyName'], $_POST['companyAddress'], $_POST['companyPhone'])){
-	$companyRegNo = filter_input(INPUT_POST, 'companyRegNo', FILTER_SANITIZE_STRING);
+if(isset($_POST['newRegNo'], $_POST['companyName'], $_POST['companyAddress'], $_POST['companyPhone'])){
+	$newRegNo = filter_input(INPUT_POST, 'newRegNo', FILTER_SANITIZE_STRING);
 	$companyName = filter_input(INPUT_POST, 'companyName', FILTER_SANITIZE_STRING);
 	$companyAddress = filter_input(INPUT_POST, 'companyAddress', FILTER_SANITIZE_STRING);
 	$companyPhone = filter_input(INPUT_POST, 'companyPhone', FILTER_SANITIZE_STRING);
+	$companyRegNo = null;
 	$companyAddress2 = null;
 	$companyAddress3 = null;
 	$companyFax = null;
+	$companyMobileNo = null;
+	$companyTinNo = null;
 	$today = date("Y-m-d H:i:s");
 	$id = '1';
 	$action = '2';
+
+	if($_POST['companyRegNo'] != null && $_POST['companyRegNo'] != ""){
+		$companyRegNo = filter_input(INPUT_POST, 'companyRegNo', FILTER_SANITIZE_STRING);
+	}
 
 	if($_POST['companyAddress2'] != null && $_POST['companyAddress2'] != ""){
 		$companyAddress2 = filter_input(INPUT_POST, 'companyAddress2', FILTER_SANITIZE_STRING);
@@ -33,14 +40,22 @@ if(isset($_POST['companyRegNo'], $_POST['companyName'], $_POST['companyAddress']
 		$companyFax = filter_input(INPUT_POST, 'companyFax', FILTER_SANITIZE_STRING);
 	}
 
-	if ($stmt2 = $db->prepare("UPDATE Company SET company_reg_no=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, name=?, modified_date=?, modified_by=? WHERE id=?")) {
-		$stmt2->bind_param('ssssssssss', $companyRegNo, $companyAddress, $companyAddress2, $companyAddress3, $companyPhone, $companyFax, $companyName, $today, $username, $id);
+	if($_POST['companyMobileNo'] != null && $_POST['companyMobileNo'] != ""){
+		$companyMobileNo = filter_input(INPUT_POST, 'companyMobileNo', FILTER_SANITIZE_STRING);
+	}
+
+	if($_POST['companyTinNo'] != null && $_POST['companyTinNo'] != ""){
+		$companyTinNo = filter_input(INPUT_POST, 'companyTinNo', FILTER_SANITIZE_STRING);
+	}
+
+	if ($stmt2 = $db->prepare("UPDATE Company SET company_reg_no=?, new_reg_no=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, mobile_no=?, tin_no=?, name=?, modified_date=?, modified_by=? WHERE id=?")) {
+		$stmt2->bind_param('sssssssssssss', $companyRegNo, $newRegNo, $companyAddress, $companyAddress2, $companyAddress3, $companyPhone, $companyFax, $companyMobileNo, $companyTinNo, $companyName, $today, $username, $id);
 		
 		if($stmt2->execute()){
 			$stmt2->close();
 
-			if ($log_insert_stmt = $db->prepare("INSERT INTO Company_Log (company_id, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by, event_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-				$log_insert_stmt->bind_param('sssssssssss', $id, $companyRegNo, $companyName, $companyAddress, $companyAddress2, $companyAddress3, $companyPhone, $companyFax, $action, $username, $today);
+			if ($log_insert_stmt = $db->prepare("INSERT INTO Company_Log (company_id, company_reg_no, new_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, mobile_no, tin_no, action_id, action_by, event_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+				$log_insert_stmt->bind_param('ssssssssssssss', $id, $companyRegNo, $newRegNo, $companyName, $companyAddress, $companyAddress2, $companyAddress3, $companyPhone, $companyFax, $companyMobileNo, $companyTinNo, $action, $username, $today);
 			
 
 				if (! $log_insert_stmt->execute()) {

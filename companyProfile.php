@@ -8,20 +8,23 @@ require_once "layouts/config.php";
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = '1';
-$stmt2 = $link->prepare("SELECT company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no from Company where id = ?");
+$stmt2 = $link->prepare("SELECT company_reg_no, new_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, tin_no, mobile_no from Company where id = ?"); 
 mysqli_stmt_bind_param($stmt2, "s", $id);
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
-mysqli_stmt_bind_result($stmt2, $company_reg_no, $name, $address_line_1, $address_line_2, $address_line_3, $phone_no, $fax_no);
+mysqli_stmt_bind_result($stmt2, $company_reg_no, $new_reg_no, $name, $address_line_1, $address_line_2, $address_line_3, $phone_no, $fax_no, $tin_no, $mobile_no);
 
 if (mysqli_stmt_fetch($stmt2)) {
     $usercompany_reg_no = $company_reg_no;
+    $usernew_reg_no = $new_reg_no;
     $username = $name;
     $useraddress_line_1 = $address_line_1;
     $useraddress_line_2 = $address_line_2;
     $useraddress_line_3 = $address_line_3;
     $userphone_no = $phone_no;
     $userfax_no = $fax_no;
+    $usertin_no = $tin_no;
+    $usermobile_no = $mobile_no;
 }
 ?>
 
@@ -58,9 +61,21 @@ if (mysqli_stmt_fetch($stmt2)) {
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <label for="companyRegNo" class="col-sm-4 col-form-label">Company Reg No. *</label>
+                                                    <label for="companyRegNo" class="col-sm-4 col-form-label">Company Reg No</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" placeholder="Company Reg No" value="<?=$usercompany_reg_no ?>" required>
+                                                        <div class="row">
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" value="<?=$usercompany_reg_no ?>">
+                                                            </div>
+                                                            <div class="col-sm-8">
+                                                                <div class="row">
+                                                                    <label for="newRegNo" class="col-sm-4 col-form-label">New Reg No *</label>
+                                                                    <div class="col-sm-8">
+                                                                        <input type="text" class="form-control" id="newRegNo" name="newRegNo"  value="<?=$usernew_reg_no ?>" required>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -106,12 +121,28 @@ if (mysqli_stmt_fetch($stmt2)) {
                                             </div>
                                             <div class="col-12">
                                                 <div class="row">
+                                                    <label for="companyMobileNo" class="col-sm-4 col-form-label">Company Mobile No</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyMobileNo" name="companyMobileNo" placeholder="Company Mobile No" value="<?=$usermobile_no ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="companyTinNo" class="col-sm-4 col-form-label">Company Tin No</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="companyTinNo" name="companyTinNo" placeholder="Company Tin No" value="<?=$usertin_no ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="col-12">
+                                                <div class="row">
                                                     <label for="companyFax" class="col-sm-4 col-form-label">Fax No.</label>
                                                     <div class="col-sm-8">
                                                         <input type="text" class="form-control" id="companyFax" name="companyFax" placeholder="Company Fax" value="<?=$userfax_no ?>">
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <div class="mt-4">
                                                 <button class="btn btn-success w-100" type="submit">Update</button>
                                             </div>
