@@ -29,11 +29,14 @@ if(isset($_POST['userID'], $_POST["file"])){
     if ($row = $result1->fetch_assoc()) {
         $compname = $row['name'];
         $compreg = $row['company_reg_no'];
+        $compnewreg = $row['company_reg_no'];
         $compaddress = $row['address_line_1'];
         $compaddress2 = $row['address_line_2'];
         $compaddress3 = $row['address_line_3'];
         $compphone = $row['phone_no'];
         $compiemail = $row['fax_no'];
+        $compmobileno = $row['mobile_no'];
+        $comptinno = $row['tin_no'];
     }
 
     if($_POST["file"] == 'weight'){
@@ -57,11 +60,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                 if ($row = $result->fetch_assoc()) {
                     $customer = '';
                     $customerR = '';
+                    $customerNR = '';
                     $customerP = '';
                     $customerA = '';
                     $customerA2 = '';
                     $customerA3 = '';
                     $customerE = '';
+                    $customerCN = '';
+                    $customerIC = '';
+                    $customerTN = '';
 
                     $product = '';
                     $price = '';
@@ -73,10 +80,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $inDate = date('h:i:s A', strtotime(explode(' ', $row['gross_weight1_date'])[1]));
                     $outDate = date('h:i:s A', strtotime(explode(' ', $row['tare_weight1_date'])[1]));
                     
-                    if($row['transaction_status'] == 'Sales'){
+                    if($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'MISC'){
                         $cid = $row['customer_code'];
                     
-                        if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=?")) {
+                        if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
                             $update_stmt->bind_param('s', $cid);
                             
                             // Execute the prepared query.
@@ -86,11 +93,16 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 if ($row2 = $result2->fetch_assoc()) {
                                     $customer = $row2['name'];
                                     $customerR = $row2['company_reg_no'] ?? '';
+                                    $customerNR = $row2['new_reg_no'] ?? '';
                                     $customerP = $row2['phone_no'] ?? '-';
                                     $customerA = $row2['address_line_1'];
                                     $customerA2 = $row2['address_line_2'];
                                     $customerA3 = $row2['address_line_3'];
                                     $customerE = $row2['fax_no'] ?? '-';
+                                    $customerCN = $row2['contact_name'] ?? '';
+                                    $customerIC = $row2['ic_no'] ?? '';
+                                    $customerTN = $row2['tin_no'] ?? '';
+                
                                 }
                             }
                         }
@@ -98,7 +110,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     else{
                         $cid = $row['supplier_code'];
                     
-                        if ($update_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=?")) {
+                        if ($update_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
                             $update_stmt->bind_param('s', $cid);
                             
                             // Execute the prepared query.
@@ -108,11 +120,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 if ($row2 = $result2->fetch_assoc()) {
                                     $customer = $row2['name'];
                                     $customerR = $row2['company_reg_no'] ?? '';
+                                    $customerNR = $row2['new_reg_no'] ?? '';
                                     $customerP = $row2['phone_no'] ?? '-';
                                     $customerA = $row2['address_line_1'];
                                     $customerA2 = $row2['address_line_2'];
                                     $customerA3 = $row2['address_line_3'];
                                     $customerE = $row2['fax_no'] ?? '-';
+                                    $customerCN = $row2['contact_name'] ?? '';
+                                    $customerIC = $row2['ic_no'] ?? '';
+                                    $customerTN = $row2['tin_no'] ?? '';
                                 }
                             }
                         }
@@ -299,8 +315,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                     </head>
                     <body>
                         <h2>'.$compname.'</h2>
-                        <p>'.$compaddress.' '.$compaddress2.' '.$compaddress3.'</p>
-                        <p>Tel: +6'.$compphone.'</p>
+                        <p>Co.Registration No: '.$compnewreg.'('.$compreg.') / Tin No: '.$comptinno.'<br>
+                        '.$compaddress.' '.$compaddress2.' '.$compaddress3.'<br>
+                        Tel: +6'.$compphone.'<br>
+                        Mobile No: +6'.$compmobileno.'</p>
                         <hr>
                         
                         <div class="container">
@@ -312,19 +330,19 @@ if(isset($_POST['userID'], $_POST["file"])){
                         }else{
                             $message .= '<tr><td class="label">Customer</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
                         }
-                        
-                    
 
-
-                        $message .= '<tr><td class="label">Address</td><td>:</td><td class="value">'.$customerA.'<br> '.$customerA2.'<br> '.$customerA3.'</td></tr>
+                        $message .= '
+                                <tr><td class="label">BRN/IC</td><td>:</td><td class="value">'.$customerIC.'</td></tr>
+                                <tr><td class="label">Tin No</td><td>:</td><td class="value">'.$customerTN.'</td></tr>
+                                <tr><td class="label">Address</td><td>:</td><td class="value">'.$customerA.'<br> '.$customerA2.'<br> '.$customerA3.'</td></tr>
                                 <tr><td class="label">Contact</td><td>:</td><td class="value">Tel: +6'.$customerP.' | Fax: +6'.$customerE.'</td></tr>
                             </table>
                             <table class="info-table right-section">
                                 <tr><td class="label">Weight Status</td><td>:</td><td class="value">'.$row['transaction_status'].'</td></tr>
                                 <tr><td class="label">Weight No</td><td>:</td><td class="value">'.$row['transaction_id'].'</td></tr>
                                 <tr><td class="label">Weight Date</td><td>:</td><td class="value">'.$date.'</td></tr>
-                                <tr><td class="label">Weight Time</td><td>:</td><td class="value">'.$time.'</td></tr>
                                 <tr><td class="label">Vehicle Plate</td><td>:</td><td class="value">'.$row['lorry_plate_no1'].'</td></tr>
+                                <tr style="visibility:hidden"><td class="label">Weight Time</td><td>:</td><td class="value">'.$time.'</td></tr>
                             </table>
                         </div>
                         <br>
