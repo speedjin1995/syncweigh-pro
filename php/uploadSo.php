@@ -58,11 +58,9 @@ if (!empty($data)) {
             $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
         }
         $ExOrQuarry = (isset($rows['DOCREF1']) && !empty($rows['DOCREF1']) && $rows['DOCREF1'] !== '' && $rows['DOCREF1'] !== null) ? trim($rows['DOCREF1']) : '';
-        $OrderQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
-        $unit = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? trim($rows['UOM']) : '';
-        if ($unit == 'MT'){
-            $OrderQuantity = (float)$OrderQuantity * 1000;
-        }
+        $ConvertedOrderQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
+        $ConvertedBalance = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
+        $ConvertedUnitId = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? searchUnitIdByCode(trim($rows['UOM']), $db) : '';
         $PlantCode = (isset($rows['PROJECT']) && !empty($rows['PROJECT']) && $rows['PROJECT'] !== '' && $rows['PROJECT'] !== null) ? trim($rows['PROJECT']) : '';
         $PlantName = '';
         if (!empty($PlantCode)) {
@@ -273,6 +271,7 @@ if (!empty($data)) {
         }
 
         # Product Checking & Processing
+        $productId = '';
         if($ProductCode != null && $ProductCode != ''){
             $productQuery = "SELECT * FROM Product WHERE product_code = '$ProductCode'";
             $productDetail = mysqli_query($db, $productQuery);
@@ -295,6 +294,24 @@ if (!empty($data)) {
                 $errMsg = "Product: ".$ProductCode." doesn't exist in master data.";
                 $errorSoProductArray[] = $errMsg;
                 continue;
+            }else{
+                $productId = $productRow['id'];
+            }
+        }
+
+        //Checking to pull rate in product
+        $OrderQuantity = 0;
+        if (isset($productId) && !empty($productId)){
+            $productUomQuery = "SELECT * FROM Product_UOM WHERE product_id = '$productId' AND unit_id = '2' AND status = '0'";
+            $productUomDetail = mysqli_query($db, $productUomQuery);
+            $productUomRow = mysqli_fetch_assoc($productUomDetail);
+
+            if (empty($productUomRow)){
+                $errMsg = "Product UOM for product code: ".$ProductCode." and UOM: KG doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
+            }else{                
+                $OrderQuantity = $ConvertedOrderQuantity / $productUomRow['rate'];
             }
         }
 
@@ -315,16 +332,14 @@ if (!empty($data)) {
 
                 $TotalPrice = 0;
                 if (isset($UnitPrice) && !empty($UnitPrice) && isset($OrderQuantity) && !empty($OrderQuantity)){
-                    if ($unit == 'MT'){
-                        $orderQtyMt = $OrderQuantity/1000;
-                    }
+                    $orderQtyMt = $OrderQuantity/1000;
                     $TotalPrice = $UnitPrice * $orderQtyMt;
                 }
                 
                 $system = 'SYSTEM';
 
-                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, order_date, order_no, so_no, agent_code, agent_name, destination_code, destination_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $ProductCode, $ProductName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrQuarry, $OrderQuantity, $OrderQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
+                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, order_date, order_no, so_no, agent_code, agent_name, destination_code, destination_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $ProductCode, $ProductName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrQuarry, $ConvertedOrderQuantity, $ConvertedBalance, $ConvertedUnitId, $OrderQuantity, $OrderQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }
