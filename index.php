@@ -1472,6 +1472,7 @@ else{
     let isEdit = false;
     let salesOption = $('#salesOrder option').clone();
     let purchaseOption = $('#purchaseOrder option').clone();
+    let transporterOption = $('#transporter option').clone();
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -2663,11 +2664,12 @@ else{
 
                     if (obj.status == 'success'){
                         if (obj.message.length > 0){
-                            if (obj.message.length > 1){
+                            if (obj.message.length > 1){ 
                                 $('#addModal').find('#transporter').empty();
                                 $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
 
                                 var deliveredTransporter;
+                                var hasValidTransporter = false; // Flag to check if any valid transporter exists
 
                                 for (var i = 0; i < obj.message.length; i++) {
                                     var customerName = obj.message[i].customer_name;
@@ -2684,9 +2686,17 @@ else{
                                         $('#addModal').find('#customerName').val(customerName).trigger('change');
                                     }*/
 
-                                    $('#addModal').find('#transporter').append(
-                                        `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
-                                    );  
+                                    if (transporterName) {
+                                        hasValidTransporter = true;
+                                        $('#addModal').find('#transporter').append(
+                                            `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
+                                        );
+                                    }
+                                }
+
+                                if (!hasValidTransporter){
+                                    $('#addModal').find('#transporter').empty();
+                                    $('#addModal').find('#transporter').append(transporterOption);
                                 }
 
                                 $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
@@ -2697,6 +2707,9 @@ else{
                                 var customerCode = obj.message[0].customer_code;
                                 var transporterName = obj.message[0].transporter_name;
                                 var transporterCode = obj.message[0].transporter_code;
+
+                                $('#addModal').find('#transporter').empty();
+                                $('#addModal').find('#transporter').append(transporterOption);
 
                                 if (exDel == 'EX'){
                                     $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
@@ -2869,6 +2882,7 @@ else{
                                     $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
 
                                     var deliveredTransporter;
+                                    var hasValidTransporter = false; // Flag to check if any valid transporter exists
 
                                     for (var i = 0; i < obj.message.length; i++) {
                                         var customerName = obj.message[i].customer_name;
@@ -2885,9 +2899,17 @@ else{
                                             $('#addModal').find('#customerName').val(customerName).trigger('change');
                                         }*/
 
-                                        $('#addModal').find('#transporter').append(
-                                            `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
-                                        );  
+                                        if (transporterName) {
+                                            hasValidTransporter = true;
+                                            $('#addModal').find('#transporter').append(
+                                                `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
+                                            );
+                                        }
+                                    }
+
+                                    if (!hasValidTransporter){
+                                        $('#addModal').find('#transporter').empty();
+                                        $('#addModal').find('#transporter').append(transporterOption);
                                     }
 
                                     $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
@@ -2898,6 +2920,9 @@ else{
                                     var customerCode = obj.message[0].customer_code;
                                     var transporterName = obj.message[0].transporter_name;
                                     var transporterCode = obj.message[0].transporter_code;
+
+                                    $('#addModal').find('#transporter').empty();
+                                    $('#addModal').find('#transporter').append(transporterOption);
 
                                     if (exDel == 'EX'){
                                         $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
