@@ -198,7 +198,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2) + coun
                     </span>
                 </button>
 
-                <h1><?=$compname ?></h1>
+                <h3><?=$compname ?></h3>
             </div>
 
             <div class="d-flex align-items-center">
