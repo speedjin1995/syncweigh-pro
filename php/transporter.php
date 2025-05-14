@@ -31,6 +31,12 @@ if (isset($_POST['transporterCode'])) {
         $companyRegNo = trim($_POST["companyRegNo"]);
     }
 
+    if (empty($_POST["newRegNo"])) {
+        $newRegNo = null;
+    } else {
+        $newRegNo = trim($_POST["newRegNo"]);
+    }
+
     if (empty($_POST["companyName"])) {
         $companyName = null;
     } else {
@@ -66,14 +72,32 @@ if (isset($_POST['transporterCode'])) {
     } else {
         $faxNo = trim($_POST["faxNo"]);
     }
+
+    if (empty($_POST["contactName"])) {
+        $contactName = null;
+    } else {
+        $contactName = trim($_POST["contactName"]);
+    }
+
+    if (empty($_POST["icNo"])) {
+        $icNo = null;
+    } else {
+        $icNo = trim($_POST["icNo"]);
+    }
+
+    if (empty($_POST["tinNo"])) {
+        $tinNo = null;
+    } else {
+        $tinNo = trim($_POST["tinNo"]);
+    }
     
     if(! empty($transporterId))
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Transporter SET transporter_code=?, company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Transporter SET transporter_code=?, company_reg_no=?, new_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, contact_name=?, ic_no=?, tin_no=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssss', $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $username, $username, $transporterId);
+            $update_stmt->bind_param('sssssssssssssss', $transporterCode, $companyRegNo, $newRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $contactName, $icNo, $tinNo, $username, $username, $transporterId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -86,8 +110,8 @@ if (isset($_POST['transporterCode'])) {
             }
             else{
 
-                if ($insert_stmt = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssss', $transporterId, $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, new_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, contact_name, ic_no, tin_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssssssssssss', $transporterId, $transporterCode, $companyRegNo, $newRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $contactName, $icNo, $tinNo, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -125,8 +149,8 @@ if (isset($_POST['transporterCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Transporter (transporter_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssss', $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Transporter (transporter_code, company_reg_no, new_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, contact_name, ic_no, tin_no, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssssssssssss', $transporterCode, $companyRegNo, $newRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $contactName, $icNo, $tinNo, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -149,8 +173,8 @@ if (isset($_POST['transporterCode'])) {
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssssssssss', $totalRecords, $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, new_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, contact_name, ic_no, tin_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('sssssssssssssss', $totalRecords, $transporterCode, $companyRegNo, $newRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $contactName, $icNo, $tinNo, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {
