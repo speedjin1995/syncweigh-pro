@@ -552,6 +552,7 @@ $(function () {
                     // alert(obj.message);
                     // $("#failBtn").attr('data-toast-text', obj.message );
                     // $("#failBtn").click();
+                    $('#customerTable').DataTable().ajax.reload(null, false);
                     $('#errorModal').find('#errorList').empty();
                     var errorMessage = obj.message;
                     for (var i = 0; i < errorMessage.length; i++) {

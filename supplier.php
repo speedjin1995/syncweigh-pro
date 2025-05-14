@@ -510,7 +510,7 @@ $(function () {
                     $('#uploadModal').modal('hide');
                     $("#successBtn").attr('data-toast-text', obj.message);
                     $("#successBtn").click();
-                    $('#customerTable').DataTable().ajax.reload(null, false);
+                    $('#supplierTable').DataTable().ajax.reload(null, false);
                 } 
                 else if (obj.status === 'failed') {
                     $('#spinnerLoading').hide();
@@ -523,6 +523,7 @@ $(function () {
                     // alert(obj.message);
                     // $("#failBtn").attr('data-toast-text', obj.message );
                     // $("#failBtn").click();
+                    $('#supplierTable').DataTable().ajax.reload(null, false);
                     $('#errorModal').find('#errorList').empty();
                     var errorMessage = obj.message;
                     for (var i = 0; i < errorMessage.length; i++) {
