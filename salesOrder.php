@@ -19,6 +19,9 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 ?>
 
@@ -57,11 +60,11 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 
 <?php include 'layouts/body.php'; ?>
 
-<!-- <div class="loading" id="spinnerLoading" style="display:none">
+<div class="loading" id="spinnerLoading" style="display:none">
   <div class='mdi mdi-loading' style='transform:scale(0.79);'>
     <div></div>
   </div>
-</div> -->
+</div>
 
 <!-- Begin page -->
 <div id="layout-wrapper">
@@ -184,6 +187,17 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                             </select>
                                                         </div>
                                                     </div><!--end col--> 
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="soSearch" class="form-label">Customer P/O No</label>
+                                                            <select id="soSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <?php while($rowSo = mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                    <option value="<?=$rowSo['order_no'] ?>"><?=$rowSo['order_no'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col--> 
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -256,7 +270,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                                 <div class="row">
                                                                                     <label for="orderDate" class="col-sm-4 col-form-label">Order Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="orderDate" name="orderDate">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="orderDate" name="orderDate" required>
                                                                                         <div class="invalid-feedback">
                                                                                             Please fill in the field.
                                                                                         </div>    
@@ -312,7 +326,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                                         <select class="form-control select2" style="width: 100%;" id="product" name="product" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                                                                                                <option value="<?=$rowProduct['product_code'] ?>" data-name="<?=$rowProduct['name'] ?>"><?=$rowProduct['name'] ?></option>
+                                                                                                <option value="<?=$rowProduct['product_code'] ?>" data-name="<?=$rowProduct['name'] ?>" data-id="<?=$rowProduct['id'] ?>"><?=$rowProduct['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -370,12 +384,61 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Order Quantity</label>
+                                                                                    <label for="convertedOrderQty" class="col-sm-4 col-form-label">Order Quantity</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <input type="number" class="form-control" id="convertedOrderQty" name="convertedOrderQty" required>
+                                                                                            <div class="input-group-text" id="convertedQtyUnit">KG</div>
                                                                                         </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="balance" name="balance" required readonly>
+                                                                                            <div class="input-group-text" id="balanceUnit">KG</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="orderQty" class="col-sm-4 col-form-label">Converted Order Quantity</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="orderQty" name="orderQty" required readonly>
+                                                                                            <div class="input-group-text">KG</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="convertedBal" class="col-sm-4 col-form-label">Converted Balance</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="convertedBal" name="convertedBal" required readonly>
+                                                                                            <div class="input-group-text">KG</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="unitPrice" name="unitPrice" placeholder="Unit Price">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="totalPrice" name="totalPrice" readonly>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -397,6 +460,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                             <input type="hidden" class="form-control" id="productName" name="productName">
                                                                             <input type="hidden" class="form-control" id="plantName" name="plantName">
                                                                             <input type="hidden" class="form-control" id="transporterName" name="transporterName">                                               
+                                                                            <input type="hidden" class="form-control" id="convertedOrderQtyUnit" name="convertedOrderQtyUnit">                                               
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -434,7 +498,24 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>                                                                
+                                    </div>   
+                                    <div class="modal fade" id="errorModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-gray-dark color-palette">
+                                                    <h4 class="modal-title">Error Log</h4>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <ol id="errorList" class="text-danger mt-2" style="padding-left: 20px;"></ol>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                                             
                                 </div>
                             </div> <!-- end row-->
 
@@ -465,6 +546,10 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-file-add-line align-middle me-1"></i>
+                                                                    Pull From SQL
+                                                                </button>
                                                                 <button type="button" id="addSalesOrder" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New S/O
@@ -476,8 +561,8 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Company Code</th>
-                                                                    <th>Company Name</th>
+                                                                    <!-- <th>Company Code</th>
+                                                                    <th>Company Name</th> -->
                                                                     <th>Customer Code</th>
                                                                     <th>Customer Name</th>
                                                                     <th>Plant Code</th>
@@ -489,6 +574,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                                                                     <th>Order Date</th>
                                                                     <th>EXQ/DEL</th>
                                                                     <th>Balance</th>
+                                                                    <th>Status</th>
                                                                     <th>Modified Date</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -577,13 +663,11 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             defaultDate: ''
         });
 
-        $('.select2').each(function() {
-            $(this).select2({
-                allowClear: true,
-                placeholder: "Please Select",
-                // Conditionally set dropdownParent based on the element’s location
-                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
-            });
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
         });
 
         // Apply custom styling to Select2 elements in addModal
@@ -606,6 +690,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -625,15 +710,19 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     plant: plantI,
                     customer: customerNoI,
                     product: productI,
+                    soNo: soI
                 } 
             },
             'columns': [
+                // { 
+                //     data: 'company_code',
+                //     class: 'company_column'
+                // },
+                // { data: 'company_name' },
                 { 
-                    data: 'company_code',
-                    class: 'company_column'
+                    data: 'customer_code',
+                    class: 'customer_column' 
                 },
-                { data: 'company_name' },
-                { data: 'customer_code' },
                 { data: 'customer_name' },
                 { data: 'plant_code' },
                 { data: 'plant_name' },
@@ -644,6 +733,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
                 { data: 'balance' },
+                { data: 'status' },
                 { data: 'modified_date' },
                 {
                     data: 'id',
@@ -690,6 +780,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -713,15 +804,19 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                         plant: plantI,
                         customer: customerNoI,
                         product: productI,
+                        soNo: soI
                     } 
                 },
                 'columns': [
+                    // { 
+                    //     data: 'company_code',
+                    //     class: 'company_column'
+                    // },
+                    // { data: 'company_name' },
                     { 
-                        data: 'company_code',
-                        class: 'company_column'
+                        data: 'customer_code',
+                        class: 'customer_column' 
                     },
-                    { data: 'company_name' },
-                    { data: 'customer_code' },
                     { data: 'customer_name' },
                     { data: 'plant_code' },
                     { data: 'plant_name' },
@@ -732,6 +827,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
                     { data: 'balance' },
+                    { data: 'status' },
                     { data: 'modified_date' },
                     {
                         data: 'id',
@@ -775,7 +871,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('company_column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('customer_column') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -832,12 +928,14 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     else if(obj.status === 'failed')
                     {
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message);
                         $("#failBtn").click();
                     }
                     else
                     {
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message);
                         $("#failBtn").click();
                     }
@@ -880,11 +978,27 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                     } 
                     else if (obj.status === 'failed') {
                         $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message );
                         $("#failBtn").click();
                     } 
+                    else if (obj.status === 'error') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        // alert(obj.message);
+                        // $("#failBtn").attr('data-toast-text', obj.message );
+                        // $("#failBtn").click();
+                        $('#errorModal').find('#errorList').empty();
+                        var errorMessage = obj.message;
+                        for (var i = 0; i < errorMessage.length; i++) {
+                            $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                        }
+                        $('#errorModal').modal('show');
+                    } 
                     else {
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', 'Failed to save');
                         $("#failBtn").click();
                     }
@@ -907,7 +1021,15 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             $('#addModal').find('#transporter').val("").trigger('change');
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
+            $('#addModal').find('#convertedOrderQty').val("");
+            $('#addModal').find('#convertedQtyUnit').val("KG");
+            $('#addModal').find('#convertedOrderQtyUnit').val('');
+            $('#addModal').find('#balance').val("");
+            $('#addModal').find('#balanceUnit').text("KG");
             $('#addModal').find('#orderQty').val("");
+            $('#addModal').find('#convertedBal').val("");
+            $('#addModal').find('#unitPrice').val("");
+            $('#addModal').find('#totalPrice').val("");
             $('#addModal').find('#remarks').val("");
             
             // Remove Validation Error Message
@@ -1007,6 +1129,35 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
         
         $('#product').on('change', function(){
             $('#productName').val($('#product :selected').data('name'));
+            var productCode = $(this).val();
+
+            if (productCode){
+                $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO', action: 'getBasicUOM'}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        // Change Basic UOM
+                        var basicUom = obj.message.basic_uom;
+
+                        $('#convertedQtyUnit').text(basicUom);
+                        $('#balanceUnit').text(basicUom);
+                        $('#convertedOrderQtyUnit').val(obj.message.basic_uom_id);
+                        $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }else{
+                $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+            }
         });
         
         $('#plant').on('change', function(){
@@ -1017,6 +1168,122 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             $('#transporterName').val($('#transporter :selected').data('name'));
         });
 
+        $('#exDel').on('change', function(){
+            var exDel = $(this).val();
+
+            if (exDel == 'E'){
+                $('#transporter').val('T01').trigger('change');
+            }else{
+                $('#transporter').val('').trigger('change');
+            }
+        });
+
+        $('#orderQty').on('change', function(){
+            var orderWeight = parseFloat($(this).val())/1000;
+            var unitPrice = parseFloat($('#unitPrice').val());
+            var totalPrice = (unitPrice * orderWeight).toFixed(2);
+            
+            $('#totalPrice').val(totalPrice);
+        });
+
+        $('#convertedQtyUnit').on('change', function(){
+            var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
+
+            $('#balanceUnit').text(convertedUnitName);
+            $('#convertedOrderQty').trigger('change');
+        });
+
+        $('#convertedOrderQty').on('change', function(){
+            var convertedOrderWeight = parseFloat($(this).val());
+            var productCode = $('#product :selected').data('id');
+            var unitId = $('#convertedOrderQtyUnit').val(); 
+
+            $('#balance').val(convertedOrderWeight); // update balance value
+
+            if (unitId == 2){
+                $('#orderQty').val(convertedOrderWeight);
+                $('#convertedBal').val(convertedOrderWeight);
+            }else{
+                // Call to backend to get conversion rate
+                if (productCode && convertedOrderWeight){
+                    $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
+                    {
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            // Processing for order quantity (KG)
+                            var rate = parseFloat(obj.message.rate);
+                            var orderQty = convertedOrderWeight/rate;
+
+                            $('#orderQty').val(orderQty).trigger('change');
+                            $('#convertedBal').val(orderQty);
+                        }
+                        else if(obj.status === 'failed'){
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        });
+
+
+        $('#unitPrice').on('change', function(){
+            var unitPrice = parseFloat($(this).val());
+            var orderWeight = parseFloat($('#orderQty').val())/1000;
+            var totalPrice = (unitPrice * orderWeight).toFixed(2);
+            
+            $('#totalPrice').val(totalPrice);
+        });
+
+
+        $('#pullSql').on('click', function(){
+            $('#spinnerLoading').show();
+            // Send the JSON array to the server
+            $.ajax({
+                url: 'php/pullSalesOrder.php',
+                type: 'POST',
+                contentType: 'application/json',
+                success: function(response) {
+                    var obj = JSON.parse(response);
+                    if (obj.status === 'success') {
+                        $('#spinnerLoading').hide();
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                        window.location.reload();
+                    } 
+                    else if (obj.status === 'failed') {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        alert(obj.message);
+                    } 
+                    else if (obj.status === 'error') {
+                        $('#spinnerLoading').hide();
+                        $('#uploadModal').modal('hide');
+                        // alert(obj.message);
+                        // $("#failBtn").attr('data-toast-text', obj.message );
+                        // $("#failBtn").click();
+                        $('#errorModal').find('#errorList').empty();
+                        var errorMessage = obj.message;
+                        for (var i = 0; i < errorMessage.length; i++) {
+                            $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                        }
+                        $('#errorModal').modal('show');
+                    } 
+                    else {
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                }
+            });
+        });
     });
 
     function format (row) {
@@ -1031,6 +1298,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 <p><strong>DESTINATION:</strong> ${row.destination_code} - ${row.destination_name}</p>
                 <p><strong>PRODUCT:</strong> ${row.product_code} - ${row.product_name}</p>
                 <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
+                <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
                 <p><strong>REMARKS:</strong> ${row.remarks}</p>
             </div>
             <div class="col-6">
@@ -1039,9 +1307,10 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 <p><strong>S/O ORDER:</strong> ${row.so_no}</p>
                 <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter_name}</p>
                 <p><strong>VEHICLE NO:</strong> ${row.veh_number}</p>
-                <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
                 <p><strong>ORDER QUANTITY:</strong> ${row.order_quantity} KG</p>
                 <p><strong>BALANCE:</strong> ${row.balance} KG</p>
+                <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
+                <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
             </div>
         </div>`;
 
@@ -1095,7 +1364,7 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
     function edit(id){
         $('#spinnerLoading').show();
         $.post('php/getSalesOrder.php', {userID: id}, function(data)
-        {
+        { 
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
@@ -1113,6 +1382,11 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
+                $('#addModal').find('#balance').val(obj.message.convertedBal);
+                $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
+                $('#addModal').find('#convertedQtyUnit').val(obj.message.converted_unit).trigger('change');
+                $('#addModal').find('#unitPrice').val(obj.message.unit_price);
+                $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
 
                 // Remove Validation Error Message
@@ -1144,11 +1418,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
             }
             else if(obj.status === 'failed'){
                 $('#spinnerLoading').hide();
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
             else{
                 $('#spinnerLoading').hide();
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
@@ -1170,11 +1446,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message);
                     $("#failBtn").click();
                 }
                 else{
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 }
@@ -1196,11 +1474,13 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message);
                     $("#failBtn").click();
                 }
                 else{
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 }
@@ -1285,10 +1565,12 @@ $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
                 }, 500);
             }
             else if(obj.status === 'failed'){
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
             else{
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', "Something wrong when print");
                 $("#failBtn").click();
             }

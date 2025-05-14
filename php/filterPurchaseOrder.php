@@ -51,6 +51,10 @@ if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMa
 	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
 }
 
+if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
+	$searchQuery .= " and po_no = '".$_POST['poNo']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (
     company_code like '%".$searchValue."%' or 
@@ -99,11 +103,11 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "raw_mat_name"=>$row['raw_mat_name'],
     "order_no"=>$row['order_no'],
     "po_no"=>$row['po_no'],
-    "order_date"=> DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y'),
+    "order_date" => !empty($row["order_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y') : '',
     "exquarry_or_delivered"=>$row['exquarry_or_delivered'],
     "balance"=>$row['balance'],
     "status"=>$row['status'],
-    "modified_date"=>DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y'),
+    "modified_date" => !empty($row["modified_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y') : ''
   );
 }
 

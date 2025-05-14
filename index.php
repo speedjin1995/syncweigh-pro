@@ -55,7 +55,7 @@ if ($user != null && $user != ''){
 
 
 //$lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$vehicles = $db->query("SELECT DISTINCT veh_number FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
 $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
@@ -66,8 +66,11 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
-$purchaseOrder = $db->query("SELECT * FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
-$salesOrder = $db->query("SELECT * FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
+$purchaseOrder2 = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE status = 'Open' AND deleted = '0' ORDER BY po_no ASC");
+$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
+$salesOrder2 = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE status = 'Open' AND deleted = '0' ORDER BY order_no ASC");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
@@ -278,6 +281,28 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
+                                                    <div class="col-3" id="soSearchDisplay">
+                                                        <div class="mb-3">
+                                                            <label for="soSearch" class="form-label">Customer P/O No</label>
+                                                            <select id="soSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowSo=mysqli_fetch_assoc($salesOrder2)){ ?>
+                                                                    <option value="<?=$rowSo['order_no'] ?>"><?=$rowSo['order_no'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3" id="poSearchDisplay" style="display:none">
+                                                        <div class="mb-3">
+                                                            <label for="poSearch" class="form-label">PO No</label>
+                                                            <select id="poSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPo=mysqli_fetch_assoc($purchaseOrder2)){ ?>
+                                                                    <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -392,7 +417,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
-                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="indicatorWeight">0</span> Kg</h2>
+                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="indicatorWeight">0</span> KG</h2>
                                                                                     </div>
                                                                                     <!--div class="connected-align">
                                                                                         <div class="input-group-text color-palette" id="indicatorConnected"><i>Indicator Connected</i></div>
@@ -418,7 +443,7 @@ else{
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
-                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="currentWeight">0</span> Kg</h2>
+                                                                                        <h2 class="mt-4 ff-secondary fw-semibold display-3 text-white"><span class="counter-value" id="currentWeight">0</span> KG</h2>
                                                                                     </div>
                                                                                     <div>
                                                                                         <div class="avatar-sm flex-shrink-0">
@@ -448,26 +473,28 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divPurchaseOrder">
-                                                                                <div class="row">
-                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
-                                                                                    <div class="col-sm-8" id="poSelect">
-                                                                                        <select class="form-select js-choice select2" id="purchaseOrder" name="purchaseOrder" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
-                                                                                                <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
-                                                                                        <input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;">
-                                                                                    </div>
-                                                                                    <div class="col-sm-8" id="soSelect">
-                                                                                        <select class="form-select js-choice select2" id="salesOrder" name="salesOrder" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
-                                                                                                <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
-                                                                                        <input type="text" class="form-control" id="salesOrderEdit" name="salesOrderEdit" disabled style="display:none;">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row mb-3">
+                                                                                    <label for="vehiclePlateNo1" class="col-sm-4 col-form-label">Vehicle Plate No.</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <div class="input-group-text">
+                                                                                                <input class="form-check-input mt-0" id="manualVehicle" name="manualVehicle" type="checkbox" value="0" aria-label="Checkbox for following text input">
+                                                                                            </div>
+                                                                                            <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
+                                                                                            <div class="col-10 index-vehicle">
+                                                                                                <select class="form-select select2" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
+                                                                                                    <option selected="-">-</option>
+                                                                                                    <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
+                                                                                                        <option value="<?=$row2['veh_number'] ?>"><?=$row2['veh_number'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                                <input type="text" class="form-control" id="vehiclePlateNo1Edit" name="vehiclePlateNo1Edit" hidden>
+                                                                                            </div>
+                                                                                            <div class="invalid-feedback">
+                                                                                                Please fill in the field.
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -477,7 +504,7 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text" id="orderWeightUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -488,14 +515,14 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <div class="input-group-text" id="supplierWeightUnit">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>  
                                                                         </div>
                                                                         <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
                                                                                     <div class="col-sm-8">
@@ -506,6 +533,50 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none">
+                                                                                <div class="row">
+                                                                                    <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="containerNo" name="containerNo" placeholder="Container No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divPurchaseOrder">
+                                                                                <div class="row">
+                                                                                    <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
+                                                                                    <div class="col-sm-8" id="poSelect">
+                                                                                        <select class="form-select js-choice select2" id="purchaseOrder" name="purchaseOrder" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
+                                                                                                <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                        <!--input type="text" class="form-control" id="purchaseOrderEdit" name="purchaseOrderEdit" disabled style="display:none;"-->
+                                                                                    </div>
+                                                                                    <div class="col-sm-8" id="soSelect">
+                                                                                        <select class="form-select js-choice select2" id="salesOrder" name="salesOrder" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                                                <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                        <!--input type="text" class="form-control" id="salesOrderEdit" name="salesOrderEdit" disabled style="display:none;"-->
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divPoSupplyWeight">
+                                                                                <div class="row">
+                                                                                    <label for="poSupplyWeight" class="col-sm-4 col-form-label">P/O Supply Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="poSupplyWeight" name="poSupplyWeight" placeholder="P/O Supply Weight" readonly>
+                                                                                            <div class="input-group-text" id="poSupplyWeightUnit">KG</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div> 
+                                                                        </div>
+                                                                        <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="customerType" class="col-sm-4 col-form-label">Customer Type</label>
@@ -518,24 +589,61 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="containerNo" class="col-sm-4 col-form-label">Container No</label>
+                                                                                <div class="row" id="productNameDisplay">
+                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="containerNo" name="containerNo" placeholder="Container No">
+                                                                                        <select class="form-select select2" id="productName" name="productName" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
+                                                                                                <option 
+                                                                                                    value="<?=$rowProduct['name'] ?>" 
+                                                                                                    data-id="<?=$rowProduct['id'] ?>" 
+                                                                                                    data-price="<?=$rowProduct['price'] ?>" 
+                                                                                                    data-code="<?=$rowProduct['product_code'] ?>" 
+                                                                                                    data-high="<?=$rowProduct['high'] ?>" 
+                                                                                                    data-low="<?=$rowProduct['low'] ?>" 
+                                                                                                    data-variance="<?=$rowProduct['variance'] ?>" 
+                                                                                                    data-description="<?=$rowProduct['description'] ?>">
+                                                                                                    <?=$rowProduct['name'] ?>
+                                                                                                </option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divPoSupplyWeight">
+                                                                                <div class="row" id="rawMaterialDisplay" style="display:none;">
+                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                                                                                                <option value="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>"><?=$rowRawMat['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>           
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
                                                                                 <div class="row">
-                                                                                    <label for="poSupplyWeight" class="col-sm-4 col-form-label">P/O Supply Weight</label>
+                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="poSupplyWeight" name="poSupplyWeight" placeholder="P/O Supply Weight" readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div> 
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <div class="input-group-text">KG</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -572,32 +680,25 @@ else{
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                 <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>                                                                                        
+                                                                                        </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
+                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
-                                                                                            <div class="input-group-text">Kg</div>
+                                                                                            <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
+                                                                                </div>
+                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
+                                                                                    <span class="col-sm-4"></span>
+                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
                                                                                 </div>
                                                                             </div> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Reduce Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -611,39 +712,34 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" id="productNameDisplay">
-                                                                                    <label for="productName" class="col-sm-4 col-form-label">Product Name</label>
+                                                                                <div class="row">
+                                                                                    <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="productName" name="productName" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowProduct=mysqli_fetch_assoc($product)){ ?>
-                                                                                                <option 
-                                                                                                    value="<?=$rowProduct['name'] ?>" 
-                                                                                                    data-price="<?=$rowProduct['price'] ?>" 
-                                                                                                    data-code="<?=$rowProduct['product_code'] ?>" 
-                                                                                                    data-high="<?=$rowProduct['high'] ?>" 
-                                                                                                    data-low="<?=$rowProduct['low'] ?>" 
-                                                                                                    data-variance="<?=$rowProduct['variance'] ?>" 
-                                                                                                    data-description="<?=$rowProduct['description'] ?>">
-                                                                                                    <?=$rowProduct['name'] ?>
-                                                                                                </option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                        
+                                                                                        <div class="form-check align-radio mr-2">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualEx" value="true">
+                                                                                            <label class="form-check-label" for="manualEx">
+                                                                                               Ex-Quarry
+                                                                                            </label>
+                                                                                        </div>
+
+                                                                                        <div class="form-check align-radio">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualDel" value="false" checked>
+                                                                                            <label class="form-check-label" for="manualDel">
+                                                                                               Delivered
+                                                                                            </label>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="row" id="rawMaterialDisplay" style="display:none;">
-                                                                                    <label for="rawMaterialName" class="col-sm-4 col-form-label">Raw Material</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowRowMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>           
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div> 
+                                                                            </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
                                                                                 <div class="row">
                                                                                     <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
@@ -655,14 +751,18 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                             
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="invoiceNo" class="col-sm-4 col-form-label">Invoice No</label>
+                                                                                    <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="invoiceNo" name="invoiceNo" placeholder="Invoice No">
+                                                                                        <select class="form-select select2" id="agent" name="agent" >
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
+                                                                                                <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>                                                                                         
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -690,46 +790,6 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="agent" class="col-sm-4 col-form-label">Sales Representative</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="agent" name="agent" >
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
-                                                                                                <option value="<?=$rowAgent['name'] ?>" data-code="<?=$rowAgent['agent_code'] ?>"><?=$rowAgent['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                         
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select select2" id="destination" name="destination" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>            
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
-                                                                                <div class="row">
-                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
-                                                                                            <div class="input-group-text">RM</div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>  
-                                                                            
                                                                         </div>
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" style="display:none;">
@@ -767,38 +827,31 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
+                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <div class="form-check align-radio mr-2">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualEx" value="true">
-                                                                                            <label class="form-check-label" for="manualEx">
-                                                                                               Ex-Quarry
-                                                                                            </label>
-                                                                                        </div>
-
-                                                                                        <div class="form-check align-radio">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualDel" value="false" checked>
-                                                                                            <label class="form-check-label" for="manualDel">
-                                                                                               Delivered
-                                                                                            </label>
-                                                                                        </div>
+                                                                                        <select class="form-select select2" id="destination" name="destination" required>
+                                                                                            <option selected="-">-</option>
+                                                                                            <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
+                                                                                                <option value="<?=$rowDestination['name'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>            
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="subTotalPriceDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <label for="subTotalPrice" class="col-sm-4 col-form-label">Sub-Total Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="subTotalPrice" name="subTotalPrice" placeholder="0" readonly>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                            </div> 
                                                                         </div>
                                                                         <div class="row">
-                                                                        <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="doDisplay">
                                                                                 <div class="row">
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
@@ -826,6 +879,19 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="totalPriceDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control input-readonly" id="totalPrice" name="totalPrice" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">RM</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>  
+                                                                        </div>
+                                                                        <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
@@ -838,20 +904,6 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="balance" class="col-sm-4 col-form-label">Balance</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly text-danger" id="balance" name="balance" placeholder="0" readonly>   
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="row mt-2" id="insufficientBalDisplay" style="display:none;">
-                                                                                    <span class="col-sm-4"></span>
-                                                                                    <label class="col-sm-8 text-danger">Insufficient Balance</label>
-                                                                                </div>
-                                                                            </div>   
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="siteName" class="col-sm-4 col-form-label">Project</label>
@@ -864,7 +916,8 @@ else{
                                                                                         </select>        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>                         
+                                                                            </div>      
+                                                                                             
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -874,31 +927,6 @@ else{
                                                             <div class="col-xxl-4 col-lg-4">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
-                                                                        <div class="row mb-3">
-                                                                            <label for="vehiclePlateNo1" class="col-sm-4 col-form-label">
-                                                                                Vehicle Plate No.
-                                                                            </label>
-                                                                            <div class="col-sm-8">
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-text">
-                                                                                        <input class="form-check-input mt-0" id="manualVehicle" name="manualVehicle" type="checkbox" value="0" aria-label="Checkbox for following text input">
-                                                                                    </div>
-                                                                                    <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
-                                                                                    <div class="col-10 index-vehicle">
-                                                                                        <select class="form-select select2" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
-                                                                                                <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
-                                                                                        <input type="text" class="form-control" id="vehiclePlateNo1Edit" name="vehiclePlateNo1Edit" hidden>
-                                                                                        </div>
-                                                                                    <div class="invalid-feedback">
-                                                                                        Please fill in the field.
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
                                                                         <div class="row mb-3" id="noOfDrumDisplay" style="display:none;">
                                                                             <label for="noOfDrum" class="col-sm-4 col-form-label">No of Drum</label>
                                                                             <div class="col-sm-8">
@@ -913,7 +941,7 @@ else{
                                                                                         <input class="form-check-input mt-0" id="manual" name="manual" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                     </div>                                                                                             -->
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
@@ -934,7 +962,7 @@ else{
                                                                                         <input class="form-check-input mt-0" id="manualOutgoing" name="manualOutgoing" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                     </div>                                                                                                -->
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing" name="tareOutgoing" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="tareCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>                                                                                       
                                                                             </div>
@@ -950,7 +978,7 @@ else{
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="nettWeight" name="nettWeight" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -983,11 +1011,11 @@ else{
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
-                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">3.Gross Incoming</label>
+                                                                            <label for="grossIncoming2" class="col-sm-4 col-form-label">Incoming</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="grossIncoming2" name="grossIncoming2" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="grossCapture2"><i class="mdi mdi-sync" type="button"></i></button>
                                                                                 </div>
                                                                             </div>
@@ -999,11 +1027,11 @@ else{
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
-                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">4.Tare Outgoing</label>
+                                                                            <label for="tareOutgoing2" class="col-sm-4 col-form-label">Outgoing</label>
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="tareOutgoing2" name="tareOutgoing2" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                     <button class="input-group-text btn btn-danger fs-5" id="tareCapture2" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                 </div>
                                                                             </div>
@@ -1019,7 +1047,7 @@ else{
                                                                             <div class="col-sm-8">
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="nettWeight2" name="nettWeight2" placeholder="0" readonly>
-                                                                                    <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">KG</div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>                                                                    
@@ -1047,6 +1075,7 @@ else{
                                                         <input type="hidden" id="bypassReason" name="bypassReason">
                                                         <input type="hidden" id="finalWeight" name="finalWeight">
                                                         <input type="hidden" id="customerCode" name="customerCode">
+                                                        <input type="hidden" id="custName" name="custName">
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
                                                         <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="agentCode" name="agentCode">
@@ -1058,6 +1087,7 @@ else{
                                                         <input type="hidden" id="productLow" name="productLow">
                                                         <input type="hidden" id="productVariance" name="productVariance">
                                                         <input type="hidden" id="transporterCode" name="transporterCode">
+                                                        <input type="hidden" id="transporterName" name="transporterName">
                                                         <input type="hidden" id="supplierCode" name="supplierCode">
                                                         <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
                                                         <input type="hidden" id="siteCode" name="siteCode">
@@ -1436,7 +1466,14 @@ else{
 
     <script type="text/javascript">
     var table = null;
-    
+    let soPoTag = false;
+    let addNewTag = false;
+    let isSyncing = false;
+    let isEdit = false;
+    let salesOption = $('#salesOrder option').clone();
+    let purchaseOption = $('#purchaseOrder option').clone();
+    let transporterOption = $('#transporter option').clone();
+
     $(function () {
         var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
@@ -1483,21 +1520,10 @@ else{
             'height': 'auto'
         });
 
-        //Date picker
-        <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today,
-                minDate: today
-            });';
-        }
-        else{
-            echo '$("#fromDateSearch").flatpickr({
-                dateFormat: "d-m-Y",
-                defaultDate: today
-            });';
-        }
-        ?>
+        $("#fromDateSearch").flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: today
+        });
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
@@ -1518,7 +1544,7 @@ else{
         $('#statusSearch').on('change', function(){
             var status = $(this).val();
 
-            if (status == 'Purchase' || status == 'Local'){
+            if (status == 'Purchase'){
                 // Hide & reset customer then show supplier
                 $('#customerSearchDisplay').hide();
                 $('#customerSearchDisplay').find('#customerNoSearch').val('-').trigger('change');
@@ -1527,6 +1553,10 @@ else{
                 $('#productSearchDisplay').find('#productSearch').val('-').trigger('change');
                 $('#productSearchDisplay').hide();
                 $('#rawMatSearchDisplay').show();
+                // Hide & reset so then show po
+                $('#soSearchDisplay').find('#soSearch').val('-').trigger('change');
+                $('#soSearchDisplay').hide();
+                $('#poSearchDisplay').show();
             }else{
                 // Hide & reset supplier then show customer
                 $('#supplierSearchDisplay').find('#supplierSearch').val('-').trigger('change');
@@ -1536,10 +1566,14 @@ else{
                 $('#rawMatSearchDisplay').find('#rawMatSearch').val('-').trigger('change');
                 $('#rawMatSearchDisplay').hide();
                 $('#productSearchDisplay').show();
+                // Hide & reset po then show so
+                $('#poSearchDisplay').find('#poSearch').val('-').trigger('change');
+                $('#poSearchDisplay').hide();
+                $('#soSearchDisplay').show();
             }
         });
 
-        $('#statusSearch').val('Sales').trigger('change');
+        //$('#statusSearch').val('Sales').trigger('change');
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -1551,6 +1585,8 @@ else{
         var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
         var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
+        var poSearchI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1572,6 +1608,8 @@ else{
                     product: productSearchI,
                     rawMaterial: rawMaterialI,
                     plant: plantNoI,
+                    soNo: soSearchI,
+                    poNo: poSearchI
                 } 
             },
             'columns': [
@@ -1597,14 +1635,14 @@ else{
                         let buttons = `<div class="row g-1 d-flex">`;
 
                         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                            if (row.is_complete != 'Y' ){
+                            //if (row.is_complete != 'Y' ){
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
                                         <i class="fas fa-pen"></i>
                                     </button>
                                 </div>`;
-                            }
+                            //}
                         }else {
                             if (row.is_complete != 'Y' ){
                                 buttons += `
@@ -1712,7 +1750,7 @@ else{
             var completed = 'N';
             var pass = true;
 
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+            if($('#transactionStatus').val() == "Purchase"){
                 trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
             }
             else{
@@ -1871,7 +1909,7 @@ else{
             var completed = 'N';
             var pass = true;
 
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+            if($('#transactionStatus').val() == "Purchase"){
                 trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
             }
             else{
@@ -1923,7 +1961,7 @@ else{
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                        $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
                             var obj2 = JSON.parse(data);
 
                             if(obj2.status === 'success'){
@@ -1938,7 +1976,7 @@ else{
                                     
                                     setTimeout(function () {
                                         if (confirm("Do you need to reprint?")) {
-                                            $.post('php/print.php', { userID: obj.id, file: 'weight' }, function (data) {
+                                            $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
                                                 var obj = JSON.parse(data);
                                                 if (obj.status === 'success') {
                                                     var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
@@ -1947,12 +1985,24 @@ else{
                                                     setTimeout(function () {
                                                         reprintWindow.print();
                                                         reprintWindow.close();
+                                                        <?php
+                                                            if(isset($_GET['weight'])){
+                                                                echo "window.location = 'index.php';";
+                                                            }
+                                                        ?>
                                                     }, 500);
                                                 } 
                                                 else {
                                                     window.location = 'index.php';
                                                 }
                                             });
+                                        }
+                                        else{
+                                            <?php
+                                                if(isset($_GET['weight'])){
+                                                    echo "window.location = 'index.php';";
+                                                }
+                                            ?>
                                         }
                                     }, 500);
                                 }, 500);
@@ -2267,6 +2317,8 @@ else{
             var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
             var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
+            var poSearchI = $('#poSearch').val() ? $('#poSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -2292,6 +2344,8 @@ else{
                         product: productSearchI,
                         rawMaterial: rawMaterialI,
                         plant: plantNoI,
+                        soNo: soSearchI,
+                        poNo: poSearchI
                     } 
                 },
                 'columns': [
@@ -2317,14 +2371,14 @@ else{
                             let buttons = `<div class="row g-1 d-flex">`;
 
                             if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                                if (row.is_complete != 'Y' ){
+                                //if (row.is_complete != 'Y' ){
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
                                             <i class="fas fa-pen"></i>
                                         </button>
                                     </div>`;
-                                }
+                                //}
                             }else {
                                 if (row.is_complete != 'Y' ){
                                     buttons += `
@@ -2397,47 +2451,31 @@ else{
             });
         });
 
-        $('#addWeight').on('click', function(){
+        $('#addWeight').on('click', function(){ 
+            addNewTag = true;
+            isEdit = false;
+
             // Show Capture Buttons When Add New
             $('#addModal').find('#grossCapture').show();
             $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
             $('#addModal').find('#transactionId').val("");
+            $('#addModal').find('#purchaseOrder').val("").trigger('change');
+            $('#addModal').find('#salesOrder').val("").trigger('change');
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
             $('#addModal').find('#vehiclePlateNo1').val("").trigger('change');
             $('#addModal').find('#vehiclePlateNo2').val("").trigger('change');
-            $('#addModal').find('#supplierWeight').val("");
             $('#addModal').find('#bypassReason').val("");
-            $('#addModal').find('#customerCode').val("");
-            $('#addModal').find('#customerName').val("").trigger('change');
-            $('#addModal').find('#supplierCode').val("");
-            $('#addModal').find('#supplierName').val("").trigger('change');
-            $('#addModal').find('#productCode').val("");
-            $('#addModal').find('#productName').val("").trigger('change');
             $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-            $('#addModal').find('#rawMaterialCode').val("");
-            $('#addModal').find('#rawMaterialName').val("").trigger('change');
-            $('#addModal').find('#siteCode').val("");
-            $('#addModal').find('#siteName').val("").trigger('change');
-            $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
-            $('#addModal').find('#purchaseOrder').val("").trigger('change');
-            $('#addModal').find('#salesOrder').val("").trigger('change');
             $('#addModal').find('#deliveryNo').val("");
-            $('#addModal').find('#transporterCode').val("");
-            $('#addModal').find('#transporter').val("").trigger('change');
-            $('#addModal').find('#destinationCode').val("");
-            $('#addModal').find('#agent').val("").trigger('change');
-            $('#addModal').find('#agentCode').val("");
-            $('#addModal').find('#plantCode').val("");
-            $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
-            $('#addModal').find('#destination').val("").trigger('change');
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             $('#addModal').find('#grossIncomingDate').val("");
             $('#addModal').find('#tareOutgoing').val("");
@@ -2460,11 +2498,6 @@ else{
             //$('#addModal').find('#indicatorId').val("");
             $('#addModal').find('#weighbridge').val("");
             //$('#addModal').find('#indicatorId2').val("");
-            $('#addModal').find('#productDescription').val("");
-            $('#addModal').find('#productHigh').val("");
-            $('#addModal').find('#productLow').val("");
-            $('#addModal').find('#productVariance').val("");
-            $('#addModal').find('#orderWeight').val("0");
             $('#addModal').find('#unitPrice').val("0.00");
             $('#addModal').find('#subTotalPrice').val("0.00");
             $('#addModal').find('#sstPrice').val("0.00");
@@ -2476,10 +2509,36 @@ else{
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
 
+            $('#addModal').find('#customerCode').val("");
+            $('#addModal').find('#customerName').val("").trigger('change');
+            $('#addModal').find('#supplierCode').val("");
+            $('#addModal').find('#supplierName').val("").trigger('change');
+            $('#addModal').find('#siteCode').val("");
+            $('#addModal').find('#siteName').val("").trigger('change');
+            $('#addModal').find('#agent').val("").trigger('change');
+            $('#addModal').find('#agentCode').val("");
+            $('#addModal').find('#plantCode').val("");
+            $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
+            $('#addModal').find('#orderWeight').val("0");
+            $('#addModal').find('#supplierWeight').val("0");
+            $('#addModal').find('#transporterCode').val("");
+            $('#addModal').find('#transporter').val("").trigger('change');
+            $('#addModal').find('#destinationCode').val("");
+            $('#addModal').find('#destination').val("").trigger('change');
+            $('#addModal').find('#productCode').val("");
+            $('#addModal').find('#productName').val("").trigger('change');
+            $('#addModal').find('#productDescription').val("");
+            $('#addModal').find('#productHigh').val("");
+            $('#addModal').find('#productLow').val("");
+            $('#addModal').find('#productVariance').val("");
+            $('#addModal').find('#rawMaterialCode').val("");
+            $('#addModal').find('#rawMaterialName').val("").trigger('change');
+
             // Show select and hide input readonly
             $('#addModal').find('#salesOrderEdit').val("").hide();
             $('#addModal').find('#purchaseOrderEdit').val("").hide();
             $('#addModal').find('#salesOrder').next('.select2-container').show();
+
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -2492,6 +2551,7 @@ else{
                 select2Container.next('.select2-error').remove(); // Remove error message
             });
 
+            addNewTag = false;
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -2596,53 +2656,129 @@ else{
             var x = $('#vehicleNoTxt').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
 
-            var exDel = $('input[name="exDel"]:checked').val();
-            if (exDel == 'true'){
-                // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
-                // $('#addModal').find('#transporterCode').val('T01');
+            if (x){
                 $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
-                        // var customerName = obj.message.customer_name;
-                        // var customerCode = obj.message.customer_code;
+                        if (obj.message.length > 0){
+                            if (obj.message.length > 1){ 
+                                $('#addModal').find('#transporter').empty();
+                                $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
 
-                        // $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        // $('#addModal').find('#customerCode').val(customerCode);
+                                var deliveredTransporter;
+                                var hasValidTransporter = false; // Flag to check if any valid transporter exists
+
+                                for (var i = 0; i < obj.message.length; i++) {
+                                    var customerName = obj.message[i].customer_name;
+                                    var customerCode = obj.message[i].customer_code;
+                                    var transporterName = obj.message[i].transporter_name;
+                                    var transporterCode = obj.message[i].transporter_code;
+                                    var exDel = obj.message[i].ex_del;
+
+                                    if (exDel == 'DEL'){
+                                        deliveredTransporter = transporterName;
+                                    }
+
+                                    /*if (customerName){
+                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                    }*/
+
+                                    if (transporterName) {
+                                        hasValidTransporter = true;
+                                        $('#addModal').find('#transporter').append(
+                                            `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
+                                        );
+                                    }
+                                }
+
+                                if (!hasValidTransporter){
+                                    $('#addModal').find('#transporter').empty();
+                                    $('#addModal').find('#transporter').append(transporterOption);
+                                }
+
+                                $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
+                            }
+                            else{
+                                var exDel = obj.message[0].ex_del;
+                                var customerName = obj.message[0].customer_name;
+                                var customerCode = obj.message[0].customer_code;
+                                var transporterName = obj.message[0].transporter_name;
+                                var transporterCode = obj.message[0].transporter_code;
+
+                                $('#addModal').find('#transporter').empty();
+                                $('#addModal').find('#transporter').append(transporterOption);
+
+                                if (exDel == 'EX'){
+                                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+
+                                    if (!$('#addModal').find('#transporter').val()) {
+                                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                        if (transporterName){
+                                            // $('#addModal').find('#transporter').attr('disabled', true);
+                                            $('#addModal').find('#transporterName').val(transporterName);
+                                        }else{
+                                            // $('#addModal').find('#transporter').attr('disabled', false);
+                                        }
+                                        $('#addModal').find('#transporterCode').val(transporterCode);
+                                    }
+
+                                    if (!$('#addModal').find('#customerName').val()) {
+                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                        if (customerName){
+                                            // $('#addModal').find('#customerName').attr('disabled', true);
+                                            $('#addModal').find('#custName').val(customerName);
+                                        }else{
+                                            // $('#addModal').find('#customerName').attr('disabled', false);
+                                            $('#addModal').find('#custName').val(customerName);
+                                        }
+                                        $('#addModal').find('#customerCode').val(customerCode);
+                                    }
+                                }
+                                else{
+                                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+
+                                    if (!$('#addModal').find('#transporter').val()) {
+                                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                        if (transporterName){
+                                            // $('#addModal').find('#transporter').attr('disabled', true);
+                                            $('#addModal').find('#transporterName').val(transporterName);
+                                        }else{
+                                            // $('#addModal').find('#transporter').attr('disabled', false);
+                                            
+                                        }
+                                        $('#addModal').find('#transporterCode').val(transporterCode);
+                                    }
+
+                                    if (!$('#addModal').find('#customerName').val()) {
+                                        $('#addModal').find('#customerName').val('').trigger('change');
+                                        // $('#addModal').find('#customerName').attr('disabled', false);
+                                        $('#addModal').find('#customerCode').val('');
+                                    }
+                                } 
+                            }
+                        }    
+                        
+                        if (transactionStatus == 'Purchase'){
+                            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+
+                            if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
+                                getSoPo();
+                            }
+                        }
+                        else{
+                            var salesOrder = $('#addModal').find('#salesOrder').val();
+
+                            if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
+                                getSoPo();
+                            }
+                        }
                     }
                     else if(obj.status === 'error'){
                         alert(obj.message);
-                        $('#vehicleNoTxt').val('');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }else{
-                // $('#addModal').find('#customerName').val('').trigger('change');
-                // $('#addModal').find('#customerCode').val('');
-
-                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        // var transporterName = obj.message.transporter_name;
-                        // var transporterCode = obj.message.transporter_code;
-
-                        // $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        // $('#addModal').find('#transporterCode').val(transporterCode);
-                    }
-                    else if(obj.status === 'error'){
-                        alert(obj.message);
-                        $('#vehicleNoTxt').val('');
+                        $('#vehiclePlateNo1').val('').trigger('change');
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -2656,6 +2792,65 @@ else{
                     }
                 });
             }
+            // var exDel = $('input[name="exDel"]:checked').val();
+            // if (exDel == 'true'){
+            //     // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
+            //     // $('#addModal').find('#transporterCode').val('T01');
+            //     $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+            //         var obj = JSON.parse(data);
+
+            //         if (obj.status == 'success'){
+            //             // var customerName = obj.message.customer_name;
+            //             // var customerCode = obj.message.customer_code;
+
+            //             // $('#addModal').find('#customerName').val(customerName).trigger('change');
+            //             // $('#addModal').find('#customerCode').val(customerCode);
+            //         }
+            //         else if(obj.status === 'error'){
+            //             alert(obj.message);
+            //             $('#vehicleNoTxt').val('');
+            //         }
+            //         else if(obj.status === 'failed'){
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //         else{
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //     });
+            // }else{
+            //     // $('#addModal').find('#customerName').val('').trigger('change');
+            //     // $('#addModal').find('#customerCode').val('');
+
+            //     $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+            //         var obj = JSON.parse(data);
+
+            //         if (obj.status == 'success'){
+            //             // var transporterName = obj.message.transporter_name;
+            //             // var transporterCode = obj.message.transporter_code;
+
+            //             // $('#addModal').find('#transporter').val(transporterName).trigger('change');
+            //             // $('#addModal').find('#transporterCode').val(transporterCode);
+            //         }
+            //         else if(obj.status === 'error'){
+            //             alert(obj.message);
+            //             $('#vehicleNoTxt').val('');
+            //         }
+            //         else if(obj.status === 'failed'){
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //         else{
+            //             $('#spinnerLoading').hide();
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //     });
+            // }
         });
 
         $('#vehiclePlateNo1').on('change', function(){
@@ -2671,67 +2866,174 @@ else{
             }*/
 
             var vehicleNo1 = $(this).val();
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
             var vehicleNo1Edit = $('#vehiclePlateNo1Edit').val();
-            var exDel = $('input[name="exDel"]:checked').val();
             if (vehicleNo1Edit == 'EDIT'){
                 return;
-            }else if (exDel == 'true'){
-                // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
-                // $('#addModal').find('#transporterCode').val('T01');
-                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
-                    var obj = JSON.parse(data);
-
-                    if (obj.status == 'success'){
-                        // var customerName = obj.message.customer_name;
-                        // var customerCode = obj.message.customer_code;
-
-                        // $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        // $('#addModal').find('#customerCode').val(customerCode);
-                    }
-                    else if(obj.status === 'error'){
-                        alert(obj.message);
-                        $('#vehiclePlateNo1').val('').trigger('change');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
             }else{
+                if (vehicleNo1){
+                    $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
+                        var obj = JSON.parse(data);
+
+                        if (obj.status == 'success'){
+                            if (obj.message.length > 0){
+                                if (obj.message.length > 1){
+                                    $('#addModal').find('#transporter').empty();
+                                    $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
+
+                                    var deliveredTransporter;
+                                    var hasValidTransporter = false; // Flag to check if any valid transporter exists
+
+                                    for (var i = 0; i < obj.message.length; i++) {
+                                        var customerName = obj.message[i].customer_name;
+                                        var customerCode = obj.message[i].customer_code;
+                                        var transporterName = obj.message[i].transporter_name;
+                                        var transporterCode = obj.message[i].transporter_code;
+                                        var exDel = obj.message[i].ex_del;
+
+                                        if (exDel == 'DEL'){
+                                            deliveredTransporter = transporterName;
+                                        }
+
+                                        /*if (customerName){
+                                            $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                        }*/
+
+                                        if (transporterName) {
+                                            hasValidTransporter = true;
+                                            $('#addModal').find('#transporter').append(
+                                                `<option value="${transporterName}" data-code="${transporterCode}">${transporterName}</option>`
+                                            );
+                                        }
+                                    }
+
+                                    if (!hasValidTransporter){
+                                        $('#addModal').find('#transporter').empty();
+                                        $('#addModal').find('#transporter').append(transporterOption);
+                                    }
+
+                                    $('#addModal').find('#transporter').val(deliveredTransporter).trigger('change');
+                                }
+                                else{
+                                    var exDel = obj.message[0].ex_del;
+                                    var customerName = obj.message[0].customer_name;
+                                    var customerCode = obj.message[0].customer_code;
+                                    var transporterName = obj.message[0].transporter_name;
+                                    var transporterCode = obj.message[0].transporter_code;
+
+                                    $('#addModal').find('#transporter').empty();
+                                    $('#addModal').find('#transporter').append(transporterOption);
+
+                                    if (exDel == 'EX'){
+                                        $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+
+                                        if (!$('#addModal').find('#transporter').val()) {
+                                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                            if (transporterName){
+                                                // $('#addModal').find('#transporter').attr('disabled', true);
+                                                $('#addModal').find('#transporterName').val(transporterName);
+                                            }else{
+                                                // $('#addModal').find('#transporter').attr('disabled', false);
+                                            }
+                                            $('#addModal').find('#transporterCode').val(transporterCode);
+                                        }
+
+                                        if (!$('#addModal').find('#customerName').val()) {
+                                            $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                            if (customerName){
+                                                // $('#addModal').find('#customerName').attr('disabled', true);
+                                                $('#addModal').find('#custName').val(customerName);
+                                            }else{
+                                                // $('#addModal').find('#customerName').attr('disabled', false);
+                                                $('#addModal').find('#custName').val(customerName);
+                                            }
+                                            $('#addModal').find('#customerCode').val(customerCode);
+                                        }
+                                    }
+                                    else{
+                                        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+
+                                        if (!$('#addModal').find('#transporter').val()) {
+                                            $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                                            if (transporterName){
+                                                // $('#addModal').find('#transporter').attr('disabled', true);
+                                                $('#addModal').find('#transporterName').val(transporterName);
+                                            }else{
+                                                // $('#addModal').find('#transporter').attr('disabled', false);
+                                                
+                                            }
+                                            $('#addModal').find('#transporterCode').val(transporterCode);
+                                        }
+
+                                        if (!$('#addModal').find('#customerName').val()) {
+                                            $('#addModal').find('#customerName').val('').trigger('change');
+                                            // $('#addModal').find('#customerName').attr('disabled', false);
+                                            $('#addModal').find('#customerCode').val('');
+                                        }
+                                    } 
+                                }
+                            }    
+                            
+                            if (transactionStatus == 'Purchase'){
+                                var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+
+                                if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
+                                    getSoPo();
+                                }
+                            }
+                            else{
+                                var salesOrder = $('#addModal').find('#salesOrder').val();
+
+                                if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
+                                    getSoPo();
+                                }
+                            }
+                        }
+                        else if(obj.status === 'error'){
+                            alert(obj.message);
+                            $('#vehiclePlateNo1').val('').trigger('change');
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+                
                 // $('#addModal').find('#customerName').val('').trigger('change');
                 // $('#addModal').find('#customerCode').val('');
 
-                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
-                    var obj = JSON.parse(data);
+                // $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
+                //     var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
-                        // var transporterName = obj.message.transporter_name;
-                        // var transporterCode = obj.message.transporter_code;
+                //     if (obj.status == 'success'){
+                //         // var transporterName = obj.message.transporter_name;
+                //         // var transporterCode = obj.message.transporter_code;
 
-                        // $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        // $('#addModal').find('#transporterCode').val(transporterCode);
-                    }
-                    else if(obj.status === 'error'){
-                        alert(obj.message);
-                        $('#vehiclePlateNo1').val('').trigger('change');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                //         // $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                //         // $('#addModal').find('#transporterCode').val(transporterCode);
+                //     }
+                //     else if(obj.status === 'error'){
+                //         alert(obj.message);
+                //         $('#vehiclePlateNo1').val('').trigger('change');
+                //     }
+                //     else if(obj.status === 'failed'){
+                //         $('#spinnerLoading').hide();
+                //         $("#failBtn").attr('data-toast-text', obj.message );
+                //         $("#failBtn").click();
+                //     }
+                //     else{
+                //         $('#spinnerLoading').hide();
+                //         $("#failBtn").attr('data-toast-text', obj.message );
+                //         $("#failBtn").click();
+                //     }
+                // });
             }
         });
 
@@ -2822,13 +3124,53 @@ else{
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
             $('#finalWeight').trigger('change');
+
+            // // Logic for Converted UOM
+            // var transactionStatus = $('#addModal').find('#transactionStatus').val();
+            // var prodRawCode = '';
+            // var type = '';
+            // if(transactionStatus == 'Sales'){
+            //     prodRawId = $('#addModal').find('#productName :selected').data('id');
+            //     type = 'SO';
+            // }else if (transactionStatus == 'Purchase'){
+            //     prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
+            //     type = 'PO';
+            // }
+
+            // var convertedUnit = $('#addModal').find('#orderWeightUnitId').val();
+            // var nettWeight = $('#addModal').find('#nettWeight').val(); console.log(convertedUnit);
+
+            // if (prodRawId && convertedUnit && nettWeight){
+            //     $.post('php/getProdRawMatUOM.php', {userID: prodRawId, unitID: convertedUnit, type: type}, function(data)
+            //     {
+            //         var obj = JSON.parse(data);
+            //         if(obj.status === 'success'){
+            //             // Processing for order quantity (KG)
+            //             var rate = parseFloat(obj.message.rate);
+            //             var convertedNettWeight = nettWeight/rate;
+
+            //             $('#addModal').find('#convertedNettWeight').val(convertedNettWeight);
+            //         }
+            //         else if(obj.status === 'failed'){
+            //             alert(obj.message);
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //         else{
+            //             alert(obj.message);
+            //             $("#failBtn").attr('data-toast-text', obj.message );
+            //             $("#failBtn").click();
+            //         }
+            //     });
+            // }
+
         });
 
         $('#finalWeight').on('change', function(){
             var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
             var nett2 = 0;
 
-            if($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+            if($('#transactionStatus').val() == "Purchase"){
                 nett2 = parseFloat($('#addModal').find('#supplierWeight').val());
             }
             else{
@@ -2929,7 +3271,7 @@ else{
         $('#transactionStatus').on('change', function(){
             var customerType = $('#addModal').find('#customerType').val();
 
-            if($(this).val() == "Purchase" || $(this).val() == "Local"){
+            if($(this).val() == "Purchase"){
                 $('#divWeightDifference').show();
                 $('#divSupplierWeight').show();
                 $('#addModal').find('#orderWeight').val("");
@@ -2981,6 +3323,44 @@ else{
                         $('#sstDisplay').hide();
                         $('#totalPriceDisplay').hide();
                     }
+                }
+            }
+            else if($(this).val() == "Local"){
+                $('#divOrderWeight').show();
+                $('#addModal').find('#orderWeight').val("0");
+                $('#addModal').find('#supplierWeight').val("");
+                $('#divWeightDifference').show();
+                $('#divSupplierWeight').hide();
+                $('#divSupplierName').hide();
+                $('#divCustomerName').show();
+                $('#rawMaterialDisplay').hide();
+                $('#productNameDisplay').show();
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                $('#addModal').find('#divPoSupplyWeight').hide();
+
+                //Hide PO Select
+                $('#divPurchaseOrder').find('#soSelect').show();
+                $('#divPurchaseOrder').find('#poSelect').hide();
+
+                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                    echo "$('#doDisplay').show();";
+                }
+                else{
+                    echo "//$('#doDisplay').show();";
+                }
+                ?>
+
+                if (customerType == 'Cash'){
+                    $('#unitPriceDisplay').show();
+                    $('#subTotalPriceDisplay').show();
+                    $('#sstDisplay').show();
+                    $('#totalPriceDisplay').show();
+                }else{
+                    $('#unitPriceDisplay').hide();
+                    $('#subTotalPriceDisplay').hide();
+                    $('#sstDisplay').hide();
+                    $('#totalPriceDisplay').hide();
                 }
             }
             else{
@@ -3042,16 +3422,121 @@ else{
             $('#subTotalPrice').val(subTotalPrice.toFixed(2));
             $('#sstPrice').val(sstPrice.toFixed(2));
             $('#totalPrice').val(totalPrice.toFixed(2));
+
+            var salesOrder = $('#addModal').find('#salesOrder').val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            var productName = $('#productName :selected').data('code');
+            var plant = $('#addModal').find('#plantCode').val();
+
+            if (salesOrder && plant && productName){
+                //if (!isEdit){
+                    $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
+                        var obj = JSON.parse(data);
+    
+                        if (obj.status == 'success'){
+                            var customerSupplierName = obj.message.customer_supplier_name;
+                            var destinationName = obj.message.destination_name;
+                            var siteName = obj.message.site_name;
+                            var agentName = obj.message.agent_name;
+                            var productName = obj.message.product_name;
+                            var plantName = obj.message.plant_name;
+                            var transporterName = obj.message.transporter_name;
+                            var vehNo = obj.message.veh_number;
+                            var exDel = obj.message.ex_del;
+                            var orderSupplierWeight = obj.message.order_supplier_weight;
+                            var balance = obj.message.balance; 
+                            // var finalWeight = obj.message.final_weight;
+                            // var previousRecordsTag = obj.message.previousRecordsTag;
+    
+                            // Change Details
+                            if (!$('#addModal').find('#customerName').val()) {
+                                $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#destination').val()) {
+                                $('#addModal').find('#destination').val(destinationName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#siteName').val()) {
+                                $('#addModal').find('#siteName').val(siteName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#agent').val()) {
+                                $('#addModal').find('#agent').val(agentName).trigger('change');
+                            }
+                            // if (!$('#addModal').find('#productName').val()) {
+                            //     $('#addModal').find('#productName').val(productName).trigger('change');
+                            // }
+                            if (!$('#addModal').find('#plant').val()) {
+                                $('#addModal').find('#plant').val(plantName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                            }
+    
+                            if (exDel == 'E') {
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
+                            } else {
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                            }
+    
+                            $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
+                            $('#addModal').find('#balance').val(balance);
+                            // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
+                            // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                /*}
+                else{
+                    $('#addModal').trigger('orderLoaded');
+                }*/
+            }else{
+                // if (!soPoTag && !addNewTag){
+                //     getSoPo();
+                // }
+            }
         });
 
         //supplierName
         $('#supplierName').on('change', function(){
             $('#supplierCode').val($('#supplierName :selected').data('code'));
+
+            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+
+            if (!purchaseOrder && !soPoTag && !addNewTag){
+                getSoPo();
+            }
         });
 
         //transporter
         $('#transporter').on('change', function(){
+            if (isSyncing) return;
+
             $('#transporterCode').val($('#transporter :selected').data('code'));
+            $('#transporterName').val($(this).val());
+
+            isSyncing = true;
+
+            if ($(this).val() == 'OWN TRANSPORTATION'){
+                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
+                // $(this).attr('disabled', true);
+            }else{
+                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                // $(this).attr('disabled', false);
+            }
+
+            isSyncing = false;
+
         });
 
         //destination
@@ -3062,6 +3547,44 @@ else{
         //plant
         $('#plant').on('change', function(){
             $('#plantCode').val($('#plant :selected').data('code'));
+
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+
+            if (transactionStatus == 'Sales'){
+                $('#addModal').find('#productName').trigger('change');
+            }else if(transactionStatus == 'Purchase'){
+                $('#addModal').find('#rawMaterialName').trigger('change');
+            }
+        });
+        
+        $('#addModal').on('orderLoaded', function(e, data) {
+            $('#addModal').find('#customerCode').val(data.customer_code);
+            $('#addModal').find('#customerName').val(data.customer_name).trigger('change');
+            $('#addModal').find('#supplierCode').val(data.supplier_code);
+            $('#addModal').find('#supplierName').val(data.supplier_name).trigger('change');
+            $('#addModal').find('#siteCode').val(data.site_code);
+            $('#addModal').find('#siteName').val(data.site_name).trigger('change');
+            $('#addModal').find('#agent').val(data.agent_name).trigger('change');
+            $('#addModal').find('#agentCode').val(data.agent_code);
+            $('#addModal').find('#supplierWeight').val(data.supplier_weight);
+            $('#addModal').find('#orderWeight').val(data.order_weight);
+            $('#addModal').find('#destinationCode').val(data.destination_code);
+            $('#addModal').find('#destination').val(data.destination).trigger('change');
+            $('#addModal').find('#plant').val(data.plant_name).trigger('change');
+            $('#addModal').find('#plantCode').val(data.plant_code);
+            $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
+            $('#addModal').find('#rawMaterialName').val(data.raw_mat_name).trigger('change');
+            $('#addModal').find('#productName').val(data.product_name).trigger('change');
+            $('#addModal').find('#productCode').val(data.product_code);
+        
+            // Optional: Show read-only fields instead of dropdown if needed
+            // if (data.transaction_status === 'Purchase') {
+            //     $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+            //     $('#addModal').find('#purchaseOrderEdit').val(data.purchase_order).show();
+            // } else {
+            //     $('#addModal').find('#salesOrder').next('.select2-container').hide();
+            //     $('#addModal').find('#salesOrderEdit').val(data.purchase_order).show();
+            // }
         });
 
         // SRP
@@ -3072,61 +3595,162 @@ else{
         //customerName
         $('#customerName').on('change', function(){
             $('#customerCode').val($('#customerName :selected').data('code'));
+            $('#custName').val($(this).val());
+
+            var salesOrder = $('#addModal').find('#salesOrder').val();
+
+            if (!salesOrder && !soPoTag && !addNewTag){
+                getSoPo();
+            }
         });
 
         $('input[name="exDel"]').change(function() {
+            if (isSyncing) return;
+
             var vehicleNo1 = $('#addModal').find('#vehiclePlateNo1').val();
             var exDel = $('input[name="exDel"]:checked').val();
+
+            isSyncing = true;
+
             if (exDel == 'true'){
+                $('#addModal').find('#transporter').val('OWN TRANSPORTATION').trigger('change.select2');
+                $('#addModal').find('#transporterCode').val('T01');
+                $('#addModal').find('#transporterName').val('OWN TRANSPORTATION');
+
                 // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
                 // $('#addModal').find('#transporterCode').val('T01');
-                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function(data){
-                    var obj = JSON.parse(data);
-                    if(obj.status === 'success'){
-                        // var customerName = obj.message.customer_name;
-                        // var customerCode = obj.message.customer_code;
+                // $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function(data){
+                //     var obj = JSON.parse(data);
+                //     if(obj.status === 'success'){
+                //         // var customerName = obj.message.customer_name;
+                //         // var customerCode = obj.message.customer_code;
 
-                        // $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        // $('#addModal').find('#customerCode').val(customerCode);
-                    }   
-                    else if(obj.status === 'failed'){
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                //         // $('#addModal').find('#customerName').val(customerName).trigger('change');
+                //         // $('#addModal').find('#customerCode').val(customerCode);
+                //     }   
+                //     else if(obj.status === 'failed'){
+                //         $("#failBtn").attr('data-toast-text', obj.message );
+                //         $("#failBtn").click();
+                //     }
+                //     else{
+                //         $("#failBtn").attr('data-toast-text', obj.message );
+                //         $("#failBtn").click();
+                //     }
+                // });
             }else{
                 // $('#addModal').find('#customerName').val('').trigger('change');
                 // $('#addModal').find('#customerCode').val('');
 
-                $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
-                    var obj = JSON.parse(data);
+                // $.post('php/getVehicle.php', {userID: vehicleNo1, type: 'lookup'}, function (data){
+                //     var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
-                        // var transporterName = obj.message.transporter_name;
-                        // var transporterCode = obj.message.transporter_code;
+                //     if (obj.status == 'success'){
+                //         // var transporterName = obj.message.transporter_name;
+                //         // var transporterCode = obj.message.transporter_code;
 
-                        // $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        // $('#addModal').find('#transporterCode').val(transporterCode);
-                    }
-                    else if(obj.status === 'failed'){
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                //         // $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                //         // $('#addModal').find('#transporterCode').val(transporterCode);
+                //     }
+                //     else if(obj.status === 'failed'){
+                //         $("#failBtn").attr('data-toast-text', obj.message );
+                //         $("#failBtn").click();
+                //     }
+                //     else{
+                //         $("#failBtn").attr('data-toast-text', obj.message );
+                //         $("#failBtn").click();
+                //     }
+                // });
             }
+
+            isSyncing = false;
         });
 
         //rawMaterialName
         $('#rawMaterialName').on('change', function(){
             $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
+            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            var rawMat = $('#rawMaterialName :selected').data('code');
+            var plant = $('#addModal').find('#plantCode').val();
+
+            if (purchaseOrder && plant && rawMat){
+                //if (!isEdit){
+                    $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
+                        var obj = JSON.parse(data);
+    
+                        if (obj.status == 'success'){
+                            var customerSupplierName = obj.message.customer_supplier_name;
+                            var destinationName = obj.message.destination_name;
+                            var siteName = obj.message.site_name;
+                            var agentName = obj.message.agent_name;
+                            var productName = obj.message.product_name;
+                            var plantName = obj.message.plant_name;
+                            var transporterName = obj.message.transporter_name;
+                            var vehNo = obj.message.veh_number;
+                            var exDel = obj.message.ex_del;
+                            var orderSupplierWeight = obj.message.order_supplier_weight;
+                            var balance = obj.message.balance;
+                            // var finalWeight = obj.message.final_weight;
+                            // var previousRecordsTag = obj.message.previousRecordsTag;
+    
+                            // Change Details
+                            if (!$('#addModal').find('#supplierName').val()) {
+                                $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#destination').val()) {
+                                $('#addModal').find('#destination').val(destinationName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#siteName').val()) {
+                                $('#addModal').find('#siteName').val(siteName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#agent').val()) {
+                                $('#addModal').find('#agent').val(agentName).trigger('change');
+                            }
+                            // if (!$('#addModal').find('#rawMaterialName').val()) {
+                            //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                            // }
+                            if (!$('#addModal').find('#plant').val()) {
+                                $('#addModal').find('#plant').val(plantName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                            }
+    
+                            if (exDel == 'E') {
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
+                            } else {
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                            }
+                            
+                            $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
+                            $('#addModal').find('#balance').val(balance);
+                            // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
+                            // $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                /*}
+                else{
+                    $('#addModal').trigger('orderLoaded');
+                }*/
+            }
+            else{
+                // if (!soPoTag && !addNewTag){
+                //     getSoPo();
+                // }
+            }
         });
 
         //siteName
@@ -3148,178 +3772,183 @@ else{
             var type = $('#addModal').find('#transactionStatus').val();
 
             if (purchaseOrder){
-                $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type}, function (data){
-                    var obj = JSON.parse(data);
+                if (isEdit){
+                    $('#addModal').find('#purchaseOrder').empty();
+                    $('#addModal').find('#purchaseOrder').append(purchaseOption);
+                    $('#addModal').find('#purchaseOrder').val(purchaseOrder);
+                    //$('#addModal').trigger('orderLoaded');
+                }else{
+                    $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
+                        var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
+                        if (obj.status == 'success'){
+                            if (obj.message.length > 0){
+                                $('#addModal').find('#rawMaterialName').empty();
 
-                        // Change Details
-                        $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
-                        $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        $('#addModal').find('#agent').val(agentName).trigger('change');
-                        $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                        $('#addModal').find('#plant').val(plantName).trigger('change');
-                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                                var prodRawMat = obj.message;
+                                $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
+                                for (var i = 0; i < prodRawMat.length; i++) {
+                                    $('#addModal').find('#rawMaterialName').append(
+                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                    );                   
+                                }
+                            }
 
-                        if(exDel == 'E'){
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        }else{
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                            //$('#addModal').trigger('orderLoaded');
                         }
-
-                        $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight)
-                        $('#addModal').find('#balance').val(balance);
-                        // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
-
-                        // if (previousRecordsTag){
-                        //     $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        //     // Hide or show insufficient balance
-                        //     if (parseFloat(orderSupplierWeight) - parseFloat(finalWeight) <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }else{
-                        //     var weight = 0;
-                        //     if (type == 'Purchase'){
-                        //         weight = $('#addModal').find('#supplierWeight').val();
-                        //     }else{
-                        //         weight = $('#addModal').find('#orderWeight').val();
-                        //     }
-
-                        //     $('#addModal').find('#balance').val(weight);
-                        //     // Hide or show insufficient balance
-                        //     if (weight <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }
-
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
-            }else{
-                $('#addModal').trigger('orderLoaded');
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
             }
         });
 
         $('#salesOrder').on('change', function (){
-            var salesOrder = $(this).val(); 
+            var salesOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val(); 
+
             if (salesOrder){
-                $.post('php/getOrderSupplier.php', {code: salesOrder, type: type}, function (data){
-                    var obj = JSON.parse(data);
+                if (isEdit){
+                    $('#addModal').find('#salesOrder').empty();
+                    $('#addModal').find('#salesOrder').append(salesOption);
+                    $('#addModal').find('#salesOrder').val(salesOrder);
+                    //$('#addModal').trigger('orderLoaded');
+                }else{
+                    $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, format: 'getProdRaw'}, function (data){
+                        var obj = JSON.parse(data);
 
-                    if (obj.status == 'success'){
-                        var customerSupplierName = obj.message.customer_supplier_name;
-                        var destinationName = obj.message.destination_name;
-                        var siteName = obj.message.site_name;
-                        var agentName = obj.message.agent_name;
-                        var productName = obj.message.product_name;
-                        var plantName = obj.message.plant_name;
-                        var transporterName = obj.message.transporter_name;
-                        var vehNo = obj.message.veh_number;
-                        var exDel = obj.message.ex_del;
-                        var orderSupplierWeight = obj.message.order_supplier_weight;
-                        var balance = obj.message.balance;
-                        // var finalWeight = obj.message.final_weight;
-                        // var previousRecordsTag = obj.message.previousRecordsTag;
+                        if (obj.status == 'success'){
+                            if (obj.message.length > 0){
+                                $('#addModal').find('#productName').empty();
 
-                        $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
-                        $('#addModal').find('#destination').val(destinationName).trigger('change');
-                        $('#addModal').find('#siteName').val(siteName).trigger('change');
-                        $('#addModal').find('#agent').val(agentName).trigger('change');
-                        $('#addModal').find('#productName').val(productName).trigger('change');
-                        $('#addModal').find('#plant').val(plantName).trigger('change');
-                        $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                                var prodRawMat = obj.message;
+                                $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
+                                for (var i = 0; i < prodRawMat.length; i++) {
+                                    $('#addModal').find('#productName').append(
+                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                    );                   
+                                }
+                            }
 
-                        if(exDel == 'E'){
-                            $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                        }else{
-                            $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                            //$('#addModal').trigger('orderLoaded');
                         }
-
-                        $('#addModal').find('#orderWeight').val(orderSupplierWeight);
-                        $('#addModal').find('#balance').val(balance);
-                        // $('#addModal').find('#previousRecordsTag').val(previousRecordsTag);
-
-                        if (parseFloat(balance) <= 0) {
-                            $('#addModal').find('#insufficientBalDisplay').hide();
-                        } else {
-                            $('#addModal').find('#insufficientBalDisplay').show();
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
                         }
-
-
-                        // if (previousRecordsTag){
-                        //     // $('#addModal').find('#balance').val(parseFloat(orderSupplierWeight) - parseFloat(finalWeight));
-
-                        //     // Hide or show insufficient balance
-                        //     if (parseFloat(balance) <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }else{
-                        //     var weight = 0;
-                        //     if (type == 'Purchase'){
-                        //         weight = $('#addModal').find('#supplierWeight').val();
-                        //     }else{
-                        //         weight = $('#addModal').find('#orderWeight').val();
-                        //     }
-
-                        //     $('#addModal').find('#balance').val(weight);
-                        //     // Hide or show insufficient balance
-                        //     if (weight <= 0) {
-                        //         $('#addModal').find('#insufficientBalDisplay').hide();
-                        //     } else {
-                        //         $('#addModal').find('#insufficientBalDisplay').show();
-                        //     }
-                        // }
-                        
-                        $('#addModal').trigger('orderLoaded');
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                });
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
             }
-
         });
+
+        //basicUOM
+        // $('#basicUOM').on('change', function(){
+        //     var value = $(this).val();
+        //     var transactionStatus = $('#transactionStatus').val();
+        //     var unit = $('#orderWeightUnitId').val();
+        //     var prodRawMatCode = '';
+
+        //     if (transactionStatus == 'Purchase'){
+        //         prodRawMatCode = $('#rawMaterialName :selected').data('id');
+        //     }else{
+        //         prodRawMatCode = $('#productName :selected').data('id');
+        //     }
+            
+        //     if (unit == 2){
+        //         $('#basicUOM').val(value);
+        //         var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+        //         var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
+        //         var current = nett1 - nett2;
+        //         $('#weightDifference').val(current.toFixed(0));
+
+        //         var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+        //         if (previousRecordsTag == 'false'){
+        //             $('#addModal').find('#balance').val($(this).val());
+        //             if ($(this).val() <= 0) {
+        //                 $('#addModal').find('#insufficientBalDisplay').hide();
+        //             } else {
+        //                 $('#addModal').find('#insufficientBalDisplay').show();
+        //             }
+        //         }
+        //     }else{
+        //         // Call to backend to get conversion rate
+        //         if (value && prodRawMatCode){
+        //             if (transactionStatus == 'Purchase'){
+        //                 $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'PO'}, function(data)
+        //                 {
+        //                     var obj = JSON.parse(data);
+        //                     if(obj.status === 'success'){
+        //                         var rate = parseFloat(obj.message.rate);
+        //                         var orderQty = value/rate;
+
+        //                         $('#basicUOM').val(orderQty);
+        //                     }
+        //                     else if(obj.status === 'failed'){
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                     else{
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                 });
+        //             }else{
+        //                 $.post('php/getProdRawMatUOM.php', {userID: prodRawMatCode, type: 'SO'}, function(data)
+        //                 {
+        //                     var obj = JSON.parse(data);
+        //                     if(obj.status === 'success'){
+        //                         var rate = parseFloat(obj.message.rate);
+        //                         var orderQty = value/rate;
+
+        //                         $('#basicUOM').val(orderQty);
+        //                         var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
+        //                         var nett2 = $('#basicUOM').val() ? $('#basicUOM').val() : 0;
+        //                         var current = nett1 - nett2;
+        //                         $('#weightDifference').val(current.toFixed(0));
+
+        //                         var previousRecordsTag = $('#addModal').find('#previousRecordsTag').val();
+
+        //                         if (previousRecordsTag == 'false'){
+        //                             $('#addModal').find('#balance').val($(this).val());
+        //                             if ($(this).val() <= 0) {
+        //                                 $('#addModal').find('#insufficientBalDisplay').hide();
+        //                             } else {
+        //                                 $('#addModal').find('#insufficientBalDisplay').show();
+        //                             }
+        //                         }
+        //                     }
+        //                     else if(obj.status === 'failed'){
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                     else{
+        //                         alert(obj.message);
+        //                         $("#failBtn").attr('data-toast-text', obj.message );
+        //                         $("#failBtn").click();
+        //                     }
+        //                 });
+        //             }
+        //         }
+        //     }
+        // });
 
         <?php
             if(isset($_GET['weight'])){
@@ -3334,60 +3963,189 @@ else{
         ?>
     });
 
+    function getSoPo(){
+        var transactionStatus = $('#addModal').find('#transactionStatus').val();
+        var manualVehicle = $('#addModal').find('#manualVehicle').val();
+        var transporter = $('#addModal').find('#transporter').val();
+
+        var vehicle = '';
+        if (manualVehicle == '1'){
+            vehicle = $('#addModal').find('#vehicleNoTxt').val();
+        }else{
+            vehicle = $('#addModal').find('#vehiclePlateNo1').val();
+        }
+
+        soPoTag = true;
+        if (transactionStatus == 'Purchase'){
+            var customerSupplier = $('#addModal').find('#supplierName').val();
+            // var options = $('#purchaseOrder option').clone();
+
+            if (isEdit){
+                $('#addModal').find('#purchaseOrder').empty();
+                $('#addModal').find('#purchaseOrder').append(purchaseOption);
+            }else{
+                $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#purchaseOrder').empty();
+
+                            var soPo = obj.message;
+                            $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < soPo.length; i++) {
+                                if (soPo.length == 1){
+                                    $('#addModal').find('#purchaseOrder').append(
+                                        `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
+                                    );   
+
+                                    $('#addModal').find('#purchaseOrder').trigger('change');
+                                }else{
+                                    $('#addModal').find('#purchaseOrder').append(
+                                        `<option value="${soPo[i]}">${soPo[i]}</option>`
+                                    );   
+                                }           
+                            }
+
+                            $('#addModal').find('#purchaseOrder').val("");
+                        }else{
+                            $('#addModal').find('#purchaseOrder').empty();
+                        }
+
+                        soPoTag = false;
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                });
+            }
+            
+        }else if (transactionStatus == 'Sales'){
+            var customerSupplier = $('#addModal').find('#customerName').val();
+
+            if (isEdit){
+                $('#addModal').find('#salesOrder').empty();
+                $('#addModal').find('#salesOrder').append(salesOption);
+            }else{
+                $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#salesOrder').empty();
+
+                            var soPo = obj.message;
+                            $('#addModal').find('#salesOrder').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < soPo.length; i++) {
+                                if (soPo.length == 1){
+                                    $('#addModal').find('#salesOrder').append(
+                                        `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
+                                    ); 
+
+                                    $('#addModal').find('#salesOrder').trigger('change');
+                                }else{
+                                    $('#addModal').find('#salesOrder').append(
+                                        `<option value="${soPo[i]}">${soPo[i]}</option>`
+                                    ); 
+                                }                 
+                            }
+
+                            $('#addModal').find('#salesOrder').val("");
+
+                        }else{
+                            $('#addModal').find('#salesOrder').empty();
+                        }
+
+                        soPoTag = false;
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                });
+            }
+        }
+    }
+
     function format (row) {
         var returnString = `
-        <!-- Weighing Section -->
+        <!-- Customer Section -->
         <div class="row">
-            <div class="col-2">
+            <div class="col-6">
+                <p><span><strong style="font-size:120%; text-decoration: underline;">Customer/Supplier</strong></span><br>
                 <p><strong>${row.name}</strong></p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
                 <p>${row.address_line_3}</p>
                 <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
             </div>
-            <div class="col-10">
-                <div class="row">
-                    <div class="col-3">
-                        <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
-                        <p><strong>DESTINATION NAME:</strong> ${row.destination}</p>
-                        <p><strong>SITE NAME:</strong> ${row.site_name}</p>
-                        <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
-
-                    if (row.transaction_status == 'Purchase'){
-                        returnString += `<p><strong>RAW MATERIAL NAME:</strong> ${row.product_rawmat_name}</p>`;
-                    }else{
-                        returnString += `<p><strong>PRODUCT NAME:</strong> ${row.product_rawmat_name}</p>`;
-                    }
-
-                    returnString += `</div>
-                    <div class="col-3">
-                        <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
-                        <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
-                        <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
-                        <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p> `;
-
-                    if (row.transaction_status == 'Purchase'){
-                        returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
-                    }else{
-                        returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
-                    }
-                    
-                    returnString += `</div>
-                    <div class="col-3">
-                        <p><strong>CREATED DATE:</strong> ${row.created_date}</p>
-                        <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
-                        <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
-                    </div>
-                    <div class="col-3">
-                        <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
-                        <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
-                        <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
-                        <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
-                        <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
-                    </div>
-                </div>
+        </div>
+        <hr>
+        <!-- Weighing Section -->
+        <div class="row">
+            <p><span><strong style="font-size:120%; text-decoration: underline;">Delivery Order Information</strong></span><br>
+            <div class="col-6">
+                <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
+                <p><strong>DESTINATION NAME:</strong> ${row.destination}</p>
+                <p><strong>SITE NAME:</strong> ${row.site_name}</p>
+                <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
+                if (row.transaction_status == 'Purchase'){
+                    returnString += `<p><strong>RAW MATERIAL NAME:</strong> ${row.product_rawmat_name}</p>`;
+                }else{
+                    returnString += `<p><strong>PRODUCT NAME:</strong> ${row.product_rawmat_name}</p>`;
+                }
+        
+            returnString += `
             </div>
-        </div>`;
+            <div class="col-6">
+                <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
+                <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>`;
+
+                if (row.transaction_status == 'Purchase'){
+                    returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
+                }else{
+                    returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
+                }
+            
+            returnString += `
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <p><span><strong style="font-size:120%; text-decoration: underline;">Weighing Information</strong></span><br>
+            <div class="col-6">
+                <p><strong>CREATED DATE:</strong> ${row.created_date}</p>
+                <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
+                <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
+            </div>
+            <div class="col-6">
+                <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
+                <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
+                <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
+                <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
+                <p><strong>SUB TOTAL WEIGHT:</strong> ${row.final_weight}</p>
+            </div>
+        </div>
+        `;
         
         return returnString;
     }
@@ -3451,7 +4209,8 @@ else{
         previewTable.innerHTML = htmlTable;
     }
 
-    function edit(id){
+    function edit(id){ 
+        isEdit = true;
         $('#spinnerLoading').show();
         $.post('php/getWeight.php', {userID: id}, function(data)
         {
@@ -3471,11 +4230,11 @@ else{
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
-                $('#addModal').find('#weightType').val(obj.message.weight_type);
+                $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
                 $('#addModal').find('#customerType').val(obj.message.customer_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
 
-                if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
+                if(obj.message.transaction_status == "Purchase"){
                     $('#divWeightDifference').show();
                     $('#divSupplierWeight').show();
                     $('#divSupplierName').show();
@@ -3527,14 +4286,14 @@ else{
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-                debugger;
+
                 if (obj.message.transaction_status == 'Purchase'){
-                    $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
-                    $('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+                    $//('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
                     $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
                 }else{
-                    $('#addModal').find('#salesOrder').next('.select2-container').hide();
-                    $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    //$('#addModal').find('#salesOrder').next('.select2-container').hide();
+                    //$('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
                 }
                 
@@ -3549,6 +4308,7 @@ else{
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                $('#addModal').find('#convertedNettWeight').val(obj.message.converted_nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
@@ -3577,6 +4337,7 @@ else{
                 $('#addModal').find('#sstPrice').val(obj.message.sst);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#finalWeight').val(obj.message.final_weight);
+                $('#addModal').find('#currentWeight').text(obj.message.final_weight);
 
                 if (obj.message.load_drum == 'LOAD'){
                     $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
@@ -3585,9 +4346,21 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
+                
+                if (obj.message.transaction_status == 'Purchase'){
+                    //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
+                    $//('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').trigger('orderLoaded', [obj.message]);
+                }else{
+                    //$('#addModal').find('#salesOrder').next('.select2-container').hide();
+                    //$('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').trigger('orderLoaded', [obj.message]);
+                }
 
                 // Load these field after PO/SO is loaded
-                $('#addModal').on('orderLoaded', function() {
+                /*$('#addModal').on('orderLoaded', function() {
                     $('#addModal').find('#customerCode').val(obj.message.customer_code);
                     $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
                     $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
@@ -3596,16 +4369,16 @@ else{
                     $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
                     $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
                     $('#addModal').find('#agentCode').val(obj.message.agent_code);
-                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
-                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
-                    $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
-                    $('#addModal').find('#productCode').val(obj.message.product_code);
                     $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
                     $('#addModal').find('#orderWeight').val(obj.message.order_weight);
                     $('#addModal').find('#destinationCode').val(obj.message.destination_code);
                     $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
                     $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
                     $('#addModal').find('#plantCode').val(obj.message.plant_code);
+                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                    $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
+                    $('#addModal').find('#productCode').val(obj.message.product_code);
 
                     // Hide select and show input readonly
                     // if (obj.message.transaction_status == 'Purchase'){
@@ -3615,7 +4388,9 @@ else{
                     //     $('#addModal').find('#salesOrder').next('.select2-container').hide();
                     //     $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     // }
-                });
+                });*/
+                
+                isEdit = false;
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
@@ -3743,47 +4518,60 @@ else{
     // }
 
     function print(id, transactionStatus) {
-        if (transactionStatus == "Sales"){
-            $('#prePrintModal').find('#id').val(id);
-            $('#prePrintModal').find('#prePrint').val("");
-            $("#prePrintModal").modal("show");
+        $.post('php/print.php', {userID: id, file: 'weight', prePrint: 'Y'}, function(data){
+            var obj2 = JSON.parse(data);
 
-            $('#prePrintForm').validate({
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                }
-            });
-        }else{
-            $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
-                var obj = JSON.parse(data);
-
-                if(obj.status === 'success'){
-                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                    printWindow.document.write(obj.message);
-                    printWindow.document.close();
-                    setTimeout(function(){
-                        printWindow.print();
-                        printWindow.close();
+            if(obj2.status === 'success'){
+                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                printWindow.document.write(obj2.message);
+                printWindow.document.close();
+                setTimeout(function(){
+                    printWindow.print();
+                    printWindow.close();
+                    table.ajax.reload();
+                    
+                    setTimeout(function () {
+                        if (confirm("Do you need to reprint?")) {
+                            $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
+                                var obj = JSON.parse(data);
+                                if (obj.status === 'success') {
+                                    var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                    reprintWindow.document.write(obj.message);
+                                    reprintWindow.document.close();
+                                    setTimeout(function () {
+                                        reprintWindow.print();
+                                        reprintWindow.close();
+                                        <?php
+                                            if(isset($_GET['weight'])){
+                                                echo "window.location = 'index.php';";
+                                            }
+                                        ?>
+                                    }, 500);
+                                } 
+                                else {
+                                    window.location = 'index.php';
+                                }
+                            });
+                        }
+                        else{
+                            <?php
+                                if(isset($_GET['weight'])){
+                                    echo "window.location = 'index.php';";
+                                }
+                            ?>
+                        }
                     }, 500);
-                }
-                else if(obj.status === 'failed'){
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                }
-                else{
-                    $("#failBtn").attr('data-toast-text', "Something wrong when print");
-                    $("#failBtn").click();
-                }
-            });
-        }
+                }, 500);
+            }
+            else if(obj.status === 'failed'){
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                $("#failBtn").click();
+            }
+        });
     }
     </script>
 </body>

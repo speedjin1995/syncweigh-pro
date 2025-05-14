@@ -59,15 +59,23 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
 }
 
+if($_POST['soNo'] != null && $_POST['soNo'] != '' && $_POST['soNo'] != '-'){
+	$searchQuery .= " and purchase_order = '".$_POST['soNo']."'";
+}
+
+if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
+	$searchQuery .= " and purchase_order = '".$_POST['poNo']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
-$allQuery = "select count(*) as allcount from Weight where status = '0'";
+$allQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')";
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -75,10 +83,10 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -86,11 +94,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0' and is_cancel = 'N'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);
@@ -127,9 +135,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "agent_name"=>$row['agent_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
-    "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
-    "product_code"=>($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
-    "product_name"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
+    "customer"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['customer_name'] : $row['supplier_name']),
+    "product_code"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_code'] : $row['raw_mat_code']), 
+    "product_name"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_name'] : $row['raw_mat_name']), 
     "container_no"=>$row['container_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],

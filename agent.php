@@ -205,9 +205,17 @@
                                                                         Download Template
                                                                     </button>
                                                                 </a>
-                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
+                                                                </button>
+                                                                <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-file-add-line align-middle me-1"></i>
+                                                                    Pull From SQL
                                                                 </button>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
@@ -319,24 +327,22 @@ $(function () {
             { data: 'agent_code' },
             { data: 'name' },
             { data: 'description' },
+            { data: 'status' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    if (row.status == '1'){
-                        return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
-                    }else{
-                        return '';
+                    if(row.status == 'Inactive'){
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
                     }
-                }
-            },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    else{
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    }
                 }
             }
         ]       
@@ -462,6 +468,41 @@ $(function () {
             }
         });
     });  
+
+    $('#exportExcel').on('click', function(){
+        window.open("php/exportMasterData.php?selectedValue=Agent");
+    });
+
+    $('#pullSql').on('click', function(){
+        $('#spinnerLoading').show();
+        // Send the JSON array to the server
+        $.ajax({
+            url: 'php/pullAgent.php',
+            type: 'POST',
+            contentType: 'application/json',
+            success: function(response) {
+                var obj = JSON.parse(response);
+                if (obj.status === 'success') {
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                    window.location.reload();
+                } 
+                else if (obj.status === 'failed') {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                    window.location.reload();
+                } 
+                else {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                    window.location.reload();
+                }
+            }
+        });
+    });
     
     $('#uploadModal').find('#previewButton').on('click', function(){
         var fileInput = document.getElementById('fileInput');

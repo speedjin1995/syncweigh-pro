@@ -6,32 +6,32 @@ session_start();
 $searchQuery = "";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
-    $searchQuery = "and plant_code IN ('$username')";
+    $searchQuery = " and plant_code IN ('$username')";
 }
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
-    $formatted_date = $date->format('Y-m-d 00:00:00');
-    $fromDate = $date->format('d/m/Y');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $fromDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date >= '".$formatted_date."'";
     }
 }
 
 if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_POST['toDate']);
-    $formatted_date = $date->format('Y-m-d 23:59:59');
-    $toDate = $date->format('d/m/Y');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $toDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date <= '".$formatted_date."'";
     }
 }
 
@@ -289,7 +289,7 @@ if(isset($_POST["file"])){
             }
         }
         else if ($_POST['reportType'] == 'PRODUCT'){
-            if ($select_stmt = $db->prepare("SELECT * FROM ( SELECT product_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY code")){
+            if ($select_stmt = $db->prepare("SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY name")){
 
                 if (!$select_stmt->execute()){
                     echo json_encode(
@@ -355,7 +355,7 @@ if(isset($_POST["file"])){
                                             <table class="table">
                                                 <thead style="border-bottom: 1px solid black;">
                                                     <tr class="text-center" style="border-top: 1px solid black;">
-                                                        <th rowspan="2" class="text-start">Product</th>
+                                                        <th rowspan="2" class="text-start">Product Description</th>
                                                         <th rowspan="2">Total Loads</th>
                                                         <th rowspan="2">Product Weight (MT)</th>
                                                         <th rowspan="2">Transport Weight (MT)</th>
@@ -377,7 +377,7 @@ if(isset($_POST["file"])){
                                                 <tbody>';
 
                                                 while ($row = $result->fetch_assoc()) {
-                                                    $product = $row['code'];
+                                                    $product = $row['name'];
                                                     $productWeight = number_format($row['product_weight']/1000, 2);
                                                     $transportWeight = number_format($row['transport_weight']/1000, 2);
 
@@ -579,7 +579,7 @@ if(isset($_POST["file"])){
                                                 $formattedGrossWeightDate = $grossWeightDate->format('H:i');
                                                 $tareWeightDate =  new DateTime($row['tare_weight1_date']);
                                                 $formattedTareWeightDate = $tareWeightDate->format('H:i');
-                                                $transactionDate =  new DateTime($row['transaction_date']);
+                                                $transactionDate =  new DateTime($row['tare_weight1_date']);
                                                 $formattedtransactionDate = $transactionDate->format('d/m/Y');
                                                 $exDel = '';
                                                 

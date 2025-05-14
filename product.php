@@ -4,6 +4,8 @@
 <?php
     require_once "php/db_connect.php";
     $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+    $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
+    $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
 ?>
 
 <head>
@@ -202,7 +204,54 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="basicUom" class="col-sm-4 col-form-label">UOM</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select id="basicUom" name="basicUom" class="form-select select2" >
+                                                                                            <?php while($rowUnit=mysqli_fetch_assoc($unit)){ ?>
+                                                                                                <option value="<?=$rowUnit['id'] ?>"><?=$rowUnit['unit'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row col-12">
+                                                            <div class="col-xxl-12 col-lg-12">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-header">
+                                                                        <div class="d-flex justify-content-between">
+                                                                            <div>
+                                                                                <h5 class="card-title mb-0">UOM Conversion</h5>
+                                                                            </div>
+                                                                            <div class="flex-shrink-0">
+                                                                                <button type="button" class="btn btn-danger add-uom"><i class="ri-add-circle-line align-middle me-1"></i>Add UOM</button>
+                                                                            </div> 
+                                                                        </div> 
+                                                                    </div>
+
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <table class="table table-primary">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th width="10%">No</th>
+                                                                                            <th>UOM</th>
+                                                                                            <th>Rate</th>
+                                                                                            <th>Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody id="uomTable"></tbody>
+                                                                                </table>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -296,9 +345,17 @@
                                                                         Download Template 
                                                                     </button>
                                                                 </a>
-                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
+                                                                </button>
+                                                                <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-file-add-line align-middle me-1"></i>
+                                                                    Pull From SQL
                                                                 </button>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
@@ -320,6 +377,7 @@
                                                                     <th>Product Name</th>
                                                                     <th>Product Price</th>
                                                                     <th>Description</th>
+                                                                    <th>Basic UOM</th>
                                                                     <th>Status</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -401,10 +459,38 @@
         </tr>
     </script>
 
+    <script type="text/html" id="uomDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="uomNo" name="uomNo" readonly>
+                <input type="text" class="form-control" id="uomId" name="uomId" hidden>
+            </td>
+            <td>
+                <select class="form-control select2" style="width: 100%; background-color:white;" id="uom" name="uom">
+                    <?php while($unitRow=mysqli_fetch_assoc($unit2)){ ?>
+                        <option value="<?=$unitRow['id'] ?>"><?=$unitRow['unit']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="rate" name="rate" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
 
 <script type="text/javascript">
 
 var table;
+var rowCount = $("#rawMaterialTable").find(".details").length;
+var rowNoCount = 1;
+var uomRowCount = $("#uomTable").find(".details").length;
+var uomNoCount = 1;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -431,8 +517,6 @@ $(function () {
         'height': 'auto'
     });
 
-    var rowCount = $("#rawMaterialTable").find(".details").length;
-
     table = $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -456,24 +540,23 @@ $(function () {
             { data: 'name' },
             { data: 'price' },
             { data: 'description' },
+            { data: 'basic_uom' },
+            { data: 'status' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    if (row.status == '1'){
-                        return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
-                    }else{
-                        return '';
+                    if(row.status == 'Inactive'){
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
                     }
-                }
-            },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    else{
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    }
                 }
             }
         ]       
@@ -587,6 +670,7 @@ $(function () {
         $('#addModal').find('#varianceType').val("");
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
+        $('#addModal').find('#basicUom').val("").trigger('change');
         $('#rawMaterialTable').html('');
         rowCount = 1;
 
@@ -618,6 +702,37 @@ $(function () {
         });
     });
 
+    $('#pullSql').on('click', function(){
+        $('#spinnerLoading').show();
+        // Send the JSON array to the server
+        $.ajax({
+            url: 'php/pullProducts.php',
+            type: 'POST',
+            contentType: 'application/json',
+            success: function(response) {
+                var obj = JSON.parse(response);
+                if (obj.status === 'success') {
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                    window.location.reload();
+                } 
+                else if (obj.status === 'failed') {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                    window.location.reload();
+                } 
+                else {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                    window.location.reload();
+                }
+            }
+        });
+    });
+
     // Find and remove selected table rows
     $("#rawMaterialTable").on('click', 'button[id^="remove"]', function () {
         $(this).parents("tr").remove();
@@ -625,13 +740,11 @@ $(function () {
         $("#rawMaterialTable tr").each(function (index) {
             $(this).find('input[name^="no"]').val(index + 1);
         });
+
+        rowNoCount = ($("#rawMaterialTable").find(".details").length)+1; //Fixed for no issue
     });
 
     $(".add-material").click(function(){
-        if(rowCount == 0){
-            rowCount++;
-        }
-
         var $addContents = $("#rawMaterialDetail").clone();
         $("#rawMaterialTable").append($addContents.html());
 
@@ -639,7 +752,7 @@ $(function () {
         $("#rawMaterialTable").find('.details:last').attr("data-index", rowCount);
         $("#rawMaterialTable").find('#remove:last').attr("id", "remove" + rowCount);
 
-        $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
+        $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowNoCount);
         $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount);
         $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).select2({
             allowClear: true,
@@ -649,6 +762,51 @@ $(function () {
         $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount);
 
         rowCount++;
+        rowNoCount++;
+    });
+
+    // Find and remove selected table rows
+    $("#uomTable").on('click', 'button[id^="remove"]', function () {
+        $(this).parents("tr").remove();
+
+        $("#uomTable tr").each(function (index) {
+            $(this).find('input[name^="uomNo"]').val(index + 1);
+        });
+
+        uomNoCount = ($("#uomTable").find(".details").length)+1; //Fixed for no issue
+    });
+
+    $(".add-uom").click(function(){
+        var $addContents = $("#uomDetail").clone();
+        $("#uomTable").append($addContents.html());
+
+        $("#uomTable").find('.details:last').attr("id", "detail" + uomRowCount);
+        $("#uomTable").find('.details:last').attr("data-index", uomRowCount);
+        $("#uomTable").find('#remove:last').attr("id", "remove" + uomRowCount);
+
+        $("#uomTable").find('#uomNo:last').attr('name', 'uomNo['+uomRowCount+']').attr("id", "uomNo" + uomRowCount).val(uomNoCount);
+        $("#uomTable").find('#uomId:last').attr('name', 'uomId['+uomRowCount+']').attr("id", "uomId" + uomRowCount);
+        $("#uomTable").find('#uom:last').attr('name', 'uom['+uomRowCount+']').attr("id", "uom" + uomRowCount).select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#uomTable') // Prevents dropdown cutoff inside modals/tables
+        });
+        $("#uomTable").find('#rate:last').attr('name', 'rate['+uomRowCount+']').attr("id", "rate" + uomRowCount);
+    
+        // Apply custom styling to Select2 elements in addModal
+        $('#uomTable .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#uomTable .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
+        uomRowCount++;
+        uomNoCount++;
     });
 
     $('#uploadExcel').on('click', function(){
@@ -667,6 +825,10 @@ $(function () {
                 $(element).removeClass('is-invalid');
             }
         });
+    });
+
+    $('#exportExcel').on('click', function(){
+        window.open("php/exportMasterData.php?selectedValue=Product");
     });
 
     $('#uploadModal').find('#previewButton').on('click', function(){
@@ -738,9 +900,11 @@ function edit(id){
             $('#addModal').find('#varianceType').val(obj.message.variance);
             $('#addModal').find('#high').val(obj.message.high);
             $('#addModal').find('#low').val(obj.message.low);
+            $('#addModal').find('#basicUom').val(obj.message.basic_uom).trigger('change');
 
             $('#rawMaterialTable').html('');
             rowCount = 1;
+            rowNoCount = 1;
 
             if (obj.message.rawMats.length > 0){
                 for(var i = 0; i < obj.message.rawMats.length; i++){
@@ -754,10 +918,67 @@ function edit(id){
 
                     $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(item.no);
                     $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount).val(item.id);
-                    $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).val(item.raw_mat_code);
+                    $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).val(item.raw_mat_code).select2({
+                        allowClear: true,
+                        placeholder: "Please Select",
+                        dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
+                    });
                     $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount).val(item.raw_mat_weight);
 
+                    // Apply custom styling to Select2 elements in addModal
+                    $('#rawMaterialTable .select2-container .select2-selection--single').css({
+                        'padding-top': '4px',
+                        'padding-bottom': '4px',
+                        'height': 'auto'
+                    });
+
+                    $('#rawMaterialTable .select2-container .select2-selection__arrow').css({
+                        'padding-top': '33px',
+                        'height': 'auto'
+                    });
+
                     rowCount++;
+                    rowNoCount++;
+                }
+            }
+
+            $('#uomTable').html('');
+            uomRowCount = 0;
+            uomNoCount = 1;
+
+            if (obj.message.prodUom.length > 0){
+                for(var i = 0; i < obj.message.prodUom.length; i++){
+                    var item = obj.message.prodUom[i];
+                    var $addContents = $("#uomDetail").clone();
+                    $("#uomTable").append($addContents.html());
+
+                    $("#uomTable").find('.details:last').attr("id", "detail" + uomRowCount);
+                    $("#uomTable").find('.details:last').attr("data-index", uomRowCount);
+                    $("#uomTable").find('#remove:last').attr("id", "remove" + uomRowCount);
+
+                    $("#uomTable").find('#uomNo:last').attr('name', 'uomNo['+uomRowCount+']').attr("id", "uomNo" + uomRowCount).val(item.no);
+                    $("#uomTable").find('#uomId:last').attr('name', 'uomId['+uomRowCount+']').attr("id", "uomId" + uomRowCount).val(item.id);
+                    $("#uomTable").find('#uom:last').attr('name', 'uom['+uomRowCount+']').attr("id", "uom" + uomRowCount).val(item.unit_id).select2({
+                        allowClear: true,
+                        placeholder: "Please Select",
+                        dropdownParent: $('#uomTable') // Prevents dropdown cutoff inside modals/tables
+                    });
+                    $("#uomTable").find('#rate:last').attr('name', 'rate['+uomRowCount+']').attr("id", "rate" + uomRowCount).val(item.rate);
+
+                    // Apply custom styling to Select2 elements in addModal
+                    $('#uomTable .select2-container .select2-selection--single').css({
+                        'padding-top': '4px',
+                        'padding-bottom': '4px',
+                        'height': 'auto'
+                    });
+
+                    $('#uomTable .select2-container .select2-selection__arrow').css({
+                        'padding-top': '33px',
+                        'height': 'auto'
+                    });
+
+                    uomRowCount++;
+                    uomNoCount++;
                 }
             }
 

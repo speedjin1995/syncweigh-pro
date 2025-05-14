@@ -16,15 +16,15 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 $searchQuery = "";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
-  $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
-  $fromDateTime = $dateTime->format('Y-m-d 00:00:00');
-  $searchQuery = " and transaction_date >= '".$fromDateTime."'";
+  $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+  $fromDateTime = $dateTime->format('Y-m-d H:i:00');
+  $searchQuery = " and tare_weight1_date >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
-  $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['toDate']);
-  $toDateTime = $dateTime->format('Y-m-d 23:59:59');
-	$searchQuery .= " and transaction_date <= '".$toDateTime."'";
+  $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+  $toDateTime = $dateTime->format('Y-m-d H:i:59');
+	$searchQuery .= " and tare_weight1_date <= '".$toDateTime."'";
 }
 
 if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
@@ -61,6 +61,10 @@ if($_POST['destination'] != null && $_POST['destination'] != '' && $_POST['desti
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+}
+
+if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
+	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
 }
 
 if($searchValue != ''){

@@ -195,6 +195,7 @@
 
                                                                             <input type="hidden" class="form-control" id="id" name="id">
                                                                             <input type="hidden" id="transporterCode" name="transporterCode">
+                                                                            <input type="hidden" id="transporterName" name="transporterName">
                                                                             <input type="hidden" id="customerCode" name="customerCode">
                                                                                                                                                          
                                                                         </div>
@@ -258,9 +259,13 @@
                                                                         Download Template
                                                                     </button>
                                                                 </a>
-                                                                <button type="button" id="uploadExcel" class="btn btn-success waves-effect waves-light">
+                                                                <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
                                                                 </button>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
@@ -399,24 +404,22 @@ $(function () {
             },
             { data: 'transporter_name' },
             { data: 'customer_name' },
+            { data: 'status' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    if (row.status == '1'){
-                        return '<button title="Reactivate" type="button" id="reactivate'+data+'" onclick="reactivate('+data+')" class="btn btn-warning btn-sm">Reactivate</button>';
-                    }else{
-                        return '';
+                    if(row.status == 'Inactive'){
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
                     }
-                }
-            },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                    '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    else{
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
+                    }
                 }
             }
         ]       
@@ -445,6 +448,7 @@ $(function () {
                 else if(obj.status === 'failed')
                 {
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 }
@@ -496,11 +500,24 @@ $(function () {
     //transporter
     $('#transporter').on('change', function(){
         $('#transporterCode').val($('#transporter :selected').data('code'));
+        $('#transporterName').val($(this).val());
     });
 
     //customer
     $('#customer').on('change', function(){
         $('#customerCode').val($('#customer :selected').data('code'));
+    });
+
+    $('input[name="exDel"]').change(function() {
+        var exDel = $('input[name="exDel"]:checked').val();
+        if (exDel == 'true'){ //ex-quarry
+            $('#transporter').val('OWN TRANSPORTATION').trigger('change');
+            $('#transporter').val('OWN TRANSPORTATION').attr('disabled', true);
+            $('#customer').val('').attr('disabled', false).trigger('change');
+        }else{ // delivered
+            $('#transporter').val('').attr('disabled', false).trigger('change');
+            $('#customer').val('').attr('disabled', true).trigger('change');
+        }
     });
 
     $('#uploadVehicle').on('click', function(){
@@ -538,11 +555,13 @@ $(function () {
                 } 
                 else if (obj.status === 'failed') {
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
                 } 
                 else {
                     $('#spinnerLoading').hide();
+                    alert(obj.message);
                     $("#failBtn").attr('data-toast-text', 'Failed to save');
                     $("#failBtn").click();
                 }
@@ -566,7 +585,11 @@ $(function () {
                 $(element).removeClass('is-invalid');
             }
         });
-    });  
+    });
+    
+    $('#exportExcel').on('click', function(){
+        window.open("php/exportMasterData.php?selectedValue=Vehicle");
+    });
     
     $('#uploadModal').find('#previewButton').on('click', function(){
         var fileInput = document.getElementById('fileInput');
@@ -632,13 +655,13 @@ function edit(id){
             $('#addModal').find('#id').val(obj.message.id);
             $('#addModal').find('#vehicleNo').val(obj.message.veh_number);
             $('#addModal').find('#vehicleWeight').val(obj.message.vehicle_weight);
+            if (obj.message.ex_del == 'EX'){
+                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+            }else{
+                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+            }
             $('#addModal').find('#transporter').val(obj.message.transporter_name).trigger('change');
             $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
-            if (obj.message.ex_del == 'EX'){
-                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
-            }else{
-                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
-            }
             $('#addModal').find('#customer').val(obj.message.customer_name).trigger('change');
             $('#addModal').find('#customerCode').val(obj.message.customer_code);
 
@@ -649,11 +672,13 @@ function edit(id){
         }
         else if(obj.status === 'failed'){
             $('#spinnerLoading').hide();
+            alert(obj.message);
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
         else{
             $('#spinnerLoading').hide();
+            alert(obj.message);
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
@@ -675,11 +700,13 @@ function deactivate(id){
             }
             else if(obj.status === 'failed'){
                 $('#spinnerLoading').hide();
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
             else{
                 $('#spinnerLoading').hide();
+                alert(obj.message);
                 $("#failBtn").attr('data-toast-text', obj.message );
                 $("#failBtn").click();
             }
@@ -758,11 +785,13 @@ function reactivate(id) {
         }
         else if(obj.status === 'failed'){
             $('#spinnerLoading').hide();
+            alert(obj.message);
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }
         else{
             $('#spinnerLoading').hide();
+            alert(obj.message);
             $("#failBtn").attr('data-toast-text', obj.message );
             $("#failBtn").click();
         }

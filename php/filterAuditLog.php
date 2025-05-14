@@ -18,14 +18,14 @@ $searchQuery = " ";
 if($_POST['fromDateSearch'] != null && $_POST['fromDateSearch'] != ''){
     $fromDate = new DateTime($_POST['fromDateSearch']);
     $fromDateTime = date_format($fromDate,"Y-m-d 00:00:00");
-     $searchQuery = " WHERE event_date >= '".$fromDateTime."'";
-  }
-  
-  if($_POST['toDateSearch'] != null && $_POST['toDateSearch'] != ''){
+    $searchQuery = " WHERE event_date >= '".$fromDateTime."'";
+}
+
+if($_POST['toDateSearch'] != null && $_POST['toDateSearch'] != ''){
     $toDate = new DateTime($_POST['toDateSearch']);
     $toDateTime = date_format($toDate,"Y-m-d 23:59:59");
-      $searchQuery .= " and event_date <= '".$toDateTime."'";
-  }
+    $searchQuery .= " and event_date <= '".$toDateTime."'";
+}
 
 if($_POST['selectedValue'] == "Customer")
 {
@@ -150,20 +150,42 @@ if($_POST['selectedValue'] == "Customer")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Customer Code"=>$row['customer_code'],
-        "Company Reg No"=>$row['company_reg_no'],
-        "Company Name"=>$row['name'],
-        "Address line 1"=>$row['address_line_1'],
-        "Address line 2"=>$row['address_line_2'],
-        "Address line 3"=>$row['address_line_3'],
-        "Phone No"=>$row['phone_no'],
-        "Fax No"=>$row['fax_no'],
-        "Action"=> searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['customer_code'])){
+            $customerId = $row['customer_id'];
+            $customerData = searchCustomerAuditById($customerId, $db); 
+    
+            if (!empty($customerData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Customer Code"=>$customerData['customer_code'],
+                "Company Reg No"=>$customerData['company_reg_no'],
+                "Company Name"=>$customerData['name'],
+                "Address line 1"=>$customerData['address_line_1'],
+                "Address line 2"=>$customerData['address_line_2'],
+                "Address line 3"=>$customerData['address_line_3'],
+                "Phone No"=>$customerData['phone_no'],
+                "Fax No"=>$customerData['fax_no'],
+                "Action"=> searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Customer Code"=>$row['customer_code'],
+            "Company Reg No"=>$row['company_reg_no'],
+            "Company Name"=>$row['name'],
+            "Address line 1"=>$row['address_line_1'],
+            "Address line 2"=>$row['address_line_2'],
+            "Address line 3"=>$row['address_line_3'],
+            "Phone No"=>$row['phone_no'],
+            "Fax No"=>$row['fax_no'],
+            "Action"=> searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
     }
 
     $columnNames = ["Customer Code", "Company Reg No", "Company Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date", ];
@@ -177,15 +199,32 @@ if($_POST['selectedValue'] == "Destination")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Destination Code"=>$row['destination_code'],
-        "Destination Name"=>$row['name'],
-        "Description"=>$row['description'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['destination_code'])){
+            $destinationId = $row['destination_id'];
+            $destinationData = searchDestinationAuditById($destinationId, $db);
+    
+            if (!empty($destinationData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Destination Code"=>$destinationData['destination_code'],
+                "Destination Name"=>$destinationData['name'],
+                "Description"=>$destinationData['description'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Destination Code"=>$supplierData['destination_code'],
+            "Destination Name"=>$supplierData['name'],
+            "Description"=>$supplierData['description'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
     }
 
     $columnNames = ["Destination Code", "Destination Name", "Description", "Action", "Action By", "Event Date"];
@@ -199,25 +238,47 @@ if($_POST['selectedValue'] == "Product")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Product Code"=>$row['product_code'],
-        "Product Name"=>$row['name'],
-        "Product Price"=>$row['price'],
-        "Description"=>$row['description'],
-        "Variance Type"=>$row['variance'],
-        "High"=>$row['high'],
-        "Low"=>$row['low'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['product_code'])){
+            $productId = $row['product_id'];
+            $productData = searchProductAuditById($productId, $db);
+           
+            if (!empty($productData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Product Code"=>$productData['product_code'],
+                "Product Name"=>$productData['name'],
+                "Product Price"=>$productData['price'],
+                "Description"=>$productData['description'],
+                "Variance Type"=>$productData['variance'],
+                "High"=>$productData['high'],
+                "Low"=>$productData['low'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Product Code"=>$row['product_code'],
+            "Product Name"=>$row['name'],
+            "Product Price"=>$row['price'],
+            "Description"=>$row['description'],
+            "Variance Type"=>$row['variance'],
+            "High"=>$row['high'],
+            "Low"=>$row['low'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
+        
     }
 
     $columnNames = ["Product Code", "Product Name", "Product Price", "Description", "Variance Type", "High", "Low", "Action", "Action By", "Event Date"];
 }
 
-if($_POST['selectedValue'] == "Product")
+if($_POST['selectedValue'] == "Raw Materials")
 {
     ## Fetch records
     $empQuery = "select * from Raw_Mat_Log".$searchQuery;
@@ -225,20 +286,43 @@ if($_POST['selectedValue'] == "Product")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Raw Material Code"=>$row['raw_mat_code'],
-        "Raw Material Name"=>$row['name'],
-        "Raw Material Price"=>$row['price'],
-        "Description"=>$row['description'],
-        "Variance Type"=>$row['variance'],
-        "High"=>$row['high'],
-        "Low"=>$row['low'],
-        "Type"=>$row['type'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if(empty($row['raw_mat_code'])){
+            $rawMatId = $row['raw_mat_id'];
+            $rawMatData = searchRawMatAuditById($rawMatId, $db);
+    
+            if (!empty($rawMatData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Raw Material Code"=>$rawMatData['raw_mat_code'],
+                "Raw Material Name"=>$rawMatData['name'],
+                "Raw Material Price"=>$rawMatData['price'],
+                "Description"=>$rawMatData['description'],
+                "Variance Type"=>$rawMatData['variance'],
+                "High"=>$rawMatData['high'],
+                "Low"=>$rawMatData['low'],
+                "Type"=>$rawMatData['type'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Raw Material Code"=>$row['raw_mat_code'],
+            "Raw Material Name"=>$row['name'],
+            "Raw Material Price"=>$row['price'],
+            "Description"=>$row['description'],
+            "Variance Type"=>$row['variance'],
+            "High"=>$row['high'],
+            "Low"=>$row['low'],
+            "Type"=>$row['type'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
+        
     }
 
     $columnNames = ["Raw Material Code", "Raw Material Name", "Raw Material Price", "Description", "Variance Type", "High", "Low", "Type", "Action", "Action By", "Event Date"];
@@ -252,20 +336,44 @@ if($_POST['selectedValue'] == "Supplier")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Supplier Code"=>$row['supplier_code'],
-        "Company Reg No"=>$row['company_reg_no'],
-        "Supplier Name"=>$row['name'],
-        "Address line 1"=>$row['address_line_1'],
-        "Address line 2"=>$row['address_line_2'],
-        "Address line 3"=>$row['address_line_3'],
-        "Phone No"=>$row['phone_no'],
-        "Fax No"=>$row['fax_no'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date']
-        );
+        if (empty($row['supplier_code'])){
+            $supplierId = $row['supplier_id'];
+            $supplierData = searchSupplierAuditById($supplierId, $db);
+    
+            if (!empty($supplierData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Supplier Code"=>$supplierData['supplier_code'],
+                "Company Reg No"=>$supplierData['company_reg_no'],
+                "Supplier Name"=>$supplierData['name'],
+                "Address line 1"=>$supplierData['address_line_1'],
+                "Address line 2"=>$supplierData['address_line_2'],
+                "Address line 3"=>$supplierData['address_line_3'],
+                "Phone No"=>$supplierData['phone_no'],
+                "Fax No"=>$supplierData['fax_no'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date']
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Supplier Code"=>$row['supplier_code'],
+            "Company Reg No"=>$row['company_reg_no'],
+            "Supplier Name"=>$row['name'],
+            "Address line 1"=>$row['address_line_1'],
+            "Address line 2"=>$row['address_line_2'],
+            "Address line 3"=>$row['address_line_3'],
+            "Phone No"=>$row['phone_no'],
+            "Fax No"=>$row['fax_no'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date']
+            );
+        }
+
+        
     }
 
     $columnNames = ["Supplier Code", "Company Reg No", "Supplier Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
@@ -279,19 +387,41 @@ if($_POST['selectedValue'] == "Vehicle")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Vehicle No"=>$row['veh_number'],
-        "Vehicle Weight"=>$row['vehicle_weight'],
-        "Transporter Code"=>$row['transporter_code'],
-        "Transporter Name"=>$row['transporter_name'],
-        "EX-Quarry / Delivered"=>($row['ex_del'] == 'EX') ? "E" : "D",
-        "Customer Code"=>$row['customer_code'],
-        "Customer Name"=>$row['customer_name'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['veh_number'])){
+            $vehicleId = $row['vehicle_id'];
+            $vehicleData = searchVehicleAuditById($vehicleId, $db);
+    
+            if (!empty($vehicleData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Vehicle No"=>$vehicleData['veh_number'],
+                "Vehicle Weight"=>$vehicleData['vehicle_weight'],
+                "Transporter Code"=>$vehicleData['transporter_code'],
+                "Transporter Name"=>$vehicleData['transporter_name'],
+                "EX-Quarry / Delivered"=>($vehicleData['ex_del'] == 'EX') ? "E" : "D",
+                "Customer Code"=>$vehicleData['customer_code'],
+                "Customer Name"=>$vehicleData['customer_name'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Vehicle No"=>$row['veh_number'],
+            "Vehicle Weight"=>$row['vehicle_weight'],
+            "Transporter Code"=>$row['transporter_code'],
+            "Transporter Name"=>$row['transporter_name'],
+            "EX-Quarry / Delivered"=>($row['ex_del'] == 'EX') ? "E" : "D",
+            "Customer Code"=>$row['customer_code'],
+            "Customer Name"=>$row['customer_name'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
+        
     }
 
     $columnNames = ["Vehicle No", "Vehicle Weight", "Transporter Code", "Transporter Name", "EX-Quarry / Delivered", "Customer Code", "Customer Name", "Action", "Action By", "Event Date"];
@@ -305,15 +435,32 @@ if($_POST['selectedValue'] == "Agent")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Sales Representative Code"=>$row['agent_code'],
-        "Sales Representative Name"=>$row['name'],
-        "Description"=>$row['description'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['agent_code'])){
+            $agentId = $row['agent_id'];
+            $agentData = searchAgentAuditById($agentId, $db);
+            
+            if (!empty($agentData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Sales Representative Code"=>$agentData['agent_code'],
+                "Sales Representative Name"=>$agentData['name'],
+                "Description"=>$agentData['description'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Sales Representative Code"=>$row['agent_code'],
+            "Sales Representative Name"=>$row['name'],
+            "Description"=>$row['description'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }  
     }
 
     $columnNames = ["Sales Representative Code", "Sales Representative Name", "Description", "Action", "Action By", "Event Date"];
@@ -327,20 +474,43 @@ if($_POST['selectedValue'] == "Transporter")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Transporter Code"=>$row['transporter_code'],
-        "Company Reg No"=>$row['company_reg_no'],
-        "Transporter Name"=>$row['name'],
-        "Address line 1"=>$row['address_line_1'],
-        "Address line 2"=>$row['address_line_2'],
-        "Address line 3"=>$row['address_line_3'],
-        "Phone No"=>$row['phone_no'],
-        "Fax No"=>$row['fax_no'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['transporter_code'])){
+            $transporterId = $row['transporter_id'];
+            $transporterData = searchTransporterAuditById($transporterId, $db);
+            
+            if (!empty($transporterData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Transporter Code"=>$transporterData['transporter_code'],
+                "Company Reg No"=>$transporterData['company_reg_no'],
+                "Transporter Name"=>$transporterData['name'],
+                "Address line 1"=>$transporterData['address_line_1'],
+                "Address line 2"=>$transporterData['address_line_2'],
+                "Address line 3"=>$transporterData['address_line_3'],
+                "Phone No"=>$transporterData['phone_no'],
+                "Fax No"=>$transporterData['fax_no'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Transporter Code"=>$row['transporter_code'],
+            "Company Reg No"=>$row['company_reg_no'],
+            "Transporter Name"=>$row['name'],
+            "Address line 1"=>$row['address_line_1'],
+            "Address line 2"=>$row['address_line_2'],
+            "Address line 3"=>$row['address_line_3'],
+            "Phone No"=>$row['phone_no'],
+            "Fax No"=>$row['fax_no'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
+        
     }
 
     $columnNames = ["Transporter Code", "Company Reg No", "Transporter Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
@@ -354,13 +524,28 @@ if($_POST['selectedValue'] == "Unit")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Unit"=>$row['unit'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['unit'])){
+            $unitId = $row['unit_id'];
+            $unitData = searchUnitAuditById($unitId, $db);
+
+            if (!empty($unitData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Unit"=>$unitData['unit'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Unit"=>$row['unit'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
     }
 
     $columnNames = ["Unit", "Action", "Action By", "Event Date"];
@@ -374,17 +559,36 @@ if($_POST['selectedValue'] == "User")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Employee Code"=>$row['employee_code'],
-        "Username"=>$row['username'],
-        "Name"=>$row['name'],
-        "Email"=>$row['useremail'],
-        "Role"=>$row['user_department'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['employee_code'])){
+            $userId = $row['user_id'];
+            $userData = searchUserAuditById($userId, $db);
+
+            if (!empty($userData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Employee Code"=>$userData['employee_code'],
+                "Username"=>$userData['username'],
+                "Name"=>$userData['name'],
+                "Email"=>$userData['useremail'],
+                "Role"=>$userData['role'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Employee Code"=>$row['employee_code'],
+            "Username"=>$row['username'],
+            "Name"=>$row['name'],
+            "Email"=>$row['useremail'],
+            "Role"=>$row['user_department'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
     }
 
     $columnNames = ["Employee Code", "Username", "Name", "Email", "Role", "Action", "Action By", "Event Date"];
@@ -399,19 +603,41 @@ if($_POST['selectedValue'] == "Plant")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Plant Code"=>$row['plant_code'],
-        "Plant Name"=>$row['name'],
-        "Address line 1"=>$row['address_line_1'],
-        "Address line 2"=>$row['address_line_2'],
-        "Address line 3"=>$row['address_line_3'],
-        "Phone No"=>$row['phone_no'],
-        "Fax No"=>$row['fax_no'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['plant_code'])){
+            $plantId = $row['plant_id'];
+            $plantData = searchPlantAuditById($plantId, $db);
+
+            if (!empty($plantData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Plant Code"=>$plantData['plant_code'],
+                "Plant Name"=>$plantData['name'],
+                "Address line 1"=>$plantData['address_line_1'],
+                "Address line 2"=>$plantData['address_line_2'],
+                "Address line 3"=>$plantData['address_line_3'],
+                "Phone No"=>$plantData['phone_no'],
+                "Fax No"=>$plantData['fax_no'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Plant Code"=>$row['plant_code'],
+            "Plant Name"=>$row['name'],
+            "Address line 1"=>$row['address_line_1'],
+            "Address line 2"=>$row['address_line_2'],
+            "Address line 3"=>$row['address_line_3'],
+            "Phone No"=>$row['phone_no'],
+            "Fax No"=>$row['fax_no'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
+        
     }
 
     $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
@@ -425,19 +651,40 @@ if($_POST['selectedValue'] == "Site")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $data[] = array( 
-        "id"=>$row['id'],
-        "Site Code"=>$row['site_code'],
-        "Site Name"=>$row['name'],
-        "Address line 1"=>$row['address_line_1'],
-        "Address line 2"=>$row['address_line_2'],
-        "Address line 3"=>$row['address_line_3'],
-        "Phone No"=>$row['phone_no'],
-        "Fax No"=>$row['fax_no'],
-        "Action"=>searchActionNameById($row['action_id'], $db),
-        "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
-        );
+        if (empty($row['site_code'])){
+            $siteId = $row['site_id'];
+            $siteData = searchSiteAuditById($siteId, $db);
+
+            if (!empty($siteData)){
+                $data[] = array( 
+                "id"=>$row['id'],
+                "Site Code"=>$siteData['site_code'],
+                "Site Name"=>$siteData['name'],
+                "Address line 1"=>$siteData['address_line_1'],
+                "Address line 2"=>$siteData['address_line_2'],
+                "Address line 3"=>$siteData['address_line_3'],
+                "Phone No"=>$siteData['phone_no'],
+                "Fax No"=>$siteData['fax_no'],
+                "Action"=>searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$row['event_date'],
+                );
+            }
+        }else{
+            $data[] = array( 
+            "id"=>$row['id'],
+            "Site Code"=>$row['site_code'],
+            "Site Name"=>$row['name'],
+            "Address line 1"=>$row['address_line_1'],
+            "Address line 2"=>$row['address_line_2'],
+            "Address line 3"=>$row['address_line_3'],
+            "Phone No"=>$row['phone_no'],
+            "Fax No"=>$row['fax_no'],
+            "Action"=>searchActionNameById($row['action_id'], $db),
+            "Action By"=>$row['action_by'],
+            "Event Date"=>$row['event_date'],
+            );
+        }
     }
 
     $columnNames = ["Site Code", "Site Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
@@ -508,13 +755,14 @@ if($_POST['selectedValue'] == "SO")
         "Order Quantity"=>$row['order_quantity'],
         "Balance"=>$row['balance'],
         "Remarks"=>$row['remarks'],
+        "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
     }
 
-    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Product Code", "Product Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "Customer P/O No", "S/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Product Code", "Product Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "Customer P/O No", "S/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "PO")
@@ -550,13 +798,14 @@ if($_POST['selectedValue'] == "PO")
         "Order Quantity"=>$row['order_quantity'],
         "Balance"=>$row['balance'],
         "Remarks"=>$row['remarks'],
+        "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$row['event_date'],
         );
     }
 
-    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "P/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "P/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
 ## Response

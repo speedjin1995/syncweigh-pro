@@ -31,7 +31,27 @@ if(isset($_POST['userID'])){
                 $message['high'] = $row['high'];
                 $message['low'] = $row['low'];
                 $message['type'] = $row['type'];
+                $message['basic_uom'] = $row['basic_uom'];
             }
+
+            // retrieve uom
+            $empQuery = "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id = $id AND status = '0' ORDER BY id ASC";
+            $empRecords = mysqli_query($db, $empQuery);
+            $rawMatUom = array();
+            $rawMatUomCount = 1;
+
+            while($row2 = mysqli_fetch_assoc($empRecords)) {
+                $rawMatUom[] = array(
+                    "no" => $rawMatUomCount,
+                    "id" => $row2['id'],
+                    "raw_mat_id" => $row2['raw_mat_id'],
+                    "unit_id" => $row2['unit_id'],
+                    "rate" => $row2['rate'],
+                );
+                $rawMatUomCount++;
+            }
+
+            $message['rawMatUom'] = $rawMatUom;
             
             echo json_encode(
                 array(

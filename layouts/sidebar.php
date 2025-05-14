@@ -66,17 +66,23 @@
                                 <a href="salesOrder.php" class="nav-link"><?=$lang['t-so']?></a>
                             </li>
                             <li class="nav-item">
+                                <a href="deliveryOrder.php" class="nav-link"><?=$lang['t-do']?></a>
+                            </li>   
+                            <li class="nav-item">
                                 <a href="purchaseOrder.php" class="nav-link"><?=$lang['t-po']?></a>
-                            </li>               
+                            </li>  
+                            <li class="nav-item">
+                                <a href="goodsReceived.php" class="nav-link"><?=$lang['t-gr']?></a>
+                            </li>             
                         </ul>
                     </div>
                 </li>
 
                 <?php
                     if($_SESSION["roles"] == 'MANAGER' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
-                        echo '<!--li class="nav-item">
+                        echo '<li class="nav-item">
                             <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i></i>'.$lang['t-inventory'].'</a>
-                        </li--> 
+                        </li> 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarMasterdata">
@@ -120,6 +126,26 @@
                                     <li class="nav-item">
                                         <a href="site.php" class="nav-link">'.$lang['t-site'].'</a>
                                     </li>                   
+                                </ul>
+                            </div>
+                        </li>';
+                    }else{
+                        echo '<li class="nav-item">
+                            <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i></i>'.$lang['t-inventory'].'</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarMasterdata">
+                                <i class="ri-pages-line"></i> <span>'.$lang['t-masterdata'].'</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarMasterdata">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="destination.php" class="nav-link">'.$lang['t-destination'].'</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
+                                    </li>       
                                 </ul>
                             </div>
                         </li>';
