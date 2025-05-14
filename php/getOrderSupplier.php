@@ -1,7 +1,6 @@
 <?php
-require_once "db_connect.php";
-
 session_start();
+require_once "db_connect.php";
 
 if(isset($_POST['code'], $_POST['type'])){
 	$code = filter_input(INPUT_POST, 'code', FILTER_SANITIZE_STRING);

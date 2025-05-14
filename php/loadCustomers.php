@@ -1,4 +1,5 @@
 <?php
+session_start();
 ## Database configuration
 require_once 'db_connect.php';
 
@@ -38,12 +39,15 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "customer_code"=>$row['customer_code'],
       "name"=>$row['name'],
       "company_reg_no"=>$row['company_reg_no'],
+      "new_reg_no"=>$row['new_reg_no'],
       "address_line_1"=>$row['address_line_1'],
       "address_line_2"=>$row['address_line_2'],
       "address_line_3"=>$row['address_line_3'],
-      "address_line_4"=>$row['address_line_4'],
       "phone_no"=>$row['phone_no'],
       "fax_no"=>$row['fax_no'],
+      "contact_name"=>$row['contact_name'],
+      "ic_no"=>$row['ic_no'],
+      "tin_no"=>$row['tin_no'],
       "status"=>$row['status']
     );
 }

@@ -9,7 +9,7 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     exit;
 }
 // Include config file
-require_once "layouts/config.php";
+//require_once "layouts/config.php";
 
 // Define variables and initialize with empty values
 $username = $password = "";
@@ -17,6 +17,7 @@ $username_err = $password_err = "";
 
 // Processing form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
 
     // Check if username is empty
     if (empty(trim($_POST["username"]))) {
@@ -32,8 +33,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = trim($_POST["password"]);
     }
 
+    // Check if company is empty
+    if (empty(trim($_POST["company"]))) {
+        $company = "SPM";
+    } else {
+        $company = trim($_POST["company"]);
+    }
+
+    $_SESSION["company"] = $company;
+
     // Validate credentials
     if (empty($username_err) && empty($password_err)) {
+        require_once "layouts/config.php";
         // Prepare a select statement
         $sql = "SELECT id, employee_code, username, password, role, plant_id FROM Users WHERE username = ?";
         
@@ -157,7 +168,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </div>
                                     <div class="p-2 mt-4">
                                         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            
+                                            <div class="mb-3">
+                                                <label for="company" class="form-label">Company</label>
+                                                <select class="form-select" id="company" name="company">
+                                                    <option value="SPM" selected>SP MEGA MINERAL SDN BHD</option>
+                                                    <option value="SMI">SP MEGA INDUSTRIES SDN BHD</option>
+                                                </select>   
+                                            </div>
+
                                             <div class="mb-3 <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
                                                 <label for="username" class="form-label">Username</label>
                                                 <input type="text" class="form-control" name="username" id="username" placeholder="Enter username">
