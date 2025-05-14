@@ -1,7 +1,6 @@
 <?php
-require_once 'db_connect.php';
-
 session_start();
+require_once 'db_connect.php';
 
 if(!isset($_SESSION['id'])){
 	echo '<script type="text/javascript">location.href = "../login.html";</script>'; 

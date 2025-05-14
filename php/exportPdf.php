@@ -1,7 +1,6 @@
 <?php
-
-require_once 'db_connect.php';
 session_start();
+require_once 'db_connect.php';
 
 $searchQuery = "";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
