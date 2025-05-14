@@ -2502,12 +2502,14 @@ else{
                     console.log("Data Received:" + data);
                     
                     if(ind == 'X2S' || ind == 'X722'){
-                        var text = data.split(" ");
-                        var text2 = text[text.length - 1];
-                        text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
-                        $('#indicatorWeight').html(text2);
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
+                        if(data.includes("GS")){
+                            var text = data.split(" ");
+                            var text2 = text[text.length - 1];
+                            text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
+                            $('#indicatorWeight').html(text2);
+                            $('#indicatorConnected').addClass('bg-primary');
+                            $('#checkingConnection').removeClass('bg-danger');
+                        }
                     }
                     else if(ind == 'BDI'){
                         if(data.includes("GS")){
