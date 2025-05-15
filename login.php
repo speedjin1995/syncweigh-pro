@@ -177,7 +177,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                             <?= htmlspecialchars($name) ?>
                                                         </option>
                                                     <?php endforeach; ?>
-                                                </select>   
                                             </div>
 
                                             <div class="mb-3 <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
