@@ -2,6 +2,7 @@
 // Initialize the session
 session_start();
 require_once 'php/requires/lookup.php';
+$companies = include(dirname(__DIR__, 1) . '/license.php');
 
 // Check if the user is already logged in, if yes then redirect him to index page
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
@@ -171,8 +172,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <div class="mb-3">
                                                 <label for="company" class="form-label">Company</label>
                                                 <select class="form-select" id="company" name="company">
-                                                    <option value="SPM" selected>SP MEGA MINERAL SDN BHD</option>
-                                                    <option value="SMI">SP MEGA INDUSTRIES SDN BHD</option>
+                                                    <?php foreach ($companies as $key => $name): ?>
+                                                        <option value="<?= htmlspecialchars($key) ?>" <?= (isset($_POST['company']) && $_POST['company'] == $key) ? 'selected' : '' ?>>
+                                                            <?= htmlspecialchars($name) ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
                                                 </select>   
                                             </div>
 
