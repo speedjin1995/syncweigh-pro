@@ -71,11 +71,9 @@ if (!empty($data['data'])) {
             $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
         }
         $ExOrDel = (isset($rows['DOCREF1']) && !empty($rows['DOCREF1']) && $rows['DOCREF1'] !== '' && $rows['DOCREF1'] !== null) ? trim($rows['DOCREF1']) : '';
-        $SupplierQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
-        $unit = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? trim($rows['UOM']) : '';
-        if ($unit == 'MT'){
-            $SupplierQuantity = $SupplierQuantity * 1000;
-        }
+        $ConvertedSupplierQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
+        $ConvertedBalance = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
+        $ConvertedUnitId = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? searchUnitIdByCode(trim($rows['UOM']), $db) : '';
         $PlantCode = (isset($rows['PROJECT']) && !empty($rows['PROJECT']) && $rows['PROJECT'] !== '' && $rows['PROJECT'] !== null) ? trim($rows['PROJECT']) : '';
         $PlantName = '';
         if (!empty($PlantCode)) {
@@ -164,6 +162,7 @@ if (!empty($data['data'])) {
         }
 
         # Raw Material Checking & Processing
+        $rawMatId = '';
         if($RawMaterialCode != null && $RawMaterialCode != ''){
             $rawMatQuery = "SELECT * FROM Raw_Mat WHERE raw_mat_code = '$RawMaterialCode'";
             $rawMatDetail = mysqli_query($db, $rawMatQuery);
@@ -173,6 +172,26 @@ if (!empty($data['data'])) {
                 $errMsg = "Raw Material: ".$RawMaterialCode." doesn't exist in master data.";
                 $errorSoProductArray[] = $errMsg;
                 continue;
+            }
+            else{
+                $rawMatId = $rawMatRow['id'];
+            }
+        }
+
+        //Checking to pull rate in raw mat
+        $SupplierQuantity = 0;
+        if (isset($rawMatId) && !empty($rawMatId)){
+            $rawMatUomQuery = "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id = '$rawMatId' AND unit_id = '2' AND status = '0'";
+            $rawMatUomDetail = mysqli_query($db, $rawMatUomQuery);
+            $rawMatUomRow = mysqli_fetch_assoc($rawMatUomDetail);
+
+            if (empty($rawMatUomRow)){
+                $errMsg = "Raw Material UOM for raw material code: ".$ProductCode." and UOM: KG doesn't exist in master data.";
+                $errorSoProductArray[] = $errMsg;
+                continue;
+            }
+            else{                
+                $SupplierQuantity = $ConvertedSupplierQuantity / $rawMatUomRow['rate'];
             }
         }
 
@@ -194,8 +213,8 @@ if (!empty($data['data'])) {
 
                 $system = 'SYSTEM';
 
-                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, order_date, po_no, agent_code, agent_name, destination_code, destination_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrDel, $SupplierQuantity, $SupplierQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
+                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, order_date, po_no, agent_code, agent_name, destination_code, destination_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrDel, $ConvertedSupplierQuantity, $ConvertedBalance, $ConvertedUnitId, $SupplierQuantity, $SupplierQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }
