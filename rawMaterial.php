@@ -235,6 +235,23 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="modal fade" id="errorModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-gray-dark color-palette">
+                                                    <h4 class="modal-title">Error Log</h4>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <ol id="errorList" class="text-danger mt-2" style="padding-left: 20px;"></ol>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div> <!-- end row-->
 
@@ -502,12 +519,26 @@ $(function () {
                     $('#uploadModal').modal('hide');
                     $("#successBtn").attr('data-toast-text', obj.message);
                     $("#successBtn").click();
-                    $('#customerTable').DataTable().ajax.reload(null, false);
+                    $('#productTable').DataTable().ajax.reload(null, false);
                 } 
                 else if (obj.status === 'failed') {
                     $('#spinnerLoading').hide();
                     $("#failBtn").attr('data-toast-text', obj.message );
                     $("#failBtn").click();
+                } 
+                else if (obj.status === 'error') {
+                    $('#spinnerLoading').hide();
+                    $('#uploadModal').modal('hide');
+                    // alert(obj.message);
+                    // $("#failBtn").attr('data-toast-text', obj.message );
+                    // $("#failBtn").click();
+                    $('#productTable').DataTable().ajax.reload(null, false);
+                    $('#errorModal').find('#errorList').empty();
+                    var errorMessage = obj.message;
+                    for (var i = 0; i < errorMessage.length; i++) {
+                        $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                    }
+                    $('#errorModal').modal('show');
                 } 
                 else {
                     $('#spinnerLoading').hide();
@@ -721,7 +752,7 @@ function displayPreview(data) {
     }
 
     // Create HTML table headers
-    var htmlTable = '<table style="width:100%;"><thead><tr>';
+    var htmlTable = '<table style="width:30%;"><thead><tr>';
     headers.forEach(function(header) {
         htmlTable += '<th>' + header + '</th>';
     });
