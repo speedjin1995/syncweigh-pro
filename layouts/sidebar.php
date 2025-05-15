@@ -1,7 +1,7 @@
 <!-- ========== App Menu ========== -->
 <div class="app-menu navbar-menu" style="background: transparent linear-gradient(360deg, #006D89 0%, #00DC53 160%, #108218 100%) 0% 0% no-repeat padding-box;">
     <!-- LOGO -->
-    <div class="navbar-brand-box">
+    <div class="navbar-brand-box" style="background: transparent linear-gradient(360deg, #006D89 0%, #00DC53 160%, #108218 100%) 0% 0% no-repeat padding-box;">
         <!-- Dark Logo-->
         <a href="index.php" class="logo logo-dark">
             <span class="logo-sm">
