@@ -1287,7 +1287,9 @@ else{
                                                                 <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
                                                             </div>
                                                             <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                            <input type="hidden" class="form-control" id="containerId" name="containerId">                                   
                                                             <input type="hidden" class="form-control" id="isEmptyContainer" name="isEmptyContainer">                                   
+                                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">                                   
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
@@ -2639,7 +2641,11 @@ else{
                         className: 'select-checkbox',
                         orderable: false,
                         render: function (data, type, row) {
-                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                            if (row.weight_type == 'Primer Mover + Container'){
+                                return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Empty Container"/>';
+                            }else{
+                                return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Lorry"/>';
+                            }
                         }
                     },
                     { data: 'transaction_id' }, 
@@ -2767,7 +2773,7 @@ else{
                             // dropdownMenu += '</ul></div>';
                             // return dropdownMenu;
                         }
-                }
+                    }
                 ],
                 "drawCallback": function(settings) {
                     $('#salesInfo').text(settings.json.salesTotal);
@@ -3156,6 +3162,48 @@ else{
             }
         });
 
+        $('#multiDeleteLorry').on('click', function(){
+            var selectedLorryIds = []; // An array to store the selected 'id' values
+            var selectedEmptyContainerIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    var type = $(this).data('type'); // Get data-type attribute
+                    if (type == 'Lorry'){
+                        selectedLorryIds.push($(this).val());
+                    }else{
+                        selectedEmptyContainerIds.push($(this).val());
+                    }
+                }
+            });
+
+            if (selectedLorryIds.length > 0 || selectedEmptyContainerIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $('#cancelModal').find('#id').val(selectedLorryIds);
+                    $('#cancelModal').find('#containerId').val(selectedEmptyContainerIds);
+                    $('#cancelModal').find('#isEmptyContainer').val('N');
+                    $('#cancelModal').find('#isMulti').val('Y');
+                    $('#cancelModal').modal('show');
+
+                    $('#cancelForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+            }else{
+                alert("Please select at least one weighing record to delete.");
+            }
+        });
+
         $('#multiDeleteContainer').on('click', function(){
             var selectedIds = []; // An array to store the selected 'id' values
 
@@ -3169,6 +3217,7 @@ else{
                 if (confirm('Are you sure you want to cancel these items?')) {
                     $('#cancelModal').find('#id').val(selectedIds);
                     $('#cancelModal').find('#isEmptyContainer').val('Y');
+                    $('#cancelModal').find('#isMulti').val('Y');
                     $('#cancelModal').modal('show');
 
                     $('#cancelForm').validate({
