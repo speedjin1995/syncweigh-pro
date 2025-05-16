@@ -1734,7 +1734,11 @@ else{
                     className: 'select-checkbox',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        if (row.weight_type == 'Primer Mover + Container'){
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Empty Container"/>';
+                        }else{
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Lorry"/>';
+                        }
                     }
                 },
                 { data: 'transaction_id' },                
@@ -3014,7 +3018,18 @@ else{
                 batchNoI = 'Complete';
             }
 
-            //if (batchNoI == 'Pending'){
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    var type = $(this).data('type'); // Get data-type attribute
+                    if (type == 'Lorry'){
+                        selectedIds.push($(this).val());
+                    }
+                }
+            });
+
+            if (selectedIds.length > 0) {
                 $.post('php/exportPdf.php', {
                     fromDate : fromDateI,
                     toDate : fromDateI,
@@ -3027,6 +3042,8 @@ else{
                     product : productSearchI,
                     rawMat : rawMaterialI,
                     plant : plantNoI,
+                    isMulti : 'Y',
+                    ids : selectedIds,
                     file : 'weight'
                 }, function(response){
                     var obj = JSON.parse(response);
@@ -3050,9 +3067,44 @@ else{
                     console.error("Error exporting PDF:", error);
                     alert("An error occurred while generating the PDF.");
                 });
-            /*}else{
-                alert("Please change status to Pending before generating PDF.");
-            }*/
+            }else{
+                $.post('php/exportPdf.php', {
+                    fromDate : fromDateI,
+                    toDate : fromDateI,
+                    transactionStatus : statusI,
+                    customer : customerNoI,
+                    supplier : supplierNoI,
+                    vehicle : vehicleNoI,
+                    weighingType : invoiceNoI,
+                    status : batchNoI,
+                    product : productSearchI,
+                    rawMat : rawMaterialI,
+                    plant : plantNoI,
+                    isMulti : 'N',
+                    file : 'weight'
+                }, function(response){
+                    var obj = JSON.parse(response);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                    }
+                }).fail(function(error){
+                    console.error("Error exporting PDF:", error);
+                    alert("An error occurred while generating the PDF.");
+                });
+            }
         });
 
         $('#exportExcel').on('click', function(){
@@ -3074,13 +3126,26 @@ else{
                 batchNoI = 'Complete';
             }
 
-            //if (batchNoI == 'Pending'){
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    var type = $(this).data('type'); // Get data-type attribute
+                    if (type == 'Lorry'){
+                        selectedIds.push($(this).val());
+                    }
+                }
+            });
+
+            if (selectedIds.length > 0) {
                 window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI);
-            /*}else{
-                alert("Please change status to Pending before generating Excel.");
-            }*/
+                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI+"&isMulti=Y&ids="+selectedIds);
+            }else{
+                window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI+"&isMulti=N");
+            }
         });
 
         $('#weightType').on('change', function(){

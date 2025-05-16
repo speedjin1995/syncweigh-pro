@@ -132,8 +132,22 @@ if(isset($_GET['status']) && $_GET['status'] != null && $_GET['status'] != '' &&
             $searchQuery .= " and Weight.is_complete = 'Y'";
         }
     }
-    
 }
+
+if($_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'){
+    $isMulti = $_GET['isMulti'];
+
+    if ($isMulti == 'Y'){
+        if(is_array($_GET['ids'])){
+			$ids = implode(",", $_GET['ids']);
+		}else{
+			$ids = $_GET['ids'];
+		}
+
+        $searchQuery = " and id IN ($ids)";
+    }
+}
+
 
 // Column names 
 $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 

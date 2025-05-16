@@ -144,6 +144,20 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
     }
 }
 
+if($_POST['isMulti'] != null && $_POST['isMulti'] != '' && $_POST['isMulti'] != '-'){
+    $isMulti = $_POST['isMulti'];
+
+    if ($isMulti == 'Y'){
+        if(is_array($_POST['ids'])){
+			$ids = implode(",", $_POST['ids']);
+		}else{
+			$ids = $_POST['ids'];
+		}
+
+        $searchQuery = " and id IN ($ids)";
+    }
+}
+
 if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
         if ($select_stmt = $db->prepare("select * from Weight WHERE status = '0'".$searchQuery.' ORDER BY tare_weight1_date')) {
