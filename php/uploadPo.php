@@ -284,7 +284,7 @@ if (!empty($data)) {
             $rawMatUomRow = mysqli_fetch_assoc($rawMatUomDetail);
 
             if (empty($rawMatUomRow)){
-                $errMsg = "Raw Material UOM for raw material code: ".$ProductCode." and UOM: KG doesn't exist in master data.";
+                $errMsg = "Raw Material UOM for raw material code: ".$RawMaterialCode." and UOM: KG doesn't exist in master data.";
                 $errorSoProductArray[] = $errMsg;
                 continue;
             }else{                
