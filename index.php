@@ -1340,9 +1340,13 @@ else{
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export PDF
                                                                 </button>
-                                                                <button type="button" id="exportExcel" class="btn btn-warning waves-effect waves-light" >
+                                                                <button type="button" id="exportExcel" class="btn btn-info waves-effect waves-light" >
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
+                                                                </button>
+                                                                <button type="button" id="multiDeleteLorry" class="btn btn-warning waves-effect waves-light" >
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Delete Weight
                                                                 </button>
                                                                 <!--a href="/template/Weight_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
@@ -1424,6 +1428,10 @@ else{
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Weight
                                                                 </button> -->
+                                                                <button type="button" id="multiDeleteContainer" class="btn btn-warning waves-effect waves-light" >
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Delete Weight
+                                                                </button>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -3145,6 +3153,40 @@ else{
                 window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
                 "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI+"&isMulti=N");
+            }
+        });
+
+        $('#multiDeleteContainer').on('click', function(){
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#emptyContainerTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $('#cancelModal').find('#id').val(selectedIds);
+                    $('#cancelModal').find('#isEmptyContainer').val('Y');
+                    $('#cancelModal').modal('show');
+
+                    $('#cancelForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+            }else{
+                alert("Please select at least one weighing record to delete.");
             }
         });
 
