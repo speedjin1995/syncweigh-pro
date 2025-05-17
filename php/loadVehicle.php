@@ -1,5 +1,6 @@
 <?php
 ## Database configuration
+include '../layouts/session.php';
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
 
@@ -18,6 +19,13 @@ if($searchValue != ''){
   $searchQuery = " and (veh_number like '%".$searchValue."%' or vehicle_weight like '%".$searchValue."%')";
 }
 
+if ($_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $plantId = searchPlantIdByCode($username, $db);
+
+  $searchQuery = " and plant = ". $plantId;
+}
+
 ## Total number of records without filtering
 $sel = mysqli_query($db,"select count(*) as allcount from Vehicle");
 $records = mysqli_fetch_assoc($sel);
@@ -29,7 +37,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Vehicle WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Vehicle WHERE status = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 

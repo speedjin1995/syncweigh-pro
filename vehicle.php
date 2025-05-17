@@ -7,6 +7,12 @@ require_once "php/requires/lookup.php";
 
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 
+$role = $_SESSION['roles'];
+if ($_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);  
+}
+
 ?>
 
 <head>
@@ -271,6 +277,19 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 var table;
 
 $(function () {
+    var userRole = <?= json_encode($role) ?>;
+
+    if (userRole !== 'SADMIN') {
+        var plantId = <?= json_encode($plantId ?? "") ?>;
+        if (plantId) {
+            $('#plant option').each(function () {
+                if ($(this).val() != plantId) {
+                    $(this).remove();
+                }
+            });
+        }
+    }
+
     table = $("#vehicleTable").DataTable({
         "responsive": true,
         "autoWidth": false,

@@ -2,8 +2,15 @@
 <?php include 'layouts/head-main.php'; ?>
 <?php
 require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
 
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+$role = $_SESSION['roles'];
+if ($_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);  
+}
 ?>
 
 <head>
@@ -318,6 +325,19 @@ require_once "php/db_connect.php";
 var table;
 
 $(function () {
+    var userRole = <?= json_encode($role) ?>;
+
+    if (userRole !== 'SADMIN') {
+        var plantId = <?= json_encode($plantId ?? "") ?>;
+        if (plantId) {
+            $('#plant option').each(function () {
+                if ($(this).val() != plantId) {
+                    $(this).remove();
+                }
+            });
+        }
+    }
+
     table = $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,

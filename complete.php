@@ -30,39 +30,41 @@ if(($row = $result->fetch_assoc()) !== null){
 }
 
 //   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer3 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if($_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
     $plantId = searchPlantIdByCode($username, $db); 
     
+    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
+    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
+    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
+    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
+    $driver = $db->query("SELECT * FROM Driver WHERE status = '0' and plant IN ('$plantId')");
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' and plant IN ('$plantId')");
+    $destination = $db->query("SELECT * FROM Destination WHERE status = '0' and plant IN ('$plantId')");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId')");
+    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId')");
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
-}
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
-}
-
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $plantId = searchPlantIdByCode($username, $db);
-
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
     $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
 }
 else{
+    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
+    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+    $driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+    $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
     $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
 }
 
@@ -1231,6 +1233,10 @@ if ($user != null && $user != ''){
             $('#plantSearchDisplay').show();
         }else{
             $('#plantSearchDisplay').hide();
+        }
+
+        if (userRole != 'SADMIN'){
+            $('#plantSearch option:first').remove();
         }
 
         var fromDateI = $('#fromDateSearch').val();
