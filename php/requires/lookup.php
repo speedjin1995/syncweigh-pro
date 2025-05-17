@@ -78,7 +78,7 @@ function searchPlantCodeById($value, $db) {
 }
 
 function searchPlantNameById($value, $db) {
-    $id = '0';
+    $id = '';
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {

@@ -1,6 +1,14 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
+
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -145,7 +153,7 @@
                                                                                 <div class="row">
                                                                                     <label for="companyName" class="col-sm-4 col-form-label">Company Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Customer Code">
+                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Company Name ">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -213,6 +221,18 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['id'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -272,6 +292,7 @@
                                                                     <th>Contact Name</th>
                                                                     <th>I/C No</th>
                                                                     <th>Tin No</th>
+                                                                    <th>Plant</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -359,6 +380,7 @@ $(function () {
             { data: 'contact_name' },
             { data: 'ic_no' },
             { data: 'tin_no' },
+            { data: 'plant' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -414,6 +436,7 @@ $(function () {
         $('#addModal').find('#contactName').val("");
         $('#addModal').find('#icNo').val("");
         $('#addModal').find('#tinNo').val("");
+        $('#addModal').find('#plant').val("");
         $('#addModal').modal('show');
         
         $('#supplierForm').validate({
@@ -465,6 +488,7 @@ function edit(id){
             $('#addModal').find('#contactName').val(obj.message.contact_name);
             $('#addModal').find('#icNo').val(obj.message.ic_no);
             $('#addModal').find('#tinNo').val(obj.message.tin_no);
+            $('#addModal').find('#plant').val(obj.message.plant);
             $('#addModal').modal('show');
             
             // $('#customerForm').validate({

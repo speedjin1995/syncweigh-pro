@@ -38,13 +38,19 @@ if (isset($_POST['destinationCode'])) {
         $destinationName = trim($_POST["destinationName"]);
     }
     
+    if (empty($_POST["plant"])) {
+        $plant = null;
+    } else {
+        $plant = trim($_POST["plant"]);
+    }
+    
     if(! empty($destinationId))
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Destination SET destination_code=?, name=?, description=? , created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Destination SET destination_code=?, name=?, description=?, plant=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('ssssss', $destinationCode, $destinationName, $description, $username, $username, $destinationId);
+            $update_stmt->bind_param('sssssss', $destinationCode, $destinationName, $description, $plant, $username, $username, $destinationId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -56,8 +62,8 @@ if (isset($_POST['destinationCode'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, description, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssssss', $destinationId, $destinationCode, $destinationName, $description, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, description, plant, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssss', $destinationId, $destinationCode, $destinationName, $description, $palnt, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -95,8 +101,8 @@ if (isset($_POST['destinationCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Destination (destination_code, name, description, created_by, modified_by) VALUES (?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssss', $destinationCode, $destinationName, $description, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Destination (destination_code, name, description, plant, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssss', $destinationCode, $destinationName, $description, $plant, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -119,8 +125,8 @@ if (isset($_POST['destinationCode'])) {
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, description, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('ssssss', $totalRecords, $destinationCode, $destinationName, $description, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, description, plant, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('sssssss', $totalRecords, $destinationCode, $destinationName, $description, $plant, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {

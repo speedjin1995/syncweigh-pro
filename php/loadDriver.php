@@ -1,6 +1,7 @@
 <?php
 ## Database configuration
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -38,7 +39,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "driver_code"=>$row['driver_code'],
       "driver_name"=>$row['driver_name'],
       "driver_ic"=>$row['driver_ic'],
-      "driver_phone"=>$row['driver_phone']
+      "driver_phone"=>$row['driver_phone'],
+      "plant"=>searchPlantNameById($row['plant'],$db)
     );
 }
 

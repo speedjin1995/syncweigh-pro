@@ -1,6 +1,14 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
+
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -143,6 +151,18 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['id'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -193,6 +213,7 @@
                                                                     <th>Destination Code</th>
                                                                     <th>Destination Name</th>
                                                                     <th>Description</th>
+                                                                    <th>Plant</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -269,6 +290,7 @@ $(function () {
             { data: 'destination_code' },
             { data: 'name' },
             { data: 'description' },
+            { data: 'plant' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -317,6 +339,7 @@ $(function () {
         $('#addModal').find('#destinationCode').val("");
         $('#addModal').find('#destinationName').val("");
         $('#addModal').find('#description').val("");
+        $('#addModal').find('#plant').val("");
         $('#addModal').modal('show');
         
         $('#destinationForm').validate({
@@ -345,6 +368,7 @@ $(function () {
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code);
                 $('#addModal').find('#destinationName').val(obj.message.name);
                 $('#addModal').find('#description').val(obj.message.description);
+                $('#addModal').find('#plant').val(obj.message.plant);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

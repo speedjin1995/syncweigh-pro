@@ -1,6 +1,14 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
+
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -151,6 +159,18 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['id'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -200,6 +220,7 @@
                                                                     <th>Driver Name</th>
                                                                     <th>Driver IC</th>
                                                                     <th>Driver Phone No</th>
+                                                                    <th>Plant</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -275,6 +296,7 @@ $(function () {
             { data: 'driver_name' },
             { data: 'driver_ic' },
             { data: 'driver_phone' },
+            { data: 'plant' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -324,6 +346,7 @@ $(function () {
         $('#addModal').find('#driverName').val("");
         $('#addModal').find('#driverIC').val("");
         $('#addModal').find('#driverPhone').val("");
+        $('#addModal').find('#plant').val("");
         $('#addModal').modal('show');
         
         $('#driverForm').validate({
@@ -353,6 +376,7 @@ $(function () {
                 $('#addModal').find('#driverName').val(obj.message.driver_name);
                 $('#addModal').find('#driverIC').val(obj.message.driver_ic);
                 $('#addModal').find('#driverPhone').val(obj.message.driver_phone);
+                $('#addModal').find('#plant').val(obj.message.plant);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){
