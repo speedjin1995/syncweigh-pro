@@ -2512,8 +2512,9 @@ else{
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find("#manualWeightNo").prop("checked", true);
-            $('#addModal').find("#manualWeightYes").prop("checked", false);
+            // $('#addModal').find("#manualWeightNo").prop("checked", true);
+            // $('#addModal').find("#manualWeightYes").prop("checked", false);
+            $('#addModal').find('#manualWeightNo').trigger('click');
             //$('#addModal').find('input[name="manualWeight"]').val("false");
             //$('#addModal').find('#indicatorId').val("");
             $('#addModal').find('#weighbridge').val("");
@@ -2525,6 +2526,7 @@ else{
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
+            $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
@@ -3570,7 +3572,7 @@ else{
             var plantId = $('#plant :selected').data('id');
             $('#plantCode').val(plantCode);
 
-            if (plantId){
+            if (plantId && !isEdit){
                 $.post('php/getPlant.php', {userID: plantId}, function(data)
                 {
                     var obj = JSON.parse(data);
@@ -4394,6 +4396,12 @@ else{
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
                 
+                if (obj.message.batch_drum == 'Batch'){
+                    $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
+                }else{
+                    $('#addModal').find("input[name='batchDrum'][value='false']").prop("checked", true);
+                }
+
                 if (obj.message.transaction_status == 'Purchase'){
                     //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
                     $//('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
