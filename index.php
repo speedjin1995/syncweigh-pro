@@ -859,7 +859,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" style="display:none">
                                                                                 <div class="row">
                                                                                     <label for="loadDrum" class="col-sm-4 col-form-label">By-Load/By-Drum</label>
                                                                                     <div class="col-sm-8">
@@ -873,6 +873,26 @@ else{
                                                                                         <div class="form-check align-radio">
                                                                                             <input class="form-check-input radio-manual-weight" type="radio" name="loadDrum" id="manualDrum" value="false">
                                                                                             <label class="form-check-label" for="manualDrum">
+                                                                                               By-Drum
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="form-check align-radio mr-2">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="batchDrum" id="batchDrum_batch" value="true" checked>
+                                                                                            <label class="form-check-label" for="batchDrum_batch">
+                                                                                               By-Batch
+                                                                                            </label>
+                                                                                        </div>
+
+                                                                                        <div class="form-check align-radio">
+                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="batchDrum" id="batchDrum_drum" value="false">
+                                                                                            <label class="form-check-label" for="batchDrum_drum">
                                                                                                By-Drum
                                                                                             </label>
                                                                                         </div>
@@ -898,7 +918,7 @@ else{
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="plant" name="plant" required>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
-                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>" data-id="<?=$rowPlant['id'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>        
                                                                                     </div>
@@ -3546,10 +3566,37 @@ else{
 
         //plant
         $('#plant').on('change', function(){
-            $('#plantCode').val($('#plant :selected').data('code'));
+            var plantCode = $('#plant :selected').data('code');
+            var plantId = $('#plant :selected').data('id');
+            $('#plantCode').val(plantCode);
+
+            if (plantId){
+                $.post('php/getPlant.php', {userID: plantId}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        if (obj.message.default_type == 'Batch'){
+                            $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
+                        }else if (obj.message.default_type == 'Drum'){
+                            $('#addModal').find("input[name='batchDrum'][value='false']").prop("checked", true);
+                        }
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    $('#spinnerLoading').hide();
+                });
+
+            }
 
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
-
             if (transactionStatus == 'Sales'){
                 $('#addModal').find('#productName').trigger('change');
             }else if(transactionStatus == 'Purchase'){
