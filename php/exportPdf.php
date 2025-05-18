@@ -130,6 +130,15 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
     }
 }
 
+if(isset($_POST['batchDrum']) && $_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
+    if($_POST["file"] == 'weight'){
+        $searchQuery .= " and Weight.batch_drum = '".$_POST['batchDrum']."'";
+    }
+    else{
+        $searchQuery .= " and count.batch_drum = '".$_POST['batchDrum']."'";
+    }
+}
+
 if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
         //i remove this because both(billboard and weight) also call this print page.
@@ -513,7 +522,6 @@ if(isset($_POST["file"])){
                                             <tr>
                                                 <th style="font-size: 9px;">TRANSACTION <br>ID</th>
                                                 <th style="font-size: 9px;">TRANSACTION <br>DATE</th>
-                                                <th style="font-size: 9px;">TRANSACTION <br>STATUS</th>
                                                 <th style="font-size: 9px;">LORRY <br>NO.</th>';
                                                 
                                             if($_POST['status'] == 'Sales'){
@@ -593,7 +601,6 @@ if(isset($_POST["file"])){
                                                 $message .= '<tr>
                                                     <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
                                                     <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
-                                                    <td style="font-size: 8px;">' . $row['transaction_status'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
                                                     
                                                     if($_POST['status'] == 'Sales'){
@@ -744,7 +751,6 @@ if(isset($_POST["file"])){
                                             <tr>
                                                 <th style="font-size: 9px;">TRANSACTION <br>ID</th>
                                                 <th style="font-size: 9px;">TRANSACTION <br>DATE</th>
-                                                <th style="font-size: 9px;">TRANSACTION <br>STATUS</th>
                                                 <th style="font-size: 9px;">LORRY <br>NO.</th>';
                                                 
                                             if($_POST['status'] == 'Sales'){
@@ -824,7 +830,6 @@ if(isset($_POST["file"])){
                                                 $message .= '<tr>
                                                     <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
                                                     <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
-                                                    <td style="font-size: 8px;">' . $row['transaction_status'] . '</td>
                                                     <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
                                                     
                                                     if($_POST['status'] == 'Sales'){

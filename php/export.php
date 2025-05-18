@@ -30,10 +30,10 @@ if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
     $formatted_date = $dateTime->format('Y-m-d H:i');
 
     if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date >= '".$formatted_date."'";
     }
 }
 
@@ -42,10 +42,10 @@ if($_GET['toDate'] != null && $_GET['toDate'] != ''){
     $formatted_date = $dateTime->format('Y-m-d H:i');
 
     if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date <= '".$formatted_date."'";
     }
 }
 
@@ -117,7 +117,16 @@ if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_
         $searchQuery .= " and Weight.plant_code = '".$_GET['plant']."'";
     }
     else{
-        $searchQuery .= " and count.raw_mat_code = '".$_GET['plant']."'";
+        $searchQuery .= " and count.plant_code = '".$_GET['plant']."'";
+    }
+}
+
+if(isset($_GET['batchDrum']) && $_GET['batchDrum'] != null && $_GET['batchDrum'] != '' && $_GET['batchDrum'] != '-'){
+    if($_GET["file"] == 'weight'){
+        $searchQuery .= " and Weight.batch_drum = '".$_GET['batchDrum']."'";
+    }
+    else{
+        $searchQuery .= " and count.batch_drum = '".$_GET['batchDrum']."'";
     }
 }
 
