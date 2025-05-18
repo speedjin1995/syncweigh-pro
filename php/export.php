@@ -132,14 +132,14 @@ if(isset($_GET['batchDrum']) && $_GET['batchDrum'] != null && $_GET['batchDrum']
 
 // Column names 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+    $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
         'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
         'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
         ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT'), 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
         'PLANT NAME', 'WEIGHTED BY'); 
 }
 else{
-    $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+    $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
         'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
         'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
         ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT'), 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
@@ -178,7 +178,7 @@ if($query->num_rows > 0){
             }
             
             if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
+                $lineData = array($row['transaction_id'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
                 $row['customer_name'], $row['supplier_code'], $row['supplier_name'], ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
                 ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), $row['product_description'], $row['destination_code'], 
                 $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], 
@@ -211,7 +211,7 @@ if($query->num_rows > 0){
                     }
                 }
 
-                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
+                $lineData = array($row['transaction_id'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
                 $row['customer_name'], $row['supplier_code'], $row['supplier_name'], ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
                 ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), $row['product_description'], $row['destination_code'], 
                 $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], 
