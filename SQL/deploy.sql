@@ -312,3 +312,28 @@ ALTER TABLE `Company` ADD `tin_no` VARCHAR(100) NULL AFTER `fax_no`, ADD `mobile
 ALTER TABLE `Company_Log` ADD `new_reg_no` VARCHAR(100) NULL AFTER `company_reg_no`;
 
 ALTER TABLE `Company_Log` ADD `tin_no` VARCHAR(100) NULL AFTER `fax_no`, ADD `mobile_no` VARCHAR(50) NULL AFTER `tin_no`;
+
+-- 17/05/2025 --
+ALTER TABLE `Customer` ADD `plant` INT(5) NULL AFTER `tin_no`;
+
+ALTER TABLE `Customer_Log` ADD `plant` INT(5) NULL AFTER `tin_no`;
+
+ALTER TABLE `Driver` ADD `plant` INT(5) NULL AFTER `driver_phone`;
+
+ALTER TABLE `Driver_Log` ADD `plant` INT(5) NULL AFTER `driver_phone`;
+
+ALTER TABLE `Destination` ADD `plant` INT(5) NULL AFTER `description`;
+
+ALTER TABLE `Destination_Log` ADD `plant` INT(5) NULL AFTER `description`;
+
+ALTER TABLE `Supplier` ADD `plant` INT(5) NULL AFTER `tin_no`;
+
+ALTER TABLE `Supplier_Log` ADD `plant` INT(5) NULL AFTER `tin_no`;
+
+ALTER TABLE `Vehicle` ADD `plant` INT(5) NULL AFTER `vehicle_weight`;
+
+ALTER TABLE `Vehicle_Log` ADD `plant` INT(5) NULL AFTER `vehicle_weight`;
+
+ALTER TABLE `Transporter` ADD `plant` INT(5) NULL AFTER `tin_no`;
+
+ALTER TABLE `Transporter_Log` ADD `plant` INT(5) NULL AFTER `tin_no`;

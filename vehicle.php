@@ -1,6 +1,20 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+require_once "php/db_connect.php";
+require_once "php/requires/lookup.php";
+
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+$role = $_SESSION['roles'];
+if ($_SESSION["roles"] != 'SADMIN'){
+    $username = implode("', '", $_SESSION["plant"]);
+    $plantId = searchPlantIdByCode($username, $db);  
+}
+
+?>
+
 <head>
     <title>Weighing | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -137,6 +151,19 @@
                                                                                 </div>
                                                                             </div>
 
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="plant" name="plant" required>
+                                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                <option value="<?=$rowPlant['id'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -186,6 +213,7 @@
                                                                 <tr>
                                                                     <th>Vehicle No</th>
                                                                     <th>Vehicle Weight</th>
+                                                                    <th>Plant</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -249,6 +277,19 @@
 var table;
 
 $(function () {
+    var userRole = <?= json_encode($role) ?>;
+
+    if (userRole !== 'SADMIN') {
+        var plantId = <?= json_encode($plantId ?? "") ?>;
+        if (plantId) {
+            $('#plant option').each(function () {
+                if ($(this).val() != plantId) {
+                    $(this).remove();
+                }
+            });
+        }
+    }
+
     table = $("#vehicleTable").DataTable({
         "responsive": true,
         "autoWidth": false,
@@ -261,6 +302,7 @@ $(function () {
         'columns': [
             { data: 'veh_number' },
             { data: 'vehicle_weight' },
+            { data: 'plant' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -308,6 +350,7 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#vehicleNo').val("");
         $('#addModal').find('#vehicleWeight').val("");
+        $('#addModal').find('#plant').val("");
         $('#addModal').modal('show');
         
         $('#vehicleForm').validate({
@@ -335,6 +378,7 @@ $(function () {
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#vehicleNo').val(obj.message.veh_number);
                 $('#addModal').find('#vehicleWeight').val(obj.message.vehicle_weight);
+                $('#addModal').find('#plant').val(obj.message.plant);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

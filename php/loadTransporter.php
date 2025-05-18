@@ -1,6 +1,8 @@
 <?php
 ## Database configuration
+include '../layouts/session.php';
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -17,6 +19,13 @@ if($searchValue != ''){
   $searchQuery = " and (name like '%".$searchValue."%' or company_reg_no like '%".$searchValue."%' or transporter_code like '%".$searchValue."%')";
 }
 
+if ($_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $plantId = searchPlantIdByCode($username, $db);
+
+  $searchQuery = " and plant = ". $plantId;
+}
+
 ## Total number of records without filtering
 $sel = mysqli_query($db,"select count(*) as allcount from Transporter");
 $records = mysqli_fetch_assoc($sel);
@@ -28,7 +37,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Transporter WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Transporter WHERE status = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -46,7 +55,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "fax_no"=>$row['fax_no'],
       "contact_name"=>$row['contact_name'],
       "ic_no"=>$row['ic_no'],
-      "tin_no"=>$row['tin_no']
+      "tin_no"=>$row['tin_no'],
+      "plant"=>searchPlantNameById($row['plant'],$db)
     );
 }
 

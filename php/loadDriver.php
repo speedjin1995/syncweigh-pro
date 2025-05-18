@@ -1,6 +1,8 @@
 <?php
 ## Database configuration
+include '../layouts/session.php';
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -17,6 +19,13 @@ if($searchValue != ''){
   $searchQuery = " and (driver_name like '%".$searchValue."%' or driver_ic like '%".$searchValue."%' or driver_code like '%".$searchValue."%')";
 }
 
+if ($_SESSION["roles"] != 'SADMIN'){
+  $username = implode("', '", $_SESSION["plant"]);
+  $plantId = searchPlantIdByCode($username, $db);
+
+  $searchQuery = " and plant = ". $plantId;
+}
+
 ## Total number of records without filtering
 $sel = mysqli_query($db,"select count(*) as allcount from Driver");
 $records = mysqli_fetch_assoc($sel);
@@ -28,7 +37,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Driver WHERE status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Driver WHERE status = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -38,7 +47,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "driver_code"=>$row['driver_code'],
       "driver_name"=>$row['driver_name'],
       "driver_ic"=>$row['driver_ic'],
-      "driver_phone"=>$row['driver_phone']
+      "driver_phone"=>$row['driver_phone'],
+      "plant"=>searchPlantNameById($row['plant'],$db)
     );
 }
 
