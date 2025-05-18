@@ -303,6 +303,16 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="batchDrumSearch" class="form-label">By-Batch/By-Drum</label>
+                                                            <select id="batchDrumSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <option value="Batch">Batch</option>
+                                                                <option value="Drum">Drum</option>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -1607,6 +1617,7 @@ else{
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
         var poSearchI = $('#poSearch').val() ? $('#poSearch').val() : '';
+        var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1629,7 +1640,8 @@ else{
                     rawMaterial: rawMaterialI,
                     plant: plantNoI,
                     soNo: soSearchI,
-                    poNo: poSearchI
+                    poNo: poSearchI,
+                    batchDrum: batchDrumSearchI
                 } 
             },
             'columns': [
@@ -2339,6 +2351,7 @@ else{
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
             var poSearchI = $('#poSearch').val() ? $('#poSearch').val() : '';
+            var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -2365,7 +2378,8 @@ else{
                         rawMaterial: rawMaterialI,
                         plant: plantNoI,
                         soNo: soSearchI,
-                        poNo: poSearchI
+                        poNo: poSearchI,
+                        batchDrum: batchDrumSearchI
                     } 
                 },
                 'columns': [
