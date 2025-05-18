@@ -917,3 +917,8 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_WEIGHT` BEFORE UPDATE ON `Weight`
 END
 $$
 DELIMITER ;
+
+-- 18/05/2025 -- 
+ALTER TABLE `Plant` ADD `default_type` VARCHAR(5) NULL AFTER `do_no`;
+
+ALTER TABLE `Plant_Log` ADD `default_type` VARCHAR(5) NULL AFTER `do_no`;
