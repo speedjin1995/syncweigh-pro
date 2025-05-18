@@ -1287,7 +1287,9 @@ else{
                                                                 <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
                                                             </div>
                                                             <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                            <input type="hidden" class="form-control" id="containerId" name="containerId">                                   
                                                             <input type="hidden" class="form-control" id="isEmptyContainer" name="isEmptyContainer">                                   
+                                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">                                   
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
@@ -1340,9 +1342,13 @@ else{
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export PDF
                                                                 </button>
-                                                                <button type="button" id="exportExcel" class="btn btn-warning waves-effect waves-light" >
+                                                                <button type="button" id="exportExcel" class="btn btn-info waves-effect waves-light" >
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
+                                                                </button>
+                                                                <button type="button" id="multiDeleteLorry" class="btn btn-warning waves-effect waves-light" >
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Delete Weight
                                                                 </button>
                                                                 <!--a href="/template/Weight_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
@@ -1365,6 +1371,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction <br>Id</th>
                                                                     <th>Weight <br>Type</th>
                                                                     <th>Weight <br> Status</th>
@@ -1423,6 +1430,10 @@ else{
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Weight
                                                                 </button> -->
+                                                                <button type="button" id="multiDeleteContainer" class="btn btn-warning waves-effect waves-light" >
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Delete Weight
+                                                                </button>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -1430,6 +1441,7 @@ else{
                                                         <table id="emptyContainerTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllContainerCheckbox" class="selectAllContainerCheckbox"></th>
                                                                     <th>Container <br>No</th>
                                                                     <th>Seal <br>No</th>
                                                                     <th>Weight <br> Status</th>
@@ -1676,6 +1688,16 @@ else{
 
         // $('#statusSearch').val('Sales').trigger('change');
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
+        $('#selectAllContainerCheckbox').on('change', function() {
+            var checkboxes = $('#emptyContainerTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -1716,10 +1738,20 @@ else{
                 } 
             },
             'columns': [
-                { 
-                    data: 'transaction_id',
-                    class: 'transaction-column'
-                },                
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        if (row.weight_type == 'Primer Mover + Container'){
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Empty Container"/>';
+                        }else{
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Lorry"/>';
+                        }
+                    }
+                },
+                { data: 'transaction_id' },                
                 { data: 'weight_type' },
                 { data: 'transaction_status' },
                 { data: 'customer' },
@@ -1870,6 +1902,15 @@ else{
                 } 
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { data: 'container_no' },                
                 { data: 'seal_no' },                
                 { data: 'transaction_status' },
@@ -1929,7 +1970,7 @@ else{
             if (!row.data()) return; // <-- Exit early if row data is not available
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button') || row.data().weight_type =='Primer Mover + Container') {
+            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button') || row.data().weight_type =='Primer Mover + Container') {
                 return;
             }
 
@@ -2594,10 +2635,20 @@ else{
                     } 
                 },
                 'columns': [
-                    { 
-                        data: 'transaction_id',
-                        class: 'transaction-column'
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            if (row.weight_type == 'Primer Mover + Container'){
+                                return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Empty Container"/>';
+                            }else{
+                                return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'" data-type="Lorry"/>';
+                            }
+                        }
                     },
+                    { data: 'transaction_id' }, 
                     { data: 'weight_type' },
                     { data: 'transaction_status' },
                     { data: 'customer' },
@@ -2722,7 +2773,7 @@ else{
                             // dropdownMenu += '</ul></div>';
                             // return dropdownMenu;
                         }
-                }
+                    }
                 ],
                 "drawCallback": function(settings) {
                     $('#salesInfo').text(settings.json.salesTotal);
@@ -2748,6 +2799,15 @@ else{
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'container_no' },                
                     { data: 'seal_no' },                
                     { data: 'transaction_status' },
@@ -2972,7 +3032,18 @@ else{
                 batchNoI = 'Complete';
             }
 
-            //if (batchNoI == 'Pending'){
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    var type = $(this).data('type'); // Get data-type attribute
+                    if (type == 'Lorry'){
+                        selectedIds.push($(this).val());
+                    }
+                }
+            });
+
+            if (selectedIds.length > 0) {
                 $.post('php/exportPdf.php', {
                     fromDate : fromDateI,
                     toDate : fromDateI,
@@ -2985,6 +3056,8 @@ else{
                     product : productSearchI,
                     rawMat : rawMaterialI,
                     plant : plantNoI,
+                    isMulti : 'Y',
+                    ids : selectedIds,
                     file : 'weight'
                 }, function(response){
                     var obj = JSON.parse(response);
@@ -3008,9 +3081,44 @@ else{
                     console.error("Error exporting PDF:", error);
                     alert("An error occurred while generating the PDF.");
                 });
-            /*}else{
-                alert("Please change status to Pending before generating PDF.");
-            }*/
+            }else{
+                $.post('php/exportPdf.php', {
+                    fromDate : fromDateI,
+                    toDate : fromDateI,
+                    transactionStatus : statusI,
+                    customer : customerNoI,
+                    supplier : supplierNoI,
+                    vehicle : vehicleNoI,
+                    weighingType : invoiceNoI,
+                    status : batchNoI,
+                    product : productSearchI,
+                    rawMat : rawMaterialI,
+                    plant : plantNoI,
+                    isMulti : 'N',
+                    file : 'weight'
+                }, function(response){
+                    var obj = JSON.parse(response);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                    }
+                }).fail(function(error){
+                    console.error("Error exporting PDF:", error);
+                    alert("An error occurred while generating the PDF.");
+                });
+            }
         });
 
         $('#exportExcel').on('click', function(){
@@ -3032,13 +3140,103 @@ else{
                 batchNoI = 'Complete';
             }
 
-            //if (batchNoI == 'Pending'){
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    var type = $(this).data('type'); // Get data-type attribute
+                    if (type == 'Lorry'){
+                        selectedIds.push($(this).val());
+                    }
+                }
+            });
+
+            if (selectedIds.length > 0) {
                 window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI);
-            /*}else{
-                alert("Please change status to Pending before generating Excel.");
-            }*/
+                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI+"&isMulti=Y&ids="+selectedIds);
+            }else{
+                window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&transactionStatus="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+invoiceNoI+"&product="+productSearchI+"&rawMat="+rawMaterialI+"&plant="+plantNoI+"&status="+batchNoI+"&isMulti=N");
+            }
+        });
+
+        $('#multiDeleteLorry').on('click', function(){
+            var selectedLorryIds = []; // An array to store the selected 'id' values
+            var selectedEmptyContainerIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    var type = $(this).data('type'); // Get data-type attribute
+                    if (type == 'Lorry'){
+                        selectedLorryIds.push($(this).val());
+                    }else{
+                        selectedEmptyContainerIds.push($(this).val());
+                    }
+                }
+            });
+
+            if (selectedLorryIds.length > 0 || selectedEmptyContainerIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $('#cancelModal').find('#id').val(selectedLorryIds);
+                    $('#cancelModal').find('#containerId').val(selectedEmptyContainerIds);
+                    $('#cancelModal').find('#isEmptyContainer').val('N');
+                    $('#cancelModal').find('#isMulti').val('Y');
+                    $('#cancelModal').modal('show');
+
+                    $('#cancelForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+            }else{
+                alert("Please select at least one weighing record to delete.");
+            }
+        });
+
+        $('#multiDeleteContainer').on('click', function(){
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#emptyContainerTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $('#cancelModal').find('#id').val(selectedIds);
+                    $('#cancelModal').find('#isEmptyContainer').val('Y');
+                    $('#cancelModal').find('#isMulti').val('Y');
+                    $('#cancelModal').modal('show');
+
+                    $('#cancelForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+            }else{
+                alert("Please select at least one weighing record to delete.");
+            }
         });
 
         $('#weightType').on('change', function(){
