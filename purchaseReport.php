@@ -450,6 +450,7 @@ else{
                                                             <option value="PRODUCT">Product Report</option>
                                                             <option value="S&P">Overall Report - Product</option>
                                                             <option value="S&PC">Overall Report - Customer</option>
+                                                            <option value="DO">Overall Report - DO</option>
                                                         </select>   
                                                     </div>
                                                 </div>

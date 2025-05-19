@@ -679,6 +679,164 @@ if(isset($_POST["file"])){
                     ));
             }
         }
+        else if ($_POST['reportType'] == 'DO') {
+            if ($select_stmt = $db->prepare("select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY delivery_no ASC')) {
+                // Execute the prepared query.
+                if (! $select_stmt->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }
+                else{
+                    $result = $select_stmt->get_result();
+    
+                    $message = '<html>
+                                <head>
+                                    <style>
+                                        @media print {
+                                            @page {
+                                                margin-left: 0.5in;
+                                                margin-right: 0.5in;
+                                                margin-top: 0.1in;
+                                                margin-bottom: 0.1in;
+                                            }
+                                            
+                                        } 
+                                                
+                                        table {
+                                            width: 100%;
+                                            border-collapse: collapse;
+                                            
+                                        } 
+                                        
+                                        .table th, .table td {
+                                            padding: 0.70rem;
+                                            vertical-align: top;
+                                            border-top: 1px solid #dee2e6;
+                                            
+                                        } 
+                                        
+                                        .table-bordered {
+                                            border: 1px solid #000000;
+                                            
+                                        } 
+                                        
+                                        .table-bordered th, .table-bordered td {
+                                            border: 1px solid #000000;
+                                            font-family: sans-serif;
+                                            font-size: 12px;
+                                            
+                                        } 
+                                        
+                                        .row {
+                                            display: flex;
+                                            flex-wrap: wrap;
+                                            margin-top: 20px;
+                                            margin-right: -15px;
+                                            margin-left: -15px;
+                                            
+                                        } 
+                                        
+                                        .col-md-4{
+                                            position: relative;
+                                            width: 33.333333%;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <table style="width:100%;">
+                                        <thead>
+                                            <tr>
+                                                <th style="font-size: 9px;">NO</th>
+                                                <th style="font-size: 9px;">TRANSACTION <br>ID</th>
+                                                <th style="font-size: 9px;">TRANSACTION <br>DATE</th>
+                                                <th style="font-size: 9px;">LORRY <br>NO.</th>';
+                                                
+                                            if($_POST['status'] == 'Sales'){
+                                                $message .= '<th style="font-size: 9px;">CUSTOMER</th>';
+                                            }
+                                            else{
+                                                $message .= '<th style="font-size: 9px;">SUPPLIER</th>';
+                                            }
+                                                
+                                                $message .= '<th style="font-size: 9px;">PRODUCT</th>
+                                                <th style="font-size: 9px;">EXQ/DEL</th>
+                                                <th style="font-size: 9px;">PO NO.</th>
+                                                <th style="font-size: 9px;">DO NO.</th>
+                                                <th style="font-size: 9px;">INCOMING <br>(MT)</th>
+                                                <th style="font-size: 9px;">OUTGOING <br>(MT)</th>
+                                                <th style="font-size: 9px;">NET <br>(MT)</th>
+                                                <th style="font-size: 9px;">IS CANCEL</th>
+                                                <th style="font-size: 9px;">CANCEL <br>REASON</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>';
+                                        
+                                        $noCount = 0;
+                                        while ($row = $result->fetch_assoc()) {
+                                            $noCount++;
+                                            $transactionDate =  new DateTime($row['transaction_date']);
+                                            $formattedtransactionDate = $transactionDate->format('d/m/Y');
+                                            $exDel = '';
+                                            
+                                            if ($row['ex_del'] == 'EX'){
+                                                $exDel = 'E';
+                                            }else{
+                                                $exDel = 'D';
+                                            }
+
+                                            $message .= '<tr>
+                                                <td style="font-size: 8px;">' . $noCount . '</td>
+                                                <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
+                                                <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
+                                                <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
+                                                
+                                                if($_POST['status'] == 'Sales'){
+                                                    $message .= '<td style="font-size: 8px;">' . $row['customer_name'] . '</td>';
+                                                }
+                                                else{
+                                                    $message .= '<td style="font-size: 8px;">' . $row['supplier_name'] . '</td>';
+                                                }
+                                                
+                                                
+                                                $message .= '
+                                                <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                                <td style="font-size: 8px; text-align: center;">' . $exDel . '</td>
+                                                <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
+                                                <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
+                                                <td style="font-size: 8px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
+                                                <td style="font-size: 8px;">' . number_format($row['tare_weight1']/1000, 2) . '</td>
+                                                <td style="font-size: 8px;">' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                <td style="font-size: 8px; text-align: center;">' . $row['is_cancel'] . '</td>
+                                                <td style="font-size: 8px;">' . $row['cancelled_reason'] . '</td>
+                                            </tr>';
+                                            
+                                        }
+                                                                                
+                                    $message .= '
+                                        </tbody>
+                                    </table>
+                                </body>
+                            </html>';
+    
+                    echo json_encode(
+                        array(
+                            "status" => "success",
+                            "message" => $message
+                        )
+                    );
+                }
+            }
+            else{
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Something Goes Wrong"
+                    ));
+            }          
+        }
         else{
             if ($select_stmt = $db->prepare("select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date')) {
                 // Execute the prepared query.
