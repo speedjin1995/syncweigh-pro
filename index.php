@@ -1597,7 +1597,7 @@ if ($user != null && $user != ''){
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
+                    var obj = JSON.parse(data); console.log(obj);
                     if(obj.status === 'success'){
                         $('#spinnerLoading').hide();
                         $('#addModal').modal('hide');
@@ -1608,6 +1608,7 @@ if ($user != null && $user != ''){
                             var obj = JSON.parse(data);
 
                             if(obj.status === 'success'){
+                                table.ajax.reload();
                                 var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
                                 printWindow.document.write(obj.message);
                                 printWindow.document.close();
