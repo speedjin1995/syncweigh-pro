@@ -68,6 +68,10 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
     $searchQuery .= " and Weight.plant_code = '".$_POST['plant']."'";
 }
 
+if(isset($_POST['batchDrum']) && $_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
+    $searchQuery .= " and Weight.batch_drum = '".$_POST['batchDrum']."'";
+}
+
 if(isset($_POST['group1']) && $_POST['group1'] != null && $_POST['group1'] != '' && $_POST['group1'] != '-'){
     $group1 = $_POST['group1'];
 }

@@ -67,6 +67,10 @@ if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
 	$searchQuery .= " and purchase_order = '".$_POST['poNo']."'";
 }
 
+if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
+	$searchQuery .= " and batch_drum = '".$_POST['batchDrum']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }

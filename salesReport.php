@@ -249,6 +249,16 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col--> 
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="batchDrumSearch" class="form-label">By-Batch/By-Drum</label>
+                                                            <select id="batchDrumSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <option value="Batch">Batch</option>
+                                                                <option value="Drum">Drum</option>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -440,6 +450,7 @@ else{
                                                             <option value="PRODUCT">Product Report</option>
                                                             <option value="S&P">Overall Report - Product</option>
                                                             <option value="S&PC">Overall Report - Customer</option>
+                                                            <option value="DO">Overall Report - DO</option>
                                                         </select>   
                                                     </div>
                                                 </div>
@@ -456,6 +467,7 @@ else{
                                             <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
                                             <input type="hidden" class="form-control" id="destination" name="destination">     
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
+                                            <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
                                             <input type="hidden" class="form-control" id="file" name="file">     
                                         </div>
                                     </div>
@@ -544,6 +556,7 @@ else{
                                             <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
                                             <input type="hidden" class="form-control" id="destination" name="destination">     
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
+                                            <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
                                             <input type="hidden" class="form-control" id="type" name="type">     
                                         </div>
                                     </div>
@@ -652,6 +665,7 @@ else{
         var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
+        var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -674,7 +688,8 @@ else{
                     rawMaterial: rawMatI,
                     destination: destinationI,
                     plant: plantI,
-                    purchaseOrder: soI
+                    purchaseOrder: soI,
+                    batchDrum: batchDrumSearchI
                 } 
             },
             'columns': [
@@ -724,6 +739,7 @@ else{
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
+            var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -750,7 +766,8 @@ else{
                         rawMaterial: rawMatI,
                         destination: destinationI,
                         plant: plantI,
-                        purchaseOrder: soI
+                        purchaseOrder: soI,
+                        batchDrum: batchDrumSearchI
                     } 
                 },
                 'columns': [
@@ -827,6 +844,7 @@ else{
                     var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+                    var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
                     $('#exportPdfForm').find('#fromDate').val(fromDateI);
                     $('#exportPdfForm').find('#toDate').val(toDateI);
@@ -839,6 +857,7 @@ else{
                     $('#exportPdfForm').find('#rawMat').val(rawMatI);
                     $('#exportPdfForm').find('#destination').val(destinationI);
                     $('#exportPdfForm').find('#plant').val(plantI);
+                    $('#exportPdfForm').find('#batchDrum').val(batchDrumSearchI);
                     $('#exportPdfForm').find('#file').val('weight');
                     $('#exportPdfModal').modal('hide');
 
@@ -891,6 +910,7 @@ else{
                     var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+                    var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
                     $('#exportSoRepForm').find('#fromDate').val(fromDateI);
                     $('#exportSoRepForm').find('#toDate').val(toDateI);
@@ -903,6 +923,7 @@ else{
                     $('#exportSoRepForm').find('#rawMat').val(rawMatI);
                     $('#exportSoRepForm').find('#destination').val(destinationI);
                     $('#exportSoRepForm').find('#plant').val(plantI);
+                    $('#exportSoRepForm').find('#batchDrum').val(batchDrumSearchI);
                     $('#exportSoRepForm').find('#type').val('Sales');
                     $('#exportSoRepModal').modal('hide');
 
@@ -985,11 +1006,12 @@ else{
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
             
             window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
             "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
-            "&destination="+destinationI+"&plant="+plantI);
+            "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
         });
 
         $('#statusSearch').on('change', function(){
