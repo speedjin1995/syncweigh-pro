@@ -496,7 +496,8 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                 echo json_encode(
                     array(
                         "status"=> "success", 
-                        "message"=> "Updated Successfully!!" 
+                        "message"=> "Updated Successfully!!",
+                        "id"=>$weightId
                     )
                 );
             }

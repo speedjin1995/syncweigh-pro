@@ -293,7 +293,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 .signature-section {
                                     display: flex;
                                     justify-content: space-between;
-                                    margin-top: 10px;
+                                    margin-top:70px;
                                 }
                                 .signature-box {
                                     width: 100%;
@@ -426,7 +426,6 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </tr>
                         </table>
                         <p><strong>Remark: '.$row['remarks'].'</strong></p>
-                        <br><br><br><br>
                         <div class="signature-section">
                             <div class="left-section">
                                 <p class="dotted-line"></p>
