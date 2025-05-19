@@ -1167,7 +1167,7 @@ if ($user != null && $user != ''){
                 <input type="text" class="form-control" id="products" name="products" style="background-color:white;" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control" id="productPercentage" name="productPercentage" style="background-color:white;" value="0" required>
+                <input type="number" class="form-control productPercentage" id="productPercentage" name="productPercentage" style="background-color:white;" value="0" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0" readonly required>
@@ -2169,16 +2169,20 @@ if ($user != null && $user != ''){
             $('#weightDifference').val(current.toFixed(0));
 
             // Loop directly through productItemWeight fields
-            $('#productTable input[id^="productItemWeight"]').each(function() {
-                var row = $(this).closest('.details'); // Find the closest row
-                var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
-                var productItemWeight = (finalWeight * productPercentage) / 100;
+            // $('#productTable input[id^="productItemWeight"]').each(function() {
+            //     var row = $(this).closest('.details'); // Find the closest row
+            //     var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
+            //     var productItemWeight = (finalWeight * productPercentage) / 100;
 
-                // Update the productItemWeight field
-                $(this).val(productItemWeight.toFixed(2));
+            //     // Update the productItemWeight field
+            //     $(this).val(productItemWeight.toFixed(2));
 
-                // Trigger change on productUnitPrice to recalculate dependent values
-                row.find('input[id^="productUnitPrice"]').trigger('change');
+            //     // Trigger change on productUnitPrice to recalculate dependent values
+            //     row.find('input[id^="productUnitPrice"]').trigger('change');
+            // });
+
+            $('.productPercentage').each(function () {
+                $(this).trigger('keyup');
             });
         });
 
@@ -2391,7 +2395,7 @@ if ($user != null && $user != ''){
         });
         
         // Event delegation for order weight to calculate variance
-        $("#productTable").on('change', 'input[id^="productPercentage"]', function(){
+        $("#productTable").on('keyup', 'input[id^="productPercentage"]', function(){
             // Retrieve the input's attributes
             var productPercentage = $(this).val();
             var finalWeight = $('#finalWeight').val();
