@@ -1021,6 +1021,33 @@ if ($user != null && $user != ''){
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="modal fade" id="cancelModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="cancelForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Cancellation Reason</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <label>Cancellation Reason *</label>
+                                                                <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
+                                                            </div>
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-success" id="submitCancel">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div><!-- end col -->
                             </div> <!-- end row-->
 
@@ -1758,6 +1785,60 @@ if ($user != null && $user != ''){
             }
         });
 
+        $('#submitCancel').on('click', function(){
+            if($('#cancelForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#cancelModal').find('#id').val();
+                var isMulti = $('#cancelModal').find('#isMulti').val();
+                var cancelReason = $('#cancelModal').find('#cancelReason').val();
+
+                if (isMulti == 'Y'){
+                    $.post('php/deleteWeight.php', {userID: id, type: 'MULTI', cancelReason: cancelReason, action: 'Cancel'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#cancelModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }else{
+                    $.post('php/deleteWeight.php', {userID: id, cancelReason: cancelReason, action: 'Cancel'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#spinnerLoading').hide();
+                            $('#cancelModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        });
+
         $.post('http://127.0.0.1:5002/', $('#setupForm').serialize(), function(data){
             if(data == "true"){
                 $('#indicatorConnected').addClass('bg-primary');
@@ -2487,21 +2568,21 @@ if ($user != null && $user != ''){
 
             if (selectedIds.length > 0) {
                 if (confirm('Are you sure you want to cancel these items?')) {
-                    $.post('php/deleteWeight.php', {userID: selectedIds, type: 'MULTI', action: 'Cancel'}, function(data){
-                        var obj = JSON.parse(data);
-                        
-                        if(obj.status === 'success'){
-                            table.ajax.reload();
-                            toastr["success"](obj.message, "Success:");
-                            $('#spinnerLoading').hide();
-                        }
-                        else if(obj.status === 'failed'){
-                            toastr["error"](obj.message, "Failed:");
-                            $('#spinnerLoading').hide();
-                        }
-                        else{
-                            toastr["error"]("Something wrong when activate", "Failed:");
-                            $('#spinnerLoading').hide();
+                    $('#cancelModal').find('#id').val(selectedIds);
+                    $('#cancelModal').find('#isMulti').val('Y');
+                    $('#cancelModal').modal('show');
+
+                    $('#cancelForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
                         }
                     });
                 }
@@ -2510,7 +2591,7 @@ if ($user != null && $user != ''){
             } 
             else {
                 // Optionally, you can display a message or take another action if no IDs are selected
-                alert("Please select at least one weight to delete.");
+                alert("Please select at least one weight to cancel.");
                 $('#spinnerLoading').hide();
             }     
         });
@@ -2856,26 +2937,25 @@ if ($user != null && $user != ''){
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id, action: 'Cancel'}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $('#cancelModal').find('#id').val(id);
+            $('#cancelModal').find('#isMulti').val('N');
+            $('#cancelModal').modal('show');
+
+            $('#cancelForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }
     }
 
     function print(id) {

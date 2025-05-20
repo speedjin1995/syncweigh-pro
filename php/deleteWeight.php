@@ -11,6 +11,7 @@ if(isset($_POST['userID'])){
 	$cancel = "Y";
 	$action = "";
 	$type = '';
+	$cancelReason = '';
 
 	if(isset($_POST['action']) && $_POST['action']!=null && $_POST['action']!=""){
 		$action = $_POST['action'];
@@ -18,6 +19,10 @@ if(isset($_POST['userID'])){
 
 	if(isset($_POST['type']) && $_POST['type']!=null && $_POST['type']!=""){
 		$type = $_POST['type'];
+	}
+
+	if(isset($_POST['cancelReason']) && $_POST['cancelReason']!=null && $_POST['cancelReason']!=""){
+		$cancelReason = $_POST['cancelReason'];
 	}
 
 	if ($action == 'Cancel'){
@@ -28,8 +33,8 @@ if(isset($_POST['userID'])){
 				$ids = $_POST['userID'];
 			}
 
-			if ($stmt2 = $db->prepare("UPDATE Weight SET is_cancel=? WHERE id IN ($ids)")) {
-				$stmt2->bind_param('s', $cancel);
+			if ($stmt2 = $db->prepare("UPDATE Weight SET is_cancel=?, cancel_reason=? WHERE id IN ($ids)")) {
+				$stmt2->bind_param('ss', $cancel, $cancelReason);
 				
 				if($stmt2->execute()){
 		
@@ -61,8 +66,8 @@ if(isset($_POST['userID'])){
 				);
 			}
 		}else{
-			if ($stmt2 = $db->prepare("UPDATE Weight SET is_cancel=? WHERE id=?")) {
-				$stmt2->bind_param('ss', $cancel, $id);
+			if ($stmt2 = $db->prepare("UPDATE Weight SET is_cancel=?, cancel_reason=? WHERE id=?")) {
+				$stmt2->bind_param('sss', $cancel, $cancelReason, $id);
 				
 				if($stmt2->execute()){
 					$stmt2->close();

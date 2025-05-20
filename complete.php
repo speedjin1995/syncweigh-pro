@@ -993,6 +993,33 @@ if ($user != null && $user != ''){
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="modal fade" id="cancelModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="cancelForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Cancellation Reason</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <label>Cancellation Reason *</label>
+                                                                <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
+                                                            </div>
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-success" id="submitCancel">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div><!-- end col -->
                             </div> <!-- end row-->
 
@@ -1009,9 +1036,13 @@ if ($user != null && $user != ''){
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="multiDeactivate" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                                    Delete Weight
+                                                                </button>
                                                                 <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal" style="display:none;">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Weight
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Weight
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -1020,6 +1051,7 @@ if ($user != null && $user != ''){
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction <br>Id</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Weight <br> Type</th>
@@ -1229,6 +1261,11 @@ if ($user != null && $user != ''){
             defaultDate: today
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
             $('#plantSearchDisplay').show();
         }else{
@@ -1271,6 +1308,15 @@ if ($user != null && $user != ''){
                 } 
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { data: 'transaction_id' },
                 { data: 'transaction_status' },
                 { data: 'weight_type' },
@@ -1287,8 +1333,10 @@ if ($user != null && $user != ''){
                     render: function (data, type, row) {
                         let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' 
-                                        //+
-                                        //'<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+
+                        // if (userRole == 'ADMIN' || userRole == 'SADMIN'){
+                        //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                        // }
 
                         if (row.is_approved == 'Y') {
                             dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1711,6 +1759,60 @@ if ($user != null && $user != ''){
             }
         });
 
+        $('#submitCancel').on('click', function(){
+            if($('#cancelForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#cancelModal').find('#id').val();
+                var isMulti = $('#cancelModal').find('#isMulti').val();
+                var cancelReason = $('#cancelModal').find('#cancelReason').val();
+
+                if (isMulti == 'Y'){
+                    $.post('php/deleteWeight.php', {userID: id, type: 'MULTI', cancelReason: cancelReason, action: 'Cancel'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#cancelModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }else{
+                    $.post('php/deleteWeight.php', {userID: id, cancelReason: cancelReason, action: 'Cancel'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#spinnerLoading').hide();
+                            $('#cancelModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        });
+
         $('#submitApproval').on('click', function(){
             if($('#approvalForm').valid()){
                 $('#spinnerLoading').show();
@@ -1780,6 +1882,15 @@ if ($user != null && $user != ''){
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'transaction_id' },
                     { data: 'transaction_status' },
                     { data: 'weight_type' },
@@ -1796,8 +1907,10 @@ if ($user != null && $user != ''){
                         render: function (data, type, row) {
                             let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' 
-                                            //+
-                                            //'<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                            
+                            // if (userRole == 'ADMIN' || userRole == 'SADMIN'){
+                            //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                            // }
 
                             if (row.is_approved == 'Y') {
                                 dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -2343,6 +2456,46 @@ if ($user != null && $user != ''){
 
             rowCount++;
         });
+
+        $('#multiDeactivate').on('click', function () {
+            $('#spinnerLoading').show();
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $('#cancelModal').find('#id').val(selectedIds);
+                    $('#cancelModal').find('#isMulti').val('Y');
+                    $('#cancelModal').modal('show');
+
+                    $('#cancelForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            } 
+            else {
+                // Optionally, you can display a message or take another action if no IDs are selected
+                alert("Please select at least one weight to cancel.");
+                $('#spinnerLoading').hide();
+            }     
+        });
     });
 
     function format (row) {
@@ -2673,26 +2826,25 @@ if ($user != null && $user != ''){
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id, action: 'Cancel'}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $('#cancelModal').find('#id').val(id);
+            $('#cancelModal').find('#isMulti').val('N');
+            $('#cancelModal').modal('show');
+
+            $('#cancelForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }
     }
 
     function print(id) {
