@@ -1346,7 +1346,7 @@ if ($user != null && $user != ''){
                             dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                         }
 
-                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Cancel</a></li>';
 
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
@@ -1785,7 +1785,7 @@ if ($user != null && $user != ''){
                         $('#checkingConnection').removeClass('bg-danger');
                     }
                     else if(ind == 'BDI'){
-                        if(data.includes("GS")){
+                        if(data.includes("GS") || data.includes("NT") || data.includes("ST") || data.includes("US")){
                             var text = data.split(" ");
                             var text2 = text[text.length - 1];
                             text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
@@ -1886,7 +1886,7 @@ if ($user != null && $user != ''){
                                 dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                             }
 
-                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Cancel</a></li>';
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
@@ -2487,7 +2487,7 @@ if ($user != null && $user != ''){
 
             if (selectedIds.length > 0) {
                 if (confirm('Are you sure you want to cancel these items?')) {
-                    $.post('php/deleteWeight.php', {userID: selectedIds, type: 'MULTI'}, function(data){
+                    $.post('php/deleteWeight.php', {userID: selectedIds, type: 'MULTI', action: 'Cancel'}, function(data){
                         var obj = JSON.parse(data);
                         
                         if(obj.status === 'success'){
@@ -2856,7 +2856,7 @@ if ($user != null && $user != ''){
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
+        $.post('php/deleteWeight.php', {userID: id, action: 'Cancel'}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){

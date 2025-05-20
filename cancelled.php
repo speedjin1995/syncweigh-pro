@@ -1302,6 +1302,8 @@ if ($user != null && $user != ''){
 
                         dropdownMenu += '<li><a class="dropdown-item revert-item-btn" id="revert' + data + '" onclick="revert(' + data + ')"><i class="ri-arrow-go-back-fill align-bottom me-2 text-muted"></i> Revert</a></li>';
 
+                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
                     }
@@ -1771,6 +1773,8 @@ if ($user != null && $user != ''){
                             // dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                             dropdownMenu += '<li><a class="dropdown-item revert-item-btn" id="revert' + data + '" onclick="revert(' + data + ')"><i class="ri-arrow-go-back-fill align-bottom me-2 text-muted"></i> Revert</a></li>';
+
+                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
@@ -2679,7 +2683,7 @@ if ($user != null && $user != ''){
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
+        $.post('php/deleteWeight.php', {userID: id, action: 'Delete'}, function(data){
             var obj = JSON.parse(data);
             
             if(obj.status === 'success'){

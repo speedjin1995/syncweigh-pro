@@ -60,10 +60,10 @@ if($searchValue != ''){
 }
 
 ## Total number of records without filtering
-$allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y'";
+$allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and plant_code IN ('$username')";
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -71,11 +71,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y'".$searchQuery;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -83,10 +83,10 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0' and is_complete = 'Y'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and plant_code IN ('$username')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);
