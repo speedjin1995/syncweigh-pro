@@ -117,7 +117,7 @@ else{
 
                             <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header fs-5 text-white" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #405189;">
+                                    <div class="card-header fs-5 text-white" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #099885;">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
@@ -376,7 +376,7 @@ else{
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="card">
-                                                    <div class="card-header" style="background-color: #405189;">
+                                                    <div class="card-header" style="background-color: #099885;">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
                                                                 <h5 class="card-title text-white mb-0">Weighing Records</h5>
@@ -397,6 +397,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction <br>Id</th>
                                                                     <th>Weight <br>Type</th>
                                                                     <th>Weight <br> Status</th>
@@ -485,6 +486,8 @@ else{
                                             <input type="hidden" class="form-control" id="plant" name="plant">   
                                             <input type="hidden" class="form-control" id="status" name="status">                                     
                                             <input type="hidden" class="form-control" id="file" name="file">     
+                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
+                                            <input type="hidden" class="form-control" id="ids" name="ids">     
                                         </div>
                                     </div>
                                 </div>
@@ -554,6 +557,11 @@ else{
             defaultDate: today
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
@@ -594,6 +602,15 @@ else{
                 } 
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { data: 'transaction_id' },
                 { data: 'weight_type' },
                 { data: 'transaction_status' },
@@ -675,6 +692,15 @@ else{
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'transaction_id' },
                     { data: 'weight_type' },
                     { data: 'transaction_status' },
@@ -768,22 +794,6 @@ else{
         });
 
         $('#exportPdf').on('click', function(){
-            /*$("#exportPdfModal").find('#reportType').val('');
-            $("#exportPdfModal").modal("show");
-
-            $('#exportPdfForm').validate({
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                }
-            });*/
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
@@ -813,30 +823,70 @@ else{
             $('#exportPdfForm').find('#plant').val(plantI);
             $('#exportPdfForm').find('#status').val(statusI);
             $('#exportPdfForm').find('#file').val('weight');
-            $('#exportPdfModal').modal('hide');
 
-            $.post('php/exportPdf.php', $('#exportPdfForm').serialize(), function(response){
-                var obj = JSON.parse(response);
+            var selectedIds = []; // An array to store the selected 'id' values
 
-                if(obj.status === 'success'){
-                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                    printWindow.document.write(obj.message);
-                    printWindow.document.close();
-                    setTimeout(function(){
-                        printWindow.print();
-                        printWindow.close();
-                    }, 500);
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
                 }
-                else if(obj.status === 'failed'){
-                    toastr["error"](obj.message, "Failed:");
-                }
-                else{
-                    toastr["error"]("Something wrong when activate", "Failed:");
-                }
-            }).fail(function(error){
-                console.error("Error exporting PDF:", error);
-                alert("An error occurred while generating the PDF.");
             });
+
+            if (selectedIds.length > 0){
+                $('#exportPdfForm').find('#isMulti').val('Y');
+                $('#exportPdfForm').find('#ids').val(selectedIds);
+                $('#exportPdfModal').modal('hide');
+
+                $.post('php/exportPdf.php', $('#exportPdfForm').serialize(), function(response){
+                    var obj = JSON.parse(response);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                    }
+                }).fail(function(error){
+                    console.error("Error exporting PDF:", error);
+                    alert("An error occurred while generating the PDF.");
+                });
+            }else{
+                $('#exportPdfForm').find('#isMulti').val('N');
+                $('#exportPdfModal').modal('hide');
+
+                $.post('php/exportPdf.php', $('#exportPdfForm').serialize(), function(response){
+                    var obj = JSON.parse(response);
+
+                    if(obj.status === 'success'){
+                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                        printWindow.document.write(obj.message);
+                        printWindow.document.close();
+                        setTimeout(function(){
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                    }
+                }).fail(function(error){
+                    console.error("Error exporting PDF:", error);
+                    alert("An error occurred while generating the PDF.");
+                });
+            }
+            
         });
 
         $('#exportExcel').on('click', function(){
@@ -854,10 +904,25 @@ else{
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             
-            window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
-            "&transactionStatus="+transactionStatusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-            "&weighingType="+weightTypeI+"&product="+productI+"&rawMat="+rawMatI+
-            "&destination="+destinationI+"&plant="+plantI+"&status="+statusI);
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&transactionStatus="+transactionStatusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+weightTypeI+"&product="+productI+"&rawMat="+rawMatI+
+                "&destination="+destinationI+"&plant="+plantI+"&status="+statusI+"&isMulti=Y&ids="+selectedIds);
+            } else {
+                window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&transactionStatus="+transactionStatusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+weightTypeI+"&product="+productI+"&rawMat="+rawMatI+
+                "&destination="+destinationI+"&plant="+plantI+"&status="+statusI+"&isMulti=N");
+            }
         });
 
         $('#transactionStatusSearch').on('change', function(){
