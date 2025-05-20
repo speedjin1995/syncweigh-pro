@@ -10,10 +10,11 @@ if(!isset($_SESSION['id'])){
 }
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
+$today = date('ym');
 
 // Processing form data when form is submitted
 if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
-, $_POST['nettWeight'], $_POST['manualWeight'])) {
+, $_POST['nettWeight'], $_POST['manualWeight'], $_POST['plantCode'])) {
     $isCancel = 'N';
     $isComplete = 'N';
     $isApproved = 'Y';
@@ -22,6 +23,18 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $weightId = null;
     } else {
         $weightId = trim($_POST["id"]);
+    }
+
+    if (empty($_POST["plantCode"])) {
+        $plantCode = null;
+    } else {
+        $plantCode = trim($_POST["plantCode"]);
+    }
+
+    if (empty($_POST["plant"])) {
+        $plant = null;
+    } else {
+        $plant = trim($_POST["plant"]);
     }
 
     if (empty($_POST["transactionId"])) {
@@ -41,12 +54,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
             else{
                 $result2 = $update_stmt2->get_result();
 				$id = '1';
-				$transactionId = "";
+				$transactionId = $plantCode.'/'.$today.'-';
 
 				if ($row2 = $result2->fetch_assoc()) {
 					$id = $row2['misc_id'];
-					$transactionId = $row2['prefix'];
-				}
+					$transactionId .= $row2['prefix'];
+				} 
 
 				if ($update_stmt = $db->prepare("SELECT * FROM miscellaneous WHERE id=?")) {
 					$update_stmt->bind_param('s', $id);
@@ -67,7 +80,7 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
 							$charSize = strlen($row['value']);
 							$misValue = $row['value'];
 		
-							for($i=0; $i<(5-(int)$charSize); $i++){
+							for($i=0; $i<(4-(int)$charSize); $i++){
 								$transactionId.='0';  // S0000
 							}
 					
@@ -324,18 +337,6 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $productCode = null;
     } else {
         $productCode = trim($_POST["productCode"]);
-    }
-
-    if (empty($_POST["plantCode"])) {
-        $plantCode = null;
-    } else {
-        $plantCode = trim($_POST["plantCode"]);
-    }
-
-    if (empty($_POST["plant"])) {
-        $plant = null;
-    } else {
-        $plant = trim($_POST["plant"]);
     }
 
     if (empty($_POST["destinationCode"])) {
