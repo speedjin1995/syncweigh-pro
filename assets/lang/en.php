@@ -13,7 +13,7 @@
     $lang["t-supplier"]="Supplier";
     $lang["t-product"]="Product";
     $lang["t-destination"]="Destination";
-    $lang["t-driver"]="Driver";
+    $lang["t-driver"]="Own Driver";
     $lang["t-transporter"]="Transporter";
     $lang["t-user"]="User";
     $lang["t-unit"]="Unit";
