@@ -2430,14 +2430,21 @@ if ($user != null && $user != ''){
         <!--div class="row">
             
         </div><hr-->
-        <div class="row">
+        <div class="row ps-5 pe-5">
             <div class="col-4">
                 <p><strong>${row.name}</strong></p>
+                <p>Tin No.: ${row.tin_no}</p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
-                <p>${row.address_line_3}</p>
-                <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
-            </div>
+                <p>${row.address_line_3}</p>`;
+
+            if(row.cust_supp_tag == 'Y'){
+                returnString += `<p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>`;
+            }else{
+                returnString += `<p></p>`;
+            }
+            
+            returnString += `</div>
             <div class="col-4">
                 <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
                 <p><strong>DRIVER NAME:</strong> ${row.driver_name}</p>
@@ -2455,9 +2462,9 @@ if ($user != null && $user != ''){
             
         </div><br>
         <!-- Product Section -->
-        <div class="row">
-            <div class="col-8">
-                <table class="product-table" width="100%">
+        <div class="row ps-5 pe-5">
+            <div class="col-7">
+                <table class="product-table" width="80%">
                     <thead>
                         <tr>
                             <th><span>PRODUCT Description</span></th>
@@ -2511,13 +2518,16 @@ if ($user != null && $user != ''){
                             </tr>
                         `;
                     }
-                    
 
                     returnString += `
                     </tbody>
                 </table>
+                <br>
+                <br>
+                <br>
+                <p><strong>REMARK:</strong> ${row.remarks}</p>
             </div>
-            <div class="col-4">
+            <div class="col-5">
                 <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} kg(${row.gross_weight1_date})</p>
                 <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} kg(${row.tare_weight1_date})</p>
                 <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} kg</p>

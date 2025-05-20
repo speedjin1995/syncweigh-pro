@@ -2607,6 +2607,7 @@ if ($user != null && $user != ''){
         <div class="row ps-5 pe-5">
             <div class="col-4">
                 <p><strong>${row.name}</strong></p>
+                <p>Tin No.: ${row.tin_no}</p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
                 <p>${row.address_line_3}</p>`;

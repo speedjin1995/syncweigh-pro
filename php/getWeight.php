@@ -30,6 +30,7 @@ if(isset($_POST['userID'])){
                 if ($format == 'EXPANDABLE'){
                     $message['id'] = $row['id'];
                     $message['name'] = '';
+                    $message['tin_no'] = '';
                     $message['address_line_1'] = '';
                     $message['address_line_2'] = '';
                     $message['address_line_3'] = '';
@@ -45,6 +46,7 @@ if(isset($_POST['userID'])){
                             
                             if ($row2 = $customer_result->fetch_assoc()) {
                                 $message['name'] = $row2['name'];
+                                $message['tin_no'] = $row2['tin_no'];
                                 $message['address_line_1'] = $row2['address_line_1'];
                                 $message['address_line_2'] = $row2['address_line_2'];
                                 $message['address_line_3'] = $row2['address_line_3'];
@@ -61,6 +63,7 @@ if(isset($_POST['userID'])){
                             
                             if ($row2 = $customer_result->fetch_assoc()) {
                                 $message['name'] = $row2['name'];
+                                $message['tin_no'] = $row2['tin_no'];
                                 $message['address_line_1'] = $row2['address_line_1'];
                                 $message['address_line_2'] = $row2['address_line_2'];
                                 $message['address_line_3'] = $row2['address_line_3'];
