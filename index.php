@@ -2095,6 +2095,12 @@ if ($user != null && $user != ''){
             }
         });
 
+        $('#vehicleNoTxt').on('keyup', function(){
+            var x = $('#vehicleNoTxt').val();
+            x = x.toUpperCase();
+            $('#vehicleNoTxt').val(x);
+        });
+
         $('#vehiclePlateNo1').on('change', function(){
             var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
         
