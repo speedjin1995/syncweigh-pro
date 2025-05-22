@@ -75,10 +75,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $variance = '';
                     $high = '';
                     $low = '';
+
                     $datetime = explode(' ', date('d/m/Y h:i:s A', strtotime($row['transaction_date'])), 2);
                     list($date, $time) = $datetime;
-                    $inDate = date('d/m/Y - h:i:s A', strtotime(explode(' ', $row['gross_weight1_date'])[1]));
-                    $outDate = date('d/m/Y - h:i:s A', strtotime(explode(' ', $row['tare_weight1_date'])[1]));
+                    $inDate = $row['gross_weight1_date'] != null ? date('d/m/Y - h:i:s A', strtotime($row['gross_weight1_date'])) : "";
+                    $outDate = $row['tare_weight1_date'] != null ? date('d/m/Y - h:i:s A', strtotime($row['tare_weight1_date'])) : "";
                     
                     if($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'MISC'){
                         $cid = $row['customer_code'];
@@ -155,7 +156,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     }
 
                     $wid = $row['id'];
-                    if ($select_stmt2 = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=?")) {
+                    if ($select_stmt2 = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=? AND deleted='0'")) {
                         $select_stmt2->bind_param('s', $wid);
             
                         // Execute the prepared query.
@@ -170,14 +171,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                             $result = $select_stmt2->get_result();
                             $weighProducts = $result->fetch_all(MYSQLI_ASSOC); // Fetch all rows as an associative array
 
-                            if(empty($weighProducts)) {
-                                echo json_encode(
-                                    array(
-                                        "status" => "failed",
-                                        "message" => 'Unable to read data'
-                                    )
-                                );
-                            }
+                            // if(empty($weighProducts)) {
+                            //     echo json_encode(
+                            //         array(
+                            //             "status" => "failed",
+                            //             "message" => 'Unable to read data'
+                            //         )
+                            //     );
+                            // }
                         }
                     }
                     else{
@@ -358,8 +359,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         </tr> 
                                         <tr>
                                             <td style="text-align:center;font-weight:bold; border-left:none;">'.$inDate.'</td>
-                                            <td style="text-align:center">IN</td>
-                                            <td style="text-align:center; border-right:none;" width="30%">'.($row['gross_weight1'] ?? '0').'</td>
+                                            <td style="text-align:center" width="15%">IN</td>
+                                            <td style="text-align:center; border-right:none;" width="25%">'.($row['gross_weight1'] ?? '0').'</td>
                                         </tr>
                                         <tr>
                                             <td style="text-align:center;font-weight:bold; border-left:none;">'.$outDate.'</td>
@@ -391,15 +392,18 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         </tr>';
 
                     $rowCount = 1;
-                    foreach($weighProducts as $row2) {
-                        $message .=  '<tr>
-                                            <td class="left-align" style="border-left:none;">'.$rowCount. ' '.$row2['product_name'].'</td>
-                                            <td style="text-align: center">'.$row2['percentage'].'</td>
-                                            <td style="text-align: center">'.$row2['item_weight'].'</td>
-                                            <td class="right-align">'.($row2['unit_price'] ?? '-').'</td>
-                                            <td class="right-align" style="border-right:none;">'.($row2['total_price'] ?? '-').'</td>
-                                        </tr>';
-                        $rowCount++;
+
+                    if (!empty($weighProducts)){
+                        foreach($weighProducts as $row2) {
+                            $message .=  '<tr>
+                                                <td class="left-align" style="border-left:none;">'.$rowCount. ' '.$row2['product_name'].'</td>
+                                                <td style="text-align: center">'.$row2['percentage'].'</td>
+                                                <td style="text-align: center">'.$row2['item_weight'].'</td>
+                                                <td class="right-align" style="padding-right: 10px;">'.($row2['unit_price'] ?? '-').'</td>
+                                                <td class="right-align" style="border-right:none; padding-right: 10px">'.($row2['total_price'] ?? '-').'</td>
+                                            </tr>';
+                            $rowCount++;
+                        }
                     }
 
                     // Add empty rows if less than 5
@@ -424,13 +428,16 @@ if(isset($_POST['userID'], $_POST["file"])){
                             if ($row3 = $result->fetch_assoc()) {
                                 $totalAmount = $row3['total_amount'];
                             }
+
+                            $totalAmount = number_format((float)$totalAmount, 2, '.', ''); // "123.00"
+
                         }
                     }
 
                                         $message .= '<tr>
                                             <td colspan="3" class="no-border"></td>
                                             <td style="text-align:right; border-bottom: none;">Total Amount</td>
-                                            <td class="right-align" style="border-bottom: none; border-right: none;">'.$totalAmount.'</td>
+                                            <td class="right-align" style="border-bottom: none; border-right: none; padding-right: 10px">'.$totalAmount.'</td>
                                         </tr>
                                     </table>
                                 </td>

@@ -495,6 +495,13 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                     }
 
                     $product_stmt->close();
+                }else{
+                    # Added this section to update all weight product related to the weighing to deleted
+                    if ($update_prod_stmt = $db->prepare("UPDATE Weight_Product SET deleted = '1' WHERE weight_id=?")){
+                        $update_prod_stmt->bind_param('s', $weightId);
+                        $update_prod_stmt->execute();
+                        $update_prod_stmt->close();
+                    }
                 }
 
                 $update_stmt->close();

@@ -103,7 +103,7 @@ if(isset($_POST['userID'])){
 
                     if($row['id'] != null && $row['id'] != ''){
                         $weightId = $row['id'];
-                        $weightProductQuery = "SELECT * FROM Weight_Product WHERE weight_id = $weightId";
+                        $weightProductQuery = "SELECT * FROM Weight_Product WHERE weight_id = $weightId AND deleted='0'";
                         $weightProductDetail = mysqli_query($db, $weightProductQuery);
 
                         $weightProduct = array();
@@ -225,7 +225,7 @@ if(isset($_POST['userID'])){
                     }
     
                     // retrieve products
-                    $empQuery = "SELECT * FROM Weight_Product WHERE weight_id = $id ORDER BY id ASC";
+                    $empQuery = "SELECT * FROM Weight_Product WHERE weight_id = $id AND deleted = '0' ORDER BY id ASC";
                     $empRecords = mysqli_query($db, $empQuery);
                     $products = array();
                     $productCount = 1;

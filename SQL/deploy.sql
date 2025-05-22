@@ -529,3 +529,5 @@ BEGIN
 END
 $$
 DELIMITER ; 
+
+ALTER TABLE `Weight_Product` ADD `deleted` INT(1) NOT NULL DEFAULT '0' AFTER `total_price`;
