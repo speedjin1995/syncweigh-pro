@@ -232,7 +232,7 @@ if ($user != null && $user != ''){
                                                             <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
@@ -240,6 +240,12 @@ if ($user != null && $user != ''){
                                                                 <option value="Normal">Normal</option>
                                                                 <!--option value="Container">Container</option-->
                                                             </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="transactionIdSearch" class="form-label">Transaction ID</label>
+                                                            <input type="text" class="form-control" placeholder="Transaction ID" id="transactionIdSearch">
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3" style="display:none;">
@@ -1309,6 +1315,7 @@ if ($user != null && $user != ''){
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+        var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
@@ -1329,6 +1336,7 @@ if ($user != null && $user != ''){
                     customer: customerNoI,
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
+                    transactionId: transactionIdSearch,
                     batch: batchNoI,
                     product: transactionStatusI,
                     plant: plantNoI,
@@ -1987,6 +1995,7 @@ if ($user != null && $user != ''){
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
@@ -2011,6 +2020,7 @@ if ($user != null && $user != ''){
                         customer: customerNoI,
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
+                        transactionId: transactionIdSearch,
                         batch: batchNoI,
                         product: transactionStatusI,
                         plant: plantNoI,

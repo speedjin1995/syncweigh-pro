@@ -182,7 +182,7 @@ if ($user != null && $user != ''){
                                                             <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
@@ -191,7 +191,13 @@ if ($user != null && $user != ''){
                                                                 <option value="Container">Container</option>
                                                             </select>
                                                         </div>
-                                                    </div><!--end col-->                                               
+                                                    </div><!--end col-->  
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="transactionIdSearch" class="form-label">Transaction ID</label>
+                                                            <input type="text" class="form-control" placeholder="Transaction ID" id="transactionIdSearch">
+                                                        </div>
+                                                    </div><!--end col-->                                             
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
@@ -592,6 +598,7 @@ if ($user != null && $user != ''){
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+        var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
@@ -611,6 +618,7 @@ if ($user != null && $user != ''){
                     customer: customerNoI,
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
+                    transactionId: transactionIdSearch,
                     product: transactionStatusI,
                     plant: plantNoI,
                 } 
@@ -652,6 +660,7 @@ if ($user != null && $user != ''){
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
@@ -675,6 +684,7 @@ if ($user != null && $user != ''){
                         customer: customerNoI,
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
+                        transactionId: transactionIdSearch,
                         product: transactionStatusI,
                         plant: plantNoI,
                     } 
@@ -719,6 +729,7 @@ if ($user != null && $user != ''){
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
@@ -733,7 +744,8 @@ if ($user != null && $user != ''){
                 status: statusI,
                 customer: customerNoI,
                 vehicle: vehicleNoI,
-                weighingType: invoiceNoI,
+                weighingType: invoiceNoI, 
+                transactionId: transactionIdSearch, 
                 product: transactionStatusI,
                 plant: plantNoI,
                 groupOne: 'customer_code',
@@ -774,6 +786,7 @@ if ($user != null && $user != ''){
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var productI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
@@ -786,6 +799,7 @@ if ($user != null && $user != ''){
                 supplier: supplierNoI,
                 vehicle: vehicleNoI,
                 weighingType: invoiceNoI,
+                transactionId: transactionIdSearch, 
                 product: productI,
                 plant: plantI,
                 type: 'summary'
@@ -823,12 +837,13 @@ if ($user != null && $user != ''){
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             
             window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
-            "&weighingType="+invoiceNoI+"&product="+transactionStatusI+"&plant="+plantNoI);
+            "&weighingType="+invoiceNoI+"&transactionId="+transactionIdSearch+"&product="+transactionStatusI+"&plant="+plantNoI);
         });
     });
 

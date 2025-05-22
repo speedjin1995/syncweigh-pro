@@ -101,6 +101,15 @@ if(isset($_POST['weighingType']) && $_POST['weighingType'] != null && $_POST['we
     }
 }
 
+if(isset($_POST['transactionId']) && $_POST['transactionId'] != null && $_POST['transactionId'] != '' && $_POST['transactionId'] != '-'){
+    if($_POST["file"] == 'weight'){
+        $searchQuery .= " and Weight.transaction_id like '%".$_POST['transactionId']."%'";
+    }
+    else{
+        $searchQuery .= " and count.weight_type like '%".$_POST['weighingType']."%'";
+    }
+}
+
 if(isset($_POST['product']) && $_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.product_code = '".$_POST['product']."'";
@@ -272,7 +281,7 @@ if(isset($_POST["file"])){
         //AND weight.pStatus = 'Pending'
 
         if ($type == 'summary'){
-            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
+            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery)) {
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {
                     echo json_encode(
@@ -445,7 +454,7 @@ if(isset($_POST["file"])){
             }
         }
         elseif ($type == 'group'){
-            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
+            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery)) {
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {
                     echo json_encode(
@@ -1164,7 +1173,7 @@ if(isset($_POST["file"])){
             }
         }
         else{
-            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery)) {
+            if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery)) {
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {
                     echo json_encode(
