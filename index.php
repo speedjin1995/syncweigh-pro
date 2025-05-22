@@ -2079,6 +2079,8 @@ if ($user != null && $user != ''){
             $('#addModal').find('#transactionDate').val(formatDate2(today));
             $('#addModal').find('#vehiclePlateNo1').val("");
             $('#addModal').find('#vehiclePlateNo2').val("");
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#supplierWeight').val("");
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
@@ -2168,7 +2170,7 @@ if ($user != null && $user != ''){
             }
         });
 
-        $('#manualVehicle').on('click', function(){
+        $('#manualVehicle').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo1').val('-');
@@ -2215,7 +2217,7 @@ if ($user != null && $user != ''){
             }*/
         });
 
-        $('#manualVehicle2').on('click', function(){
+        $('#manualVehicle2').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo2').val('-');
@@ -2236,12 +2238,14 @@ if ($user != null && $user != ''){
                 $('#grossIncoming').removeAttr('readonly');
                 $('#tareOutgoing2').removeAttr('readonly');
                 $('#grossIncoming2').removeAttr('readonly');
+                $('[id^="productItemWeight"]').removeAttr('readonly');
             }
             else{
                 $('#grossIncoming').attr('readonly', 'readonly');
                 $('#tareOutgoing').attr('readonly', 'readonly');
                 $('#grossIncoming2').attr('readonly', 'readonly');
                 $('#tareOutgoing2').attr('readonly', 'readonly');
+                $('[id^="productItemWeight"]').attr('readonly', true);
             }
         });
 
@@ -2579,7 +2583,6 @@ if ($user != null && $user != ''){
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
-            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
 
             // Check the total sum of all productPercentage inputs
             var totalPercentage = 0;
@@ -2589,8 +2592,36 @@ if ($user != null && $user != ''){
 
             if (totalPercentage > 100) {
                 alert("Total percentage cannot exceed 100%!");
-                $(this).val(0); // Reset the input to prevent exceeding 100%
+                $(this).val(0); // Reset the input to prevent percentage from exceeding 100%
+                $(this).closest('.details').find('input[id^="productItemWeight"]').val(0); // Reset weight to 0
             }
+
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
+        });
+
+        // Event delegation to calculate product percentage from order weight
+        $("#productTable").on('keyup', 'input[id^="productItemWeight"]', function(){
+            // Retrieve the input's attributes
+            var productItemWeight = $(this).val();
+            var finalWeight = $('#finalWeight').val();
+            var productPercentage = (parseFloat(productItemWeight) / parseFloat(finalWeight)) * 100;
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productPercentage"]').val(productPercentage);
+
+            // Check the total sum of all productPercentage inputs
+            var totalPercentage = 0;
+            $('input[id^="productPercentage"]').each(function() {
+                totalPercentage += parseFloat($(this).val()) || 0;
+            });
+
+            if (totalPercentage > 100) {
+                alert("Total percentage cannot exceed 100%!");
+                $(this).val(0); // Reset the weight to 0
+                $(this).closest('.details').find('input[id^="productPercentage"]').val(0); // Reset the input to prevent percentage from exceeding 100%
+            }
+
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
         });
 
         // Event delegation for order weight to calculate variance
@@ -2624,10 +2655,16 @@ if ($user != null && $user != ''){
 
         $(".add-product").click(function(){
             var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
+            var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
             if(manualPrice == 'false'){
                 var readonly = true;
             }else{
                 var readonly = false;
+            }            
+            if(manualWeight == 'false'){
+                var weightReadOnly = true;
+            }else{
+                var weightReadOnly = false;
             }            
 
             var $addContents = $("#productDetail").clone();
@@ -2643,7 +2680,7 @@ if ($user != null && $user != ''){
             $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
             $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
             $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
-            $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount);
+            $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
             $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
             $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
 
@@ -2902,29 +2939,6 @@ if ($user != null && $user != ''){
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
-
-                if(obj.message.manual_weight == 'true'){
-                    $("#manualWeightYes").prop("checked", true);
-                    $("#manualWeightNo").prop("checked", false);
-                    $('#manualWeightYes').trigger('click');
-                }
-                else{
-                    $("#manualWeightYes").prop("checked", false);
-                    $("#manualWeightNo").prop("checked", true);
-                    $('#manualWeightNo').trigger('click');
-                }
-
-                if(obj.message.manual_price == 'true'){
-                    $("#manualPriceYes").prop("checked", true);
-                    $("#manualPriceNo").prop("checked", false);
-                    $('#manualPriceYes').trigger('click');
-                }
-                else{
-                    $("#manualPriceYes").prop("checked", false);
-                    $("#manualPriceNo").prop("checked", true);
-                    $('#manualPriceNo').trigger('click');
-                }
-
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
@@ -2960,6 +2974,28 @@ if ($user != null && $user != ''){
 
                         rowCount++;
                     }
+                }
+
+                if(obj.message.manual_weight == 'true'){
+                    $("#manualWeightYes").prop("checked", true);
+                    $("#manualWeightNo").prop("checked", false);
+                    $('#manualWeightYes').trigger('click');
+                }
+                else{
+                    $("#manualWeightYes").prop("checked", false);
+                    $("#manualWeightNo").prop("checked", true);
+                    $('#manualWeightNo').trigger('click');
+                }
+
+                if(obj.message.manual_price == 'true'){
+                    $("#manualPriceYes").prop("checked", true);
+                    $("#manualPriceNo").prop("checked", false);
+                    $('#manualPriceYes').trigger('click');
+                }
+                else{
+                    $("#manualPriceYes").prop("checked", false);
+                    $("#manualPriceNo").prop("checked", true);
+                    $('#manualPriceNo').trigger('click');
                 }
 
                 $('#addModal').modal('show');

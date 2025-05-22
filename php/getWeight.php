@@ -169,7 +169,7 @@ if(isset($_POST['userID'])){
                     $message['is_complete'] = $row['is_complete'];
                     $message['is_cancel'] = $row['is_cancel'];
                     $message['manual_weight'] = $row['manual_weight'];
-                    //$message['manual_price'] = $row['manual_price'];
+                    $message['manual_price'] = $row['manual_price'];
                     $message['indicator_id'] = $row['indicator_id'];
                     $message['weighbridge_id'] = $row['weighbridge_id'];
                     $message['created_date'] = $row['created_date'];
