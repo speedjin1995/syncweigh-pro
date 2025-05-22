@@ -1483,7 +1483,7 @@ if ($user != null && $user != ''){
 
                 let productRow = $('#addModal').find($('#productTable tr'));
 
-                if (productRow.length > 0 ) {
+                if (productRow.length > 0) {
                     $.post('php/weight.php', $('#weightForm').serialize(), function(data){
                         var obj = JSON.parse(data); 
                         if(obj.status === 'success'){
@@ -1511,8 +1511,40 @@ if ($user != null && $user != ''){
                         }
                     });
                 }else{
-                    $('#spinnerLoading').hide();
-                    alert("Product cannot be empty. Please add product.");
+                    var grossIncoming = $('#addModal').find('#grossIncoming').val();
+                    var tareIncoming = $('#addModal').find('#tareOutgoing').val();
+
+                    if (grossIncoming > 0 && tareIncoming > 0){
+                        $('#spinnerLoading').hide();
+                        alert("Product cannot be empty. Please add product.");
+                    }else{
+                        $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                            var obj = JSON.parse(data); 
+                            if(obj.status === 'success'){
+                                <?php
+                                    if(isset($_GET['weight'])){
+                                        echo "window.location = 'index.php';";
+                                    }
+                                ?>
+                                table.ajax.reload();
+                                window.location = 'index.php';
+                                $('#spinnerLoading').hide();
+                                $('#addModal').modal('hide');
+                                $("#successBtn").attr('data-toast-text', obj.message);
+                                $("#successBtn").click();
+                            }
+                            else if(obj.status === 'failed'){
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
+                            }
+                            else{
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', 'Failed to save');
+                                $("#failBtn").click();
+                            }
+                        });
+                    }
                 }
             }
             /*else{
@@ -1623,48 +1655,104 @@ if ($user != null && $user != ''){
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); console.log(obj);
-                    if(obj.status === 'success'){
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
-                            var obj = JSON.parse(data);
+                let productRow = $('#addModal').find($('#productTable tr'));
 
-                            if(obj.status === 'success'){
-                                table.ajax.reload();
-                                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                printWindow.document.write(obj.message);
-                                printWindow.document.close();
-                                setTimeout(function(){
-                                    printWindow.print();
-                                    printWindow.close();
+                if (productRow > 0){
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+
+                            $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                                var obj = JSON.parse(data);
+
+                                if(obj.status === 'success'){
                                     table.ajax.reload();
-                                    window.location = 'index.php';
-                                }, 500);
+                                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                    printWindow.document.write(obj.message);
+                                    printWindow.document.close();
+                                    setTimeout(function(){
+                                        printWindow.print();
+                                        printWindow.close();
+                                        table.ajax.reload();
+                                        window.location = 'index.php';
+                                    }, 500);
+                                }
+                                else if(obj.status === 'failed'){
+                                    toastr["error"](obj.message, "Failed:");
+                                }
+                                else{
+                                    toastr["error"]("Something wrong when activate", "Failed:");
+                                }
+                            });
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
+                        }
+                    });
+                }else{
+                    var grossIncoming = $('#addModal').find('#grossIncoming').val();
+                    var tareIncoming = $('#addModal').find('#tareOutgoing').val();
+
+                    if (grossIncoming > 0 && tareIncoming > 0){
+                        $('#spinnerLoading').hide();
+                        alert("Product cannot be empty. Please add product.");
+                    }else{
+                        $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                            var obj = JSON.parse(data);
+                            if(obj.status === 'success'){
+                                $('#spinnerLoading').hide();
+                                $('#addModal').modal('hide');
+                                $("#successBtn").attr('data-toast-text', obj.message);
+                                $("#successBtn").click();
+
+                                $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                                    var obj = JSON.parse(data);
+
+                                    if(obj.status === 'success'){
+                                        table.ajax.reload();
+                                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                        printWindow.document.write(obj.message);
+                                        printWindow.document.close();
+                                        setTimeout(function(){
+                                            printWindow.print();
+                                            printWindow.close();
+                                            table.ajax.reload();
+                                            window.location = 'index.php';
+                                        }, 500);
+                                    }
+                                    else if(obj.status === 'failed'){
+                                        toastr["error"](obj.message, "Failed:");
+                                    }
+                                    else{
+                                        toastr["error"]("Something wrong when activate", "Failed:");
+                                    }
+                                });
                             }
                             else if(obj.status === 'failed'){
-                                toastr["error"](obj.message, "Failed:");
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
                             }
                             else{
-                                toastr["error"]("Something wrong when activate", "Failed:");
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', 'Failed to save');
+                                $("#failBtn").click();
                             }
                         });
                     }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
+                }
             }
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
