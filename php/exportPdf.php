@@ -1172,6 +1172,115 @@ if(isset($_POST["file"])){
                     ));
             }
         }
+        elseif ($type == 'Weighing'){
+            $weightStatus = '';
+
+            if(isset($_POST['weightStatus']) && $_POST['weightStatus'] != null && $_POST['weightStatus'] != '' && $_POST['weightStatus'] != '-'){
+                $weightStatus = $_POST['weightStatus'];
+            }
+
+            if ($weightStatus == 'Pending'){
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'N' and Weight.is_cancel <> 'Y'".$searchQuery;
+            }elseif ($weightStatus == 'Complete'){
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
+            }else{
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y'".$searchQuery;
+            }
+
+            if ($select_stmt = $db->prepare($sql)) {
+                // Execute the prepared query.
+                if (! $select_stmt->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }
+                else{
+                    $result = $select_stmt->get_result();
+
+                    $message = '<html>
+                                    <head>
+                                        <!-- Bootstrap Css -->
+                                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                                        
+                                        <style>
+                                            @media print {
+                                                @page {
+                                                    size: A3 landscape;
+                                                    margin: 5mm;
+                                                }
+
+                                                body {
+                                                    font-size: 14px;
+                                                }
+                                            } 
+                                        </style>
+                                    </head>
+                                    <body>
+                                        <div class="container-full content">
+                                            <div class="row">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr class="text-center"">
+                                                                <th>Transaction Id</th>
+                                                                <th>Weight Status</th>
+                                                                <th>Weight Type</th>
+                                                                <th>Vehicle</th>
+                                                                <th>Gross Incoming (KG)</th>
+                                                                <th>Incoming Date</th>
+                                                                <th>Tare Outgoing (KG)</th>
+                                                                <th>Outgoing Date</th>
+                                                                <th>Nett Weight (KG)</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>';
+
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        $message .= '
+                                                            <tr class="text-center">
+                                                                <td>'.$row['transaction_id'].'</td>
+                                                                <td>'.$row['transaction_status'].'</td>
+                                                                <td>'.$row['weight_type'].'</td>
+                                                                <td>'.$row['lorry_plate_no1'].'</td>
+                                                                <td>'.$row['gross_weight1'].'</td>
+                                                                <td>'.$row['gross_weight1_date'].'</td>
+                                                                <td>'.$row['tare_weight1'].'</td>
+                                                                <td>'.$row['tare_weight1_date'].'</td>
+                                                                <td>'.$row['nett_weight1'].'</td>
+                                                            </tr>
+                                                        ';
+                                                    }        
+
+                                            $message .= '</tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                                    </body>
+                                </html>';
+
+                    
+
+                    echo json_encode(
+                        array(
+                            "status" => "success",
+                            "message" => $message
+                        )
+                    );
+                }
+            }else{
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Something Went Wrong"
+                    ));
+            }
+            
+        }
         else{
             if ($select_stmt = $db->prepare("select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery)) {
                 // Execute the prepared query.

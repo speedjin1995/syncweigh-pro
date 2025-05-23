@@ -1071,6 +1071,14 @@ if ($user != null && $user != ''){
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="exportPdf" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
+                                                                    Export Pdf
+                                                                </button>
+                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Excel
+                                                                </button>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Weight
@@ -1655,7 +1663,7 @@ if ($user != null && $user != ''){
 
                 let productRow = $('#addModal').find($('#productTable tr'));
 
-                if (productRow > 0){
+                if (productRow.length > 0){
                     $.post('php/weight.php', $('#weightForm').serialize(), function(data){
                         var obj = JSON.parse(data);
                         if(obj.status === 'success'){
@@ -1921,6 +1929,106 @@ if ($user != null && $user != ''){
                         }
                     });
                 }
+            }
+        });
+
+        $('#exportPdf').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
+            var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+
+            var selectedIds = []; // An array to store the selected 'id' values
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            var isMulti = '';
+            if (selectedIds.length > 0){
+                isMulti = 'Y';
+            }else{
+                isMulti = 'N';
+            }
+
+            $.post('php/exportPdf.php', {
+                file: 'weight',
+                fromDate: fromDateI,
+                toDate: toDateI,
+                status: statusI,
+                customer: customerNoI,
+                vehicle: vehicleNoI,
+                invoice: invoiceNoI,
+                transactionId: transactionIdSearch,
+                batch: batchNoI,
+                product: transactionStatusI,
+                plant: plantNoI,
+                isMulti: isMulti,
+                id: selectedIds,
+                weightStatus: 'Pending',
+                type: 'Weighing'
+            }, function(response){
+                var obj = JSON.parse(response);
+
+                if(obj.status === 'success'){
+                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                    printWindow.document.write(obj.message);
+                    printWindow.document.close();
+                    setTimeout(function(){
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                }
+                else if(obj.status === 'failed'){
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            }).fail(function(error){
+                console.error("Error exporting PDF:", error);
+                alert("An error occurred while generating the PDF.");
+            });
+        });
+
+        $('#exportExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
+            var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            
+            var selectedIds = []; // An array to store the selected 'id' values
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0){
+                window.open("php/export.php?file=weight&isMulti=Y&type=Weighing&weightStatus=Complete&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+invoiceNoI+"&transactionId="+transactionIdSearch+"&product="+transactionStatusI+"&plant="+plantNoI+"&id="+selectedIds);
+            }else{
+                window.open("php/export.php?file=weight&isMulti=N&type=Weighing&weightStatus=Complete&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+invoiceNoI+"&transactionId="+transactionIdSearch+"&product="+transactionStatusI+"&plant="+plantNoI);
             }
         });
 

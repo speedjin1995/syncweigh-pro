@@ -12,7 +12,16 @@ function filterData(&$str){
  
 // Excel file name for download 
 if($_GET["file"] == 'weight'){
-    $fileName = "Weight-data_" . date('Y-m-d') . ".xls";
+    if ($_GET["type"] == 'Weighing'){
+        $weightStatus = '';
+        if($_GET['weightStatus'] != null && $_GET['weightStatus'] != ''){
+            $weightStatus = $_GET["weightStatus"];
+        }
+
+        $fileName = $weightStatus."-Weight-data_" . date('Y-m-d') . ".xls";
+    }else{
+        $fileName = "Weight-data_" . date('Y-m-d') . ".xls";
+    }
 }else{
     $fileName = "Count-data_" . date('Y-m-d') . ".xls";
 }
@@ -108,38 +117,75 @@ if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_
 }
 
 // Column names 
-$fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+if ($_GET["type"] == 'Weighing'){
+    $fields = array('TRANSACTION ID', 'WEIGHT STATUS', 'WEIGHT TYPE', 'VEHICLE', 'GROSS INCOMING (KG)', 'INCOMING DATE', 'TARE OUTGOING (KG)', 
+    'OUTGOING DATE', 'NETT WEIGHT (KG)'); 
+
+    // Fetch records from database
+    if($_GET["file"] == 'weight'){
+
+        if ($_GET["isMulti"] == 'Y'){
+            $ids = $_GET['id'];
+            if ($weightStatus == 'Pending'){
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'N' and Weight.is_cancel <> 'Y' and id IN ($ids)";
+            }elseif ($weightStatus == 'Complete'){
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y' and id IN ($ids)";
+            }else{
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y' and id IN ($ids)";
+            }
+        }else{
+            if ($weightStatus == 'Pending'){
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'N' and Weight.is_cancel <> 'Y'".$searchQuery;
+            }elseif ($weightStatus == 'Complete'){
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
+            }else{
+                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y'".$searchQuery;
+            }
+        }
+    }
+}else{
+    $fields = array('TRANSACTION ID', 'WEIGHT STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
     'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 
-    'NET WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
+    'NETT WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
+
+    if($_GET["file"] == 'weight'){
+        $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
+    }
+    else{
+        $sql = "select count.id, count.serialNo, vehicles.veh_number, lots.lots_no, count.batchNo, count.invoiceNo, count.deliveryNo, 
+        count.purchaseNo, customers.customer_name, products.product_name, packages.packages, count.unitWeight, count.tare, count.totalWeight, 
+        count.actualWeight, count.currentWeight, units.units, count.moq, count.dateTime, count.unitPrice, count.totalPrice,count.totalPCS, 
+        count.remark, count.deleted, status.status from count, vehicles, packages, lots, customers, products, units, status WHERE 
+        count.vehicleNo = vehicles.id AND count.package = packages.id AND count.lotNo = lots.id AND count.customer = customers.id AND 
+        count.productName = products.id AND status.id=count.status AND units.id=count.unit ".$searchQuery."";
+    }
+}
 
 // Display column names as first row 
 $excelData = implode("\t", array_values($fields)) . "\n";
 
 // Fetch records from database
-if($_GET["file"] == 'weight'){
-    $query = $db->query("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery);
-}
-else{
-    $query = $db->query("select count.id, count.serialNo, vehicles.veh_number, lots.lots_no, count.batchNo, count.invoiceNo, count.deliveryNo, 
-    count.purchaseNo, customers.customer_name, products.product_name, packages.packages, count.unitWeight, count.tare, count.totalWeight, 
-    count.actualWeight, count.currentWeight, units.units, count.moq, count.dateTime, count.unitPrice, count.totalPrice,count.totalPCS, 
-    count.remark, count.deleted, status.status from count, vehicles, packages, lots, customers, products, units, status WHERE 
-    count.vehicleNo = vehicles.id AND count.package = packages.id AND count.lotNo = lots.id AND count.customer = customers.id AND 
-    count.productName = products.id AND status.id=count.status AND units.id=count.unit ".$searchQuery."");
-}
+$query = $db->query($sql);
 
 if($query->num_rows > 0){ 
     // Output each row of the data 
     while($row = $query->fetch_assoc()){ 
-        if($_GET["file"] == 'weight'){
-            $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
-            $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['purchase_order'],
-            $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], 
-            $row['created_by']);
+        if ($_GET["type"] == 'Weighing'){
+            if($_GET["file"] == 'weight'){
+                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['lorry_plate_no1'], $row['gross_weight1'], 
+                $row['gross_weight1_date'], $row['tare_weight1'], $row['tare_weight1_date'], $row['nett_weight1']);
+            }
         }else{
-            $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],
-            $row['totalPCS'], $row['moq'], $row['unitPrice'], $row['totalPrice'], $row['veh_number'], $row['lots_no'], $row['batchNo'], $row['invoiceNo']
-            , $row['deliveryNo'], $row['purchaseNo'], $row['customer_name'], $row['packages'], $row['dateTime'], $row['remark'], $row['status'], $deleted);
+            if($_GET["file"] == 'weight'){
+                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
+                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['purchase_order'],
+                $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], 
+                $row['created_by']);
+            }else{
+                $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],
+                $row['totalPCS'], $row['moq'], $row['unitPrice'], $row['totalPrice'], $row['veh_number'], $row['lots_no'], $row['batchNo'], $row['invoiceNo']
+                , $row['deliveryNo'], $row['purchaseNo'], $row['customer_name'], $row['packages'], $row['dateTime'], $row['remark'], $row['status'], $deleted);
+            }
         }
 
         array_walk($lineData, 'filterData'); 
