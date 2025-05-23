@@ -46,8 +46,9 @@ if($plantId != null && count($plantId) > 0){
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
 if($_SESSION["roles"] != 'SADMIN'){
+    $plantId = implode("', '", $_SESSION['plant_id']);
     $username = implode("', '", $_SESSION["plant"]);
-    $plantId = searchPlantIdByCode($username, $db);
+    // $plantId = searchPlantIdByCode($username, $db);
 
     $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
     $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
