@@ -1,6 +1,6 @@
 <?php
 ## Database configuration
-include '../layouts/session.php';
+session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
 
@@ -16,14 +16,13 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-  $searchQuery = " and (name like '%".$searchValue."%' or description like '%".$searchValue."%' or product_code like '%".$searchValue."%')";
+  $searchQuery .= " and (name like '%".$searchValue."%' or description like '%".$searchValue."%' or product_code like '%".$searchValue."%')";
 }
 
 if ($_SESSION["roles"] != 'SADMIN'){
-  $username = implode("', '", $_SESSION["plant"]);
-  $plantId = searchPlantIdByCode($username, $db);
+  $username = implode("', '", $_SESSION['plant_id']);
 
-  $searchQuery = " and plant = ". $plantId;
+  $searchQuery .= " and plant IN ('$username')";
 }
 
 ## Total number of records without filtering
