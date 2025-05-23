@@ -1655,7 +1655,7 @@ if ($user != null && $user != ''){
 
                 let productRow = $('#addModal').find($('#productTable tr'));
 
-                if (productRow > 0){
+                if (productRow.length > 0){
                     $.post('php/weight.php', $('#weightForm').serialize(), function(data){
                         var obj = JSON.parse(data);
                         if(obj.status === 'success'){
