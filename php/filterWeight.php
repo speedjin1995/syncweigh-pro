@@ -43,6 +43,10 @@ if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != 
 	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
 }
 
+if($_POST['transactionId'] != null && $_POST['transactionId'] != '' && $_POST['transactionId'] != '-'){
+	$searchQuery .= " and transaction_id like '%".$_POST['transactionId']."%'";
+}
+
 if($_POST['batch'] != null && $_POST['batch'] != '' && $_POST['batch'] != '-'){
 	$searchQuery .= " and is_complete = '".$_POST['batch']."'";
 }
@@ -82,16 +86,16 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0' and is_cancel <> 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where status = '0' and is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 if($_SESSION["roles"] == 'ADMIN'){
     $username = $_SESSION["username"];
-    $empQuery = "select * from Weight where status = '0' and created_by='$username'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+    $empQuery = "select * from Weight where status = '0' and is_cancel <> 'Y' and created_by='$username'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery);

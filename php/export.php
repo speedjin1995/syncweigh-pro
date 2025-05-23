@@ -80,6 +80,15 @@ if($_GET['weighingType'] != null && $_GET['weighingType'] != '' && $_GET['weighi
     }
 }
 
+if($_GET['transactionId'] != null && $_GET['transactionId'] != '' && $_GET['transactionId'] != '-'){
+    if($_GET["file"] == 'weight'){
+        $searchQuery .= " and Weight.transaction_id like '%".$_GET['transactionId']."%'";
+    }
+    else{
+        $searchQuery .= " and count.weight_type like '%".$_GET['weighingType']."%'";
+    }
+}
+
 if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'){
     if($_GET["file"] == 'weight'){
         $searchQuery .= " and Weight.product_code = '".$_GET['product']."'";

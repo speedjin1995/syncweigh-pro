@@ -10,10 +10,11 @@ if(!isset($_SESSION['id'])){
 }
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = $_SESSION['id'];
+$today = date('ym');
 
 // Processing form data when form is submitted
 if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transactionDate'], $_POST['grossIncoming'], $_POST['grossIncomingDate']
-, $_POST['nettWeight'], $_POST['manualWeight'])) {
+, $_POST['nettWeight'], $_POST['manualWeight'], $_POST['plantCode'])) {
     $isCancel = 'N';
     $isComplete = 'N';
     $isApproved = 'Y';
@@ -22,6 +23,18 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $weightId = null;
     } else {
         $weightId = trim($_POST["id"]);
+    }
+
+    if (empty($_POST["plantCode"])) {
+        $plantCode = null;
+    } else {
+        $plantCode = trim($_POST["plantCode"]);
+    }
+
+    if (empty($_POST["plant"])) {
+        $plant = null;
+    } else {
+        $plant = trim($_POST["plant"]);
     }
 
     if (empty($_POST["transactionId"])) {
@@ -41,12 +54,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
             else{
                 $result2 = $update_stmt2->get_result();
 				$id = '1';
-				$transactionId = "";
+				$transactionId = $plantCode.'/'.$today.'-';
 
 				if ($row2 = $result2->fetch_assoc()) {
 					$id = $row2['misc_id'];
-					$transactionId = $row2['prefix'];
-				}
+					$transactionId .= $row2['prefix'];
+				} 
 
 				if ($update_stmt = $db->prepare("SELECT * FROM miscellaneous WHERE id=?")) {
 					$update_stmt->bind_param('s', $id);
@@ -67,7 +80,7 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
 							$charSize = strlen($row['value']);
 							$misValue = $row['value'];
 		
-							for($i=0; $i<(5-(int)$charSize); $i++){
+							for($i=0; $i<(4-(int)$charSize); $i++){
 								$transactionId.='0';  // S0000
 							}
 					
@@ -149,6 +162,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $manualWeight = null;
     } else {
         $manualWeight = trim($_POST["manualWeight"]);
+    }
+
+    if (empty($_POST["manualPrice"])) {
+        $manualPrice = null;
+    } else {
+        $manualPrice = trim($_POST["manualPrice"]);
     }
 
     if (empty($_POST["weighbridge"])) {
@@ -326,18 +345,6 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $productCode = trim($_POST["productCode"]);
     }
 
-    if (empty($_POST["plantCode"])) {
-        $plantCode = null;
-    } else {
-        $plantCode = trim($_POST["plantCode"]);
-    }
-
-    if (empty($_POST["plant"])) {
-        $plant = null;
-    } else {
-        $plant = trim($_POST["plant"]);
-    }
-
     if (empty($_POST["destinationCode"])) {
         $destinationCode = null;
     } else {
@@ -419,13 +426,13 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $action = "2";
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
-        gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
+        gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, manual_price=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
         product_description=?, total_price=?, is_approved=?, approved_reason=?, plant_code=?, plant_name=?, driver_code=?, driver_name=?, driver_ic=?, driver_phone=?, estimate_loading=? WHERE id=?"))
         {
-            $update_stmt->bind_param('ssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
+            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
             $supplierCode, $supplierName, $productCode, $productName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
             $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
-            $isComplete, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $plantCode, $plant, $driverCode, $driverName, $driverICNo, $driverPhone, $estimateLoading, $weightId);
+            $isComplete, $isCancel, $manualWeight, $manualPrice, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $plantCode, $plant, $driverCode, $driverName, $driverICNo, $driverPhone, $estimateLoading, $weightId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -488,6 +495,13 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                     }
 
                     $product_stmt->close();
+                }else{
+                    # Added this section to update all weight product related to the weighing to deleted
+                    if ($update_prod_stmt = $db->prepare("UPDATE Weight_Product SET deleted = '1' WHERE weight_id=?")){
+                        $update_prod_stmt->bind_param('s', $weightId);
+                        $update_prod_stmt->execute();
+                        $update_prod_stmt->close();
+                    }
                 }
 
                 $update_stmt->close();
@@ -509,12 +523,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
 
         if ($insert_stmt = $db->prepare("INSERT INTO Weight (transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, order_weight, customer_code, customer_name, supplier_code, supplier_name,
         product_code, product_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1,
-        gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, manual_weight, indicator_id, weighbridge_id, created_by, modified_by, indicator_id_2, 
-        product_description, total_price, is_approved, approved_reason, driver_code, driver_name, driver_ic, estimate_loading, plant_code, plant_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
+        gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, manual_weight, manual_price, indicator_id, weighbridge_id, created_by, modified_by, indicator_id_2, 
+        product_description, total_price, is_approved, approved_reason, driver_code, driver_name, driver_ic, estimate_loading, plant_code, plant_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
             $supplierCode, $supplierName, $productCode, $productName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
             $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
-            $isComplete, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $driverCode, $driverName, $driverICNo, $estimateLoading, $plantCode, $plant);
+            $isComplete, $isCancel, $manualWeight, $manualPrice, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $driverCode, $driverName, $driverICNo, $estimateLoading, $plantCode, $plant);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

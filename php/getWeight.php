@@ -30,6 +30,7 @@ if(isset($_POST['userID'])){
                 if ($format == 'EXPANDABLE'){
                     $message['id'] = $row['id'];
                     $message['name'] = '';
+                    $message['tin_no'] = '';
                     $message['address_line_1'] = '';
                     $message['address_line_2'] = '';
                     $message['address_line_3'] = '';
@@ -45,6 +46,7 @@ if(isset($_POST['userID'])){
                             
                             if ($row2 = $customer_result->fetch_assoc()) {
                                 $message['name'] = $row2['name'];
+                                $message['tin_no'] = $row2['tin_no'];
                                 $message['address_line_1'] = $row2['address_line_1'];
                                 $message['address_line_2'] = $row2['address_line_2'];
                                 $message['address_line_3'] = $row2['address_line_3'];
@@ -61,6 +63,7 @@ if(isset($_POST['userID'])){
                             
                             if ($row2 = $customer_result->fetch_assoc()) {
                                 $message['name'] = $row2['name'];
+                                $message['tin_no'] = $row2['tin_no'];
                                 $message['address_line_1'] = $row2['address_line_1'];
                                 $message['address_line_2'] = $row2['address_line_2'];
                                 $message['address_line_3'] = $row2['address_line_3'];
@@ -100,7 +103,7 @@ if(isset($_POST['userID'])){
 
                     if($row['id'] != null && $row['id'] != ''){
                         $weightId = $row['id'];
-                        $weightProductQuery = "SELECT * FROM Weight_Product WHERE weight_id = $weightId";
+                        $weightProductQuery = "SELECT * FROM Weight_Product WHERE weight_id = $weightId AND deleted='0'";
                         $weightProductDetail = mysqli_query($db, $weightProductQuery);
 
                         $weightProduct = array();
@@ -166,7 +169,7 @@ if(isset($_POST['userID'])){
                     $message['is_complete'] = $row['is_complete'];
                     $message['is_cancel'] = $row['is_cancel'];
                     $message['manual_weight'] = $row['manual_weight'];
-                    //$message['manual_price'] = $row['manual_price'];
+                    $message['manual_price'] = $row['manual_price'];
                     $message['indicator_id'] = $row['indicator_id'];
                     $message['weighbridge_id'] = $row['weighbridge_id'];
                     $message['created_date'] = $row['created_date'];
@@ -222,7 +225,7 @@ if(isset($_POST['userID'])){
                     }
     
                     // retrieve products
-                    $empQuery = "SELECT * FROM Weight_Product WHERE weight_id = $id ORDER BY id ASC";
+                    $empQuery = "SELECT * FROM Weight_Product WHERE weight_id = $id AND deleted = '0' ORDER BY id ASC";
                     $empRecords = mysqli_query($db, $empQuery);
                     $products = array();
                     $productCount = 1;

@@ -75,10 +75,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $variance = '';
                     $high = '';
                     $low = '';
+
                     $datetime = explode(' ', date('d/m/Y h:i:s A', strtotime($row['transaction_date'])), 2);
                     list($date, $time) = $datetime;
-                    $inDate = date('d/m/Y - h:i:s A', strtotime(explode(' ', $row['gross_weight1_date'])[1]));
-                    $outDate = date('d/m/Y - h:i:s A', strtotime(explode(' ', $row['tare_weight1_date'])[1]));
+                    $inDate = $row['gross_weight1_date'] != null ? date('d/m/Y - h:i:s A', strtotime($row['gross_weight1_date'])) : "";
+                    $outDate = $row['tare_weight1_date'] != null ? date('d/m/Y - h:i:s A', strtotime($row['tare_weight1_date'])) : "";
                     
                     if($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'MISC'){
                         $cid = $row['customer_code'];
@@ -155,7 +156,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     }
 
                     $wid = $row['id'];
-                    if ($select_stmt2 = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=?")) {
+                    if ($select_stmt2 = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=? AND deleted='0'")) {
                         $select_stmt2->bind_param('s', $wid);
             
                         // Execute the prepared query.
@@ -170,14 +171,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                             $result = $select_stmt2->get_result();
                             $weighProducts = $result->fetch_all(MYSQLI_ASSOC); // Fetch all rows as an associative array
 
-                            if(empty($weighProducts)) {
-                                echo json_encode(
-                                    array(
-                                        "status" => "failed",
-                                        "message" => 'Unable to read data'
-                                    )
-                                );
-                            }
+                            // if(empty($weighProducts)) {
+                            //     echo json_encode(
+                            //         array(
+                            //             "status" => "failed",
+                            //             "message" => 'Unable to read data'
+                            //         )
+                            //     );
+                            // }
                         }
                     }
                     else{
@@ -296,7 +297,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 .signature-section {
                                     display: flex;
                                     justify-content: space-between;
-                                    margin-top:100px;
+                                    margin-top:85px;
                                 }
                                 .signature-box {
                                     width: 100%;
@@ -319,14 +320,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                         </style>
                     </head>
                     <body>
-                        <span style="font-size:32px; font-weight:bold;">'.$compname.'</span><br>
-                        <span style="margin-bottom: 10px;">Co.Registration No: '.$compnewreg.'('.$compreg.') / Tin No: '.$comptinno.'<br>
+                        <span style="font-size:32px; font-weight:bold; margin-top: 10px;">'.$compname.'</span><br>
+                        <span style="margin-bottom: 10px; font-size: 20px;">Co.Registration No: '.$compnewreg.'('.$compreg.') / Tin No: '.$comptinno.'<br>
                         '.$compaddress.' '.$compaddress2.' '.$compaddress3.'<br>
                         Tel: '.$compphone.' Mobile No: '.$compmobileno.'</span>
                         <hr>
                         
                         <div class="container">
-                            <table class="info-table left-section" style="padding:0">';
+                            <table class="info-table left-section" style="padding:0; font-size: 18px;">';
                                 if ($row['transaction_status'] == 'Purchase'){
                                     $message .= '<tr><td class="label">Supplier</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
                                 }else{
@@ -339,7 +340,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <tr><td class="label">Address</td><td>:</td><td class="value">'.$customerA.'<br> '.$customerA2.'<br> '.$customerA3.'</td></tr>
                                 <tr><td class="label">Contact</td><td>:</td><td class="value">Tel: '.$customerP.' | Fax: '.$customerE.'</td></tr>
                             </table>
-                            <table class="info-table right-section" style="width:40%">
+                            <table class="info-table right-section" style="width:40%; font-size: 18px;">
                                 <tr><td class="label">Weight Status</td><td>:</td><td class="value">'.$row['transaction_status'].'</td></tr>
                                 <tr><td class="label">Weight No</td><td>:</td><td class="value">'.$row['transaction_id'].'</td></tr>
                                 <tr><td class="label">Weight Date</td><td>:</td><td class="value">'.$date.'</td></tr>
@@ -348,43 +349,40 @@ if(isset($_POST['userID'], $_POST["file"])){
                             </table>
                         </div>
                         <br>
-                        <table style="border: none;">
+                        <table style="border: none; font-size: 18px;">
                             <tr>
                                 <td class="weight">
                                     <table style="border: none;">
                                         <tr>
-                                            <th class="border-none">Date / Time</th>
+                                            <th style="border-top:none; border-left:none;">Date / Time</th>
                                             <th class="border-none" colspan="2">Weight (kg)</th>
                                         </tr> 
                                         <tr>
-                                            <td style="text-align:center;font-weight:bold;">'.$inDate.'</td>
-                                            <td style="text-align:center">IN</td>
-                                            <td style="text-align:center; border-right:none;" width="35%">'.($row['gross_weight1'] ?? '0').'</td>
+                                            <td style="text-align:center;font-weight:bold; border-left:none;">'.$inDate.'</td>
+                                            <td style="text-align:center" width="15%">IN</td>
+                                            <td style="text-align:center; border-right:none;" width="25%">'.($row['gross_weight1'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td style="text-align:center;font-weight:bold;">'.$outDate.'</td>
+                                            <td style="text-align:center;font-weight:bold; border-left:none;">'.$outDate.'</td>
                                             <td style="text-align:center">OUT</td>
                                             <td style="text-align:center; border-right:none;">'.($row['tare_weight1'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="right-align">Total Weight (kg)</td>
+                                            <td colspan="2" class="right-align" style="border-left:none;">Total Weight (kg)</td>
                                             <td style="text-align:center; border-right:none;">'.($row['final_weight'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="right-align">Deduct (kg)</td>
+                                            <td colspan="2" class="right-align" style="border-left:none;">Deduct (kg)</td>
                                             <td style="text-align:center; border-right:none;">'.($row['reduce_weight'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="right-align">Net Weight (kg)</td>
-                                            <td style="text-align:center;font-weight:bold; border-right:none;">'.($row['nett_weight1'] ?? '0').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" style="visibility:hidden; border-left:none; border-right:none;">Empty Space</td>
+                                            <td colspan="2" class="right-align" style="border-left:none; border-bottom: none;">Net Weight (kg)</td>
+                                            <td style="text-align:center;font-weight:bold; border-right:none; border-bottom: none;">'.($row['nett_weight1'] ?? '0').'</td>
                                         </tr>
                                     </table>
                                 </td>
                                 <td class="product">
-                                    <table style="border: none;">
+                                    <table style="border: none; font-size: 18px;">
                                         <tr>
                                             <th style="border-top:none; border-left:none;">Product Description</th>
                                             <th style="border-top:none;">(%)</th>
@@ -394,25 +392,28 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         </tr>';
 
                     $rowCount = 1;
-                    foreach($weighProducts as $row2) {
-                        $message .=  '<tr>
-                                            <td class="left-align" style="border-left:none;">'.$rowCount. ' '.$row2['product_name'].'</td>
-                                            <td style="text-align: center">'.$row2['percentage'].'</td>
-                                            <td style="text-align: center">'.$row2['item_weight'].'</td>
-                                            <td class="right-align">'.($row2['unit_price'] ?? '-').'</td>
-                                            <td class="right-align">'.($row2['total_price'] ?? '-').'</td>
-                                        </tr>';
-                        $rowCount++;
+
+                    if (!empty($weighProducts)){
+                        foreach($weighProducts as $row2) {
+                            $message .=  '<tr>
+                                                <td class="left-align" style="border-left:none;">'.$rowCount. ' '.$row2['product_name'].'</td>
+                                                <td style="text-align: center">'.$row2['percentage'].'</td>
+                                                <td style="text-align: center">'.$row2['item_weight'].'</td>
+                                                <td class="right-align" style="padding-right: 10px;">'.($row2['unit_price'] ?? '-').'</td>
+                                                <td class="right-align" style="border-right:none; padding-right: 10px">'.($row2['total_price'] ?? '-').'</td>
+                                            </tr>';
+                            $rowCount++;
+                        }
                     }
 
-                    // Add empty rows if less than 6
-                    while ($rowCount <= 6) {
+                    // Add empty rows if less than 5
+                    while ($rowCount <= 4) {
                         $message .= '<tr>
                                         <td class="left-align" style="border-left:none; visibility:hidden">' . $rowCount . '</td>
                                         <td></td>
                                         <td></td>
                                         <td class="right-align"></td>
-                                        <td class="right-align"></td>
+                                        <td class="right-align" style="border-right:none;"></td>
                                     </tr>';
                         $rowCount++;
                     }
@@ -427,30 +428,33 @@ if(isset($_POST['userID'], $_POST["file"])){
                             if ($row3 = $result->fetch_assoc()) {
                                 $totalAmount = $row3['total_amount'];
                             }
+
+                            $totalAmount = number_format((float)$totalAmount, 2, '.', ''); // "123.00"
+
                         }
                     }
 
                                         $message .= '<tr>
                                             <td colspan="3" class="no-border"></td>
                                             <td style="text-align:right; border-bottom: none;">Total Amount</td>
-                                            <td class="right-align" style="border-bottom: none;">'.$totalAmount.'</td>
+                                            <td class="right-align" style="border-bottom: none; border-right: none; padding-right: 10px">'.$totalAmount.'</td>
                                         </tr>
                                     </table>
                                 </td>
                             </tr>
                         </table>
-                        <p><strong>Remark: '.$row['remarks'].'</strong></p>
+                        <p style="font-size: 18px;"><strong>Remark: '.$row['remarks'].'</strong></p>
                         <div class="signature-section">
                             <div class="left-section">
-                                <span class="dotted-line" style="padding-bottom: 15px"></span>
+                                <span class="dotted-line"></span>
                                 <table class="info-table">
                                     <tr><td colspan="3" style="text-align:center; font-weight:bold; font-size: 20px">(Received By)</td></tr>
-                                    <tr><td class="label">Name</td><td>:</td></td><td class="value"></td></tr>
-                                    <tr><td class="label">I/C No.</td><td>:</td><td class="value"></td></tr>
+                                    <tr><td class="label" style="font-size: 18px;">Name</td><td>:</td></td><td class="value"></td></tr>
+                                    <tr><td class="label" style="font-size: 18px;">I/C No.</td><td>:</td><td class="value"></td></tr>
                                 </table>
                             </div>
                             <div style="margin-top:30px;">
-                                <p style="text-align:center;">
+                                <p style="text-align:center;font-size: 18px;">
                                     THIS WEIGHING SLIP IS COMPUTER GENERATED AND<br>
                                     REQUIRES NO SIGNATURE & CHOP<br>
                                     Authorised by: '.$compname.'

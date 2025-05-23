@@ -13,7 +13,7 @@ $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Search value
 
 ## Search 
-$searchQuery = " and is_complete = 'Y'";
+$searchQuery = "";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
   $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
@@ -43,6 +43,10 @@ if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != 
 	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
 }
 
+if(isset($_POST['transactionId']) && $_POST['transactionId'] != null && $_POST['transactionId'] != '' && $_POST['transactionId'] != '-'){
+  $searchQuery .= " and transaction_id like '%".$_POST['transactionId']."%'";
+}
+
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
 }
@@ -56,10 +60,10 @@ if($searchValue != ''){
 }
 
 ## Total number of records without filtering
-$allQuery = "select count(*) as allcount from Weight where status = '0'";
+$allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y'";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')";
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -67,10 +71,10 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filterQuery = "select count(*) as allcount from Weight where status = '0'".$searchQuery;
+$filterQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y' ".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where status = '0' and plant_code IN ('$username')".$searchQuery;
+  $allQuery = "select count(*) as allcount from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filterQuery);
@@ -78,11 +82,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-}
+  $empQuery = "select * from Weight where status = '0' and is_complete = 'Y' and is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+} 
 
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();

@@ -29,12 +29,25 @@ if(($row = $result->fetch_assoc()) !== null){
     $indicator = $row['indicator'];
 }
 
+$plantName = '-';
+
+if($plantId != null && count($plantId) > 0){
+    $stmt2 = $db->prepare("SELECT * from Plant WHERE plant_code = ?");
+    $stmt2->bind_param('s', $plantId[0]);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+        
+    if(($row2 = $result2->fetch_assoc()) !== null){
+        $plantName = $row2['name'];
+    }
+}
+
 //   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
 if($_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
-    $plantId = searchPlantIdByCode($username, $db); 
+    $plantId = searchPlantIdByCode($username, $db);
     
     $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
     $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
@@ -219,7 +232,7 @@ if ($user != null && $user != ''){
                                                             <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
@@ -227,6 +240,12 @@ if ($user != null && $user != ''){
                                                                 <option value="Normal">Normal</option>
                                                                 <!--option value="Container">Container</option-->
                                                             </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="transactionIdSearch" class="form-label">Transaction ID</label>
+                                                            <input type="text" class="form-control" placeholder="Transaction ID" id="transactionIdSearch">
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3" style="display:none;">
@@ -425,7 +444,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="weightType" class="col-sm-4 col-form-label">Weight Type</label>
+                                                                                            <label for="weightType" class="col-sm-4 col-form-label">Weight Type *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <select id="weightType" name="weightType" class="form-select">
                                                                                                     <option selected>Normal</option>
@@ -436,7 +455,7 @@ if ($user != null && $user != ''){
                                                                                     </div>
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID</label>
+                                                                                            <label for="transactionId" class="col-sm-4 col-form-label">Transaction ID *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <input type="text" class="form-control input-readonly" id="transactionId" name="transactionId" placeholder="Transaction ID" readonly>                                                                                  
                                                                                             </div>
@@ -446,7 +465,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
+                                                                                            <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <select id="transactionStatus" name="transactionStatus" class="form-select">
                                                                                                     <option value="Sales" selected>Sales</option>
@@ -459,12 +478,26 @@ if ($user != null && $user != ''){
                                                                                     </div>
                                                                                     <div class="col-xxl-6 col-lg-6 mb-3">
                                                                                         <div class="row">
-                                                                                            <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date</label>
+                                                                                            <label for="transactionDate" class="col-sm-4 col-form-label">Transaction Date *</label>
                                                                                             <div class="col-sm-8">
                                                                                                 <input type="date" class="form-control" data-provider="flatpickr" id="transactionDate" name="transactionDate" required>
                                                                                                 <div class="invalid-feedback">
                                                                                                     Please fill in the field.
                                                                                                 </div>    
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                            <div class="row">
+                                                                                                <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
+                                                                                                <div class="col-sm-8">
+                                                                                                    <select class="form-select select2" id="plant" name="plant" required>
+                                                                                                        <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                                                                                                            <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                                        <?php } ?>
+                                                                                                    </select>        
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
@@ -899,6 +932,7 @@ if ($user != null && $user != ''){
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
                                                         <input type="hidden" id="driverCode" name="driverCode">
                                                         <!-- <input type="hidden" id="driverPhone" name="driverPhone"> -->
+                                                        <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="status" name="status">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
@@ -993,6 +1027,33 @@ if ($user != null && $user != ''){
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="modal fade" id="cancelModal">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="cancelForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Cancellation Reason</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <label>Cancellation Reason *</label>
+                                                                <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
+                                                            </div>
+                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
+                                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">                                   
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-success" id="submitCancel">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div><!-- end col -->
                             </div> <!-- end row-->
 
@@ -1009,9 +1070,13 @@ if ($user != null && $user != ''){
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal" style="display:none;">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Weight
+                                                                <button type="button" id="multiDeactivate" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                                    Delete Weight
+                                                                </button>
+                                                                <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Weight
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -1020,6 +1085,7 @@ if ($user != null && $user != ''){
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction <br>Id</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Weight <br> Type</th>
@@ -1134,7 +1200,7 @@ if ($user != null && $user != ''){
                 <input type="text" class="form-control" id="products" name="products" style="background-color:white;" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control" id="productPercentage" name="productPercentage" style="background-color:white;" value="0" required>
+                <input type="number" class="form-control productPercentage" id="productPercentage" name="productPercentage" style="background-color:white;" value="0" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0" readonly required>
@@ -1215,7 +1281,6 @@ if ($user != null && $user != ''){
         //Date picker
         $('#fromDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            // defaultDate: yesterday
             defaultDate: new Date().fp_incr(-7)
         });
 
@@ -1227,6 +1292,11 @@ if ($user != null && $user != ''){
         $('#transactionDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: today
+        });
+
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
         });
 
         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
@@ -1245,6 +1315,7 @@ if ($user != null && $user != ''){
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+        var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
@@ -1265,12 +1336,22 @@ if ($user != null && $user != ''){
                     customer: customerNoI,
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
+                    transactionId: transactionIdSearch,
                     batch: batchNoI,
                     product: transactionStatusI,
                     plant: plantNoI,
                 } 
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { data: 'transaction_id' },
                 { data: 'transaction_status' },
                 { data: 'weight_type' },
@@ -1287,8 +1368,10 @@ if ($user != null && $user != ''){
                     render: function (data, type, row) {
                         let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' 
-                                        //+
-                                        //'<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+
+                        if (userRole == 'ADMIN' || userRole == 'SADMIN'){
+                            dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                        }
 
                         if (row.is_approved == 'Y') {
                             dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1298,7 +1381,7 @@ if ($user != null && $user != ''){
                         //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                         // }
 
-                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Cancel</a></li>';
 
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
@@ -1336,48 +1419,6 @@ if ($user != null && $user != ''){
                     }
                 });
             }
-        });
-
-        $('#statusSearch').on('change', function () {
-            var status = $(this).val();
-
-            if(status == 'Sales' || status == '-') {
-                $('#labelCustomer').text('Customer Name');
-
-                <?php 
-                $options = [];
-                while($rowPF = mysqli_fetch_assoc($customer3)){
-                    $options[] = ['value' => $rowPF['customer_code'], 'text' => $rowPF['name']];
-                }
-                ?>
-                var options = <?= json_encode($options) ?>;
-            } else {
-                $('#labelCustomer').text('Supplier Name');
-
-                <?php 
-                $options = [];
-                while($rowPF = mysqli_fetch_assoc($supplier2)){
-                    $options[] = ['value' => $rowPF['supplier_code'], 'text' => $rowPF['name']];
-                }
-                ?>
-                var options = <?= json_encode($options) ?>;
-            }
-
-            var $select = $('#customerNoSearch');
-            $select.empty(); // clear existing options if needed
-
-            // Add default option
-            var $defaultOption = $('<option></option>')
-                .val('-')
-                .text('-');
-            $select.append($defaultOption);
-
-            options.forEach(function(opt) {
-                var $option = $('<option></option>')
-                    .val(opt.value)
-                    .text(opt.text);
-                $select.append($option);
-            });
         });
 
         $('#submitWeight').on('click', function(){
@@ -1447,32 +1488,60 @@ if ($user != null && $user != ''){
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        <?php
-                            if(isset($_GET['weight'])){
-                                echo "window.location = 'index.php';";
+
+                let productRow = $('#addModal').find($('#productTable tr'));
+
+                if (productRow.length > 0) {
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        var obj = JSON.parse(data); 
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
+                        }
+                    });
+                }else{
+                    var grossIncoming = $('#addModal').find('#grossIncoming').val();
+                    var tareIncoming = $('#addModal').find('#tareOutgoing').val();
+
+                    if (grossIncoming > 0 && tareIncoming > 0){
+                        $('#spinnerLoading').hide();
+                        alert("Product cannot be empty. Please add product.");
+                    }else{
+                        $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                            var obj = JSON.parse(data); 
+                            if(obj.status === 'success'){
+                                table.ajax.reload();
+                                $('#spinnerLoading').hide();
+                                $('#addModal').modal('hide');
+                                $("#successBtn").attr('data-toast-text', obj.message);
+                                $("#successBtn").click();
                             }
-                        ?>
-                        table.ajax.reload();
-                        window.location = 'index.php';
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
+                            else if(obj.status === 'failed'){
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
+                            }
+                            else{
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', 'Failed to save');
+                                $("#failBtn").click();
+                            }
+                        });
                     }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
+                }
             }
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
@@ -1582,47 +1651,104 @@ if ($user != null && $user != ''){
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
-                            var obj = JSON.parse(data);
+                let productRow = $('#addModal').find($('#productTable tr'));
 
-                            if(obj.status === 'success'){
-                                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                printWindow.document.write(obj.message);
-                                printWindow.document.close();
-                                setTimeout(function(){
-                                    printWindow.print();
-                                    printWindow.close();
+                if (productRow > 0){
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+
+                            $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                                var obj = JSON.parse(data);
+
+                                if(obj.status === 'success'){
                                     table.ajax.reload();
-                                    window.location = 'index.php';
-                                }, 500);
+                                    var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                    printWindow.document.write(obj.message);
+                                    printWindow.document.close();
+                                    setTimeout(function(){
+                                        printWindow.print();
+                                        printWindow.close();
+                                        table.ajax.reload();
+                                        window.location = 'index.php';
+                                    }, 500);
+                                }
+                                else if(obj.status === 'failed'){
+                                    toastr["error"](obj.message, "Failed:");
+                                }
+                                else{
+                                    toastr["error"]("Something wrong when activate", "Failed:");
+                                }
+                            });
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
+                        }
+                    });
+                }else{
+                    var grossIncoming = $('#addModal').find('#grossIncoming').val();
+                    var tareIncoming = $('#addModal').find('#tareOutgoing').val();
+
+                    if (grossIncoming > 0 && tareIncoming > 0){
+                        $('#spinnerLoading').hide();
+                        alert("Product cannot be empty. Please add product.");
+                    }else{
+                        $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                            var obj = JSON.parse(data);
+                            if(obj.status === 'success'){
+                                $('#spinnerLoading').hide();
+                                $('#addModal').modal('hide');
+                                $("#successBtn").attr('data-toast-text', obj.message);
+                                $("#successBtn").click();
+
+                                $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                                    var obj = JSON.parse(data);
+
+                                    if(obj.status === 'success'){
+                                        table.ajax.reload();
+                                        var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                        printWindow.document.write(obj.message);
+                                        printWindow.document.close();
+                                        setTimeout(function(){
+                                            printWindow.print();
+                                            printWindow.close();
+                                            table.ajax.reload();
+                                            window.location = 'index.php';
+                                        }, 500);
+                                    }
+                                    else if(obj.status === 'failed'){
+                                        toastr["error"](obj.message, "Failed:");
+                                    }
+                                    else{
+                                        toastr["error"]("Something wrong when activate", "Failed:");
+                                    }
+                                });
                             }
                             else if(obj.status === 'failed'){
-                                toastr["error"](obj.message, "Failed:");
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
                             }
                             else{
-                                toastr["error"]("Something wrong when activate", "Failed:");
+                                $('#spinnerLoading').hide();
+                                $("#failBtn").attr('data-toast-text', 'Failed to save');
+                                $("#failBtn").click();
                             }
                         });
                     }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
+                }
             }
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
@@ -1743,6 +1869,60 @@ if ($user != null && $user != ''){
             }
         });
 
+        $('#submitCancel').on('click', function(){
+            if($('#cancelForm').valid()){
+                $('#spinnerLoading').show();
+                var id = $('#cancelModal').find('#id').val();
+                var isMulti = $('#cancelModal').find('#isMulti').val();
+                var cancelReason = $('#cancelModal').find('#cancelReason').val();
+
+                if (isMulti == 'Y'){
+                    $.post('php/deleteWeight.php', {userID: id, type: 'MULTI', cancelReason: cancelReason, action: 'Cancel'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#cancelModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }else{
+                    $.post('php/deleteWeight.php', {userID: id, cancelReason: cancelReason, action: 'Cancel'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#spinnerLoading').hide();
+                            $('#cancelModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        });
+
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
@@ -1750,6 +1930,7 @@ if ($user != null && $user != ''){
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
@@ -1774,12 +1955,22 @@ if ($user != null && $user != ''){
                         customer: customerNoI,
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
+                        transactionId: transactionIdSearch,
                         batch: batchNoI,
                         product: transactionStatusI,
                         plant: plantNoI,
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'transaction_id' },
                     { data: 'transaction_status' },
                     { data: 'weight_type' },
@@ -1796,8 +1987,10 @@ if ($user != null && $user != ''){
                         render: function (data, type, row) {
                             let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' 
-                                            //+
-                                            //'<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                            
+                            if (userRole == 'ADMIN' || userRole == 'SADMIN'){
+                                dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>';
+                            }
 
                             if (row.is_approved == 'Y') {
                                 dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
@@ -1807,7 +2000,7 @@ if ($user != null && $user != ''){
                             //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
                             // }
 
-                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
+                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Cancel</a></li>';
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
@@ -1831,16 +2024,20 @@ if ($user != null && $user != ''){
             $('#addModal').find('#transactionDate').val(formatDate2(today));
             $('#addModal').find('#vehiclePlateNo1').val("");
             $('#addModal').find('#vehiclePlateNo2').val("");
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#supplierWeight').val("");
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
             $('#addModal').find('#customerName').val("");
             $('#addModal').find('#driverCode').val("");
             $('#addModal').find('#driverName').val("");
-            $('#addModal').find('#driverIC').val("");
+            $('#addModal').find('#driverICNo').val("");
             $('#addModal').find('#supplierCode').val("");
             $('#addModal').find('#supplierName').val("");
             $('#addModal').find('#productCode').val("");
+            $('#addModal').find('#plantCode').val("");
+            $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
             $('#addModal').find('#productName').val("");
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
@@ -1869,8 +2066,9 @@ if ($user != null && $user != ''){
             $('#addModal').find('#weightDifference').val("");
             // $('#addModal').find('#id').val(obj.message.is_complete);
             // $('#addModal').find('#vehicleNo').val(obj.message.is_cancel);
-            $('#addModal').find("#manualWeightNo").prop("checked", true);
-            $('#addModal').find("#manualWeightYes").prop("checked", false);
+            // $('#addModal').find("#manualWeightNo").prop("checked", true);
+            // $('#addModal').find("#manualWeightYes").prop("checked", false);
+            $('#addModal').find('#manualWeightNo').trigger('click');
             $('#addModal').find("#manualPriceNo").prop("checked", true);
             $('#addModal').find("#manualPriceYes").prop("checked", false);
             //$('#addModal').find('input[name="manualWeight"]').val("false");
@@ -1887,6 +2085,8 @@ if ($user != null && $user != ''){
             $('#addModal').find('#productPrice').val("0.00");
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
+            $('#addModal').find('#productTable').html('');
+            rowCount = 0;
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -1915,7 +2115,7 @@ if ($user != null && $user != ''){
             }
         });
 
-        $('#manualVehicle').on('click', function(){
+        $('#manualVehicle').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo1').val('-');
@@ -1928,6 +2128,12 @@ if ($user != null && $user != ''){
                 $('#vehicleNoTxt').val('');
                 $('.index-vehicle').show();
             }
+        });
+
+        $('#vehicleNoTxt').on('keyup', function(){
+            var x = $('#vehicleNoTxt').val();
+            x = x.toUpperCase();
+            $('#vehicleNoTxt').val(x);
         });
 
         $('#vehiclePlateNo1').on('change', function(){
@@ -1956,7 +2162,7 @@ if ($user != null && $user != ''){
             }*/
         });
 
-        $('#manualVehicle2').on('click', function(){
+        $('#manualVehicle2').on('change', function(){
             if($(this).is(':checked')){
                 $(this).val(1);
                 $('#vehiclePlateNo2').val('-');
@@ -1977,12 +2183,14 @@ if ($user != null && $user != ''){
                 $('#grossIncoming').removeAttr('readonly');
                 $('#tareOutgoing2').removeAttr('readonly');
                 $('#grossIncoming2').removeAttr('readonly');
+                $('[id^="productItemWeight"]').removeAttr('readonly');
             }
             else{
                 $('#grossIncoming').attr('readonly', 'readonly');
                 $('#tareOutgoing').attr('readonly', 'readonly');
                 $('#grossIncoming2').attr('readonly', 'readonly');
                 $('#tareOutgoing2').attr('readonly', 'readonly');
+                $('[id^="productItemWeight"]').attr('readonly', true);
             }
         });
 
@@ -2086,16 +2294,20 @@ if ($user != null && $user != ''){
             $('#weightDifference').val(current.toFixed(0));
 
             // Loop directly through productItemWeight fields
-            $('#productTable input[id^="productItemWeight"]').each(function() {
-                var row = $(this).closest('.details'); // Find the closest row
-                var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
-                var productItemWeight = (finalWeight * productPercentage) / 100;
+            // $('#productTable input[id^="productItemWeight"]').each(function() {
+            //     var row = $(this).closest('.details'); // Find the closest row
+            //     var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
+            //     var productItemWeight = (finalWeight * productPercentage) / 100;
 
-                // Update the productItemWeight field
-                $(this).val(productItemWeight.toFixed(2));
+            //     // Update the productItemWeight field
+            //     $(this).val(productItemWeight.toFixed(2));
 
-                // Trigger change on productUnitPrice to recalculate dependent values
-                row.find('input[id^="productUnitPrice"]').trigger('change');
+            //     // Trigger change on productUnitPrice to recalculate dependent values
+            //     row.find('input[id^="productUnitPrice"]').trigger('change');
+            // });
+
+            $('.productPercentage').each(function () {
+                $(this).trigger('keyup');
             });
         });
 
@@ -2243,6 +2455,48 @@ if ($user != null && $user != ''){
             }
         ?>
 
+        $('#statusSearch').on('change', function () {
+            var status = $(this).val();
+
+            if(status == 'Sales' || status == '-') {
+                $('#labelCustomer').text('Customer Name');
+
+                <?php 
+                $options = [];
+                while($rowPF = mysqli_fetch_assoc($customer3)){
+                    $options[] = ['value' => $rowPF['customer_code'], 'text' => $rowPF['name']];
+                }
+                ?>
+                var options = <?= json_encode($options) ?>;
+            } else {
+                $('#labelCustomer').text('Supplier Name');
+
+                <?php 
+                $options = [];
+                while($rowPF = mysqli_fetch_assoc($supplier2)){
+                    $options[] = ['value' => $rowPF['supplier_code'], 'text' => $rowPF['name']];
+                }
+                ?>
+                var options = <?= json_encode($options) ?>;
+            }
+
+            var $select = $('#customerNoSearch');
+            $select.empty(); // clear existing options if needed
+
+            // Add default option
+            var $defaultOption = $('<option></option>')
+                .val('-')
+                .text('-');
+            $select.append($defaultOption);
+
+            options.forEach(function(opt) {
+                var $option = $('<option></option>')
+                    .val(opt.value)
+                    .text(opt.text);
+                $select.append($option);
+            });
+        });
+
         // Find and remove selected table rows
         $("#productTable").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
@@ -2266,7 +2520,7 @@ if ($user != null && $user != ''){
         });
         
         // Event delegation for order weight to calculate variance
-        $("#productTable").on('change', 'input[id^="productPercentage"]', function(){
+        $("#productTable").on('keyup', 'input[id^="productPercentage"]', function(){
             // Retrieve the input's attributes
             var productPercentage = $(this).val();
             var finalWeight = $('#finalWeight').val();
@@ -2274,7 +2528,6 @@ if ($user != null && $user != ''){
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
-            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
 
             // Check the total sum of all productPercentage inputs
             var totalPercentage = 0;
@@ -2284,8 +2537,36 @@ if ($user != null && $user != ''){
 
             if (totalPercentage > 100) {
                 alert("Total percentage cannot exceed 100%!");
-                $(this).val(0); // Reset the input to prevent exceeding 100%
+                $(this).val(0); // Reset the input to prevent percentage from exceeding 100%
+                $(this).closest('.details').find('input[id^="productItemWeight"]').val(0); // Reset weight to 0
             }
+
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
+        });
+
+        // Event delegation to calculate product percentage from order weight
+        $("#productTable").on('keyup', 'input[id^="productItemWeight"]', function(){
+            // Retrieve the input's attributes
+            var productItemWeight = $(this).val();
+            var finalWeight = $('#finalWeight').val();
+            var productPercentage = (parseFloat(productItemWeight) / parseFloat(finalWeight)) * 100;
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productPercentage"]').val(productPercentage);
+
+            // Check the total sum of all productPercentage inputs
+            var totalPercentage = 0;
+            $('input[id^="productPercentage"]').each(function() {
+                totalPercentage += parseFloat($(this).val()) || 0;
+            });
+
+            if (totalPercentage > 100) {
+                alert("Total percentage cannot exceed 100%!");
+                $(this).val(0); // Reset the weight to 0
+                $(this).closest('.details').find('input[id^="productPercentage"]').val(0); // Reset the input to prevent percentage from exceeding 100%
+            }
+
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
         });
 
         // Event delegation for order weight to calculate variance
@@ -2312,17 +2593,24 @@ if ($user != null && $user != ''){
             $('#totalPrice').val(totalSum.toFixed(2));
         });
 
-        $(".add-product").click(function(){
-            if(rowCount == 0){
-                rowCount++;
-            }
+        //plant
+        $('#plant').on('change', function(){
+            $('#plantCode').val($('#plant :selected').data('code'));
+        });
 
+        $(".add-product").click(function(){
             var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
+            var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
             if(manualPrice == 'false'){
                 var readonly = true;
             }else{
                 var readonly = false;
-            }
+            }            
+            if(manualWeight == 'false'){
+                var weightReadOnly = true;
+            }else{
+                var weightReadOnly = false;
+            }            
 
             var $addContents = $("#productDetail").clone();
             $("#productTable").append($addContents.html());
@@ -2332,16 +2620,56 @@ if ($user != null && $user != ''){
             $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
             $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
-            $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount);
+            $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
             $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
             $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
             $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
             $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
-            $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount);
+            $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
             $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
             $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
 
             rowCount++;
+        });
+
+        $('#multiDeactivate').on('click', function () {
+            $('#spinnerLoading').show();
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to cancel these items?')) {
+                    $('#cancelModal').find('#id').val(selectedIds);
+                    $('#cancelModal').find('#isMulti').val('Y');
+                    $('#cancelModal').modal('show');
+
+                    $('#cancelForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            } 
+            else {
+                // Optionally, you can display a message or take another action if no IDs are selected
+                alert("Please select at least one weight to cancel.");
+                $('#spinnerLoading').hide();
+            }     
         });
     });
 
@@ -2351,14 +2679,21 @@ if ($user != null && $user != ''){
         <!--div class="row">
             
         </div><hr-->
-        <div class="row">
+        <div class="row ps-5 pe-5">
             <div class="col-4">
                 <p><strong>${row.name}</strong></p>
+                <p>Tin No.: ${row.tin_no}</p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
-                <p>${row.address_line_3}</p>
-                <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
-            </div>
+                <p>${row.address_line_3}</p>`;
+
+            if(row.cust_supp_tag == 'Y'){
+                returnString += `<p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>`;
+            }else{
+                returnString += `<p></p>`;
+            }
+            
+            returnString += `</div>
             <div class="col-4">
                 <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
                 <p><strong>DRIVER NAME:</strong> ${row.driver_name}</p>
@@ -2376,9 +2711,9 @@ if ($user != null && $user != ''){
             
         </div><br>
         <!-- Product Section -->
-        <div class="row">
-            <div class="col-8">
-                <table class="product-table" width="100%">
+        <div class="row ps-5 pe-5">
+            <div class="col-7">
+                <table class="product-table" width="80%">
                     <thead>
                         <tr>
                             <th><span>PRODUCT Description</span></th>
@@ -2432,13 +2767,16 @@ if ($user != null && $user != ''){
                             </tr>
                         `;
                     }
-                    
 
                     returnString += `
                     </tbody>
                 </table>
+                <br>
+                <br>
+                <br>
+                <p><strong>REMARK:</strong> ${row.remarks}</p>
             </div>
-            <div class="col-4">
+            <div class="col-5">
                 <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} kg(${row.gross_weight1_date})</p>
                 <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} kg(${row.tare_weight1_date})</p>
                 <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} kg</p>
@@ -2461,6 +2799,8 @@ if ($user != null && $user != ''){
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
+                $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                $('#addModal').find('#plantCode').val(obj.message.plant_code);
 
                 if(obj.message.transaction_status == "Purchase" || obj.message.transaction_status == "Local"){
                     $('#divWeightDifference').show();
@@ -2543,29 +2883,6 @@ if ($user != null && $user != ''){
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
                 $('#addModal').find('#weightDifference').val(obj.message.weight_different);
-
-                if(obj.message.manual_weight == 'true'){
-                    $("#manualWeightYes").prop("checked", true);
-                    $("#manualWeightNo").prop("checked", false);
-                    $('#manualWeightYes').trigger('click');
-                }
-                else{
-                    $("#manualWeightYes").prop("checked", false);
-                    $("#manualWeightNo").prop("checked", true);
-                    $('#manualWeightNo').trigger('click');
-                }
-
-                if(obj.message.manual_price == 'true'){
-                    $("#manualPriceYes").prop("checked", true);
-                    $("#manualPriceNo").prop("checked", false);
-                    $('#manualPriceYes').trigger('click');
-                }
-                else{
-                    $("#manualPriceYes").prop("checked", false);
-                    $("#manualPriceNo").prop("checked", true);
-                    $('#manualPriceNo').trigger('click');
-                }
-
                 $('#addModal').find('#indicatorId').val(obj.message.indicator_id);
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
@@ -2601,6 +2918,28 @@ if ($user != null && $user != ''){
 
                         rowCount++;
                     }
+                }
+
+                if(obj.message.manual_weight == 'true'){
+                    $("#manualWeightYes").prop("checked", true);
+                    $("#manualWeightNo").prop("checked", false);
+                    $('#manualWeightYes').trigger('click');
+                }
+                else{
+                    $("#manualWeightYes").prop("checked", false);
+                    $("#manualWeightNo").prop("checked", true);
+                    $('#manualWeightNo').trigger('click');
+                }
+
+                if(obj.message.manual_price == 'true'){
+                    $("#manualPriceYes").prop("checked", true);
+                    $("#manualPriceNo").prop("checked", false);
+                    $('#manualPriceYes').trigger('click');
+                }
+                else{
+                    $("#manualPriceYes").prop("checked", false);
+                    $("#manualPriceNo").prop("checked", true);
+                    $('#manualPriceNo').trigger('click');
                 }
 
                 $('#addModal').modal('show');
@@ -2673,26 +3012,25 @@ if ($user != null && $user != ''){
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+        if (confirm('Are you sure you want to cancel this item?')) {
+            $('#cancelModal').find('#id').val(id);
+            $('#cancelModal').find('#isMulti').val('N');
+            $('#cancelModal').modal('show');
+
+            $('#cancelForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        }
     }
 
     function print(id) {

@@ -219,7 +219,7 @@ if ($user != null && $user != ''){
                                                             <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <div class="col-3" style="display:none;">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
                                                             <select id="invoiceNoSearch" class="form-select"  >
@@ -227,6 +227,12 @@ if ($user != null && $user != ''){
                                                                 <option value="Normal">Normal</option>
                                                                 <!--option value="Container">Container</option-->
                                                             </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="transactionIdSearch" class="form-label">Transaction ID</label>
+                                                            <input type="text" class="form-control" placeholder="Transaction ID" id="transactionIdSearch">
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3" style="display:none;">
@@ -1009,9 +1015,13 @@ if ($user != null && $user != ''){
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="multiDeactivate" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                                    Delete Weight
+                                                                </button>
                                                                 <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal" style="display:none;">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add New Weight
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Weight
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -1020,6 +1030,7 @@ if ($user != null && $user != ''){
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction <br>Id</th>
                                                                     <th>Weight <br> Status</th>
                                                                     <th>Weight <br> Type</th>
@@ -1228,6 +1239,11 @@ if ($user != null && $user != ''){
             dateFormat: "d-m-Y",
             defaultDate: today
         });
+        
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
 
         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
             $('#plantSearchDisplay').show();
@@ -1245,6 +1261,7 @@ if ($user != null && $user != ''){
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+        var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
@@ -1265,12 +1282,22 @@ if ($user != null && $user != ''){
                     customer: customerNoI,
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
+                    transactionId: transactionIdSearch,
                     batch: batchNoI,
                     product: transactionStatusI,
                     plant: plantNoI,
                 } 
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { data: 'transaction_id' },
                 { data: 'transaction_status' },
                 { data: 'weight_type' },
@@ -1301,6 +1328,8 @@ if ($user != null && $user != ''){
                         // dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                         dropdownMenu += '<li><a class="dropdown-item revert-item-btn" id="revert' + data + '" onclick="revert(' + data + ')"><i class="ri-arrow-go-back-fill align-bottom me-2 text-muted"></i> Revert</a></li>';
+
+                        dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                         dropdownMenu += '</ul></div>';
                         return dropdownMenu;
@@ -1711,6 +1740,7 @@ if ($user != null && $user != ''){
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var transactionIdSearch = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
@@ -1735,12 +1765,22 @@ if ($user != null && $user != ''){
                         customer: customerNoI,
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
+                        transactionId: transactionIdSearch,
                         batch: batchNoI,
                         product: transactionStatusI,
                         plant: plantNoI,
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'transaction_id' },
                     { data: 'transaction_status' },
                     { data: 'weight_type' },
@@ -1771,6 +1811,8 @@ if ($user != null && $user != ''){
                             // dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                             dropdownMenu += '<li><a class="dropdown-item revert-item-btn" id="revert' + data + '" onclick="revert(' + data + ')"><i class="ri-arrow-go-back-fill align-bottom me-2 text-muted"></i> Revert</a></li>';
+
+                            dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
 
                             dropdownMenu += '</ul></div>';
                             return dropdownMenu;
@@ -2349,6 +2391,47 @@ if ($user != null && $user != ''){
 
             rowCount++;
         });
+
+        $('#multiDeactivate').on('click', function () {
+            $('#spinnerLoading').show();
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to delete this item?')) {
+                    $.post('php/deleteWeight.php', {userID: selectedIds, type: 'MULTI', action: 'Delete'}, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            table.ajax.reload();
+                            $('#spinnerLoading').hide();
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            } 
+            else {
+                // Optionally, you can display a message or take another action if no IDs are selected
+                alert("Please select at least one weight to delete.");
+                $('#spinnerLoading').hide();
+            }     
+        });
     });
 
     function format (row) {
@@ -2357,14 +2440,21 @@ if ($user != null && $user != ''){
         <!--div class="row">
             
         </div><hr-->
-        <div class="row">
+        <div class="row ps-5 pe-5">
             <div class="col-4">
                 <p><strong>${row.name}</strong></p>
+                <p>Tin No.: ${row.tin_no}</p>
                 <p>${row.address_line_1}</p>
                 <p>${row.address_line_2}</p>
-                <p>${row.address_line_3}</p>
-                <p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>
-            </div>
+                <p>${row.address_line_3}</p>`;
+
+            if(row.cust_supp_tag == 'Y'){
+                returnString += `<p>TEL: ${row.phone_no} FAX: ${row.fax_no}</p>`;
+            }else{
+                returnString += `<p></p>`;
+            }
+            
+            returnString += `</div>
             <div class="col-4">
                 <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
                 <p><strong>DRIVER NAME:</strong> ${row.driver_name}</p>
@@ -2382,9 +2472,9 @@ if ($user != null && $user != ''){
             
         </div><br>
         <!-- Product Section -->
-        <div class="row">
-            <div class="col-8">
-                <table class="product-table" width="100%">
+        <div class="row ps-5 pe-5">
+            <div class="col-7">
+                <table class="product-table" width="80%">
                     <thead>
                         <tr>
                             <th><span>PRODUCT Description</span></th>
@@ -2438,13 +2528,16 @@ if ($user != null && $user != ''){
                             </tr>
                         `;
                     }
-                    
 
                     returnString += `
                     </tbody>
                 </table>
+                <br>
+                <br>
+                <br>
+                <p><strong>REMARK:</strong> ${row.remarks}</p>
             </div>
-            <div class="col-4">
+            <div class="col-5">
                 <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} kg(${row.gross_weight1_date})</p>
                 <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} kg(${row.tare_weight1_date})</p>
                 <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} kg</p>
@@ -2679,26 +2772,28 @@ if ($user != null && $user != ''){
 
     function deactivate(id){
         $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-        });
+        if (confirm('Are you sure you want to delete this item?')) {
+            $.post('php/deleteWeight.php', {userID: id, action: 'Delete'}, function(data){
+                var obj = JSON.parse(data);
+                
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
     }
 
     function revert(id){

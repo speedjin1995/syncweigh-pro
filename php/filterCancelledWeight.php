@@ -43,6 +43,10 @@ if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != 
 	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
 }
 
+if($_POST['transactionId'] != null && $_POST['transactionId'] != '' && $_POST['transactionId'] != '-'){
+	$searchQuery .= " and transaction_id like '%".$_POST['transactionId']."%'";
+}
+
 if($_POST['batch'] != null && $_POST['batch'] != '' && $_POST['batch'] != '-'){
 	$searchQuery .= " and is_complete = '".$_POST['batch']."'";
 }
