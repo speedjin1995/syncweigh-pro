@@ -46,8 +46,9 @@ if($plantId != null && count($plantId) > 0){
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
 if($_SESSION["roles"] != 'SADMIN'){
+    $plantId = implode("', '", $_SESSION['plant_id']);
     $username = implode("', '", $_SESSION["plant"]);
-    $plantId = searchPlantIdByCode($username, $db);
+    // $plantId = searchPlantIdByCode($username, $db);
     
     $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
     $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
@@ -1074,10 +1075,10 @@ if ($user != null && $user != ''){
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Weight
                                                                 </button>
-                                                                <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <!-- <button type="button" id="addWeight" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Weight
-                                                                </button>
+                                                                </button> -->
                                                             </div> 
                                                         </div> 
                                                     </div>

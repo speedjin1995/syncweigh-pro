@@ -20,10 +20,9 @@ if($searchValue != ''){
 }
 
 if ($_SESSION["roles"] != 'SADMIN'){
-  $username = implode("', '", $_SESSION["plant"]);
-  $plantId = searchPlantIdByCode($username, $db);
+  $username = implode("', '", $_SESSION['plant_id']);
 
-  $searchQuery = " and plant = ". $plantId;
+  $searchQuery .= " and plant IN ('$username')";
 }
 
 ## Total number of records without filtering
