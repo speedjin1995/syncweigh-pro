@@ -1972,7 +1972,7 @@ if ($user != null && $user != ''){
                 plant: plantNoI,
                 isMulti: isMulti,
                 id: selectedIds,
-                weightStatus: 'Pending',
+                weightStatus: 'Complete',
                 type: 'Weighing'
             }, function(response){
                 var obj = JSON.parse(response);

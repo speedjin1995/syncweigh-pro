@@ -1179,13 +1179,30 @@ if(isset($_POST["file"])){
                 $weightStatus = $_POST['weightStatus'];
             }
 
-            if ($weightStatus == 'Pending'){
-                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'N' and Weight.is_cancel <> 'Y'".$searchQuery;
-            }elseif ($weightStatus == 'Complete'){
-                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
+            if ($_POST['isMulti'] == 'Y'){
+                if(is_array($_POST['id'])){
+                    $ids = implode(",", $_POST['id']);
+                }else{
+                    $ids = $_POST['id'];
+                }
+
+                if ($weightStatus == 'Pending'){
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'N' and Weight.is_cancel <> 'Y' AND Weight.id IN (".$ids.")";       
+                }elseif ($weightStatus == 'Complete'){
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
+                }else{
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y'".$searchQuery;
+                }
             }else{
-                $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y'".$searchQuery;
+                if ($weightStatus == 'Pending'){
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'N' and Weight.is_cancel <> 'Y'".$searchQuery;
+                }elseif ($weightStatus == 'Complete'){
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
+                }else{
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y'".$searchQuery;
+                }
             }
+            
 
             if ($select_stmt = $db->prepare($sql)) {
                 // Execute the prepared query.
