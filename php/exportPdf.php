@@ -1189,9 +1189,9 @@ if(isset($_POST["file"])){
                 if ($weightStatus == 'Pending'){
                     $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'N' and Weight.is_cancel <> 'Y' AND Weight.id IN (".$ids.")";       
                 }elseif ($weightStatus == 'Complete'){
-                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y' AND Weight.id IN (".$ids.")";
                 }else{
-                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y'".$searchQuery;
+                    $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_cancel = 'Y' AND Weight.id IN (".$ids.")";
                 }
             }else{
                 if ($weightStatus == 'Pending'){
@@ -1224,7 +1224,7 @@ if(isset($_POST["file"])){
                                         <style>
                                             @media print {
                                                 @page {
-                                                    size: A3 landscape;
+                                                    size: A4 landscape;
                                                     margin: 5mm;
                                                 }
 
