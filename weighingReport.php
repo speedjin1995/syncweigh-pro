@@ -841,7 +841,7 @@ if ($user != null && $user != ''){
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             
-            window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
+            window.open("php/export.php?file=weight&type=Report&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
             "&weighingType="+invoiceNoI+"&transactionId="+transactionIdSearch+"&product="+transactionStatusI+"&plant="+plantNoI);
         });
