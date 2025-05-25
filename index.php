@@ -2724,9 +2724,10 @@ if ($user != null && $user != ''){
             var productItemWeight = $(this).val();
             var finalWeight = $('#finalWeight').val();
             var productPercentage = (parseFloat(productItemWeight) / parseFloat(finalWeight)) * 100;
+            var roundedPercentage = Math.round(productPercentage);
 
             // Update the respective inputs for variance
-            $(this).closest('.details').find('input[id^="productPercentage"]').val(productPercentage);
+            $(this).closest('.details').find('input[id^="productPercentage"]').val(roundedPercentage);
 
             // Check the total sum of all productPercentage inputs
             var totalPercentage = 0;
