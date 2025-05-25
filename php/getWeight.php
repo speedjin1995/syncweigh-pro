@@ -189,7 +189,7 @@ if(isset($_POST['userID'])){
                     $message['plant_code'] = $row['plant_code'];
                     $message['plant_name'] = $row['plant_name'];
     
-                    if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
+                    if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=? AND status='0'")) {
                         $update_stmt2->bind_param('s', $row['lorry_plate_no1']);
                         $update_stmt2->execute();
                         $result2 = $update_stmt2->get_result();
@@ -207,7 +207,7 @@ if(isset($_POST['userID'])){
                     }
                 
                     // Check and retrieve vehicle details for lorry_plate_no2
-                    if ($update_stmt3 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
+                    if ($update_stmt3 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=? AND status='0'")) {
                         $update_stmt3->bind_param('s', $row['lorry_plate_no2']);
                         $update_stmt3->execute();
                         $result3 = $update_stmt3->get_result();
