@@ -274,7 +274,7 @@ if(isset($_POST["file"])){
                                             $transactionStatus = 'Dispatch';
                                         }
                                         else if($row['transaction_status'] == 'Purchase'){
-                                            $transactionStatus = 'REceiving';
+                                            $transactionStatus = 'Receiving';
                                         }
                                         else if($row['transaction_status'] == 'Misc'){
                                             $transactionStatus = 'Miscellaneous';
