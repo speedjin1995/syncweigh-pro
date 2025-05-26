@@ -92,6 +92,7 @@ if(isset($_POST['userID'])){
                     $message['final_weight'] = $row['final_weight'] ?? '';
                     $message['plant_name'] = $row['plant_name'] ?? '';
                     $message['remarks'] = $row['remarks'] ?? '';
+                    $message['modified_by'] = $row['modified_by'] ?? '';
 
                     # Values for Weight Product
                     $productCode = null;
