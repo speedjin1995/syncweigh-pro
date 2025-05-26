@@ -294,7 +294,7 @@ if ($user != null && $user != ''){
                             </div>
                             
                             <div class="row">
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-success">
                                         <div class="card-body">
@@ -320,7 +320,7 @@ if ($user != null && $user != ''){
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-warning">
                                         <div class="card-body">
@@ -345,7 +345,7 @@ if ($user != null && $user != ''){
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-info">
                                         <div class="card-body">
@@ -371,7 +371,7 @@ if ($user != null && $user != ''){
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-danger">
                                         <div class="card-body">
