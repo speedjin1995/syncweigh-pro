@@ -16,12 +16,11 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-  $searchQuery = " and (veh_number like '%".$searchValue."%' or vehicle_weight like '%".$searchValue."%')";
+  $searchQuery = " and (veh_number like '%".$searchValue."%' or vehicle_weight like '%".$searchValue."%' or customer_name like '%".$searchValue."%' or supplier_name like '%".$searchValue."%')";
 }
 
 if ($_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION['plant_id']);
-
   $searchQuery .= " and plant IN ('$username')";
 }
 
@@ -45,6 +44,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "id"=>$row['id'],
       "veh_number"=>$row['veh_number'],
       "vehicle_weight"=>$row['vehicle_weight'],
+      "customer_name"=>$row['customer_name'],
+      "supplier_name"=>$row['supplier_name'],
       "plant"=>searchPlantNameById($row['plant'],$db)
 
     );

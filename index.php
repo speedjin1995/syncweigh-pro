@@ -2308,10 +2308,66 @@ if ($user != null && $user != ''){
             var x = $('#vehicleNoTxt').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
+
+            if(x){
+                $.post('php/getVehicle.php', {userID: x, type: 'pullCustomer'}, function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        if ($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+                            var supplierName = obj.message.supplier_name;
+
+                            $('#addModal').find('#supplierName').val(supplierName).trigger('change');
+                        }else{
+                            var customerName = obj.message.customer_name;
+
+                            $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        }
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    $('#spinnerLoading').hide();
+                });
+            }
         });
 
         $('#vehiclePlateNo1').on('change', function(){
             var tare = $('#vehiclePlateNo1 :selected').data('weight') ? parseFloat($('#vehiclePlateNo1 :selected').data('weight')) : 0;
+
+            if($(this).val()){
+                $.post('php/getVehicle.php', {userID: $(this).val(), type: 'pullCustomer'}, function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        if ($('#transactionStatus').val() == "Purchase" || $('#transactionStatus').val() == "Local"){
+                            var supplierName = obj.message.supplier_name;
+
+                            $('#addModal').find('#supplierName').val(supplierName).trigger('change');
+                        }else{
+                            var customerName = obj.message.customer_name;
+
+                            $('#addModal').find('#customerName').val(customerName).trigger('change');
+                        }
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    $('#spinnerLoading').hide();
+                });
+            }
         
             //if($('#transactionStatus').val() == "Purchase" || $(this).val() == "Local"){
                 //$('#grossIncoming').val(parseFloat(tare).toFixed(0));

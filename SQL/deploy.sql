@@ -531,3 +531,8 @@ $$
 DELIMITER ; 
 
 ALTER TABLE `Weight_Product` ADD `deleted` INT(1) NOT NULL DEFAULT '0' AFTER `total_price`;
+
+-- 26/05/2025 --
+ALTER TABLE `Vehicle` ADD `customer_code` VARCHAR(50) NULL AFTER `plant`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`, ADD `supplier_code` VARCHAR(50) NULL AFTER `customer_name`, ADD `supplier_name` VARCHAR(100) NULL AFTER `supplier_code`;
+
+ALTER TABLE `Vehicle_Log` ADD `customer_code` VARCHAR(50) NULL AFTER `plant`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`, ADD `supplier_code` VARCHAR(50) NULL AFTER `customer_name`, ADD `supplier_name` VARCHAR(100) NULL AFTER `supplier_code`;
