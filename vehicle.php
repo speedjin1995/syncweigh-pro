@@ -9,8 +9,14 @@ $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 
 $role = $_SESSION['roles'];
 if ($_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
+    $username = implode("', '", $_SESSION['plant_id']);
     $plantId = searchPlantIdByCode($username, $db);  
+
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$username')");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$username')");
+}else{
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
 }
 
 ?>
@@ -153,6 +159,34 @@ if ($_SESSION["roles"] != 'SADMIN'){
 
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
+                                                                                    <label for="customer" class="col-sm-4 col-form-label">Customer</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="customer" name="customer">
+                                                                                            <option selected>-</option>
+                                                                                            <?php while($rowC=mysqli_fetch_assoc($customer)){ ?>
+                                                                                                <option value="<?=$rowC['name'] ?>" data-code="<?=$rowC['customer_code'] ?>"><?=$rowC['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="supplier" class="col-sm-4 col-form-label">Supplier</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="supplier" name="supplier">
+                                                                                            <option selected>-</option>
+                                                                                            <?php while($rowS=mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                <option value="<?=$rowS['name'] ?>" data-code="<?=$rowS['supplier_code'] ?>"><?=$rowS['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant *</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="plant" name="plant" required>
@@ -164,12 +198,13 @@ if ($_SESSION["roles"] != 'SADMIN'){
                                                                                 </div>
                                                                             </div>
 
-                                                                            <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
+                                                                            <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                              
+                                                                            <input type="hidden" class="form-control" id="customerCode" name="customerCode">                                                                                                                                              
+                                                                            <input type="hidden" class="form-control" id="supplierCode" name="supplierCode">                                                                                                                                              
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-
                                                         </div>
                                                         
                                                         <div class="col-lg-12">
@@ -213,6 +248,8 @@ if ($_SESSION["roles"] != 'SADMIN'){
                                                                 <tr>
                                                                     <th>Vehicle No</th>
                                                                     <th>Vehicle Weight</th>
+                                                                    <th>Customer</th>
+                                                                    <th>Supplier</th>
                                                                     <th>Plant</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -302,6 +339,8 @@ $(function () {
         'columns': [
             { data: 'veh_number' },
             { data: 'vehicle_weight' },
+            { data: 'customer_name' },
+            { data: 'supplier_name' },
             { data: 'plant' },
             { 
                 data: 'id',
@@ -350,6 +389,8 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#vehicleNo').val("");
         $('#addModal').find('#vehicleWeight').val("");
+        $('#addModal').find('#customer').val("").trigger('change');
+        $('#addModal').find('#supplier').val("").trigger('change');
         $('#addModal').find('#plant').val("");
         $('#addModal').modal('show');
         
@@ -367,6 +408,20 @@ $(function () {
             }
         });
     });
+
+    $('#vehicleNo').on('keyup', function(){
+        var x = $('#vehicleNo').val();
+        x = x.toUpperCase();
+        $('#vehicleNo').val(x);
+    });
+
+    $('#customer').on('change', function(){
+        $('#customerCode').val($('#customer :selected').data('code'));
+    });
+
+    $('#supplier').on('change', function(){
+        $('#supplierCode').val($('#supplier :selected').data('code'));
+    });
 });
 
     function edit(id){
@@ -378,6 +433,8 @@ $(function () {
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#vehicleNo').val(obj.message.veh_number);
                 $('#addModal').find('#vehicleWeight').val(obj.message.vehicle_weight);
+                $('#addModal').find('#customer').val(obj.message.customer_name).trigger('change');
+                $('#addModal').find('#supplier').val(obj.message.supplier_name).trigger('change');
                 $('#addModal').find('#plant').val(obj.message.plant);
                 $('#addModal').modal('show');
             }

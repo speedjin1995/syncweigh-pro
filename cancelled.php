@@ -281,7 +281,7 @@ if ($user != null && $user != ''){
                             </div>
                             
                             <div class="row">
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-success">
                                         <div class="card-body">
@@ -307,7 +307,7 @@ if ($user != null && $user != ''){
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-warning">
                                         <div class="card-body">
@@ -332,7 +332,7 @@ if ($user != null && $user != ''){
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-info">
                                         <div class="card-body">
@@ -358,7 +358,7 @@ if ($user != null && $user != ''){
                                     </div><!-- end card -->
                                 </div><!-- end col -->
 
-                                <div class="col-xl-3 col-md-6">
+                                <div class="col-xl-3 col-md-6" style="display:none">
                                     <!-- card -->
                                     <div class="card card-animate card-danger">
                                         <div class="card-body">
@@ -2582,7 +2582,7 @@ if ($user != null && $user != ''){
         </div><br>
         <!-- Product Section -->
         <div class="row ps-5 pe-5">
-            <div class="col-7">
+            <div class="col-8">
                 <table class="product-table" width="80%">
                     <thead>
                         <tr>
@@ -2644,9 +2644,10 @@ if ($user != null && $user != ''){
                 <br>
                 <br>
                 <br>
+                <p><strong>WEIGHT BY:</strong> ${row.modified_by}</p>
                 <p><strong>REMARK:</strong> ${row.remarks}</p>
             </div>
-            <div class="col-5">
+            <div class="col-4">
                 <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} kg(${row.gross_weight1_date})</p>
                 <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} kg(${row.tare_weight1_date})</p>
                 <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} kg</p>

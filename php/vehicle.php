@@ -32,6 +32,30 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
         $vehicleWeight = trim($_POST["vehicleWeight"]);
     }
 
+    if (empty($_POST["customerCode"])) {
+        $customerCode = null;
+    } else {
+        $customerCode = trim($_POST["customerCode"]);
+    }
+
+    if (empty($_POST["customer"])) {
+        $customer = null;
+    } else {
+        $customer = trim($_POST["customer"]);
+    }
+
+    if (empty($_POST["supplierCode"])) {
+        $supplierCode = null;
+    } else {
+        $supplierCode = trim($_POST["supplierCode"]);
+    }
+
+    if (empty($_POST["supplier"])) {
+        $supplier = null;
+    } else {
+        $supplier = trim($_POST["supplier"]);
+    }
+
     if (empty($_POST["plant"])) {
         $plant = null;
     } else {
@@ -42,9 +66,9 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Vehicle SET veh_number=?, vehicle_weight=?, plant=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Vehicle SET veh_number=?, vehicle_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?, plant=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('ssssss', $vehicleNo, $vehicleWeight, $plant, $username, $username, $vehicleId);
+            $update_stmt->bind_param('ssssssssss', $vehicleNo, $vehicleWeight, $customerCode, $customer, $supplierCode, $supplier, $plant, $username, $username, $vehicleId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -56,8 +80,8 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, plant, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssssss', $vehicleId, $vehicleNo, $vehicleWeight, $plant, $action, $username);
+                if ($insert_stmt = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, customer_code, customer_name, supplier_code, supplier_name, plant, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssss', $vehicleId, $vehicleNo, $vehicleWeight, $customerCode, $customer, $supplierCode, $supplier, $plant, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -95,8 +119,8 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Vehicle (veh_number, vehicle_weight, plant, created_by, modified_by) VALUES (?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssss', $vehicleNo, $vehicleWeight, $plant, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Vehicle (veh_number, vehicle_weight, customer_code, customer_name, supplier_code, supplier_name, plant, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssss', $vehicleNo, $vehicleWeight, $customerCode, $customer, $supplierCode, $supplier, $plant, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -119,8 +143,8 @@ if (isset($_POST['vehicleNo'], $_POST['vehicleWeight'])) {
                 $records = mysqli_fetch_assoc($sel);
                 $totalRecords = $records['allcount'];
 
-                if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, plant, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('ssssss', $totalRecords, $vehicleNo, $vehicleWeight, $plant, $action, $username);
+                if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, customer_code, customer_name, supplier_code, supplier_name, plant, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('ssssssssss', $totalRecords, $vehicleNo, $vehicleWeight, $customerCode, $customer, $supplierCode, $supplier, $plant, $action, $username);
         
                     // Execute the prepared query.
                     if (! $insert_log->execute()) {
