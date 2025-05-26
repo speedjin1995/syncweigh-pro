@@ -373,15 +373,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <td style="text-align:center; border-right:none;">'.($row['tare_weight1'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="right-align" style="border-left:none;">Total Weight (kg)</td>
+                                            <td colspan="2" class="right-align" style="border-left:none; padding-left: 15px;">Total Weight (kg)</td>
                                             <td style="text-align:center; border-right:none;">'.($row['final_weight'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="right-align" style="border-left:none;">Deduct (kg)</td>
+                                            <td colspan="2" class="right-align" style="border-left:none; padding-left: 15px;">Deduct (kg)</td>
                                             <td style="text-align:center; border-right:none;">'.($row['reduce_weight'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2" class="right-align" style="border-left:none; border-bottom: none;">Net Weight (kg)</td>
+                                            <td colspan="2" class="right-align" style="border-left:none; border-bottom: none; padding-left: 15px;">Net Weight (kg)</td>
                                             <td style="text-align:center;font-weight:bold; border-right:none; border-bottom: none;">'.($row['nett_weight1'] ?? '0').'</td>
                                         </tr>
                                     </table>
