@@ -201,7 +201,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 @page {
                                     size: a5 landscape;
                                     margin-left: 0.15in;
-                                    margin-right: 0.15in;
+                                    margin-right: 0.5in;
                                     margin-top: 0.1in;
                                     margin-bottom: 0.1in;
                                 }
@@ -320,7 +320,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                         </style>
                     </head>
                     <body>
-                        <span style="font-size:32px; font-weight:bold; margin-top: 10px;">'.$compname.'</span><br>
+                        <div style="display: flex;">
+                            <span style="font-size:30px; font-weight:bold; margin-top: 10px;">'.$compname.'</span><br>
+                            <span style="font-size:28px; font-weight:bold; margin-top: 10px; margin-left: 140px;">WEIGHING SLIP</span><br>
+                        </div>
                         <span style="margin-bottom: 10px; font-size: 20px;">Co.Registration No: '.$compnewreg.'('.$compreg.') / Tin No: '.$comptinno.'<br>
                         '.$compaddress.' '.$compaddress2.' '.$compaddress3.'<br>
                         Tel: '.$compphone.' Mobile No: '.$compmobileno.'</span>
@@ -335,17 +338,19 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 }
 
                             $message .= '
-                                <tr><td class="label">BRN/IC</td><td>:</td><td class="value">'.$customerIC.'</td></tr>
-                                <tr><td class="label">Tin No</td><td>:</td><td class="value">'.$customerTN.'</td></tr>
-                                <tr><td class="label">Address</td><td>:</td><td class="value">'.$customerA.'<br> '.$customerA2.'<br> '.$customerA3.'</td></tr>
-                                <tr><td class="label">Contact</td><td>:</td><td class="value">Tel: '.$customerP.' | Fax: '.$customerE.'</td></tr>
+                                <tr><td class="label">Co. Reg</td><td>:</td><td class="value">'.$customerNR.' - ('.$customerR.')</td></tr>
+                                <tr><td class="label">Tin No</td><td>:</td><td class="value">'.$customerTN.' - (I/C No : '.$customerIC.')</td></tr>
+                                <tr><td class="label">Driver Name</td><td>:</td><td class="value">'.$row['driver_name'].'</td></tr>
+                                <tr><td class="label">I/C No.</td><td>:</td><td class="value">'.$row['driver_ic'].'</td></tr>
+                                <tr><td class="label">Transporter.</td><td>:</td><td class="value">'.$row['transporter'].'</td></tr>
                             </table>
                             <table class="info-table right-section" style="width:40%; font-size: 18px;">
                                 <tr><td class="label">Weight Status</td><td>:</td><td class="value">'.$row['transaction_status'].'</td></tr>
                                 <tr><td class="label">Weight No</td><td>:</td><td class="value">'.$row['transaction_id'].'</td></tr>
+                                <tr><td class="label">Weight By</td><td>:</td><td class="value">'.$row['modified_by'].'</td></tr>
                                 <tr><td class="label">Weight Date</td><td>:</td><td class="value">'.$date.'</td></tr>
+                                <tr><td class="label">Destination</td><td>:</td><td class="value">'.$row['destination'].'</td></tr>
                                 <tr><td class="label">Vehicle Plate</td><td>:</td><td class="value">'.$row['lorry_plate_no1'].'</td></tr>
-                                <tr style="visibility:hidden"><td class="label">Weight Time</td><td>:</td><td class="value">'.$time.'</td></tr>
                             </table>
                         </div>
                         <br>
@@ -457,7 +462,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <p style="text-align:center;font-size: 18px;">
                                     THIS WEIGHING SLIP IS COMPUTER GENERATED AND<br>
                                     REQUIRES NO SIGNATURE & CHOP<br>
-                                    Authorised by: '.$compname.'
+                                    AUTHORISED BY: '.$compname.'
                                 </p>
                             </div>
                         </div>
