@@ -536,3 +536,10 @@ ALTER TABLE `Weight_Product` ADD `deleted` INT(1) NOT NULL DEFAULT '0' AFTER `to
 ALTER TABLE `Vehicle` ADD `customer_code` VARCHAR(50) NULL AFTER `plant`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`, ADD `supplier_code` VARCHAR(50) NULL AFTER `customer_name`, ADD `supplier_name` VARCHAR(100) NULL AFTER `supplier_code`;
 
 ALTER TABLE `Vehicle_Log` ADD `customer_code` VARCHAR(50) NULL AFTER `plant`, ADD `customer_name` VARCHAR(100) NULL AFTER `customer_code`, ADD `supplier_code` VARCHAR(50) NULL AFTER `customer_name`, ADD `supplier_name` VARCHAR(100) NULL AFTER `supplier_code`;
+
+-- 27/05/2025 --
+ALTER TABLE `Vehicle` CHANGE `vehicle_weight` `vehicle_weight` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `Vehicle_Log` CHANGE `vehicle_weight` `vehicle_weight` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `Weight_product` ADD `reduce_weight` INT(20) NULL AFTER `item_weight`, ADD `total_weight` INT(20) NULL AFTER `reduce_weight`;

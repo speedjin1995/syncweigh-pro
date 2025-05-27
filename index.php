@@ -528,6 +528,19 @@ if ($user != null && $user != ''){
                                                                                             </div><!-- end col -->
                                                                                         </div><!-- end row -->
                                                                                     </div><!-- end col-xxl -->
+                                                                                    <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                        <div class="row">
+                                                                                            <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                            <div class="col-sm-8">
+                                                                                                <select class="form-select" id="transporter" name="transporter" >
+                                                                                                    <option selected="-">-</option>
+                                                                                                    <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
+                                                                                                        <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>                                                                                          
+                                                                                            </div><!-- end col -->
+                                                                                        </div><!-- end row -->
+                                                                                    </div><!-- end col-xxl -->
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -560,40 +573,13 @@ if ($user != null && $user != ''){
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select" id="transporter" name="transporter" >
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                          
-                                                                                    </div><!-- end col -->
+                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
-                                                                                <div class="row">
-                                                                                    <label for="supplyWeight" class="col-sm-4 col-form-label">Order Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div><!-- end col -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supply Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl --> 
                                                                         </div><!-- end row -->
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
@@ -630,17 +616,28 @@ if ($user != null && $user != ''){
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl --> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
                                                                                 <div class="row">
-                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
+                                                                                    <label for="supplyWeight" class="col-sm-4 col-form-label">Order Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
+                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supply Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
                                                                         </div><!-- end row -->
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverName">
@@ -664,12 +661,12 @@ if ($user != null && $user != ''){
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
                                                                                 <div class="row">
-                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Overall Reduce Weight</label>
+                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div><!-- end col -->
@@ -697,6 +694,17 @@ if ($user != null && $user != ''){
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Overall Reduce Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -742,10 +750,6 @@ if ($user != null && $user != ''){
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="grossIncoming" class="col-sm-4 col-form-label">Incoming Weight</label>
                                                                                     <div class="col-sm-8">
@@ -765,10 +769,6 @@ if ($user != null && $user != ''){
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate" readonly>
                                                                                     </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -794,10 +794,6 @@ if ($user != null && $user != ''){
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="nettWeight" class="col-sm-4 col-form-label">Nett Weight</label>
                                                                                     <div class="col-sm-8">
@@ -816,10 +812,6 @@ if ($user != null && $user != ''){
                                                                                     <div class="col-sm-8">
                                                                                         <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Remarks"></textarea>
                                                                                     </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -905,6 +897,8 @@ if ($user != null && $user != ''){
                                                                                     <th>Products Description</th>
                                                                                     <th>Percentage (%)</th>
                                                                                     <th>Item Weight (kg)</th>
+                                                                                    <th>Reduce Weight (kg)</th>
+                                                                                    <th>Total Weight (kg)</th>
                                                                                     <th>Unit Price (RM)</th>
                                                                                     <th>Total Price (RM)</th>
                                                                                     <!-- <th>Variance (KG)</th> -->
@@ -913,7 +907,7 @@ if ($user != null && $user != ''){
                                                                             </thead>
                                                                             <tbody id="productTable"></tbody>
                                                                             <tfoot>
-                                                                                <th colspan="6">Total Price (RM)</th>
+                                                                                <th colspan="8">Total Price (RM)</th>
                                                                                 <th><input type="number" class="form-control" id="totalPrice" name="totalPrice" style="background-color:white;" value="0" readonly></th>
                                                                                 <th></th>
                                                                             </tfoot>
@@ -1217,6 +1211,12 @@ if ($user != null && $user != ''){
             </td>
             <td>
                 <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0" readonly required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productReduceWeight" name="productReduceWeight" style="background-color:white;" value="0" readonly required>
+            </td>
+            <td>
+                <input type="number" class="form-control input-readonly" id="productTotalWeight" name="productTotalWeight" style="background-color:white;" value="0" readonly required>
             </td>
             <td>
                 <input type="number" class="form-control input-readonly" id="productUnitPrice" name="productUnitPrice" value="0" readonly required>
@@ -2418,6 +2418,7 @@ if ($user != null && $user != ''){
                 $('#tareOutgoing2').removeAttr('readonly');
                 $('#grossIncoming2').removeAttr('readonly');
                 $('[id^="productItemWeight"]').removeAttr('readonly');
+                $('[id^="productReduceWeight"]').removeAttr('readonly');
             }
             else{
                 $('#grossIncoming').attr('readonly', 'readonly');
@@ -2425,6 +2426,7 @@ if ($user != null && $user != ''){
                 $('#grossIncoming2').attr('readonly', 'readonly');
                 $('#tareOutgoing2').attr('readonly', 'readonly');
                 $('[id^="productItemWeight"]').attr('readonly', true);
+                $('[id^="productReduceWeight"]').attr('readonly', true);
             }
         });
 
@@ -2527,21 +2529,20 @@ if ($user != null && $user != ''){
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
 
-            // Loop directly through productItemWeight fields
-            // $('#productTable input[id^="productItemWeight"]').each(function() {
-            //     var row = $(this).closest('.details'); // Find the closest row
-            //     var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
-            //     var productItemWeight = (finalWeight * productPercentage) / 100;
+            // Loop directly through productPercentage fields to recalculate item weight
+            $('#productTable input[id^="productPercentage"]').each(function() {
+                var row = $(this).closest('.details'); // Find the closest row
+                var productPercentage = parseFloat($(this).val());
+                var reduceWeight = parseFloat(row.find('input[id^="productReduceWeight"]').val());
+                var productItemWeight = (nett1 * productPercentage) / 100;
+                var productTotalWeight = productItemWeight - reduceWeight;
 
-            //     // Update the productItemWeight field
-            //     $(this).val(productItemWeight.toFixed(2));
+                // Update the productItemWeight field
+                row.find('input[id^="productItemWeight"]').val(productItemWeight.toFixed(2));
+                row.find('input[id^="productTotalWeight"]').val(productTotalWeight.toFixed(2));
 
-            //     // Trigger change on productUnitPrice to recalculate dependent values
-            //     row.find('input[id^="productUnitPrice"]').trigger('change');
-            // });
-
-            $('.productPercentage').each(function () {
-                $(this).trigger('keyup');
+                // Trigger change on productUnitPrice to recalculate dependent values
+                row.find('input[id^="productUnitPrice"]').trigger('change');
             });
         });
 
@@ -2758,21 +2759,25 @@ if ($user != null && $user != ''){
             // Retrieve the input's attributes
             var productPercentage = $(this).val();
             var finalWeight = $('#finalWeight').val();
+            var reduceWeight = $(this).closest('.details').find('input[id^="productReduceWeight"]').val();
             var productItemWeight = parseFloat(finalWeight) * (parseFloat(productPercentage) / 100);
+            var productTotalWeight = parseFloat(productItemWeight) - parseFloat(reduceWeight);
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
+            $(this).closest('.details').find('input[id^="productTotalWeight"]').val(productTotalWeight);
 
-            // Check the total sum of all productPercentage inputs
-            var totalPercentage = 0;
-            $('input[id^="productPercentage"]').each(function() {
-                totalPercentage += parseFloat($(this).val()) || 0;
-            });
+            // Check the total sum of all product item weight inputs
+            var totalItemWeight = 0;
+            $('input[id^="productItemWeight"]').each(function() {
+                totalItemWeight += parseFloat($(this).val()) || 0;
+            }); 
 
-            if (totalPercentage > 100) {
-                alert("Total percentage cannot exceed 100%!");
+            if (totalItemWeight > finalWeight) {
+                alert("Total item weight cannot exceed final weight!");
                 $(this).val(0); // Reset the input to prevent percentage from exceeding 100%
                 $(this).closest('.details').find('input[id^="productItemWeight"]').val(0); // Reset weight to 0
+                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0);
             }
 
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
@@ -2783,24 +2788,40 @@ if ($user != null && $user != ''){
             // Retrieve the input's attributes
             var productItemWeight = $(this).val();
             var finalWeight = $('#finalWeight').val();
+            var reduceWeight = $(this).closest('.details').find('input[id^="productReduceWeight"]').val();
+            var productTotalWeight = parseFloat(productItemWeight) - parseFloat(reduceWeight);
             var productPercentage = (parseFloat(productItemWeight) / parseFloat(finalWeight)) * 100;
-            var roundedPercentage = Math.round(productPercentage);
+            var roundedPercentage = productPercentage.toFixed(2);
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productPercentage"]').val(roundedPercentage);
+            $(this).closest('.details').find('input[id^="productTotalWeight"]').val(productTotalWeight);
 
-            // Check the total sum of all productPercentage inputs
-            var totalPercentage = 0;
-            $('input[id^="productPercentage"]').each(function() {
-                totalPercentage += parseFloat($(this).val()) || 0;
+            // Check the total sum of all product item weight inputs
+            var totalItemWeight = 0;
+            $('input[id^="productItemWeight"]').each(function() {
+                totalItemWeight += parseFloat($(this).val()) || 0;
             });
 
-            if (totalPercentage > 100) {
-                alert("Total percentage cannot exceed 100%!");
+            if (totalItemWeight > finalWeight) {
+                alert("Total item weight cannot exceed final weight!");
                 $(this).val(0); // Reset the weight to 0
                 $(this).closest('.details').find('input[id^="productPercentage"]').val(0); // Reset the input to prevent percentage from exceeding 100%
+                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0);
             }
 
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
+        });
+
+        // Event delegation to calculate product percentage from order weight
+        $("#productTable").on('keyup', 'input[id^="productReduceWeight"]', function(){
+            // Retrieve the input's attributes
+            var reduceWeight = $(this).val();
+            var itemWeight = $(this).closest('.details').find('input[id^="productItemWeight"]').val();
+            var totalWeight = parseFloat(itemWeight) - parseFloat(reduceWeight);
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productTotalWeight"]').val(totalWeight);
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
         });
 
@@ -2808,8 +2829,8 @@ if ($user != null && $user != ''){
         $("#productTable").on('change', 'input[id^="productUnitPrice"]', function(){
             // Retrieve the input's attributes
             var unitPrice = parseFloat($(this).val()) || 0;
-            var productItemWeight = parseFloat($(this).closest('.details').find('input[id^="productItemWeight"]').val()) || 0;
-            var variance = parseFloat(unitPrice) * parseFloat(productItemWeight);
+            var productTotalWeight = parseFloat($(this).closest('.details').find('input[id^="productTotalWeight"]').val()) || 0;
+            var variance = parseFloat(unitPrice) * parseFloat(productTotalWeight);
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productTotalPrice"]').val(variance.toFixed(2)).trigger('change');
@@ -2834,37 +2855,100 @@ if ($user != null && $user != ''){
         });
 
         $(".add-product").click(function(){
-            var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
-            var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
-            if(manualPrice == 'false'){
-                var readonly = true;
+            var lastRow = $('#productTable tr:last');
+            var productPartCode = lastRow.find('select[name^="productPartCode"]').val();
+            var productPercentage = lastRow.find('input[name^="productPercentage"]').val();
+            var productItemWeight = lastRow.find('input[name^="productItemWeight"]').val();
+
+            if (lastRow.length) {
+                if (!productPartCode || productPartCode === "-" || !productPercentage || productPercentage == 0 || !productItemWeight || productItemWeight == 0) {
+                    alert("Please ensure the previous product is selected and that its product percentage and item weight are not zero before adding a new product.");
+                }else{
+                    var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
+                    var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
+                    if(manualPrice == 'false'){
+                        var readonly = true;
+                    }else{
+                        var readonly = false;
+                    }            
+                    if(manualWeight == 'false'){
+                        var weightReadOnly = true;
+                    }else{
+                        var weightReadOnly = false;
+                    } 
+                    
+                    // Calculation for future item weight
+                    var totalProductItemWeight = 0;
+                    $('#productTable tr').each(function(){
+                        if ($(this).find('input[name^="productItemWeight"]').val() > 0){
+                            totalProductItemWeight += parseFloat($(this).find('input[name^="productItemWeight"]').val())
+                        }
+                    });
+
+                    var finalWeight = parseFloat($('#addModal').find('#finalWeight').val());
+                    var nextProductWeight = finalWeight - totalProductItemWeight;
+                    var nextProductPercentage = (nextProductWeight/finalWeight)*100;
+
+                    if (nextProductWeight == 0){
+                        alert("The total weight of all products matches the final weight. You cannot add a new product.");
+                    }else{
+                        var $addContents = $("#productDetail").clone();
+                        $("#productTable").append($addContents.html());
+
+                        $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#productTable").find('.details:last').attr("data-index", rowCount);
+                        $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+                        $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+                        $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
+                        $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+                        $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount).val(nextProductPercentage);
+                        $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).val(nextProductWeight).attr("readonly", weightReadOnly);
+                        $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).attr("readonly", weightReadOnly);
+                        $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).val(nextProductWeight).attr("readonly", true);
+                        $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
+                        $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
+
+                        rowCount++;
+                    }
+                }
             }else{
-                var readonly = false;
-            }            
-            if(manualWeight == 'false'){
-                var weightReadOnly = true;
-            }else{
-                var weightReadOnly = false;
-            }            
+                var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
+                var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
+                if(manualPrice == 'false'){
+                    var readonly = true;
+                }else{
+                    var readonly = false;
+                }            
+                if(manualWeight == 'false'){
+                    var weightReadOnly = true;
+                }else{
+                    var weightReadOnly = false;
+                }            
 
-            var $addContents = $("#productDetail").clone();
-            $("#productTable").append($addContents.html());
+                var $addContents = $("#productDetail").clone();
+                $("#productTable").append($addContents.html());
 
-            $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
-            $("#productTable").find('.details:last').attr("data-index", rowCount);
-            $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
-            $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+                $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                $("#productTable").find('.details:last').attr("data-index", rowCount);
+                $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+                $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
-            $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
-            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
-            $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
-            $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
-            $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
-            $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
-            $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
-            $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
+                $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+                $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+                $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
+                $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+                $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
+                $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
+                $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).attr("readonly", weightReadOnly);
+                $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).attr("readonly", true);
+                $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
+                $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
 
-            rowCount++;
+                rowCount++;
+            }
         });
 
         $('#multiDeactivate').on('click', function () {
@@ -2955,6 +3039,8 @@ if ($user != null && $user != ''){
                             <th><span>PRODUCT Description</span></th>
                             <th class="align-center"><span>Percentage</span></th>
                             <th class="align-center"><span>Weight (KG)</span></th>
+                            <th class="align-center"><span>Reduce Weight (KG)</span></th>
+                            <th class="align-center"><span>Total Weight (KG)</span></th>
                             <th class="align-center"><span>Unit Price</span></th>
                             <th class="align-center"><span>Total Price</span></th>
                         </tr>
@@ -2973,6 +3059,8 @@ if ($user != null && $user != ''){
                                     <td>${i+1} ${item.product_code} - ${item.product_name}</td>
                                     <td class="align-center">${item.percentage}%</td>
                                     <td class="align-center">${item.item_weight}</td>
+                                    <td class="align-center">${item.reduce_weight}</td>
+                                    <td class="align-center">${item.total_weight}</td>
                                     <td class="align-center">RM ${item.unit_price}</td>
                                     <td class="align-center">RM ${item.total_price}</td>
                                 </tr>
@@ -3086,7 +3174,7 @@ if ($user != null && $user != ''){
                     $('#manualVehicle2').prop("checked", false);
                     $('.index-vehicle2').show();
                     $('#vehicleNoTxt2').hide();
-                } console.log(obj.message.driver_phone);
+                }
                 
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
                 $('#addModal').find('#customerName').val(obj.message.customer_name);
@@ -3150,6 +3238,8 @@ if ($user != null && $user != ''){
                         $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount).val(item.product_name);
                         $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount).val(item.percentage);
                         $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).val(item.item_weight);
+                        $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).val(item.reduce_weight);
+                        $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).val(item.total_weight);
                         $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).val(item.unit_price);
                         $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", true).val(item.total_price);
 

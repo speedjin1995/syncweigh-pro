@@ -71,6 +71,19 @@ while($row2=mysqli_fetch_assoc($weighing2)){
 
 $count = count($salesList) + count($purchaseList) + count($localList) + count($miscList);
 $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
+
+$compids = '1';
+$stmtComp = $db->prepare("SELECT * FROM Company WHERE id=?");
+$stmtComp->bind_param('s', $compids);
+$stmtComp->execute();
+$resultC = $stmtComp->get_result();
+$compname = '';
+        
+if ($rowc = $resultC->fetch_assoc()) {
+    $compname = $rowc['name'];
+}
+
+$date = date('d/m/Y - h:i:sA');
 ?>
 <header id="page-topbar" style="background-color: #316b31;">
     <div class="layout-width">
@@ -105,6 +118,8 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                         <span></span>
                     </span>
                 </button>
+
+                <h3 style="color: white; margin-top: 4%"><?=$compname ?></h3>
 
                 <!-- App Search-->
                 <!--form class="app-search d-none d-md-block">
@@ -650,6 +665,8 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                         </div>
                     </div>
                 </div-->
+
+                <h4 style="color:white; margin-top: 10px;"><?= $date ?></h4>
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
