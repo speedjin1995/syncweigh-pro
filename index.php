@@ -787,9 +787,9 @@ if ($user != null && $user != ''){
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="estimateLoading" class="col-sm-4 col-form-label">Estimate Loading (Mins)</label>
+                                                                                    <label for="estimateLoading" class="col-sm-4 col-form-label">Estimate Loading</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly" id="estimateLoading" name="estimateLoading" readonly>
+                                                                                        <input type="text" class="form-control input-readonly" style="color:red;" id="estimateLoading" name="estimateLoading" readonly>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -819,7 +819,7 @@ if ($user != null && $user != ''){
                                                                                     <label for="finalWeight" class="col-sm-4 col-form-label">Final Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="finalWeight" name="finalWeight" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" style="font-weight:bold;" id="finalWeight" name="finalWeight" placeholder="0" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div><!-- end col -->
@@ -1197,6 +1197,7 @@ if ($user != null && $user != ''){
                             data-high="<?=$rowProduct['high'] ?>" 
                             data-low="<?=$rowProduct['low'] ?>" 
                             data-variance="<?=$rowProduct['variance'] ?>" 
+                            data-ratetype="<?=$rowProduct['rate_type'] ?>" 
                             data-description="<?=$rowProduct['description'] ?>">
                             <?=$rowProduct['product_code'] ?> - <?=$rowProduct['name'] ?>
                         </option>
@@ -1207,22 +1208,22 @@ if ($user != null && $user != ''){
                 <input type="text" class="form-control" id="products" name="products" style="background-color:white;" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control productPercentage" id="productPercentage" name="productPercentage" style="background-color:white;" value="0" required>
+                <input type="number" class="form-control productPercentage" id="productPercentage" name="productPercentage" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0" readonly required>
+                <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0.00" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control" id="productReduceWeight" name="productReduceWeight" style="background-color:white;" value="0" readonly required>
+                <input type="number" class="form-control" id="productReduceWeight" name="productReduceWeight" style="background-color:white;" value="0.00" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control input-readonly" id="productTotalWeight" name="productTotalWeight" style="background-color:white;" value="0" readonly required>
+                <input type="number" class="form-control input-readonly" id="productTotalWeight" name="productTotalWeight" style="background-color:white;" value="0.00" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control input-readonly" id="productUnitPrice" name="productUnitPrice" value="0" readonly required>
+                <input type="number" class="form-control input-readonly" id="productUnitPrice" name="productUnitPrice" value="0.00" readonly required>
             </td>
             <td>
-                <input type="number" class="form-control" id="productTotalPrice" name="productTotalPrice" style="background-color:white;" value="0" required>
+                <input type="number" class="form-control" id="productTotalPrice" name="productTotalPrice" style="background-color:white;" value="0.00" required>
             </td>
             <!-- <td>
                 <input type="number" class="form-control" id="productActualWeight" name="productActualWeight" style="background-color:white;" value="0">
@@ -2477,8 +2478,16 @@ if ($user != null && $user != ''){
                 let start = parseDate(startDate);
                 let end = parseDate(endDate);
 
-                let diffInMinutes = Math.ceil((end - start) / 60000); // Convert milliseconds to minutes
-                $('#estimateLoading').val(Math.abs(diffInMinutes));
+                let diffInMinutes = Math.abs(Math.ceil((end - start) / 60000)); // Convert milliseconds to minutes
+
+                // Calculate hours and minutes
+                let hours = Math.floor(diffInMinutes / 60);
+                let minutes = diffInMinutes % 60;
+
+                // Format to "X HOUR Y MIN"
+                let formattedDuration = `${hours} HOUR${hours !== 1 ? 'S' : ''} ${minutes} MIN${minutes !== 1 ? 'S' : ''}`;
+
+                $('#estimateLoading').val(formattedDuration);
             }
         });
 
@@ -2490,8 +2499,16 @@ if ($user != null && $user != ''){
                 let start = parseDate(startDate);
                 let end = parseDate(endDate);
 
-                let diffInMinutes = Math.ceil((end - start) / 60000); // Convert milliseconds to minutes
-                $('#estimateLoading').val(Math.abs(diffInMinutes));
+                let diffInMinutes = Math.abs(Math.ceil((end - start) / 60000)); // Convert milliseconds to minutes
+
+                // Calculate hours and minutes
+                let hours = Math.floor(diffInMinutes / 60);
+                let minutes = diffInMinutes % 60;
+
+                // Format to "X HOUR Y MIN"
+                let formattedDuration = `${hours} HOUR${hours !== 1 ? 'S' : ''} ${minutes} MIN${minutes !== 1 ? 'S' : ''}`;
+
+                $('#estimateLoading').val(formattedDuration);
             }
         });
 
@@ -2760,10 +2777,11 @@ if ($user != null && $user != ''){
             var productPercentage = $(this).val();
             var finalWeight = $('#finalWeight').val();
             var reduceWeight = $(this).closest('.details').find('input[id^="productReduceWeight"]').val();
-            var productItemWeight = parseFloat(finalWeight) * (parseFloat(productPercentage) / 100);
-            var productTotalWeight = parseFloat(productItemWeight) - parseFloat(reduceWeight);
+            var productItemWeight = (parseFloat(finalWeight) * (parseFloat(productPercentage) / 100)).toFixed(2);
+            var productTotalWeight = (parseFloat(productItemWeight) - parseFloat(reduceWeight)).toFixed(2);
 
             // Update the respective inputs for variance
+            $(this).val(parseFloat(productPercentage).toFixed(2));
             $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
             $(this).closest('.details').find('input[id^="productTotalWeight"]').val(productTotalWeight);
 
@@ -2776,8 +2794,8 @@ if ($user != null && $user != ''){
             if (totalItemWeight > finalWeight) {
                 alert("Total item weight cannot exceed final weight!");
                 $(this).val(0); // Reset the input to prevent percentage from exceeding 100%
-                $(this).closest('.details').find('input[id^="productItemWeight"]').val(0); // Reset weight to 0
-                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0);
+                $(this).closest('.details').find('input[id^="productItemWeight"]').val(0.00); // Reset weight to 0
+                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0.00);
             }
 
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
@@ -2789,11 +2807,12 @@ if ($user != null && $user != ''){
             var productItemWeight = $(this).val();
             var finalWeight = $('#finalWeight').val();
             var reduceWeight = $(this).closest('.details').find('input[id^="productReduceWeight"]').val();
-            var productTotalWeight = parseFloat(productItemWeight) - parseFloat(reduceWeight);
+            var productTotalWeight = (parseFloat(productItemWeight) - parseFloat(reduceWeight)).tofixed(2);
             var productPercentage = (parseFloat(productItemWeight) / parseFloat(finalWeight)) * 100;
             var roundedPercentage = productPercentage.toFixed(2);
 
             // Update the respective inputs for variance
+            $(this).val(parseFloat(productItemWeight).tofixed(2));
             $(this).closest('.details').find('input[id^="productPercentage"]').val(roundedPercentage);
             $(this).closest('.details').find('input[id^="productTotalWeight"]').val(productTotalWeight);
 
@@ -2806,8 +2825,8 @@ if ($user != null && $user != ''){
             if (totalItemWeight > finalWeight) {
                 alert("Total item weight cannot exceed final weight!");
                 $(this).val(0); // Reset the weight to 0
-                $(this).closest('.details').find('input[id^="productPercentage"]').val(0); // Reset the input to prevent percentage from exceeding 100%
-                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0);
+                $(this).closest('.details').find('input[id^="productPercentage"]').val(0.00); // Reset the input to prevent percentage from exceeding 100%
+                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0.00);
             }
 
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
@@ -2818,9 +2837,10 @@ if ($user != null && $user != ''){
             // Retrieve the input's attributes
             var reduceWeight = $(this).val();
             var itemWeight = $(this).closest('.details').find('input[id^="productItemWeight"]').val();
-            var totalWeight = parseFloat(itemWeight) - parseFloat(reduceWeight);
+            var totalWeight = (parseFloat(itemWeight) - parseFloat(reduceWeight)).toFixed(2);
 
             // Update the respective inputs for variance
+            $(this).val(parseFloat(reduceWeight).toFixed(2));
             $(this).closest('.details').find('input[id^="productTotalWeight"]').val(totalWeight);
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
         });
@@ -2829,8 +2849,15 @@ if ($user != null && $user != ''){
         $("#productTable").on('change', 'input[id^="productUnitPrice"]', function(){
             // Retrieve the input's attributes
             var unitPrice = parseFloat($(this).val()) || 0;
+            var rateType = $(this).closest('.details').find('select[id^="productPartCode"]').find(":selected").data('ratetype');
             var productTotalWeight = parseFloat($(this).closest('.details').find('input[id^="productTotalWeight"]').val()) || 0;
-            var variance = parseFloat(unitPrice) * parseFloat(productTotalWeight);
+            var variance = 0;
+
+            if (rateType == 'Fixed'){
+                variance = parseFloat(unitPrice);
+            }else{
+                variance = parseFloat(unitPrice) * parseFloat(productTotalWeight);
+            }
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productTotalPrice"]').val(variance.toFixed(2)).trigger('change');
@@ -2886,8 +2913,8 @@ if ($user != null && $user != ''){
                     });
 
                     var finalWeight = parseFloat($('#addModal').find('#finalWeight').val());
-                    var nextProductWeight = finalWeight - totalProductItemWeight;
-                    var nextProductPercentage = (nextProductWeight/finalWeight)*100;
+                    var nextProductWeight = (finalWeight - totalProductItemWeight).toFixed(2);
+                    var nextProductPercentage = ((nextProductWeight/finalWeight)*100).toFixed(2);
 
                     if (nextProductWeight == 0){
                         alert("The total weight of all products matches the final weight. You cannot add a new product.");
