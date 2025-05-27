@@ -666,7 +666,7 @@ $date = date('d/m/Y - h:i:sA');
                     </div>
                 </div-->
 
-                <h4 style="color:white; margin-top: 10px;"><?= $date ?></h4>
+                <!-- <h4 style="color:white; margin-top: 10px;"><?= $date ?></h4> -->
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
