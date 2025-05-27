@@ -2964,6 +2964,8 @@ if ($user != null && $user != ''){
                             <th><span>PRODUCT Description</span></th>
                             <th class="align-center"><span>Percentage</span></th>
                             <th class="align-center"><span>Weight (KG)</span></th>
+                            <th class="align-center"><span>Reduce Weight (KG)</span></th>
+                            <th class="align-center"><span>Total Weight (KG)</span></th>
                             <th class="align-center"><span>Unit Price</span></th>
                             <th class="align-center"><span>Total Price</span></th>
                         </tr>
@@ -2982,6 +2984,8 @@ if ($user != null && $user != ''){
                                     <td>${i+1} ${item.product_code} - ${item.product_name}</td>
                                     <td class="align-center">${item.percentage}%</td>
                                     <td class="align-center">${item.item_weight}</td>
+                                    <td class="align-center">${item.reduce_weight}</td>
+                                    <td class="align-center">${item.total_weight}</td>
                                     <td class="align-center">RM ${item.unit_price}</td>
                                     <td class="align-center">RM ${item.total_price}</td>
                                 </tr>
