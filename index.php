@@ -528,6 +528,19 @@ if ($user != null && $user != ''){
                                                                                             </div><!-- end col -->
                                                                                         </div><!-- end row -->
                                                                                     </div><!-- end col-xxl -->
+                                                                                    <div class="col-xxl-6 col-lg-6 mb-3">
+                                                                                        <div class="row">
+                                                                                            <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
+                                                                                            <div class="col-sm-8">
+                                                                                                <select class="form-select" id="transporter" name="transporter" >
+                                                                                                    <option selected="-">-</option>
+                                                                                                    <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
+                                                                                                        <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>                                                                                          
+                                                                                            </div><!-- end col -->
+                                                                                        </div><!-- end row -->
+                                                                                    </div><!-- end col-xxl -->
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -560,40 +573,13 @@ if ($user != null && $user != ''){
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row">
-                                                                                    <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <select class="form-select" id="transporter" name="transporter" >
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                          
-                                                                                    </div><!-- end col -->
+                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
-                                                                                <div class="row">
-                                                                                    <label for="supplyWeight" class="col-sm-4 col-form-label">Order Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight" placeholder="0">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div><!-- end col -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supply Weight</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
-                                                                                            <div class="input-group-text">Kg</div>
-                                                                                        </div>
-                                                                                    </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl --> 
                                                                         </div><!-- end row -->
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
@@ -630,17 +616,28 @@ if ($user != null && $user != ''){
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl --> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
                                                                                 <div class="row">
-                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
+                                                                                    <label for="supplyWeight" class="col-sm-4 col-form-label">Order Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
+                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight" placeholder="0">
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierWeight" style="display:none;">
+                                                                                <div class="row">
+                                                                                    <label for="supplierWeight" class="col-sm-4 col-form-label">Supply Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl --> 
                                                                         </div><!-- end row -->
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverName">
@@ -664,12 +661,12 @@ if ($user != null && $user != ''){
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
                                                                                 <div class="row">
-                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Overall Reduce Weight</label>
+                                                                                    <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <input type="number" class="form-control input-readonly" id="weightDifference" name="weightDifference" placeholder="Weight Difference" readonly>
                                                                                             <div class="input-group-text">Kg</div>
                                                                                         </div>
                                                                                     </div><!-- end col -->
@@ -697,6 +694,17 @@ if ($user != null && $user != ''){
                                                                                     <label for="deliveryNo" class="col-sm-4 col-form-label">Delivery No</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="deliveryNo" name="deliveryNo" placeholder="Delivery No">
+                                                                                    </div><!-- end col -->
+                                                                                </div><!-- end row -->
+                                                                            </div><!-- end col-xxl -->
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="reduceWeight" class="col-sm-4 col-form-label">Overall Reduce Weight</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <div class="input-group">
+                                                                                            <input type="number" class="form-control" id="reduceWeight" name="reduceWeight" placeholder="0">
+                                                                                            <div class="input-group-text">Kg</div>
+                                                                                        </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -742,10 +750,6 @@ if ($user != null && $user != ''){
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="grossIncoming" class="col-sm-4 col-form-label">Incoming Weight</label>
                                                                                     <div class="col-sm-8">
@@ -765,10 +769,6 @@ if ($user != null && $user != ''){
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate" readonly>
                                                                                     </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -794,10 +794,6 @@ if ($user != null && $user != ''){
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="nettWeight" class="col-sm-4 col-form-label">Nett Weight</label>
                                                                                     <div class="col-sm-8">
@@ -816,10 +812,6 @@ if ($user != null && $user != ''){
                                                                                     <div class="col-sm-8">
                                                                                         <textarea class="form-control" id="remarks" name="remarks" rows="3" placeholder="Remarks"></textarea>
                                                                                     </div><!-- end col -->
-                                                                                </div><!-- end row -->
-                                                                            </div><!-- end col-xxl -->
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
-                                                                                <div class="row" style="display:none;">
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
