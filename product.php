@@ -210,6 +210,18 @@ if ($_SESSION["roles"] != 'SADMIN'){
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="rateType" class="col-sm-4 col-form-label">Rate Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="rateType" name="rateType" required>
+                                                                                            <option value="" selected disabled hidden>Please Select</option>
+                                                                                            <option value="Float">Float</option>
+                                                                                            <option value="Fixed">Fixed</option>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -262,6 +274,7 @@ if ($_SESSION["roles"] != 'SADMIN'){
                                                                     <th>Product Price</th>
                                                                     <th>Description</th>
                                                                     <th>Plant</th>
+                                                                    <th>Rate Type</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -353,6 +366,7 @@ $(function () {
             { data: 'price' },
             { data: 'description' },
             { data: 'plant' },
+            { data: 'rate_type' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -406,6 +420,7 @@ $(function () {
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
         $('#addModal').find('#plant').val("");
+        $('#addModal').find('#rateType').val("");
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -439,6 +454,7 @@ $(function () {
                 $('#addModal').find('#high').val(obj.message.high);
                 $('#addModal').find('#low').val(obj.message.low);
                 $('#addModal').find('#plant').val(obj.message.plant);
+                $('#addModal').find('#rateType').val(obj.message.rate_type);
                 $('#addModal').modal('show');
             }
             else if(obj.status === 'failed'){

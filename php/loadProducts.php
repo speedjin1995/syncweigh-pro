@@ -47,6 +47,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "name"=>$row['name'],
       "price"=>$row['price'],
       "description"=>$row['description'],
+      "rate_type"=>$row['rate_type'],
       "plant"=>searchPlantNameById($row['plant'],$db)
     );
 }
