@@ -543,3 +543,11 @@ ALTER TABLE `Vehicle` CHANGE `vehicle_weight` `vehicle_weight` VARCHAR(50) CHARA
 ALTER TABLE `Vehicle_Log` CHANGE `vehicle_weight` `vehicle_weight` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
 
 ALTER TABLE `Weight_product` ADD `reduce_weight` INT(20) NULL AFTER `item_weight`, ADD `total_weight` INT(20) NULL AFTER `reduce_weight`;
+
+ALTER TABLE `Weight` CHANGE `estimate_loading` `estimate_loading` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Weight_Log` CHANGE `estimate_loading` `estimate_loading` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Product` ADD `rate_type` VARCHAR(10) NOT NULL DEFAULT 'Float' AFTER `plant`;
+
+ALTER TABLE `Product_Log` ADD `rate_type` VARCHAR(10) NOT NULL DEFAULT 'Float' AFTER `plant`;

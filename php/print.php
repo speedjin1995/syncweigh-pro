@@ -297,7 +297,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 .signature-section {
                                     display: flex;
                                     justify-content: space-between;
-                                    margin-top:85px;
+                                    margin-top:55px;
                                 }
                                 .signature-box {
                                     width: 100%;
@@ -359,7 +359,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <td class="weight">
                                     <table style="border: none;">
                                         <tr>
-                                            <th style="border-top:none; border-left:none;">Date / Time</th>
+                                            <th style="border-top:none; border-left:none;">Date / Time <br> <span style="visibility:hidden">empty</span></th>
                                             <th class="border-none" colspan="2">Weight (kg)</th>
                                         </tr> 
                                         <tr>
@@ -384,6 +384,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <td colspan="2" class="right-align" style="border-left:none; border-bottom: none; padding-left: 15px;">Net Weight (kg)</td>
                                             <td style="text-align:center;font-weight:bold; border-right:none; border-bottom: none;">'.($row['nett_weight1'] ?? '0').'</td>
                                         </tr>
+                                        <tr>
+                                            <td colspan="3" style="border-left:none; border-right:none; border-bottom: none; visibility:hidden">empty space</td>
+                                        </tr>
                                     </table>
                                 </td>
                                 <td class="product">
@@ -391,9 +394,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <tr>
                                             <th style="border-top:none; border-left:none;">Product Description</th>
                                             <th style="border-top:none;">(%)</th>
-                                            <th style="border-top:none;">Weight (kg)</th>
-                                            <th style="border-top:none;">U/Price (RM)</th>
-                                            <th style="border-top:none; border-right:none;">Total Price (RM)</th>
+                                            <th style="border-top:none;">Weight <br>(kg)</th>
+                                            <th style="border-top:none;">Reduce <br>(kg)</th>
+                                            <th style="border-top:none;">Total <br>(kg)</th>
+                                            <th style="border-top:none;">U/Price <br>(RM)</th>
+                                            <th style="border-top:none; border-right:none;">Total Price <br>(RM)</th>
                                         </tr>';
 
                     $rowCount = 1;
@@ -404,17 +409,21 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                 <td class="left-align" style="border-left:none;">'.$rowCount. ' '.$row2['product_name'].'</td>
                                                 <td style="text-align: center">'.$row2['percentage'].'</td>
                                                 <td style="text-align: center">'.$row2['item_weight'].'</td>
+                                                <td style="text-align: center">'.$row2['reduce_weight'].'</td>
+                                                <td style="text-align: center">'.$row2['total_weight'].'</td>
                                                 <td class="right-align" style="padding-right: 10px;">'.($row2['unit_price'] ?? '-').'</td>
-                                                <td class="right-align" style="border-right:none; padding-right: 10px">'.($row2['total_price'] ?? '-').'</td>
+                                                <td class="right-align" style="font-weight:bold; border-right:none; padding-right: 10px">'.($row2['total_price'] ?? '-').'</td>
                                             </tr>';
                             $rowCount++;
                         }
                     }
 
                     // Add empty rows if less than 5
-                    while ($rowCount <= 4) {
+                    while ($rowCount <= 5) {
                         $message .= '<tr>
                                         <td class="left-align" style="border-left:none; visibility:hidden">' . $rowCount . '</td>
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td class="right-align"></td>
@@ -440,9 +449,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                     }
 
                                         $message .= '<tr>
-                                            <td colspan="3" class="no-border"></td>
-                                            <td style="text-align:right; border-bottom: none;">Total Amount</td>
-                                            <td class="right-align" style="border-bottom: none; border-right: none; padding-right: 10px">'.$totalAmount.'</td>
+                                            <td colspan="6" style="text-align:right; border-bottom: none; border-left: none; font-weight:bold;">Total Amount</td>
+                                            <td class="right-align" style="font-weight:bold; border-bottom: none; border-right: none; padding-right: 10px; text-align:right; padding-right: 10px;">'.$totalAmount.'</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -458,7 +466,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <tr><td class="label" style="font-size: 18px;">I/C No.</td><td>:</td><td class="value"></td></tr>
                                 </table>
                             </div>
-                            <div style="margin-top:30px;">
+                            <div style="margin-top:10px;">
                                 <p style="text-align:center;font-size: 18px;">
                                     THIS WEIGHING SLIP IS COMPUTER GENERATED AND<br>
                                     REQUIRES NO SIGNATURE & CHOP<br>
