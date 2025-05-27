@@ -2455,21 +2455,20 @@ if ($user != null && $user != ''){
             var current = nett1 - nett2;
             $('#weightDifference').val(current.toFixed(0));
 
-            // Loop directly through productItemWeight fields
-            // $('#productTable input[id^="productItemWeight"]').each(function() {
-            //     var row = $(this).closest('.details'); // Find the closest row
-            //     var productPercentage = parseFloat(row.find('input[id^="productPercentage"]').val()) || 0;
-            //     var productItemWeight = (finalWeight * productPercentage) / 100;
+            // Loop directly through productPercentage fields to recalculate item weight
+            $('#productTable input[id^="productPercentage"]').each(function() {
+                var row = $(this).closest('.details'); // Find the closest row
+                var productPercentage = parseFloat($(this).val());
+                var reduceWeight = parseFloat(row.find('input[id^="productReduceWeight"]').val());
+                var productItemWeight = (nett1 * productPercentage) / 100;
+                var productTotalWeight = productItemWeight - reduceWeight;
 
-            //     // Update the productItemWeight field
-            //     $(this).val(productItemWeight.toFixed(2));
+                // Update the productItemWeight field
+                row.find('input[id^="productItemWeight"]').val(productItemWeight.toFixed(2));
+                row.find('input[id^="productTotalWeight"]').val(productTotalWeight.toFixed(2));
 
-            //     // Trigger change on productUnitPrice to recalculate dependent values
-            //     row.find('input[id^="productUnitPrice"]').trigger('change');
-            // });
-
-            $('.productPercentage').each(function () {
-                $(this).trigger('keyup');
+                // Trigger change on productUnitPrice to recalculate dependent values
+                row.find('input[id^="productUnitPrice"]').trigger('change');
             });
         });
 
@@ -2789,7 +2788,7 @@ if ($user != null && $user != ''){
 
             if (lastRow.length) {
                 if (!productPartCode || productPartCode === "-" || !productPercentage || productPercentage == 0 || !productItemWeight || productItemWeight == 0) {
-                    alert("Previous product must be selected and product percentage and item weight must not be 0 before adding new product.");
+                    alert("Please ensure the previous product is selected and that its product percentage and item weight are not zero before adding a new product.");
                 }else{
                     var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
                     var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
@@ -2802,28 +2801,44 @@ if ($user != null && $user != ''){
                         var weightReadOnly = true;
                     }else{
                         var weightReadOnly = false;
-                    }            
+                    } 
+                    
+                    // Calculation for future item weight
+                    var totalProductItemWeight = 0;
+                    $('#productTable tr').each(function(){
+                        if ($(this).find('input[name^="productItemWeight"]').val() > 0){
+                            totalProductItemWeight += parseFloat($(this).find('input[name^="productItemWeight"]').val())
+                        }
+                    });
 
-                    var $addContents = $("#productDetail").clone();
-                    $("#productTable").append($addContents.html());
+                    var finalWeight = parseFloat($('#addModal').find('#finalWeight').val());
+                    var nextProductWeight = finalWeight - totalProductItemWeight;
+                    var nextProductPercentage = (nextProductWeight/finalWeight)*100;
 
-                    $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
-                    $("#productTable").find('.details:last').attr("data-index", rowCount);
-                    $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
-                    $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+                    if (nextProductWeight == 0){
+                        alert("The total weight of all products matches the final weight. You cannot add a new product.");
+                    }else{
+                        var $addContents = $("#productDetail").clone();
+                        $("#productTable").append($addContents.html());
 
-                    $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
-                    $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
-                    $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
-                    $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
-                    $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
-                    $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
-                    $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).attr("readonly", weightReadOnly);
-                    $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).attr("readonly", true);
-                    $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
-                    $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
+                        $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#productTable").find('.details:last').attr("data-index", rowCount);
+                        $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
-                    rowCount++;
+                        $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+                        $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
+                        $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+                        $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount).val(nextProductPercentage);
+                        $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).val(nextProductWeight).attr("readonly", weightReadOnly);
+                        $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).attr("readonly", weightReadOnly);
+                        $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).val(nextProductWeight).attr("readonly", true);
+                        $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
+                        $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
+
+                        rowCount++;
+                    }
                 }
             }else{
                 var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
