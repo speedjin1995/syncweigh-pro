@@ -475,6 +475,8 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                 $products = isset($_POST['products']) ? $_POST['products']: [];
                 $productPercentage = isset($_POST['productPercentage']) ? $_POST['productPercentage']: [];
                 $productItemWeight = isset($_POST['productItemWeight']) ? $_POST['productItemWeight']: [];
+                $productReduceWeight = isset($_POST['productReduceWeight']) ? $_POST['productReduceWeight']: [];
+                $productTotalWeight = isset($_POST['productTotalWeight']) ? $_POST['productTotalWeight']: [];
                 $productUnitPrice = isset($_POST['productUnitPrice']) ? $_POST['productUnitPrice']: [];
                 $productTotalPrice = isset($_POST['productTotalPrice']) ? $_POST['productTotalPrice']: [];
 
@@ -488,14 +490,14 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
 
                             foreach ($no as $i => $no) {
                                 if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){ // Update FE existing product deleted to 0 but deleted products remain deleted='1'
-                                    if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_code=?, product_name=?, percentage=?, item_weight=?, unit_price=?, total_price=?, deleted='0' WHERE id=?")){
-                                        $product_stmt->bind_param('ssssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i], $weightProductId[$i]);
+                                    if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product_code=?, product_name=?, percentage=?, item_weight=?, reduce_weight=?, total_weight=?, unit_price=?, total_price=?, deleted='0' WHERE id=?")){
+                                        $product_stmt->bind_param('ssssssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productReduceWeight[$i], $productTotalWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i], $weightProductId[$i]);
                                         $product_stmt->execute();
                                     }
                                 }
                                 else{ // if got new then insert new record
-                                    if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_code, product_name, percentage, item_weight, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)")){
-                                        $product_stmt->bind_param('sssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i]);
+                                    if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_code, product_name, percentage, item_weight, reduce_weight, total_weight, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+                                        $product_stmt->bind_param('sssssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productReduceWeight[$i], $productTotalWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i]);
                                         $product_stmt->execute();
                                     }
                                 }
@@ -576,13 +578,15 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                         $products = isset($_POST['products']) ? $_POST['products']: [];
                         $productPercentage = isset($_POST['productPercentage']) ? $_POST['productPercentage']: [];
                         $productItemWeight = isset($_POST['productItemWeight']) ? $_POST['productItemWeight']: [];
+                        $productReduceWeight = isset($_POST['productReduceWeight']) ? $_POST['productReduceWeight']: [];
+                        $productTotalWeight = isset($_POST['productTotalWeight']) ? $_POST['productTotalWeight']: [];
                         $productUnitPrice = isset($_POST['productUnitPrice']) ? $_POST['productUnitPrice']: [];
                         $productTotalPrice = isset($_POST['productTotalPrice']) ? $_POST['productTotalPrice']: [];
         
                         if(isset($no) && $no != null && count($no) > 0){
                             foreach ($no as $i => $no) {
-                                if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_code, product_name, percentage, item_weight, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)")){
-                                    $product_stmt->bind_param('sssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i]);
+                                if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product_code, product_name, percentage, item_weight, reduce_weight, total_weight, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+                                    $product_stmt->bind_param('sssssssss', $weightId, $productPartCode[$i], $products[$i], $productPercentage[$i], $productItemWeight[$i], $productReduceWeight[$i], $productTotalWeight[$i], $productUnitPrice[$i], $productTotalPrice[$i]);
                                     $product_stmt->execute();
                                 }
                             }

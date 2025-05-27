@@ -115,6 +115,8 @@ if(isset($_POST['userID'])){
                                     'product_name' => $weightProductRow['product_name'],
                                     'percentage' => $weightProductRow['percentage'],
                                     'item_weight' => $weightProductRow['item_weight'],
+                                    'reduce_weight' => $weightProductRow['reduce_weight'],
+                                    'total_weight' => $weightProductRow['total_weight'],
                                     'unit_price' => $weightProductRow['unit_price'],
                                     'total_price' => $weightProductRow['total_price']
                                 );
@@ -240,6 +242,8 @@ if(isset($_POST['userID'])){
                             "product_name" => $row4['product_name'],
                             "percentage" => $row4['percentage'],
                             "item_weight" => $row4['item_weight'],
+                            "reduce_weight" => $row4['reduce_weight'],
+                            "total_weight" => $row4['total_weight'],
                             "unit_price" => $row4['unit_price'],
                             "total_price" => $row4['total_price']
                         );

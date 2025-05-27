@@ -541,3 +541,5 @@ ALTER TABLE `Vehicle_Log` ADD `customer_code` VARCHAR(50) NULL AFTER `plant`, AD
 ALTER TABLE `Vehicle` CHANGE `vehicle_weight` `vehicle_weight` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
 
 ALTER TABLE `Vehicle_Log` CHANGE `vehicle_weight` `vehicle_weight` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+ALTER TABLE `Weight_product` ADD `reduce_weight` INT(20) NULL AFTER `item_weight`, ADD `total_weight` INT(20) NULL AFTER `reduce_weight`;

@@ -889,6 +889,8 @@ if ($user != null && $user != ''){
                                                                                     <th>Products Description</th>
                                                                                     <th>Percentage (%)</th>
                                                                                     <th>Item Weight (kg)</th>
+                                                                                    <th>Reduce Weight (kg)</th>
+                                                                                    <th>Total Weight (kg)</th>
                                                                                     <th>Unit Price (RM)</th>
                                                                                     <th>Total Price (RM)</th>
                                                                                     <!-- <th>Variance (KG)</th> -->
@@ -897,7 +899,7 @@ if ($user != null && $user != ''){
                                                                             </thead>
                                                                             <tbody id="productTable"></tbody>
                                                                             <tfoot>
-                                                                                <th colspan="6">Total Price (RM)</th>
+                                                                                <th colspan="8">Total Price (RM)</th>
                                                                                 <th><input type="number" class="form-control" id="totalPrice" name="totalPrice" style="background-color:white;" value="0" readonly></th>
                                                                                 <th></th>
                                                                             </tfoot>
@@ -1201,6 +1203,12 @@ if ($user != null && $user != ''){
             </td>
             <td>
                 <input type="number" class="form-control" id="productItemWeight" name="productItemWeight" style="background-color:white;" value="0" readonly required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productReduceWeight" name="productReduceWeight" style="background-color:white;" value="0" readonly required>
+            </td>
+            <td>
+                <input type="number" class="form-control input-readonly" id="productTotalWeight" name="productTotalWeight" style="background-color:white;" value="0" readonly required>
             </td>
             <td>
                 <input type="number" class="form-control input-readonly" id="productUnitPrice" name="productUnitPrice" value="0" readonly required>
@@ -2336,6 +2344,7 @@ if ($user != null && $user != ''){
                 $('#tareOutgoing2').removeAttr('readonly');
                 $('#grossIncoming2').removeAttr('readonly');
                 $('[id^="productItemWeight"]').removeAttr('readonly');
+                $('[id^="productReduceWeight"]').removeAttr('readonly');
             }
             else{
                 $('#grossIncoming').attr('readonly', 'readonly');
@@ -2343,6 +2352,7 @@ if ($user != null && $user != ''){
                 $('#grossIncoming2').attr('readonly', 'readonly');
                 $('#tareOutgoing2').attr('readonly', 'readonly');
                 $('[id^="productItemWeight"]').attr('readonly', true);
+                $('[id^="productReduceWeight"]').attr('readonly', true);
             }
         });
 
@@ -2676,21 +2686,25 @@ if ($user != null && $user != ''){
             // Retrieve the input's attributes
             var productPercentage = $(this).val();
             var finalWeight = $('#finalWeight').val();
+            var reduceWeight = $(this).closest('.details').find('input[id^="productReduceWeight"]').val();
             var productItemWeight = parseFloat(finalWeight) * (parseFloat(productPercentage) / 100);
+            var productTotalWeight = parseFloat(productItemWeight) - parseFloat(reduceWeight);
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productItemWeight"]').val(productItemWeight);
+            $(this).closest('.details').find('input[id^="productTotalWeight"]').val(productTotalWeight);
 
-            // Check the total sum of all productPercentage inputs
-            var totalPercentage = 0;
-            $('input[id^="productPercentage"]').each(function() {
-                totalPercentage += parseFloat($(this).val()) || 0;
+            // Check the total sum of all product item weight inputs
+            var totalItemWeight = 0;
+            $('input[id^="productItemWeight"]').each(function() {
+                totalItemWeight += parseFloat($(this).val()) || 0;
             });
 
-            if (totalPercentage > 100) {
-                alert("Total percentage cannot exceed 100%!");
+            if (totalItemWeight > finalWeight) {
+                alert("Total item weight cannot exceed final weight!");
                 $(this).val(0); // Reset the input to prevent percentage from exceeding 100%
                 $(this).closest('.details').find('input[id^="productItemWeight"]').val(0); // Reset weight to 0
+                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0);
             }
 
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
@@ -2701,23 +2715,40 @@ if ($user != null && $user != ''){
             // Retrieve the input's attributes
             var productItemWeight = $(this).val();
             var finalWeight = $('#finalWeight').val();
+            var reduceWeight = $(this).closest('.details').find('input[id^="productReduceWeight"]').val();
+            var productTotalWeight = parseFloat(productItemWeight) - parseFloat(reduceWeight);
             var productPercentage = (parseFloat(productItemWeight) / parseFloat(finalWeight)) * 100;
+            var roundedPercentage = productPercentage.toFixed(2);
 
             // Update the respective inputs for variance
-            $(this).closest('.details').find('input[id^="productPercentage"]').val(productPercentage);
+            $(this).closest('.details').find('input[id^="productPercentage"]').val(roundedPercentage);
+            $(this).closest('.details').find('input[id^="productTotalWeight"]').val(productTotalWeight);
 
-            // Check the total sum of all productPercentage inputs
-            var totalPercentage = 0;
-            $('input[id^="productPercentage"]').each(function() {
-                totalPercentage += parseFloat($(this).val()) || 0;
+            // Check the total sum of all product item weight inputs
+            var totalItemWeight = 0;
+            $('input[id^="productItemWeight"]').each(function() {
+                totalItemWeight += parseFloat($(this).val()) || 0;
             });
 
-            if (totalPercentage > 100) {
-                alert("Total percentage cannot exceed 100%!");
+            if (totalItemWeight > finalWeight) {
+                alert("Total item weight cannot exceed final weight!");
                 $(this).val(0); // Reset the weight to 0
                 $(this).closest('.details').find('input[id^="productPercentage"]').val(0); // Reset the input to prevent percentage from exceeding 100%
+                $(this).closest('.details').find('input[id^="productTotalWeight"]').val(0);
             }
 
+            $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
+        });
+
+        // Event delegation to calculate product percentage from order weight
+        $("#productTable").on('keyup', 'input[id^="productReduceWeight"]', function(){
+            // Retrieve the input's attributes
+            var reduceWeight = $(this).val();
+            var itemWeight = $(this).closest('.details').find('input[id^="productItemWeight"]').val();
+            var totalWeight = parseFloat(itemWeight) - parseFloat(reduceWeight);
+
+            // Update the respective inputs for variance
+            $(this).closest('.details').find('input[id^="productTotalWeight"]').val(totalWeight);
             $(this).closest('.details').find('input[id^="productUnitPrice"]').trigger('change');
         });
 
@@ -2725,8 +2756,8 @@ if ($user != null && $user != ''){
         $("#productTable").on('change', 'input[id^="productUnitPrice"]', function(){
             // Retrieve the input's attributes
             var unitPrice = parseFloat($(this).val()) || 0;
-            var productItemWeight = parseFloat($(this).closest('.details').find('input[id^="productItemWeight"]').val()) || 0;
-            var variance = parseFloat(unitPrice) * parseFloat(productItemWeight);
+            var productTotalWeight = parseFloat($(this).closest('.details').find('input[id^="productTotalWeight"]').val()) || 0;
+            var variance = parseFloat(unitPrice) * parseFloat(productTotalWeight);
 
             // Update the respective inputs for variance
             $(this).closest('.details').find('input[id^="productTotalPrice"]').val(variance.toFixed(2)).trigger('change');
@@ -2751,37 +2782,84 @@ if ($user != null && $user != ''){
         });
 
         $(".add-product").click(function(){
-            var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
-            var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
-            if(manualPrice == 'false'){
-                var readonly = true;
+            var lastRow = $('#productTable tr:last');
+            var productPartCode = lastRow.find('select[name^="productPartCode"]').val();
+            var productPercentage = lastRow.find('input[name^="productPercentage"]').val();
+            var productItemWeight = lastRow.find('input[name^="productItemWeight"]').val();
+
+            if (lastRow.length) {
+                if (!productPartCode || productPartCode === "-" || !productPercentage || productPercentage == 0 || !productItemWeight || productItemWeight == 0) {
+                    alert("Previous product must be selected and product percentage and item weight must not be 0 before adding new product.");
+                }else{
+                    var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
+                    var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
+                    if(manualPrice == 'false'){
+                        var readonly = true;
+                    }else{
+                        var readonly = false;
+                    }            
+                    if(manualWeight == 'false'){
+                        var weightReadOnly = true;
+                    }else{
+                        var weightReadOnly = false;
+                    }            
+
+                    var $addContents = $("#productDetail").clone();
+                    $("#productTable").append($addContents.html());
+
+                    $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                    $("#productTable").find('.details:last').attr("data-index", rowCount);
+                    $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+                    $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+                    $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+                    $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+                    $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
+                    $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+                    $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
+                    $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
+                    $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).attr("readonly", weightReadOnly);
+                    $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).attr("readonly", true);
+                    $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
+                    $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
+
+                    rowCount++;
+                }
             }else{
-                var readonly = false;
-            }            
-            if(manualWeight == 'false'){
-                var weightReadOnly = true;
-            }else{
-                var weightReadOnly = false;
-            }            
+                var manualPrice = $('#addModal').find('input[name="manualPrice"]:checked').val();
+                var manualWeight = $('#addModal').find('input[name="manualWeight"]:checked').val();
+                if(manualPrice == 'false'){
+                    var readonly = true;
+                }else{
+                    var readonly = false;
+                }            
+                if(manualWeight == 'false'){
+                    var weightReadOnly = true;
+                }else{
+                    var weightReadOnly = false;
+                }            
 
-            var $addContents = $("#productDetail").clone();
-            $("#productTable").append($addContents.html());
+                var $addContents = $("#productDetail").clone();
+                $("#productTable").append($addContents.html());
 
-            $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
-            $("#productTable").find('.details:last').attr("data-index", rowCount);
-            $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
-            $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+                $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                $("#productTable").find('.details:last').attr("data-index", rowCount);
+                $("#productTable").find('#productWeightCapture:last').attr("id", "productWeightCapture" + rowCount);
+                $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
 
-            $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
-            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
-            $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
-            $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
-            $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
-            $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
-            $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
-            $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
+                $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+                $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+                $("#productTable").find('#productPartCode:last').attr('name', 'productPartCode['+rowCount+']').attr("id", "productPartCode" + rowCount);
+                $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount);
+                $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount);
+                $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).attr("readonly", weightReadOnly);
+                $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).attr("readonly", weightReadOnly);
+                $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).attr("readonly", true);
+                $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).attr("readonly", readonly);
+                $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", readonly);
 
-            rowCount++;
+                rowCount++;
+            }
         });
 
         $('#multiDeactivate').on('click', function () {
@@ -3002,7 +3080,7 @@ if ($user != null && $user != ''){
                     $('#manualVehicle2').prop("checked", false);
                     $('.index-vehicle2').show();
                     $('#vehicleNoTxt2').hide();
-                } console.log(obj.message.driver_phone);
+                }
                 
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
                 $('#addModal').find('#customerName').val(obj.message.customer_name);
@@ -3066,6 +3144,8 @@ if ($user != null && $user != ''){
                         $("#productTable").find('#products:last').attr('name', 'products['+rowCount+']').attr("id", "products" + rowCount).val(item.product_name);
                         $("#productTable").find('#productPercentage:last').attr('name', 'productPercentage['+rowCount+']').attr("id", "productPercentage" + rowCount).val(item.percentage);
                         $("#productTable").find('#productItemWeight:last').attr('name', 'productItemWeight['+rowCount+']').attr("id", "productItemWeight" + rowCount).val(item.item_weight);
+                        $("#productTable").find('#productReduceWeight:last').attr('name', 'productReduceWeight['+rowCount+']').attr("id", "productReduceWeight" + rowCount).val(item.reduce_weight);
+                        $("#productTable").find('#productTotalWeight:last').attr('name', 'productTotalWeight['+rowCount+']').attr("id", "productTotalWeight" + rowCount).val(item.total_weight);
                         $("#productTable").find('#productUnitPrice:last').attr('name', 'productUnitPrice['+rowCount+']').attr("id", "productUnitPrice" + rowCount).val(item.unit_price);
                         $("#productTable").find('#productTotalPrice:last').attr('name', 'productTotalPrice['+rowCount+']').attr("id", "productTotalPrice" + rowCount).attr("readonly", true).val(item.total_price);
 
