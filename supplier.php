@@ -525,6 +525,37 @@ $(function () {
         window.open("php/exportMasterData.php?selectedValue=Supplier");
     });
 
+    $('#pullSql').on('click', function(){
+        $('#spinnerLoading').show();
+        // Send the JSON array to the server
+        $.ajax({
+            url: 'php/pullSuppliers.php',
+            type: 'POST',
+            contentType: 'application/json',
+            success: function(response) {
+                var obj = JSON.parse(response);
+                if (obj.status === 'success') {
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                    window.location.reload();
+                } 
+                else if (obj.status === 'failed') {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                    window.location.reload();
+                } 
+                else {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                    window.location.reload();
+                }
+            }
+        });
+    });
+
     $('#uploadModal').find('#previewButton').on('click', function(){
         var fileInput = document.getElementById('fileInput');
         var file = fileInput.files[0];

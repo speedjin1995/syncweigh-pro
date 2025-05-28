@@ -7,16 +7,16 @@ session_start();
 $uid = $_SESSION['username'];
 
 $startDate = '6/1/2025'; // Hardcoded or dynamic as needed
-//$endDate = date('n/j/Y'); // Today’s date in m/d/Y format, e.g., 4/29/2025
-$endDate = '6/30/2025';
+$endDate = date('n/j/Y'); // Today’s date in m/d/Y format, e.g., 4/29/2025
+//$endDate = '6/30/2025';
 
-$url = "https://sturgeon-still-falcon.ngrok-free.app/purchase_orders?start_date=$startDate&end_date=$endDate";
+$url = "https://sturgeon-still-falcon.ngrok-free.app/purchase_orders?start_date=$endDate&end_date=$endDate";
 
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_HTTPGET, true);
-curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+curl_setopt($curl, CURLOPT_TIMEOUT, 100);
 curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 $response = curl_exec($curl);
@@ -63,7 +63,7 @@ if (!empty($data['data'])) {
         if (!empty($RawMaterialCode)) {
             $RawMaterialName = searchRawNameByCode($RawMaterialCode, $db);
         }
-        $VehNumber = (isset($rows['DESCRIPTION2']) && !empty($rows['DESCRIPTION2']) && $rows['DESCRIPTION2'] !== '' && $rows['DESCRIPTION2'] !== null) ? trim($rows['DESCRIPTION2']) : '';
+        $VehNumber = (isset($rows['ITEMDESC2']) && !empty($rows['ITEMDESC2']) && $rows['ITEMDESC2'] !== '' && $rows['ITEMDESC2'] !== null) ? trim($rows['ITEMDESC2']) : '';
         $Remarks = !empty($rows['REMARK1']) ? trim($rows['REMARK1']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
         $DestinationCode = '';

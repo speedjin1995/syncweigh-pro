@@ -11,7 +11,7 @@ $url = "https://sturgeon-still-falcon.ngrok-free.app/items";
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_HTTPGET, true);
-curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+curl_setopt($curl, CURLOPT_TIMEOUT, 100);
 curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 $response = curl_exec($curl);

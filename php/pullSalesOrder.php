@@ -15,7 +15,7 @@ $url = "https://sturgeon-still-falcon.ngrok-free.app/sales_orders?start_date=$en
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_HTTPGET, true);
-curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+curl_setopt($curl, CURLOPT_TIMEOUT, 100);
 curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 $response = curl_exec($curl);
@@ -63,7 +63,7 @@ if (!empty($data['data'])) {
         if (!empty($ProductCode)) {
             $ProductName = searchProductNameByCode($ProductCode, $db);
         }
-        $VehNumber = (isset($rows['DESCRIPTION2']) && !empty($rows['DESCRIPTION2']) && $rows['DESCRIPTION2'] !== '' && $rows['DESCRIPTION2'] !== null) ? trim($rows['DESCRIPTION2']) : '';
+        $VehNumber = (isset($rows['ITEMDESC2']) && !empty($rows['ITEMDESC2']) && $rows['ITEMDESC2'] !== '' && $rows['ITEMDESC2'] !== null) ? trim($rows['ITEMDESC2']) : '';
         $Remarks = !empty($rows['REMARKS']) ? trim($rows['REMARKS']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
         $DestinationCode = '';
