@@ -29,7 +29,7 @@ if(isset($_POST['userID'], $_POST["file"])){
     if ($row = $result1->fetch_assoc()) {
         $compname = $row['name'];
         $compreg = $row['company_reg_no'];
-        $compnewreg = $row['company_reg_no'];
+        $compnewreg = $row['new_reg_no'];
         $compaddress = $row['address_line_1'];
         $compaddress2 = $row['address_line_2'];
         $compaddress3 = $row['address_line_3'];
@@ -324,7 +324,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <span style="font-size:30px; font-weight:bold; margin-top: 10px;">'.$compname.'</span><br>
                             <span style="font-size:28px; font-weight:bold; margin-top: 10px; margin-left: 140px;">WEIGHING SLIP</span><br>
                         </div>
-                        <span style="margin-bottom: 10px; font-size: 20px;">Co.Registration No: '.$compnewreg.'('.$compreg.') / Tin No: '.$comptinno.'<br>
+                        <span style="margin-bottom: 10px; font-size: 20px;">Co.Registration No: '.$compnewreg.' ('.$compreg.') / Tin No: '.$comptinno.'<br>
                         '.$compaddress.' '.$compaddress2.' '.$compaddress3.'<br>
                         Tel: '.$compphone.' Mobile No: '.$compmobileno.'</span>
                         <hr>
