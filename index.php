@@ -2807,12 +2807,12 @@ if ($user != null && $user != ''){
             var productItemWeight = $(this).val();
             var finalWeight = $('#finalWeight').val();
             var reduceWeight = $(this).closest('.details').find('input[id^="productReduceWeight"]').val();
-            var productTotalWeight = (parseFloat(productItemWeight) - parseFloat(reduceWeight)).tofixed(2);
+            var productTotalWeight = (parseFloat(productItemWeight) - parseFloat(reduceWeight)).toFixed(2);
             var productPercentage = (parseFloat(productItemWeight) / parseFloat(finalWeight)) * 100;
             var roundedPercentage = productPercentage.toFixed(2);
 
             // Update the respective inputs for variance
-            $(this).val(parseFloat(productItemWeight).tofixed(2));
+            $(this).val(parseFloat(productItemWeight).toFixed(2));
             $(this).closest('.details').find('input[id^="productPercentage"]').val(roundedPercentage);
             $(this).closest('.details').find('input[id^="productTotalWeight"]').val(productTotalWeight);
 
