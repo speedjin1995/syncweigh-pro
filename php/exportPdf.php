@@ -243,8 +243,8 @@ if(isset($_POST["file"])){
                                             $message .= '<th style="font-size: 9px;">SUPPLIER</th>';
                                         }
                                             
-                                            $message .= '<th style="font-size: 9px;">PRODUCT <br>CODE</th>
-                                            <th style="font-size: 9px;">PRODUCT</th>
+                                            $message .= '<th style="font-size: 9px;">'.($_POST['status'] == 'Sales' ? 'PRODUCT <br>CODE' : 'RAW MAT <br>CODE').'</th>
+                                            <th style="font-size: 9px;">'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MAT').'</th>
                                             <th style="font-size: 9px;">DESTINATION <br>CODE</th>
                                             <th style="font-size: 9px;">DESTINATION</th>
                                             <th style="font-size: 9px;">PO NO.</th>
@@ -338,8 +338,8 @@ if(isset($_POST["file"])){
                                                 }
                                                 
                                                 
-                                                $message .= '<td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] : $row['raw_mat_code']) . '</td>
-                                                <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                                $message .= '<td style="font-size: 8px;">' . (($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc') ? $row['product_code'] : $row['raw_mat_code']) . '</td>
+                                                <td style="font-size: 8px;">' . (($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc') ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                 <td style="font-size: 8px;">' . $row['destination_code'] . '</td>
                                                 <td style="font-size: 8px;">' . $row['destination'] . '</td>
                                                 <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
