@@ -130,6 +130,11 @@ if(isset($_GET['batchDrum']) && $_GET['batchDrum'] != null && $_GET['batchDrum']
     }
 }
 
+$isMulti = '';
+if(isset($_GET['isMulti']) && $_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'){
+    $isMulti = $_GET['isMulti'];
+}
+
 // Column names 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
@@ -152,7 +157,14 @@ $excelData = implode("\t", array_values($fields)) . "\n";
 
 // Fetch records from database
 if($_GET["file"] == 'weight'){
-    $query = $db->query("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery);
+    if ($isMulti == 'Y'){
+        $id = $_GET['id']; 
+        $sql = "select * from Weight WHERE id IN ($id)";
+    }else{
+        $sql = "select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery;
+    }
+
+    $query = $db->query($sql);
 }
 else{
     $query = $db->query("select count.id, count.serialNo, vehicles.veh_number, lots.lots_no, count.batchNo, count.invoiceNo, count.deliveryNo, 
