@@ -139,13 +139,25 @@ if(isset($_POST['batchDrum']) && $_POST['batchDrum'] != null && $_POST['batchDru
     }
 }
 
+$isMulti = '';
+if(isset($_POST['isMulti']) && $_POST['isMulti'] != null && $_POST['isMulti'] != '' && $_POST['isMulti'] != '-'){
+    $isMulti = $_POST['isMulti'];
+}
+
 if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
         //i remove this because both(billboard and weight) also call this print page.
         //AND weight.pStatus = 'Pending'
-
+        $sql = '';
         if ($_POST['reportType'] == 'SUMMARY') {
-            if ($select_stmt = $db->prepare("SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC")){
+            if ($isMulti == 'Y'){
+                $id = $_POST['id'];
+                $sql = "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC";
+            }else{
+                $sql = "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC";
+            }
+
+            if ($select_stmt = $db->prepare($sql)){
 
                 if (!$select_stmt->execute()){
                     echo json_encode(
@@ -298,7 +310,15 @@ if(isset($_POST["file"])){
             }
         }
         else if ($_POST['reportType'] == 'PRODUCT'){
-            if ($select_stmt = $db->prepare("SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY name")){
+            if ($isMulti == 'Y'){
+                $id = $_POST['id'];
+                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND id IN ($id) GROUP BY product_code 
+                UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL AND id IN (".$id.") GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
+            }else{
+                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
+            }
+
+            if ($select_stmt = $db->prepare($sql)){
 
                 if (!$select_stmt->execute()){
                     echo json_encode(
@@ -451,7 +471,14 @@ if(isset($_POST["file"])){
             }
         }
         else if ($_POST['reportType'] == 'S&PC'){
-            if ($select_stmt = $db->prepare("select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date')) {
+            if ($isMulti == 'Y'){
+                $id = $_POST['id'];
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date";
+            }else{
+                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date';
+            }
+
+            if ($select_stmt = $db->prepare($sql)){
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {
                     echo json_encode(
@@ -683,7 +710,14 @@ if(isset($_POST["file"])){
             }
         }
         else if ($_POST['reportType'] == 'DO') {
-            if ($select_stmt = $db->prepare("select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY delivery_no ASC')) {
+            if ($isMulti == 'Y'){
+                $id = $_POST['id'];
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY delivery_no ASC";
+            }else{
+                $sql = "select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY delivery_no ASC';
+            }
+
+            if ($select_stmt = $db->prepare($sql)) {
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {
                     echo json_encode(
@@ -844,7 +878,14 @@ if(isset($_POST["file"])){
             }          
         }
         else{
-            if ($select_stmt = $db->prepare("select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date')) {
+            if ($isMulti == 'Y'){
+                $id = $_POST['id'];
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date";
+            }else{
+                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date';
+            }
+
+            if ($select_stmt = $db->prepare($sql)) {
                 // Execute the prepared query.
                 if (! $select_stmt->execute()) {
                     echo json_encode(

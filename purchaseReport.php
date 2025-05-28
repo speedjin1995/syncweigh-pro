@@ -383,6 +383,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction Id</th>
                                                                     <th>Status</th>
                                                                     <th>Supplier</th>
@@ -469,6 +470,7 @@ else{
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
                                             <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
                                             <input type="hidden" class="form-control" id="file" name="file">     
+                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
                                         </div>
                                     </div>
                                 </div>
@@ -558,6 +560,7 @@ else{
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
                                             <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
                                             <input type="hidden" class="form-control" id="type" name="type">     
+                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
                                         </div>
                                     </div>
                                 </div>
@@ -653,6 +656,11 @@ else{
             'height': 'auto'
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
@@ -693,6 +701,15 @@ else{
                 } 
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { 
                     data: 'transaction_id',
                     class: 'transaction-column'
@@ -771,6 +788,15 @@ else{
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { 
                         data: 'transaction_id',
                         class: 'transaction-column'
@@ -811,7 +837,7 @@ else{
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -845,6 +871,20 @@ else{
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
                     var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+
+                    var selectedIds = []; // An array to store the selected 'id' values
+                    $("#weightTable tbody input[type='checkbox']").each(function () {
+                        if (this.checked) {
+                            selectedIds.push($(this).val());
+                        }
+                    });
+
+                    if (selectedIds.length > 0) {
+                        $('#exportPdfForm').find('#id').val(selectedIds);
+                        $('#exportPdfForm').find('#isMulti').val('Y');
+                    }else{
+                        $('#exportPdfForm').find('#isMulti').val('N');
+                    }
 
                     $('#exportPdfForm').find('#fromDate').val(fromDateI);
                     $('#exportPdfForm').find('#toDate').val(toDateI);
@@ -911,6 +951,20 @@ else{
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
                     var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+
+                    var selectedIds = []; // An array to store the selected 'id' values
+                    $("#weightTable tbody input[type='checkbox']").each(function () {
+                        if (this.checked) {
+                            selectedIds.push($(this).val());
+                        }
+                    });
+
+                    if (selectedIds.length > 0) {
+                        $('#exportPoRepForm').find('#id').val(selectedIds);
+                        $('#exportPoRepForm').find('#isMulti').val('Y');
+                    }else{
+                        $('#exportPoRepForm').find('#isMulti').val('N');
+                    }
 
                     $('#exportPoRepForm').find('#fromDate').val(fromDateI);
                     $('#exportPoRepForm').find('#toDate').val(toDateI);
@@ -1008,10 +1062,24 @@ else{
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
-            window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
-            "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-            "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
-            "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
+            var selectedIds = []; // An array to store the selected 'id' values
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                window.open("php/export.php?file=weight&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
+                "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI+"&id="+selectedIds);
+            }else{
+                window.open("php/export.php?file=weight&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
+                "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
+            }
         });
 
         $('#statusSearch').on('change', function(){
