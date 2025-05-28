@@ -2772,7 +2772,7 @@ if ($user != null && $user != ''){
         });
         
         // Event delegation for order weight to calculate variance
-        $("#productTable").on('keyup', 'input[id^="productPercentage"]', function(){
+        $("#productTable").on('change', 'input[id^="productPercentage"]', function(){
             // Retrieve the input's attributes
             var productPercentage = $(this).val();
             var finalWeight = $('#finalWeight').val();
@@ -2802,7 +2802,7 @@ if ($user != null && $user != ''){
         });
 
         // Event delegation to calculate product percentage from order weight
-        $("#productTable").on('keyup', 'input[id^="productItemWeight"]', function(){
+        $("#productTable").on('change', 'input[id^="productItemWeight"]', function(){
             // Retrieve the input's attributes
             var productItemWeight = $(this).val();
             var finalWeight = $('#finalWeight').val();
@@ -2833,7 +2833,7 @@ if ($user != null && $user != ''){
         });
 
         // Event delegation to calculate product percentage from order weight
-        $("#productTable").on('keyup', 'input[id^="productReduceWeight"]', function(){
+        $("#productTable").on('change', 'input[id^="productReduceWeight"]', function(){
             // Retrieve the input's attributes
             var reduceWeight = $(this).val();
             var itemWeight = $(this).closest('.details').find('input[id^="productItemWeight"]').val();
