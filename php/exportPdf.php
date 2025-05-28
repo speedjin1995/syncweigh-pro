@@ -243,8 +243,8 @@ if(isset($_POST["file"])){
                                             $message .= '<th style="font-size: 9px;">SUPPLIER</th>';
                                         }
                                             
-                                            $message .= '<th style="font-size: 9px;">'.($_POST['status'] == 'Sales' ? 'PRODUCT <br>CODE' : 'RAW MAT <br>CODE').'</th>
-                                            <th style="font-size: 9px;">'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MAT').'</th>
+                                            $message .= '<th style="font-size: 9px;">'.(($_POST['status'] == 'Sales' || $_POST['status'] == 'Misc') ? 'PRODUCT <br>CODE' : 'RAW MAT <br>CODE').'</th>
+                                            <th style="font-size: 9px;">'.(($_POST['status'] == 'Sales' || $_POST['status'] == 'Misc') ? 'PRODUCT' : 'RAW MAT').'</th>
                                             <th style="font-size: 9px;">DESTINATION <br>CODE</th>
                                             <th style="font-size: 9px;">DESTINATION</th>
                                             <th style="font-size: 9px;">PO NO.</th>
