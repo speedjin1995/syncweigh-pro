@@ -10,7 +10,7 @@ if(isset($post['staffName'], $post['customer'])){
 	$customer = $post['customer'];
 
 	if(isset($post['userId']) && $post['userId'] != null && $post['userId'] != ''){
-	    if ($update_stmt = $db->prepare("UPDATE locations SET locations = ? WHERE id = ?")) {
+	    if ($update_stmt = $db->prepare("UPDATE farms SET name = ? WHERE id = ?")) {
             $update_stmt->bind_param('ss', $staffName, $post['userId']);
             
             // Execute the prepared query.
@@ -33,7 +33,7 @@ if(isset($post['staffName'], $post['customer'])){
 		}
 	}
 	else{
-	    if ($insert_stmt = $db->prepare("INSERT INTO locations (locations, customer) VALUES (?, ?)")){	
+	    if ($insert_stmt = $db->prepare("INSERT INTO farms (name, customer) VALUES (?, ?)")){	
     	    $insert_stmt->bind_param('ss', $staffName, $customer);		
     		// Execute the prepared query.
     		if (! $insert_stmt->execute()){

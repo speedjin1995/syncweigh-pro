@@ -7,16 +7,11 @@ $post = json_decode(file_get_contents('php://input'), true);
 
 if(isset($post['staffName'], $post['customer'])){
 	$staffName = $post['staffName'];
-	$staffIc = null;
 	$customer = $post['customer'];
-	
-	if(isset($post['staffIc']) && $post['staffIc'] != null && $post['staffIc'] != ''){
-	    $staffIc = $post['staffIc'];
-	}
 
 	if(isset($post['userId']) && $post['userId'] != null && $post['userId'] != ''){
-	    if ($update_stmt = $db->prepare("UPDATE transporters SET transporter_name = ?, transporter_ic = ? WHERE id = ?")) {
-            $update_stmt->bind_param('sss', $staffName, $staffIc, $post['userId']);
+	    if ($update_stmt = $db->prepare("UPDATE transporters SET transporter_name = ? WHERE id = ?")) {
+            $update_stmt->bind_param('ss', $staffName, $post['userId']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -38,8 +33,8 @@ if(isset($post['staffName'], $post['customer'])){
 		}
 	}
 	else{
-	    if ($insert_stmt = $db->prepare("INSERT INTO transporters (transporter_name, transporter_ic, customer) VALUES (?, ?, ?)")){	
-    	    $insert_stmt->bind_param('sss', $staffName, $staffIc, $customer);		
+	    if ($insert_stmt = $db->prepare("INSERT INTO transporters (transporter_name, customer) VALUES (?, ?)")){	
+    	    $insert_stmt->bind_param('ss', $staffName, $customer);		
     		// Execute the prepared query.
     		if (! $insert_stmt->execute()){
     			echo json_encode(
