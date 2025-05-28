@@ -33,12 +33,15 @@
             </div>
             <ul class="navbar-nav" id="navbar-nav">
                 <!--li class="menu-title"><span><?=$lang['t-menu']?></span></li-->
-                <!--li class="nav-item">
+                <!-- <li class="nav-item">
                     <a href="dashboard.php" class="nav-link"><i class="mdi mdi-billboard"></i><?=$lang['t-billboard']?></a>
-                </li-->
+                </li> -->
                 <!--li class="nav-item">
                     <a href="index.php" class="nav-link"><i class="ri-dashboard-2-line"></i><?=$lang['t-weighing']?></a>
-                </li-->                
+                </li-->       
+                <li class="nav-item">
+                    <a href="weighingDashboard.php" class="nav-link"><i class="mdi mdi-view-dashboard"></i><?=$lang['t-dashboard']?></a>
+                </li>         
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                         aria-expanded="true" aria-controls="sidebarDashboards">

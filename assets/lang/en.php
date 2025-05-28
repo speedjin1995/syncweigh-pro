@@ -2,6 +2,7 @@
     $lang["t-menu"]="Menu";
     $lang["t-weightweighing"]="Weight Weighing";
     $lang["t-analytics"]="Analytics";
+    $lang["t-dashboard"]="Dashboard";
 
     $lang["t-companyProfile"]="Company Profile";
     $lang["t-portSetup"]="Port Setup";
