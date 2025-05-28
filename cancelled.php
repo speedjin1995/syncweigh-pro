@@ -2588,11 +2588,11 @@ if ($user != null && $user != ''){
                         <tr>
                             <th><span>PRODUCT Description</span></th>
                             <th class="align-center"><span>Percentage</span></th>
-                            <th class="align-center"><span>Weight (KG)</span></th>
-                            <th class="align-center"><span>Reduce Weight (KG)</span></th>
-                            <th class="align-center"><span>Total Weight (KG)</span></th>
-                            <th class="align-center"><span>Unit Price</span></th>
-                            <th class="align-center"><span>Total Price</span></th>
+                            <th class="align-center"><span>Weight <br>(KG)</span></th>
+                            <th class="align-center"><span>Reduce <br>(KG)</span></th>
+                            <th class="align-center"><span>Total <br>(KG)</span></th>
+                            <th class="align-center"><span>Unit <br>Price</span></th>
+                            <th class="align-center"><span>Total <br>Price</span></th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -2623,6 +2623,8 @@ if ($user != null && $user != ''){
 
                         returnString += `
                             <tr>
+                                <td></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
