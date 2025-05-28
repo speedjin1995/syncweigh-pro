@@ -519,34 +519,35 @@ if(isset($_POST["file"])){
                                 <body>
                                     <table style="width:100%;">
                                         <thead>
-                                            <tr>
-                                                <th style="font-size: 11px;">TRANSACTION <br>ID</th>
-                                                <th style="font-size: 11px;">TRANSACTION <br>DATE</th>
-                                                <th style="font-size: 11px;">LORRY <br>NO.</th>';
+                                            <tr style="font-size: 11px; text-align: center;">
+                                                <th>TRANSACTION <br>ID</th>
+                                                <th>TRANSACTION <br>DATE</th>
+                                                <th>LORRY <br>NO.</th>';
                                                 
                                                 if($_POST['status'] == 'Sales'){
-                                                    $message .= '<th style="font-size: 11px;">CUSTOMER</th>';
+                                                    $message .= '<th>CUSTOMER</th>';
                                                 }
                                                 else{
-                                                    $message .= '<th style="font-size: 11px;">SUPPLIER</th>';
+                                                    $message .= '<th>SUPPLIER</th>';
                                                 }
                                                     
-                                                $message .= '<th style="font-size: 11px;">PRODUCT</th>
-                                                <th style="font-size: 11px;">DESTINATION</th>';
+                                                $message .= '<th>'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MATERIAL').'</th>
+                                                <th>DESTINATION</th>';
 
                                                 if($_POST['status'] == 'Sales'){
-                                                    $message .= '<th style="font-size: 11px;">EXQ/DEL</th>';
+                                                    $message .= '<th>EXQ/DEL</th>';
                                                 }
                                                 
-                                                $message .= '<th style="font-size: 9px;">PO NO.</th>
-                                                <th style="font-size: 11px;">DO NO.</th>
-                                                <th style="font-size: 11px;">'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
-                                                <th style="font-size: 11px;">INCOMING <br>(MT)</th>
-                                                <th style="font-size: 11px;">OUTGOING <br>(MT)</th>
-                                                <th style="font-size: 11px;">NET <br>(MT)</th>
-                                                <th style="font-size: 11px;">IN TIME</th>
-                                                <th style="font-size: 11px;">OUT TIME</th>
-                                                <th style="font-size: 11px;">USER</th>
+                                                $message .= '<th>PO NO.</th>
+                                                <th>DO NO.</th>
+                                                <th>INCOMING <br>(MT)</th>
+                                                <th>OUTGOING <br>(MT)</th>
+                                                <th>NETT <br>(MT)</th>
+                                                <th>'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
+                                                <th>VARIANCE <br>(MT)</th>
+                                                <th>IN TIME</th>
+                                                <th>OUT TIME</th>
+                                                <th>USER</th>
                                             </tr>
                                         </thead>
                                         <tbody>';
@@ -599,35 +600,35 @@ if(isset($_POST["file"])){
                                                 }
                                                 
                                                 
-                                                $message .= '<tr>
-                                                    <td style="font-size: 10px;">' . $row['transaction_id'] . '</td>
-                                                    <td style="font-size: 10px;">' . $formattedtransactionDate . '</td>
-                                                    <td style="font-size: 10px;">' . $row['lorry_plate_no1'] . '</td>';
+                                                $message .= '<tr style="font-size: 10px; text-align: center;">
+                                                    <td>' . $row['transaction_id'] . '</td>
+                                                    <td>' . $formattedtransactionDate . '</td>
+                                                    <td>' . $row['lorry_plate_no1'] . '</td>';
                                                     
                                                     if($_POST['status'] == 'Sales'){
-                                                        $message .= '<td style="font-size: 10px;">' . $row['customer_name'] . '</td>';
+                                                        $message .= '<td>' . $row['customer_name'] . '</td>';
                                                     }
                                                     else{
-                                                        $message .= '<td style="font-size: 10px;">' . $row['supplier_name'] . '</td>';
+                                                        $message .= '<td>' . $row['supplier_name'] . '</td>';
                                                     }
                                                     
-                                                    
-                                                    $message .= '<td style="font-size: 10px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
-                                                    <td style="font-size: 10px;">' . $row['destination'] . '</td>';
+                                                    $message .= '<td>' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                                    <td>' . $row['destination'] . '</td>';
 
                                                     if($_POST['status'] == 'Sales'){
-                                                        $message .= '<td style="font-size: 10px; text-align: center;">' . $exDel . '</td>';
+                                                        $message .= '<td>' . $exDel . '</td>';
                                                     }
                                                     
-                                                    $message .= '<td style="font-size: 10px;">' . $row['purchase_order'] . '</td>
-                                                    <td style="font-size: 10px;">' . $row['delivery_no'] . '</td>
-                                                    <td style="font-size: 10px;">' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
-                                                    <td style="font-size: 10px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
-                                                    <td style="font-size: 10px;">' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                    <td style="font-size: 10px;">' . number_format($row['nett_weight1']/1000, 2) . '</td>
-                                                    <td style="font-size: 10px;">' . $formattedGrossWeightDate . '</td>
-                                                    <td style="font-size: 10px;">' . $formattedTareWeightDate . '</td>
-                                                    <td style="font-size: 10px; text-align: center;">' . $row['created_by'] . '</td>
+                                                    $message .= '<td>' . $row['purchase_order'] . '</td>
+                                                    <td>' . $row['delivery_no'] . '</td>
+                                                    <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                    <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
+                                                    <td>' . number_format($row['weight_different']/1000, 2) . '</td>
+                                                    <td>' . $formattedGrossWeightDate . '</td>
+                                                    <td>' . $formattedTareWeightDate . '</td>
+                                                    <td>' . $row['created_by'] . '</td>
                                                 </tr>';
                                         
                                                 // Calculate subtotals
@@ -637,11 +638,11 @@ if(isset($_POST["file"])){
                                             }
                                         
                                             // Add product-wise subtotal
-                                            $message .= '<tr>
-                                                <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Subtotal (' . $product . ')</th>
-                                                <th style="border:1px solid black;font-size: 11px;">' . number_format($totalGross /1000, 2). '</th>
-                                                <th style="border:1px solid black;font-size: 11px;">' . number_format($totalTare/1000, 2) . '</th>
-                                                <th style="border:1px solid black;font-size: 11px;">' . number_format($totalNet/1000, 2) . '</th>
+                                            $message .= '<tr style="font-size: 11px;">
+                                                <th colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Subtotal (' . $product . ')</th>
+                                                <th style="border:1px solid black;">' . number_format($totalGross /1000, 2). '</th>
+                                                <th style="border:1px solid black;">' . number_format($totalTare/1000, 2) . '</th>
+                                                <th style="border:1px solid black;">' . number_format($totalNet/1000, 2) . '</th>
                                             </tr>';
                                         
                                             // Add to grand total
@@ -750,28 +751,30 @@ if(isset($_POST["file"])){
                                 <body>
                                     <table style="width:100%;">
                                         <thead>
-                                            <tr>
-                                                <th style="font-size: 9px;">NO</th>
-                                                <th style="font-size: 9px;">TRANSACTION <br>ID</th>
-                                                <th style="font-size: 9px;">TRANSACTION <br>DATE</th>
-                                                <th style="font-size: 9px;">LORRY <br>NO.</th>';
+                                            <tr style="font-size: 9px;">
+                                                <th>NO</th>
+                                                <th>TRANSACTION <br>ID</th>
+                                                <th>TRANSACTION <br>DATE</th>
+                                                <th>LORRY <br>NO.</th>';
                                                 
                                             if($_POST['status'] == 'Sales'){
-                                                $message .= '<th style="font-size: 9px;">CUSTOMER</th>';
+                                                $message .= '<th>CUSTOMER</th>';
                                             }
                                             else{
-                                                $message .= '<th style="font-size: 9px;">SUPPLIER</th>';
+                                                $message .= '<th>SUPPLIER</th>';
                                             }
                                                 
-                                                $message .= '<th style="font-size: 9px;">PRODUCT</th>
-                                                <th style="font-size: 9px;">EXQ/DEL</th>
-                                                <th style="font-size: 9px;">PO NO.</th>
-                                                <th style="font-size: 9px;">DO NO.</th>
-                                                <th style="font-size: 9px;">INCOMING <br>(MT)</th>
-                                                <th style="font-size: 9px;">OUTGOING <br>(MT)</th>
-                                                <th style="font-size: 9px;">NET <br>(MT)</th>
-                                                <th style="font-size: 9px;">IS CANCEL</th>
-                                                <th style="font-size: 9px;">CANCEL <br>REASON</th>
+                                                $message .= '<th>'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MATERIAL').'</th>
+                                                <th>EXQ/DEL</th>
+                                                <th>PO NO.</th>
+                                                <th>DO NO.</th>
+                                                <th>INCOMING <br>(MT)</th>
+                                                <th>OUTGOING <br>(MT)</th>
+                                                <th>NETT <br>(MT)</th>
+                                                <th>'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
+                                                <th>VARIANCE <br>(MT)</th>
+                                                <th>IS CANCEL</th>
+                                                <th>CANCEL <br>REASON</th>
                                             </tr>
                                         </thead>
                                         <tbody>';
@@ -789,30 +792,31 @@ if(isset($_POST["file"])){
                                                 $exDel = 'D';
                                             }
 
-                                            $message .= '<tr>
-                                                <td style="font-size: 8px;">' . $noCount . '</td>
-                                                <td style="font-size: 8px;">' . $row['transaction_id'] . '</td>
-                                                <td style="font-size: 8px;">' . $formattedtransactionDate . '</td>
-                                                <td style="font-size: 8px;">' . $row['lorry_plate_no1'] . '</td>';
+                                            $message .= '<tr style="text-align:center; font-size: 8px;"">
+                                                <td>' . $noCount . '</td>
+                                                <td>' . $row['transaction_id'] . '</td>
+                                                <td>' . $formattedtransactionDate . '</td>
+                                                <td>' . $row['lorry_plate_no1'] . '</td>';
                                                 
                                                 if($_POST['status'] == 'Sales'){
-                                                    $message .= '<td style="font-size: 8px;">' . $row['customer_name'] . '</td>';
+                                                    $message .= '<td>' . $row['customer_name'] . '</td>';
                                                 }
                                                 else{
-                                                    $message .= '<td style="font-size: 8px;">' . $row['supplier_name'] . '</td>';
+                                                    $message .= '<td>' . $row['supplier_name'] . '</td>';
                                                 }
                                                 
-                                                
                                                 $message .= '
-                                                <td style="font-size: 8px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
-                                                <td style="font-size: 8px; text-align: center;">' . $exDel . '</td>
-                                                <td style="font-size: 8px;">' . $row['purchase_order'] . '</td>
-                                                <td style="font-size: 8px;">' . $row['delivery_no'] . '</td>
-                                                <td style="font-size: 8px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
-                                                <td style="font-size: 8px;">' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                <td style="font-size: 8px;">' . number_format($row['nett_weight1']/1000, 2) . '</td>
-                                                <td style="font-size: 8px; text-align: center;">' . $row['is_cancel'] . '</td>
-                                                <td style="font-size: 8px;">' . $row['cancelled_reason'] . '</td>
+                                                <td>' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                                <td>' . $exDel . '</td>
+                                                <td>' . $row['purchase_order'] . '</td>
+                                                <td>' . $row['delivery_no'] . '</td>
+                                                <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
+                                                <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
+                                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
+                                                <td>' . number_format($row['weight_different']/1000, 2) . '</td>
+                                                <td>' . $row['is_cancel'] . '</td>
+                                                <td>' . $row['cancelled_reason'] . '</td>
                                             </tr>';
                                             
                                         }
@@ -908,34 +912,35 @@ if(isset($_POST["file"])){
                                 <body>
                                     <table style="width:100%;">
                                         <thead>
-                                            <tr>
-                                                <th style="font-size: 11px;">TRANSACTION <br>ID</th>
-                                                <th style="font-size: 11px;">TRANSACTION <br>DATE</th>
-                                                <th style="font-size: 11px;">LORRY <br>NO.</th>';
+                                            <tr style="font-size: 11px; text-align: center;">
+                                                <th>TRANSACTION <br>ID</th>
+                                                <th>TRANSACTION <br>DATE</th>
+                                                <th>LORRY <br>NO.</th>';
                                                 
                                                 if($_POST['status'] == 'Sales'){
-                                                    $message .= '<th style="font-size: 11px;">CUSTOMER</th>';
+                                                    $message .= '<th>CUSTOMER</th>';
                                                 }
                                                 else{
-                                                    $message .= '<th style="font-size: 11px;">SUPPLIER</th>';
+                                                    $message .= '<th>SUPPLIER</th>';
                                                 }
                                                 
-                                                $message .= '<th style="font-size: 11px;">PRODUCT</th>
-                                                <th style="font-size: 9px;">DESTINATION</th>';
+                                                $message .= '<th>'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MATERIAL').'</th>
+                                                <th>DESTINATION</th>';
 
                                                 if($_POST['status'] == 'Sales'){
-                                                    $message .= '<th style="font-size: 11px;">EXQ/DEL</th>';
+                                                    $message .= '<th>EXQ/DEL</th>';
                                                 }
                                                 
-                                                $message .= '<th style="font-size: 11px;">PO NO.</th>
-                                                <th style="font-size: 11px;">DO NO.</th>
-                                                <th style="font-size: 11px;">'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
-                                                <th style="font-size: 11px;">INCOMING <br>(MT)</th>
-                                                <th style="font-size: 11px;">OUTGOING <br>(MT)</th>
-                                                <th style="font-size: 11px;">NET <br>(MT)</th>
-                                                <th style="font-size: 11px;">IN TIME</th>
-                                                <th style="font-size: 11px;">OUT TIME</th>
-                                                <th style="font-size: 11px;">USER</th>
+                                                $message .= '<th>PO NO.</th>
+                                                <th>DO NO.</th>
+                                                <th>INCOMING <br>(MT)</th>
+                                                <th>OUTGOING <br>(MT)</th>
+                                                <th>NETT <br>(MT)</th>
+                                                <th>'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
+                                                <th>VARIANCE</th>
+                                                <th>IN TIME</th>
+                                                <th>OUT TIME</th>
+                                                <th>USER</th>
                                             </tr>
                                         </thead>
                                         <tbody>';
@@ -988,34 +993,34 @@ if(isset($_POST["file"])){
                                                 }
                                                 
                                                 
-                                                $message .= '<tr>
-                                                    <td style="font-size: 10px;">' . $row['transaction_id'] . '</td>
-                                                    <td style="font-size: 10px;">' . $formattedtransactionDate . '</td>
-                                                    <td style="font-size: 10px;">' . $row['lorry_plate_no1'] . '</td>';
+                                                $message .= '<tr style="font-size: 10px; text-align: center;">
+                                                    <td>' . $row['transaction_id'] . '</td>
+                                                    <td>' . $formattedtransactionDate . '</td>
+                                                    <td>' . $row['lorry_plate_no1'] . '</td>';
                                                     
                                                     if($_POST['status'] == 'Sales'){
-                                                        $message .= '<td style="font-size: 10px;">' . $row['customer_name'] . '</td>';
+                                                        $message .= '<td>' . $row['customer_name'] . '</td>';
                                                     }
                                                     else{
-                                                        $message .= '<td style="font-size: 10px;">' . $row['supplier_name'] . '</td>';
+                                                        $message .= '<td>' . $row['supplier_name'] . '</td>';
                                                     }
                                                     
                                                     
-                                                    $message .= '<td style="font-size: 10px;">' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
-                                                    <td style="font-size: 10px;">' . $row['destination'] . '</td>';
+                                                    $message .= '<td>' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                                    <td>' . $row['destination'] . '</td>';
 
                                                     if($_POST['status'] == 'Sales'){
                                                         $message .= '<td style="font-size: 10px; text-align: center;">' . $exDel . '</td>';
                                                     }
                                                     
-                                                    $message .= '<td style="font-size: 10px;">' . $row['purchase_order'] . '</td>
-                                                    <td style="font-size: 10px;">' . $row['delivery_no'] . '</td>
-                                                    <td style="font-size: 10px;">' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
-                                                    <td style="font-size: 10px;">' . number_format($row['gross_weight1']/1000, 2) . '</td>
-                                                    <td style="font-size: 10px;">' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                    <td style="font-size: 10px;">' . number_format($row['nett_weight1']/1000, 2) . '</td>
-                                                    <td style="font-size: 10px;">' . $formattedGrossWeightDate . '</td>
-                                                    <td style="font-size: 10px;">' . $formattedTareWeightDate . '</td>
+                                                    $message .= '<td>' . $row['purchase_order'] . '</td>
+                                                    <td>' . $row['delivery_no'] . '</td>
+                                                    <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
+                                                    <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                    <td>' . $formattedGrossWeightDate . '</td>
+                                                    <td>' . $formattedTareWeightDate . '</td>
                                                     <td style="font-size: 10px; text-align: center;">' . $row['created_by'] . '</td>
                                                 </tr>';
                                         
