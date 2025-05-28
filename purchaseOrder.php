@@ -1178,18 +1178,10 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         });
 
         $('#orderQty').on('change', function(){
-            var orderWeight = parseFloat($(this).val())/1000;
+            var orderWeight = parseFloat($('#convertedOrderQty').val())/1000;
             var unitPrice = parseFloat($('#unitPrice').val());
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
 
-            $('#totalPrice').val(totalPrice);
-        });
-
-        $('#orderQty').on('change', function(){
-            var orderWeight = parseFloat($(this).val())/1000;
-            var unitPrice = parseFloat($('#unitPrice').val());
-            var totalPrice = (unitPrice * orderWeight).toFixed(2);
-            
             $('#totalPrice').val(totalPrice);
         });
 
@@ -1220,6 +1212,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                             // Processing for order quantity (KG)
                             var rate = parseFloat(obj.message.rate);
                             var orderQty = convertedOrderWeight/rate;
+                            orderQty = parseInt(orderQty);
 
                             $('#orderQty').val(orderQty).trigger('change');
                             $('#convertedBal').val(orderQty);
@@ -1241,7 +1234,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#unitPrice').on('change', function(){
             var unitPrice = parseFloat($(this).val());
-            var orderWeight = parseFloat($('#orderQty').val())/1000;
+            var orderWeight = parseFloat($('#orderQty').val());
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
 
             $('#totalPrice').val(totalPrice);

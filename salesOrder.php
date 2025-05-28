@@ -1179,7 +1179,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
         });
 
         $('#orderQty').on('change', function(){
-            var orderWeight = parseFloat($(this).val())/1000;
+            var orderWeight = parseFloat($('#convertedOrderQty').val());
             var unitPrice = parseFloat($('#unitPrice').val());
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
             
@@ -1213,6 +1213,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                             // Processing for order quantity (KG)
                             var rate = parseFloat(obj.message.rate);
                             var orderQty = convertedOrderWeight/rate;
+                            orderQty = parseInt(orderQty);
 
                             $('#orderQty').val(orderQty).trigger('change');
                             $('#convertedBal').val(orderQty);
@@ -1235,7 +1236,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
 
         $('#unitPrice').on('change', function(){
             var unitPrice = parseFloat($(this).val());
-            var orderWeight = parseFloat($('#orderQty').val())/1000;
+            var orderWeight = parseFloat($('#convertedOrderQty').val());
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
             
             $('#totalPrice').val(totalPrice);
