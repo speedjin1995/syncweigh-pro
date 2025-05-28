@@ -155,6 +155,26 @@ if(isset($_POST['userID'], $_POST["file"])){
                         }
                     }
 
+                    $plantCode = $row['plant_code']; 
+
+                    if ($update_stmt3 = $db->prepare("SELECT * FROM Plant WHERE plant_code=?")) {
+                        $update_stmt3->bind_param('s', $plantCode);
+                        
+                        // Execute the prepared query.
+                        if ($update_stmt3->execute()) {
+                            $result4 = $update_stmt3->get_result();
+                            
+                            if ($row4 = $result4->fetch_assoc()) {
+                                $plantAddress1 = $row4['address_line_1'];
+                                $plantAddress2 = $row4['address_line_2'] ?? '';
+                                $plantAddress3 = $row4['address_line_3'] ?? '';
+                                $plantPhoneNo = $row4['phone_no'] ?? '';
+                                $plantFaxNo = $row4['fax_no'] ?? '';
+                            }
+                        }
+                    }
+
+
                     $wid = $row['id'];
                     if ($select_stmt2 = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=? AND deleted='0'")) {
                         $select_stmt2->bind_param('s', $wid);
@@ -325,8 +345,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <span style="font-size:28px; font-weight:bold; margin-top: 10px; margin-left: 140px;">WEIGHING SLIP</span><br>
                         </div>
                         <span style="margin-bottom: 10px; font-size: 20px;">Co.Registration No: '.$compnewreg.' ('.$compreg.') / Tin No: '.$comptinno.'<br>
-                        '.$compaddress.' '.$compaddress2.' '.$compaddress3.'<br>
-                        Tel: '.$compphone.' Mobile No: '.$compmobileno.'</span>
+                        '.$plantAddress1.' '.$plantAddress2.' '.$plantAddress3.'<br>
+                        Tel: '.$plantPhoneNo.' Mobile No: '.$plantFaxNo.'</span>
                         <hr>
                         
                         <div class="container">
