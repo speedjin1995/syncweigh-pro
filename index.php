@@ -1702,6 +1702,7 @@ else{
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var supplierI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
@@ -1726,6 +1727,7 @@ else{
                     toDate: toDateI,
                     status: statusI,
                     customer: customerNoI,
+                    supplier: supplierI,
                     vehicle: vehicleNoI,
                     invoice: invoiceNoI,
                     batch: batchNoI,
@@ -2594,6 +2596,7 @@ else{
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
@@ -2623,6 +2626,7 @@ else{
                         toDate: toDateI,
                         status: statusI,
                         customer: customerNoI,
+                        supplier: supplierI,
                         vehicle: vehicleNoI,
                         invoice: invoiceNoI,
                         batch: batchNoI,
