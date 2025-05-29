@@ -41,10 +41,10 @@ if ($user != null && $user != ''){
 }
 
 $readonly = '';
-$disabled = '';
+$hidden = false;
 if ($role != 'SADMIN'){
     $readonly = 'readonly';
-    $disabled = 'disabled';
+    $hidden = true;
 }
 ?>
 
@@ -163,8 +163,8 @@ if ($role != 'SADMIN'){
                                                     </div>
                                                 </div>
                                             </div> -->
-                                            <div class="mt-4">
-                                                <button class="btn btn-success w-100" type="submit" <?= $disabled ?>>Update</button>
+                                            <div class="mt-4" <?= $hidden ? 'style="display:none;"' : '' ?>>
+                                                <button class="btn btn-success w-100" type="submit">Update</button>
                                             </div>
                                         </div>
                                     </form>
