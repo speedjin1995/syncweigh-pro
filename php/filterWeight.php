@@ -35,6 +35,10 @@ if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] 
 	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
 }
 
+if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
+	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
+}
+
 if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
 	$searchQuery .= " and lorry_plate_no1 like '%".$_POST['vehicle']."%'";
 }
