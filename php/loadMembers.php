@@ -23,7 +23,7 @@ if($searchValue != ''){
 
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Users where status IN (0,1)";
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if($_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant_id"]);
   $allQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status IN (0,1) and Users.plant_id IN ('$username')";
 }
@@ -34,7 +34,7 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 $filteredQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status IN (0,1)".$searchQuery;
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if($_SESSION["roles"] != 'SADMIN'){
   $$username = implode("', '", $_SESSION["plant_id"]);
   $filteredQuery = "select count(*) as allcount from Users, roles WHERE Users.role = roles.role_code AND Users.status IN (0,1) AND Users.plant_id IN ('$username')".$searchQuery;
 }
@@ -46,9 +46,9 @@ $totalRecordwithFilter = $records['allcount'];
 ## Fetch records
 $empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, Users.name, roles.role_name, Users.plant_id, Users.status from Users, roles WHERE 
 Users.role = roles.role_code AND Users.status IN (0,1) AND Users.role <> 'SADMIN'".$searchQuery." 
-order by status ASC, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+order by status ASC, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage; 
 
-if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN') {
+if ($_SESSION["roles"] != 'SADMIN') {
   $plantIds = $_SESSION["plant_id"]; // Should be an array like ["26", "27"]
 
   if (!empty($plantIds) && is_array($plantIds)) {
@@ -58,7 +58,7 @@ if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN') {
       }
       $jsonCondition = implode(" OR ", $conditions);
 
-      $empQuery = "SELECT Users.name AS empname, Users.id, Users.employee_code, Users.username, Users.useremail, Users.name 
+      $empQuery = "SELECT Users.name AS empname, Users.id, Users.employee_code, Users.username, Users.useremail, Users.name, 
                           roles.role_name, Users.plant_id, Users.status
                    FROM Users 
                    JOIN roles ON Users.role = roles.role_code 
