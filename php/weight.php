@@ -534,7 +534,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $action = "2";
 
         # Update PO or SO table row balance only if status is Purchase or Sales
-        /*if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
+        if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
             if ($isComplete == 'Y' && $isCancel == 'N'){
                 if($transactionStatus == 'Purchase'){
                     $soPoQuantity = $poSupplyWeight;
@@ -543,7 +543,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     $prodRawName = $rawMaterialName;
                     $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                 }elseif($transactionStatus == 'Sales'){
-                    $soPoQuantity = $convertedOrderWeight;
+                    $soPoQuantity = $orderWeight;
                     $orderSuppWeight = $nettWeight;
                     $prodRawCode = $productCode;
                     $prodRawName = $productName;
@@ -553,7 +553,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 # Weighing Details
                 $weighing_stmt->bind_param('ssssss', $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant, $weightId);
                 $weighing_stmt->execute();
-                $result = $weighing_stmt->get_result();
+                $result = $weighing_stmt->get_result(); 
 
                 if ($result->num_rows > 0) {
                     $orderSuppWeights = 0;
@@ -586,7 +586,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
                 $updatePoSoStmt->close();
             }
-        }*/
+        }
 
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, po_supply_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
@@ -676,7 +676,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         //$db->close();
 
                         # Update PO or SO table row balance only if status is Purchase or Sales
-                        /*if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
+                        if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
                             if ($isComplete == 'Y' && $isCancel == 'N'){
                                 if($transactionStatus == 'Purchase'){
                                     $soPoQuantity = $poSupplyWeight;
@@ -728,7 +728,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 
                                 $updatePoSoStmt->close();
                             }
-                        }*/
+                        }
                         
                         echo json_encode(
                             array(
