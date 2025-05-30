@@ -2575,6 +2575,9 @@ else{
             $('#addModal').find('#purchaseOrderEdit').val("").hide();
             $('#addModal').find('#salesOrder').next('.select2-container').show();
 
+            // Unset appended so fields
+            $('#addModal').find('#salesOrder').next('.select2-container').show();
+
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -3464,7 +3467,7 @@ else{
             var productName = $('#productName :selected').data('code');
             var plant = $('#addModal').find('#plantCode').val();
 
-            if (salesOrder && plant && productName){
+            if (salesOrder && salesOrder != '-' && plant && productName){
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
                         var obj = JSON.parse(data);
@@ -3736,7 +3739,7 @@ else{
             var rawMat = $('#rawMaterialName :selected').data('code');
             var plant = $('#addModal').find('#plantCode').val();
 
-            if (purchaseOrder && plant && rawMat){
+            if (purchaseOrder && purchaseOrder != '-' && plant && rawMat){
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
                         var obj = JSON.parse(data);
@@ -3835,12 +3838,12 @@ else{
             var type = $('#addModal').find('#transactionStatus').val();
 
             if (purchaseOrder){
-                if (isEdit){
-                    $('#addModal').find('#purchaseOrder').empty();
-                    $('#addModal').find('#purchaseOrder').append(purchaseOption);
-                    $('#addModal').find('#purchaseOrder').val(purchaseOrder);
-                    //$('#addModal').trigger('orderLoaded');
-                }else{
+                // if (isEdit){
+                //     $('#addModal').find('#purchaseOrder').empty();
+                //     $('#addModal').find('#purchaseOrder').append(purchaseOption);
+                //     $('#addModal').find('#purchaseOrder').val(purchaseOrder);
+                //     //$('#addModal').trigger('orderLoaded');
+                // }else{
                     $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, format: 'getProdRaw'}, function (data){
                         var obj = JSON.parse(data);
 
@@ -3870,7 +3873,7 @@ else{
                             $("#failBtn").click();
                         }
                     });
-                }
+                // }
             }
         });
 
@@ -3879,12 +3882,12 @@ else{
             var type = $('#addModal').find('#transactionStatus').val(); 
 
             if (salesOrder){
-                if (isEdit){
-                    $('#addModal').find('#salesOrder').empty();
-                    $('#addModal').find('#salesOrder').append(salesOption);
-                    $('#addModal').find('#salesOrder').val(salesOrder);
-                    //$('#addModal').trigger('orderLoaded');
-                }else{
+                // if (isEdit){
+                //     $('#addModal').find('#salesOrder').empty();
+                //     $('#addModal').find('#salesOrder').append(salesOption);
+                //     $('#addModal').find('#salesOrder').val(salesOrder);
+                //     //$('#addModal').trigger('orderLoaded');
+                // }else{
                     $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, format: 'getProdRaw'}, function (data){
                         var obj = JSON.parse(data);
 
@@ -3914,7 +3917,7 @@ else{
                             $("#failBtn").click();
                         }
                     });
-                }
+                // }
             }
         });
 
@@ -4349,18 +4352,9 @@ else{
                 }else{
                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                 }
-
-                if (obj.message.transaction_status == 'Purchase'){
-                    //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
-                    $//('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
-                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
-                }else{
-                    //$('#addModal').find('#salesOrder').next('.select2-container').hide();
-                    //$('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
-                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
-                }
                 
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
+                $('#addModal').find('#poSupplyWeight').val(obj.message.po_supply_weight);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
@@ -4418,12 +4412,37 @@ else{
 
                 if (obj.message.transaction_status == 'Purchase'){
                     //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
-                    $//('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    //('#addModal').find('#purchaseOrderEdit').val(obj.message.purchase_order).show();
+                    // Check if purchaseOrder value exist in the select tag
+                    var purchaseOrderExists = $('#addModal').find('#purchaseOrder option').filter(function() {
+                        return $(this).val() === obj.message.purchase_order;
+                    }).length > 0;
+
+                    if (!purchaseOrderExists){
+                        // Append missing purchaseOrder
+                        $('#addModal').find('#purchaseOrder').append(
+                            '<option value="'+obj.message.purchase_order+'">'+obj.message.purchase_order+'</option>'
+                        );
+                    }
+
                     $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }else{
                     //$('#addModal').find('#salesOrder').next('.select2-container').hide();
                     //$('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
+
+                    // Check if salesOrder value exist in the select tag
+                    var salesOrderExists = $('#addModal').find('#salesOrder option').filter(function() {
+                        return $(this).val() === obj.message.purchase_order;
+                    }).length > 0;
+
+                    if (!salesOrderExists){
+                        // Append missing salesOrder
+                        $('#addModal').find('#salesOrder').append(
+                            '<option value="'+obj.message.purchase_order+'">'+obj.message.purchase_order+'</option>'
+                        );
+                    }
+
                     $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }
