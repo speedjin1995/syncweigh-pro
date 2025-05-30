@@ -15,6 +15,8 @@ $query = "SELECT role_code, role_name from roles WHERE role_code <> 'SADMIN' AND
 
 if($_SESSION["roles"] == 'ADMIN'){
     $query = "SELECT role_code, role_name from roles WHERE role_code <> 'SADMIN' AND role_code <> 'ADMIN' AND deleted = '0'";
+}else if ($_SESSION["roles"] == 'MANAGER'){
+    $query = "SELECT role_code, role_name from roles WHERE role_code NOT IN ('SADMIN', 'ADMIN', 'MANAGER') AND deleted = '0'";
 }
 
 $stmt2 = $link->prepare($query);
