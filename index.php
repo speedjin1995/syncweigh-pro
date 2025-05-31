@@ -2494,8 +2494,6 @@ else{
             $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
             $('#addModal').find('#transactionId').val("");
-            $('#addModal').find('#purchaseOrder').val("").trigger('change');
-            $('#addModal').find('#salesOrder').val("").trigger('change');
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
@@ -2573,11 +2571,14 @@ else{
             // Show select and hide input readonly
             $('#addModal').find('#salesOrderEdit').val("").hide();
             $('#addModal').find('#purchaseOrderEdit').val("").hide();
-            $('#addModal').find('#salesOrder').next('.select2-container').show();
 
-            // Unset appended so fields
-            $('#addModal').find('#salesOrder').next('.select2-container').show();
-
+            // Unset appended so/po fields
+            $('#addModal').find('#salesOrder').empty();
+            $('#addModal').find('#salesOrder').append(salesOption);
+            $('#addModal').find('#salesOrder').val("").trigger('change');
+            $('#addModal').find('#purchaseOrder').empty();
+            $('#addModal').find('#purchaseOrder').append(purchaseOption);
+            $('#addModal').find('#purchaseOrder').val("").trigger('change');
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
