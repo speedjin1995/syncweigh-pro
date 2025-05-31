@@ -745,7 +745,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <label for="grossIncomingDate" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate" readonly>
+                                                                                        <input type="date" class="form-control input-readonly" data-provider="flatpickr" id="grossIncomingDate" name="grossIncomingDate" required>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -767,7 +767,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Outgoing Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate" readonly>
+                                                                                        <input type="date" class="form-control input-readonly" data-provider="flatpickr" id="tareOutgoingDate" name="tareOutgoingDate">
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -1282,7 +1282,9 @@ if ($user != null && $user != ''){
     <script type="text/javascript">
     var table = null;
     var rowCount = $("#productTable").find(".details").length;
-    
+    var grossIncomingDatePicker;
+    var tareOutgoingDatePicker; 
+
     $(function () {
         var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
@@ -1306,6 +1308,40 @@ if ($user != null && $user != ''){
         $('#transactionDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: true,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN') ? 'true' : 'false' ?>,
+            onReady: function(selectedDates, dateStr, instance) {
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN')): ?>
+                    instance._input.setAttribute('readonly', true);
+                    instance.close();
+                <?php endif; ?>
+            }
+        });
+
+        tareOutgoingDatePicker = $('#tareOutgoingDate').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: true,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN') ? 'true' : 'false' ?>,
+            onReady: function(selectedDates, dateStr, instance) {
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN')): ?>
+                    instance._input.setAttribute('readonly', true);
+                    instance.close();
+                <?php endif; ?>
+            }
         });
 
         $('#selectAllCheckbox').on('change', function() {
@@ -2229,9 +2265,9 @@ if ($user != null && $user != ''){
             $('#addModal').find('#destination').val("");
             $('#addModal').find('#remarks').val("");
             $('#addModal').find('#grossIncoming').val("");
-            $('#addModal').find('#grossIncomingDate').val("");
+            grossIncomingDatePicker.clear();
             $('#addModal').find('#tareOutgoing').val("");
-            $('#addModal').find('#tareOutgoingDate').val("");
+            tareOutgoingDatePicker.clear();
             $('#addModal').find('#nettWeight').val("");
             $('#addModal').find('#estimateLoading').val("");
             $('#addModal').find('#grossIncoming2').val("");
@@ -2445,8 +2481,11 @@ if ($user != null && $user != ''){
             var tare = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#grossIncomingDate').val(formatDate3(new Date())).trigger('keyup');
             $('#nettWeight').trigger('change');
+
+            // Update the Flatpickr instance
+            grossIncomingDatePicker.setDate(new Date()); // sets it to current date/time
+            $('#grossIncomingDate').trigger('change');
         });
 
         $('#grossCapture').on('click', function(){
@@ -2460,8 +2499,11 @@ if ($user != null && $user != ''){
             var gross = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#tareOutgoingDate').val(formatDate3(new Date())).trigger('keyup');
             $('#nettWeight').trigger('change');
+
+            // Update the Flatpickr instance
+            tareOutgoingDatePicker.setDate(new Date()); // sets it to current date/time
+            $('#tareOutgoingDate').trigger('change');
         });
 
         $('#tareCapture').on('click', function(){
@@ -2470,12 +2512,12 @@ if ($user != null && $user != ''){
             $('#tareOutgoing').trigger('keyup');
         });
 
-        $('#grossIncomingDate').on('keyup', function(){
-            let startDate = $(this).val();
-            let endDate = $('#tareOutgoingDate').val();
+        $('#grossIncomingDate').on('change', function(){
+            let startDate = formatDateStr($(this).val());
+            let endDate = formatDateStr($('#tareOutgoingDate').val());
 
             if(startDate && endDate) {
-                let start = parseDate(startDate);
+                let start = parseDate(startDate); 
                 let end = parseDate(endDate);
 
                 let diffInMinutes = Math.abs(Math.ceil((end - start) / 60000)); // Convert milliseconds to minutes
@@ -2491,9 +2533,9 @@ if ($user != null && $user != ''){
             }
         });
 
-        $('#tareOutgoingDate').on('keyup', function(){
-            let startDate = $('#grossIncomingDate').val();
-            let endDate = $(this).val();
+        $('#tareOutgoingDate').on('change', function(){
+            let startDate = formatDateStr($('#grossIncomingDate').val());
+            let endDate = formatDateStr($(this).val());
             
             if(startDate && endDate) {
                 let start = parseDate(startDate);
@@ -3225,9 +3267,9 @@ if ($user != null && $user != ''){
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#remarks').val(obj.message.remarks); //
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
+                grossIncomingDatePicker.setDate(new Date(obj.message.gross_weight1_date));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
-                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
+                tareOutgoingDatePicker.setDate(obj.message.tare_weight1_date != null ? new Date(obj.message.tare_weight1_date) : null);
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#estimateLoading').val(obj.message.estimate_loading); //
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
