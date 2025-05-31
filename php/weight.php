@@ -135,8 +135,9 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $grossIncomingDate = null;
     } 
     else {
-        $grossIncomingDate = trim(str_replace(["AM", "PM"], "", $_POST["grossIncomingDate"]));
-        $grossIncomingDate = DateTime::createFromFormat('d/m/Y H:i:s', $grossIncomingDate)->format('Y-m-d H:i:s');
+        // $grossIncomingDate = trim(str_replace(["AM", "PM"], "", $_POST["grossIncomingDate"]));
+        // $grossIncomingDate = DateTime::createFromFormat('d/m/Y H:i:s', $_POST["grossIncomingDate"])->format('Y-m-d H:i:s');
+        $grossIncomingDate = $_POST['grossIncomingDate'];
     }
 
     if (empty($_POST["tareOutgoing"])) {
@@ -148,8 +149,9 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
     if (empty($_POST["tareOutgoingDate"])) {
         $tareOutgoingDate = null;
     } else {
-        $tareOutgoingDate = trim(str_replace(["AM", "PM"], "", $_POST["tareOutgoingDate"]));
-        $tareOutgoingDate = DateTime::createFromFormat('d/m/Y H:i:s', $tareOutgoingDate)->format('Y-m-d H:i:s');
+        // $tareOutgoingDate = trim(str_replace(["AM", "PM"], "", $_POST["tareOutgoingDate"]));
+        // $tareOutgoingDate = DateTime::createFromFormat('d/m/Y H:i:s', $_POST["tareOutgoingDate"])->format('Y-m-d H:i:s');
+        $tareOutgoingDate = $_POST["tareOutgoingDate"];
     }
 
     if (empty($_POST["nettWeight"])) {
