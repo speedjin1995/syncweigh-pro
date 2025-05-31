@@ -745,7 +745,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <label for="grossIncomingDate" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate" readonly>
+                                                                                        <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate" <?= $role == 'SADMIN' || $role == 'ADMIN' ? '' : 'readonly'; ?>>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -767,7 +767,7 @@ if ($user != null && $user != ''){
                                                                                 <div class="row">
                                                                                     <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Outgoing Date</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate" readonly>
+                                                                                        <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate" <?= $role == 'SADMIN' || $role == 'ADMIN' ? '' : 'readonly'; ?>>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
