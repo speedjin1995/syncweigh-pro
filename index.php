@@ -3452,7 +3452,8 @@ else{
             $('#grossWeightBy1').val('<?php echo $username; ?>');
         });
 
-        $('#grossCapture').on('click', function(){
+        $('#grossCapture').on('click', function(event){
+            event.preventDefault();
             var text = $('#indicatorWeight').text();
             $('#grossIncoming').val(parseFloat(text).toFixed(0));
             $('#grossIncoming').trigger('keyup');
@@ -3468,7 +3469,8 @@ else{
             $('#tareWeightBy1').val('<?php echo $username; ?>');
         });
 
-        $('#tareCapture').on('click', function(){
+        $('#tareCapture').on('click', function(event){
+            event.preventDefault();
             var text = $('#indicatorWeight').text();
             $('#tareOutgoing').val(parseFloat(text).toFixed(0));
             $('#tareOutgoing').trigger('keyup');
@@ -3558,7 +3560,8 @@ else{
             $('#grossWeightBy2').val('<?php echo $username; ?>');
         });
 
-        $('#grossCapture2').on('click', function(){
+        $('#grossCapture2').on('click', function(event){
+            event.preventDefault();
             var text = $('#indicatorWeight').text();
             $('#grossIncoming2').val(parseFloat(text).toFixed(0));
             $('#grossIncoming2').trigger('keyup');
@@ -3574,7 +3577,8 @@ else{
             $('#tareWeightBy2').val('<?php echo $username; ?>');
         });
 
-        $('#tareCapture2').on('click', function(){
+        $('#tareCapture2').on('click', function(event){
+            event.preventDefault();
             var text = $('#indicatorWeight').text();
             $('#tareOutgoing2').val(parseFloat(text).toFixed(0));
             $('#tareOutgoing2').trigger('keyup');
