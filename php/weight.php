@@ -811,7 +811,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         } 
                         else{
                             $update_stmt->close();
-                            //$db->close();
     
                             # Update PO or SO table row balance
                             /*if ($transactionStatus == 'Purchase'){
@@ -848,35 +847,21 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             $updatePoSoStmt->close();*/
 
                             // update empty container status
-                            // if(!empty($containerNo)){
-                            //     if ($update_container = $db->prepare("UPDATE Weight_Container SET is_complete=? WHERE container_no=? AND status='0'")){
-                            //         $update_container->bind_param('ss', $isComplete, $containerNo);
-    
-                            //         // Execute the prepared query.
-                            //         if (! $update_container->execute()) {
-                            //             echo json_encode(
-                            //                 array(
-                            //                     "status"=> "failed", 
-                            //                     "message"=> $update_container->error
-                            //                 )
-                            //             );
-                            //         }
-                            //         else
-                            //         {
-                            //             $update_container->close();
+                            if(!empty($containerNo) && $weightType == 'Container'){
+                                if ($update_container = $db->prepare("UPDATE Weight_Container SET is_cancel=? WHERE container_no=? AND status='0'")){
+                                    $update_container->bind_param('ss', $isComplete, $containerNo);
 
-                            //             echo json_encode(
-                            //                 array(
-                            //                     "status"=> "success", 
-                            //                     "message"=> "Added Successfully!!",
-                            //                     "id"=>$id
-                            //                 )
-                            //             );
-                            //         }
-                            //     }
-                            // }else{
-                                
-                            // }
+                                    // Execute the prepared query.
+                                    if (! $update_container->execute()) {
+                                        echo json_encode(
+                                            array(
+                                                "status"=> "failed", 
+                                                "message"=> $update_container->error
+                                            )
+                                        );
+                                    }
+                                }
+                            }
 
                             echo json_encode(
                                 array(
