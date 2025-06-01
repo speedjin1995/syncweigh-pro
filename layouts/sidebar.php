@@ -169,6 +169,9 @@
                                 <li class="nav-item">
                                     <a href="purchaseReport.php" class="nav-link"><?=$lang['t-poReport']?></a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="publicReport.php" class="nav-link"><?=$lang['t-publicReport']?></a>
+                                </li>
                                 <?php
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                                         echo '<li class="nav-item">

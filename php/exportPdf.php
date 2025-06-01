@@ -666,7 +666,7 @@ if(isset($_POST["file"])){
                                         
                                             // Add product-wise subtotal
                                             $message .= '<tr style="font-size: 11px;">
-                                                <th colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Subtotal (' . $product . ')</th>
+                                                <th colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalNet/1000, 2) . '</th>
@@ -681,7 +681,7 @@ if(isset($_POST["file"])){
                                         $message .= '</tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Grand Total</th>
+                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Grand Total</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
@@ -1056,10 +1056,10 @@ if(isset($_POST["file"])){
                                                     
                                                     $message .= '<td>' . $row['purchase_order'] . '</td>
                                                     <td>' . $row['delivery_no'] . '</td>
-                                                    <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
                                                     <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                    <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
                                                     <td>' . $formattedGrossWeightDate . '</td>
                                                     <td>' . $formattedTareWeightDate . '</td>
                                                     <td style="font-size: 10px; text-align: center;">' . $row['created_by'] . '</td>
@@ -1073,7 +1073,7 @@ if(isset($_POST["file"])){
                                         
                                             // Add product-wise subtotal
                                             $message .= '<tr>
-                                                <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Subtotal (' . $product . ')</th>
+                                                <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalNet/1000, 2) . '</th>
@@ -1088,7 +1088,7 @@ if(isset($_POST["file"])){
                                         $message .= '</tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Grand Total</th>
+                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Grand Total</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>

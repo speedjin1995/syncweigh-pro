@@ -33,6 +33,7 @@
     $lang["t-weighingReport"]="Weighing Report";
     $lang["t-soReport"]="Sales Report";
     $lang["t-poReport"]="Purchase Report";
+    $lang["t-publicReport"]="Public Report";
     $lang["t-auditLog"]="Audit Log";
     $lang["t-logout"]="Log out";
 

@@ -44,7 +44,7 @@ else{
 
 <head>
 
-    <title>Purchase Reports | Synctronix - Weighing System</title>
+    <title>Public Reports | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -143,7 +143,7 @@ else{
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select select2">
-                                                                <option value="Purchase" selected>Purchase</option>
+                                                                <option value="Local">Public</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -361,7 +361,7 @@ else{
                                                     <div class="card-header">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Purchase Weighing Records</h5>
+                                                                <h5 class="card-title mb-0">Public Weighing Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <button type="button" id="exportSummaryPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
@@ -370,7 +370,7 @@ else{
                                                                 </button>
                                                                 <button type="button" id="exportPurchasePdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
-                                                                    Export Purchase Report
+                                                                    Export Public Report
                                                                 </button>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
@@ -493,7 +493,7 @@ else{
         <div class="modal-dialog modal-dialog-scrollable custom-xxl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Purchase Report</h5>
+                    <h5 class="modal-title" id="exampleModalScrollableTitle">Export Public Report</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
