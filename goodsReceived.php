@@ -226,6 +226,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Supplier</th>
                                                                     <th>Plant</th>
                                                                     <th>Raw Material</th>
@@ -338,6 +339,11 @@ else{
             'height': 'auto'
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = 'Purchase';
@@ -369,7 +375,16 @@ else{
                     purchaseOrder: poI
                 } 
             },
-            'columns': [                
+            'columns': [    
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },            
                 { data: 'supplier_name' },
                 { data: 'plant_name' },
                 { data: 'product_name' },
@@ -397,7 +412,7 @@ else{
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
-            var statusI = 'Sales';
+            var statusI = 'Purchase';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
@@ -431,6 +446,15 @@ else{
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'supplier_name' },
                     { data: 'plant_name' },
                     { data: 'product_name' },
@@ -462,7 +486,7 @@ else{
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
