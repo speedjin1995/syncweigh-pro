@@ -254,13 +254,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     text-align: left;
                                 }
                                 .left-align {
-                                text-align: left;
+                                    text-align: left;
                                 }
                                 .right-align {
-                                text-align: right;
+                                    text-align: right;
                                 }
                                 .right-align td {
-                                text-align: right;
+                                    text-align: right;
                                 }
                                 .no-border {
                                     border: none;
@@ -299,7 +299,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     border: none;
                                 }
                                 .info-table td {
-                                    padding: 4px 4px;
+                                    padding: 2px 4px;
                                     border: none;
                                 }
                                 .info-table .label {
