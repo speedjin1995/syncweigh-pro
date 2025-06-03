@@ -226,6 +226,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Supplier</th>
                                                                     <th>Plant</th>
                                                                     <th>Raw Material</th>
@@ -338,6 +339,11 @@ else{
             'height': 'auto'
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = 'Purchase';
@@ -369,7 +375,16 @@ else{
                     purchaseOrder: poI
                 } 
             },
-            'columns': [                
+            'columns': [    
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },            
                 { data: 'supplier_name' },
                 { data: 'plant_name' },
                 { data: 'product_name' },
@@ -431,6 +446,15 @@ else{
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'supplier_name' },
                     { data: 'plant_name' },
                     { data: 'product_name' },
@@ -462,7 +486,7 @@ else{
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -627,6 +651,93 @@ else{
         // Trigger the function on change
         $('select[id^="group"]').on('change', function () {
             updateSelects();
+        });
+
+        // Post to SQL Handling
+        $('#postSQL').on('click', function () {
+            $('#spinnerLoading').show();
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = 'Purchase';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to post to SQL these items?')) {
+                    $.post('php/postGr.php', {
+                        fromDate: fromDateI,
+                        toDate: toDateI,
+                        status: statusI,
+                        supplier: supplierNoI,
+                        rawMat: rawMatI,
+                        plant: plantI,
+                        purchaseOrder: poI,
+                        userID: selectedIds, 
+                        type: 'MULTI'
+                    }, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            toastr["success"](obj.message, "Success:");
+                            $('#weightTable').DataTable().ajax.reload(null, false);
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            } 
+            else {
+                if (confirm('Are you sure you want to post to SQL?')) {
+                    $.post('php/postGr.php', {
+                        fromDate: fromDateI,
+                        toDate: toDateI,
+                        status: statusI,
+                        supplier: supplierNoI,
+                        rawMat: rawMatI,
+                        plant: plantI,
+                        purchaseOrder: poI,
+                        type: 'ALL'
+                    }, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            toastr["success"](obj.message, "Success:");
+                            $('#weightTable').DataTable().ajax.reload(null, false);
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            }     
         });
     });
 
