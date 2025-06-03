@@ -36,10 +36,25 @@ $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
     require_once 'db_connect.php';
+
+    # Company Details
+    $CompanyCode = '';
+    $CompanyName = '';
+
+    $companyQuery = "SELECT * FROM Company";
+    $companyDetail = mysqli_query($db, $companyQuery);
+    $companyRow = mysqli_fetch_assoc($companyDetail);
+
+    if (!empty($companyRow)) {
+        $CompanyCode = $companyRow['company_code'];
+        $CompanyName = $companyRow['name'];
+    }
+
     $agents = $data['data'];
+    $errorSoProductArray = [];
     
-    foreach ($agents as $rows) {
-        $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('n/j/Y', $rows['DOCDATE'])->format('Y-m-d H:i:s') : '';
+    foreach ($agents as $rows) { 
+        $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('j/n/Y', $rows['DOCDATE'])->format('Y-m-d H:i:s') : '';
         $PONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
         $SupplierCode = (isset($rows['CODE']) && !empty($rows['CODE']) && $rows['CODE'] !== '' && $rows['CODE'] !== null) ? trim($rows['CODE']) : '';
         // $SupplierName = (isset($rows['COMPANYNAME']) && !empty($rows['COMPANYNAME']) && $rows['COMPANYNAME'] !== '' && $rows['COMPANYNAME'] !== null) ? trim($rows['COMPANYNAME']) : '';
@@ -175,7 +190,7 @@ if (!empty($data['data'])) {
                 }
 
                 // Auto gen destination code
-                if($update_stmt2 = $db->prepare("SELECT * FROM Miscellaneous WHERE code=? AND name=?")){
+                if($update_stmt2 = $db->prepare("SELECT * FROM miscellaneous WHERE code=? AND name=?")){
                     $update_stmt2->bind_param('ss', $code, $firstChar);
 
                     if (! $update_stmt2->execute()) {
@@ -261,7 +276,7 @@ if (!empty($data['data'])) {
             $rawMatUomRow = mysqli_fetch_assoc($rawMatUomDetail);
 
             if (empty($rawMatUomRow)){
-                $errMsg = "Raw Material UOM for raw material code: ".$ProductCode." and UOM: KG doesn't exist in master data.";
+                $errMsg = "Raw Material UOM for raw material code: ".$RawMaterialCode." and UOM: KG doesn't exist in master data.";
                 $errorSoProductArray[] = $errMsg;
                 continue;
             }
@@ -280,9 +295,7 @@ if (!empty($data['data'])) {
             if($poCount < 1){
                 $TotalPrice = 0;
                 if (isset($UnitPrice) && !empty($UnitPrice) && isset($SupplierQuantity) && !empty($SupplierQuantity)){
-                    if ($unit == 'MT'){
-                        $supplierQtyMt = $SupplierQuantity/1000;
-                    }
+                    $supplierQtyMt = $SupplierQuantity/1000;
                     $TotalPrice = $UnitPrice * $supplierQtyMt;
                 }
 

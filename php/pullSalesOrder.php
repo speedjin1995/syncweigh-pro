@@ -35,10 +35,25 @@ $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
     require_once 'db_connect.php';
+
+    # Company Details
+    $CompanyCode = '';
+    $CompanyName = '';
+
+    $companyQuery = "SELECT * FROM Company";
+    $companyDetail = mysqli_query($db, $companyQuery);
+    $companyRow = mysqli_fetch_assoc($companyDetail);
+
+    if (!empty($companyRow)) {
+        $CompanyCode = $companyRow['company_code'];
+        $CompanyName = $companyRow['name'];
+    }
+
     $agents = $data['data'];
+    $errorSoProductArray = [];
     
     foreach ($agents as $rows) {
-        $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('n/j/Y', $rows['DOCDATE'])->format('Y-m-d H:i:s') : '';
+        $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('j/n/Y', $rows['DOCDATE'])->format('Y-m-d H:i:s') : '';
         $SONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
         $OrderNumber = (isset($rows['DOCNOEX']) && !empty($rows['DOCNOEX']) && $rows['DOCNOEX'] !== '' && $rows['DOCNOEX'] !== null) ? trim($rows['DOCNOEX']) : '';
         $CustomerCode = (isset($rows['CODE']) && !empty($rows['CODE']) && $rows['CODE'] !== '' && $rows['CODE'] !== null) ? trim($rows['CODE']) : '';
@@ -175,7 +190,7 @@ if (!empty($data['data'])) {
                 }
 
                 // Auto gen destination code
-                if($update_stmt2 = $db->prepare("SELECT * FROM Miscellaneous WHERE code=? AND name=?")){
+                if($update_stmt2 = $db->prepare("SELECT * FROM miscellaneous WHERE code=? AND name=?")){
                     $update_stmt2->bind_param('ss', $code, $firstChar);
 
                     if (! $update_stmt2->execute()) {
@@ -279,9 +294,7 @@ if (!empty($data['data'])) {
             if($soCount < 1){
                 $TotalPrice = 0;
                 if (isset($UnitPrice) && !empty($UnitPrice) && isset($OrderQuantity) && !empty($OrderQuantity)){
-                    if ($unit == 'MT'){
-                        $orderQtyMt = $OrderQuantity/1000;
-                    }
+                    $orderQtyMt = $OrderQuantity/1000;
                     $TotalPrice = $UnitPrice * $orderQtyMt;
                 }
                 
