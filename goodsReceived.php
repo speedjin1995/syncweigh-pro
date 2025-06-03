@@ -652,6 +652,93 @@ else{
         $('select[id^="group"]').on('change', function () {
             updateSelects();
         });
+
+        // Post to SQL Handling
+        $('#postSQL').on('click', function () {
+            $('#spinnerLoading').show();
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = 'Purchase';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to post to SQL these items?')) {
+                    $.post('php/postGr.php', {
+                        fromDate: fromDateI,
+                        toDate: toDateI,
+                        status: statusI,
+                        supplier: supplierNoI,
+                        rawMat: rawMatI,
+                        plant: plantI,
+                        purchaseOrder: poI,
+                        userID: selectedIds, 
+                        type: 'MULTI'
+                    }, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            toastr["success"](obj.message, "Success:");
+                            $('#weightTable').DataTable().ajax.reload(null, false);
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            } 
+            else {
+                if (confirm('Are you sure you want to post to SQL?')) {
+                    $.post('php/postGr.php', {
+                        fromDate: fromDateI,
+                        toDate: toDateI,
+                        status: statusI,
+                        supplier: supplierNoI,
+                        rawMat: rawMatI,
+                        plant: plantI,
+                        purchaseOrder: poI,
+                        type: 'ALL'
+                    }, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            toastr["success"](obj.message, "Success:");
+                            $('#weightTable').DataTable().ajax.reload(null, false);
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            }     
+        });
     });
 
     function format (row) {

@@ -71,10 +71,10 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 
-$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);

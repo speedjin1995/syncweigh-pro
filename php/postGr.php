@@ -31,12 +31,12 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
 	$searchQuery .= " and transaction_status = '".$_POST['status']."'";
 }
 
-if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
+	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
 }
 
-if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
-	$searchQuery .= " and product_code = '".$_POST['product']."'";
+if($_POST['rawMat'] != null && $_POST['rawMat'] != '' && $_POST['rawMat'] != '-'){
+	$searchQuery .= " and raw_mat_code = '".$_POST['rawMat']."'";
 }
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
@@ -100,7 +100,7 @@ if ($type == "MULTI"){
             $result = $stmt2->get_result();
 
             while ($row = $result->fetch_assoc()) {
-                
+
             }
 
             $stmt2->close();
