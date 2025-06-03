@@ -551,3 +551,8 @@ ALTER TABLE `Weight_Log` CHANGE `estimate_loading` `estimate_loading` VARCHAR(50
 ALTER TABLE `Product` ADD `rate_type` VARCHAR(10) NOT NULL DEFAULT 'Float' AFTER `plant`;
 
 ALTER TABLE `Product_Log` ADD `rate_type` VARCHAR(10) NOT NULL DEFAULT 'Float' AFTER `plant`;
+
+-- 03/06/2025 --
+INSERT INTO `miscellaneous` (`name`, `value`) VALUES ('weight misc', 1);
+
+INSERT INTO `status` (`status`, `prefix`, `misc_id`) VALUES ('Misc', 'M', 8);
