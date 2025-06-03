@@ -634,6 +634,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
     <script type="text/javascript">
 
     var table = null;
+    let wasErrorModalShown = false;
 
     $(function () {
         const today = new Date();
@@ -1242,6 +1243,16 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             $('#totalPrice').val(totalPrice);
         });
 
+        $('#errorModal').on('shown.bs.modal', function () {
+            wasErrorModalShown = true;
+        });
+        
+        $('#errorModal').on('hidden.bs.modal', function () {
+            if (wasErrorModalShown) {
+                wasErrorModalShown = false; // Reset flag
+                window.location.reload();
+            }
+        });
 
         $('#pullSql').on('click', function(){
             $('#spinnerLoading').show();
