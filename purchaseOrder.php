@@ -633,6 +633,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
     <script type="text/javascript">
 
     var table = null;
+    let wasErrorModalShown = false;
 
     $(function () {
         const today = new Date();
@@ -1238,6 +1239,17 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
 
             $('#totalPrice').val(totalPrice);
+        });
+
+        $('#errorModal').on('shown.bs.modal', function () {
+            wasErrorModalShown = true;
+        });
+        
+        $('#errorModal').on('hidden.bs.modal', function () {
+            if (wasErrorModalShown) {
+                wasErrorModalShown = false; // Reset flag
+                window.location.reload();
+            }
         });
 
         $('#pullSql').on('click', function(){

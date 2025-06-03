@@ -222,7 +222,7 @@ if (!empty($data)) {
                 }
 
                 // Auto gen destination code
-                if($update_stmt2 = $db->prepare("SELECT * FROM Miscellaneous WHERE code=? AND name=?")){
+                if($update_stmt2 = $db->prepare("SELECT * FROM miscellaneous WHERE code=? AND name=?")){
                     $update_stmt2->bind_param('ss', $code, $firstChar);
 
                     if (! $update_stmt2->execute()) {
