@@ -110,6 +110,11 @@ if (!empty($data['data'])) {
                 continue;
             }
         }
+        else{
+            $errMsg = "Supplier: ".$SupplierCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
+        }
 
         # Transporter Checking & Processing
         if($TransporterCode != null && $TransporterCode != ''){
@@ -122,6 +127,11 @@ if (!empty($data['data'])) {
                 $errorSoProductArray[] = $errMsg;
                 continue;
             }
+        }
+        else{
+            $errMsg = "Transporter: ".$TransporterCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
         }
 
         # Agent Checking & Processing
@@ -250,6 +260,11 @@ if (!empty($data['data'])) {
                 continue;
             }
         }
+        else{
+            $errMsg = "Plant: ".$PlantCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
+        }
 
         # Raw Material Checking & Processing
         $rawMatId = '';
@@ -266,6 +281,11 @@ if (!empty($data['data'])) {
             else{
                 $rawMatId = $rawMatRow['id'];
             }
+        }
+        else{
+            $errMsg = "Raw Material: ".$RawMaterialCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
         }
 
         //Checking to pull rate in raw mat

@@ -139,6 +139,11 @@ if (!empty($data)) {
                 continue;
             }
         }
+        else{
+            $errMsg = "Customer: ".$CustomerCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
+        }
 
         # Transporter Checking & Processing
         if($TransporterCode != null && $TransporterCode != ''){
@@ -164,6 +169,11 @@ if (!empty($data)) {
                 $errorSoProductArray[] = $errMsg;
                 continue;
             }
+        }
+        else{
+            $errMsg = "Transporter: ".$TransporterCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
         }
 
         # Agent Checking & Processing
@@ -318,6 +328,11 @@ if (!empty($data)) {
                 continue;
             }
         }
+        else{
+            $errMsg = "Plant: ".$PlantCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
+        }
 
         # Product Checking & Processing
         $productId = '';
@@ -346,6 +361,11 @@ if (!empty($data)) {
             }else{
                 $productId = $productRow['id'];
             }
+        }
+        else{
+            $errMsg = "Product: ".$ProductCode." doesn't exist in master data.";
+            $errorSoProductArray[] = $errMsg;
+            continue;
         }
 
         //Checking to pull rate in product
