@@ -39,9 +39,9 @@
                 <li class="nav-item">
                     <a href="index.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
                 </li>                
-                <!--li class="nav-item">
+                <li class="nav-item">
                     <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i></i><?=$lang['t-bitumen']?></a>
-                </li-->         
+                </li>         
                 <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                         aria-expanded="true" aria-controls="sidebarDashboards">
