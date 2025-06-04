@@ -452,7 +452,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                         $rowCount++;
                     }
 
-                    if ($select_stmt3 = $db->prepare("SELECT SUM(total_price) AS total_amount FROM Weight_Product WHERE weight_id=?")) {
+                    /*if ($select_stmt3 = $db->prepare("SELECT SUM(total_price) AS total_amount FROM Weight_Product WHERE weight_id=?")) {
                         $select_stmt3->bind_param('s', $wid);
                         
                         // Execute the prepared query.
@@ -466,11 +466,11 @@ if(isset($_POST['userID'], $_POST["file"])){
                             $totalAmount = number_format((float)$totalAmount, 2, '.', ''); // "123.00"
 
                         }
-                    }
+                    }*/
 
                                         $message .= '<tr>
                                             <td colspan="6" style="text-align:right; border-bottom: none; border-left: none; font-weight:bold;">Total Amount</td>
-                                            <td class="right-align" style="font-weight:bold; border-bottom: none; border-right: none; padding-right: 10px; text-align:right; padding-right: 10px;">'.$totalAmount.'</td>
+                                            <td class="right-align" style="font-weight:bold; border-bottom: none; border-right: none; padding-right: 10px; text-align:right; padding-right: 10px;">'.$row['total_price'].'</td>
                                         </tr>
                                     </table>
                                 </td>
