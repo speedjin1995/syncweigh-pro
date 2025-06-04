@@ -61,9 +61,19 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
 					$transactionId .= $row2['prefix'];
 				} 
 
-				if ($update_stmt = $db->prepare("SELECT * FROM miscellaneous WHERE id=?")) {
-					$update_stmt->bind_param('s', $id);
-					
+                $queryPlant = "SELECT sales as curcount FROM Plant WHERE plant_code='$plantCode'";
+
+                if($status == 'Purchase'){
+                    $queryPlant = "SELECT purchase as curcount FROM Plant WHERE plant_code='$plantCode'";
+                }
+                else if($status == 'Local'){
+                    $queryPlant = "SELECT locals as curcount FROM Plant WHERE plant_code='$plantCode'";
+                }
+                else if($status == 'Misc'){
+                    $queryPlant = "SELECT misc as curcount FROM Plant WHERE plant_code='$plantCode'";
+                }
+
+                if ($update_stmt = $db->prepare($queryPlant)) {
 					// Execute the prepared query.
 					if (! $update_stmt->execute()) {
 						echo json_encode(
@@ -77,8 +87,8 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
 						$message = array();
 						
 						if ($row = $result->fetch_assoc()) {
-							$charSize = strlen($row['value']);
-							$misValue = $row['value'];
+							$charSize = strlen($row['curcount']);
+							$misValue = $row['curcount'];
 		
 							for($i=0; $i<(4-(int)$charSize); $i++){
 								$transactionId.='0';  // S0000
@@ -555,10 +565,21 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
             else{
                 $misValue++;
                 $weightId = $insert_stmt->insert_id;
+                $queryPlantU = "UPDATE Plant SET sales=? WHERE plant_code='$plantCode'";
+    
+                if($status == 'Purchase'){
+                    $queryPlantU = "UPDATE Plant SET purchase=? WHERE plant_code='$plantCode'";
+                }
+                else if($status == 'Local'){
+                    $queryPlantU = "UPDATE Plant SET locals=? WHERE plant_code='$plantCode'";
+                }
+                else if($status == 'Misc'){
+                    $queryPlantU = "UPDATE Plant SET misc=? WHERE plant_code='$plantCode'";
+                }
                 
                 ///insert miscellaneous
-                if ($update_stmt = $db->prepare("UPDATE miscellaneous SET value=? WHERE id=?")){
-                    $update_stmt->bind_param('ss', $misValue, $id);
+                if ($update_stmt = $db->prepare($queryPlantU)){
+                    $update_stmt->bind_param('s', $misValue);
                     
                     // Execute the prepared query.
                     if (! $update_stmt->execute()){
@@ -572,7 +593,6 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
                     } 
                     else{
                         $update_stmt->close();
-                        //$db->close();
 
                         # Insert into Weight_Product 
                         $no = isset($_POST['no']) ? $_POST['no']: [];

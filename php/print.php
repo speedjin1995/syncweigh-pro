@@ -383,12 +383,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <th class="border-none" colspan="2">Weight (kg)</th>
                                         </tr> 
                                         <tr>
-                                            <td style="text-align:center;font-weight:bold; border-left:none;">'.$inDate.'</td>
+                                            <td style="text-align:center;font-weight:bold; border-left:none;font-size:15px;">'.$inDate.'</td>
                                             <td style="text-align:center" width="15%">IN</td>
                                             <td style="text-align:center; border-right:none;" width="25%">'.($row['gross_weight1'] ?? '0').'</td>
                                         </tr>
                                         <tr>
-                                            <td style="text-align:center;font-weight:bold; border-left:none;">'.$outDate.'</td>
+                                            <td style="text-align:center;font-weight:bold; border-left:none;font-size:15px;">'.$outDate.'</td>
                                             <td style="text-align:center">OUT</td>
                                             <td style="text-align:center; border-right:none;">'.($row['tare_weight1'] ?? '0').'</td>
                                         </tr>
