@@ -979,3 +979,43 @@ DELIMITER ;
 ALTER TABLE `Inventory` ADD `raw_mat_basic_uom` VARCHAR(10) NOT NULL DEFAULT '0' AFTER `raw_mat_id`;
 
 ALTER TABLE `Product_RawMat` ADD `raw_mat_basic_uom` VARCHAR(10) NOT NULL DEFAULT '0' AFTER `raw_mat_code`;
+
+CREATE TABLE `Api_Log` (
+  `id` int(15) NOT NULL,
+  `request` longtext DEFAULT NULL,
+  `response` longtext DEFAULT NULL,
+  `error_message` longtext DEFAULT NULL,
+  `services` varchar(50) DEFAULT NULL,
+  `created_datetime` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Api_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Api_Log` MODIFY `id` int(15) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Cronjob_Table` (
+  `id` int(11) NOT NULL,
+  `cronjob_name` varchar(50) NOT NULL,
+  `cronjob_file` text NOT NULL,
+  `duration` varchar(10) NOT NULL,
+  `unit` varchar(30) NOT NULL,
+  `status` int(2) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Cronjob_Table` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Cronjob_Table` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+CREATE TRIGGER TRG_INS_INV
+AFTER INSERT ON Raw_Mat
+FOR EACH ROW
+BEGIN
+    -- Insert one inventory row for each plant
+    INSERT INTO Inventory (raw_mat_id, plant_code)
+    SELECT NEW.id, p.plant_code
+    FROM Plant p WHERE status = '0';
+END$$
+
+DELIMITER ;
