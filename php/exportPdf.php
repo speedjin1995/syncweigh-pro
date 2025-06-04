@@ -253,6 +253,8 @@ if(isset($_POST["file"])){
                                             <th>SEAL NO.</th>
                                             <th>CONTAINER <br>NO. 2</th>
                                             <th>SEAL NO. 2</th>
+                                            <th>ORDER WEIGHT</th>
+                                            <th>SUPPLIER WEIGHT</th>
                                             <th>INCOMING <br>(MT)</th>
                                             <th>OUTGOING <br>(MT)</th>
                                             <th>NET <br>(MT)</th>
@@ -263,6 +265,7 @@ if(isset($_POST["file"])){
                                             <th>NET 2 <br>(MT)</th>
                                             <th>IN TIME 2</th>
                                             <th>OUT TIME 2</th>
+                                            <th>VARIANCE</th>
                                             <th>SUB TOTAL WEIGHT</th>
                                             <th>USER</th>
                                         </tr>
@@ -351,8 +354,8 @@ if(isset($_POST["file"])){
                                                 <td>' . $row['delivery_no'] . '</td>
                                                 <td>' . $row['container_no'] . '</td>
                                                 <td>' . $row['seal_no'] . '</td>
-                                                <td>' . $row['container_no2'] . '</td>
-                                                <td>' . $row['seal_no2'] . '</td>
+                                                <td>' . (!empty($row['order_weight']) ? number_format($row['order_weight'] / 1000, 2) : '') . '</td>
+                                                <td>' . (!empty($row['supplier_weight']) ? number_format($row['supplier_weight'] / 1000, 2) : '') . '</td>
                                                 <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                 <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
                                                 <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
@@ -363,6 +366,7 @@ if(isset($_POST["file"])){
                                                 <td>' . (!empty($row['nett_weight2']) ? number_format($row['nett_weight2'] / 1000, 2) : '') . '</td>
                                                 <td>' . $formattedGrossWeightDate2 . '</td>
                                                 <td>' . $formattedTareWeightDate2 . '</td>
+                                                <td>' . (!empty($row['weight_different']) ? number_format($row['weight_different'] / 1000, 2) : '') . '</td>
                                                 <td>' . number_format($row['final_weight']/1000, 2) . '</td>
                                                 <td>' . $row['created_by'] . '</td>
                                             </tr>';
@@ -375,7 +379,7 @@ if(isset($_POST["file"])){
                                     
                                         // Add product-wise subtotal
                                         $message .= '<tr>
-                                            <th style="font-size: 10px;" colspan="16">Subtotal (' . $product . ')</th>
+                                            <th style="font-size: 10px;" colspan="18">Subtotal (' . $product . ')</th>
                                             <th style="border:1px solid black;font-size: 9px;">' . number_format($totalGross /1000, 2). '</th>
                                             <th style="border:1px solid black;font-size: 9px;">' . number_format($totalTare/1000, 2) . '</th>
                                             <th style="border:1px solid black;font-size: 9px;">' . number_format($totalNet/1000, 2) . '</th>
@@ -390,7 +394,7 @@ if(isset($_POST["file"])){
                                     $message .= '</tbody>
                                         <tfoot>
                                             <tr>
-                                                <th style="font-size: 10px;" colspan="16">Grand Total</th>
+                                                <th style="font-size: 10px;" colspan="18">Grand Total</th>
                                                 <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                 <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                 <th style="border:1px solid black;font-size: 9px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
