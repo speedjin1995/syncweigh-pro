@@ -213,9 +213,23 @@ else{
                                                 </div>
                                                 <div class="col-xxl-12 col-lg-12 mb-3">
                                                     <div class="row">
-                                                        <label for="weight" class="col-sm-4 col-form-label">Weight (Kg)</label>
+                                                        <label for="basicUom" class="col-sm-4 col-form-label">Basic UOM</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="weight" name="weight" placeholder="Raw Material Weight (Kg)">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control" id="basicUom" name="basicUom" required>
+                                                                <div class="input-group-text" id="basicUomUnit">KG</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="weight" class="col-sm-4 col-form-label">Weight</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control input-readonly" id="weight" name="weight" readonly>
+                                                                <div class="input-group-text">KG</div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -227,7 +241,9 @@ else{
                                                         </div>
                                                     </div>
                                                 </div>                                                       
-                                                <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
+                                                <input type="hidden" class="form-control" id="id" name="id">
+                                                <input type="hidden" class="form-control" id="rawMatId" name="rawMatId">
+                                                <input type="hidden" class="form-control" id="basicUnitId" name="basicUnitId">
                                             </div>
                                         </div>
                                     </div>
@@ -437,6 +453,42 @@ else{
             "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
             "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
         });
+
+        $('#basicUom').on('keyup', function(){
+            var basicUom = parseFloat($(this).val());
+            var basicUomUnitId = $('#addModal').find('#basicUnitId').val();
+            var rawMatId = $('#addModal').find('#rawMatId').val();
+
+            if (basicUomUnitId == 2){
+                $('#addModal').find('#weight').val(basicUom);
+            }else{
+                // Call to backend to get conversion rate
+                if (rawMatId && basicUom){
+                    $.post('php/getProdRawMatUOM.php', {userID: rawMatId, type: 'PO'}, function(data)
+                    {
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            // Processing for order quantity (KG)
+                            var rate = parseFloat(obj.message.rate);
+                            var weight = basicUom/rate;
+                            weight = parseInt(weight);
+
+                            $('#addModal').find('#weight').val(weight);
+                        }
+                        else if(obj.status === 'failed'){
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        });
     });
 
     function edit(id){
@@ -446,8 +498,12 @@ else{
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#rawMatId').val(obj.message.raw_mat_id);
                 $('#addModal').find('#rawMatCode').val(obj.message.raw_mat_code);
                 $('#addModal').find('#rawMatName').val(obj.message.name);
+                $('#addModal').find('#basicUom').val(obj.message.raw_mat_basic_uom);
+                $('#addModal').find('#basicUomUnit').text(obj.message.basic_uom);
+                $('#addModal').find('#basicUnitId').val(obj.message.basic_uom_id);
                 $('#addModal').find('#weight').val(obj.message.raw_mat_weight);
                 $('#addModal').find('#drum').val(obj.message.raw_mat_count);
                 $('#addModal').modal('show');
