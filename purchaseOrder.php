@@ -1386,9 +1386,9 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
                 $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).trigger('change');
                 $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
-                $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
+                $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
                 $('#addModal').find('#balance').val(obj.message.convertedBal);
                 $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
