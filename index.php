@@ -1110,6 +1110,7 @@ else{
                                                         <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="agentCode" name="agentCode">
                                                         <input type="hidden" id="status" name="status">
+                                                        <input type="hidden" id="productId" name="productId">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
                                                         <input type="hidden" id="productPrice" name="productPrice">
@@ -1120,10 +1121,12 @@ else{
                                                         <input type="hidden" id="transporterName" name="transporterName">
                                                         <input type="hidden" id="supplierCode" name="supplierCode">
                                                         <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
+                                                        <input type="hidden" id="rawMaterialId" name="rawMaterialId">
                                                         <input type="hidden" id="siteCode" name="siteCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                         <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
+                                                        <input type="hidden" id="basicNettWeight" name="basicNettWeight">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -3165,44 +3168,41 @@ else{
             $('#currentWeight').trigger('change');
             $('#finalWeight').trigger('change');
 
-            // // Logic for Converted UOM
-            // var transactionStatus = $('#addModal').find('#transactionStatus').val();
-            // var prodRawCode = '';
-            // var type = '';
-            // if(transactionStatus == 'Sales'){
-            //     prodRawId = $('#addModal').find('#productName :selected').data('id');
-            //     type = 'SO';
-            // }else if (transactionStatus == 'Purchase'){
-            //     prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
-            //     type = 'PO';
-            // }
+            // Logic for Converted UOM
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+            var prodRawCode = '';
+            var type = '';
+            if(transactionStatus == 'Sales'){
+                prodRawId = $('#addModal').find('#productName :selected').data('id');
+                type = 'SO';
+            }else if (transactionStatus == 'Purchase'){
+                prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
+                type = 'PO';
+            }
 
-            // var convertedUnit = $('#addModal').find('#orderWeightUnitId').val();
-            // var nettWeight = $('#addModal').find('#nettWeight').val(); console.log(convertedUnit);
+            if (prodRawId && nettWeight){
+                $.post('php/getProdRawMatUOM.php', {userID: prodRawId, type: type}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        // Processing for order quantity (KG)
+                        var rate = parseFloat(obj.message.rate);
+                        var basicNettWeight = nett1*rate;
 
-            // if (prodRawId && convertedUnit && nettWeight){
-            //     $.post('php/getProdRawMatUOM.php', {userID: prodRawId, unitID: convertedUnit, type: type}, function(data)
-            //     {
-            //         var obj = JSON.parse(data);
-            //         if(obj.status === 'success'){
-            //             // Processing for order quantity (KG)
-            //             var rate = parseFloat(obj.message.rate);
-            //             var convertedNettWeight = nettWeight/rate;
-
-            //             $('#addModal').find('#convertedNettWeight').val(convertedNettWeight);
-            //         }
-            //         else if(obj.status === 'failed'){
-            //             alert(obj.message);
-            //             $("#failBtn").attr('data-toast-text', obj.message );
-            //             $("#failBtn").click();
-            //         }
-            //         else{
-            //             alert(obj.message);
-            //             $("#failBtn").attr('data-toast-text', obj.message );
-            //             $("#failBtn").click();
-            //         }
-            //     });
-            // }
+                        $('#addModal').find('#basicNettWeight').val(basicNettWeight);
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
 
         });
 
@@ -3445,6 +3445,7 @@ else{
 
         //productName
         $('#productName').on('change', function(){
+            $('#productId').val($('#productName :selected').data('id'));
             $('#productCode').val($('#productName :selected').data('code'));
             $('#productDescription').val($('#productName :selected').data('description'));
             $('#productPrice').val($('#productName :selected').data('price'));
@@ -3735,6 +3736,7 @@ else{
         //rawMaterialName
         $('#rawMaterialName').on('change', function(){
             $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
+            $('#rawMaterialId').val($('#rawMaterialName :selected').data('id'));
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
             var rawMat = $('#rawMaterialName :selected').data('code');
