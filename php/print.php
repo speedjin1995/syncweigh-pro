@@ -220,8 +220,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                             @media print{ 
                                 @page {
                                     size: a5 landscape;
-                                    margin-left: 0.15in;
-                                    margin-right: 0.5in;
+                                    margin-left: 0.25in;
+                                    margin-right: 0.3in;
                                     margin-top: 0.1in;
                                     margin-bottom: 0.1in;
                                 }
