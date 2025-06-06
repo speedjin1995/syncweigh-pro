@@ -548,7 +548,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     $prodRawCode = $productCode;
                     $prodRawName = $productName;
                     $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND product_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
-                } var_dump($prodRawName);die;
+                }
 
                 # Weighing Details
                 $weighing_stmt->bind_param('ssssss', $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant, $weightId);
@@ -601,16 +601,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
                 // Update Balance 
                 if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
-                    var_dump($currentBalance);
-                    var_dump($poSoStatus);
-                    var_dump($purchaseOrder);
-                    var_dump($prodRawCode);
-                    var_dump($prodRawName);
-                    var_dump($plantCode);
-                    var_dump($plant);
-
-                    die;
-
                     if ($isComplete == 'Y' && $isCancel == 'N'){
                         if ($transactionStatus == 'Purchase'){
                             $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND plant_name=?");
