@@ -2122,12 +2122,15 @@ if ($user != null && $user != ''){
                         }
                     }
                     else if(ind == 'EX2001'){
-                        var text = data.split(" ");
-                        let newArray = text.slice(1, -1);
-                        let newtext = newArray.join();
-                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
+                        data = data.replace("kg", "").replace("KG", "").replace("Kg", "").replace("g", "");
+                        if(data != null && data != ''){
+                            var text = data.split(",");
+                            var text2 = text[text.length - 1];
+                            //text2 = text2.replace("kg", "").replace("KG", "").replace("Kg", "");
+                            $('#indicatorWeight').html(parseInt(text2.replaceAll(",", "").trim()).toString());
+                            $('#indicatorConnected').addClass('bg-primary');
+                            $('#checkingConnection').removeClass('bg-danger');
+                        }
                     }
                 }
                 else{

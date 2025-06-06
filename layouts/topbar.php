@@ -1,7 +1,7 @@
 <?php
 require_once "php/db_connect.php";
 
-$weighing = $db->query("SELECT * FROM Weight WHERE is_complete = 'N'");
+$weighing = $db->query("SELECT * FROM Weight WHERE is_complete = 'N' AND is_cancel<>'Y'");
 $weighing2 = $db->query("SELECT * FROM Weight WHERE is_approved = 'N'");
 $salesList = array();
 $purchaseList = array();
