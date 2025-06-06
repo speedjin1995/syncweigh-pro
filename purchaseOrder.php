@@ -754,6 +754,13 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                         <i class="fas fa-check"></i>
                                     </button>
                                 </div>`;
+                            } else {
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </div>`;
                             }
                             
                             buttons += `
@@ -846,6 +853,13 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                     <div class="col-auto">
                                         <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
                                             <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>`;
+                                } else {
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
+                                            <i class="fas fa-undo"></i>
                                         </button>
                                     </div>`;
                                 }
@@ -1444,6 +1458,34 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         if (confirm('Are you sure you want to close this item?')) {
             $('#spinnerLoading').show();
             $.post('php/completePurchaseOrder.php', {userID: id}, function(data){
+                var obj = JSON.parse(data);
+                
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message);
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    function revert(id){
+        if (confirm('Are you sure you want to revert this PO back to Open?')) {
+            $('#spinnerLoading').show();
+            $.post('php/revertSoPo.php', {userID: id, type: 'Purchase'}, function(data){
                 var obj = JSON.parse(data);
                 
                 if(obj.status === 'success'){
