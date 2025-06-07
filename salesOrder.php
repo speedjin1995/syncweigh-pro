@@ -1037,7 +1037,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#convertedOrderQty').val("");
-            $('#addModal').find('#convertedQtyUnit').val("KG");
+            $('#addModal').find('#convertedQtyUnit').text("KG");
             $('#addModal').find('#convertedOrderQtyUnit').val('');
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#balanceUnit').text("KG");
@@ -1212,42 +1212,74 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             var convertedOrderWeight = parseFloat($(this).val());
             var productCode = $('#product :selected').data('id');
             var unitId = $('#convertedOrderQtyUnit').val(); 
+            var orderNo = $('#orderNo').val();
 
-            $('#balance').val(convertedOrderWeight); // update balance value
+            let orderWeightMatched = false;
+            // Query to SO log to see previous record order weight
+            if (orderNo){
+                $.post('php/getSoPoLog.php', {userID: orderNo, type: 'SO'}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        if (obj.message.length < 1){
+                            orderWeightMatched = true;
+                        }else if (parseFloat(obj.message.converted_order_qty) == convertedOrderWeight){
+                            orderWeightMatched = true;
+                        }else {
+                            orderWeightMatched = false;
+                        }
 
-            if (unitId == 2){
-                $('#orderQty').val(convertedOrderWeight);
-                $('#convertedBal').val(convertedOrderWeight);
-            }else{
-                // Call to backend to get conversion rate
-                if (productCode && convertedOrderWeight){
-                    $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
-                    {
-                        var obj = JSON.parse(data);
-                        if(obj.status === 'success'){
-                            // Processing for order quantity (KG)
-                            var rate = parseFloat(obj.message.rate);
-                            var orderQty = convertedOrderWeight/rate;
-                            orderQty = parseInt(orderQty);
+                        if (orderWeightMatched){
+                            $('#balance').val(convertedOrderWeight); // update balance value
 
-                            $('#orderQty').val(orderQty).trigger('change');
-                            $('#convertedBal').val(orderQty);
+                            if (unitId == 2){
+                                $('#orderQty').val(convertedOrderWeight);
+                                $('#convertedBal').val(convertedOrderWeight);
+                            }else{
+                                // Call to backend to get conversion rate
+                                if (productCode && convertedOrderWeight){
+                                    $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
+                                    {
+                                        var obj = JSON.parse(data);
+                                        if(obj.status === 'success'){
+                                            // Processing for order quantity (KG)
+                                            var rate = parseFloat(obj.message.rate);
+                                            var orderQty = convertedOrderWeight/rate;
+                                            orderQty = parseInt(orderQty);
+
+                                            $('#orderQty').val(orderQty).trigger('change');
+                                            $('#convertedBal').val(orderQty);
+                                        }
+                                        else if(obj.status === 'failed'){
+                                            alert(obj.message);
+                                            $("#failBtn").attr('data-toast-text', obj.message );
+                                            $("#failBtn").click();
+                                        }
+                                        else{
+                                            alert(obj.message);
+                                            $("#failBtn").attr('data-toast-text', obj.message );
+                                            $("#failBtn").click();
+                                        }
+                                    });
+                                }
+                            }
+                        }else{
+                            // calculate added or deducted new order weight 
                         }
-                        else if(obj.status === 'failed'){
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                    });
-                }
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
             }
         });
-
 
         $('#unitPrice').on('change', function(){
             var unitPrice = parseFloat($(this).val());
@@ -1402,18 +1434,40 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 $('#addModal').find('#soNo').val(obj.message.so_no);
                 $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
-                $('#addModal').find('#product').val(obj.message.product_code).trigger('change');
+                $('#addModal').find('#product').val(obj.message.product_code).select2('destroy').select2();
+                $('#addModal').find('#productName').val(obj.message.product_name);
                 $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
+                $('#addModal').find('#convertedQtyUnit').text(obj.message.converted_unit_text);
+                $('#addModal').find('#balanceUnit').text(obj.message.converted_unit_text);
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
-                $('#addModal').find('#balance').val(obj.message.convertedBal);
+                $('#addModal').find('#balance').val(obj.message.converted_balance);
                 $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
-                $('#addModal').find('#convertedQtyUnit').val(obj.message.converted_unit).trigger('change');
+                $('#addModal').find('#convertedBal').val(obj.message.balance);
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');

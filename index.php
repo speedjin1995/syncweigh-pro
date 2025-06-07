@@ -1110,6 +1110,7 @@ else{
                                                         <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="agentCode" name="agentCode">
                                                         <input type="hidden" id="status" name="status">
+                                                        <input type="hidden" id="productId" name="productId">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
                                                         <input type="hidden" id="productPrice" name="productPrice">
@@ -1120,6 +1121,7 @@ else{
                                                         <input type="hidden" id="transporterName" name="transporterName">
                                                         <input type="hidden" id="supplierCode" name="supplierCode">
                                                         <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
+                                                        <input type="hidden" id="rawMaterialId" name="rawMaterialId">
                                                         <input type="hidden" id="siteCode" name="siteCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
@@ -3445,6 +3447,7 @@ else{
 
         //productName
         $('#productName').on('change', function(){
+            $('#productId').val($('#productName :selected').data('id'));
             $('#productCode').val($('#productName :selected').data('code'));
             $('#productDescription').val($('#productName :selected').data('description'));
             $('#productPrice').val($('#productName :selected').data('price'));
@@ -3735,6 +3738,7 @@ else{
         //rawMaterialName
         $('#rawMaterialName').on('change', function(){
             $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
+            $('#rawMaterialId').val($('#rawMaterialName :selected').data('id'));
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
             var rawMat = $('#rawMaterialName :selected').data('code');

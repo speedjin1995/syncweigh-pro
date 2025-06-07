@@ -416,11 +416,23 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     } else {
         $productCode = trim($_POST["productCode"]);
     }
+    
+    if (empty($_POST["productId"])) {
+        $productId = null;
+    } else {
+        $productId = trim($_POST["productId"]);
+    }
 
     if (empty($_POST["rawMaterialCode"])) {
         $rawMaterialCode = null;
     } else {
         $rawMaterialCode = trim($_POST["rawMaterialCode"]);
+    }
+
+    if (empty($_POST["rawMaterialId"])) {
+        $rawMaterialId = null;
+    } else {
+        $rawMaterialId = trim($_POST["rawMaterialId"]);
     }
 
     if (empty($_POST["siteCode"])) {
@@ -598,19 +610,28 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
             }
             else
             {
-
                 // Update Balance 
                 if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
                     if ($isComplete == 'Y' && $isCancel == 'N'){
                         if ($transactionStatus == 'Purchase'){
+                            // $rawMaterialId
+
+
                             $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND plant_name=?");
                         }elseif($transactionStatus == 'Sales'){
+                            $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
+
+                            // productId
                             $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE order_no=? AND product_code=? AND plant_code=? AND plant_name=?");
                         }
 
                         $updatePoSoStmt->bind_param('ssssss', $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $plantCode, $plant);
                         $updatePoSoStmt->execute();
                         $updatePoSoStmt->close();
+
+                        // Update Converted Balance 
+
+
                     }
                 }
 
@@ -795,4 +816,9 @@ else
         )
     );
 }
+
+function convertBalance($balance, $db, $type){
+
+}
+
 ?>
