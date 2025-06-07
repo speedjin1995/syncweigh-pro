@@ -1214,7 +1214,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             var unitId = $('#convertedOrderQtyUnit').val(); 
             var orderNo = $('#orderNo').val();
 
-            let orderWeightMatched = false;
+            var previousWeight = 0;
             // Query to SO log to see previous record order weight
             if (orderNo){
                 $.post('php/getSoPoLog.php', {userID: orderNo, type: 'SO'}, function(data)
@@ -1222,33 +1222,35 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
                         if (obj.message.length < 1){
-                            orderWeightMatched = true;
-                        }else if (parseFloat(obj.message.converted_order_qty) == convertedOrderWeight){
-                            orderWeightMatched = true;
+                            previousWeight = 0;
+                            convertedBalance = 0;
                         }else {
-                            orderWeightMatched = false;
+                            previousWeight = obj.message.converted_order_qty;
+                            convertedBalance = obj.message.converted_balance;
                         }
 
-                        if (orderWeightMatched){
-                            $('#balance').val(convertedOrderWeight); // update balance value
+                        var weightDifference = parseFloat(previousWeight) - convertedOrderWeight;
+                        var currentOrderWeight = parseFloat(convertedBalance) - weightDifference;
 
+                        if (weightDifference && currentOrderWeight){
+                            $('#balance').val(currentOrderWeight); // update balance value
                             if (unitId == 2){
                                 $('#orderQty').val(convertedOrderWeight);
-                                $('#convertedBal').val(convertedOrderWeight);
+                                $('#convertedBal').val(currentOrderWeight);
                             }else{
                                 // Call to backend to get conversion rate
-                                if (productCode && convertedOrderWeight){
+                                if (productCode && convertedOrderWeight && currentOrderWeight){
                                     $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
                                     {
                                         var obj = JSON.parse(data);
                                         if(obj.status === 'success'){
                                             // Processing for order quantity (KG)
                                             var rate = parseFloat(obj.message.rate);
-                                            var orderQty = convertedOrderWeight/rate;
-                                            orderQty = parseInt(orderQty);
+                                            var orderQty = parseInt(convertedOrderWeight/rate);
+                                            var balance = parseInt(currentOrderWeight/rate);
 
                                             $('#orderQty').val(orderQty).trigger('change');
-                                            $('#convertedBal').val(orderQty);
+                                            $('#convertedBal').val(balance);
                                         }
                                         else if(obj.status === 'failed'){
                                             alert(obj.message);
@@ -1263,8 +1265,6 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                     });
                                 }
                             }
-                        }else{
-                            // calculate added or deducted new order weight 
                         }
                     }
                     else if(obj.status === 'failed'){
