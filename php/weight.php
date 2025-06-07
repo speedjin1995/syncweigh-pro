@@ -849,9 +849,4 @@ else
         )
     );
 }
-
-function convertBalance($balance, $db, $type){
-
-}
-
 ?>

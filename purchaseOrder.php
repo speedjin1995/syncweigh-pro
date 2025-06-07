@@ -1035,7 +1035,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#convertedOrderQty').val("");
-            $('#addModal').find('#convertedQtyUnit').val("KG");
+            $('#addModal').find('#convertedQtyUnit').text("KG");
             $('#addModal').find('#convertedOrderQtyUnit').val('');
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#balanceUnit').text("KG");
@@ -1209,41 +1209,76 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#convertedOrderQty').on('change', function(){
             var convertedOrderWeight = parseFloat($(this).val());
-            var rawMatCode = $('#rawMat :selected').data('id');
+            var rawMatId = $('#rawMat :selected').data('id');
             var unitId = $('#convertedOrderQtyUnit').val(); 
+            var poNo = $('#poNo').val();
 
-            $('#balance').val(convertedOrderWeight); // update balance value
+            var previousWeight = 0;
+            var convertedBalance = 0;
+            // Query to PO log to see previous record supplier weight
+            if (poNo){
+                $.post('php/getSoPoLog.php', {userID: poNo, type: 'PO'}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        if (obj.message.length < 1){
+                            previousWeight = 0;
+                            convertedBalance = 0;
+                        }else {
+                            previousWeight = obj.message.converted_order_qty;
+                            convertedBalance = obj.message.converted_balance;
+                        }
 
-            if (unitId == 2){
-                $('#orderQty').val(convertedOrderWeight);
-                $('#convertedBal').val(convertedOrderWeight);
-            }else{
-                // Call to backend to get conversion rate
-                if (rawMatCode && convertedOrderWeight){
-                    $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, type: 'PO'}, function(data)
-                    {
-                        var obj = JSON.parse(data);
-                        if(obj.status === 'success'){
-                            // Processing for order quantity (KG)
-                            var rate = parseFloat(obj.message.rate);
-                            var orderQty = convertedOrderWeight/rate;
-                            orderQty = parseInt(orderQty);
+                        var weightDifference = parseFloat(previousWeight) - convertedOrderWeight;
+                        var currentOrderWeight = parseFloat(convertedBalance) - weightDifference; console.log(weightDifference); console.log(currentOrderWeight);
+ 
+                        $('#balance').val(currentOrderWeight); // update balance value
+                        if (unitId == 2){
+                            $('#orderQty').val(convertedOrderWeight);
+                            $('#convertedBal').val(currentOrderWeight);
+                            $('#unitPrice').trigger('change');
+                        }else{
+                            // Call to backend to get conversion rate
+                            if (rawMatId && convertedOrderWeight && currentOrderWeight){
+                                $.post('php/getProdRawMatUOM.php', {userID: rawMatId, type: 'PO'}, function(data)
+                                {
+                                    var obj = JSON.parse(data);
+                                    if(obj.status === 'success'){
+                                        // Processing for order quantity (KG)
+                                        var rate = parseFloat(obj.message.rate);
+                                        var orderQty = parseInt(convertedOrderWeight/rate);
+                                        var balance = parseInt(currentOrderWeight/rate);
 
-                            $('#orderQty').val(orderQty).trigger('change');
-                            $('#convertedBal').val(orderQty);
+                                        $('#orderQty').val(orderQty).trigger('change');
+                                        $('#convertedBal').val(balance);
+                                        $('#unitPrice').trigger('change');
+                                    }
+                                    else if(obj.status === 'failed'){
+                                        alert(obj.message);
+                                        $("#failBtn").attr('data-toast-text', obj.message );
+                                        $("#failBtn").click();
+                                    }
+                                    else{
+                                        alert(obj.message);
+                                        $("#failBtn").attr('data-toast-text', obj.message );
+                                        $("#failBtn").click();
+                                    }
+                                });
+                            }
                         }
-                        else if(obj.status === 'failed'){
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                    });
-                }
+                        
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
             }
         });
 
@@ -1398,18 +1433,41 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 $('#addModal').find('#poNo').val(obj.message.po_no);
                 $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
-                $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).trigger('change');
+                $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).select2('destroy').select2();
+                $('#addModal').find('#rawMatName').val(obj.message.raw_mat_name);
                 $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
+                $('#addModal').find('#convertedQtyUnit').text(obj.message.converted_unit_text);
+                $('#addModal').find('#balanceUnit').text(obj.message.converted_unit_text);
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
-                $('#addModal').find('#balance').val(obj.message.convertedBal);
+                $('#addModal').find('#balance').val(obj.message.converted_balance);
                 $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
-                $('#addModal').find('#convertedQtyUnit').val(obj.message.converted_unit).trigger('change');
+                $('#addModal').find('#convertedOrderQtyUnit').val(obj.message.converted_unit);
+                $('#addModal').find('#convertedBal').val(obj.message.balance);
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');

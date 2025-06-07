@@ -1215,6 +1215,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             var orderNo = $('#orderNo').val();
 
             var previousWeight = 0;
+            var convertedBalance = 0;
             // Query to SO log to see previous record order weight
             if (orderNo){
                 $.post('php/getSoPoLog.php', {userID: orderNo, type: 'SO'}, function(data)
@@ -1232,38 +1233,36 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                         var weightDifference = parseFloat(previousWeight) - convertedOrderWeight;
                         var currentOrderWeight = parseFloat(convertedBalance) - weightDifference;
 
-                        if (weightDifference && currentOrderWeight){
-                            $('#balance').val(currentOrderWeight); // update balance value
-                            if (unitId == 2){
-                                $('#orderQty').val(convertedOrderWeight);
-                                $('#convertedBal').val(currentOrderWeight);
-                            }else{
-                                // Call to backend to get conversion rate
-                                if (productCode && convertedOrderWeight && currentOrderWeight){
-                                    $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
-                                    {
-                                        var obj = JSON.parse(data);
-                                        if(obj.status === 'success'){
-                                            // Processing for order quantity (KG)
-                                            var rate = parseFloat(obj.message.rate);
-                                            var orderQty = parseInt(convertedOrderWeight/rate);
-                                            var balance = parseInt(currentOrderWeight/rate);
+                        $('#balance').val(currentOrderWeight); // update balance value
+                        if (unitId == 2){
+                            $('#orderQty').val(convertedOrderWeight);
+                            $('#convertedBal').val(currentOrderWeight);
+                        }else{
+                            // Call to backend to get conversion rate
+                            if (productCode && convertedOrderWeight && currentOrderWeight){
+                                $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
+                                {
+                                    var obj = JSON.parse(data);
+                                    if(obj.status === 'success'){
+                                        // Processing for order quantity (KG)
+                                        var rate = parseFloat(obj.message.rate);
+                                        var orderQty = parseInt(convertedOrderWeight/rate);
+                                        var balance = parseInt(currentOrderWeight/rate);
 
-                                            $('#orderQty').val(orderQty).trigger('change');
-                                            $('#convertedBal').val(balance);
-                                        }
-                                        else if(obj.status === 'failed'){
-                                            alert(obj.message);
-                                            $("#failBtn").attr('data-toast-text', obj.message );
-                                            $("#failBtn").click();
-                                        }
-                                        else{
-                                            alert(obj.message);
-                                            $("#failBtn").attr('data-toast-text', obj.message );
-                                            $("#failBtn").click();
-                                        }
-                                    });
-                                }
+                                        $('#orderQty').val(orderQty).trigger('change');
+                                        $('#convertedBal').val(balance);
+                                    }
+                                    else if(obj.status === 'failed'){
+                                        alert(obj.message);
+                                        $("#failBtn").attr('data-toast-text', obj.message );
+                                        $("#failBtn").click();
+                                    }
+                                    else{
+                                        alert(obj.message);
+                                        $("#failBtn").attr('data-toast-text', obj.message );
+                                        $("#failBtn").click();
+                                    }
+                                });
                             }
                         }
                     }
@@ -1445,6 +1444,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
                 $('#addModal').find('#balance').val(obj.message.converted_balance);
                 $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
+                $('#addModal').find('#convertedOrderQtyUnit').val(obj.message.converted_unit);
                 $('#addModal').find('#convertedBal').val(obj.message.balance);
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
