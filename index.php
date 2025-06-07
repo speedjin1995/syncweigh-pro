@@ -4428,7 +4428,7 @@ else{
                         );
                     }
 
-                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).select2('destroy').select2();
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }else{
                     //$('#addModal').find('#salesOrder').next('.select2-container').hide();
@@ -4446,9 +4446,29 @@ else{
                         );
                     }
 
-                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).select2('destroy').select2();
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
+
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {

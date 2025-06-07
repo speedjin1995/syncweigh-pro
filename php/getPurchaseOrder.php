@@ -123,6 +123,7 @@ if(isset($_POST['userID'])){
                     $message['agent_code'] = $row['agent_code'];
                     $message['destination_code'] = $row['destination_code'];
                     $message['raw_mat_code'] = $row['raw_mat_code'];
+                    $message['raw_mat_name'] = $row['raw_mat_name'];
                     $message['plant_code'] = $row['plant_code'];
                     $message['transporter_code'] = $row['transporter_code'];
                     $message['veh_number'] = $row['veh_number'];
@@ -130,6 +131,7 @@ if(isset($_POST['userID'])){
                     $message['converted_order_qty'] = $row['converted_order_qty'];
                     $message['converted_balance'] = $row['converted_balance'];
                     $message['converted_unit'] = $row['converted_unit'];
+                    $message['converted_unit_text'] = searchUnitById($row['converted_unit'], $db);
                     $message['order_quantity'] = $row['order_quantity'];
                     $message['balance'] = $row['balance'];
                     $message['unit_price'] = $row['unit_price'];

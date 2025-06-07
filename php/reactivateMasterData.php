@@ -580,6 +580,39 @@ if(isset($_POST['userID'])){
 				)
 			);
 		}
+	}elseif ($type == 'Cronjob_Table') {
+		if ($stmt2 = $db->prepare("UPDATE Cronjob_Table SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				// Execute the prepared query.
+				$stmt2->close();
+				$db->close();
+				
+				echo json_encode(
+					array(
+						"status"=> "success", 
+						"message"=> "Reactivated"
+					)
+				);
+	
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
 	}
 } 
 else{
