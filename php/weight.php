@@ -416,11 +416,23 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     } else {
         $productCode = trim($_POST["productCode"]);
     }
+    
+    if (empty($_POST["productId"])) {
+        $productId = null;
+    } else {
+        $productId = trim($_POST["productId"]);
+    }
 
     if (empty($_POST["rawMaterialCode"])) {
         $rawMaterialCode = null;
     } else {
         $rawMaterialCode = trim($_POST["rawMaterialCode"]);
+    }
+
+    if (empty($_POST["rawMaterialId"])) {
+        $rawMaterialId = null;
+    } else {
+        $rawMaterialId = trim($_POST["rawMaterialId"]);
     }
 
     if (empty($_POST["siteCode"])) {
@@ -574,17 +586,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 }
             
                 $poSoStatus = ($currentBalance <= 0) ? 'Close' : 'Open';
-
-                if ($transactionStatus == 'Purchase'){
-                    $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=?");
-                }elseif($transactionStatus == 'Sales'){
-                    $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE order_no=? AND product_code=? AND product_name=? AND plant_code=? AND plant_name=?");
-                }
-
-                $updatePoSoStmt->bind_param('sssssss', $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant);
-                $updatePoSoStmt->execute();
-
-                $updatePoSoStmt->close();
             }
         }
 
@@ -609,6 +610,43 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
             }
             else
             {
+                // Update Balance 
+                if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
+                    if ($isComplete == 'Y' && $isCancel == 'N'){
+                        if ($transactionStatus == 'Purchase'){
+                            $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
+                            $prodRawId = $rawMaterialId;
+                            $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND plant_name=?");
+                        }elseif($transactionStatus == 'Sales'){
+                            $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
+                            $prodRawId = $productId;
+                            $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND plant_code=? AND plant_name=?");
+                        }
+
+                        // get conversion UOM
+                        $conversion_stmt = $db->prepare($sql);
+                        $unit = '2';
+                        $status = '0';
+                        $conversion_stmt->bind_param('sss', $prodRawId, $unit, $status);
+                        $conversion_stmt->execute();
+                        $conversion_result = $conversion_stmt->get_result();
+
+                        $convertedBalance = 0;
+                        $rate = 1;
+                        if ($conversion_result->num_rows > 0){
+                            $conversionRow = $conversion_result->fetch_assoc();
+                            $rate = $conversionRow['rate'];
+                        }
+                        $conversion_stmt->close();
+                        $convertedBalance = $currentBalance * (float) $rate;
+
+                        // Update Balance 
+                        $updatePoSoStmt->bind_param('sssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $plantCode, $plant);
+                        $updatePoSoStmt->execute();
+                        $updatePoSoStmt->close();
+                    }
+                }
+
                 $update_stmt->close();
                 $db->close();
 
@@ -716,16 +754,37 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 }
                             
                                 $poSoStatus = ($currentBalance <= 0) ? 'Close' : 'Open';
-                
+
                                 if ($transactionStatus == 'Purchase'){
-                                    $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=?");
+                                    $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
+                                    $prodRawId = $rawMaterialId;
+                                    $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND plant_name=?");
                                 }elseif($transactionStatus == 'Sales'){
-                                    $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE order_no=? AND product_code=? AND product_name=? AND plant_code=? AND plant_name=?");
+                                    $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
+                                    $prodRawId = $productId;
+                                    $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND plant_code=? AND plant_name=?");
                                 }
-                
-                                $updatePoSoStmt->bind_param('sssssss', $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant);
+
+                                // get conversion UOM
+                                $conversion_stmt = $db->prepare($sql);
+                                $unit = '2';
+                                $status = '0';
+                                $conversion_stmt->bind_param('sss', $prodRawId, $unit, $status);
+                                $conversion_stmt->execute();
+                                $conversion_result = $conversion_stmt->get_result();
+
+                                $convertedBalance = 0;
+                                $rate = 1;
+                                if ($conversion_result->num_rows > 0){
+                                    $conversionRow = $conversion_result->fetch_assoc();
+                                    $rate = $conversionRow['rate'];
+                                }
+                                $conversion_stmt->close();
+                                $convertedBalance = $currentBalance * (float) $rate;
+
+                                // Update Balance 
+                                $updatePoSoStmt->bind_param('sssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $plantCode, $plant);
                                 $updatePoSoStmt->execute();
-                
                                 $updatePoSoStmt->close();
                             }
                         }

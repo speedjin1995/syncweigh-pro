@@ -1110,6 +1110,7 @@ else{
                                                         <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="agentCode" name="agentCode">
                                                         <input type="hidden" id="status" name="status">
+                                                        <input type="hidden" id="productId" name="productId">
                                                         <input type="hidden" id="productCode" name="productCode">
                                                         <input type="hidden" id="productDescription" name="productDescription">
                                                         <input type="hidden" id="productPrice" name="productPrice">
@@ -1120,6 +1121,7 @@ else{
                                                         <input type="hidden" id="transporterName" name="transporterName">
                                                         <input type="hidden" id="supplierCode" name="supplierCode">
                                                         <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
+                                                        <input type="hidden" id="rawMaterialId" name="rawMaterialId">
                                                         <input type="hidden" id="siteCode" name="siteCode">
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
@@ -3445,6 +3447,7 @@ else{
 
         //productName
         $('#productName').on('change', function(){
+            $('#productId').val($('#productName :selected').data('id'));
             $('#productCode').val($('#productName :selected').data('code'));
             $('#productDescription').val($('#productName :selected').data('description'));
             $('#productPrice').val($('#productName :selected').data('price'));
@@ -3735,6 +3738,7 @@ else{
         //rawMaterialName
         $('#rawMaterialName').on('change', function(){
             $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
+            $('#rawMaterialId').val($('#rawMaterialName :selected').data('id'));
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
             var rawMat = $('#rawMaterialName :selected').data('code');
@@ -4426,7 +4430,7 @@ else{
                         );
                     }
 
-                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).select2('destroy').select2();
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }else{
                     //$('#addModal').find('#salesOrder').next('.select2-container').hide();
@@ -4444,9 +4448,29 @@ else{
                         );
                     }
 
-                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).select2('destroy').select2();
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
+
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {
