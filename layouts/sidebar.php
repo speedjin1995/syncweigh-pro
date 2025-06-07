@@ -174,9 +174,14 @@
                                 </li>
                                 <?php
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
-                                        echo '<li class="nav-item">
-                                            <a href="auditLog.php" class="nav-link">'.$lang['t-auditLog'].'</a>
-                                        </li> ';
+                                        echo '
+                                            <li class="nav-item">
+                                                <a href="auditLog.php" class="nav-link">'.$lang['t-auditLog'].'</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="apiLog.php" class="nav-link">'.$lang['t-apiLog'].'</a>
+                                            </li>
+                                        ';
                                     }
                                 ?>                            
                             </li>
@@ -193,6 +198,12 @@
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <?php
+                                    if($_SESSION["roles"] == 'SADMIN'){
+                                        echo '<li class="nav-item">
+                                            <a href="cronjobSetup.php" class="nav-link">'.$lang['t-cronjobSetup'].'</a>
+                                        </li> ';
+                                    }
+
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                                         echo '<li class="nav-item">
                                             <a href="companyProfile.php" class="nav-link">'.$lang['t-companyProfile'].'</a>

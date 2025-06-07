@@ -975,6 +975,37 @@ END
 $$
 DELIMITER ;
 
+-- 04/06/2025 --
+ALTER TABLE `Inventory` ADD `raw_mat_basic_uom` VARCHAR(10) NOT NULL DEFAULT '0' AFTER `raw_mat_id`;
+
+ALTER TABLE `Product_RawMat` ADD `raw_mat_basic_uom` VARCHAR(10) NOT NULL DEFAULT '0' AFTER `raw_mat_code`;
+
+CREATE TABLE `Api_Log` (
+  `id` int(15) NOT NULL,
+  `request` longtext DEFAULT NULL,
+  `response` longtext DEFAULT NULL,
+  `error_message` longtext DEFAULT NULL,
+  `services` varchar(50) DEFAULT NULL,
+  `created_datetime` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Api_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Api_Log` MODIFY `id` int(15) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Cronjob_Table` (
+  `id` int(11) NOT NULL,
+  `cronjob_name` varchar(50) NOT NULL,
+  `cronjob_file` text NOT NULL,
+  `duration` varchar(10) NOT NULL,
+  `unit` varchar(30) NOT NULL,
+  `status` int(2) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Cronjob_Table` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Cronjob_Table` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 -- 07/06/2025 --
 ALTER TABLE `Purchase_Order_Log` ADD `unit_price` VARCHAR(50) NULL AFTER `converted_unit`, ADD `total_price` VARCHAR(50) NULL AFTER `unit_price`;
 

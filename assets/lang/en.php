@@ -4,6 +4,7 @@
     $lang["t-analytics"]="Analytics";
 
     $lang["t-companyProfile"]="Company Profile";
+    $lang["t-cronjobSetup"]="Cronjob Setup";
     $lang["t-portSetup"]="Port Setup";
     $lang["t-myProfile"]="My Profile";
     $lang["t-changePassword"]="Change Password";
@@ -35,6 +36,7 @@
     $lang["t-poReport"]="Purchase Report";
     $lang["t-publicReport"]="Public Report";
     $lang["t-auditLog"]="Audit Log";
+    $lang["t-apiLog"]="Api Log";
     $lang["t-logout"]="Log out";
 
     $lang["t-crm"]="CRM";
