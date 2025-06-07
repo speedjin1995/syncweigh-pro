@@ -614,22 +614,30 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
                     if ($isComplete == 'Y' && $isCancel == 'N'){
                         if ($transactionStatus == 'Purchase'){
-                            // $rawMaterialId
-
-
+                            $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
+                            $prodRawId = $rawMaterialId;
                             $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND plant_name=?");
                         }elseif($transactionStatus == 'Sales'){
                             $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
-
-                            // productId
+                            $prodRawId = $productId;
                             $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET balance=?, status=? WHERE order_no=? AND product_code=? AND plant_code=? AND plant_name=?");
                         }
 
+                        // get conversion UOM
+                        $conversion_stmt = $db->prepare($sql);
+                        $unit = '2';
+                        $status = '0';
+                        $conversion_stmt->bind_param('sss', $prodRawId, $unit, $status);
+                        $conversion_stmt->execute();
+                        $conversion_stmt->close();
+
+
+
+                        // Update Balance 
                         $updatePoSoStmt->bind_param('ssssss', $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $plantCode, $plant);
                         $updatePoSoStmt->execute();
                         $updatePoSoStmt->close();
 
-                        // Update Converted Balance 
 
 
                     }
