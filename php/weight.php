@@ -605,6 +605,21 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 }
             
                 $poSoStatus = ($currentBalance <= 0) ? 'Close' : 'Open';
+
+                # Inventory Logic
+                $previousNettWeight = 0;
+                // Query previous weight log
+                $weight_log_stmt = $db->prepare("SELECT * FROM Weight_Log WHERE transaction_id=? ORDER BY 1 DESC");
+                $weight_log_stmt->bind_param('s', $transactionId);
+                $weight_log_stmt->execute();
+                $weight_log_result = $weight_log_stmt->get_result();
+
+                if ($weight_log_result->num_rows > 0){
+                    $weightLogRow = $weight_log_result->fetch_assoc();
+                    $previousNettWeight = $weightLogRow['nett_weight1'];
+                }
+
+                $nettWeightDifference = (float) $nettWeight - (float) $previousNettWeight;
             }
         }
 
@@ -663,6 +678,75 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         $updatePoSoStmt->bind_param('sssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $plantCode, $plant);
                         $updatePoSoStmt->execute();
                         $updatePoSoStmt->close();
+                    }
+                }
+
+                # Update Inventory Raw Material
+                if ($transactionStatus == 'Purchase'){
+                    if ($isComplete == 'Y' && $isCancel == 'N'){
+                        $inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_code=? AND status='0'");
+                        $inventory_stmt->bind_param('ss', $rawMaterialId, $plantCode);
+                        $inventory_stmt->execute();
+                        $inventory_result = $inventory_stmt->get_result();
+
+                        while ($inventoryRow = $inventory_result->fetch_assoc()) {
+                            $basicUomWeight = $inventoryRow['raw_mat_basic_uom'];
+                            $weight = $inventoryRow['raw_mat_weight'];
+                            $invId = $inventoryRow['id'];
+
+                            $addedWeight = (float) $weight + (float) $nettWeightDifference;
+                            $addedBasicNettWeight = $addedWeight * $rate;
+
+                            $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
+                            $upd_inv_stmt->bind_param('sss', $addedBasicNettWeight, $addedWeight, $invId);
+                            $upd_inv_stmt->execute();
+                        }
+
+                        $inventory_stmt->close();
+                        $upd_inv_stmt->close();
+                    }
+                }elseif ($transactionStatus == 'Sales') {
+                    if ($isComplete == 'Y' && $isCancel == 'N'){
+                        $productRawMat_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND status='0'");
+                        $productRawMat_stmt->bind_param('s', $productId);
+                        $productRawMat_stmt->execute();
+                        $productRawMat_result = $productRawMat_stmt->get_result();
+
+                        while ($productRawMatRow = $productRawMat_result->fetch_assoc()) {
+                            $rawMatCode = $productRawMatRow['raw_mat_code'];
+                            $rawMatId = searchRawMatIdByCode($rawMatCode, $db);
+                            $rawMatBasicUom = $productRawMatRow['raw_mat_basic_uom'];
+                            $rawMatWeight = $productRawMatRow['raw_mat_weight'];
+
+                            $deltaRawMatWeight = (float) $rawMatWeight * $nettWeightDifference; // Multiply Weight Difference Only
+                            $deltaBasicUom = $deltaRawMatWeight * $rate;
+
+                            // Query Inventory for Raw Material
+                            $inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_code=? AND status='0'");
+                            $inventory_stmt->bind_param('ss', $rawMatId, $plantCode);
+                            $inventory_stmt->execute();
+                            $inventory_result = $inventory_stmt->get_result();
+                            $invRow = $inventory_result->fetch_assoc();
+
+                            if (!empty($invRow)){
+                                $invId = $invRow['id'];
+                                $currentBasicUom = (float)$invRow['raw_mat_basic_uom'];
+                                $currentWeight  = (float)$invRow['raw_mat_weight'];
+
+                                // Calculation with delta
+                                $newBasicUom = $currentBasicUom - $deltaBasicUom;
+                                $newWeight = $currentWeight - $deltaRawMatWeight;
+
+                                // Update Inventory
+                                $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
+                                $upd_inv_stmt->bind_param('sss', $newBasicUom, $newWeight, $invId);
+                                $upd_inv_stmt->execute();
+                                $upd_inv_stmt->close();
+                            }
+                        }
+
+                        $inventory_stmt->close();
+                        $productRawMat_stmt->close();
                     }
                 }
 
@@ -889,7 +973,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 $inventory_stmt->close();
                                 $productRawMat_stmt->close();
                             }
-                        }             
+                        }
                         
                         echo json_encode(
                             array(
@@ -908,33 +992,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         )
                     );
                 }
-
-                // $sel = mysqli_query($db,"select count(*) as allcount from Vehicle");
-                // $records = mysqli_fetch_assoc($sel);
-                // $totalRecords = $records['allcount'];
-
-                // if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
-                //     $insert_log->bind_param('sssss', $totalRecords, $vehicleNo, $vehicleWeight, $action, $username);
-        
-                //     // Execute the prepared query.
-                //     if (! $insert_log->execute()) {
-                //         // echo json_encode(
-                //         //     array(
-                //         //         "status"=> "failed", 
-                //         //         "message"=> $insert_stmt->error
-                //         //     )
-                //         // );
-                //     }
-                //     else{
-                //         $insert_log->close();
-                //         // echo json_encode(
-                //         //     array(
-                //         //         "status"=> "success", 
-                //         //         "message"=> "Added Successfully!!" 
-                //         //     )
-                //         // );
-                //     }
-                // }
 
                 $insert_stmt->close();
                 $db->close();
