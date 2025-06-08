@@ -1078,3 +1078,81 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
 END
 $$
 DELIMITER ;
+
+ALTER TABLE `Inventory` ADD `created_by` VARCHAR(50) NULL DEFAULT 'SYSTEM' AFTER `plant_code`, ADD `created_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_by`, ADD `modified_by` VARCHAR(50) NULL DEFAULT 'SYSTEM' AFTER `created_date`, ADD `modified_date` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `modified_by`;
+
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER TRG_INS_INV
+AFTER INSERT ON Raw_Mat
+FOR EACH ROW
+BEGIN
+    -- Insert one inventory row for each plant
+    INSERT INTO Inventory (raw_mat_id, plant_code, created_by, modified_by)
+    SELECT NEW.id, p.plant_code, NEW.created_by, NEW.modified_by
+    FROM Plant p WHERE status = '0';
+END$$
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER TRG_INS_INV AFTER INSERT ON Raw_Mat
+ FOR EACH ROW BEGIN
+    -- Insert one inventory row for each plant
+    INSERT INTO Inventory (raw_mat_id, plant_code, created_by, modified_by)
+    SELECT NEW.id, p.plant_code, NEW.created_by, NEW.modified_by
+    FROM Plant p WHERE status = '0';
+END
+$$
+DELIMITER ;
+
+CREATE TABLE `Inventory_Log` (
+  `id` int(5) NOT NULL,
+  `inventory_id` int(11) NOT NULL,
+  `raw_mat_id` int(5) NOT NULL,
+  `raw_mat_basic_uom` varchar(10) DEFAULT NULL,
+  `raw_mat_weight` varchar(10) DEFAULT NULL,
+  `raw_mat_count` varchar(10) DEFAULT NULL,
+  `plant_code` varchar(15) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Inventory_Log` ADD PRIMARY KEY (`id`);
+  
+ALTER TABLE `Inventory_Log` MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_INV_LOG` AFTER INSERT ON `Inventory`
+ FOR EACH ROW INSERT INTO Inventory_Log (
+    inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_code, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Inventory_Log (
+        inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;

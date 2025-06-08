@@ -121,7 +121,7 @@
 
                                     <!-- /.modal-dialog -->
                                     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-xl">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="exampleModalScrollableTitle">Add New Product</h5>
@@ -277,6 +277,7 @@
                                                                                         <tr>
                                                                                             <th width="10%">No</th>
                                                                                             <th>Raw Material</th>
+                                                                                            <th width="30%">Basic UOM</th>
                                                                                             <th>Weight (KG)</th>
                                                                                             <th>Action</th>
                                                                                         </tr>
@@ -440,16 +441,25 @@
             <td>
                 <input type="text" class="form-control" id="no" name="no" readonly>
                 <input type="text" class="form-control" id="productRawMatId" name="productRawMatId" hidden>
+                <input type="text" class="form-control" id="rawMatBasicUomUnitId" name="rawMatBasicUomUnitId" hidden>
             </td>
             <td>
                 <select class="form-control select2" style="width: 100%; background-color:white;" id="rawMats" name="rawMats">
                     <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                        <option value="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>"><?=$rowRawMat['raw_mat_code'] . ' - ' . $rowRawMat['name']?></option>
+                        <option value="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>"><?=$rowRawMat['raw_mat_code'] . ' - ' . $rowRawMat['name']?></option>
                     <?php } ?>
                 </select>
             </td>
             <td>
-                <input type="number" class="form-control" id="rawMatWeight" name="rawMatWeight" style="background-color:white;" value="0">
+                <div class="row">
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="rawMatBasicUom" name="rawMatBasicUom" style="background-color:white;" value="0">
+                        <div class="input-group-text rawMatBasicUnit" id="rawMatBasicUnit">MT</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <input type="number" class="form-control input-readonly" id="rawMatWeight" name="rawMatWeight" style="background-color:white;" value="0" readonly>
             </td>
             <td class="d-flex" style="text-align:center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -744,6 +754,80 @@ $(function () {
         rowNoCount = ($("#rawMaterialTable").find(".details").length)+1; //Fixed for no issue
     });
 
+    // Event delegation to calculate product percentage from order weight
+    $("#rawMaterialTable").on('change', 'input[id^="rawMatBasicUom"]', function(){
+        // Retrieve the input's attributes
+        const rawMatBasicUomThis = $(this);
+        var basicUom = $(this).val();
+        var rawMatId = $(this).closest('.details').find('select[id^="rawMats"]').find(":selected").data('id');
+        var basicUomUnitId = rawMatBasicUomThis.closest('.details').find('input[id^="rawMatBasicUomUnitId"]').val();
+
+        if (rawMatId){
+            if (basicUomUnitId == 2){
+                rawMatBasicUomThis.closest('.details').find('input[id^="rawMatWeight"]').val(basicUom);
+            }else{
+                // Call to backend to get conversion rate
+                if (rawMatId && basicUom){
+                    $.post('php/getProdRawMatUOM.php', {userID: rawMatId, type: 'PO'}, function(data)
+                    {
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            // Processing for order quantity (KG)
+                            var rate = parseFloat(obj.message.rate);
+                            var weight = basicUom/rate;
+                            weight = parseInt(weight);
+
+                            rawMatBasicUomThis.closest('.details').find('input[id^="rawMatWeight"]').val(weight);
+                        }
+                        else if(obj.status === 'failed'){
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    // Event delegation to calculate product percentage from order weight
+    $("#rawMaterialTable").on('change', 'select[id^="rawMats"]', function(){
+        // Retrieve the input's attributes
+        var rawMatCode = $(this).val();
+        const rawMatThis = $(this);
+
+        if (rawMatCode){
+            $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, type: 'PO', action: 'getBasicUOM'}, function(data)
+            {
+                var obj = JSON.parse(data);
+                if(obj.status === 'success'){
+                    // Change Basic UOM
+                    var basicUom = obj.message.basic_uom;
+                    var basicUomUnitId = obj.message.basic_uom_id;
+
+                    rawMatThis.closest('.details').find('.rawMatBasicUnit').text(basicUom);
+                    rawMatThis.closest('.details').find('input[id^="rawMatBasicUomUnitId"]').val(basicUomUnitId);
+                }
+                else if(obj.status === 'failed'){
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+
+        }
+    });
+
     $(".add-material").click(function(){
         var $addContents = $("#rawMaterialDetail").clone();
         $("#rawMaterialTable").append($addContents.html());
@@ -754,11 +838,14 @@ $(function () {
 
         $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowNoCount);
         $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount);
+        $("#rawMaterialTable").find('#rawMatBasicUomUnitId:last').attr('name', 'rawMatBasicUomUnitId['+rowCount+']').attr("id", "rawMatBasicUomUnitId" + rowCount);
         $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).select2({
             allowClear: true,
             placeholder: "Please Select",
             dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
-        });
+        }).trigger('change');
+        $("#rawMaterialTable").find('#rawMatBasicUom:last').attr('name', 'rawMatBasicUom['+rowCount+']').attr("id", "rawMatBasicUom" + rowCount);
+        $("#rawMaterialTable").find('#rawMatBasicUnit:last').attr('name', 'rawMatBasicUnit['+rowCount+']').attr("id", "rawMatBasicUnit" + rowCount);
         $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount);
 
         rowCount++;
@@ -923,6 +1010,7 @@ function edit(id){
                         placeholder: "Please Select",
                         dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
                     });
+                    $("#rawMaterialTable").find('#rawMatBasicUom:last').attr('name', 'rawMatBasicUom['+rowCount+']').attr("id", "rawMatBasicUom" + rowCount).val(item.raw_mat_basic_uom);
                     $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount).val(item.raw_mat_weight);
 
                     // Apply custom styling to Select2 elements in addModal

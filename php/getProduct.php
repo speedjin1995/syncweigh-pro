@@ -45,6 +45,7 @@ if(isset($_POST['userID'])){
                     "id" => $row2['id'],
                     "product_id" => $row2['product_id'],
                     "raw_mat_code" => $row2['raw_mat_code'],
+                    "raw_mat_basic_uom" => $row2['raw_mat_basic_uom'],
                     "raw_mat_weight" => $row2['raw_mat_weight'],
                 );
                 $rawMatCount++;

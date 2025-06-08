@@ -1126,6 +1126,7 @@ else{
                                                         <input type="hidden" id="id" name="id">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                         <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
+                                                        <input type="hidden" id="basicNettWeight" name="basicNettWeight">
                                                     </form>
                                                 </div>
                                             </div><!-- /.modal-content -->
@@ -3167,44 +3168,41 @@ else{
             $('#currentWeight').trigger('change');
             $('#finalWeight').trigger('change');
 
-            // // Logic for Converted UOM
-            // var transactionStatus = $('#addModal').find('#transactionStatus').val();
-            // var prodRawCode = '';
-            // var type = '';
-            // if(transactionStatus == 'Sales'){
-            //     prodRawId = $('#addModal').find('#productName :selected').data('id');
-            //     type = 'SO';
-            // }else if (transactionStatus == 'Purchase'){
-            //     prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
-            //     type = 'PO';
-            // }
+            // Logic for Converted UOM
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+            var prodRawCode = '';
+            var type = '';
+            if(transactionStatus == 'Sales'){
+                prodRawId = $('#addModal').find('#productName :selected').data('id');
+                type = 'SO';
+            }else if (transactionStatus == 'Purchase'){
+                prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
+                type = 'PO';
+            }
 
-            // var convertedUnit = $('#addModal').find('#orderWeightUnitId').val();
-            // var nettWeight = $('#addModal').find('#nettWeight').val(); console.log(convertedUnit);
+            if (prodRawId && nettWeight){
+                $.post('php/getProdRawMatUOM.php', {userID: prodRawId, type: type}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        // Processing for order quantity (KG)
+                        var rate = parseFloat(obj.message.rate);
+                        var basicNettWeight = nett1*rate;
 
-            // if (prodRawId && convertedUnit && nettWeight){
-            //     $.post('php/getProdRawMatUOM.php', {userID: prodRawId, unitID: convertedUnit, type: type}, function(data)
-            //     {
-            //         var obj = JSON.parse(data);
-            //         if(obj.status === 'success'){
-            //             // Processing for order quantity (KG)
-            //             var rate = parseFloat(obj.message.rate);
-            //             var convertedNettWeight = nettWeight/rate;
-
-            //             $('#addModal').find('#convertedNettWeight').val(convertedNettWeight);
-            //         }
-            //         else if(obj.status === 'failed'){
-            //             alert(obj.message);
-            //             $("#failBtn").attr('data-toast-text', obj.message );
-            //             $("#failBtn").click();
-            //         }
-            //         else{
-            //             alert(obj.message);
-            //             $("#failBtn").attr('data-toast-text', obj.message );
-            //             $("#failBtn").click();
-            //         }
-            //     });
-            // }
+                        $('#addModal').find('#basicNettWeight').val(basicNettWeight);
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
 
         });
 
