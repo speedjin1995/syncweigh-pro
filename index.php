@@ -3469,7 +3469,8 @@ else{
             var productName = $('#productName :selected').data('code');
             var plant = $('#addModal').find('#plantCode').val();
 
-            if (salesOrder && salesOrder != '-' && plant && productName){
+            //if (salesOrder && salesOrder != '-' && plant && productName){
+            if (salesOrder && salesOrder != '-' && productName){
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
                         var obj = JSON.parse(data);
@@ -3742,7 +3743,8 @@ else{
             var rawMat = $('#rawMaterialName :selected').data('code');
             var plant = $('#addModal').find('#plantCode').val();
 
-            if (purchaseOrder && purchaseOrder != '-' && plant && rawMat){
+            //if (purchaseOrder && purchaseOrder != '-' && plant && rawMat){
+            if (purchaseOrder && purchaseOrder != '-' && rawMat){
                 //if (!isEdit){
                     $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
                         var obj = JSON.parse(data);
