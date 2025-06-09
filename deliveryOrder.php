@@ -484,6 +484,8 @@ else{
         $('#weightTable tbody').on('click', 'tr', function (e) {
             var tr = $(this); // The row that was clicked
             var row = table.row(tr);
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
 
             // Exclude specific td elements by checking the event target
             if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
@@ -495,7 +497,7 @@ else{
                 row.child.hide();
                 tr.removeClass('shown');
             } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', acctType: 'DO' }, function (data) {
+                $.post('php/getWeight.php', { userID: row.data().id, fromDate: fromDateI, toDate: toDateI, format: 'EXPANDABLE', acctType: 'DO' }, function (data) {
                     var obj = JSON.parse(data);
                     if (obj.status === 'success') {
                         row.child(format(obj.message)).show();
