@@ -82,11 +82,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' AND purchase_order != '-'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 // var_dump($empQuery);
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND purchase_order != '-' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery); 

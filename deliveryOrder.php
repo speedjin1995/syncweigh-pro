@@ -764,12 +764,12 @@ else{
             if (selectedIds.length > 0) {
                 window.open("php/exportDoGr.php?type=do&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
-                "&rawMat="+rawMatI+"&plant="+plantI+"&purchaseOrder="+soI+"&id="+selectedIds);
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+soI+"&id="+selectedIds);
             } 
             else {
                 window.open("php/exportDoGr.php?type=do&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
-                "&rawMat="+rawMatI+"&plant="+plantI+"&purchaseOrder="+soI);
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+soI);
             }     
         });
     });

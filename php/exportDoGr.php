@@ -1,6 +1,7 @@
 <?php
 
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 // // Load the database configuration file 
 session_start();
  
@@ -14,106 +15,158 @@ function filterData(&$str){
 ## Search 
 $searchQuery = "";
 if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_GET['fromDate']);
-    $formatted_date = $date->format('Y-m-d 00:00:00');
-    $searchQuery .= " and order_date >= '".$formatted_date."'";
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
+    $fromDateTime = $dateTime->format('Y-m-d H:i:00');
+    $searchQuery = " and tare_weight1_date >= '".$fromDateTime."'";
 }
 
 if($_GET['toDate'] != null && $_GET['toDate'] != ''){
-    $date = DateTime::createFromFormat('d-m-Y', $_GET['toDate']);
-    $formatted_date = $date->format('Y-m-d 23:59:59');
-    $searchQuery .= " and order_date <= '".$formatted_date."'";
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
+    $toDateTime = $dateTime->format('Y-m-d H:i:59');
+    $searchQuery .= " and tare_weight1_date <= '".$toDateTime."'";
 }
 
 if($_GET['status'] != null && $_GET['status'] != '' && $_GET['status'] != '-'){
-    $searchQuery .= " and status = '".$_GET['status']."'";
-}
-
-if($_GET['company'] != null && $_GET['company'] != '' && $_GET['company'] != '-'){
-    $searchQuery .= " and company_code = '".$_GET['company']."'";
-}
-
-if($_GET['site'] != null && $_GET['site'] != '' && $_GET['site'] != '-'){
-    $searchQuery .= " and site_code = '".$_GET['site']."'";
-}
-
-if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
-    $searchQuery .= " and plant_code = '".$_GET['plant']."'";
+	$searchQuery .= " and transaction_status = '".$_GET['status']."'";
 }
 
 if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != '-'){
-    if($_GET["type"] == 'Sales'){
-        $searchQuery .= " and customer_code = '".$_GET['customer']."'";
-    }
-    else{
-        $searchQuery .= " and supplier_code = '".$_GET['customer']."'";
-    }
+	$searchQuery .= " and customer_code = '".$_GET['customer']."'";
+}
+
+if($_GET['supplier'] != null && $_GET['supplier'] != '' && $_GET['supplier'] != '-'){
+	$searchQuery .= " and supplier_code = '".$_GET['supplier']."'";
 }
 
 if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'){
-    if($_GET["type"] == 'Sales'){
-        $searchQuery .= " and product_code = '".$_GET['product']."'";
-    }
-    else{
-        $searchQuery .= " and raw_mat_code = '".$_GET['product']."'";
-    }
+	$searchQuery .= " and product_code = '".$_GET['product']."'";
+}
+
+if($_GET['rawMaterial'] != null && $_GET['rawMaterial'] != '' && $_GET['rawMaterial'] != '-'){
+	$searchQuery .= " and raw_mat_code = '".$_GET['rawMaterial']."'";
+}
+
+if($_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_GET['plant']."'";
+}
+
+if($_GET['purchaseOrder'] != null && $_GET['purchaseOrder'] != '' && $_GET['purchaseOrder'] != '-'){
+	$searchQuery .= " and purchase_order = '".$_GET['purchaseOrder']."'";
+}
+
+$isMulti = 'N';
+if($_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'){
+    $isMulti = $_GET['isMulti'];
 }
 
 // Excel file name for download 
-if($_GET["type"] == 'Sales'){
-    $fileName = "SO-data_" . date('Y-m-d') . ".xls";
+if ($isMulti == 'N'){
+    if($_GET["type"] == 'do'){
+        $fileName = "DO-data_" . date('Y-m-d') . ".xls";
 
-    // Column names 
-    $fields = array('COMPANY CODE', 'COMPANY NAME', 'CUSTOMER CODE', 'CUSTOMER NAME', 'PLANT CODE', 'PLANT NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'CUSTOMER P/O NO', 'S/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BALANCE'); 
+        // Column names 
+        $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount'); 
 
-    // Display column names as first row 
-    $excelData = implode("\t", array_values($fields)) . "\n";
+        // Display column names as first row 
+        $excelData = implode("\t", array_values($fields)) . "\n";
 
-    // Fetch records from database
-    $query = $db->query("select * from Sales_Order WHERE deleted = '0'".$searchQuery);
+        // Fetch records from database
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' AND purchase_order != '-'".$searchQuery." group by purchase_order order by id asc";
+        if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+            $username = implode("', '", $_SESSION["plant"]);
+            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username') AND purchase_order != '-'".$searchQuery." group by purchase_order order by id asc";
+        }
 
-    if($query->num_rows > 0){ 
-        // Output each row of the data 
-        while($row = $query->fetch_assoc()){ 
-            $lineData = []; // Ensure it starts as an empty array each iteration
-            $lineData = array($row['company_code'], $row['company_name'], $row['customer_code'], $row['customer_name'], $row['plant_code'], $row['plant_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
+        $do_stmt = $db->query($query);
+        if($do_stmt->num_rows > 0){  
+            // Output each row of the data 
+            while($row = $do_stmt->fetch_assoc()){
+                $soNo = $row['purchase_order']; 
+                $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
+                $fromDateTime = $fromDate->format('Y-m-d H:i:00');
+                $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
+                $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-            # Added checking to fix duplicated issue
-            if (!empty($lineData)) {
-                array_walk($lineData, 'filterData'); 
-                $excelData .= implode("\t", array_values($lineData)) . "\n"; 
-            }
+                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                $doRecords = mysqli_query($db, $doQuery);
+                $weighingData = array();
+
+                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                    $lineData = []; // Ensure it starts as an empty array each iteration
+                    $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
+                    $tareDateTime = $tareDate->format('d/m/Y');
+                    $exDel = ($row2['ex_del'] == 'EX') ? 'E' : 'D';
+                    $orderNo = $row2['purchase_order'];
+
+                    $soNo = '';
+                    $uom = '';
+                    $qty = '';
+                    $amt = '';
+                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
+                        $select_stmt->bind_param('sss', $orderNo, $row2['product_code'], $row2['plant_code']);
+                        $select_stmt->execute();
+                        $result = $select_stmt->get_result();
+                        if ($row3 = $result->fetch_assoc()) {
+                            $uom = searchUnitById($row3['converted_unit'], $db);
+                            $productId = searchProductIdByCode($row3['product_code'], $db);
+                            $unitPrice = $row3['unit_price'];
+                            $soNo = $row3['so_no'];
+
+                            if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
+                                $update_stmt->bind_param('s', $productId);
+                                $update_stmt->execute();
+                                $result2 = $update_stmt->get_result();
+                                if ($row4 = $result2->fetch_assoc()) {
+                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $amt = $qty * $unitPrice;
+                                }
+                                $update_stmt->close();
+                            }
+                        }
+                        $select_stmt->close();
+                    }
+                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+
+                    # Added checking to fix duplicated issue
+                    if (!empty($lineData)) {
+                        array_walk($lineData, 'filterData'); 
+                        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+                    }
+                }
+            } 
+        }else{ 
+            $excelData .= 'No records found...'. "\n"; 
         } 
-    }else{ 
-        $excelData .= 'No records found...'. "\n"; 
-    } 
+    }else{
+        $fileName = "GR-data_" . date('Y-m-d') . ".xls";
+
+        // Column names 
+        $fields = array('COMPANY CODE', 'COMPANY NAME', 'SUPPLIER CODE', 'SUPPLIER NAME', 'PLANT CODE', 'PLANT NAME', 'RAW MATERIAL CODE', 'RAW MATERIAL NAME', 'P/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BALANCE'); 
+
+        // Display column names as first row 
+        $excelData = implode("\t", array_values($fields)) . "\n";
+
+        // Fetch records from database
+        $query = $db->query("select * from Purchase_Order WHERE deleted = '0'".$searchQuery);
+
+        if($query->num_rows > 0){ 
+            // Output each row of the data 
+            while($row = $query->fetch_assoc()){ 
+                $lineData = []; // Ensure it starts as an empty array each iteration
+                $lineData = array($row['company_code'], $row['company_name'], $row['supplier_code'], $row['supplier_name'], $row['plant_code'], $row['plant_name'], $row['raw_mat_code'], $row['raw_mat_name'], $row['po_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
+
+                # Added checking to fix duplicated issue
+                if (!empty($lineData)) {
+                    array_walk($lineData, 'filterData'); 
+                    $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+                }
+            } 
+        }else{ 
+            $excelData .= 'No records found...'. "\n"; 
+        } 
+    }
 }else{
-    $fileName = "PO-data_" . date('Y-m-d') . ".xls";
 
-    // Column names 
-    $fields = array('COMPANY CODE', 'COMPANY NAME', 'SUPPLIER CODE', 'SUPPLIER NAME', 'PLANT CODE', 'PLANT NAME', 'RAW MATERIAL CODE', 'RAW MATERIAL NAME', 'P/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BALANCE'); 
-
-    // Display column names as first row 
-    $excelData = implode("\t", array_values($fields)) . "\n";
-
-    // Fetch records from database
-    $query = $db->query("select * from Purchase_Order WHERE deleted = '0'".$searchQuery);
-
-    if($query->num_rows > 0){ 
-        // Output each row of the data 
-        while($row = $query->fetch_assoc()){ 
-            $lineData = []; // Ensure it starts as an empty array each iteration
-            $lineData = array($row['company_code'], $row['company_name'], $row['supplier_code'], $row['supplier_name'], $row['plant_code'], $row['plant_name'], $row['raw_mat_code'], $row['raw_mat_name'], $row['po_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
-
-            # Added checking to fix duplicated issue
-            if (!empty($lineData)) {
-                array_walk($lineData, 'filterData'); 
-                $excelData .= implode("\t", array_values($lineData)) . "\n"; 
-            }
-        } 
-    }else{ 
-        $excelData .= 'No records found...'. "\n"; 
-    } 
 }
  
 // Headers for download 
