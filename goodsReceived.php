@@ -210,11 +210,11 @@ else{
                                                                 <!-- <button type="button" id="exportPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Pdf
-                                                                </button>
+                                                                </button> -->
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
-                                                                </button> -->
+                                                                </button>
                                                                 <button type="button" id="postSQL" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Post to SQL
@@ -739,6 +739,37 @@ else{
                 }
 
                 $('#spinnerLoading').hide();
+            }     
+        });
+
+        // Export Excel
+        $('#exportExcel').on('click', function () {
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = 'Purchase';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                window.open("php/exportDoGr.php?type=gr&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+poI+"&id="+selectedIds);
+            } 
+            else {
+                window.open("php/exportDoGr.php?type=gr&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+poI);
             }     
         });
     });
