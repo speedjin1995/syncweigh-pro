@@ -38,41 +38,50 @@ if(isset($_POST['userID'])){
                     $message['fax_no'] = '';
                     $message['cust_supp_tag'] = 'N'; // Tag to see if customer or supplier is selected
 
-                    if ($row['transaction_status'] == 'Purchase'){
-                        if ($customer_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
-                            $customer_stmt->bind_param('s', $row['supplier_code']);
-                            $customer_stmt->execute();
-                            $customer_result = $customer_stmt->get_result();
-                            
-                            if ($row2 = $customer_result->fetch_assoc()) {
-                                $message['name'] = $row2['name'];
-                                $message['tin_no'] = $row2['tin_no'];
-                                $message['address_line_1'] = $row2['address_line_1'];
-                                $message['address_line_2'] = $row2['address_line_2'];
-                                $message['address_line_3'] = $row2['address_line_3'];
-                                $message['phone_no'] = $row2['phone_no'];
-                                $message['fax_no'] = $row2['fax_no'];
-                                $message['cust_supp_tag'] = 'Y';
-                            } 
+                    if ($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
+                        if ($row['supplier_is_manual'] == 'Y'){
+                            $message['name'] = $row['supplier_name'];
+                        }else{
+                            if ($customer_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
+                                $customer_stmt->bind_param('s', $row['supplier_code']);
+                                $customer_stmt->execute();
+                                $customer_result = $customer_stmt->get_result();
+                                
+                                if ($row2 = $customer_result->fetch_assoc()) {
+                                    $message['name'] = $row2['name'];
+                                    $message['tin_no'] = $row2['tin_no'];
+                                    $message['address_line_1'] = $row2['address_line_1'];
+                                    $message['address_line_2'] = $row2['address_line_2'];
+                                    $message['address_line_3'] = $row2['address_line_3'];
+                                    $message['phone_no'] = $row2['phone_no'];
+                                    $message['fax_no'] = $row2['fax_no'];
+                                    $message['cust_supp_tag'] = 'Y';
+                                } 
+                            }
                         }
                     }else{
-                        if ($customer_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
-                            $customer_stmt->bind_param('s', $row['customer_code']);
-                            $customer_stmt->execute();
-                            $customer_result = $customer_stmt->get_result();
-                            
-                            if ($row2 = $customer_result->fetch_assoc()) {
-                                $message['name'] = $row2['name'];
-                                $message['tin_no'] = $row2['tin_no'];
-                                $message['address_line_1'] = $row2['address_line_1'];
-                                $message['address_line_2'] = $row2['address_line_2'];
-                                $message['address_line_3'] = $row2['address_line_3'];
-                                $message['phone_no'] = $row2['phone_no'];
-                                $message['fax_no'] = $row2['fax_no'];
-                                $message['cust_supp_tag'] = 'Y';
-                            }
-                        } 
+                        if ($row['customer_is_manual'] == 'Y'){
+                            $message['name'] = $row['customer_name'];
+                        }else{
+                            if ($customer_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
+                                $customer_stmt->bind_param('s', $row['customer_code']);
+                                $customer_stmt->execute();
+                                $customer_result = $customer_stmt->get_result();
+                                
+                                if ($row2 = $customer_result->fetch_assoc()) {
+                                    $message['name'] = $row2['name'];
+                                    $message['tin_no'] = $row2['tin_no'];
+                                    $message['address_line_1'] = $row2['address_line_1'];
+                                    $message['address_line_2'] = $row2['address_line_2'];
+                                    $message['address_line_3'] = $row2['address_line_3'];
+                                    $message['phone_no'] = $row2['phone_no'];
+                                    $message['fax_no'] = $row2['fax_no'];
+                                    $message['cust_supp_tag'] = 'Y';
+                                }
+                            } 
+                        }
                     }
+                    
                     $message['transporter'] = $row['transporter'] ?? '';
                     $message['driver_name'] = $row['driver_name'] ?? '';
                     $message['driver_ic'] = $row['driver_ic'] ?? '';
@@ -136,12 +145,14 @@ if(isset($_POST['userID'])){
                     $message['lorry_plate_no2'] = $row['lorry_plate_no2'];
                     $message['supplier_weight'] = $row['supplier_weight'];
                     $message['order_weight'] = $row['order_weight'];
+                    $message['customer_is_manual'] = $row['customer_is_manual'];
                     $message['customer_code'] = $row['customer_code'];
                     $message['customer_name'] = $row['customer_name'];
                     $message['driver_code'] = $row['driver_code'];
                     $message['driver_name'] = $row['driver_name'];
                     $message['driver_ic'] = $row['driver_ic'];
                     $message['driver_phone'] = $row['driver_phone'];
+                    $message['supplier_is_manual'] = $row['supplier_is_manual'];
                     $message['supplier_code'] = $row['supplier_code'];
                     $message['supplier_name'] = $row['supplier_name'];
                     $message['product_code'] = $row['product_code'];

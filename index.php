@@ -584,27 +584,53 @@ if ($user != null && $user != ''){
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divCustomerName">
                                                                                 <div class="row">
-                                                                                    <label for="customerName" class="col-sm-4 col-form-label">Customer Name</label>
+                                                                                    <label for="customerName" class="col-sm-4 col-form-label">
+                                                                                    Customer Name
+                                                                                    </label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice" id="customerName" name="customerName">
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
+                                                                                        <div class="input-group">
+                                                                                            <div class="input-group-text">
+                                                                                                <input class="form-check-input mt-0" id="manualCustomer" name="manualCustomer" type="checkbox" value="0" aria-label="Checkbox for following text input">
+                                                                                            </div>
+                                                                                            <input type="text" class="form-control" id="customerNameTxt" name="customerNameTxt" placeholder="Customer Name" style="display:none" required>
+                                                                                            <div class="col-10 index-customer">
+                                                                                                <select class="form-select js-choice" id="customerName" name="customerName">
+                                                                                                    <option selected="-">-</option>
+                                                                                                    <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
+                                                                                                        <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="invalid-feedback">
+                                                                                                Please fill in the field.
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
-                                                                            </div><!-- end col-xxl --> 
+                                                                            </div><!-- end col-xxl -->
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divSupplierName" style="display:none;">
                                                                                 <div class="row">
-                                                                                    <label for="supplierName" class="col-sm-4 col-form-label">Supplier Name</label>
+                                                                                    <label for="supplierName" class="col-sm-4 col-form-label">
+                                                                                    Supplier Name
+                                                                                    </label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select" id="supplierName" name="supplierName">
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
-                                                                                                <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>                                                                                        
+                                                                                        <div class="input-group">
+                                                                                            <div class="input-group-text">
+                                                                                                <input class="form-check-input mt-0" id="manualSupplier" name="manualSupplier" type="checkbox" value="0" aria-label="Checkbox for following text input">
+                                                                                            </div>
+                                                                                            <input type="text" class="form-control" id="supplierNameTxt" name="supplierNameTxt" placeholder="Supplier Name" style="display:none" required>
+                                                                                            <div class="col-10 index-supplier">
+                                                                                                <select class="form-select js-choice" id="supplierName" name="supplierName">
+                                                                                                    <option selected="-">-</option>
+                                                                                                    <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                        <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="invalid-feedback">
+                                                                                                Please fill in the field.
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -2248,11 +2274,13 @@ if ($user != null && $user != ''){
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
             $('#addModal').find('#customerName').val("");
+            $('#addModal').find('#manualCustomer').prop('checked', false).trigger('change');
             $('#addModal').find('#driverCode').val("");
             $('#addModal').find('#driverName').val("");
             $('#addModal').find('#driverICNo').val("");
             $('#addModal').find('#supplierCode').val("");
             $('#addModal').find('#supplierName').val("");
+            $('#addModal').find('#manualSupplier').prop('checked', false).trigger('change');
             $('#addModal').find('#productCode').val("");
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
@@ -2713,11 +2741,6 @@ if ($user != null && $user != ''){
             $('#totalPrice').val(totalPrice.toFixed(2));
         });
 
-        //supplierName
-        $('#supplierName').on('change', function(){
-            $('#supplierCode').val($('#supplierName :selected').data('code'));
-        });
-
         //transporter
         $('#transporter').on('change', function(){
             $('#transporterCode').val($('#transporter :selected').data('code'));
@@ -2734,10 +2757,57 @@ if ($user != null && $user != ''){
             $('#driverPhone').val($('#driverName :selected').data('phone'));
             $('#driverICNo').val($('#driverName :selected').data('ic')); // 
         });
-
+        
         //customerName
+        $('#manualCustomer').on('change', function(){
+            if($(this).is(':checked')){
+                $(this).val(1);
+                $('#customerName').val('-').trigger('change');
+                $('.index-customer').hide();
+                $('#customerNameTxt').show();
+            }
+            else{
+                $(this).val(0);
+                $('#customerNameTxt').hide();
+                $('#customerNameTxt').val('');
+                $('.index-customer').show();
+            }
+        });
+
+        $('#customerNameTxt').on('keyup', function(){
+            var x = $('#customerNameTxt').val();
+            x = x.toUpperCase();
+            $('#customerNameTxt').val(x);
+        });
+
         $('#customerName').on('change', function(){
             $('#customerCode').val($('#customerName :selected').data('code'));
+        });
+
+        //supplierName
+        $('#manualSupplier').on('change', function(){
+            if($(this).is(':checked')){
+                $(this).val(1);
+                $('#supplierName').val('-').trigger('change');
+                $('.index-supplier').hide();
+                $('#supplierNameTxt').show();
+            }
+            else{
+                $(this).val(0);
+                $('#supplierNameTxt').hide();
+                $('#supplierNameTxt').val('');
+                $('.index-supplier').show();
+            }
+        });
+
+        $('#supplierNameTxt').on('keyup', function(){
+            var x = $('#supplierNameTxt').val();
+            x = x.toUpperCase();
+            $('#supplierNameTxt').val(x);
+        });
+
+        $('#supplierName').on('change', function(){
+            $('#supplierCode').val($('#supplierName :selected').data('code'));
         });
 
         <?php
@@ -3250,14 +3320,46 @@ if ($user != null && $user != ''){
                     $('#vehicleNoTxt2').hide();
                 }
                 
+                if(obj.message.customer_is_manual == 'Y'){
+                    $('#addModal').find('#customerNameTxt').val(obj.message.customer_name);
+                    $('#addModal').find('#customerName').val('-');
+                    $('#manualCustomer').val(1);
+                    $('#manualCustomer').prop("checked", true);
+                    $('.index-customer').hide();
+                    $('#customerNameTxt').show();
+                }
+                else{
+                    $('#addModal').find('#customerNameTxt').val('');
+                    $('#addModal').find('#customerName').val(obj.message.customer_name);
+                    $('#manualCustomer').val(0);
+                    $('#manualCustomer').prop("checked", false);
+                    $('.index-customer').show();
+                    $('#customerNameTxt').hide();
+                }
+                
+                if(obj.message.supplier_is_manual == 'Y'){
+                    $('#addModal').find('#supplierNameTxt').val(obj.message.supplier_name);
+                    $('#addModal').find('#supplierName').val('-');
+                    $('#manualSupplier').val(1);
+                    $('#manualSupplier').prop("checked", true);
+                    $('.index-supplier').hide();
+                    $('#supplierNameTxt').show();
+                }
+                else{
+                    $('#addModal').find('#supplierNameTxt').val('');
+                    $('#addModal').find('#supplierName').val(obj.message.supplier_name);
+                    $('#manualSupplier').val(0);
+                    $('#manualSupplier').prop("checked", false);
+                    $('.index-supplier').show();
+                    $('#supplierNameTxt').hide();
+                }
+
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                $('#addModal').find('#customerName').val(obj.message.customer_name);
                 $('#addModal').find('#driverCode').val(obj.message.driver_code); //
                 $('#addModal').find('#driverName').val(obj.message.driver_name); //
                 $('#addModal').find('#driverICNo').val(obj.message.driver_ic); //
                 $('#addModal').find('#driverPhone').val(obj.message.driver_phone); //
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                $('#addModal').find('#supplierName').val(obj.message.supplier_name);
                 $('#addModal').find('#productCode').val(obj.message.product_code);
                 $('#addModal').find('#containerNo').val(obj.message.container_no);
                 $('#addModal').find('#invoiceNo').val(obj.message.invoice_no);
