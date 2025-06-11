@@ -218,12 +218,6 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $containerNo = trim($_POST["containerNo"]);
     }
 
-    if (empty($_POST["customerName"])) {
-        $customerName = null;
-    } else {
-        $customerName = trim($_POST["customerName"]);
-    }
-
     if (empty($_POST["productName"])) {
         $productName = null;
     } else {
@@ -332,24 +326,6 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
     } else {
         $nettWeight2 = trim($_POST["nettWeight2"]);
     }
-    
-    if (empty($_POST["customerCode"])) {
-        $customerCode = null;
-    } else {
-        $customerCode = trim($_POST["customerCode"]);
-    }
-
-    if (empty($_POST["supplierCode"])) {
-        $supplierCode = null;
-    } else {
-        $supplierCode = trim($_POST["supplierCode"]);
-    }
-
-    if (empty($_POST["supplierName"])) {
-        $supplierName = null;
-    } else {
-        $supplierName = trim($_POST["supplierName"]);
-    }
 
     if (empty($_POST["productCode"])) {
         $productCode = null;
@@ -397,6 +373,44 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
         $vehiclePlateNo1 = trim($_POST["vehicleNoTxt"]);
     }
 
+    //Customer Name
+    if (empty($_POST["customerName"])) {
+        $customerName = null;
+    } else {
+        $customerName = trim($_POST["customerName"]);
+    }
+
+    $isCustomerManual = 'N';
+    if(filter_has_var(INPUT_POST,'manualCustomer')) {
+        $customerName = trim($_POST["customerNameTxt"]);
+        $isCustomerManual = 'Y';
+    }
+
+    if (empty($_POST["customerCode"])) {
+        $customerCode = null;
+    } else {
+        $customerCode = trim($_POST["customerCode"]);
+    }
+
+    //Supplier Name
+    if (empty($_POST["supplierName"])) {
+        $supplierName = null;
+    } else {
+        $supplierName = trim($_POST["supplierName"]);
+    }
+
+    $isSupplierManual = 'N';
+    if(filter_has_var(INPUT_POST,'manualSupplier')) {
+        $supplierName = trim($_POST["supplierNameTxt"]);
+        $isSupplierManual = 'Y';
+    }
+
+    if (empty($_POST["supplierCode"])) {
+        $supplierCode = null;
+    } else {
+        $supplierCode = trim($_POST["supplierCode"]);
+    }
+
     if($weightType == 'Normal' && ($grossIncoming != null && $tareOutgoing != null)){
         $isComplete = 'Y';
     }
@@ -436,12 +450,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
     if(! empty($weightId)){
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
+        if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_is_manual=?, customer_code=?, customer_name=?, supplier_is_manual=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
         gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, manual_price=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
         product_description=?, total_price=?, is_approved=?, approved_reason=?, plant_code=?, plant_name=?, driver_code=?, driver_name=?, driver_ic=?, driver_phone=?, estimate_loading=? WHERE id=?"))
         {
-            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
+            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $isCustomerManual, $customerCode, $customerName, $isSupplierManual,
             $supplierCode, $supplierName, $productCode, $productName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
             $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
             $isComplete, $isCancel, $manualWeight, $manualPrice, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $plantCode, $plant, $driverCode, $driverName, $driverICNo, $driverPhone, $estimateLoading, $weightId);
@@ -544,12 +558,12 @@ if (isset($_POST['transactionStatus'], $_POST['weightType'], $_POST['transaction
     else{
         $action = "1";
 
-        if ($insert_stmt = $db->prepare("INSERT INTO Weight (transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, order_weight, customer_code, customer_name, supplier_code, supplier_name,
+        if ($insert_stmt = $db->prepare("INSERT INTO Weight (transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, order_weight, customer_is_manual, customer_code, customer_name, supplier_is_manual, supplier_code, supplier_name,
         product_code, product_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1,
         gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, manual_weight, manual_price, indicator_id, weighbridge_id, created_by, modified_by, indicator_id_2, 
-        product_description, total_price, is_approved, approved_reason, driver_code, driver_name, driver_ic, estimate_loading, plant_code, plant_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $customerCode, $customerName,
-            $supplierCode, $supplierName, $productCode, $productName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
+        product_description, total_price, is_approved, approved_reason, driver_code, driver_name, driver_ic, estimate_loading, plant_code, plant_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeight, $orderWeight, $isCustomerManual, $customerCode, $customerName,
+            $isSupplierManual, $supplierCode, $supplierName, $productCode, $productName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
             $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
             $isComplete, $isCancel, $manualWeight, $manualPrice, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $totalPrice, $isApproved, $approved_reason, $driverCode, $driverName, $driverICNo, $estimateLoading, $plantCode, $plant);
 

@@ -82,59 +82,66 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $outDate = $row['tare_weight1_date'] != null ? date('d/m/Y - h:i:s A', strtotime($row['tare_weight1_date'])) : "";
                     
                     if($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'MISC'){
-                        $cid = $row['customer_code'];
+                        if ($row['customer_is_manual'] == 'Y'){
+                            $customer = $row['customer_name'];
+                        }else{
+                            $cid = $row['customer_code'];
                     
-                        if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
-                            $update_stmt->bind_param('s', $cid);
-                            
-                            // Execute the prepared query.
-                            if ($update_stmt->execute()) {
-                                $result2 = $update_stmt->get_result();
+                            if ($update_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
+                                $update_stmt->bind_param('s', $cid);
                                 
-                                if ($row2 = $result2->fetch_assoc()) {
-                                    $customer = $row2['name'];
-                                    $customerR = $row2['company_reg_no'] ?? '';
-                                    $customerNR = $row2['new_reg_no'] ?? '';
-                                    $customerP = $row2['phone_no'] ?? '-';
-                                    $customerA = $row2['address_line_1'];
-                                    $customerA2 = $row2['address_line_2'];
-                                    $customerA3 = $row2['address_line_3'];
-                                    $customerE = $row2['fax_no'] ?? '-';
-                                    $customerCN = $row2['contact_name'] ?? '';
-                                    $customerIC = $row2['ic_no'] ?? '';
-                                    $customerTN = $row2['tin_no'] ?? '';
-                
+                                // Execute the prepared query.
+                                if ($update_stmt->execute()) {
+                                    $result2 = $update_stmt->get_result();
+                                    
+                                    if ($row2 = $result2->fetch_assoc()) {
+                                        $customer = $row2['name'];
+                                        $customerR = $row2['company_reg_no'] ?? '';
+                                        $customerNR = $row2['new_reg_no'] ?? '';
+                                        $customerP = $row2['phone_no'] ?? '-';
+                                        $customerA = $row2['address_line_1'];
+                                        $customerA2 = $row2['address_line_2'];
+                                        $customerA3 = $row2['address_line_3'];
+                                        $customerE = $row2['fax_no'] ?? '-';
+                                        $customerCN = $row2['contact_name'] ?? '';
+                                        $customerIC = $row2['ic_no'] ?? '';
+                                        $customerTN = $row2['tin_no'] ?? '';
+                    
+                                    }
                                 }
                             }
                         }
                     }
                     else{
-                        $cid = $row['supplier_code'];
+                        if ($row['supplier_is_manual'] == 'Y'){
+                            $customer = $row['supplier_name'];
+                        }else{
+                            $cid = $row['supplier_code'];
                     
-                        if ($update_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
-                            $update_stmt->bind_param('s', $cid);
-                            
-                            // Execute the prepared query.
-                            if ($update_stmt->execute()) {
-                                $result2 = $update_stmt->get_result();
+                            if ($update_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status = '0'")) {
+                                $update_stmt->bind_param('s', $cid);
                                 
-                                if ($row2 = $result2->fetch_assoc()) {
-                                    $customer = $row2['name'];
-                                    $customerR = $row2['company_reg_no'] ?? '';
-                                    $customerNR = $row2['new_reg_no'] ?? '';
-                                    $customerP = $row2['phone_no'] ?? '-';
-                                    $customerA = $row2['address_line_1'];
-                                    $customerA2 = $row2['address_line_2'];
-                                    $customerA3 = $row2['address_line_3'];
-                                    $customerE = $row2['fax_no'] ?? '-';
-                                    $customerCN = $row2['contact_name'] ?? '';
-                                    $customerIC = $row2['ic_no'] ?? '';
-                                    $customerTN = $row2['tin_no'] ?? '';
+                                // Execute the prepared query.
+                                if ($update_stmt->execute()) {
+                                    $result2 = $update_stmt->get_result();
+                                    
+                                    if ($row2 = $result2->fetch_assoc()) {
+                                        $customer = $row2['name'];
+                                        $customerR = $row2['company_reg_no'] ?? '';
+                                        $customerNR = $row2['new_reg_no'] ?? '';
+                                        $customerP = $row2['phone_no'] ?? '-';
+                                        $customerA = $row2['address_line_1'];
+                                        $customerA2 = $row2['address_line_2'];
+                                        $customerA3 = $row2['address_line_3'];
+                                        $customerE = $row2['fax_no'] ?? '-';
+                                        $customerCN = $row2['contact_name'] ?? '';
+                                        $customerIC = $row2['ic_no'] ?? '';
+                                        $customerTN = $row2['tin_no'] ?? '';
+                                    }
                                 }
                             }
                         }
                     }
-                    
 
                     $pid = $row['product_code'];
                     
