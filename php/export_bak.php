@@ -123,6 +123,7 @@ if ($_GET["type"] == 'Weighing'){
 
     // Fetch records from database
     if($_GET["file"] == 'weight'){
+
         if ($_GET["isMulti"] == 'Y'){
             $ids = $_GET['id'];
             if ($weightStatus == 'Pending'){
@@ -143,10 +144,9 @@ if ($_GET["type"] == 'Weighing'){
         }
     }
 }else{
-    $fields = [];
-    // $fields = array('TRANSACTION ID', 'WEIGHT STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
-    // 'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 
-    // 'NETT WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
+    $fields = array('TRANSACTION ID', 'WEIGHT STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+    'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 
+    'NETT WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
 
     if($_GET["file"] == 'weight'){
         $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
@@ -170,103 +170,26 @@ $query = $db->query($sql);
 if($query->num_rows > 0){ 
     // Output each row of the data 
     while($row = $query->fetch_assoc()){ 
-        $lineData = [];
         if ($_GET["type"] == 'Weighing'){
             if($_GET["file"] == 'weight'){
                 $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['lorry_plate_no1'], $row['gross_weight1'], 
                 $row['gross_weight1_date'], $row['tare_weight1'], $row['tare_weight1_date'], $row['nett_weight1']);
             }
         }else{
-            # Customer Details
-            $status = '';
-            $customerContactName = '';
-            $customerIcNo = '';
-            $customerTinNo = '';
-            $customerContactNo = '';
-            if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
-                if ($row['customer_is_manual'] == 'Y'){
-                    $status = 'Walk In Customer';
-                }else{
-                    $status = 'Existing Customer';
-
-                    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status='0'")) {
-                        $select_stmt->bind_param('s', $row['customer_code']);
-                        $select_stmt->execute();
-                        $result = $select_stmt->get_result();
-                        if ($row2 = $result->fetch_assoc()) {
-                            $customerContactName = $row2['contact_name'];
-                            $customerIcNo = $row2['ic_no'];
-                            $customerTinNo = $row2['tin_no'];
-                            $customerContactNo = $row2['phone_no'];
-                        }
-                        $select_stmt->close();
-                    }
-                }
+            if($_GET["file"] == 'weight'){
+                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
+                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['purchase_order'],
+                $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], 
+                $row['created_by']);
             }else{
-                if ($row['supplier_is_manual'] == 'Y'){
-                    $status = 'Walk In Supplier';
-                }else{
-                    $status = 'Existing Supplier';
-
-                    if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status='0'")) {
-                        $select_stmt->bind_param('s', $row['supplier_code']);
-                        $select_stmt->execute();
-                        $result = $select_stmt->get_result();
-                        if ($row2 = $result->fetch_assoc()) {
-                            $customerContactName = $row2['contact_name'];
-                            $customerIcNo = $row2['ic_no'];
-                            $customerTinNo = $row2['tin_no'];
-                            $customerContactNo = $row2['phone_no'];
-                        }
-                        $select_stmt->close();
-                    }
-                }
+                $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],
+                $row['totalPCS'], $row['moq'], $row['unitPrice'], $row['totalPrice'], $row['veh_number'], $row['lots_no'], $row['batchNo'], $row['invoiceNo']
+                , $row['deliveryNo'], $row['purchaseNo'], $row['customer_name'], $row['packages'], $row['dateTime'], $row['remark'], $row['status'], $deleted);
             }
-
-            $headerRow1 = array('SERIAL NO', 'STATUS', 'TYPE', 'CONTACT NAME', 'IC NO. / REG NO.', 'TIN NO', 'CONTACT NO');
-            $dataRow1 = array($row['transaction_id'], $status, $row['transaction_status'], $customerContactName, $customerIcNo, $customerTinNo, $customerContactNo);
-
-            array_walk($headerRow1, 'filterData');
-            array_walk($dataRow1, 'filterData');
-            $excelData .= implode("\t", array_values($headerRow1)) . "\n";
-            $excelData .= implode("\t", array_values($dataRow1)) . "\n\n";
-
-            # Product Details
-            $headerRow2 = array('DESCRIPTION', 'WEIGHT', 'REDUCE WEIGHT', 'NETT', 'UNIT PRICE', 'TOTAL PRICE', 'SUB TOTAL PRICE');
-            array_walk($headerRow2, 'filterData');
-            $excelData .= implode("\t", array_values($headerRow2)) . "\n";
-
-            if ($product_stmt = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=? AND deleted='0'")) {
-                $product_stmt->bind_param('s', $row['id']);
-                $product_stmt->execute();
-                $result2 = $product_stmt->get_result();
-                while ($row3 = $result2->fetch_assoc()) {
-                    $dataRow2 = array($row3['product_name'], $row3['item_weight'], $row3['reduce_weight'], $row3['total_weight'], $row3['unit_price'], $row3['total_price']);
-                
-                    array_walk($dataRow2, 'filterData');
-                    $excelData .= implode("\t", array_values($dataRow2)) . "\n";
-                }
-
-                $product_stmt->close();
-            }
-
-            # Weighing Person Detail
-            $isManual = '';
-            if ($row['manual_weight'] == 'true'){
-                $isManual = 'MANUAL WEIGHT';
-            }else{
-                $isManual = 'AUTO WEIGHT';
-            }
-
-            $headerRow3 = array('PIC USE ON', 'LAST LOGIN BY', 'STATUS', 'LAST LOGIN DATE / TIME');
-            $dataRow3 = array($row['created_by'], $row['modified_by'], $isManual, $row['modified_date']);
-
-            array_walk($headerRow3, 'filterData');
-            array_walk($dataRow3, 'filterData');
-            $excelData .= "\n";
-            $excelData .= implode("\t", array_values($headerRow3)) . "\n";
-            $excelData .= implode("\t", array_values($dataRow3)) . "\n\n";
         }
+
+        array_walk($lineData, 'filterData'); 
+        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
     } 
 }else{ 
     $excelData .= 'No records found...'. "\n"; 
