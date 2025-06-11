@@ -59,30 +59,33 @@ if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
 
-$allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'";
+$allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' group by purchase_order";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')";
+  $allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' and plant_code IN ('$username') group by purchase_order";
 }
 
 $sel = mysqli_query($db, $allQuery); 
-$records = mysqli_fetch_assoc($sel);
-$totalRecords = $records['allcount'];
-
-## Total number of record with filtering
-
-$filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery;
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
+// $records = mysqli_fetch_assoc($sel);
+// $totalRecords = $records['allcount'];
+$totalRecords = 0;
+while($row2 = mysqli_fetch_assoc($sel)) {
+  $totalRecords++;
 }
 
-$sel = mysqli_query($db, $filteredQuery);
-$records = mysqli_fetch_assoc($sel);
-$totalRecordwithFilter = $records['allcount'];
+## Total number of record with filtering
+// $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order";
+// if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+//   $username = implode("', '", $_SESSION["plant"]);
+//   $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
+// }
+
+// $sel = mysqli_query($db, $filteredQuery);
+// $records = mysqli_fetch_assoc($sel);
+// $totalRecordwithFilter = $records['allcount']; 
 
 ## Fetch records
-$empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 // var_dump($empQuery);
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
@@ -91,6 +94,7 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 
 $empRecords = mysqli_query($db, $empQuery); 
 $data = array();
+$totalRecordwithFilter = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
@@ -118,6 +122,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "modified_date"=>$row['modified_date'],
     "modified_by"=>$row['modified_by']
   );
+  $totalRecordwithFilter++;
 }
 
 ## Response

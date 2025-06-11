@@ -210,11 +210,11 @@ else{
                                                                 <!-- <button type="button" id="exportPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Pdf
-                                                                </button>
+                                                                </button>-->
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
-                                                                </button> -->
+                                                                </button>
                                                                 <button type="button" id="postSQL" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Post to SQL
@@ -484,6 +484,8 @@ else{
         $('#weightTable tbody').on('click', 'tr', function (e) {
             var tr = $(this); // The row that was clicked
             var row = table.row(tr);
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
 
             // Exclude specific td elements by checking the event target
             if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
@@ -495,7 +497,7 @@ else{
                 row.child.hide();
                 tr.removeClass('shown');
             } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', acctType: 'DO' }, function (data) {
+                $.post('php/getWeight.php', { userID: row.data().id, fromDate: fromDateI, toDate: toDateI, format: 'EXPANDABLE', acctType: 'DO' }, function (data) {
                     var obj = JSON.parse(data);
                     if (obj.status === 'success') {
                         row.child(format(obj.message)).show();
@@ -737,6 +739,37 @@ else{
                 }
 
                 $('#spinnerLoading').hide();
+            }     
+        });
+
+        // Export Excel
+        $('#exportExcel').on('click', function () {
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = 'Sales';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                window.open("php/exportDoGr.php?type=do&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+soI+"&id="+selectedIds);
+            } 
+            else {
+                window.open("php/exportDoGr.php?type=do&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+soI);
             }     
         });
     });
