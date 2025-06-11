@@ -727,6 +727,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             $inventory_stmt->execute();
                             $inventory_result = $inventory_stmt->get_result();
                             $invRow = $inventory_result->fetch_assoc();
+                            $inventory_stmt->close();
 
                             if (!empty($invRow)){
                                 $invId = $invRow['id'];
@@ -745,7 +746,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             }
                         }
 
-                        $inventory_stmt->close();
                         $productRawMat_stmt->close();
                     }
                 }
@@ -951,6 +951,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                         $inventory_stmt->execute();
                                         $inventory_result = $inventory_stmt->get_result();
                                         $invRow = $inventory_result->fetch_assoc();
+                                        $inventory_stmt->close();
 
                                         if (!empty($invRow)){
                                             $basicUomWeight = $invRow['raw_mat_basic_uom'];
@@ -970,7 +971,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                     }
                                 }
 
-                                $inventory_stmt->close();
                                 $productRawMat_stmt->close();
                             }
                         }
