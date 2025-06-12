@@ -28,16 +28,16 @@ curl_close($curl);
 
 // Decode the JSON
 $data = json_decode($response, true);
-$services = 'PullCustomer';
-$requests = json_encode($data);
-
-$stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
-$stmtL->bind_param('ss', $services, $requests);
-$stmtL->execute();
-$invid = $stmtL->insert_id;
 
 if (!empty($data['data'])) {
     require_once 'db_connect.php';
+    $services = 'PullCustomer';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
     $agents = $data['data'];
     
     foreach ($agents as $agent) {
@@ -90,6 +90,14 @@ if (!empty($data['data'])) {
     echo $response;
 } 
 else {
+    require_once 'db_connect.php';
+    $services = 'PullCustomer';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
     $response = json_encode(
         array(
             "status" => "failed",

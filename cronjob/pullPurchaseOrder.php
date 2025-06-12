@@ -33,16 +33,16 @@ curl_close($curl);
 
 // Decode the JSON
 $data = json_decode($response, true);
-$services = 'PullPO';
-$requests = json_encode($data);
-
-$stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
-$stmtL->bind_param('ss', $services, $requests);
-$stmtL->execute();
-$invid = $stmtL->insert_id;
 
 if (!empty($data['data'])) {
     require_once 'db_connect.php';
+    $services = 'PullPO';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
 
     # Company Details
     $CompanyCode = '';
@@ -370,6 +370,14 @@ if (!empty($data['data'])) {
     }
 } 
 else {
+    require_once 'db_connect.php';
+    $services = 'PullPO';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
     $response = json_encode(
         array(
             "status" => "failed",
