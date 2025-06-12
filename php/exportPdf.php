@@ -188,6 +188,8 @@ function rearrangeList(array $records, array $filteredGroupKeys, array $productL
         // Inject product_code from lookup via weight_id
         $weightId = $record['id'] ?? null;
 
+        if ($weightId)
+
         if ($weightId && isset($productLookup[$weightId])) {
             $record['product_code'] = $productLookup[$weightId]['product_code'];
             $record['product_name'] = $productLookup[$weightId]['product_name'];
@@ -198,11 +200,17 @@ function rearrangeList(array $records, array $filteredGroupKeys, array $productL
 
         // Add grouping levels based on provided groupKeys
         foreach ($filteredGroupKeys as $key) {
-            if (empty($record[$key])) {
-                continue; // skip empty group value
-            }
+            if ($key === 'customer_code' && $record['customer_is_manual'] === 'Y') {
+                $keyValue = 'Manual Customer';
+            } else if ($key === 'supplier_code' && $record['supplier_is_manual'] === 'Y') {
+                $keyValue = 'Manual Supplier';
+            } else {
+                if (empty($record[$key])) {
+                    continue; // skip empty group value
+                }
 
-            $keyValue = $record[$key];
+                $keyValue = $record[$key];
+            }
 
             if (!isset($ref[$keyValue])) {
                 $ref[$keyValue] = [];
@@ -210,6 +218,7 @@ function rearrangeList(array $records, array $filteredGroupKeys, array $productL
 
             $ref = &$ref[$keyValue];
         }
+
 
         // Step 2: Group by product_code
         $productKey = $record['product_code'];
@@ -514,7 +523,7 @@ if(isset($_POST["file"])){
                     ################################################## Header Processing ##################################################
                     $headerGrouping = [];
                     
-                    if ($_POST['status'] == 'Purchase'){
+                    if ($_POST['status'] == 'Purchase' || $_POST['status'] == 'Local'){
                         $defaultGroups = ['Supplier', 'Product', 'Vehicle', 'Destination', 'Transporter', 'Plant']; // Default group keys
                     }else{
                         $defaultGroups = ['Customer', 'Product', 'Vehicle', 'Destination', 'Transporter', 'Plant']; // Default group keys
@@ -1109,9 +1118,15 @@ if(isset($_POST["file"])){
                                     <div class="row">
                                         <p>
                                             Start Date : '.$fromDate.' Last Date : '.$toDate.'
-                                            <br>
-                                            Start Customer / Last Customer : '.reset($headerGroup['Customer']).' / '.end($headerGroup['Customer']).'
-                                            <br>
+                                            <br>';
+
+                                        if ($_POST['status'] == 'Sales' || $_POST['status'] == 'Misc'){ 
+                                            $message .= 'Start Customer / Last Customer : '.reset($headerGroup['Customer']).' / '.end($headerGroup['Customer']);
+                                        }else{
+                                            $message .= 'Start Supplier / Last Supplier : '.reset($headerGroup['Supplier']).' / '.end($headerGroup['Supplier']);
+                                        }
+
+                            $message .= '<br>
                                             Start Product / Last Product : '.reset($headerGroup['Product']).' / '.end($headerGroup['Product']).'
                                         </p>
                                     </div>
@@ -1405,7 +1420,7 @@ if(isset($_POST["file"])){
                                                                 <div class="fw-bold">
                                                                     <span>';
 
-                                                                    if($row['transaction_status'] == 'Sales') {
+                                                                    if($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc') {
                                                                         $name = 'Customer';
                                                                         $value = $row['customer_name'];
                                                                     } else {

@@ -2360,7 +2360,7 @@ if ($user != null && $user != ''){
         $('#statusSearch').on('change', function () {
             var status = $(this).val();
 
-            if(status == 'Sales' || status == '-') {
+            if(status == 'Sales' || status == 'Misc' || status == '-') {
                 $('#labelCustomer').text('Customer Name');
 
                 <?php 

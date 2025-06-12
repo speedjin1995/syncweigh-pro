@@ -668,14 +668,27 @@ if ($user != null && $user != ''){
                                                                         <div class="row">
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="divDriverName">
                                                                                 <div class="row">
-                                                                                    <label for="driverName" class="col-sm-4 col-form-label">Driver Name</label>
+                                                                                    <label for="driverName" class="col-sm-4 col-form-label">
+                                                                                    Driver Name
+                                                                                    </label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-select js-choice" id="driverName" name="driverName">
-                                                                                            <option selected="-">-</option>
-                                                                                            <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
-                                                                                                <option data-ic="<?=$rowDriver['driver_ic'] ?>" value="<?=$rowDriver['driver_name'] ?>" data-code="<?=$rowDriver['driver_code'] ?>" data-phone="<?=$rowDriver['driver_phone'] ?>"><?=$rowDriver['driver_name'] ?></option>
-                                                                                            <?php } ?>
-                                                                                        </select>
+                                                                                        <div class="input-group">
+                                                                                            <div class="input-group-text">
+                                                                                                <input class="form-check-input mt-0" id="manualDriverName" name="manualDriverName" type="checkbox" value="0" aria-label="Checkbox for following text input">
+                                                                                            </div>
+                                                                                            <input type="text" class="form-control" id="driverNameTxt" name="driverNameTxt" placeholder="Driver Name" style="display:none" required>
+                                                                                            <div class="col-10 index-driver">
+                                                                                                <select class="form-select js-choice" id="driverName" name="driverName">
+                                                                                                    <option selected="-">-</option>
+                                                                                                    <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
+                                                                                                        <option data-ic="<?=$rowDriver['driver_ic'] ?>" value="<?=$rowDriver['driver_name'] ?>" data-code="<?=$rowDriver['driver_code'] ?>" data-phone="<?=$rowDriver['driver_phone'] ?>"><?=$rowDriver['driver_name'] ?></option>
+                                                                                                    <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="invalid-feedback">
+                                                                                                Please fill in the field.
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div><!-- end col -->
                                                                                 </div><!-- end row -->
                                                                             </div><!-- end col-xxl -->
@@ -2278,6 +2291,7 @@ if ($user != null && $user != ''){
             $('#addModal').find('#driverCode').val("");
             $('#addModal').find('#driverName').val("");
             $('#addModal').find('#driverICNo').val("");
+            $('#addModal').find('#manualDriverName').prop('checked', false).trigger('change');
             $('#addModal').find('#supplierCode').val("");
             $('#addModal').find('#supplierName').val("");
             $('#addModal').find('#manualSupplier').prop('checked', false).trigger('change');
@@ -2752,6 +2766,27 @@ if ($user != null && $user != ''){
         });
 
         //driver
+        $('#manualDriverName').on('change', function(){
+            if($(this).is(':checked')){
+                $(this).val(1);
+                $('#driverName').val('-').trigger('change');
+                $('.index-driver').hide();
+                $('#driverNameTxt').show();
+            }
+            else{
+                $(this).val(0);
+                $('#driverNameTxt').hide();
+                $('#driverNameTxt').val('');
+                $('.index-driver').show();
+            }
+        });
+
+        $('#driverNameTxt').on('keyup', function(){
+            var x = $('#driverNameTxt').val();
+            x = x.toUpperCase();
+            $('#driverNameTxt').val(x);
+        });
+
         $('#driverName').on('change', function(){
             $('#driverCode').val($('#driverName :selected').data('code'));
             $('#driverPhone').val($('#driverName :selected').data('phone'));
@@ -2825,7 +2860,7 @@ if ($user != null && $user != ''){
         $('#statusSearch').on('change', function () {
             var status = $(this).val();
 
-            if(status == 'Sales' || status == '-') {
+            if(status == 'Sales' || status == 'Misc' || status == '-') {
                 $('#labelCustomer').text('Customer Name');
 
                 <?php 
@@ -3354,9 +3389,25 @@ if ($user != null && $user != ''){
                     $('#supplierNameTxt').hide();
                 }
 
+                if(obj.message.driver_is_manual == 'Y'){
+                    $('#addModal').find('#driverNameTxt').val(obj.message.driver_name);
+                    $('#addModal').find('#driverName').val('-');
+                    $('#manualDriverName').val(1);
+                    $('#manualDriverName').prop("checked", true);
+                    $('.index-driver').hide();
+                    $('#driverNameTxt').show();
+                }
+                else{
+                    $('#addModal').find('#driverNameTxt').val('');
+                    $('#addModal').find('#driverName').val(obj.message.driver_name);
+                    $('#manualDriverName').val(0);
+                    $('#manualDriverName').prop("checked", false);
+                    $('.index-driver').show();
+                    $('#driverNameTxt').hide();
+                }
+
                 $('#addModal').find('#customerCode').val(obj.message.customer_code);
                 $('#addModal').find('#driverCode').val(obj.message.driver_code); //
-                $('#addModal').find('#driverName').val(obj.message.driver_name); //
                 $('#addModal').find('#driverICNo').val(obj.message.driver_ic); //
                 $('#addModal').find('#driverPhone').val(obj.message.driver_phone); //
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
