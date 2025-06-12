@@ -28,6 +28,13 @@ curl_close($curl);
 
 // Decode the JSON
 $data = json_decode($response, true);
+$services = 'PullSupplier';
+$requests = json_encode($data);
+
+$stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+$stmtL->bind_param('ss', $services, $requests);
+$stmtL->execute();
+$invid = $stmtL->insert_id;
 
 if (!empty($data['data'])) {
     require_once 'db_connect.php';
@@ -69,16 +76,31 @@ if (!empty($data['data'])) {
         //$stmt->close();
     }
 
-    $db->close();
+    $response = json_encode(
+        array(
+            "status" => "success",
+            "message" => "Data synced successfully!"
+        )
+    );
+    $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+    $stmtU->bind_param('ss', $response, $invid);
+    $stmtU->execute();
 
-    echo json_encode([
-        "status" => "success",
-        "message" => "Data synced successfully!"
-    ]);
-} else {
-    echo json_encode([
-        "status" => "failed",
-        "message" => "Invalid data received from API"
-    ]);
+    $db->close();
+    echo $response;
+} 
+else {
+    $response = json_encode(
+        array(
+            "status" => "failed",
+            "message" => "Invalid data received from API"
+        )
+    );
+    $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+    $stmtU->bind_param('ss', $response, $invid);
+    $stmtU->execute();
+
+    $db->close();
+    echo $response;
 }
 ?>
