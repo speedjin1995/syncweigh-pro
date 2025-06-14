@@ -128,7 +128,12 @@ if(isset($_POST['userID'])){
 
                         if ($acctType == 'DO'){
                             $soNo = $row['purchase_order'];
-                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND is_complete = 'Y' AND status = '0'";
+                            $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+                            $fromDateTime = $fromDate->format('Y-m-d H:i:00');
+                            $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+                            $toDateTime = $toDate->format('Y-m-d H:i:59');
+
+                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                             $doRecords = mysqli_query($db, $doQuery);
                             $weighingData = array();
 
@@ -153,7 +158,12 @@ if(isset($_POST['userID'])){
 
                         }elseif ($acctType == 'GR') {
                             $poNo = $row['purchase_order'];
-                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND is_complete = 'Y' AND status = '0'";
+                            $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+                            $fromDateTime = $fromDate->format('Y-m-d H:i:00');
+                            $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+                            $toDateTime = $toDate->format('Y-m-d H:i:59');
+
+                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                             $grRecords = mysqli_query($db, $grQuery);
                             $weighingData = array();
 
