@@ -67,6 +67,8 @@ if(isset($_POST['userID'])){
                                 $message['ex_del'] = $row['ex_del'];
                                 $message['customer_code'] = $row['customer_code'];
                                 $message['customer_name'] = $row['customer_name'];
+                                $message['supplier_code'] = $row['supplier_code'];
+                                $message['supplier_name'] = $row['supplier_name'];
                             }
                             
                             echo json_encode(
@@ -104,6 +106,8 @@ if(isset($_POST['userID'])){
                     $message['ex_del'] = $row['ex_del'];
                     $message['customer_code'] = $row['customer_code'];
                     $message['customer_name'] = $row['customer_name'];
+                    $message['supplier_code'] = $row['supplier_code'];
+                    $message['supplier_name'] = $row['supplier_name'];
                 }
                 
                 echo json_encode(
