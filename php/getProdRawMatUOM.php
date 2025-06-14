@@ -21,7 +21,7 @@ if(isset($_POST['userID'], $_POST['type'])){
 
     if ($action == 'getBasicUOM'){
         if ($type == 'SO'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Product WHERE product_code=? AND status=?")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Product WHERE id=? AND status=?")) {
                 $update_stmt->bind_param('ss', $id, $status);
                 
                 // Execute the prepared query.
@@ -49,7 +49,7 @@ if(isset($_POST['userID'], $_POST['type'])){
                 }
             }
         }elseif($type == 'PO'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=? AND status=?")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE id=? AND status=?")) {
                 $update_stmt->bind_param('ss', $id, $status);
                 
                 // Execute the prepared query.

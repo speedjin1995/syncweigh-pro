@@ -64,42 +64,58 @@ if (!empty($data['data'])) {
         $SONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
         $OrderNumber = (isset($rows['DOCNOEX']) && !empty($rows['DOCNOEX']) && $rows['DOCNOEX'] !== '' && $rows['DOCNOEX'] !== null) ? trim($rows['DOCNOEX']) : '';
         $CustomerCode = (isset($rows['CODE']) && !empty($rows['CODE']) && $rows['CODE'] !== '' && $rows['CODE'] !== null) ? trim($rows['CODE']) : '';
+        $CustomerId = '';
         $CustomerName = '';
         if (!empty($CustomerCode)){
-            $CustomerName = searchCustomerByCode($CustomerCode, $db);
+            $customerData = searchCustomerByCode($CustomerCode, $db);
+            $CustomerId = $customerData['id'];
+            $CustomerName = $customerData['name'];
         }
-        // $CustomerName = (isset($rows['COMPANYNAME']) && !empty($rows['COMPANYNAME']) && $rows['COMPANYNAME'] !== '' && $rows['COMPANYNAME'] !== null) ? trim($rows['COMPANYNAME']) : '';
         $TransporterCode = (isset($rows['SHIPPER']) && !empty($rows['SHIPPER']) && $rows['SHIPPER'] !== '' && $rows['SHIPPER'] !== null) ? trim($rows['SHIPPER']) : '';
+        $TransporterId = '';
         $TransporterName = '';
         if (!empty($TransporterCode)) {
-            $TransporterName = searchTransporterNameByCode($TransporterCode, $db);
+            $TransporterData = searchTransporterNameByCode($TransporterCode, $db);
+            $TransporterId = $TransporterData['id'];
+            $TransporterName = $TransporterData['name'];
         }
         $AgentCode = (isset($rows['AGENT']) && !empty($rows['AGENT']) && $rows['AGENT'] !== '' && $rows['AGENT'] !== null) ? trim($rows['AGENT']) : '';
+        $AgentId = '';
         $AgentName = '';
         if (!empty($AgentCode)) {
-            $AgentName = searchAgentNameByCode($AgentCode, $db);
+            $AgentData = searchAgentNameByCode($AgentCode, $db);
+            $AgentId = $AgentData['id'];
+            $AgentName = $AgentData['name'];
         }
         $ProductCode = (isset($rows['ITEMCODE']) && !empty($rows['ITEMCODE']) && $rows['ITEMCODE'] !== '' && $rows['ITEMCODE'] !== null) ? trim($rows['ITEMCODE']) : '';
-        // $ProductName = (isset($rows['DESCRIPTION']) && !empty($rows['DESCRIPTION']) && $rows['DESCRIPTION'] !== '' && $rows['DESCRIPTION'] !== null) ? trim($rows['DESCRIPTION']) : '';
+        $ProductId = '';
         $ProductName = '';
         if (!empty($ProductCode)) {
-            $ProductName = searchProductNameByCode($ProductCode, $db);
+            $ProductData = searchProductNameByCode($ProductCode, $db);
+            $ProductId = $ProductData['id'];
+            $ProductName = $ProductData['name'];
         }
         $VehNumber = (isset($rows['ITEMDESC2']) && !empty($rows['ITEMDESC2']) && $rows['ITEMDESC2'] !== '' && $rows['ITEMDESC2'] !== null) ? trim($rows['ITEMDESC2']) : '';
         $Remarks = !empty($rows['REMARKS']) ? trim($rows['REMARKS']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
+        $DestinationId = '';
         $DestinationCode = '';
         if(!empty($DestinationName)){
-            $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
+            $DestinationData = searchDestinationCodeByName($DestinationName, $db);
+            $DestinationId = $DestinationData['id'];
+            $DestinationCode = $DestinationData['destination_code'];
         }
         $ExOrQuarry = (isset($rows['DOCREF1']) && !empty($rows['DOCREF1']) && $rows['DOCREF1'] !== '' && $rows['DOCREF1'] !== null) ? trim($rows['DOCREF1']) : '';
         $ConvertedOrderQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
         $ConvertedBalance = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
         $ConvertedUnitId = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? searchUnitIdByCode(trim($rows['UOM']), $db) : '';
         $PlantCode = (isset($rows['PROJECT']) && !empty($rows['PROJECT']) && $rows['PROJECT'] !== '' && $rows['PROJECT'] !== null) ? trim($rows['PROJECT']) : '';
+        $PlantId = '';
         $PlantName = '';
         if (!empty($PlantCode)) {
-            $PlantName = searchPlantNameByCode($PlantCode, $db);
+            $PlantData = searchPlantNameByCode($PlantCode, $db);
+            $PlantId = $PlantData['id'];
+            $PlantName = $PlantData['name'];
         }
         $UnitPrice = (isset($rows['UNITPRICE']) && !empty($rows['UNITPRICE']) && $rows['UNITPRICE'] !== '' && $rows['UNITPRICE'] !== null) ? (float) trim($rows['UNITPRICE']) : '';
         $status = 'Open';
@@ -313,7 +329,7 @@ if (!empty($data['data'])) {
 
         # Checking for existing Order No.
         if($OrderNumber != null && $OrderNumber != ''){
-            $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$OrderNumber' AND product_code = '$ProductCode' AND deleted = '0'";
+            $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$OrderNumber' AND product_code = '$ProductCode' AND plant_code = '$PlantCode' AND deleted = '0'";
             $soDetail = mysqli_query($db, $soQuery);
             $soRow = mysqli_fetch_assoc($soDetail);
             $soCount = (int) $soRow['count'];
@@ -327,14 +343,14 @@ if (!empty($data['data'])) {
                 
                 $system = 'SYSTEM';
 
-                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, order_date, order_no, so_no, agent_code, agent_name, destination_code, destination_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssssssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $ProductCode, $ProductName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrQuarry, $ConvertedOrderQuantity, $ConvertedBalance, $ConvertedUnitId, $OrderQuantity, $OrderQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
+                if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_id, company_code, company_name, customer_id, customer_code, customer_name, order_date, order_no, so_no, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, product_id, product_code, product_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssssssssssssssssssssssssssssss', $CompanyId, $CompanyCode, $CompanyName, $CustomerId, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $AgentId, $AgentCode, $AgentName, $DestinationId, $DestinationCode, $DestinationName, $ProductId, $ProductCode, $ProductName, $PlantId, $PlantCode, $PlantName, $TransporterId, $TransporterCode, $TransporterName, $VehNumber, $ExOrQuarry, $ConvertedOrderQuantity, $ConvertedBalance, $ConvertedUnitId, $OrderQuantity, $OrderQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
                 }
             }
             else{
-                $errMsg = "Sales order for Customer P/O No: ".$OrderNumber." + Product: ".$ProductName." already exist.";
+                $errMsg = "Sales order for Customer P/O No: ".$OrderNumber." + Product: ".$ProductName." + Plant: ".$PlantName." already exist.";
                 $errorSoProductArray[] = $errMsg;
             }
         }

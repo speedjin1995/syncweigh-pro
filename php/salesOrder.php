@@ -20,9 +20,15 @@ if (isset($_POST['orderNo'])) {
     }
 
     if (empty($_POST["company"])) {
+        $companyId = null;
+    } else {
+        $companyId = trim($_POST["company"]);
+    }
+
+    if (empty($_POST["companyCode"])) {
         $companyCode = null;
     } else {
-        $companyCode = trim($_POST["company"]);
+        $companyCode = trim($_POST["companyCode"]);
     }
 
     if (empty($_POST["companyName"])) {
@@ -32,9 +38,15 @@ if (isset($_POST['orderNo'])) {
     }
 
     if (empty($_POST["customer"])) {
+        $customerId = null;
+    } else {
+        $customerId = trim($_POST["customer"]);
+    }
+
+    if (empty($_POST["customerCode"])) {
         $customerCode = null;
     } else {
-        $customerCode = trim($_POST["customer"]);
+        $customerCode = trim($_POST["customerCode"]);
     }
 
     if (empty($_POST["customerName"])) {
@@ -44,9 +56,15 @@ if (isset($_POST['orderNo'])) {
     }
 
     if (empty($_POST["site"])) {
+        $siteId = null;
+    } else {
+        $siteId = trim($_POST["site"]);
+    }
+
+    if (empty($_POST["siteCode"])) {
         $siteCode = null;
     } else {
-        $siteCode = trim($_POST["site"]);
+        $siteCode = trim($_POST["siteCode"]);
     }
 
     if (empty($_POST["siteName"])) {
@@ -80,15 +98,27 @@ if (isset($_POST['orderNo'])) {
     }
 
     if (empty($_POST["agent"])) {
+        $agentId = null;
+    } else {
+        $agentId = trim($_POST["agent"]);
+    }
+
+    if (empty($_POST["agentCode"])) {
         $agentCode = null;
     } else {
-        $agentCode = trim($_POST["agent"]);
+        $agentCode = trim($_POST["agentCode"]);
     }
     
     if (empty($_POST["agentName"])) {
         $agentName = null;
     } else {
         $agentName = trim($_POST["agentName"]);
+    }
+
+    if (empty($_POST["destination"])) {
+        $destinationId = null;
+    } else {
+        $destinationId = trim($_POST["destination"]);
     }
 
     if (empty($_POST["destinationCode"])) {
@@ -110,9 +140,15 @@ if (isset($_POST['orderNo'])) {
     }
     
     if (empty($_POST["product"])) {
+        $productId = null;
+    } else {
+        $productId = trim($_POST["product"]);
+    }
+    
+    if (empty($_POST["productCode"])) {
         $productCode = null;
     } else {
-        $productCode = trim($_POST["product"]);
+        $productCode = trim($_POST["productCode"]);
     }
 
     if (empty($_POST["productName"])) {
@@ -122,11 +158,17 @@ if (isset($_POST['orderNo'])) {
     }
     
     if (empty($_POST["plant"])) {
-        $plantCode = null;
+        $plantId = null;
     } else {
-        $plantCode = trim($_POST["plant"]);
+        $plantId = trim($_POST["plant"]);
     }
 
+    if (empty($_POST["plantCode"])) {
+        $plantCode = null;
+    } else {
+        $plantCode = trim($_POST["plantCode"]);
+    }
+    
     if (empty($_POST["plantName"])) {
         $plantName = null;
     } else {
@@ -134,9 +176,15 @@ if (isset($_POST['orderNo'])) {
     }
 
     if (empty($_POST["transporter"])) {
+        $transporterId = null;
+    } else {
+        $transporterId = trim($_POST["transporter"]);
+    }
+
+    if (empty($_POST["transporterCode"])) {
         $transporterCode = null;
     } else {
-        $transporterCode = trim($_POST["transporter"]);
+        $transporterCode = trim($_POST["transporterCode"]);
     }
 
     if (empty($_POST["transporterName"])) {
@@ -213,9 +261,9 @@ if (isset($_POST['orderNo'])) {
 
     if(!empty($poId))
     {
-        if ($update_stmt = $db->prepare("UPDATE Sales_Order SET company_code=?, company_name=?, customer_code=?, customer_name=?, site_code=?, site_name=?, order_date=?, order_no=?, so_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, deliver_to_name=?, product_code=?, product_name=?, plant_code=?, plant_name=?, transporter_code=?, transporter_name=?, veh_number=?, exquarry_or_delivered=?, order_load=?, converted_order_qty=?, converted_balance=?, converted_unit=?, order_quantity=?, balance=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Sales_Order SET company_id=?, company_code=?, company_name=?, customer_id=?, customer_code=?, customer_name=?, site_id=?, site_code=?, site_name=?, order_date=?, order_no=?, so_no=?, delivery_date=?, agent_id=?, agent_code=?, agent_name=?, destination_id=?, destination_code=?, destination_name=?, deliver_to_name=?, product_id=?, product_code=?, product_name=?, plant_id=?, plant_code=?, plant_name=?, transporter_id=?, transporter_code=?, transporter_name=?, veh_number=?, exquarry_or_delivered=?, order_load=?, converted_order_qty=?, converted_balance=?, converted_unit=?, order_quantity=?, balance=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $productCode, $productName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
+            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssss', $companyId, $companyCode, $companyName, $customerId, $customerCode, $customerName, $siteId,$siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentId, $agentCode, $agentName, $destinationId, $destinationCode, $destinationName, $deliverToName, $productId, $productCode, $productName, $plantId, $plantCode, $plantName, $transporterId, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -244,7 +292,7 @@ if (isset($_POST['orderNo'])) {
         $status = 'Open';
 
         # Check if SO with customer p/o no and product exists
-        $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$orderNo' AND product_code = '$productCode' AND deleted = '0'";
+        $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$orderNo' AND product_id = '$productId' AND plant_id = '$plantId' AND deleted = '0'";
         $soDetail = mysqli_query($db, $soQuery);
         $soRow = mysqli_fetch_assoc($soDetail);
         $soCount = (int) $soRow['count'];
@@ -253,12 +301,12 @@ if (isset($_POST['orderNo'])) {
             echo json_encode(
                 array(
                     "status"=> "failed", 
-                    "message"=> "Sales order for Customer P/O No: ".$orderNo." + Product: ".$productName." already exist."
+                    "message"=> "Sales order for Customer P/O No: ".$orderNo." + Product: ".$productName." + Plant: ".$plantName." already exist."
                 )
             );
         }else{
-            if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $productCode, $productName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $status, $username, $username);
+            if ($insert_stmt = $db->prepare("INSERT INTO Sales_Order (company_id, company_code, company_name, customer_id, customer_code, customer_name, site_id, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, product_id, product_code, product_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssss', $companyId, $companyCode, $companyName, $customerId, $customerCode, $customerName, $siteId, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentId, $agentCode, $agentName, $destinationId, $destinationCode, $destinationName, $deliverToName, $productId, $productCode, $productName, $plantId, $plantCode, $plantName, $transporterId, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $status, $username, $username);
     
                 // Execute the prepared query.
                 if (! $insert_stmt->execute()) {

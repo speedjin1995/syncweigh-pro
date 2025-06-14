@@ -1,6 +1,7 @@
 <?php
 
 require_once 'db_connect.php';
+require_once 'requires\lookup.php';
 // // Load the database configuration file 
 session_start();
  
@@ -30,32 +31,32 @@ if($_GET['status'] != null && $_GET['status'] != '' && $_GET['status'] != '-'){
 }
 
 if($_GET['company'] != null && $_GET['company'] != '' && $_GET['company'] != '-'){
-    $searchQuery .= " and company_code = '".$_GET['company']."'";
+    $searchQuery .= " and company_id = '".$_GET['company']."'";
 }
 
 if($_GET['site'] != null && $_GET['site'] != '' && $_GET['site'] != '-'){
-    $searchQuery .= " and site_code = '".$_GET['site']."'";
+    $searchQuery .= " and site_id = '".$_GET['site']."'";
 }
 
 if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
-    $searchQuery .= " and plant_code = '".$_GET['plant']."'";
+    $searchQuery .= " and plant_id = '".$_GET['plant']."'";
 }
 
 if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != '-'){
     if($_GET["type"] == 'Sales'){
-        $searchQuery .= " and customer_code = '".$_GET['customer']."'";
+        $searchQuery .= " and customer_id = '".$_GET['customer']."'";
     }
     else{
-        $searchQuery .= " and supplier_code = '".$_GET['customer']."'";
+        $searchQuery .= " and supplier_id = '".$_GET['customer']."'";
     }
 }
 
 if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'){
     if($_GET["type"] == 'Sales'){
-        $searchQuery .= " and product_code = '".$_GET['product']."'";
+        $searchQuery .= " and product_id = '".$_GET['product']."'";
     }
     else{
-        $searchQuery .= " and raw_mat_code = '".$_GET['product']."'";
+        $searchQuery .= " and raw_mat_id = '".$_GET['product']."'";
     }
 }
 
@@ -75,8 +76,13 @@ if($_GET["type"] == 'Sales'){
     if($query->num_rows > 0){ 
         // Output each row of the data 
         while($row = $query->fetch_assoc()){ 
+            $companyData = searchCompanyDataById($row['company_id'], $db);
+            $customerData = searchCustomerDataById($row['customer_id'], $db);
+            $plantData = searchPlantDataById($row['plant_id'], $db);
+            $productData = searchProductDataById($row['product_id'], $db);
+
             $lineData = []; // Ensure it starts as an empty array each iteration
-            $lineData = array($row['company_code'], $row['company_name'], $row['customer_code'], $row['customer_name'], $row['plant_code'], $row['plant_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
+            $lineData = array($companyData['company_code'], $companyData['name'], $customerData['customer_code'], $customerData['name'], $plantData['plant_code'], $plantData['name'], $productData['product_code'], $productData['name'], $row['order_no'], $row['so_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
 
             # Added checking to fix duplicated issue
             if (!empty($lineData)) {
@@ -102,8 +108,13 @@ if($_GET["type"] == 'Sales'){
     if($query->num_rows > 0){ 
         // Output each row of the data 
         while($row = $query->fetch_assoc()){ 
+            $companyData = searchCompanyDataById($row['company_id'], $db);
+            $supplierData = searchSupplierDataById($row['supplier_id'], $db);
+            $plantData = searchPlantDataById($row['plant_id'], $db);
+            $rawMatData = searchRawMatDataById($row['raw_mat_id'], $db);
+
             $lineData = []; // Ensure it starts as an empty array each iteration
-            $lineData = array($row['company_code'], $row['company_name'], $row['supplier_code'], $row['supplier_name'], $row['plant_code'], $row['plant_name'], $row['raw_mat_code'], $row['raw_mat_name'], $row['po_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
+            $lineData = array($companyData['company_code'], $companyData['name'], $supplierData['supplier_code'], $supplierData['name'], $plantData['plant_code'], $plantData['name'], $rawMatData['raw_mat_code'], $rawMatData['name'], $row['po_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
 
             # Added checking to fix duplicated issue
             if (!empty($lineData)) {

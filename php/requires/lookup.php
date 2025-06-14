@@ -6,7 +6,7 @@ function convertDatetimeToDate($datetime){
 }
 
 function searchCustomerByCode($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status='0'")) {
@@ -14,7 +14,7 @@ function searchCustomerByCode($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['name'];
+                $id = $row;
             }
             $select_stmt->close();
         }
@@ -78,7 +78,7 @@ function searchPlantNameById($value, $db) {
 }
 
 function searchPlantNameByCode($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE plant_code=? AND status = '0'")) {
@@ -86,7 +86,7 @@ function searchPlantNameByCode($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['name'];
+                $id = $row;
             }
             $select_stmt->close();
         }
@@ -114,7 +114,7 @@ function searchProjectByCode($value, $db) {
 }
 
 function searchTransporterNameByCode($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Transporter WHERE transporter_code=? AND status = '0'")) {
@@ -122,7 +122,7 @@ function searchTransporterNameByCode($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['name'];
+                $id = $row;
             }
             $select_stmt->close();
         }
@@ -132,7 +132,7 @@ function searchTransporterNameByCode($value, $db) {
 }
 
 function searchProductNameByCode($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Product WHERE product_code=? AND status = '0'")) {
@@ -140,7 +140,7 @@ function searchProductNameByCode($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['name'];
+                $id = $row;
             }
             $select_stmt->close();
         }
@@ -242,7 +242,7 @@ function searchRawMatIdByCode($value, $db) {
 }
 
 function searchAgentNameByCode($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Agents WHERE agent_code=? AND status = '0'")) {
@@ -250,7 +250,7 @@ function searchAgentNameByCode($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['name'];
+                $id = $row;
             }
             $select_stmt->close();
         }
@@ -278,7 +278,7 @@ function searchDestinationNameByCode($value, $db) {
 }
 
 function searchDestinationCodeByName($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Destination WHERE name=? AND status = '0'")) {
@@ -286,7 +286,7 @@ function searchDestinationCodeByName($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['destination_code'];
+                $id = $row;
             }
             $select_stmt->close();
         }
@@ -578,6 +578,167 @@ function searchPoAuditById($value, $db) {
     $data = array();
 
     if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+# Reports Lookups
+function searchCompanyDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Company WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchCustomerDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchSiteDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Site WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchDestinationDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Destination WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchAgentDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Agents WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchProductDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Product WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchPlantDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchTransporterDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Transporter WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchSupplierDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE id=?")) {
+        $select_stmt->bind_param('s', $value);
+        $select_stmt->execute();
+        $result = $select_stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $data = $row;
+        }
+        $select_stmt->close();
+    }
+
+    return $data;
+}
+
+function searchRawMatDataById($value, $db) {
+    $data = array();
+
+    if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE id=?")) {
         $select_stmt->bind_param('s', $value);
         $select_stmt->execute();
         $result = $select_stmt->get_result();

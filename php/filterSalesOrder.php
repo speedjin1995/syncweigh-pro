@@ -32,23 +32,23 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
 }
 
 if($_POST['company'] != null && $_POST['company'] != '' && $_POST['company'] != '-'){
-	$searchQuery .= " and company_code = '".$_POST['company']."'";
+	$searchQuery .= " and company_id = '".$_POST['company']."'";
 }
 
 if($_POST['site'] != null && $_POST['site'] != '' && $_POST['site'] != '-'){
-	$searchQuery .= " and site_code = '".$_POST['site']."'";
+	$searchQuery .= " and site_id = '".$_POST['site']."'";
 }
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
-	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+	$searchQuery .= " and plant_id = '".$_POST['plant']."'";
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+	$searchQuery .= " and customer_id = '".$_POST['customer']."'";
 }
 
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
-	$searchQuery .= " and product_code = '".$_POST['product']."'";
+	$searchQuery .= " and product_id = '".$_POST['product']."'";
 }
 
 if($_POST['soNo'] != null && $_POST['soNo'] != '' && $_POST['soNo'] != '-'){
@@ -56,20 +56,18 @@ if($_POST['soNo'] != null && $_POST['soNo'] != '' && $_POST['soNo'] != '-'){
 }
 
 if($searchValue != ''){
-  $searchQuery = " and (
-    company_code like '%".$searchValue."%' or 
-    company_name like '%".$searchValue."%' or 
-    customer_code like '%".$searchValue."%' or 
-    customer_name like '%".$searchValue."%' or 
-    plant_code like '%".$searchValue."%' or 
-    plant_name like '%".$searchValue."%' or 
-    product_code like '%".$searchValue."%' or 
-    product_name like '%".$searchValue."%' or 
-    order_no like '%".$searchValue."%' or 
-    so_no like '%".$searchValue."%' or
-    order_date like '%".$searchValue."%' or 
-    exquarry_or_delivered like '%".$searchValue."%' or 
-    modified_date like '%".$searchValue."%'
+  $searchQuery .= " and (
+    c.customer_code like '%".$searchValue."%' or 
+    c.name like '%".$searchValue."%' or 
+    pl.plant_code like '%".$searchValue."%' or 
+    pl.name like '%".$searchValue."%' or 
+    p.product_code like '%".$searchValue."%' or 
+    p.name like '%".$searchValue."%' or 
+    so.order_no like '%".$searchValue."%' or 
+    so.so_no like '%".$searchValue."%' or
+    so.order_date like '%".$searchValue."%' or 
+    so.exquarry_or_delivered like '%".$searchValue."%' or 
+    so.modified_date like '%".$searchValue."%'
   )";
 }
 
@@ -80,27 +78,45 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount from Sales_Order where deleted = '0'".$searchQuery;
+$filteredQuery ="select count(*) as allcount FROM Sales_Order so
+                  LEFT JOIN Company company ON so.company_id = company.id 
+                  LEFT JOIN Customer c ON so.customer_id = c.id 
+                  LEFT JOIN Site s ON so.site_id = s.id 
+                  LEFT JOIN Agents a ON so.agent_id = a.id 
+                  LEFT JOIN Destination d ON so.destination_id = d.id 
+                  LEFT JOIN Product p ON so.product_id = p.id
+                  LEFT JOIN Plant pl ON so.plant_id = pl.id
+                  LEFT JOIN Transporter t ON so.transporter_id = t.id
+                  WHERE so.deleted = '0'".$searchQuery;
 $sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Sales_Order where deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery ="select so.*, company.company_code as companycode, company.name as companyname, c.customer_code as customercode, c.name AS customername, p.product_code as productcode, p.name as productname, pl.plant_code as plantcode, pl.name as plantname FROM Sales_Order so
+            LEFT JOIN Company company ON so.company_id = company.id 
+            LEFT JOIN Customer c ON so.customer_id = c.id 
+            LEFT JOIN Site s ON so.site_id = s.id 
+            LEFT JOIN Agents a ON so.agent_id = a.id 
+            LEFT JOIN Destination d ON so.destination_id = d.id 
+            LEFT JOIN Product p ON so.product_id = p.id
+            LEFT JOIN Plant pl ON so.plant_id = pl.id
+            LEFT JOIN Transporter t ON so.transporter_id = t.id
+            WHERE so.deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery); 
 $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array(
     "id"=>$row['id'],
-    "company_code"=>$row['company_code'],
-    "company_name"=>$row['company_name'],
-    "customer_code"=>$row['customer_code'],
-    "customer_name"=>$row['customer_name'],
-    "plant_code"=>$row['plant_code'],
-    "plant_name"=>$row['plant_name'],
-    "product_code"=>$row['product_code'],
-    "product_name"=>$row['product_name'],
+    "company_code"=>$row['companycode'],
+    "company_name"=>$row['companyname'],
+    "customer_code"=>$row['customercode'],
+    "customer_name"=>$row['customername'],
+    "plant_code"=>$row['plantcode'],
+    "plant_name"=>$row['plantname'],
+    "product_code"=>$row['productcode'],
+    "product_name"=>$row['productname'],
     "order_no"=>$row['order_no'],
     "so_no"=>$row['so_no'],
     "order_date" => !empty($row["order_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y') : '',

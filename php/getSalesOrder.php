@@ -28,28 +28,38 @@ if(isset($_POST['userID'])){
             else{
                 $result = $update_stmt->get_result();
                 $message = array();
-                
+
                 while ($row = $result->fetch_assoc()) {
+                    # lookup
+                    $companyData = searchCompanyDataById($row['company_id'], $db);
+                    $customerData = searchCustomerDataById($row['customer_id'], $db);
+                    $siteData = searchSiteDataById($row['site_id'], $db);
+                    $destinationData = searchDestinationDataById($row['destination_id'], $db);
+                    $agentData = searchAgentDataById($row['agent_id'], $db);
+                    $plantData = searchPlantDataById($row['plant_id'], $db);
+                    $productData = searchProductDataById($row['product_id'], $db);
+                    $transporterData = searchTransporterDataById($row['transporter_id'], $db);
+
                     $message['id'] = $row['id'];
-                    $message['company_code'] = $row['company_code'] ?? '';
-                    $message['company_name'] = $row['company_name'] ?? '';
-                    $message['customer_code'] = $row['customer_code'] ?? '';
-                    $message['customer_name'] = $row['customer_name'] ?? '';
-                    $message['site_code'] = $row['site_code'] ?? '';
-                    $message['site_name'] = $row['site_name'] ?? '';
+                    $message['company_code'] = $companyData['company_code'] ?? '';
+                    $message['company_name'] = $companyData['name'] ?? '';
+                    $message['customer_code'] = $customerData['customer_code'] ?? '';
+                    $message['customer_name'] = $customerData['name'] ?? '';
+                    $message['site_code'] = $siteData['site_code'] ?? '';
+                    $message['site_name'] = $siteData['name'] ?? '';
                     $message['order_date'] = $row['order_date'];
                     $message['order_no'] = $row['order_no']; //customer po no
                     $message['so_no'] = $row['so_no'];
-                    $message['agent_code'] = $row['agent_code'] ?? '';
-                    $message['agent_name'] = $row['agent_name'] ?? '';
-                    $message['destination_code'] = $row['destination_code'] ?? '';
-                    $message['destination_name'] = $row['destination_name'] ?? '';
-                    $message['product_code'] = $row['product_code'] ?? '';
-                    $message['product_name'] = $row['product_name'] ?? '';
-                    $message['plant_code'] = $row['plant_code'] ?? '';
-                    $message['plant_name'] = $row['plant_name'] ?? '';
-                    $message['transporter_code'] = $row['transporter_code'] ?? '';
-                    $message['transporter_name'] = $row['transporter_name'] ?? '';
+                    $message['agent_code'] = $agentData['agent_code'] ?? '';
+                    $message['agent_name'] = $agentData['name'] ?? '';
+                    $message['destination_code'] = $destinationData['destination_code'] ?? '';
+                    $message['destination_name'] = $destinationData['name'] ?? '';
+                    $message['product_code'] = $productData['product_code'] ?? '';
+                    $message['product_name'] = $productData['name'] ?? '';
+                    $message['plant_code'] = $plantData['plant_code'] ?? '';
+                    $message['plant_name'] = $plantData['name'] ?? '';
+                    $message['transporter_code'] = $transporterData['transporter_code'] ?? '';
+                    $message['transporter_name'] = $transporterData['name'] ?? '';
                     $message['veh_number'] = $row['veh_number'] ?? '';
                     if ($row['exquarry_or_delivered'] == 'E'){
                         $message['exquarry_or_delivered'] = 'EX-QUARRY';
@@ -114,17 +124,25 @@ if(isset($_POST['userID'])){
                 
                 while ($row = $result->fetch_assoc()) {
                     $message['id'] = $row['id'];
+                    $message['company_id'] = $row['company_id'];
                     $message['company_code'] = $row['company_code'];
+                    $message['customer_id'] = $row['customer_id'];
                     $message['customer_code'] = $row['customer_code'];
+                    $message['site_id'] = $row['site_id'];
                     $message['site_code'] = $row['site_code'];
                     $message['order_date'] = $row['order_date'];
                     $message['order_no'] = $row['order_no'];
                     $message['so_no'] = $row['so_no'];
+                    $message['agent_id'] = $row['agent_id'];
                     $message['agent_code'] = $row['agent_code'];
+                    $message['destination_id'] = $row['destination_id'];
                     $message['destination_code'] = $row['destination_code'];
+                    $message['product_id'] = $row['product_id'];
                     $message['product_code'] = $row['product_code'];
                     $message['product_name'] = $row['product_name'];
+                    $message['plant_id'] = $row['plant_id'];
                     $message['plant_code'] = $row['plant_code'];
+                    $message['transporter_id'] = $row['transporter_id'];
                     $message['transporter_code'] = $row['transporter_code'];
                     $message['veh_number'] = $row['veh_number'];
                     $message['exquarry_or_delivered'] = $row['exquarry_or_delivered'];

@@ -1234,7 +1234,7 @@ CREATE OR REPLACE TRIGGER `TRG_INS_SO` AFTER INSERT ON `Sales_Order`
     company_id, company_code, company_name, customer_id, customer_code, customer_name, site_id, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, product_id, product_code, product_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
 ) 
 VALUES (
-    NEW.company_id, NEW.company_code, NEW.company_name, NEW.customer_id, NEW.customer_code, NEW.customer_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_id, NEW.product_code, NEW.product_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.remarks, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.status, 1, NEW.created_by, NEW.created_date
+    NEW.company_id, NEW.company_code, NEW.company_name, NEW.customer_id, NEW.customer_code, NEW.customer_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_id, NEW.product_code, NEW.product_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
 )
 $$
 DELIMITER ;
@@ -1255,7 +1255,7 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_SO` BEFORE UPDATE ON `Sales_Order`
         company_id, company_code, company_name, customer_id, customer_code, customer_name, site_id, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, product_id, product_code, product_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
     ) 
     VALUES (
-        NEW.company_id, NEW.company_code, NEW.company_name, NEW.customer_id, NEW.customer_code, NEW.customer_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_id, NEW.product_code, NEW.product_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.remarks, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+        NEW.company_id, NEW.company_code, NEW.company_name, NEW.customer_id, NEW.customer_code, NEW.customer_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_id, NEW.product_code, NEW.product_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
     );
 END
 $$
@@ -1296,15 +1296,106 @@ $$
 DELIMITER ;
 
 -- 14/06/2025 --
-UPDATE Sales_Order SET company_id = '1';
+UPDATE Inventory i
+LEFT JOIN Plant p ON i.plant_code = p.plant_code
+SET i.plant_id = p.id
+WHERE i.plant_code IS NOT NULL;
 
+UPDATE Inventory_Log i
+LEFT JOIN Plant p ON i.plant_code COLLATE utf8mb4_unicode_ci = p.plant_code COLLATE utf8mb4_unicode_ci
+SET i.plant_id = p.id
+WHERE i.plant_code IS NOT NULL;
+
+-- Update SO
+-- 1. Update customer_id
 UPDATE Sales_Order SO
 LEFT JOIN Customer c ON SO.customer_code = c.customer_code
-LEFT JOIN Site s ON SO.site_code = s.id
-SET 
-  SO.company_id = '1',
-  SO.customer_id = c.id,
-  SO.site_id = s.id
-  
-WHERE 
-  (t.customer_code IS NOT NULL OR t.site_code IS NOT NULL);
+SET SO.customer_id = c.id
+WHERE SO.customer_code IS NOT NULL;
+
+-- 2. Update site_id
+UPDATE Sales_Order SO
+LEFT JOIN Site s ON SO.site_code = s.site_code
+SET SO.site_id = s.id
+WHERE SO.site_code IS NOT NULL;
+
+-- 3. Update agent_id
+UPDATE Sales_Order SO
+LEFT JOIN Agents a ON SO.agent_code = a.agent_code
+SET SO.agent_id = a.id
+WHERE SO.agent_code IS NOT NULL;
+
+-- 4. Update destination_id
+UPDATE Sales_Order SO
+LEFT JOIN Destination d ON SO.destination_code = d.destination_code
+SET SO.destination_id = d.id
+WHERE SO.destination_code IS NOT NULL;
+
+-- 5. Update product_id
+UPDATE Sales_Order SO
+LEFT JOIN Product p ON SO.product_code = p.product_code
+SET SO.product_id = p.id
+WHERE SO.product_code IS NOT NULL;
+
+-- 6. Update plant_id
+UPDATE Sales_Order SO
+LEFT JOIN Plant pl ON SO.plant_code = pl.plant_code
+SET SO.plant_id = pl.id
+WHERE SO.plant_code IS NOT NULL;
+
+-- 7. Update transporter_id
+UPDATE Sales_Order SO
+LEFT JOIN Transporter t ON SO.transporter_code = t.transporter_code
+SET SO.transporter_id = t.id
+WHERE SO.transporter_code IS NOT NULL;
+
+-- 8. Set company_id to '1'
+UPDATE Sales_Order
+SET company_id = '1';
+
+-- Update SO Log
+-- 1. Update customer_id
+UPDATE Sales_Order_Log SO
+LEFT JOIN Customer c ON SO.customer_code = c.customer_code
+SET SO.customer_id = c.id
+WHERE SO.customer_code IS NOT NULL;
+
+-- 2. Update site_id
+UPDATE Sales_Order_Log SO
+LEFT JOIN Site s ON SO.site_code = s.site_code
+SET SO.site_id = s.id
+WHERE SO.site_code IS NOT NULL;
+
+-- 3. Update agent_id
+UPDATE Sales_Order_Log SO
+LEFT JOIN Agents a ON SO.agent_code = a.agent_code
+SET SO.agent_id = a.id
+WHERE SO.agent_code IS NOT NULL;
+
+-- 4. Update destination_id
+UPDATE Sales_Order_Log SO
+LEFT JOIN Destination d ON SO.destination_code = d.destination_code
+SET SO.destination_id = d.id
+WHERE SO.destination_code IS NOT NULL;
+
+-- 5. Update product_id
+UPDATE Sales_Order_Log SO
+LEFT JOIN Product p ON SO.product_code = p.product_code
+SET SO.product_id = p.id
+WHERE SO.product_code IS NOT NULL;
+
+-- 6. Update plant_id
+UPDATE Sales_Order_Log SO
+LEFT JOIN Plant pl ON SO.plant_code = pl.plant_code
+SET SO.plant_id = pl.id
+WHERE SO.plant_code IS NOT NULL;
+
+-- 7. Update transporter_id
+UPDATE Sales_Order_Log SO
+LEFT JOIN Transporter t ON SO.transporter_code = t.transporter_code
+SET SO.transporter_id = t.id
+WHERE SO.transporter_code IS NOT NULL;
+
+-- 8. Set company_id to '1'
+UPDATE Sales_Order_Log
+SET company_id = '1';

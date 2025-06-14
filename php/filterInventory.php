@@ -20,7 +20,7 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 }
 
 ## Total number of records without filtering
-$allQuery = "select count(*) as allcount from Inventory, Raw_Mat where Inventory.status = '0' and Inventory.raw_mat_id = Raw_Mat.id".$searchQuery;
+$allQuery = "select count(*) as allcount from Inventory, Raw_Mat where Inventory.status = '0' and Inventory.raw_mat_id = Raw_Mat.id";
 $sel = mysqli_query($db, $allQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
