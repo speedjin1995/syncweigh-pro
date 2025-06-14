@@ -891,7 +891,7 @@ else{
                                                                         <div class="row mb-3">
                                                                             <label for="grossIncomingDate" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                             <div class="col-sm-8">
-                                                                                <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate" readonly>
+                                                                                <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate">
                                                                             </div>
                                                                         </div>
 
@@ -911,7 +911,7 @@ else{
                                                                         <div class="row mb-3">
                                                                             <label for="tareOutgoingDate" class="col-sm-4 col-form-label">Outgoing Date</label>
                                                                             <div class="col-sm-8">
-                                                                                <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate" readonly>
+                                                                                <input type="text" class="form-control input-readonly" id="tareOutgoingDate" name="tareOutgoingDate">
                                                                             </div>
                                                                         </div>                                                                        
                                                                         <div class="row mb-3">
@@ -964,7 +964,7 @@ else{
                                                                         <div class="row mb-3">
                                                                             <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                             <div class="col-sm-8">
-                                                                                <input type="text" class="form-control input-readonly" id="grossIncomingDate2" name="grossIncomingDate2" readonly>
+                                                                                <input type="text" class="form-control input-readonly" id="grossIncomingDate2" name="grossIncomingDate2">
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
@@ -980,7 +980,7 @@ else{
                                                                         <div class="row mb-3">
                                                                             <label for="tareOutgoingDate2" class="col-sm-4 col-form-label">Outgoing Date</label>
                                                                             <div class="col-sm-8">
-                                                                                <input type="text" class="form-control input-readonly" placeholder="" id="tareOutgoingDate2" name="tareOutgoingDate2" readonly>
+                                                                                <input type="text" class="form-control input-readonly" placeholder="" id="tareOutgoingDate2" name="tareOutgoingDate2">
                                                                             </div>
                                                                         </div>                                                                        
                                                                         <div class="row mb-3">
@@ -1594,6 +1594,11 @@ else{
     var emptyContainerTable = null;
     let clickTimer = null;
 
+    var grossIncomingDatePicker;
+    var tareOutgoingDatePicker; 
+    var grossIncomingDatePicker2;
+    var tareOutgoingDatePicker2; 
+
     $(function () {
         var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
@@ -1654,6 +1659,46 @@ else{
         $('#transactionDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: true,
+        });
+
+        tareOutgoingDatePicker = $('#tareOutgoingDate').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: true,
+        });
+
+        grossIncomingDatePicker2 = $('#grossIncomingDate2').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: true,
+        });
+
+        tareOutgoingDatePicker2 = $('#tareOutgoingDate2').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: true,
         });
 
         if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
@@ -2910,15 +2955,15 @@ else{
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
-            $('#addModal').find('#grossIncomingDate').val("");
+            grossIncomingDatePicker.clear();
             $('#addModal').find('#tareOutgoing').val("");
-            $('#addModal').find('#tareOutgoingDate').val("");
+            tareOutgoingDatePicker.clear();
             $('#addModal').find('#nettWeight').val("");
             $('#addModal').find('#grossIncoming2').val("");
             $('#addModal').find('#status').val("");
-            $('#addModal').find('#grossIncomingDate2').val("");
+            grossIncomingDatePicker2.clear();
             $('#addModal').find('#tareOutgoing2').val("");
-            $('#addModal').find('#tareOutgoingDate2').val("");
+            tareOutgoingDatePicker2.clear();
             $('#addModal').find('#nettWeight2').val("");
             $('#addModal').find('#reduceWeight').val("");
             // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
@@ -3447,9 +3492,12 @@ else{
             var tare = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#grossIncomingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
             $('#grossWeightBy1').val('<?php echo $username; ?>');
+
+            // Update the Flatpickr instance
+            grossIncomingDatePicker.setDate(new Date()); // sets it to current date/time
+            $('#grossIncomingDate').trigger('change');
         });
 
         $('#grossCapture').on('click', function(event){
@@ -3464,9 +3512,13 @@ else{
             var gross = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#tareOutgoingDate').val(formatDate3(new Date()));
             $('#nettWeight').trigger('change');
             $('#tareWeightBy1').val('<?php echo $username; ?>');
+
+            // Update the Flatpickr instance
+            tareOutgoingDatePicker.setDate(new Date()); // sets it to current date/time
+            $('#tareOutgoingDate').trigger('change');
+
         });
 
         $('#tareCapture').on('click', function(event){
@@ -3555,9 +3607,13 @@ else{
             var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#grossIncomingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
             $('#grossWeightBy2').val('<?php echo $username; ?>');
+
+            // Update the Flatpickr instance
+            grossIncomingDatePicker2.setDate(new Date()); // sets it to current date/time
+            $('#grossIncomingDate2').trigger('change');
+
         });
 
         $('#grossCapture2').on('click', function(event){
@@ -3572,9 +3628,13 @@ else{
             var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#tareOutgoingDate2').val(formatDate3(new Date()));
             $('#nettWeight2').trigger('change');
             $('#tareWeightBy2').val('<?php echo $username; ?>');
+
+            // Update the Flatpickr instance
+            tareOutgoingDatePicker2.setDate(new Date()); // sets it to current date/time
+            $('#tareOutgoingDate2').trigger('change');
+
         });
 
         $('#tareCapture2').on('click', function(event){
@@ -4242,17 +4302,18 @@ else{
                 
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                $('#addModal').find('#grossIncomingDate').val(formatDate3(new Date(obj.message.gross_weight1_date)));
+                grossIncomingDatePicker.setDate(new Date(obj.message.gross_weight1_date));
                 $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
+                tareOutgoingDatePicker.setDate(obj.message.tare_weight1_date != null ? new Date(obj.message.tare_weight1_date) : null);
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
-                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate3(new Date(obj.message.gross_weight2_date)) : '');
+                grossIncomingDatePicker2.setDate(obj.message.gross_weight2_date != null ? new Date(obj.message.gross_weight2_date) : null);
                 $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2);
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
-                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate3(new Date(obj.message.tare_weight2_date)) : '');
+                tareOutgoingDatePicker2.setDate(obj.message.tare_weight2_date != null ? new Date(obj.message.tare_weight2_date) : null);
                 $('#addModal').find('#tareWeightBy2').val(obj.message.tare_weight_by2);
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
