@@ -138,7 +138,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                             <select id="companySearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowCompanyF=mysqli_fetch_assoc($company2)){ ?>
-                                                                    <option value="<?=$rowCompanyF['company_code'] ?>"><?=$rowCompanyF['company_code']. ' - ' .$rowCompanyF['name'] ?></option>
+                                                                    <option value="<?=$rowCompanyF['company_code'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowCompanyF['company_code']. ' - ' .$rowCompanyF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -160,7 +160,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                             <select id="plantSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
-                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -171,7 +171,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                             <select id="productSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                    <option value="<?=$rowProductF['product_code'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -182,7 +182,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                             <select id="customerNoSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                    <option value="<?=$rowPF['customer_code'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowPF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -234,7 +234,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control select2" style="width: 100%;" id="company" name="company" required>
                                                                                             <?php while($rowCompany=mysqli_fetch_assoc($company)){ ?>
-                                                                                                <option value="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>"><?=$rowCompany['name'] ?></option>
+                                                                                                <option value="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowCompany['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -247,7 +247,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                         <select class="form-control select2" style="width: 100%;" id="customer" name="customer">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['customer_code'] ?>" data-name="<?=$rowCustomer['name'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                                <option value="<?=$rowCustomer['customer_code'] ?>" data-name="<?=$rowCustomer['name'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowCustomer['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -260,7 +260,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                         <select class="form-control select2" style="width: 100%;" id="site" name="site">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
-                                                                                                <option value="<?=$rowSite['site_code'] ?>" data-name="<?=$rowSite['name'] ?>"><?=$rowSite['name'] ?></option>
+                                                                                                <option value="<?=$rowSite['site_code'] ?>" data-name="<?=$rowSite['name'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowSite['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -300,7 +300,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                         <select class="form-control select2" style="width: 100%;" id="agent" name="agent">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
-                                                                                                <option value="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>"><?=$rowAgent['name'] ?></option>
+                                                                                                <option value="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowAgent['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -313,7 +313,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                         <select class="form-control select2" style="width: 100%;" id="destinationCode" name="destinationCode">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                                <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -339,7 +339,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                         <select class="form-control select2" style="width: 100%;" id="plant" name="plant">
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
-                                                                                                <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                                <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -352,7 +352,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                                         <select class="form-control select2" style="width: 100%;" id="transporter" name="transporter" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['transporter_code'] ?>" data-name="<?=$rowTransporter['name'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                                <option value="<?=$rowTransporter['transporter_code'] ?>" data-name="<?=$rowTransporter['name'] ?>" data-id="<?=$rowCompanyF['id'] ?>"><?=$rowTransporter['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -452,13 +452,21 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                             </div>
 
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                 
+                                                                            <input type="hidden" class="form-control" id="companyId" name="companyId">                                                                   
                                                                             <input type="hidden" class="form-control" id="companyName" name="companyName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="customerId" name="customerId">                                                                   
                                                                             <input type="hidden" class="form-control" id="customerName" name="customerName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="siteId" name="siteId">                                                                   
                                                                             <input type="hidden" class="form-control" id="siteName" name="siteName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="agentId" name="agentId">   
                                                                             <input type="hidden" class="form-control" id="agentName" name="agentName">   
+                                                                            <input type="hidden" class="form-control" id="destinationId" name="destinationId">
                                                                             <input type="hidden" class="form-control" id="destinationName" name="destinationName">
+                                                                            <input type="hidden" class="form-control" id="productId" name="productId">
                                                                             <input type="hidden" class="form-control" id="productName" name="productName">
+                                                                            <input type="hidden" class="form-control" id="plantId" name="plantId">
                                                                             <input type="hidden" class="form-control" id="plantName" name="plantName">
+                                                                            <input type="hidden" class="form-control" id="transporterId" name="transporterId">                                               
                                                                             <input type="hidden" class="form-control" id="transporterName" name="transporterName">                                               
                                                                             <input type="hidden" class="form-control" id="convertedOrderQtyUnit" name="convertedOrderQtyUnit">                                               
                                                                         </div>

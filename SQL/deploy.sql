@@ -1294,3 +1294,17 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
 END
 $$
 DELIMITER ;
+
+-- 14/06/2025 --
+UPDATE Sales_Order SET company_id = '1';
+
+UPDATE Sales_Order SO
+LEFT JOIN Customer c ON SO.customer_code = c.customer_code
+LEFT JOIN Site s ON SO.site_code = s.id
+SET 
+  SO.company_id = '1',
+  SO.customer_id = c.id,
+  SO.site_id = s.id
+  
+WHERE 
+  (t.customer_code IS NOT NULL OR t.site_code IS NOT NULL);
