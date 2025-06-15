@@ -4547,7 +4547,6 @@ else{
                 $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
                 tareOutgoingDatePicker.setDate(obj.message.tare_weight1_date != null ? new Date(obj.message.tare_weight1_date) : null);
-                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#vehicleWeight2').val(obj.message.lorry_no2_weight);
