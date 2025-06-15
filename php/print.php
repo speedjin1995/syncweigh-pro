@@ -316,13 +316,25 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                     <th style="border:1px solid black;">Container No.1</th>
                                     <th style="border:1px solid black;">Seal No.1</th>
                                     <th style="border:1px solid black;">Container No.2</th>
-                                    <th style="border:1px solid black;">Seal No.2</th>
+                                    <th style="border:1px solid black;">Seal No.2</th>';
+
+                                if($row['weight_type'] == 'Different Container'){
+                                    $message .= '<th style="border:1px solid black;">Replacement Container</th>';
+                                }
+                            
+                            $message .= '
                                 </tr>
                                 <tr style="font-size: 14px;text-align: center;">
                                     <td style="border:1px solid black;">'.(!empty($row["container_no"]) ? $row["container_no"] : '&nbsp;').'</td>
                                     <td style="border:1px solid black;">'.$row["seal_no"].'</td>
                                     <td style="border:1px solid black;">'.$row["container_no2"].'</td>
-                                    <td style="border:1px solid black;">'.$row["seal_no2"].'</td>
+                                    <td style="border:1px solid black;">'.$row["seal_no2"].'</td>';
+
+                                if ($row['weight_type'] == 'Different Container'){
+                                    $message .= '<td style="border:1px solid black;">'.$row["replacement_container"].'</td>';
+                                }    
+                                
+                            $message .= '    
                                 </tr>
                             </table>';
                             
