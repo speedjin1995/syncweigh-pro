@@ -31,7 +31,7 @@ function formatWeight($weight){
     return $formatted;
 }
 
-if(isset($_POST['userID'], $_POST["file"])){
+if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
     $stmt = $db->prepare("SELECT * FROM Company WHERE id=?");
     $stmt->bind_param('s', $compids);
     $stmt->execute();
@@ -52,7 +52,13 @@ if(isset($_POST['userID'], $_POST["file"])){
         //i remove this because both(billboard and weight) also call this print page.
         //AND weight.pStatus = 'Pending'
 
-        if ($select_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
+        if ($_POST['isEmptyContainer'] == 'Y'){
+            $sql = "SELECT * FROM Weight_Container WHERE id=?";
+        }else{
+            $sql = "SELECT * FROM Weight WHERE id=?";
+        }
+
+        if ($select_stmt = $db->prepare($sql)) {
             $select_stmt->bind_param('s', $id);
 
             // Execute the prepared query.

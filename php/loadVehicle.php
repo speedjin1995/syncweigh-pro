@@ -18,7 +18,8 @@ if($searchValue != ''){
   $searchQuery = " and (veh_number like '%".$searchValue."%' 
   or vehicle_weight like '%".$searchValue."%' 
   or transporter_code like '%".$searchValue."%'
-  or customer_code like '%".$searchValue."%'
+  or customer_name like '%".$searchValue."%'
+  or supplier_name like '%".$searchValue."%'
   )";
 }
 
@@ -45,6 +46,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "ex_del"=>$row['ex_del'],
       "transporter_name"=>$row['transporter_name'],
       "customer_name"=>$row['customer_name'],
+      "supplier_name"=>$row['supplier_name'],
       "status"=>(($row['status'] == '0') ? 'Active' : 'Inactive')
     );
 }
