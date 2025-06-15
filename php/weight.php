@@ -285,7 +285,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
 
     if (empty($_POST["containerNo"])) {
-        if ($weightType == 'Container'){
+        /*if ($weightType == 'Container'){
             echo json_encode(
                 array(
                     "status"=> "failed", 
@@ -294,9 +294,9 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
             );
 
             exit;
-        }else{
+        }else{*/
             $containerNo = null;
-        }
+        //}
     } else {
         $containerNo = trim($_POST["containerNo"]);
     }
