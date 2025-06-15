@@ -4079,6 +4079,7 @@ else{
                 $('#addModal').find('#tareOutgoing').val(0);
                 $('#addModal').find('#tareOutgoingDate').val("");
                 $('#addModal').find('#nettWeight').val(0);
+                $('#tareOutgoing2').trigger('keyup');
                 $('#normalCard').hide();
             } else if (emptyContainerNo) { 
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
@@ -4133,6 +4134,7 @@ else{
                             $('#vehicleNoTxt').hide();
                         }
                         
+                        $('#tareOutgoing2').trigger('keyup');
                         
                         $('#normalCard').show();
                     }
@@ -4154,6 +4156,7 @@ else{
                 $('#addModal').find('#tareOutgoing').val(0);
                 $('#addModal').find('#tareOutgoingDate').val("");
                 $('#addModal').find('#nettWeight').val(0);
+                $('#tareOutgoing2').trigger('keyup');
                 $('#normalCard').hide();
             }
         });
