@@ -768,9 +768,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                     }
                                     else{
                                         $result = $weightContainer_stmt->get_result();
-                                        $row = $result->fetch_assoc();
 
-                                        if (count($row) > 0){
+                                        if ($row = $result->fetch_assoc()){
                                             $containerId = $row['id'];
                                             if ($insert_stmt = $db->prepare("UPDATE Weight_Container SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, order_weight=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
                                             product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, seal_no=?, container_no2=?, seal_no2=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, gross_weight_by1=?, tare_weight1=?, tare_weight1_date=?, tare_weight_by1=?, nett_weight1=?, lorry_no2_weight=?, empty_container2_weight=?, 
@@ -856,7 +855,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                                         } 
                                                         else{
                                                             $update_stmt2->close();
-                                                            $db->close();
                                                             echo json_encode(
                                                                 array(
                                                                     "status"=> "success", 
