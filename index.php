@@ -237,6 +237,7 @@ else{
                                                                 <option value="Normal">Normal Weighing</option>
                                                                 <option value="Container">Primer Mover</option>
                                                                 <option value="Empty Container">Primer Mover + Container</option>
+                                                                <option value="Different Container">Primer Mover + Different Container</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -535,6 +536,7 @@ else{
                                                                                             <option value="Normal" selected>Normal Weighing</option>
                                                                                             <option value="Container">Primer Mover</option>
                                                                                             <option value="Empty Container">Primer Mover + Container</option>
+                                                                                            <option value="Different Container">Primer Mover + Different Container</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -951,6 +953,15 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <div class="row mb-3" id="vehicleWeight2Display" style="display:none">
+                                                                            <label for="vehicleWeight2" class="col-sm-4 col-form-label">Vehicle Weight</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="number" class="form-control input-readonly" id="vehicleWeight2" name="vehicleWeight2" placeholder="0" readonly>
+                                                                                    <div class="input-group-text">Kg</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                         <div class="row mb-3">
                                                                             <label for="grossIncoming2" class="col-sm-4 col-form-label">Incoming</label>
                                                                             <div class="col-sm-8">
@@ -965,6 +976,15 @@ else{
                                                                             <label for="grossIncomingDate2" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                             <div class="col-sm-8">
                                                                                 <input type="text" class="form-control input-readonly" id="grossIncomingDate2" name="grossIncomingDate2">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row mb-3" id="container2WeightDisplay" style="display:none">
+                                                                            <label for="emptyContainerWeight2" class="col-sm-4 col-form-label">Empty Container Weight</label>
+                                                                            <div class="col-sm-8">
+                                                                                <div class="input-group">
+                                                                                    <input type="number" class="form-control input-readonly" id="emptyContainerWeight2" name="emptyContainerWeight2" placeholder="0" readonly>
+                                                                                    <div class="input-group-text">Kg</div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                         <div class="row mb-3">
@@ -2973,6 +2993,8 @@ else{
             $('#addModal').find('#tareOutgoing').val("");
             tareOutgoingDatePicker.clear();
             $('#addModal').find('#nettWeight').val("");
+            $('#addModal').find('#vehicleWeight2').val("");
+            $('#addModal').find('#emptyContainerWeight2').val("");
             $('#addModal').find('#grossIncoming2').val("");
             $('#addModal').find('#status').val("");
             grossIncomingDatePicker2.clear();
@@ -3341,18 +3363,63 @@ else{
 
                 handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').show();
+                $('#addModal').find('#vehicleWeight2Display').hide();
+                $('#addModal').find('#container2WeightDisplay').hide();
                 $('#addModal').find('#containerDisplay').hide();
                 $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
                 handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
+                $('#addModal').find('#vehicleWeight2Display').hide();
+                $('#addModal').find('#container2WeightDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', true);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
+            }else if (weightType == 'Different Container') {
+                $.post('php/getContainers.php', {userID: transaType}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            $('#addModal').find('#emptyContainerNo').empty();
+                            $('#addModal').find('#emptyContainerNo').append(`<option selected="-">-</option>`);
+
+                            var deliveredTransporter;
+
+                            for (var i = 0; i < obj.message.length; i++) {
+                                var id = obj.message[i].id;
+                                var container_no = obj.message[i].container_no;
+
+                                $('#addModal').find('#emptyContainerNo').append(
+                                    '<option value="'+container_no+'">'+container_no+'</option>'
+                                );  
+                            }
+                        }
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+                handleWeightType(weightType);
+                $('#addModal').find('#emptyContainerDisplay').show();
+                $('#addModal').find('#vehicleWeight2Display').show();
+                $('#addModal').find('#container2WeightDisplay').show();
+                $('#addModal').find('#containerDisplay').hide();
+                $('#addModal').find('#containerNoInput').attr('required', false);
+                $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else{
                 handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
+                $('#addModal').find('#vehicleWeight2Display').hide();
+                $('#addModal').find('#container2WeightDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
@@ -3499,6 +3566,61 @@ else{
             var x = $('#vehicleNoTxt2').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt2').val(x);
+            var weightType = $('#weightType').val();
+
+            if (weightType == 'Different Container' && x) {
+                $.post('php/getVehicle.php', {userID: x, type: 'pullCustomer'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var vehicleWeight = obj.message.vehicle_weight;
+                        $('#vehicleWeight2').val(vehicleWeight);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehicleNoTxt').val('');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        });
+
+        $('#vehiclePlateNo2').on('change', function(){
+            var vehiclePlateNo2 = $(this).val();
+            var weightType = $('#weightType').val();
+            if (weightType == 'Different Container' && vehiclePlateNo2){
+                $.post('php/getVehicle.php', {userID: vehiclePlateNo2, type: 'pullCustomer'}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        var vehicleWeight = obj.message.vehicle_weight;
+                        $('#vehicleWeight2').val(vehicleWeight);
+                    }
+                    else if(obj.status === 'error'){
+                        alert(obj.message);
+                        $('#vehicleNoTxt').val('');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
+            }
         });
 
         $('.radio-manual-weight').on('click', function(){
@@ -3558,9 +3680,16 @@ else{
         });
 
         $('#nettWeight').on('change', function(){
-            var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
+            var weightType = $('#weightType').val();
+
+            if (weightType == 'Different Container'){
+                var current = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
+            }else{
+                var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
+                var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
+                var current = Math.abs(nett1 - nett2);
+            }
+
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#reduceWeight').trigger('change');
@@ -3568,9 +3697,15 @@ else{
         });
         
         $('#reduceWeight').on('change', function(){
-            var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
-            var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
+            var weightType = $('#weightType').val();
+
+            if (weightType == 'Different Container'){
+                var current = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
+            }else{
+                var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
+                var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
+                var current = Math.abs(nett1 - nett2);
+            }
             var reduce = $(this).val() ? parseFloat($(this).val()) : 0;
             //var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
             var final = Math.abs(current - reduce);
@@ -3632,9 +3767,25 @@ else{
         });
 
         $('#grossIncoming2').on('keyup', function(){
-            var gross = $(this).val() ? parseFloat($(this).val()) : 0;
-            var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
-            var nett = Math.abs(gross - tare);
+            var weightType = $('#weightType').val();
+
+            if (weightType == 'Different Container'){
+                var gross2 = $(this).val() ? parseFloat($(this).val()) : 0;
+                var tare2 = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
+                var vehicleWeight2 = $('#vehicleWeight2').val() ? parseFloat($('#vehicleWeight2').val()) : 0;
+                var emptyContainerWeight2 = Math.abs(gross2 - vehicleWeight2);
+
+                // Container 1 weights
+                var emptyContainer1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
+                var nett = Math.abs(tare2 - vehicleWeight2 - emptyContainer1); console.log(nett);
+
+                $('#emptyContainerWeight2').val(emptyContainerWeight2);
+            }else{
+                var gross = $(this).val() ? parseFloat($(this).val()) : 0;
+                var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
+                var nett = Math.abs(gross - tare);
+            }
+
             $('#nettWeight2').val(nett.toFixed(0));
             $('#nettWeight2').trigger('change');
             $('#grossWeightBy2').val('<?php echo $username; ?>');
@@ -3642,7 +3793,6 @@ else{
             // Update the Flatpickr instance
             grossIncomingDatePicker2.setDate(new Date()); // sets it to current date/time
             $('#grossIncomingDate2').trigger('change');
-
         });
 
         $('#grossCapture2').on('click', function(event){
@@ -3653,9 +3803,27 @@ else{
         });
 
         $('#tareOutgoing2').on('keyup', function(){
-            var tare = $(this).val() ? parseFloat($(this).val()) : 0;
-            var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
-            var nett = Math.abs(gross - tare);
+            var weightType = $('#weightType').val();
+
+            if (weightType == 'Different Container'){
+                var gross2 = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
+                var tare2 = $(this).val() ? parseFloat($(this).val()) : 0;
+                var vehicleWeight2 = $('#vehicleWeight2').val() ? parseFloat($('#vehicleWeight2').val()) : 0;
+                var emptyContainerWeight2 = Math.abs(gross2 - vehicleWeight2);
+                console.log($('#grossIncoming2').val());
+                console.log(vehicleWeight2);
+                console.log(emptyContainerWeight2);
+                $('#emptyContainerWeight2').val(emptyContainerWeight2);
+
+                // Container 1 weights
+                var emptyContainer1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
+                var nett = Math.abs(tare2 - vehicleWeight2 - emptyContainer1);
+            }else{
+                var tare = $(this).val() ? parseFloat($(this).val()) : 0;
+                var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
+                var nett = Math.abs(gross - tare);
+            }
+
             $('#nettWeight2').val(nett.toFixed(0));
             $('#nettWeight2').trigger('change');
             $('#tareWeightBy2').val('<?php echo $username; ?>');
@@ -3674,9 +3842,16 @@ else{
         });
 
         $('#nettWeight2').on('change', function(){
-            var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
-            var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
+            var weightType = $('#weightType').val();
+
+            if (weightType == 'Different Container'){
+                var current = $(this).val() ? parseFloat($(this).val()) : 0;
+            }else{
+                var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
+                var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
+                var current = Math.abs(nett1 - nett2);
+            }
+
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#reduceWeight').trigger('change');
@@ -3889,6 +4064,7 @@ else{
         //Empty Container No
         $('#emptyContainerNo').on('change', function (){
             var emptyContainerNo = $(this).val();
+            var weightType = $('#weightType').val();
             $('#containerNo').val(emptyContainerNo);
 
             if (emptyContainerNo == '-'){
@@ -3908,8 +4084,11 @@ else{
                         $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                         $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order);
                         $('#addModal').find('#sealNo').val(obj.message.seal_no);
-                        $('#addModal').find('#containerNo2').val(obj.message.container_no2);
-                        $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
+
+                        if (weightType != 'Different Container'){
+                            $('#addModal').find('#containerNo2').val(obj.message.container_no2);
+                            $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
+                        }
 
                         if (obj.message.transaction_status == 'Sales' || obj.message.transaction_status == 'Misc'){
                             $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
@@ -3924,11 +4103,13 @@ else{
 
                         
                         $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
-                        $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                        $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
+                        $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1); console.log(obj.message.gross_weight1_date);
+                        grossIncomingDatePicker.setDate(new Date(obj.message.gross_weight1_date)); 
+                        // $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
                         $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
                         $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
-                        $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
+                        tareOutgoingDatePicker.setDate(new Date(obj.message.tare_weight1_date));
+                        // $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date);
                         $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                         $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
 
@@ -4051,6 +4232,15 @@ else{
             $('#addModal').find('#nettWeight2').val(0);
             $('#containerCard').hide();
             $('#normalCard').show();
+        }else if(weightType == 'Different Container'){
+            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#grossIncoming').val(0);
+            $('#addModal').find('#grossIncomingDate').val("");
+            $('#addModal').find('#tareOutgoing').val(0);
+            $('#addModal').find('#tareOutgoingDate').val("");
+            $('#addModal').find('#nettWeight').val(0);
+            $('#normalCard').hide();
+            $('#containerCard').show();
         }else{
             $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming2').val(0);
@@ -4083,6 +4273,8 @@ else{
             weightType = 'Primer Mover + Container';
         }else if(row.weight_type == 'Normal'){
             weightType = 'Normal Weighing';
+        }else if(row.weight_type == 'Different Container'){
+            weightType = 'Primer Mover + Different Container';
         }else{
             weightType = row.weight_type;
         }
@@ -4338,6 +4530,8 @@ else{
                 $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate3(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#tareWeightBy1').val(obj.message.tare_weight_by1);
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+                $('#addModal').find('#vehicleWeight2').val(obj.message.lorry_no2_weight);
+                $('#addModal').find('#emptyContainerWeight2').val(obj.message.empty_container2_weight);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 grossIncomingDatePicker2.setDate(obj.message.gross_weight2_date != null ? new Date(obj.message.gross_weight2_date) : null);
                 $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2);
@@ -4384,7 +4578,7 @@ else{
                 $('#addModal').find('#sealNo2').val(obj.message.seal_no2);
 
                 // Load container data and update the emptyContainerNo field if it's a container
-                if(obj.message.weight_type == 'Container' && obj.message.container_no){
+                if((obj.message.weight_type == 'Container' || obj.message.weight_type == 'Different Container') && obj.message.container_no){
                     loadContainerData(function() {
                         $('#normalCard').show();
 

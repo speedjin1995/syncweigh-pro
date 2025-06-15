@@ -202,7 +202,11 @@ if($query->num_rows > 0){
                 $weightType = 'Primer Mover';
             }elseif($row['weight_type'] == 'Empty Container'){
                 $weightType = 'Primer Mover + Container';
-            }else{
+            }else if($row['weight_type'] == 'Different Container'){
+                $weightType = 'Primer Mover + Different Container';
+            }else if($row['weight_type'] == 'Different Container'){
+                $weightType = 'Primer Mover + Different Container';
+            }  else{
                 $weightType = $row['weight_type'];
             }
 
