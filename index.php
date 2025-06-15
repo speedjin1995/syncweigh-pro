@@ -1993,6 +1993,13 @@ else{
                             }
                         }
 
+                        buttons += `
+                        <div class="col-auto">
+                            <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}', 'Y')" class="btn btn-info btn-sm">
+                                <i class="fa-solid fa-print"></i>
+                            </button>
+                        </div>`;
+
                         if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
                             buttons += `
                             <div class="col-auto">
@@ -2891,6 +2898,13 @@ else{
                                     </div>`;
                                 }
                             }
+
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}', 'Y')" class="btn btn-info btn-sm">
+                                    <i class="fa-solid fa-print"></i>
+                                </button>
+                            </div>`;
 
                             if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
                                 buttons += `
@@ -4604,7 +4618,7 @@ else{
     //     });
     // }
 
-    function print(id, transactionStatus) {
+    function print(id, transactionStatus, isEmptyContainer = 'N') {
         /*if (transactionStatus == "Sales"){
             $('#prePrintModal').find('#id').val(id);
             $('#prePrintModal').find('#prePrint').val("");
@@ -4649,7 +4663,7 @@ else{
         //var id = $('#prePrintModal').find('#id').val();
         var prePrintStatus = 'N';
 
-        $.post('php/print.php', {userID: id, file: 'weight', prePrint: prePrintStatus}, function(data){
+        $.post('php/print.php', {userID: id, file: 'weight', prePrint: prePrintStatus, isEmptyContainer: isEmptyContainer}, function(data){
             var obj = JSON.parse(data);
 
             if(obj.status === 'success'){
