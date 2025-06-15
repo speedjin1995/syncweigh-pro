@@ -836,6 +836,14 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="replacementContainerDisplay" style="display:none">
+                                                                                <div class="row">
+                                                                                    <label for="replacementContainer" class="col-sm-4 col-form-label">Replacement Container</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="replacementContainer" name="replacementContainer" placeholder="Replacement Container">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2305,6 +2313,11 @@ else{
 
             pass = true;
 
+            var isEmptyContainer = 'N';
+            if ($('#weightType').val() == 'Empty Container'){
+                isEmptyContainer = 'Y';
+            }
+
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -2315,7 +2328,7 @@ else{
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                        $.post('php/print.php', {userID: obj.id, file: 'weight', isEmptyContainer: isEmptyContainer}, function(data){
                             var obj2 = JSON.parse(data);
 
                             if(obj2.status === 'success'){
@@ -3363,6 +3376,7 @@ else{
 
                 handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').show();
+                $('#addModal').find('#replacementContainerDisplay').hide();
                 $('#addModal').find('#vehicleWeight2Display').hide();
                 $('#addModal').find('#container2WeightDisplay').hide();
                 $('#addModal').find('#containerDisplay').hide();
@@ -3371,6 +3385,7 @@ else{
             }else if (weightType == 'Empty Container'){
                 handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
+                $('#addModal').find('#replacementContainerDisplay').hide();
                 $('#addModal').find('#vehicleWeight2Display').hide();
                 $('#addModal').find('#container2WeightDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
@@ -3410,6 +3425,7 @@ else{
                 });
                 handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').show();
+                $('#addModal').find('#replacementContainerDisplay').show();
                 $('#addModal').find('#vehicleWeight2Display').show();
                 $('#addModal').find('#container2WeightDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
@@ -3418,6 +3434,7 @@ else{
             }else{
                 handleWeightType(weightType);
                 $('#addModal').find('#emptyContainerDisplay').hide();
+                $('#addModal').find('#replacementContainerDisplay').hide();
                 $('#addModal').find('#vehicleWeight2Display').hide();
                 $('#addModal').find('#container2WeightDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
@@ -4074,6 +4091,7 @@ else{
                 $('#addModal').find('#tareOutgoing').val(0);
                 $('#addModal').find('#tareOutgoingDate').val("");
                 $('#addModal').find('#nettWeight').val(0);
+                $('#tareOutgoing2').trigger('keyup');
                 $('#normalCard').hide();
             } else if (emptyContainerNo) { 
                 $.post('php/getEmptyContainer.php', {userID: emptyContainerNo}, function (data){
@@ -4128,6 +4146,7 @@ else{
                             $('#vehicleNoTxt').hide();
                         }
                         
+                        $('#tareOutgoing2').trigger('keyup');
                         
                         $('#normalCard').show();
                     }
@@ -4149,6 +4168,7 @@ else{
                 $('#addModal').find('#tareOutgoing').val(0);
                 $('#addModal').find('#tareOutgoingDate').val("");
                 $('#addModal').find('#nettWeight').val(0);
+                $('#tareOutgoing2').trigger('keyup');
                 $('#normalCard').hide();
             }
         });
@@ -4532,6 +4552,7 @@ else{
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#vehicleWeight2').val(obj.message.lorry_no2_weight);
                 $('#addModal').find('#emptyContainerWeight2').val(obj.message.empty_container2_weight);
+                $('#addModal').find('#replacementContainer').val(obj.message.replacement_container);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 grossIncomingDatePicker2.setDate(obj.message.gross_weight2_date != null ? new Date(obj.message.gross_weight2_date) : null);
                 $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2);

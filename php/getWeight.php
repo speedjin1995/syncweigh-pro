@@ -169,6 +169,7 @@ if(isset($_POST['userID'])){
                             $message['nett_weight1'] = $row['nett_weight1'];
                             $message['lorry_no2_weight'] = $row['lorry_no2_weight'];
                             $message['empty_container2_weight'] = $row['empty_container2_weight'];
+                            $message['replacement_container'] = $row['replacement_container'];
                             $message['gross_weight2'] = $row['gross_weight2'];
                             $message['gross_weight2_date'] = $row['gross_weight2_date'];
                             $message['gross_weight_by2'] = $row['gross_weight_by2'];
@@ -386,6 +387,7 @@ if(isset($_POST['userID'])){
                             $message['nett_weight1'] = $row['nett_weight1'];
                             $message['lorry_no2_weight'] = $row['lorry_no2_weight'];
                             $message['empty_container2_weight'] = $row['empty_container2_weight'];
+                            $message['replacement_container'] = $row['replacement_container'];
                             $message['gross_weight2'] = $row['gross_weight2'];
                             $message['gross_weight2_date'] = $row['gross_weight2_date'];
                             $message['gross_weight_by2'] = $row['gross_weight_by2'];
