@@ -2305,6 +2305,11 @@ else{
 
             pass = true;
 
+            var isEmptyContainer = 'N';
+            if ($('#weightType').val() == 'Empty Container'){
+                isEmptyContainer = 'Y';
+            }
+
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -2315,7 +2320,7 @@ else{
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                        $.post('php/print.php', {userID: obj.id, file: 'weight', isEmptyContainer: isEmptyContainer}, function(data){
                             var obj2 = JSON.parse(data);
 
                             if(obj2.status === 'success'){
