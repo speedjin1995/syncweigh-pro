@@ -3403,20 +3403,25 @@ else{
             var x = $('#vehicleNoTxt').val();
             x = x.toUpperCase();
             $('#vehicleNoTxt').val(x);
+            var transactionStatus = $('#transactionStatus').val();
 
-            var exDel = $('input[name="exDel"]:checked').val();
-            if (exDel == 'true'){
-                // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
-                // $('#addModal').find('#transporterCode').val('T01');
-                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+            if (x){
+                $.post('php/getVehicle.php', {userID: x, type: 'pullCustomer'}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
-                        // var customerName = obj.message.customer_name;
-                        // var customerCode = obj.message.customer_code;
+                        var customerName = obj.message.customer_name;
+                        var customerCode = obj.message.customer_code;
+                        var supplierName = obj.message.supplier_name;
+                        var supplierCode = obj.message.supplier_code;
 
-                        // $('#addModal').find('#customerName').val(customerName).trigger('change');
-                        // $('#addModal').find('#customerCode').val(customerCode);
+                        if (transactionStatus == 'Sales' || transactionStatus == 'Misc'){
+                            $('#addModal').find('#customerName').val(customerName).trigger('change');
+                            $('#addModal').find('#customerCode').val(customerCode);
+                        }else{
+                            $('#addModal').find('#supplierName').val(supplierName).trigger('change');
+                            $('#addModal').find('#supplierCode').val(supplierCode);
+                        }
                     }
                     else if(obj.status === 'error'){
                         alert(obj.message);
@@ -3433,19 +3438,29 @@ else{
                         $("#failBtn").click();
                     }
                 });
-            }else{
-                // $('#addModal').find('#customerName').val('').trigger('change');
-                // $('#addModal').find('#customerCode').val('');
+            }
+        });
 
-                $.post('php/getVehicle.php', {userID: x, type: 'lookup'}, function (data){
+        $('#vehiclePlateNo1').on('change', function(){
+            var vehiclePlateNo1 = $(this).val();
+            var transactionStatus = $('#transactionStatus').val();
+            if (vehiclePlateNo1){
+                $.post('php/getVehicle.php', {userID: vehiclePlateNo1, type: 'pullCustomer'}, function (data){
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
-                        // var transporterName = obj.message.transporter_name;
-                        // var transporterCode = obj.message.transporter_code;
+                        var customerName = obj.message.customer_name;
+                        var customerCode = obj.message.customer_code;
+                        var supplierName = obj.message.supplier_name;
+                        var supplierCode = obj.message.supplier_code;
 
-                        // $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                        // $('#addModal').find('#transporterCode').val(transporterCode);
+                        if (transactionStatus == 'Sales' || transactionStatus == 'Misc'){
+                            $('#addModal').find('#customerName').val(customerName).trigger('change');
+                            $('#addModal').find('#customerCode').val(customerCode);
+                        }else{
+                            $('#addModal').find('#supplierName').val(supplierName).trigger('change');
+                            $('#addModal').find('#supplierCode').val(supplierCode);
+                        }
                     }
                     else if(obj.status === 'error'){
                         alert(obj.message);
