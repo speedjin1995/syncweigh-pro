@@ -338,7 +338,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                 </tr>
                             </table>';
                             
-                            if($row['weight_type'] == 'Container' || $row['weight_type'] == 'Different Container'){
+                            if(($row['weight_type'] == 'Container' || $row['weight_type'] == 'Different Container') && $_POST['isEmptyContainer'] == 'N'){
                                 $message .= '<br>
                                 <table style="width:100%; border:0px solid black; margin-top: -10px;">
                                     <tr style="text-align: center; font-size: 14px;">
