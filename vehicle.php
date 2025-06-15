@@ -4,8 +4,9 @@
 <?php
     require_once "php/db_connect.php";
 
-    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
     $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
 ?>
 
 <head>
@@ -132,7 +133,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
                                                                                     <label for="vehicleWeight" class="col-sm-4 col-form-label">Vehicle Weight</label>
                                                                                     <div class="col-sm-8">
@@ -144,28 +145,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
-                                                                                <div class="row">
-                                                                                    <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
-                                                                                    <div class="col-sm-8">
-                                                                                        <div class="form-check align-radio mr-2">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualEx" value="true">
-                                                                                            <label class="form-check-label" for="manualEx">
-                                                                                               Ex-Quarry
-                                                                                            </label>
-                                                                                        </div>
-
-                                                                                        <div class="form-check align-radio">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="exDel" id="manualDel" value="false" checked>
-                                                                                            <label class="form-check-label" for="manualDel">
-                                                                                               Delivered
-                                                                                            </label>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none">
                                                                                 <div class="row">
                                                                                     <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                     <div class="col-sm-8">
@@ -183,12 +163,26 @@
                                                                                 <div class="row">
                                                                                     <label for="customer" class="col-sm-4 col-form-label">Customer</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" id="customer" name="customer">
-                                                                                            <option value="" selected disabled hidden>Please Select</option>
-                                                                                            <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
-                                                                                                <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
+                                                                                        <select class="form-select select2" id="customer" name="customer">
+                                                                                            <option selected>-</option>
+                                                                                            <?php while($rowC=mysqli_fetch_assoc($customer)){ ?>
+                                                                                                <option value="<?=$rowC['name'] ?>" data-code="<?=$rowC['customer_code'] ?>"><?=$rowC['name'] ?></option>
                                                                                             <?php } ?>
-                                                                                        </select>
+                                                                                        </select>        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="supplier" class="col-sm-4 col-form-label">Supplier</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-select select2" id="supplier" name="supplier">
+                                                                                            <option selected>-</option>
+                                                                                            <?php while($rowS=mysqli_fetch_assoc($supplier)){ ?>
+                                                                                                <option value="<?=$rowS['name'] ?>" data-code="<?=$rowS['supplier_code'] ?>"><?=$rowS['name'] ?></option>
+                                                                                            <?php } ?>
+                                                                                        </select>        
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -196,6 +190,7 @@
                                                                             <input type="hidden" class="form-control" id="id" name="id">
                                                                             <input type="hidden" id="transporterCode" name="transporterCode">
                                                                             <input type="hidden" id="customerCode" name="customerCode">
+                                                                            <input type="hidden" id="supplierCode" name="supplierCode">
                                                                                                                                                          
                                                                         </div>
                                                                     </div>
@@ -298,8 +293,9 @@
                                                                     <th>Vehicle No</th>
                                                                     <!--th>Vehicle Weight</th-->
                                                                     <!--th>EX-Quarry/Delivered</th-->
-                                                                    <th>Transporter</th>
+                                                                    <!-- <th>Transporter</th> -->
                                                                     <th>Customer</th>
+                                                                    <th>Supplier</th>
                                                                     <th>Status</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -414,8 +410,9 @@ $(function () {
                     }
                 }
             },*/
-            { data: 'transporter_name' },
+            // { data: 'transporter_name' },
             { data: 'customer_name' },
+            { data: 'supplier_name' },
             { data: 'status' },
             { 
                 data: 'id',
@@ -478,10 +475,11 @@ $(function () {
         $('#addModal').find('#vehicleWeight').val("");
         $('#addModal').find('#transporter').val("");
         $('#addModal').find('#transporterCode').val("");
-        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-        $('#addModal').find('#customer').val("");
+        $('#addModal').find('#customer').val("").trigger('change');
         $('#addModal').find('#customerCode').val("");
-
+        $('#addModal').find('#supplier').val("").trigger('change');
+        $('#addModal').find('#supplierCode').val("");
+        $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
         // Remove Validation Error Message
         $('#addModal .is-invalid').removeClass('is-invalid');
 
@@ -516,6 +514,11 @@ $(function () {
     //customer
     $('#customer').on('change', function(){
         $('#customerCode').val($('#customer :selected').data('code'));
+    });
+
+    //supplier
+    $('#supplier').on('change', function(){
+        $('#supplierCode').val($('#supplier :selected').data('code'));
     });
 
     $('#uploadVehicle').on('click', function(){
@@ -669,7 +672,7 @@ function edit(id){
                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
             }
             $('#addModal').find('#customer').val(obj.message.customer_name).trigger('change');
-            $('#addModal').find('#customerCode').val(obj.message.customer_code);
+            $('#addModal').find('#supplier').val(obj.message.supplier_name).trigger('change');
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
