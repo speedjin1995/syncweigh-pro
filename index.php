@@ -237,7 +237,7 @@ else{
                                                                 <option value="Normal">Normal Weighing</option>
                                                                 <option value="Container">Primer Mover</option>
                                                                 <option value="Empty Container">Primer Mover + Container</option>
-                                                                <option value="Different Container">Primer Mover + Different Container</option>
+                                                                <option value="Different Container">Primer Mover + Different Bins</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -536,7 +536,7 @@ else{
                                                                                             <option value="Normal" selected>Normal Weighing</option>
                                                                                             <option value="Container">Primer Mover</option>
                                                                                             <option value="Empty Container">Primer Mover + Container</option>
-                                                                                            <option value="Different Container">Primer Mover + Different Container</option>
+                                                                                            <option value="Different Container">Primer Mover + Different Bins</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -549,7 +549,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="row" id="emptyContainerDisplay" style="display:none" >
-                                                                                    <label for="emptyContainerNo" class="col-sm-4 col-form-label">Container No 1</label>
+                                                                                    <label for="emptyContainerNo" class="col-sm-4 col-form-label" id="containerNo1Label">Container No 1</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-select select2" id="emptyContainerNo" name="emptyContainerNo">
                                                                                             <option selected="-">-</option>
@@ -587,12 +587,17 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sealNoDisplay">
                                                                                 <div class="row">
                                                                                     <label for="sealNo" class="col-sm-4 col-form-label">Seal No 1</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="sealNo" name="sealNo" placeholder="Seal No">
                                                                                     </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sealNoReplaceDisplay" style="display:none;">
+                                                                                <div class="row">
+                                                                                    
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3">
@@ -619,12 +624,17 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="containerNo2Display">
                                                                                 <div class="row">
                                                                                     <label for="containerNo2" class="col-sm-4 col-form-label">Container No 2</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="containerNo2" name="containerNo2" placeholder="Container No 2">
                                                                                     </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="containerNo2ReplaceDisplay">
+                                                                                <div class="row">
+                                                                                    
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="unitPriceDisplay">
@@ -648,12 +658,17 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sealNo2Display">
                                                                                 <div class="row">
                                                                                     <label for="sealNo2" class="col-sm-4 col-form-label">Seal No 2</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="sealNo2" name="sealNo2" placeholder="Seal No 2">
                                                                                     </div>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="sealNo2ReplaceDisplay">
+                                                                                <div class="row">
+                                                                                    
                                                                                 </div>
                                                                             </div> 
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
@@ -838,7 +853,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="replacementContainerDisplay" style="display:none">
                                                                                 <div class="row">
-                                                                                    <label for="replacementContainer" class="col-sm-4 col-form-label">Replacement Container</label>
+                                                                                    <label for="replacementContainer" class="col-sm-4 col-form-label">New Empty Entrance Bin</label>
                                                                                     <div class="col-sm-8">
                                                                                         <input type="text" class="form-control" id="replacementContainer" name="replacementContainer" placeholder="Replacement Container">
                                                                                     </div>
@@ -992,6 +1007,8 @@ else{
                                                                                 <div class="input-group">
                                                                                     <input type="number" class="form-control input-readonly" id="emptyContainerWeight2" name="emptyContainerWeight2" placeholder="0" readonly>
                                                                                     <div class="input-group-text">Kg</div>
+                                                                                    <div class="input-group-text">-</div>
+                                                                                    <div class="input-group-text" id="replaceContainerText"></div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -2998,6 +3015,7 @@ else{
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
             $('#addModal').find('#destination').val("-").trigger('change');
+            $('#addModal').find('#replacementContainer').val('').trigger('keyup');
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
@@ -3375,19 +3393,33 @@ else{
                 });
 
                 handleWeightType(weightType);
+                $('#addModal').find('#containerNo1Label').text("Container No 1");
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#replacementContainerDisplay').hide();
                 $('#addModal').find('#vehicleWeight2Display').hide();
                 $('#addModal').find('#container2WeightDisplay').hide();
+                $('#addModal').find('#containerNo2Display').show();
+                $('#addModal').find('#containerNo2ReplaceDisplay').hide();
+                $('#addModal').find('#sealNoDisplay').show();
+                $('#addModal').find('#sealNoReplaceDisplay').hide();
+                $('#addModal').find('#sealNo2Display').show();
+                $('#addModal').find('#sealNo2ReplaceDisplay').hide();
                 $('#addModal').find('#containerDisplay').hide();
                 $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else if (weightType == 'Empty Container'){
                 handleWeightType(weightType);
+                $('#addModal').find('#containerNo1Label').text("Container No 1");
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#replacementContainerDisplay').hide();
                 $('#addModal').find('#vehicleWeight2Display').hide();
                 $('#addModal').find('#container2WeightDisplay').hide();
+                $('#addModal').find('#containerNo2Display').show();
+                $('#addModal').find('#containerNo2ReplaceDisplay').hide();
+                $('#addModal').find('#sealNoDisplay').show();
+                $('#addModal').find('#sealNoReplaceDisplay').hide();
+                $('#addModal').find('#sealNo2Display').show();
+                $('#addModal').find('#sealNo2ReplaceDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', true);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
@@ -3424,23 +3456,42 @@ else{
                     }
                 });
                 handleWeightType(weightType);
+                $('#addModal').find('#containerNo1Label').text("Pending Dispatch Bin");
                 $('#addModal').find('#emptyContainerDisplay').show();
                 $('#addModal').find('#replacementContainerDisplay').show();
                 $('#addModal').find('#vehicleWeight2Display').show();
                 $('#addModal').find('#container2WeightDisplay').show();
+                $('#addModal').find('#containerNo2Display').hide();
+                $('#addModal').find('#containerNo2ReplaceDisplay').show();
+                $('#addModal').find('#sealNoDisplay').hide();
+                $('#addModal').find('#sealNoReplaceDisplay').show();
+                $('#addModal').find('#sealNo2Display').hide();
+                $('#addModal').find('#sealNo2ReplaceDisplay').show();
                 $('#addModal').find('#containerDisplay').hide();
                 $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', true);
             }else{
                 handleWeightType(weightType);
+                $('#addModal').find('#containerNo1Label').text("Container No 1");
                 $('#addModal').find('#emptyContainerDisplay').hide();
                 $('#addModal').find('#replacementContainerDisplay').hide();
                 $('#addModal').find('#vehicleWeight2Display').hide();
                 $('#addModal').find('#container2WeightDisplay').hide();
+                $('#addModal').find('#containerNo2Display').show();
+                $('#addModal').find('#containerNo2ReplaceDisplay').hide();
+                $('#addModal').find('#sealNoDisplay').show();
+                $('#addModal').find('#sealNoReplaceDisplay').hide();
+                $('#addModal').find('#sealNo2Display').show();
+                $('#addModal').find('#sealNo2ReplaceDisplay').hide();
                 $('#addModal').find('#containerDisplay').show();
                 $('#addModal').find('#containerNoInput').attr('required', false);
                 $('#addModal').find('#emptyContainerNo').attr('required', false);
             }
+        });
+
+        $('#replacementContainer').on('keyup', function(){
+            var replacementContainer = $(this).val();
+            $('#replaceContainerText').text(replacementContainer);
         });
 
         /*$('#customerType').on('change', function(){
@@ -4551,7 +4602,7 @@ else{
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#vehicleWeight2').val(obj.message.lorry_no2_weight);
                 $('#addModal').find('#emptyContainerWeight2').val(obj.message.empty_container2_weight);
-                $('#addModal').find('#replacementContainer').val(obj.message.replacement_container);
+                $('#addModal').find('#replacementContainer').val(obj.message.replacement_container).trigger('keyup');
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
                 grossIncomingDatePicker2.setDate(obj.message.gross_weight2_date != null ? new Date(obj.message.gross_weight2_date) : null);
                 $('#addModal').find('#grossWeightBy2').val(obj.message.gross_weight_by2);
