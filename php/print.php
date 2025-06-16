@@ -487,11 +487,11 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                 '.$row['lorry_no2_weight'].' kg
                                             </td>
                                             <td class="table-border">
-                                                <br>
+                                                -<br>
                                                 '.$row['nett_weight1'].' kg
                                             </td>
                                             <td class="table-border">
-                                                <br>
+                                                -<br>
                                                 '.$row['nett_weight2'].' kg
                                             </td>
                                         </tr>
