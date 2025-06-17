@@ -1,6 +1,5 @@
 <?php
-require_once 'db_connect.php';
-require_once 'requires/lookup.php';
+require_once __DIR__ . '/../php/requires/lookup.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 ini_set('memory_limit', '512M');
 set_time_limit(300);
@@ -31,7 +30,7 @@ curl_close($curl);
 $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
-    require_once 'db_connect.php';
+    require_once __DIR__ . '/../php/db_connect.php';
     $services = 'PullTransporter';
     $requests = json_encode($data);
 
@@ -87,7 +86,7 @@ if (!empty($data['data'])) {
     echo $response;
 } 
 else {
-    require_once 'db_connect.php';
+    require_once __DIR__ . '/../php/db_connect.php';
     $services = 'PullTransporter';
     $requests = json_encode($data);
 
