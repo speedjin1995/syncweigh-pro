@@ -59,34 +59,90 @@ if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'
     }
 }
 
+$report = '';
+if($_GET['report'] != null && $_GET['report'] != '' && $_GET['report'] != '-'){
+    $report = $_GET["report"];
+}
+
 // Excel file name for download 
 if($_GET["type"] == 'Sales'){
-    $fileName = "SO-data_" . date('Y-m-d') . ".xls";
+    if ($report == 'supply'){
+        $fileName = "SO-supply-data_" . date('Y-m-d') . ".xls";
 
-    // Column names 
-    $fields = array('COMPANY CODE', 'COMPANY NAME', 'CUSTOMER CODE', 'CUSTOMER NAME', 'PLANT CODE', 'PLANT NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'CUSTOMER P/O NO', 'S/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BALANCE'); 
+        // Column names 
+        $fields = array('CUSTOMER CODE', 'CUSTOMER NAME', 'PLANT CODE', 'PLANT NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'CUSTOMER P/O NO', 'S/O NO', 'ORDER WEIGHT (KG)', 'TOTAL NETT WEIGHT (KG)', 'BALANCE (KG)'); 
 
-    // Display column names as first row 
-    $excelData = implode("\t", array_values($fields)) . "\n";
+        // Display column names as first row 
+        $excelData = implode("\t", array_values($fields)) . "\n";
 
-    // Fetch records from database
-    $query = $db->query("select * from Sales_Order WHERE deleted = '0'".$searchQuery);
+        // Fetch records from database
+        $query = $db->query("select * from Sales_Order WHERE deleted = '0'".$searchQuery);
 
-    if($query->num_rows > 0){ 
-        // Output each row of the data 
-        while($row = $query->fetch_assoc()){ 
-            $lineData = []; // Ensure it starts as an empty array each iteration
-            $lineData = array($row['company_code'], $row['company_name'], $row['customer_code'], $row['customer_name'], $row['plant_code'], $row['plant_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
+        if($query->num_rows > 0){ 
+            // Output each row of the data 
+            while($row = $query->fetch_assoc()){ 
+                $lineData = []; // Ensure it starts as an empty array each iteration
 
-            # Added checking to fix duplicated issue
-            if (!empty($lineData)) {
-                array_walk($lineData, 'filterData'); 
-                $excelData .= implode("\t", array_values($lineData)) . "\n"; 
-            }
+                if($row['order_no'] != null && $row['order_no'] != ''){
+                    $customerPONo = $row['order_no'];
+                    $productCode = $row['product_code'];
+                    $plantCode = $row['plant_code'];
+                    $weightQuery = "SELECT SUM(nett_weight1) FROM Weight WHERE purchase_order = '$customerPONo' AND product_code = '$productCode' AND plant_code = '$plantCode' AND status = '0' AND transaction_status = 'Sales' ORDER BY id ASC";
+                    $weightRecords = mysqli_query($db, $weightQuery);
+
+                    while($weightRow = mysqli_fetch_assoc($weightRecords)) { var_dump($weightRow);die;
+                        $weightData[] = array(
+                            "id" => $weightRow['id'],
+                            "transaction_id" => $weightRow['transaction_id'],
+                            "product_code" => $weightRow['product_code'],
+                            "product_name" => $weightRow['product_name'],
+                            "delivery_no" => $weightRow['delivery_no'] ?? '',
+                            "lorry_plate_no1" => $weightRow['lorry_plate_no1'],
+                            "nett_weight1" => $weightRow['nett_weight1'],
+                            "created_by" => searchNamebyId($weightRow['created_by'], $db)
+                        );
+                    }   
+                }
+
+                $lineData = array($row['company_code'], $row['company_name'], $row['customer_code'], $row['customer_name'], $row['plant_code'], $row['plant_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_weight'], $row['exquarry_or_delivered'], $row['balance']);
+
+                # Added checking to fix duplicated issue
+                if (!empty($lineData)) {
+                    array_walk($lineData, 'filterData'); 
+                    $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+                }
+            } 
+        }else{ 
+            $excelData .= 'No records found...'. "\n"; 
         } 
-    }else{ 
-        $excelData .= 'No records found...'. "\n"; 
-    } 
+    }else{
+        $fileName = "SO-data_" . date('Y-m-d') . ".xls";
+
+        // Column names 
+        $fields = array('COMPANY CODE', 'COMPANY NAME', 'CUSTOMER CODE', 'CUSTOMER NAME', 'PLANT CODE', 'PLANT NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'CUSTOMER P/O NO', 'S/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BALANCE'); 
+
+        // Display column names as first row 
+        $excelData = implode("\t", array_values($fields)) . "\n";
+
+        // Fetch records from database
+        $query = $db->query("select * from Sales_Order WHERE deleted = '0'".$searchQuery);
+
+        if($query->num_rows > 0){ 
+            // Output each row of the data 
+            while($row = $query->fetch_assoc()){ 
+                $lineData = []; // Ensure it starts as an empty array each iteration
+                $lineData = array($row['company_code'], $row['company_name'], $row['customer_code'], $row['customer_name'], $row['plant_code'], $row['plant_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['balance']);
+
+                # Added checking to fix duplicated issue
+                if (!empty($lineData)) {
+                    array_walk($lineData, 'filterData'); 
+                    $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+                }
+            } 
+        }else{ 
+            $excelData .= 'No records found...'. "\n"; 
+        } 
+    }
 }else{
     $fileName = "PO-data_" . date('Y-m-d') . ".xls";
 

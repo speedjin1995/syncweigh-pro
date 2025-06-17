@@ -546,6 +546,10 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <button type="button" id="exportSupplyExcel" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Supply Excel
+                                                                </button>
                                                                 <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
@@ -1118,6 +1122,21 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
             
             window.open("php/exportSoPo.php?type=Sales&fromDate="+fromDateI+"&toDate="+toDateI+
+            "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
+            "&customer="+customerNoI+"&product="+productI);
+        });
+
+        $('#exportSupplyExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
+            var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+
+            window.open("php/exportSoPo.php?type=Sales&report=supply&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
             "&customer="+customerNoI+"&product="+productI);
         });
