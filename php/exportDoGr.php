@@ -129,7 +129,15 @@ if ($isMulti == 'N'){
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
-                        array_walk($lineData, 'filterData'); 
+                        foreach($lineData as $key => $value) {
+                            if($key == 3) { // lorry_plate_no1 is at index 3
+                                $lineData[$key] = " " . $value;
+                            } else {
+                                // Apply normal filtering to other columns
+                                filterData($lineData[$key]); 
+                            }
+                        }
+
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
@@ -198,7 +206,14 @@ if ($isMulti == 'N'){
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
-                        array_walk($lineData, 'filterData'); 
+                        foreach($lineData as $key => $value) {
+                            if($key == 3) { // lorry_plate_no1 is at index 3
+                                $lineData[$key] = " " . $value;
+                            } else {
+                                // Apply normal filtering to other columns
+                                filterData($lineData[$key]); 
+                            }
+                        }
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
@@ -269,7 +284,14 @@ if ($isMulti == 'N'){
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
-                        array_walk($lineData, 'filterData'); 
+                        foreach($lineData as $key => $value) {
+                            if($key == 3) { // lorry_plate_no1 is at index 3
+                                $lineData[$key] = " " . $value;
+                            } else {
+                                // Apply normal filtering to other columns
+                                filterData($lineData[$key]); 
+                            }
+                        }
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
@@ -334,7 +356,14 @@ if ($isMulti == 'N'){
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
-                        array_walk($lineData, 'filterData'); 
+                        foreach($lineData as $key => $value) {
+                            if($key == 3) { // lorry_plate_no1 is at index 3
+                                $lineData[$key] = " " . $value;
+                            } else {
+                                // Apply normal filtering to other columns
+                                filterData($lineData[$key]); 
+                            }
+                        }
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
