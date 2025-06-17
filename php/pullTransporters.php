@@ -1,5 +1,4 @@
 <?php
-require_once 'db_connect.php';
 require_once 'requires/lookup.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 ini_set('memory_limit', '512M');
