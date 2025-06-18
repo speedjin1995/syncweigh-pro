@@ -195,7 +195,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
 
                     $message = '';
 
-                    if($row['is_complete'] == 'N'){
+                    //if($row['is_complete'] == 'N'){
                         $message = 
                             '<html>
                                 <head>
@@ -453,9 +453,10 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        <p>REMARKS: </p>
 
                                         <!-- Footer Section -->
-                                        <div class="footer" style="margin-top: 90px;">
+                                        <div class="footer" style="margin-top: 60px;">
                                             <div class="signature-section">
                                                 <div class="signature-line"></div>
                                                 <div class="signature-label">(Received By)</div>
@@ -473,7 +474,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                     </div>
                                 </body>
                                 </html>';
-                    }
+                    /*}
                     else{
                         $message = 
                             '<html>
@@ -673,16 +674,6 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                 <td style="border:1px solid black;">'.formatWeight($row['final_weight']).' kg</td>
                                             </tr>
                                         </table>';
-                                        /*if(){
-                                            $message .= '<tr>
-                                                <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row['lorry_plate_no2'].'</td>
-                                                <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row['product_name'].'</td>
-                                                <td style="border:1px solid black;font-size: 14px;text-align: center;">RM '.$price.'</td>
-                                                <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row['nett_weight2'].'</td>
-                                                <td style="border:1px solid black;font-size: 14px;text-align: center;">kg</td>
-                                                <td style="border:1px solid black;font-weight: bold;font-size: 14px;">RM '.number_format(((float)$price * (float)$row['nett_weight2']), 2, '.', '').'</td>
-                                            </tr>';
-                                        }*/
                                     }
                                     else if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
                                         # Old design commented out incase need
@@ -884,7 +875,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                     
                                 </body>
                             </html>';
-                    }
+                    }*/
                     
 
                     echo json_encode(
@@ -902,8 +893,6 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                         )
                     );
                 }
-                
-                
             }
         }
         else{
