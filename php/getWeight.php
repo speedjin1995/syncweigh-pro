@@ -137,6 +137,7 @@ if(isset($_POST['userID'])){
                             $doRecords = mysqli_query($db, $doQuery);
                             $weighingData = array();
 
+                            $totalDeliverAmt = 0;
                             while($row = mysqli_fetch_assoc($doRecords)) {
                                 $weighingData[] = array( 
                                     "id"=>$row['id'],
@@ -152,8 +153,10 @@ if(isset($_POST['userID'])){
                                     "tare_weight1_date"=>$row['tare_weight1_date'],
                                     "nett_weight1"=>$row['nett_weight1']        
                                 );
-                            }
 
+                                $totalDeliverAmt += $row['nett_weight1'];
+                            }
+                            $message['totalDeliverAmt'] = $totalDeliverAmt;
                             $message['weights'] = $weighingData;
 
                         }elseif ($acctType == 'GR') {
