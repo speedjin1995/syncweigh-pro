@@ -32,23 +32,23 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
 }
 
 if($_POST['company'] != null && $_POST['company'] != '' && $_POST['company'] != '-'){
-	$searchQuery .= " and company_code = '".$_POST['company']."'";
+	$searchQuery .= " and company_id = '".$_POST['company']."'";
 }
 
 if($_POST['site'] != null && $_POST['site'] != '' && $_POST['site'] != '-'){
-	$searchQuery .= " and site_code = '".$_POST['site']."'";
+	$searchQuery .= " and site_id = '".$_POST['site']."'";
 }
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
-	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+	$searchQuery .= " and plant_id = '".$_POST['plant']."'";
 }
 
 if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
-	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
+	$searchQuery .= " and supplier_id = '".$_POST['supplier']."'";
 }
 
 if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMaterial'] != '-'){
-	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
+	$searchQuery .= " and raw_mat_id = '".$_POST['rawMaterial']."'";
 }
 
 if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
@@ -56,20 +56,18 @@ if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
 }
 
 if($searchValue != ''){
-  $searchQuery = " and (
-    company_code like '%".$searchValue."%' or 
-    company_name like '%".$searchValue."%' or 
-    supplier_code like '%".$searchValue."%' or 
-    supplier_name like '%".$searchValue."%' or 
-    plant_code like '%".$searchValue."%' or 
-    plant_name like '%".$searchValue."%' or 
-    raw_mat_code like '%".$searchValue."%' or 
-    raw_mat_name like '%".$searchValue."%' or 
-    order_no like '%".$searchValue."%' or 
-    po_no like '%".$searchValue."%' or
-    order_date like '%".$searchValue."%' or 
-    exquarry_or_delivered like '%".$searchValue."%' or 
-    modified_date like '%".$searchValue."%'
+  $searchQuery .= " and (
+    sup.supplier_code like '%".$searchValue."%' or 
+    sup.name like '%".$searchValue."%' or 
+    pl.plant_code like '%".$searchValue."%' or 
+    pl.name like '%".$searchValue."%' or 
+    rw.raw_mat_code like '%".$searchValue."%' or 
+    rw.name like '%".$searchValue."%' or 
+    po.order_no like '%".$searchValue."%' or 
+    po.po_no like '%".$searchValue."%' or
+    po.order_date like '%".$searchValue."%' or 
+    po.exquarry_or_delivered like '%".$searchValue."%' or 
+    po.modified_date like '%".$searchValue."%'
   )";
 }
 
@@ -80,27 +78,45 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount from Purchase_Order where deleted = '0'".$searchQuery;
+$filteredQuery = "select count(*) as allcount from Purchase_Order po
+                  LEFT JOIN Company company ON po.company_id = company.id 
+                  LEFT JOIN Supplier sup ON po.supplier_id = sup.id 
+                  LEFT JOIN Site s ON po.site_id = s.id 
+                  LEFT JOIN Agents a ON po.agent_id = a.id 
+                  LEFT JOIN Destination d ON po.destination_id = d.id 
+                  LEFT JOIN Raw_Mat rw ON po.raw_mat_id = rw.id
+                  LEFT JOIN Plant pl ON po.plant_id = pl.id
+                  LEFT JOIN Transporter t ON po.transporter_id = t.id
+                  where po.deleted = '0'".$searchQuery;
 $sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Purchase_Order where deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select po.*, company.company_code as companycode, company.name as companyname, sup.supplier_code as supcode, sup.name AS supname, rw.raw_mat_code as rwcode, rw.name as rwname, pl.plant_code as plantcode, pl.name as plantname from Purchase_Order po
+            LEFT JOIN Company company ON po.company_id = company.id 
+            LEFT JOIN Supplier sup ON po.supplier_id = sup.id 
+            LEFT JOIN Site s ON po.site_id = s.id 
+            LEFT JOIN Agents a ON po.agent_id = a.id 
+            LEFT JOIN Destination d ON po.destination_id = d.id 
+            LEFT JOIN Raw_Mat rw ON po.raw_mat_id = rw.id
+            LEFT JOIN Plant pl ON po.plant_id = pl.id
+            LEFT JOIN Transporter t ON po.transporter_id = t.id
+            where po.deleted = '0'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery); 
 $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array(
     "id"=>$row['id'],
-    "company_code"=>$row['company_code'],
-    "company_name"=>$row['company_name'],
-    "supplier_code"=>$row['supplier_code'],
-    "supplier_name"=>$row['supplier_name'],
-    "plant_code"=>$row['plant_code'],
-    "plant_name"=>$row['plant_name'],
-    "raw_mat_code"=>$row['raw_mat_code'],
-    "raw_mat_name"=>$row['raw_mat_name'],
+    "company_code"=>$row['companycode'],
+    "company_name"=>$row['companyname'],
+    "supplier_code"=>$row['supcode'],
+    "supplier_name"=>$row['supname'],
+    "plant_code"=>$row['plantcode'],
+    "plant_name"=>$row['plantname'],
+    "raw_mat_code"=>$row['rwcode'],
+    "raw_mat_name"=>$row['rwname'],
     "order_no"=>$row['order_no'],
     "po_no"=>$row['po_no'],
     "order_date" => !empty($row["order_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y') : '',

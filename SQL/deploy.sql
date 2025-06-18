@@ -1399,3 +1399,98 @@ WHERE SO.transporter_code IS NOT NULL;
 -- 8. Set company_id to '1'
 UPDATE Sales_Order_Log
 SET company_id = '1';
+
+-- Update PO
+-- 1. Update supplier_id
+UPDATE Purchase_Order PO
+LEFT JOIN Supplier c ON PO.supplier_code = c.supplier_code
+SET PO.supplier_id = c.id
+WHERE PO.supplier_code IS NOT NULL;
+
+-- 2. Update site_id
+UPDATE Purchase_Order PO
+LEFT JOIN Site s ON PO.site_code = s.site_code
+SET PO.site_id = s.id
+WHERE PO.site_code IS NOT NULL;
+
+-- 3. Update agent_id
+UPDATE Purchase_Order PO
+LEFT JOIN Agents a ON PO.agent_code = a.agent_code
+SET PO.agent_id = a.id
+WHERE PO.agent_code IS NOT NULL;
+
+-- 4. Update destination_id
+UPDATE Purchase_Order PO
+LEFT JOIN Destination d ON PO.destination_code = d.destination_code
+SET PO.destination_id = d.id
+WHERE PO.destination_code IS NOT NULL;
+
+-- 5. Update product_id
+UPDATE Purchase_Order PO
+LEFT JOIN Raw_Mat p ON PO.raw_mat_code = p.raw_mat_code
+SET PO.raw_mat_id = p.id
+WHERE PO.raw_mat_code IS NOT NULL;
+
+-- 6. Update plant_id
+UPDATE Purchase_Order PO
+LEFT JOIN Plant pl ON PO.plant_code = pl.plant_code
+SET PO.plant_id = pl.id
+WHERE PO.plant_code IS NOT NULL;
+
+-- 7. Update transporter_id
+UPDATE Purchase_Order PO
+LEFT JOIN Transporter t ON PO.transporter_code = t.transporter_code
+SET PO.transporter_id = t.id
+WHERE PO.transporter_code IS NOT NULL;
+
+-- 8. Set company_id to '1'
+UPDATE Purchase_Order
+SET company_id = '1';
+
+-- Update SO Log
+-- 1. Update supplier_id
+UPDATE Purchase_Order PO
+LEFT JOIN Supplier c ON PO.supplier_code = c.supplier_code
+SET PO.supplier_id = c.id
+WHERE PO.supplier_code IS NOT NULL;
+
+-- 2. Update site_id
+UPDATE Purchase_Order_Log PO
+LEFT JOIN Site s ON PO.site_code = s.site_code
+SET PO.site_id = s.id
+WHERE PO.site_code IS NOT NULL;
+
+-- 3. Update agent_id
+UPDATE Purchase_Order_Log PO
+LEFT JOIN Agents a ON PO.agent_code = a.agent_code
+SET PO.agent_id = a.id
+WHERE PO.agent_code IS NOT NULL;
+
+-- 4. Update destination_id
+UPDATE Purchase_Order_Log PO
+LEFT JOIN Destination d ON PO.destination_code = d.destination_code
+SET PO.destination_id = d.id
+WHERE PO.destination_code IS NOT NULL;
+
+-- 5. Update product_id
+UPDATE Purchase_Order PO
+LEFT JOIN Raw_Mat p ON PO.raw_mat_code = p.raw_mat_code
+SET PO.raw_mat_id = p.id
+WHERE PO.raw_mat_code IS NOT NULL;
+
+-- 6. Update plant_id
+UPDATE Purchase_Order_Log PO
+LEFT JOIN Plant pl ON PO.plant_code = pl.plant_code
+SET PO.plant_id = pl.id
+WHERE PO.plant_code IS NOT NULL;
+
+-- 7. Update transporter_id
+UPDATE Purchase_Order_Log PO
+LEFT JOIN Transporter t ON PO.transporter_code = t.transporter_code
+SET PO.transporter_id = t.id
+WHERE PO.transporter_code IS NOT NULL;
+
+-- 8. Set company_id to '1'
+UPDATE Purchase_Order_Log
+SET company_id = '1';
+

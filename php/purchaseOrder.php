@@ -20,9 +20,15 @@ if (isset($_POST['poNo'])) {
     }
 
     if (empty($_POST["company"])) {
+        $companyId = null;
+    } else {
+        $companyId = trim($_POST["company"]);
+    }
+
+    if (empty($_POST["companyCode"])) {
         $companyCode = null;
     } else {
-        $companyCode = trim($_POST["company"]);
+        $companyCode = trim($_POST["companyCode"]);
     }
 
     if (empty($_POST["companyName"])) {
@@ -32,9 +38,15 @@ if (isset($_POST['poNo'])) {
     }
 
     if (empty($_POST["supplier"])) {
+        $supplierId = null;
+    } else {
+        $supplierId = trim($_POST["supplier"]);
+    }
+
+    if (empty($_POST["supplierCode"])) {
         $supplierCode = null;
     } else {
-        $supplierCode = trim($_POST["supplier"]);
+        $supplierCode = trim($_POST["supplierCode"]);
     }
 
     if (empty($_POST["supplierName"])) {
@@ -44,9 +56,15 @@ if (isset($_POST['poNo'])) {
     }
 
     if (empty($_POST["site"])) {
+        $siteId = null;
+    } else {
+        $siteId = trim($_POST["site"]);
+    }
+
+    if (empty($_POST["siteCode"])) {
         $siteCode = null;
     } else {
-        $siteCode = trim($_POST["site"]);
+        $siteCode = trim($_POST["siteCode"]);
     }
 
     if (empty($_POST["siteName"])) {
@@ -80,9 +98,15 @@ if (isset($_POST['poNo'])) {
     }
 
     if (empty($_POST["agent"])) {
+        $agentId = null;
+    } else {
+        $agentId = trim($_POST["agent"]);
+    }
+
+    if (empty($_POST["agentCode"])) {
         $agentCode = null;
     } else {
-        $agentCode = trim($_POST["agent"]);
+        $agentCode = trim($_POST["agentCode"]);
     }
     
     if (empty($_POST["agentName"])) {
@@ -91,11 +115,17 @@ if (isset($_POST['poNo'])) {
         $agentName = trim($_POST["agentName"]);
     }
 
+    if (empty($_POST["destination"])) {
+        $destinationId = null;
+    } else {
+        $destinationId = trim($_POST["destination"]);
+    }
+
     if (empty($_POST["destinationCode"])) {
         $destinationCode = null;
     } else {
-        $destinationCode = trim($_POST["destinationCode"]);
-    }
+        $destinationCode = trim($_POST["destinationCode"]); 
+    } 
 
     if (empty($_POST["destinationName"])) {
         $destinationName = null;
@@ -110,9 +140,15 @@ if (isset($_POST['poNo'])) {
     }
 
     if (empty($_POST["rawMat"])) {
+        $rawMatId = null;
+    } else {
+        $rawMatId = trim($_POST["rawMat"]);
+    }
+
+    if (empty($_POST["rawMatCode"])) {
         $rawMatCode = null;
     } else {
-        $rawMatCode = trim($_POST["rawMat"]);
+        $rawMatCode = trim($_POST["rawMatCode"]);
     }
 
     if (empty($_POST["rawMatName"])) {
@@ -122,9 +158,15 @@ if (isset($_POST['poNo'])) {
     }
     
     if (empty($_POST["plant"])) {
+        $plantId = null;
+    } else {
+        $plantId = trim($_POST["plant"]);
+    }
+    
+    if (empty($_POST["plantCode"])) {
         $plantCode = null;
     } else {
-        $plantCode = trim($_POST["plant"]);
+        $plantCode = trim($_POST["plantCode"]);
     }
 
     if (empty($_POST["plantName"])) {
@@ -134,9 +176,15 @@ if (isset($_POST['poNo'])) {
     }
     
     if (empty($_POST["transporter"])) {
+        $transporterId = null;
+    } else {
+        $transporterId = trim($_POST["transporter"]);
+    }
+    
+    if (empty($_POST["transporterCode"])) {
         $transporterCode = null;
     } else {
-        $transporterCode = trim($_POST["transporter"]);
+        $transporterCode = trim($_POST["transporterCode"]);
     }
 
     if (empty($_POST["transporterName"])) {
@@ -213,9 +261,9 @@ if (isset($_POST['poNo'])) {
 
     if(!empty($poId))
     {
-        if ($update_stmt = $db->prepare("UPDATE Purchase_Order SET company_code=?, company_name=?, supplier_code=?, supplier_name=?, site_code=?, site_name=?, order_date=?, order_no=?, po_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, deliver_to_name=?, raw_mat_code=?, raw_mat_name=?, plant_code=?, plant_name=?, transporter_code=?, transporter_name=?, veh_number=?, exquarry_or_delivered=?, order_load=?, converted_order_qty=?, converted_balance=?, converted_unit=?, order_quantity=?, balance=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Purchase_Order SET company_id=?, company_code=?, company_name=?, supplier_id=?, supplier_code=?, supplier_name=?, site_id=?, site_code=?, site_name=?, order_date=?, order_no=?, po_no=?, delivery_date=?, agent_id=?, agent_code=?, agent_name=?, destination_id=?, destination_code=?, destination_name=?, deliver_to_name=?, raw_mat_id=?, raw_mat_code=?, raw_mat_name=?, plant_id=?, plant_code=?, plant_name=?, transporter_id=?, transporter_code=?, transporter_name=?, veh_number=?, exquarry_or_delivered=?, order_load=?, converted_order_qty=?, converted_balance=?, converted_unit=?, order_quantity=?, balance=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $rawMatCode, $rawMatName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
+            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssss', $companyId, $companyCode, $companyName, $supplierId, $supplierCode, $supplierName, $siteId, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentId, $agentCode, $agentName, $destinationId, $destinationCode, $destinationName, $deliverToName, $rawMatId, $rawMatCode, $rawMatName, $plantId, $plantCode, $plantName, $transporterId, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -257,8 +305,8 @@ if (isset($_POST['poNo'])) {
                 )
             );
         }else{
-            if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $rawMatCode, $rawMatName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $status, $username, $username);
+            if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_id, company_code, company_name, supplier_id, supplier_code, supplier_name, site_id, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, raw_mat_id, raw_mat_code, raw_mat_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssss', $companyId, $companyCode, $companyName, $supplierId, $supplierCode, $supplierName, $siteId, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentId, $agentCode, $agentName, $destinationId, $destinationCode, $destinationName, $deliverToName, $rawMatId, $rawMatCode, $rawMatName, $plantId, $plantCode, $plantName, $transporterId, $transporterCode, $transporterName, $vehicle, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $status, $username, $username);
 
                 // Execute the prepared query.
                 if (! $insert_stmt->execute()) {

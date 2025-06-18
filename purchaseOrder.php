@@ -5,19 +5,19 @@
 require_once "php/db_connect.php";
 // $plantId = $_SESSION['plant'];
 
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $company = $db->query("SELECT * FROM Company");
 $company2 = $db->query("SELECT * FROM Company");
-$site = $db->query("SELECT * FROM Site WHERE status = '0'");
-$site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
-$agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
+$site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$site2 = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
-$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
-$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
@@ -137,7 +137,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                             <select id="companySearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowCompanyF=mysqli_fetch_assoc($company2)){ ?>
-                                                                    <option value="<?=$rowCompanyF['company_code'] ?>"><?=$rowCompanyF['company_code']. ' - ' .$rowCompanyF['name'] ?></option>
+                                                                    <option value="<?=$rowCompanyF['id'] ?>"><?=$rowCompanyF['company_code']. ' - ' .$rowCompanyF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -148,7 +148,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                             <select id="siteSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowSiteF=mysqli_fetch_assoc($site2)){ ?>
-                                                                    <option value="<?=$rowSiteF['site_code'] ?>"><?=$rowSiteF['name'] ?></option>
+                                                                    <option value="<?=$rowSiteF['id'] ?>"><?=$rowSiteF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -159,7 +159,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                             <select id="plantSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
-                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                    <option value="<?=$rowPlantF['id'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -170,7 +170,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                             <select id="rawMatSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
-                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
+                                                                    <option value="<?=$rowRawMatF['id'] ?>"><?=$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -181,7 +181,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                             <select id="supplierNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($supplier2)){ ?>
-                                                                    <option value="<?=$rowPF['supplier_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                    <option value="<?=$rowPF['id'] ?>"><?=$rowPF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -233,7 +233,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control select2" style="width: 100%;" id="company" name="company" required>
                                                                                             <?php while($rowCompany=mysqli_fetch_assoc($company)){ ?>
-                                                                                                <option value="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>"><?=$rowCompany['name'] ?></option>
+                                                                                                <option value="<?=$rowCompany['id'] ?>" data-code="<?=$rowCompany['company_code'] ?>" data-name="<?=$rowCompany['name'] ?>"><?=$rowCompany['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -246,7 +246,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                         <select class="form-control select2" style="width: 100%;" id="supplier" name="supplier" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
-                                                                                                <option value="<?=$rowSupplier['supplier_code'] ?>" data-name="<?=$rowSupplier['name'] ?>"><?=$rowSupplier['name'] ?></option>
+                                                                                                <option value="<?=$rowSupplier['id'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>" data-name="<?=$rowSupplier['name'] ?>"><?=$rowSupplier['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -259,7 +259,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                         <select class="form-control select2" style="width: 100%;" id="site" name="site" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowSite=mysqli_fetch_assoc($site)){ ?>
-                                                                                                <option value="<?=$rowSite['site_code'] ?>" data-name="<?=$rowSite['name'] ?>"><?=$rowSite['name'] ?></option>
+                                                                                                <option value="<?=$rowSite['id'] ?>" data-code="<?=$rowSite['site_code'] ?>" data-name="<?=$rowSite['name'] ?>"><?=$rowSite['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -299,7 +299,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                         <select class="form-control select2" style="width: 100%;" id="agent" name="agent" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowAgent=mysqli_fetch_assoc($agent)){ ?>
-                                                                                                <option value="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>"><?=$rowAgent['name'] ?></option>
+                                                                                                <option value="<?=$rowAgent['id'] ?>" data-code="<?=$rowAgent['agent_code'] ?>" data-name="<?=$rowAgent['name'] ?>"><?=$rowAgent['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -307,12 +307,12 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                             </div> 
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
-                                                                                    <label for="destinationCode" class="col-sm-4 col-form-label">Destination</label>
+                                                                                    <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select class="form-control select2" style="width: 100%;" id="destinationCode" name="destinationCode" required>
+                                                                                        <select class="form-control select2" style="width: 100%;" id="destination" name="destination" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
-                                                                                                <option value="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                                                <option value="<?=$rowDestination['id'] ?>" data-code="<?=$rowDestination['destination_code'] ?>" data-name="<?=$rowDestination['name'] ?>"><?=$rowDestination['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -325,7 +325,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                         <select class="form-control select2" style="width: 100%;" id="rawMat" name="rawMat" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>"><?=$rowRawMat['name'] ?></option>
+                                                                                                <option value="<?=$rowRawMat['id'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>"><?=$rowRawMat['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -338,7 +338,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                         <select class="form-control select2" style="width: 100%;" id="plant" name="plant" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
-                                                                                                <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                                                <option value="<?=$rowPlant['id'] ?>" data-code="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -351,7 +351,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                         <select class="form-control select2" style="width: 100%;" id="transporter" name="transporter" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
-                                                                                                <option value="<?=$rowTransporter['transporter_code'] ?>" data-name="<?=$rowTransporter['name'] ?>"><?=$rowTransporter['name'] ?></option>
+                                                                                                <option value="<?=$rowTransporter['id'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>" data-name="<?=$rowTransporter['name'] ?>"><?=$rowTransporter['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>
                                                                                     </div>
@@ -451,13 +451,21 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                             </div>
 
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                 
+                                                                            <input type="hidden" class="form-control" id="companyCode" name="companyCode">                                                                   
                                                                             <input type="hidden" class="form-control" id="companyName" name="companyName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="supplierCode" name="supplierCode">                                                                   
                                                                             <input type="hidden" class="form-control" id="supplierName" name="supplierName">                                                                   
-                                                                            <input type="hidden" class="form-control" id="siteName" name="siteName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="siteCode" name="siteCode">                                                                   
+                                                                            <input type="hidden" class="form-control" id="siteCode" name="siteCode">                                                                   
+                                                                            <input type="hidden" class="form-control" id="agentCode" name="agentCode">                                                                   
                                                                             <input type="hidden" class="form-control" id="agentName" name="agentName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="destinationCode" name="destinationCode">                                                                   
                                                                             <input type="hidden" class="form-control" id="destinationName" name="destinationName">                                                                   
+                                                                            <input type="hidden" class="form-control" id="rawMatCode" name="rawMatCode">                    
                                                                             <input type="hidden" class="form-control" id="rawMatName" name="rawMatName">                    
+                                                                            <input type="hidden" class="form-control" id="plantCode" name="plantCode">                                               
                                                                             <input type="hidden" class="form-control" id="plantName" name="plantName">                                               
+                                                                            <input type="hidden" class="form-control" id="transporterCode" name="transporterCode">
                                                                             <input type="hidden" class="form-control" id="transporterName" name="transporterName">
                                                                             <input type="hidden" class="form-control" id="convertedOrderQtyUnit" name="convertedOrderQtyUnit">
                                                                         </div>
@@ -661,6 +669,24 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         $('#deliveryDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        // Initialize all Select2 elements in the search bar
+        $('#collapseSearch .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+        });
+
+        // Apply custom styling to Select2 elements in search bar
+        $('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
         });
 
         // Initialize all Select2 elements in the modal
@@ -1028,7 +1054,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             // $('#addModal').find('#orderNo').val("");
             $('#addModal').find('#poNo').val("");
             $('#addModal').find('#agent').val("").trigger('change');
-            $('#addModal').find('#destinationCode').val("").trigger('change');
+            $('#addModal').find('#destination').val("").trigger('change');
             $('#addModal').find('#rawMat').val("").trigger('change');
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#transporter').val("").trigger('change');
@@ -1121,26 +1147,32 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         });
 
         $('#company').on('change', function(){
+            $('#companyCode').val($('#company :selected').data('code'));
             $('#companyName').val($('#company :selected').data('name'));
         });
 
         $('#supplier').on('change', function(){
+            $('#supplierCode').val($('#supplier :selected').data('code'));
             $('#supplierName').val($('#supplier :selected').data('name'));
         });
 
         $('#site').on('change', function(){
+            $('#siteCode').val($('#site :selected').data('code'));
             $('#siteName').val($('#site :selected').data('name'));
         });
 
         $('#agent').on('change', function(){
+            $('#agentCode').val($('#agent :selected').data('code'));
             $('#agentName').val($('#agent :selected').data('name'));
         });
 
-        $('#destinationCode').on('change', function(){
-            $('#destinationName').val($('#destinationCode :selected').data('name'));
+        $('#destination').on('change', function(){
+            $('#destinationCode').val($('#destination :selected').data('code'));
+            $('#destinationName').val($('#destination :selected').data('name'));
         });
 
         $('#rawMat').on('change', function(){
+            $('#rawMatCode').val($('#rawMat :selected').data('code'));
             $('#rawMatName').val($('#rawMat :selected').data('name'));
             var rawMatCode = $(this).val();
 
@@ -1174,10 +1206,12 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         });
 
         $('#plant').on('change', function(){
+            $('#plantCode').val($('#plant :selected').data('code'));
             $('#plantName').val($('#plant :selected').data('name'));
         });
 
         $('#transporter').on('change', function(){
+            $('#transporterCode').val($('#transporter :selected').data('code'));
             $('#transporterName').val($('#transporter :selected').data('name'));
         });
 
@@ -1425,20 +1459,21 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
-                $('#addModal').find('#company').val(obj.message.company_code).trigger('change');
-                $('#addModal').find('#supplier').val(obj.message.supplier_code).trigger('change');
-                $('#addModal').find('#site').val(obj.message.site_code).trigger('change');
+                $('#addModal').find('#company').val(obj.message.company_id).trigger('change');
+                $('#addModal').find('#supplier').val(obj.message.supplier_id).trigger('change');
+                $('#addModal').find('#site').val(obj.message.site_id).trigger('change');
                 $('#addModal').find('#orderDate').val(formatDate2(new Date(obj.message.order_date)));
                 $('#addModal').find('#orderNo').val(obj.message.order_no);
                 $('#addModal').find('#poNo').val(obj.message.po_no);
-                $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
-                $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
-                $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).select2('destroy').select2();
+                $('#addModal').find('#agent').val(obj.message.agent_id).trigger('change');
+                $('#addModal').find('#destinationCode').val(obj.message.destination_id).trigger('change');
+                $('#addModal').find('#rawMat').val(obj.message.raw_mat_id).select2('destroy').select2();
+                $('#addModal').find('#rawMatCode').val(obj.message.raw_mat_code);
                 $('#addModal').find('#rawMatName').val(obj.message.raw_mat_name);
-                $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
+                $('#addModal').find('#plant').val(obj.message.plant_id).trigger('change');
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
-                $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
+                $('#addModal').find('#transporter').val(obj.message.transporter_id).trigger('change');
                 $('#addModal').find('#convertedQtyUnit').text(obj.message.converted_unit_text);
                 $('#addModal').find('#balanceUnit').text(obj.message.converted_unit_text);
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
