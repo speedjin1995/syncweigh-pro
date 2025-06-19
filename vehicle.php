@@ -291,9 +291,9 @@
                                                                 <tr>
                                                                     <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Vehicle No</th>
-                                                                    <!--th>Vehicle Weight</th-->
-                                                                    <!--th>EX-Quarry/Delivered</th-->
-                                                                    <!-- <th>Transporter</th> -->
+                                                                    <th>Vehicle Weight</th>
+                                                                    <!-- <th>EX-Quarry/Delivered</th>
+                                                                    <th>Transporter</th> -->
                                                                     <th>Customer</th>
                                                                     <th>Supplier</th>
                                                                     <th>Status</th>
@@ -399,6 +399,7 @@ $(function () {
                 }
             },
             { data: 'veh_number' },
+            { data: 'vehicle_weight' },
             //{ data: 'vehicle_weight' },
             /*{ 
                 data: 'ex_del',
