@@ -208,15 +208,15 @@ else{
                                                                 <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status</label>
                                                                 <div class="col-sm-8">
                                                                     <select id="transactionStatus" name="transactionStatus" class="form-select select2">
-                                                                        <option value="Sales" selected>Dispatch</option>
-                                                                        <option value="Purchase">Receiving</option>
+                                                                        <option value="Sales">Dispatch</option>
+                                                                        <option value="Purchase" selected>Receiving</option>
                                                                         <option value="Local">Internal Transfer</option>
                                                                         <option value="Misc">Miscellaneous</option>
                                                                     </select>  
                                                                 </div>
                                                             </div>
                                                         </div><br>
-                                                        <div class="col-12">
+                                                        <div class="col-12" style="display:none;">
                                                             <div class="row" id="productNameDisplay">
                                                                 <label for="productName" class="col-sm-4 col-form-label">Product</label>
                                                                 <div class="col-sm-8">
@@ -246,6 +246,18 @@ else{
                                                                             <option value="<?=$rowRowMat['name'] ?>" data-code="<?=$rowRowMat['raw_mat_code'] ?>"><?=$rowRowMat['raw_mat_code'] ?></option>
                                                                         <?php } ?>
                                                                     </select>           
+                                                                </div>
+                                                            </div>
+                                                        </div><br>
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <label for="containerNo" class="col-sm-4 col-form-label">
+                                                                    Container No.
+                                                                </label>
+                                                                <div class="col-sm-8">
+                                                                    <div class="input-group">
+                                                                        <input type="text" class="form-control" id="containerNo" name="containerNo" placeholder="Container No">
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div><br>
@@ -317,6 +329,14 @@ else{
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div><br>
+                                                        <div class="col-12">
+                                                            <div class="row">
+                                                                <label for="otherRemarks" class="col-4 col-form-label">Remarks</label>
+                                                                <div class="col-8">
+                                                                    <textarea class="form-control" id="otherRemarks" name="otherRemarks" rows="3" placeholder="Other Remarks"></textarea>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>                                                                                                                                  
                                                 </div>
@@ -363,6 +383,128 @@ else{
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="h-100">
+                                                <div class="col-xxl-12 col-lg-12">
+                                                    <div class="card">
+                                                        <div class="card-header fs-5 text-white" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #405189;">
+                                                            <i class="mdi mdi-chevron-down pull-right"></i>
+                                                            Search Records
+                                                        </div>
+                                                        <div id="collapseSearch" class="collapse" aria-labelledby="collapseSearch">                                    
+                                                            <div class="card-body">
+                                                                <form action="javascript:void(0);">
+                                                                    <div class="row">
+                                                                        <div class="col-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="fromDateSearch" class="form-label">From Date</label>
+                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="fromDateSearch">
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <div class="col-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="toDateSearch" class="form-label">To Date</label>
+                                                                                <input type="date" class="form-control" data-provider="flatpickr" id="toDateSearch">
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <div class="col-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="batchNoSearch" class="form-label">Status</label>
+                                                                                <select id="batchNoSearch" class="form-select select2">
+                                                                                    <option value="N" selected>Pending</option>
+                                                                                    <option value="Y">Complete</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div><!--end col-->   
+                                                                        <div class="col-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="statusSearch" class="form-label">Transaction Status</label>
+                                                                                <select id="statusSearch" class="form-select select2">
+                                                                                    <option selected>-</option>
+                                                                                    <option value="Sales">Dispatch</option>
+                                                                                    <option value="Purchase">Receiving</option>
+                                                                                    <option value="Local">Internal Transfer</option>
+                                                                                    <option value="Misc">Miscellaneous</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <!--div class="col-3" id="customerSearchDisplay">
+                                                                            <div class="mb-3">
+                                                                                <label for="customerNoSearch" class="form-label">Customer No</label>
+                                                                                <select id="customerNoSearch" class="form-select select2" >
+                                                                                    <option selected>-</option>
+                                                                                    <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
+                                                                                        <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <!--div class="col-3" id="supplierSearchDisplay" style="display:none">
+                                                                            <div class="mb-3">
+                                                                                <label for="supplierSearch" class="form-label">Supplier No</label>
+                                                                                <select id="supplierSearch" class="form-select select2" >
+                                                                                    <option selected>-</option>
+                                                                                    <?php while($rowSF = mysqli_fetch_assoc($supplier2)){ ?>
+                                                                                        <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <div class="col-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="vehicleNo" class="form-label">Vehicle No</label>
+                                                                                <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <!--div class="col-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
+                                                                                <select id="invoiceNoSearch" class="form-select select2"  >
+                                                                                    <option selected>-</option>
+                                                                                    <option value="Normal">Normal Weighing</option>
+                                                                                    <option value="Container">Primer Mover</option>
+                                                                                    <option value="Empty Container">Primer Mover + Container</option>
+                                                                                    <option value="Different Container">Primer Mover + Different Bins</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div><!--end col-->                       
+                                                                        <!--div class="col-3" id="productSearchDisplay">
+                                                                            <div class="mb-3">
+                                                                                <label for="productSearch" class="form-label">Product</label>
+                                                                                <select id="productSearch" class="form-select select2" >
+                                                                                    <option selected>-</option>
+                                                                                    <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
+                                                                                        <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <!--div class="col-3" id="rawMatSearchDisplay" style="display:none">
+                                                                            <div class="mb-3">
+                                                                                <label for="rawMatSearch" class="form-label">Raw Material</label>
+                                                                                <select id="rawMatSearch" class="form-select select2" >
+                                                                                    <option selected>-</option>
+                                                                                    <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
+                                                                                        <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
+                                                                                    <?php } ?>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <div class="col-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="containerNoSearch" class="form-label">Container No</label>
+                                                                                <input type="text" class="form-control" id="containerNoSearch" name="containerNoSearch" placeholder="Container No">                                                                                  
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                        <div class="col-6">
+                                                                            <div class="text-end">
+                                                                                <button type="submit" class="btn btn-success" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                                            </div>
+                                                                        </div><!--end col-->
+                                                                    </div><!--end row-->
+                                                                </form>                                                                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <!--datatable--> 
                                                 <div class="row">
                                                     <div class="col-lg-12">
@@ -539,6 +681,16 @@ else{
             dropdownParent: $('#addModal') // Ensures dropdown is not cut off
         });
 
+        $('#fromDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: ''
+        });
+
+        $('#toDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: ''
+        });
+
         grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
             enableTime: true,
             enableSeconds: true,
@@ -559,6 +711,21 @@ else{
             allowInput: true,
         });
 
+        var fromDateI = $('#fromDateSearch').val();
+        var toDateI = $('#toDateSearch').val();
+        var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var supplierI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+        var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+        var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+        var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+        var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
+        var containerNoI = $('#containerNoSearch').val() ? $('#containerNoSearch').val() : '';
+        var sealNoI = $('#sealNoSearch').val() ? $('#sealNoSearch').val() : '';
+
         var table = $("#weightTable").DataTable({
             "responsive": true,
             "autoWidth": false,
@@ -568,7 +735,23 @@ else{
             'serverMethod': 'post',
             "order": [[1, "asc"]],
             'ajax': {
-                'url':'php/filterWeight2.php'
+                'url':'php/filterWeight2.php',
+                'data': {
+                    fromDate: fromDateI,
+                    toDate: toDateI,
+                    status: statusI,
+                    customer: '',
+                    supplier: '',
+                    vehicle: vehicleNoI,
+                    invoice: invoiceNoI,
+                    batch: batchNoI,
+                    product: '',
+                    rawMaterial: '',
+                    plant: '',
+                    transactionId: '',
+                    containerNo: containerNoI,
+                    sealNo: ''
+                }
             },
             'columns': [
                 { data: 'no' },   
@@ -830,7 +1013,7 @@ else{
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight', isEmptyContainer: isEmptyContainer}, function(data){
+                        $.post('php/print2.php', {userID: obj.id, file: 'weight', isEmptyContainer: isEmptyContainer}, function(data){
                             var obj2 = JSON.parse(data);
 
                             if(obj2.status === 'success'){
@@ -845,7 +1028,7 @@ else{
                                     
                                     /*setTimeout(function () {
                                         if (confirm("Do you need to reprint?")) {
-                                            $.post('php/print.php', { userID: obj.id, file: 'weight' }, function (data) {
+                                            $.post('php/print2.php', { userID: obj.id, file: 'weight' }, function (data) {
                                                 var obj = JSON.parse(data);
                                                 if (obj.status === 'success') {
                                                     var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
@@ -1084,6 +1267,90 @@ else{
             });
         }, 500);
 
+        $('#filterSearch').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
+            var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
+            var productSearchI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMaterialI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
+            var containerNoI = $('#containerNoSearch').val() ? $('#containerNoSearch').val() : '';
+            var sealNoI = $('#sealNoSearch').val() ? $('#sealNoSearch').val() : '';
+
+            //Destroy the old Datatable
+            $("#weightTable").DataTable().clear().destroy();
+
+            //Create new Datatable
+            table = $("#weightTable").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                'processing': true,
+                'serverSide': true,
+                'searching': true,
+                'serverMethod': 'post',
+                "order": [[1, "asc"]],
+                'ajax': {
+                    'url':'php/filterWeight2.php',
+                    'data': {
+                        fromDate: fromDateI,
+                        toDate: toDateI,
+                        status: statusI,
+                        customer: '',
+                        supplier: '',
+                        vehicle: vehicleNoI,
+                        invoice: invoiceNoI,
+                        batch: batchNoI,
+                        product: '',
+                        rawMaterial: '',
+                        plant: '',
+                        transactionId: '',
+                        containerNo: containerNoI,
+                        sealNo: ''
+                    }
+                },
+                'columns': [
+                    { data: 'no' },   
+                    { data: 'transaction_status' },
+                    { data: 'lorry_plate_no1' },
+                    { data: 'gross_weight1' },
+                    { data: 'gross_weight1_date' },
+                    { 
+                        data: 'id',
+                        class: 'action-button',
+                        render: function (data, type, row) {
+                            let buttons = `<div class="row g-1 d-flex">`;
+                            buttons += `
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data}, 'Y')" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                            <i class="fas fa-print"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data}, 'Y')" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>`;  
+                            
+                            buttons += `</div>`;
+
+                            return buttons;
+                        }
+                    }
+                ] 
+            });
+        });
+
         $('#addWeight').on('click', function(){
             // Show Capture Buttons When Add New
             $('#grossCapture').show();
@@ -1091,7 +1358,7 @@ else{
             $('#id').val("");
             $('#currentWeight').text("0");
             $('#transactionId').val("");
-            $('#transactionStatus').val("Sales").trigger('change');
+            $('#transactionStatus').val("Purchase").trigger('change');
             $('#emptyContainerNo').val("").trigger('change');
             $('#weightType').val("Normal").trigger('change');
             $('#customerType').val("Normal").trigger('change');
@@ -3020,7 +3287,7 @@ else{
                 }
             });
         }else{
-            $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
+            $.post('php/print2.php', {userID: id, file: 'weight'}, function(data){
                 var obj = JSON.parse(data);
 
                 if(obj.status === 'success'){
@@ -3045,7 +3312,7 @@ else{
         //var id = $('#prePrintModal').find('#id').val();
         var prePrintStatus = 'N';
 
-        $.post('php/print.php', {userID: id, file: 'weight', prePrint: prePrintStatus, isEmptyContainer: isEmptyContainer}, function(data){
+        $.post('php/print2.php', {userID: id, file: 'weight', prePrint: prePrintStatus, isEmptyContainer: isEmptyContainer}, function(data){
             var obj = JSON.parse(data);
 
             if(obj.status === 'success'){

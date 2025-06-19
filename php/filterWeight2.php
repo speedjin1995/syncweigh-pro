@@ -15,6 +15,66 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 
+if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
+  $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['fromDate']);
+  $fromDateTime = $dateTime->format('Y-m-d 00:00:00');
+  $searchQuery .= " and transaction_date >= '".$fromDateTime."'";
+}
+
+if($_POST['toDate'] != null && $_POST['toDate'] != ''){
+  $dateTime = DateTime::createFromFormat('d-m-Y', $_POST['toDate']);
+  $toDateTime = $dateTime->format('Y-m-d 23:59:59');
+	$searchQuery .= " and transaction_date <= '".$toDateTime."'";
+}
+
+if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
+	$searchQuery .= " and transaction_status = '".$_POST['status']."'";
+}
+
+if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
+	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+}
+
+if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
+	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
+}
+
+if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
+	$searchQuery .= " and lorry_plate_no1 like '%".$_POST['vehicle']."%'";
+}
+
+if($_POST['invoice'] != null && $_POST['invoice'] != '' && $_POST['invoice'] != '-'){
+	$searchQuery .= " and weight_type = '".$_POST['invoice']."'";
+}
+
+if($_POST['batch'] != null && $_POST['batch'] != '' && $_POST['batch'] != '-'){
+	$searchQuery .= " and is_complete = '".$_POST['batch']."'";
+}
+
+if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
+	$searchQuery .= " and product_code = '".$_POST['product']."'";
+}
+
+if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMaterial'] != '-'){
+	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
+}
+
+if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
+	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+}
+
+if($_POST['transactionId'] != null && $_POST['transactionId'] != '' && $_POST['transactionId'] != '-'){
+	$searchQuery .= " and transaction_id like '%".$_POST['transactionId']."%'";
+}
+
+if($_POST['containerNo'] != null && $_POST['containerNo'] != '' && $_POST['containerNo'] != '-'){
+	$searchQuery .= " and (container_no like '%".$_POST['containerNo']."%' OR container_no2 like '%".$_POST['containerNo']."%')";
+}
+
+if($_POST['sealNo'] != null && $_POST['sealNo'] != '' && $_POST['sealNo'] != '-'){
+	$searchQuery .= " and (seal_no like '%".$_POST['sealNo']."%' OR seal_no2 like '%".$_POST['sealNo']."%')";
+}
+
 if($searchValue != ''){
   $searchQuery .= " and (lorry_plate_no1 like '%".$searchValue."%')";
 }
@@ -23,7 +83,7 @@ $allQuery = "select COUNT(*) as allcount FROM Weight WHERE status = '0'";
   
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select COUNT(*) as allcount FROM Weight WHERE status = '0' and plant_code IN ('$username') and is_complete = 'N'";
+  $allQuery = "select COUNT(*) as allcount FROM Weight WHERE status = '0' and plant_code IN ('$username')";
 }
 
 $sel = mysqli_query($db, $allQuery);
@@ -31,10 +91,10 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$filteredQuery = "select count(*) as allcount FROM Weight where status = '0' and is_complete = 'N'".$searchQuery; 
+$filteredQuery = "select count(*) as allcount FROM Weight where status = '0'".$searchQuery; 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $filteredQuery = "select count(*) as allcount FROM Weight where status = '0' and is_complete = 'N' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery = "select count(*) as allcount FROM Weight where status = '0' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
@@ -42,11 +102,11 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0' and is_complete = 'N'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from Weight where status = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where status = '0' and is_complete = 'N' and plant_code IN ('$username')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where status = '0' and plant_code IN ('$username')".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 // var_dump($empQuery);
@@ -146,7 +206,8 @@ $response = array(
   "draw" => intval($draw),
   "iTotalRecords" => $totalRecords,
   "iTotalDisplayRecords" => $totalRecordwithFilter,
-  "aaData" => $data
+  "aaData" => $data,
+  "query" => $empQuery
 );
 
 echo json_encode($response);

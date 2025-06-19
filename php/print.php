@@ -192,691 +192,416 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                             }
                         }
                     }
-
-                    $message = '';
-
-                    //if($row['is_complete'] == 'N'){
-                        $message = 
-                            '<html>
-                                <head>
-                                    <style>
-                                        @page {
-                                            size: A5 landscape;
-                                            margin: 15mm;
-                                        }
-
-                                        * {
-                                            margin: 0;
-                                            padding: 0;
-                                            box-sizing: border-box;
-                                        }
-
-                                        body {
-                                            font-family: Arial, sans-serif;
-                                            font-size: 14px;
-                                            line-height: 1.3;
-                                            color: #000;
-                                            background: white;
-                                            padding: 10px;
-                                        }
-
-                                        .dispatch-slip {
-                                            width: 100%;
-                                            height: calc(100vh - 30px);
-                                            padding: 5px;
-                                            display: flex;
-                                            flex-direction: column;
-                                            margin: 5px;
-                                        }
-
-                                        .header {
-                                            display: flex;
-                                            justify-content: space-between;
-                                            align-items: flex-start;
-                                            margin-bottom: 8px;
-                                            border-bottom: 1px solid #000;
-                                            padding-bottom: 5px;
-                                        }
-
-                                        .company-info {
-                                            flex: 1;
-                                        }
-
-                                        .company-name {
-                                            font-size: 16px;
-                                            font-weight: bold;
-                                            margin-bottom: 6px;
-                                        }
-
-                                        .company-address {
-                                            font-size: 12px;
-                                            line-height: 1.4;
-                                        }
-
-                                        .slip-info {
-                                            text-align: right;
-                                            flex-shrink: 0;
-                                        }
-
-                                        .slip-title {
-                                            font-size: 14px;
-                                            font-weight: bold;
-                                            text-decoration: underline;
-                                            margin-bottom: 6px;
-                                        }
-
-                                        .slip-details {
-                                            font-size: 12px;
-                                            line-height: 1.4;
-                                        }
-
-                                        .lorry-section {
-                                            margin: 5px 0;
-                                            border-bottom: 1px solid #000;
-                                            padding-bottom: 5px;
-                                        }
-
-                                        .lorry-plate {
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 12px;
-                                        }
-
-                                        .lorry-label {
-                                            font-weight: bold;
-                                            font-size: 12px;
-                                        }
-
-                                        .chinese-label {
-                                            font-size: 12px;
-                                            color: #666;
-                                        }
-
-                                        .plate-number {
-                                            font-size: 24px;
-                                            font-weight: bold;
-                                            letter-spacing: 2px;
-                                        }
-
-                                        .weight-table {
-                                            width: 100%;
-                                            border-collapse: collapse;
-                                            margin: 5px 0;
-                                            flex: 1;
-                                        }
-
-                                        .weight-table th,
-                                        .weight-table td {
-                                            border: 1px solid #000;
-                                            padding: 5px;
-                                            text-align: center;
-                                            vertical-align: middle;
-                                        }
-
-                                        .weight-table th {
-                                            background-color: #f5f5f5;
-                                            font-weight: bold;
-                                            font-size: 13px;
-                                        }
-
-                                        .weight-table .chinese-row {
-                                            font-size: 11px;
-                                            color: #666;
-                                            background-color: #f9f9f9;
-                                        }
-
-                                        .weight-data {
-                                            font-size: 14px;
-                                            font-weight: 500;
-                                        }
-
-                                        .footer {
-                                            display: flex;
-                                            justify-content: space-between;
-                                            align-items: flex-end;
-                                            margin-top: auto;
-                                            padding-top: 3px;
-                                        }
-
-                                        .signature-section {
-                                            flex: 1;
-                                        }
-
-                                        .signature-line {
-                                            border-bottom: 1px solid #000;
-                                            width: 220px;
-                                            margin-bottom: 6px;
-                                        }
-
-                                        .signature-label {
-                                            text-align: center;
-                                            font-size: 13px;
-                                            margin-bottom: 10px;
-                                        }
-
-                                        .signature-fields {
-                                            font-size: 13px;
-                                            line-height: 1.6;
-                                        }
-
-                                        .disclaimer {
-                                            flex: 2;
-                                            text-align: left;
-                                            font-size: 10px;
-                                            line-height: 1.4;
-                                            margin-left: 80px;
-                                        }
-
-                                        .disclaimer-en {
-                                            margin-bottom: 3px;
-                                            font-weight: 500;
-                                        }
-
-                                        .disclaimer-auth {
-                                            margin-bottom: 3px;
-                                            font-weight: 500;
-                                        }
-
-                                        .disclaimer-cn {
-                                            color: black;
-                                            font-weight: bold;
-                                        }
-
-                                        @media print {
-                                            body {
-                                                -webkit-print-color-adjust: exact;
-                                                print-color-adjust: exact;
-                                            }
-                                        }
-
-                                        @media screen {
-                                            body {
-                                                background-color: #f0f0f0;
-                                            }
-                                        }
-                                    </style>
-                                </head>
-                                <body>
-                                    <div class="dispatch-slip">
-                                        <!-- Header Section -->
-                                        <div class="header">
-                                            <div class="company-info">
-                                                <div class="company-name">'.$compname.'</div>
-                                                <div class="company-address">
-                                                    '.$compaddress.' '.$compaddress2.'<br>
-                                                    '.$compaddress3.'
-                                                </div>
-                                            </div>
-                                            <div class="slip-info">
-                                                <div class="slip-title">'. $transacationStatus .' SLIP</div>
-                                                <div class="slip-details">
-                                                    '.$row['transaction_id'].'<br>
-                                                    DATE : '.$transactionDate.'
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Lorry Plate Section -->
-                                        <div class="lorry-section">
-                                            <div class="lorry-plate" style="margin-bottom: 10px;">
-                                                <span class="lorry-label">Lorry Plate<br>(车牌号)</span>
-                                                <span style="margin: 0 10px; font-size: 13px;">:</span>
-                                                <span class="plate-number">'.$row['lorry_plate_no1'].'</span>
-                                            </div>
-                                            <div class="lorry-plate">
-                                                <span class="lorry-label" style="text-align: center;">Product<br>(物品)</span>
-                                                <span style="margin: 0 10px; font-size: 13px;">:</span>
-                                                <span class="plate-number">'.$product.'</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Weight Table -->
-                                        <table class="weight-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>In Weight<br>进重(kg)</th>
-                                                    <th>1st Date / Time<br>进重日期时间</th>
-                                                    <th>Out Weight<br>出重(kg)</th>
-                                                    <th>2nd Date / Time<br>出重日期时间</th>
-                                                    <th>Tare Weight<br>皮重(kg)</th>
-                                                    <th>Nett Weight<br>净重(kg)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class="weight-data">
-                                                    <td>'.formatWeight($row['gross_weight1']).' kg</td>
-                                                    <td>'.$grossWeightTime.'</td>
-                                                    <td>'.formatWeight($row['tare_weight1']).' kg</td>
-                                                    <td>'.$tareWeightTime.'</td>
-                                                    <td>'.formatWeight($row['reduce_weight']).' kg</td>
-                                                    <td>'.formatWeight($row['final_weight']).' kg</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <p>REMARKS: </p>
-
-                                        <!-- Footer Section -->
-                                        <div class="footer" style="margin-top: 60px;">
-                                            <div class="signature-section">
-                                                <div class="signature-line"></div>
-                                                <div class="signature-label">(Received By)</div>
-                                                <div class="signature-fields">
-                                                    <strong>Name :</strong><br>
-                                                    <strong>I/C No :</strong>
-                                                </div>
-                                            </div>
-                                            <div class="disclaimer">
-                                                <div class="disclaimer-en">THIS WEIGHING SLIP IS COMPUTER GENERATED AND REQUIRES NO SIGNATURE & CHOP</div>
-                                                <div class="disclaimer-auth">AUTHORISED BY: STN UNION SDN BHD</div>
-                                                <div class="disclaimer-cn">此称重单由电脑生成, 无需签名印章. 授权人: STN UNION SDN BHD</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </body>
-                                </html>';
-                    /*}
-                    else{
-                        $message = 
-                            '<html>
-                                <head>
-                                    <style>
-                                        @media print {
-                                            @page {
-                                                size: A5 landscape;
-                                                margin-left: 0.5in;
-                                                margin-right: 0.5in;
-                                                margin-top: 0.1in;
-                                                margin-bottom: 0.1in;
-                                            }
-                                            
-                                        } 
-                                            
-                                        table {
-                                            width: 100%;
-                                            border-collapse: collapse;
-                                            
-                                        } 
-                                        
-                                        .table th, .table td {
-                                            padding: 0.70rem;
-                                            vertical-align: top;
-                                            border-top: 1px solid #dee2e6;
-                                            
-                                        } 
-                                        
-                                        .table-bordered {
-                                            border: 1px solid #000000;
-                                            
-                                        } 
-                                        
-                                        .table-bordered th, .table-bordered td {
-                                            border: 1px solid #000000;
-                                            font-family: sans-serif;
-                                            font-size: 12px;
-                                            
-                                        } 
-
-                                        .table-border {
-                                            border: 1px solid #000000;
-                                        }
-                                        
-                                        .row {
-                                            display: flex;
-                                            flex-wrap: wrap;
-                                            margin-top: 20px;
-                                            margin-right: -15px;
-                                            margin-left: -15px;
-                                            
-                                        } 
-                                        
-                                        .col-md-4{
-                                            position: relative;
-                                            width: 33.333333%;
-                                        }
-                                    </style>
-                                </head>
-                                <body>
-                                    <table style="width:100%;">
-                                        <tr>
-                                            <td style="width: 60%;">
-                                                <p style="font-size: 14px;">
-                                                    <span style="font-weight: bold;font-size: 16px; margin-bottom: 10px; display: inline-block;">'.$compname.'</span><br>
-                                                    <span> Reg No.: '.$compreg.'</span><br>
-                                                    <span>'.$compaddress.'</span><br>
-                                                    <span>'.$compaddress2.'</span><br>
-                                                    <span>'.$compaddress3.'</span><br>
-                                                    <span>Tel/Fax: '.$compphone.' / '.$compiemail.'</span>
-                                                </p>
-                                            </td>
-                                            <td style="vertical-align: top;">
-                                                <p style="vertical-align: top; margin-left:30px; font-size: 14px;">
-                                                    <span style="font-size: 24px; font-weight: bold; margin-bottom: 10px; display: inline-block;">'. $transacationStatus .' Slip</span><br>
-                                                    <span>Ticket No &nbsp;:&nbsp; <b>'.$row['transaction_id'].'</b></span><br>
-                                                    <span>Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 1.5px;">:&nbsp;&nbsp;'.$transactionDate.'</span><br>
-                                                    <span>D/O No &nbsp;&nbsp;&nbsp;&nbsp;</span><span>:&nbsp;&nbsp;'.$row['delivery_no'].'</span><br>
-                                                    <span>P/O No &nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left:2.5px">:&nbsp;&nbsp;'.$row['purchase_order'].'</span><br>
-                                                </p>
-                                            </td>
-                                        </tr>
-                                        <tr style="visibility:hidden;">
-                                            <td style="height: 5px">Placeholder for empty space</td>
-                                        </tr>
-                                        <tr style="border-top: 1px solid black;">
-                                            <td style="vertical-align: top; width: 65%;">
-                                                <p style="margin-top: 5px; font-size: 14px;">
-                                                    <span><b>'.$customer.'</b></span><br>
-                                                    <span>'.$customerA.'</span><br>
-                                                    <span>'.$customerA2.'</span><br>
-                                                    <span>'.$customerA3.'</span><br>
-                                                    <span>Tel/Fax: '.$customerP.' / '.$customerE.'</span><br>   
-                                                </p>
-                                            </td>
-                                            <td style="vertical-align: top;">
-                                                <p style="vertical-align: top; margin-top: 5px; margin-left:30px; font-size: 14px;">';
-                                                    if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
-                                                        $message .= '<br><span>Order Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="margin-left:2.5px">:</span>&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
-                                                    }
-                                                    else{
-                                                        $message .= '<br><span>Supply Weight &nbsp;:&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
-                                                    }
-
-                                                $message .='    
-                                                    <br>
-                                                    <span><b>Net Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 17.5px">:&nbsp; '.($finalWeight ? formatWeight($finalWeight).' kg' : '-').'</b></span><br>
-                                                    <span">Variance &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 18.5px">:&nbsp; '.($weightDifference ? formatWeight($weightDifference).' kg' : '-').'</span><br>';
-
-                                                    if ($row['weight_type'] == 'Normal'){
-                                                        $message .= '<span>Product Code &nbsp;&nbsp;</span><span style="margin-left: 19px">:&nbsp; '.($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] : $row['raw_mat_code']) .'</span><br>';
-                                                    }
-
-                                                    if ($row['weight_type'] == 'Different Container'){
-                                                        $message .= '<span>Pending Bin No. &nbsp;&nbsp;</span><span style="margin-left: 2px">:&nbsp; '. $row['replacement_container'] .'</span><br>';
-                                                    }
-
-                                                $message .= '
-                                                    <br>
-                                                </p>
-
-                                                <p style="vertical-align: top; margin-left:50px;"><br></p>
-                                            </td>
-                                        </tr>
-                                    </table>';
-
-                                    if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
-                                        $message .= '
-                                        <table style="width:100%; border:0px solid black; margin-top:-40px; margin-bottom: 0px;">
-                                            <tr style="font-size: 14px;">
-                                                <th style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
-                                                <th style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
-                                            </tr>
-                                        </table>';
-                                    }else{
-                                        $message .= '
-                                        <table style="width:100%; border:0px solid black; margin-top:-20px; margin-bottom: 0px;">
-                                            <tr style="font-size: 14px;text-align: center;">
-                                                <th style="border:1px solid black;">Container No.1</th>
-                                                <th style="border:1px solid black;">Seal No.1</th>
-                                                <th style="border:1px solid black;">Container No.2</th>
-                                                <th style="border:1px solid black;">Seal No.2</th>
-                                            </tr>
-                                            <tr style="font-size: 14px;text-align: center;">
-                                                <td style="border:1px solid black;">'.(!empty($row["container_no"]) ? $row["container_no"] : '&nbsp;').'</td>
-                                                <td style="border:1px solid black;">'.$row["seal_no"].'</td>
-                                                <td style="border:1px solid black;">'.$row["container_no2"].'</td>
-                                                <td style="border:1px solid black;">'.$row["seal_no2"].'</td>    
-                                            </tr>
-                                        </table>';
-                                    }
-                                    
-                                    if($row['weight_type'] == 'Container' && $_POST['isEmptyContainer'] == 'N'){
-                                        $message .= '<br>
-                                        <table style="width:100%; border:0px solid black; margin-top: -10px;">
-                                            <tr style="text-align: center; font-size: 14px;">
-                                                <td style="border:1px solid black;"><b>Product : </b></td>
-                                                <td colspan="5" style="border:1px solid black;"><b>'.($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] . ' - ' .$row['product_name'] : $row['raw_mat_code'] . ' - ' .$row['raw_mat_name']).'</b></td>
-                                            </tr>
-                                            <tr style="font-size: 14px;text-align: center;">
-                                                <th style="border:1px solid black;">Incoming Date/Time</th>
-                                                <th style="border:1px solid black;">Outgoing Date/Time</th>
-                                                <th colspan="2" style="border:1px solid black;">Prime Mover No. & Weight (kg)</th>
-                                                <th style="border:1px solid black;">Tare (kg)</th>
-                                                <th style="border:1px solid black;">Nett (kg)</th>
-                                            </tr>
-                                            <tr style="font-size: 14px;text-align: center;">
-                                                <td style="border:1px solid black;">'.$grossWeightTime.'</td>
-                                                <td style="border:1px solid black;">'.$tareWeightTime.'</td>
-                                                <td style="border:1px solid black;">'.$row['lorry_plate_no1'].'</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['gross_weight1']).'</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['tare_weight1']).' kg</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['nett_weight1']).' kg</td>
-                                            </tr>
-                                            <tr style="font-size: 14px;text-align: center;">
-                                                <td style="border:1px solid black;">'.$grossWeightTime2.'</td>
-                                                <td style="border:1px solid black;">'.$tareWeightTime2.'</td>
-                                                <td style="border:1px solid black;">'.$row['lorry_plate_no2'].'</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['gross_weight2']).'</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['tare_weight2']).' kg</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['nett_weight2']).' kg</td>
-                                            </tr>
-                                            <tr style="font-size: 14px;text-align: center;">
-                                                <td colspan="4" style="text-align: left;"><b>Transporter &nbsp;:&nbsp;</b> <span style="margin-left: 10px">'.$row['transporter'].'</span></td>
-                                                <td style="border:1px solid black;">Final Weight</td>
-                                                <td style="border:1px solid black;">'.formatWeight(abs((int)$row['nett_weight1'] - (int)$row['nett_weight2'])).' kg</td>
-                                            </tr>
-                                            <tr style="font-size: 14px;text-align: center;">
-                                                <td colspan="4" style="text-align: left;"><b>Destination &nbsp&nbsp;:&nbsp;</b> <span style="margin-left: 10px">'.$row['destination'].'</span></td>
-                                                <td style="border:1px solid black;">Reduce Weight</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['reduce_weight']).' kg</td>
-                                            </tr>
-                                            <tr style="font-size: 14px;text-align: center;font-weight:bold;">
-                                                <td colspan="4" style="text-align: left;">Remarks &nbsp&nbsp&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
-                                                <td style="border:1px solid black;">Nett Weight</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['final_weight']).' kg</td>
-                                            </tr>
-                                        </table>';
-                                    }
-                                    else if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
-                                        # Old design commented out incase need
-                                        // $message .= '
-                                        //     <table style="width:100%; border:0; border-bottom: 1px solid black; margin-top:5px; text-align: left; font-size: 14px;">
-                                        //         <tr>
-                                        //             <td>1st Vehicle No: &nbsp;&nbsp;:&nbsp;&nbsp; '.$row['lorry_plate_no1'].'</td>
-                                        //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['gross_weight1_date'].'</td>
-                                        //             <td>In Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['gross_weight1'].' kg</td>
-                                        //         </tr>
-                                        //         <tr>
-                                        //             <td></td>
-                                        //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['tare_weight2_date'].'</td>
-                                        //             <td>Out Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['tare_weight2'].' kg</td>
-                                        //         </tr>
-                                        //         <tr>
-                                        //             <td></td>
-                                        //             <td></td>
-                                        //             <td>Nett Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['nett_weight2'].' kg</td>
-                                        //         </tr>
-                                        //         <tr>
-                                        //             <td>2nd Vehicle No: &nbsp;&nbsp;:&nbsp;&nbsp; '.$row['lorry_plate_no2'].'</td>
-                                        //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['gross_weight2_date'].'</td>
-                                        //             <td>In Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['empty_container2_weight'].' kg</td>
-                                        //         </tr>
-                                        //         <tr>
-                                        //             <td></td>
-                                        //             <td>Deduct Prime Vehicle No</td>
-                                        //             <td>Prime FFR 324&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['lorry_no2_weight'].' kg</td>
-                                        //         </tr>
-                                        //         <tr>
-                                        //             <td></td>
-                                        //             <td></td>
-                                        //             <td>Entry Bin Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['nett_weight1'].' kg</td>
-                                        //         </tr>
-                                        //         <tr>
-                                        //             <td></td>
-                                        //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['tare_weight1_date'].'</td>
-                                        //             <td>Out Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].' kg</td>
-                                        //         </tr>
-                                        //         <tr>
-                                        //             <td></td>
-                                        //             <td>Bin of No.&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['container_no'].'</td>
-                                        //             <td>Total Nett Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['final_weight'].' kg</td>
-                                        //         </tr>
-                                        //     </table>
-                                        //     <div style="margin-top: 5px; font-size: 14px;">
-                                        //         <span>Transporter&nbsp;&nbsp;:&nbsp;&nbsp;</span><br>
-                                        //         <span>Remarks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</span>
-                                        //     </div>
-                                        // ';
-
-                                        $message .= '
-                                            <table style="width:100%; border: 1px solid black; margin-top:5px; text-align: left; font-size: 14px;">
-                                                <tr style="text-align: center; border: 1px solid black;">
-                                                    <th class="table-border">Bin</th>
-                                                    <th class="table-border">Date/Time</th>
-                                                    <th class="table-border">Vehicle</th>
-                                                    <th class="table-border">Gross Weight</th>
-                                                    <th class="table-border" colspan="2">Tare Weight</th>
-                                                    <th class="table-border">Nett Weight</th>
-                                                </tr>
-                                                <tr style="text-align: center;">
-                                                    <th colspan="4"></th>
-                                                    <th class="table-border">Vehicle</th>
-                                                    <th class="table-border">Bin</th>
-                                                </tr>
-                                                <tr style="text-align: center;">
-                                                    <td class="table-border">'.$row['container_no'].'</td>
-                                                    <td class="table-border">
-                                                        Date In: '.$row['gross_weight1_date'].'<br>
-                                                        Date Out: '.$row['tare_weight2_date'].'
-                                                    </td>
-                                                    <td class="table-border">
-                                                        In: '.$row['lorry_plate_no1'].'<br>
-                                                        Out: '.$row['lorry_plate_no2'].'
-                                                    </td>
-                                                    <td class="table-border">
-                                                        '.$row['gross_weight1'].' kg<br>
-                                                        '.$row['tare_weight2'].' kg
-                                                    </td>
-                                                    <td class="table-border">
-                                                        '.$row['tare_weight1'].' kg<br>
-                                                        '.$row['lorry_no2_weight'].' kg
-                                                    </td>
-                                                    <td class="table-border">
-                                                        -<br>
-                                                        '.$row['nett_weight1'].' kg
-                                                    </td>
-                                                    <td class="table-border">
-                                                        -<br>
-                                                        '.$row['nett_weight2'].' kg
-                                                    </td>
-                                                </tr>
-                                                <tr style="text-align: center;">
-                                                    <td class="table-border">'.$row['replacement_container'].'</td>
-                                                    <td class="table-border">
-                                                        Date In: '.$row['gross_weight2_date'].'
-                                                    </td>
-                                                    <td class="table-border">
-                                                        In: '.$row['lorry_plate_no2'].'
-                                                    </td>
-                                                    <td class="table-border">
-                                                        '.$row['gross_weight2'].' kg
-                                                    </td>
-                                                    <td class="table-border">
-                                                        '.$row['lorry_no2_weight'].' kg
-                                                    </td>
-                                                    <td class="table-border">
-                                                        '.$row['empty_container2_weight'].' kg
-                                                    </td>
-                                                    <td class="table-border">
-                                                        -
-                                                    </td>
-                                                </tr>
-                                                <tr style="text-align: center;">
-                                                    <td class="table-border" colspan="6" style="text-align: right; padding-right: 20px;">
-                                                        Final Weight
-                                                    </td>
-                                                    <td class="table-border">
-                                                        '.$row['final_weight'].' kg
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <div style="margin-top: 5px; font-size: 14px;">
-                                                <span>Transporter&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['transporter'].'</span><br>
-                                                <span>Remarks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'.$row['remarks'].'</span>
-                                            </div>
-                                        ';
-                                        
-                                    }
-                                    else{
-                                        $message .= '<br>
-                                        <table style="width:100%; border:0px solid black; margin-top: -10px;">
-                                            <tr>
-                                                <th style="border:1px solid black;font-size: 18px;text-align: center;">Vehicle No</th>
-                                                <th colspan="2" style="border:1px solid black;font-size: 18px;text-align: center;">Product Description</th>
-                                                <th style="border:1px solid black;font-size: 18px;text-align: center;">Date/Time</th>
-                                                <th colspan="2" style="border:1px solid black;font-size: 18px;text-align: center;">Weight (kg)</th>
-                                            </tr>
-                                            <tr style="font-size: 16px;text-align: center;">
-                                                <td style="border:1px solid black;">'.$row['lorry_plate_no1'].'</td>';
-
-                                                if ($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
-                                                    $message .= '<td colspan="2" style="border:1px solid black;">'.$row['raw_mat_name'].'</td>';
-                                                }else{
-                                                    $message .= '<td colspan="2" style="border:1px solid black;">'.$row['product_name'].'</td>';
-                                                }
-
-                                            $message .= '    
-                                                <td style="border:1px solid black;">'.$grossWeightTime.'</td>
-                                                <td style="border:1px solid black; font-weight: bold;">In</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['gross_weight1']).' kg</td>
-                                            </tr>
-                                            <tr style="font-size: 16px;text-align: center;">
-                                                <td colspan="3" style="text-align:left">Transporter &nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['transporter'].'</span></td>
-                                                <td style="border:1px solid black;">'.$tareWeightTime.'</td>
-                                                <td style="border:1px solid black; font-weight: bold;">Out</td>
-                                                <td style="border:1px solid black;">'.formatWeight($row['tare_weight1']).' kg</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="4">Destination &nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['destination'].'</span></td>
-                                                <td style="border:1px solid black;font-size: 16px;text-align: center;">Reduce</td>
-                                                <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['reduce_weight']).' kg</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="4">Remarks &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
-                                                <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">Nett</td>
-                                                <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">'.formatWeight($row['final_weight']).' kg</td>
-                                            </tr>
-                                        </table><br>';
-                                    }
-                                    
-                                    $message .= '<table style="margin-top:50px">
-                                        <!--<tr style="visibility: hidden; border:0px;">
-                                            <th width="24%">Vehicle No</th>
-                                            <th width="23%">Product</th>
-                                            <th width="23%">Time</th>
-                                            <th colspan="2" width="30%">Weight (kg)</th>
-                                        </tr>-->
-                                        <tr>
-                                            <td style="vertical-align: top; font-size: 14px;">
-                                                <hr width="80%" style="margin-left: 0; text-align: left;">
-                                                <span>1st Weight by : '.$row['gross_weight_by1'].'</span><br>
-                                                <span>2nd Weight by : '.$row['tare_weight_by1'].'</span>
-                                            </td>
-                                            <td style="vertical-align: top; font-size: 14px;">
-                                                <hr width="80%" style="margin-left: 0; text-align: left;">
-                                                <span>Acknowledge By <br> Administrator</span>
-                                            </td>
-                                            <td style="vertical-align: top; font-size: 14px;">
-                                                <hr width="80%" style="margin-left: 0; text-align: left;">
-                                                <span>Received By</span><br>
-                                                <span>Name: </span><br>
-                                                <span>I/C: </span>
-                                            </td>
-                                        <tr>
-                                    </table>
-                                    
-                                </body>
-                            </html>';
-                    }*/
                     
+                    $message = 
+                    '<html>
+                        <head>
+                            <style>
+                                @media print {
+                                    @page {
+                                        size: A5 landscape;
+                                        margin-left: 0.5in;
+                                        margin-right: 0.5in;
+                                        margin-top: 0.1in;
+                                        margin-bottom: 0.1in;
+                                    }
+                                    
+                                } 
+                                      
+                                table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    
+                                } 
+                                
+                                .table th, .table td {
+                                    padding: 0.70rem;
+                                    vertical-align: top;
+                                    border-top: 1px solid #dee2e6;
+                                    
+                                } 
+                                
+                                .table-bordered {
+                                    border: 1px solid #000000;
+                                    
+                                } 
+                                
+                                .table-bordered th, .table-bordered td {
+                                    border: 1px solid #000000;
+                                    font-family: sans-serif;
+                                    font-size: 12px;
+                                    
+                                } 
+
+                                .table-border {
+                                    border: 1px solid #000000;
+                                }
+                                
+                                .row {
+                                    display: flex;
+                                    flex-wrap: wrap;
+                                    margin-top: 20px;
+                                    margin-right: -15px;
+                                    margin-left: -15px;
+                                    
+                                } 
+                                
+                                .col-md-4{
+                                    position: relative;
+                                    width: 33.333333%;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <table style="width:100%;">
+                                <tr>
+                                    <td style="width: 60%;">
+                                        <p style="font-size: 14px;">
+                                            <span style="font-weight: bold;font-size: 16px; margin-bottom: 10px; display: inline-block;">'.$compname.'</span><br>
+                                            <span> Reg No.: '.$compreg.'</span><br>
+                                            <span>'.$compaddress.'</span><br>
+                                            <span>'.$compaddress2.'</span><br>
+                                            <span>'.$compaddress3.'</span><br>
+                                            <span>Tel/Fax: '.$compphone.' / '.$compiemail.'</span>
+                                        </p>
+                                    </td>
+                                    <td style="vertical-align: top;">
+                                        <p style="vertical-align: top; margin-left:30px; font-size: 14px;">
+                                            <span style="font-size: 24px; font-weight: bold; margin-bottom: 10px; display: inline-block;">'. $transacationStatus .' Slip</span><br>
+                                            <span>Ticket No &nbsp;:&nbsp; <b>'.$row['transaction_id'].'</b></span><br>
+                                            <span>Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 1.5px;">:&nbsp;&nbsp;'.$transactionDate.'</span><br>
+                                            <span>D/O No &nbsp;&nbsp;&nbsp;&nbsp;</span><span>:&nbsp;&nbsp;'.$row['delivery_no'].'</span><br>
+                                            <span>P/O No &nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left:2.5px">:&nbsp;&nbsp;'.$row['purchase_order'].'</span><br>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr style="visibility:hidden;">
+                                    <td style="height: 5px">Placeholder for empty space</td>
+                                </tr>
+                                <tr style="border-top: 1px solid black;">
+                                    <td style="vertical-align: top; width: 65%;">
+                                        <p style="margin-top: 5px; font-size: 14px;">
+                                            <span><b>'.$customer.'</b></span><br>
+                                            <span>'.$customerA.'</span><br>
+                                            <span>'.$customerA2.'</span><br>
+                                            <span>'.$customerA3.'</span><br>
+                                            <span>Tel/Fax: '.$customerP.' / '.$customerE.'</span><br>   
+                                        </p>
+                                    </td>
+                                    <td style="vertical-align: top;">
+                                        <p style="vertical-align: top; margin-top: 5px; margin-left:30px; font-size: 14px;">';
+                                            if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
+                                                $message .= '<span>Order Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="margin-left:2.5px">:</span>&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
+                                            }
+                                            else{
+                                                $message .= '<span>Supply Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="margin-left: 1.5px">:</span>&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
+                                            }
+
+                                        $message .='    
+                                            <br>
+                                            <span><b>Net Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 17.5px">:&nbsp; '.($finalWeight ? formatWeight($finalWeight).' kg' : '-').'</b></span><br>
+                                            <span">Variance &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 18.5px">:&nbsp; '.($weightDifference ? formatWeight($weightDifference).' kg' : '-').'</span><br>';
+
+                                            if ($row['weight_type'] == 'Normal'){
+                                                $message .= '<span>Product Code &nbsp;&nbsp;</span><span style="margin-left: 19px">:&nbsp; '.($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] : $row['raw_mat_code']) .'</span><br>';
+                                            }
+
+                                            if ($row['weight_type'] == 'Different Container'){
+                                                $message .= '<span>Pending Bin No. &nbsp;&nbsp;</span><span style="margin-left: 2px">:&nbsp; '. $row['replacement_container'] .'</span><br>';
+                                            }
+
+                                        $message .= '
+                                            <br>
+                                        </p>
+
+                                        <p style="vertical-align: top; margin-left:50px;"><br></p>
+                                    </td>
+                                </tr>
+                            </table>';
+
+                            if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
+                                $message .= '
+                                <table style="width:100%; border:0px solid black; margin-top:-40px; margin-bottom: 0px;">
+                                    <tr style="font-size: 14px;">
+                                        <th style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
+                                        <th style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
+                                    </tr>
+                                </table>';
+                            }else{
+                                $message .= '
+                                <table style="width:100%; border:0px solid black; margin-top:-20px; margin-bottom: 0px;">
+                                    <tr style="font-size: 14px;text-align: center;">
+                                        <th style="border:1px solid black;">Container No.1</th>
+                                        <th style="border:1px solid black;">Seal No.1</th>
+                                        <th style="border:1px solid black;">Container No.2</th>
+                                        <th style="border:1px solid black;">Seal No.2</th>
+                                    </tr>
+                                    <tr style="font-size: 14px;text-align: center;">
+                                        <td style="border:1px solid black;">'.(!empty($row["container_no"]) ? $row["container_no"] : '&nbsp;').'</td>
+                                        <td style="border:1px solid black;">'.$row["seal_no"].'</td>
+                                        <td style="border:1px solid black;">'.$row["container_no2"].'</td>
+                                        <td style="border:1px solid black;">'.$row["seal_no2"].'</td>    
+                                    </tr>
+                                </table>';
+                            }
+                            
+                            if($row['weight_type'] == 'Container' && $_POST['isEmptyContainer'] == 'N'){
+                                $message .= '<br>
+                                <table style="width:100%; border:0px solid black; margin-top: -10px;">
+                                    <tr style="text-align: center; font-size: 14px;">
+                                        <td style="border:1px solid black;"><b>Product : </b></td>
+                                        <td colspan="5" style="border:1px solid black;"><b>'.($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] . ' - ' .$row['product_name'] : $row['raw_mat_code'] . ' - ' .$row['raw_mat_name']).'</b></td>
+                                    </tr>
+                                    <tr style="font-size: 14px;text-align: center;">
+                                        <th style="border:1px solid black;">Incoming Date/Time</th>
+                                        <th style="border:1px solid black;">Outgoing Date/Time</th>
+                                        <th colspan="2" style="border:1px solid black;">Prime Mover No. & Weight (kg)</th>
+                                        <th style="border:1px solid black;">Tare (kg)</th>
+                                        <th style="border:1px solid black;">Nett (kg)</th>
+                                    </tr>
+                                    <tr style="font-size: 14px;text-align: center;">
+                                        <td style="border:1px solid black;">'.$grossWeightTime.'</td>
+                                        <td style="border:1px solid black;">'.$tareWeightTime.'</td>
+                                        <td style="border:1px solid black;">'.$row['lorry_plate_no1'].'</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['gross_weight1']).'</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['tare_weight1']).' kg</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['nett_weight1']).' kg</td>
+                                    </tr>
+                                    <tr style="font-size: 14px;text-align: center;">
+                                        <td style="border:1px solid black;">'.$grossWeightTime2.'</td>
+                                        <td style="border:1px solid black;">'.$tareWeightTime2.'</td>
+                                        <td style="border:1px solid black;">'.$row['lorry_plate_no2'].'</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['gross_weight2']).'</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['tare_weight2']).' kg</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['nett_weight2']).' kg</td>
+                                    </tr>
+                                    <tr style="font-size: 14px;text-align: center;">
+                                        <td colspan="4" style="text-align: left;"><b>Transporter &nbsp;:&nbsp;</b> <span style="margin-left: 10px">'.$row['transporter'].'</span></td>
+                                        <td style="border:1px solid black;">Final Weight</td>
+                                        <td style="border:1px solid black;">'.formatWeight(abs((int)$row['nett_weight1'] - (int)$row['nett_weight2'])).' kg</td>
+                                    </tr>
+                                    <tr style="font-size: 14px;text-align: center;">
+                                        <td colspan="4" style="text-align: left;"><b>Destination &nbsp&nbsp;:&nbsp;</b> <span style="margin-left: 10px">'.$row['destination'].'</span></td>
+                                        <td style="border:1px solid black;">Reduce Weight</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['reduce_weight']).' kg</td>
+                                    </tr>
+                                    <tr style="font-size: 14px;text-align: center;font-weight:bold;">
+                                        <td colspan="4" style="text-align: left;">Remarks &nbsp&nbsp&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
+                                        <td style="border:1px solid black;">Nett Weight</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['final_weight']).' kg</td>
+                                    </tr>
+                                </table>';
+                                /*if(){
+                                    $message .= '<tr>
+                                        <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row['lorry_plate_no2'].'</td>
+                                        <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row['product_name'].'</td>
+                                        <td style="border:1px solid black;font-size: 14px;text-align: center;">RM '.$price.'</td>
+                                        <td style="border:1px solid black;font-size: 14px;text-align: center;">'.$row['nett_weight2'].'</td>
+                                        <td style="border:1px solid black;font-size: 14px;text-align: center;">kg</td>
+                                        <td style="border:1px solid black;font-weight: bold;font-size: 14px;">RM '.number_format(((float)$price * (float)$row['nett_weight2']), 2, '.', '').'</td>
+                                    </tr>';
+                                }*/
+                            }
+                            else if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
+                                # Old design commented out incase need
+                                // $message .= '
+                                //     <table style="width:100%; border:0; border-bottom: 1px solid black; margin-top:5px; text-align: left; font-size: 14px;">
+                                //         <tr>
+                                //             <td>1st Vehicle No: &nbsp;&nbsp;:&nbsp;&nbsp; '.$row['lorry_plate_no1'].'</td>
+                                //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['gross_weight1_date'].'</td>
+                                //             <td>In Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['gross_weight1'].' kg</td>
+                                //         </tr>
+                                //         <tr>
+                                //             <td></td>
+                                //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['tare_weight2_date'].'</td>
+                                //             <td>Out Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['tare_weight2'].' kg</td>
+                                //         </tr>
+                                //         <tr>
+                                //             <td></td>
+                                //             <td></td>
+                                //             <td>Nett Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['nett_weight2'].' kg</td>
+                                //         </tr>
+                                //         <tr>
+                                //             <td>2nd Vehicle No: &nbsp;&nbsp;:&nbsp;&nbsp; '.$row['lorry_plate_no2'].'</td>
+                                //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['gross_weight2_date'].'</td>
+                                //             <td>In Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['empty_container2_weight'].' kg</td>
+                                //         </tr>
+                                //         <tr>
+                                //             <td></td>
+                                //             <td>Deduct Prime Vehicle No</td>
+                                //             <td>Prime FFR 324&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['lorry_no2_weight'].' kg</td>
+                                //         </tr>
+                                //         <tr>
+                                //             <td></td>
+                                //             <td></td>
+                                //             <td>Entry Bin Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['nett_weight1'].' kg</td>
+                                //         </tr>
+                                //         <tr>
+                                //             <td></td>
+                                //             <td>Date/Time&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['tare_weight1_date'].'</td>
+                                //             <td>Out Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].' kg</td>
+                                //         </tr>
+                                //         <tr>
+                                //             <td></td>
+                                //             <td>Bin of No.&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['container_no'].'</td>
+                                //             <td>Total Nett Weight&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['final_weight'].' kg</td>
+                                //         </tr>
+                                //     </table>
+                                //     <div style="margin-top: 5px; font-size: 14px;">
+                                //         <span>Transporter&nbsp;&nbsp;:&nbsp;&nbsp;</span><br>
+                                //         <span>Remarks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</span>
+                                //     </div>
+                                // ';
+
+                                $message .= '
+                                    <table style="width:100%; border: 1px solid black; margin-top:5px; text-align: left; font-size: 14px;">
+                                        <tr style="text-align: center; border: 1px solid black;">
+                                            <th class="table-border">Bin</th>
+                                            <th class="table-border">Date/Time</th>
+                                            <th class="table-border">Vehicle</th>
+                                            <th class="table-border">Gross Weight</th>
+                                            <th class="table-border" colspan="2">Tare Weight</th>
+                                            <th class="table-border">Nett Weight</th>
+                                        </tr>
+                                        <tr style="text-align: center;">
+                                            <th colspan="4"></th>
+                                            <th class="table-border">Vehicle</th>
+                                            <th class="table-border">Bin</th>
+                                        </tr>
+                                        <tr style="text-align: center;">
+                                            <td class="table-border">'.$row['container_no'].'</td>
+                                            <td class="table-border">
+                                                Date In: '.$row['gross_weight1_date'].'<br>
+                                                Date Out: '.$row['tare_weight2_date'].'
+                                            </td>
+                                            <td class="table-border">
+                                                In: '.$row['lorry_plate_no1'].'<br>
+                                                Out: '.$row['lorry_plate_no2'].'
+                                            </td>
+                                            <td class="table-border">
+                                                '.$row['gross_weight1'].' kg<br>
+                                                '.$row['tare_weight2'].' kg
+                                            </td>
+                                            <td class="table-border">
+                                                '.$row['tare_weight1'].' kg<br>
+                                                '.$row['lorry_no2_weight'].' kg
+                                            </td>
+                                            <td class="table-border">
+                                                -<br>
+                                                '.$row['nett_weight1'].' kg
+                                            </td>
+                                            <td class="table-border">
+                                                -<br>
+                                                '.$row['nett_weight2'].' kg
+                                            </td>
+                                        </tr>
+                                        <tr style="text-align: center;">
+                                            <td class="table-border">'.$row['replacement_container'].'</td>
+                                            <td class="table-border">
+                                                Date In: '.$row['gross_weight2_date'].'
+                                            </td>
+                                            <td class="table-border">
+                                                In: '.$row['lorry_plate_no2'].'
+                                            </td>
+                                            <td class="table-border">
+                                                '.$row['gross_weight2'].' kg
+                                            </td>
+                                            <td class="table-border">
+                                                '.$row['lorry_no2_weight'].' kg
+                                            </td>
+                                            <td class="table-border">
+                                                '.$row['empty_container2_weight'].' kg
+                                            </td>
+                                            <td class="table-border">
+                                                -
+                                            </td>
+                                        </tr>
+                                        <tr style="text-align: center;">
+                                            <td class="table-border" colspan="6" style="text-align: right; padding-right: 20px;">
+                                                Final Weight
+                                            </td>
+                                            <td class="table-border">
+                                                '.$row['final_weight'].' kg
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div style="margin-top: 5px; font-size: 14px;">
+                                        <span>Transporter&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['transporter'].'</span><br>
+                                        <span>Remarks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'.$row['remarks'].'</span>
+                                    </div>
+                                ';
+                                
+                            }
+                            else{
+                                $message .= '<br>
+                                <table style="width:100%; border:0px solid black; margin-top: -10px;">
+                                    <tr>
+                                        <th style="border:1px solid black;font-size: 18px;text-align: center;">Vehicle No</th>
+                                        <th colspan="2" style="border:1px solid black;font-size: 18px;text-align: center;">Product Description</th>
+                                        <th style="border:1px solid black;font-size: 18px;text-align: center;">Date/Time</th>
+                                        <th colspan="2" style="border:1px solid black;font-size: 18px;text-align: center;">Weight (kg)</th>
+                                    </tr>
+                                    <tr style="font-size: 16px;text-align: center;">
+                                        <td style="border:1px solid black;">'.$row['lorry_plate_no1'].'</td>';
+
+                                        if ($row['transaction_status'] == 'Purchase' || $row['transaction_status'] == 'Local'){
+                                            $message .= '<td colspan="2" style="border:1px solid black;">'.$row['raw_mat_name'].'</td>';
+                                        }else{
+                                            $message .= '<td colspan="2" style="border:1px solid black;">'.$row['product_name'].'</td>';
+                                        }
+
+                                    $message .= '    
+                                        <td style="border:1px solid black;">'.$grossWeightTime.'</td>
+                                        <td style="border:1px solid black; font-weight: bold;">In</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['gross_weight1']).' kg</td>
+                                    </tr>
+                                    <tr style="font-size: 16px;text-align: center;">
+                                        <td colspan="3" style="text-align:left">Transporter &nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['transporter'].'</span></td>
+                                        <td style="border:1px solid black;">'.$tareWeightTime.'</td>
+                                        <td style="border:1px solid black; font-weight: bold;">Out</td>
+                                        <td style="border:1px solid black;">'.formatWeight($row['tare_weight1']).' kg</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">Destination &nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['destination'].'</span></td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">Reduce</td>
+                                        <td style="border:1px solid black;font-size: 16px;text-align: center;">'.formatWeight($row['reduce_weight']).' kg</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">Remarks &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp; <span style="margin-left: 10px">'.$row['remarks'].'</span></td>
+                                        <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">Nett</td>
+                                        <td style="border:1px solid black;font-size: 16px;font-weight:bold;text-align: center;">'.formatWeight($row['final_weight']).' kg</td>
+                                    </tr>
+                                </table><br>';
+                            }
+                            
+                            $message .= '<table style="margin-top:50px">
+                                <!--<tr style="visibility: hidden; border:0px;">
+                                    <th width="24%">Vehicle No</th>
+                                    <th width="23%">Product</th>
+                                    <th width="23%">Time</th>
+                                    <th colspan="2" width="30%">Weight (kg)</th>
+                                </tr>-->
+                                <tr>
+                                    <td style="vertical-align: top; font-size: 14px;">
+                                        <hr width="80%" style="margin-left: 0; text-align: left;">
+                                        <span>1st Weight by : '.$row['gross_weight_by1'].'</span><br>
+                                        <span>2nd Weight by : '.$row['tare_weight_by1'].'</span>
+                                    </td>
+                                    <td style="vertical-align: top; font-size: 14px;">
+                                        <hr width="80%" style="margin-left: 0; text-align: left;">
+                                        <span>Acknowledge By <br> Administrator</span>
+                                    </td>
+                                    <td style="vertical-align: top; font-size: 14px;">
+                                        <hr width="80%" style="margin-left: 0; text-align: left;">
+                                        <span>Received By</span><br>
+                                        <span>Name: </span><br>
+                                        <span>I/C: </span>
+                                    </td>
+                                <tr>
+                            </table>
+                            
+                        </body>
+                    </html>';
 
                     echo json_encode(
                         array(
@@ -893,6 +618,8 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                         )
                     );
                 }
+                
+                
             }
         }
         else{
