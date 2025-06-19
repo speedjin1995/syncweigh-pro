@@ -321,7 +321,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
 
                             if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
                                 $message .= '
-                                <table style="width:100%; border:0px solid black; margin-top:-40px; margin-bottom: 0px;">
+                                <table style="width:100%; border:0px solid black; margin-top:-20px; margin-bottom: 0px;">
                                     <tr style="font-size: 14px;">
                                         <th style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
                                         <th style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
