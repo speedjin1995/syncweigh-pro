@@ -200,8 +200,8 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                 @media print {
                                     @page {
                                         size: A5 landscape;
-                                        margin-left: 0.5in;
-                                        margin-right: 0.5in;
+                                        margin-left: 0.1in;
+                                        margin-right: 0.1in;
                                         margin-top: 0.1in;
                                         margin-bottom: 0.1in;
                                     }
@@ -311,7 +311,6 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                             }
 
                                         $message .= '
-                                            <br>
                                         </p>
 
                                         <p style="vertical-align: top; margin-left:50px;"><br></p>
@@ -329,7 +328,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                 </table>';
                             }else{
                                 $message .= '
-                                <table style="width:100%; border:0px solid black; margin-top:-15px; margin-bottom: 0px;">
+                                <table style="width:100%; border:0px solid black; margin-bottom: 0px;">
                                     <tr style="font-size: 14px;text-align: center;">
                                         <th style="border:1px solid black;">Container No.1</th>
                                         <th style="border:1px solid black;">Seal No.1</th>
