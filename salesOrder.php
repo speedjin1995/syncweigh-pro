@@ -5,22 +5,22 @@
 require_once "php/db_connect.php";
 // $plantId = $_SESSION['plant'];
 
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
 $company = $db->query("SELECT * FROM Company");
 $company2 = $db->query("SELECT * FROM Company");
-$site = $db->query("SELECT * FROM Site WHERE status = '0'");
-$site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
-$agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
+$site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$site2 = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 ?>
@@ -666,6 +666,12 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
         $('#deliveryDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        // Initialize all Select2 elements in the search bar
+        $('#collapseSearch .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
         });
 
         // Initialize all Select2 elements in the modal
