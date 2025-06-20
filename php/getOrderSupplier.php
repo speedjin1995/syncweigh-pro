@@ -248,6 +248,7 @@ if(isset($_POST['type'])){
                         $converted_order_supplier_weight = $row['converted_order_qty'];
                         $converted_order_supplier_unit = searchUnitById($row['converted_unit'], $db);
                         $converted_order_supplier_unitId = $row['converted_unit'];
+                        $remarks = $row['remarks'];
                     }
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -277,6 +278,7 @@ if(isset($_POST['type'])){
                     $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
                     $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
                     $message['converted_order_supplier_unitId'] = $converted_order_supplier_unitId;
+                    $message['remarks'] = $remarks;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     
@@ -319,6 +321,7 @@ if(isset($_POST['type'])){
                         $converted_order_supplier_weight = $row['converted_order_qty'];
                         $converted_order_supplier_unit = searchUnitById($row['converted_unit'], $db);
                         $converted_order_supplier_unitId = $row['converted_unit'];
+                        $remarks = $row['remarks'];
                     }  
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -348,6 +351,7 @@ if(isset($_POST['type'])){
                     $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
                     $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
                     $message['converted_order_supplier_unitId'] = $converted_order_supplier_unitId;
+                    $message['remarks'] = $remarks;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     
