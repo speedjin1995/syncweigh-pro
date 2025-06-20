@@ -569,7 +569,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                     <th>Company Name</th> -->
                                                                     <th>Customer Code</th>
                                                                     <th>Customer Name</th>
-                                                                    <th>Plant Code</th>
+                                                                    <!-- <th>Plant Code</th> -->
                                                                     <th>Plant Name</th>
                                                                     <th>Product Code</th>
                                                                     <th>Product Name</th>
@@ -577,6 +577,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                     <th>S/O No.</th>
                                                                     <th>Order Date</th>
                                                                     <th>EXQ/DEL</th>
+                                                                    <th>Order Quantity</th>
                                                                     <th>Balance</th>
                                                                     <th>Status</th>
                                                                     <th>Modified Date</th>
@@ -735,7 +736,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                     class: 'customer_column' 
                 },
                 { data: 'customer_name' },
-                { data: 'plant_code' },
+                // { data: 'plant_code' },
                 { data: 'plant_name' },
                 { data: 'product_code' },
                 { data: 'product_name' },
@@ -743,6 +744,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 { data: 'so_no' },
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
+                { data: 'order_quantity' },
                 { data: 'balance' },
                 { data: 'status' },
                 { data: 'modified_date' },
@@ -836,7 +838,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                         class: 'customer_column' 
                     },
                     { data: 'customer_name' },
-                    { data: 'plant_code' },
+                    // { data: 'plant_code' },
                     { data: 'plant_name' },
                     { data: 'product_code' },
                     { data: 'product_name' },
@@ -844,6 +846,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                     { data: 'so_no' },
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
+                    { data: 'order_quantity' },
                     { data: 'balance' },
                     { data: 'status' },
                     { data: 'modified_date' },

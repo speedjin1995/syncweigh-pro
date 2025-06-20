@@ -105,6 +105,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "po_no"=>$row['po_no'],
     "order_date" => !empty($row["order_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["order_date"])->format('d-m-Y') : '',
     "exquarry_or_delivered"=>$row['exquarry_or_delivered'],
+    "order_quantity"=>$row['order_quantity'],
     "balance"=>$row['balance'],
     "status"=>$row['status'],
     "modified_date" => !empty($row["modified_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y') : ''

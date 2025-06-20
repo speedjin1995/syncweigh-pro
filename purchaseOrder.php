@@ -568,7 +568,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <th>Company Name</th> -->
                                                                     <th>Supplier Code</th>
                                                                     <th>Supplier Name</th>
-                                                                    <th>Plant Code</th>
+                                                                    <!-- <th>Plant Code</th> -->
                                                                     <th>Plant Name</th>
                                                                     <th>Raw Material Code</th>
                                                                     <th>Raw Material Name</th>
@@ -576,6 +576,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <th>P/O No.</th>
                                                                     <th>Order Date</th>
                                                                     <th>EXQ/DEL</th>
+                                                                    <th>Supplier Quantity</th>
                                                                     <th>Balance</th>
                                                                     <th>Status</th>
                                                                     <th>Modified Date</th>
@@ -734,7 +735,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     class: 'supplier_column'
                 },
                 { data: 'supplier_name' },
-                { data: 'plant_code' },
+                // { data: 'plant_code' },
                 { data: 'plant_name' },
                 { data: 'raw_mat_code' },
                 { data: 'raw_mat_name' },
@@ -742,6 +743,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 { data: 'po_no' },
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
+                { data: 'order_quantity' },
                 { data: 'balance' },
                 { data: 'status' },
                 { data: 'modified_date' },
@@ -835,7 +837,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                         class: 'supplier_column'
                     },
                     { data: 'supplier_name' },
-                    { data: 'plant_code' },
+                    // { data: 'plant_code' },
                     { data: 'plant_name' },
                     { data: 'raw_mat_code' },
                     { data: 'raw_mat_name' },
@@ -843,6 +845,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     { data: 'po_no' },
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
+                    { data: 'order_quantity' },
                     { data: 'balance' },
                     { data: 'status' },
                     { data: 'modified_date' },
