@@ -39,9 +39,7 @@
                 <li class="nav-item">
                     <a href="index.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
                 </li>                
-                <li class="nav-item">
-                    <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i></i><?=$lang['t-bitumen']?></a>
-                </li>         
+                
                 <!-- <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                         aria-expanded="true" aria-controls="sidebarDashboards">
@@ -80,8 +78,22 @@
 
                 <?php
                     if($_SESSION["roles"] == 'MANAGER' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
-                        echo '<li class="nav-item">
-                            <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i></i>'.$lang['t-inventory'].'</a>
+                        echo '
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarStock" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarStock">
+                                <i class="ri-pages-line"></i> <span>'.$lang['t-stock'].'</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarStock">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i></i>'.$lang['t-bitumen'].'</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i></i>'.$lang['t-inventory'].'</a>
+                                    </li>              
+                                </ul>
+                            </div>
                         </li> 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
