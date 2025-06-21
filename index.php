@@ -791,7 +791,7 @@ else{
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3" id="sstDisplay">
                                                                                 <div class="row">
-                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (6%)</label>
+                                                                                    <label for="sstPrice" class="col-sm-4 col-form-label">SST (8%)</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
                                                                                             <input type="number" class="form-control input-readonly" id="sstPrice" name="sstPrice" placeholder="0" readonly>
@@ -3298,7 +3298,8 @@ else{
         });
 
         $('#currentWeight').on('change', function(){
-            var price = $('#productPrice').val() ? parseFloat($('#productPrice').val()).toFixed(2) : 0.00;
+            // var price = $('#productPrice').val() ? parseFloat($('#productPrice').val()).toFixed(2) : 0.00;
+            var price = $('#unitPrice').val() ? parseFloat($('#unitPrice').val()).toFixed(2) : 0.00;
             var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
             var subTotalPrice = price * weight;
             var sstPrice = subTotalPrice * 0.08;
@@ -3527,7 +3528,7 @@ else{
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
                             $('#addModal').find('#balance').val(balance);
                             $('#addModal').find('#otherRemarks').val(remarks);
-                            $('#addModal').find('#unitPrice').val(unitPrice);
+                            $('#addModal').find('#unitPrice').val(unitPrice).trigger('change');
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
                         }
@@ -3551,6 +3552,18 @@ else{
                 //     getSoPo();
                 // }
             }
+        });
+
+        $('#unitPrice').on('change', function() {
+            var unitPrice = $(this).val() ? parseFloat($(this).val()).toFixed(2) : 0.00;
+            var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
+            var subTotalPrice = unitPrice * weight;
+            var sstPrice = subTotalPrice * 0.08;
+            var totalPrice = subTotalPrice + sstPrice;
+
+            $('#subTotalPrice').val(subTotalPrice.toFixed(2));
+            $('#sstPrice').val(sstPrice.toFixed(2));
+            $('#totalPrice').val(totalPrice.toFixed(2));
         });
 
         //supplierName
@@ -4400,7 +4413,7 @@ else{
                 $('#addModal').find('#weighbridge').val(obj.message.weighbridge_id);
                 $('#addModal').find('#indicatorId2').val(obj.message.indicator_id_2);
                 $('#addModal').find('#productDescription').val(obj.message.product_description);
-                $('#addModal').find('#unitPrice').val(obj.message.unit_price);
+                $('#addModal').find('#unitPrice').val(obj.message.unit_price).trigger('change');
                 $('#addModal').find('#subTotalPrice').val(obj.message.sub_total);
                 $('#addModal').find('#sstPrice').val(obj.message.sst);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
