@@ -755,7 +755,7 @@ else{
                                                                                     <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" readonly>
+                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" required>
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
@@ -2534,7 +2534,7 @@ else{
             //$('#addModal').find('#indicatorId').val("");
             $('#addModal').find('#weighbridge').val("");
             //$('#addModal').find('#indicatorId2').val("");
-            $('#addModal').find('#unitPrice').val("0.00");
+            $('#addModal').find('#unitPrice').val("");
             $('#addModal').find('#subTotalPrice').val("0.00");
             $('#addModal').find('#sstPrice').val("0.00");
             $('#addModal').find('#productPrice').val("0.00");
@@ -3459,7 +3459,7 @@ else{
             var sstPrice = subTotalPrice * 0.08;
             var totalPrice = subTotalPrice + sstPrice;
 
-            $('#unitPrice').val(price);
+            // $('#unitPrice').val(price);
             $('#subTotalPrice').val(subTotalPrice.toFixed(2));
             $('#sstPrice').val(sstPrice.toFixed(2));
             $('#totalPrice').val(totalPrice.toFixed(2));
@@ -3488,6 +3488,7 @@ else{
                             var orderSupplierWeight = obj.message.order_supplier_weight;
                             var balance = obj.message.balance; 
                             var remarks = obj.message.remarks; 
+                            var unitPrice = obj.message.unit_price; 
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3526,6 +3527,7 @@ else{
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
                             $('#addModal').find('#balance').val(balance);
                             $('#addModal').find('#otherRemarks').val(remarks);
+                            $('#addModal').find('#unitPrice').val(unitPrice);
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
                         }
