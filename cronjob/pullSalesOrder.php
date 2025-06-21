@@ -1,5 +1,5 @@
 <?php
-require_once 'requires/lookup.php';
+require_once __DIR__ . '/../php/requires/lookup.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 ini_set('memory_limit', '512M');
 set_time_limit(300);
@@ -34,7 +34,7 @@ curl_close($curl);
 $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
-    require_once 'db_connect.php';
+    require_once __DIR__ . '/../php/db_connect.php';
     $services = 'PullSO';
     $requests = json_encode($data);
 
@@ -86,7 +86,7 @@ if (!empty($data['data'])) {
             $ProductName = searchProductNameByCode($ProductCode, $db);
         }
         $VehNumber = (isset($rows['ITEMDESC2']) && !empty($rows['ITEMDESC2']) && $rows['ITEMDESC2'] !== '' && $rows['ITEMDESC2'] !== null) ? trim($rows['ITEMDESC2']) : '';
-        $Remarks = !empty($rows['DOCREF4']) ? trim($rows['DOCREF4']) : '';
+        $Remarks = !empty($rows['REMARKS']) ? trim($rows['REMARKS']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
         $DestinationCode = '';
         if(!empty($DestinationName)){
@@ -370,7 +370,7 @@ if (!empty($data['data'])) {
     }
 } 
 else {
-    require_once 'db_connect.php';
+    require_once __DIR__ . '/../php/db_connect.php';
     $services = 'PullPO';
     $requests = json_encode($data);
 

@@ -36,6 +36,13 @@ $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
     require_once 'db_connect.php';
+    $services = 'PullPO';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
 
     # Company Details
     $CompanyCode = '';
@@ -333,28 +340,55 @@ if (!empty($data['data'])) {
         }
     }
 
-    $db->close();
-
     if (!empty($errorSoProductArray)){
-        echo json_encode(
+        $response = json_encode(
             array(
                 "status"=> "error", 
                 "message"=> $errorSoProductArray 
             )
         );
-    }else{
-        echo json_encode(
+        $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+        $stmtU->bind_param('ss', $response, $invid);
+        $stmtU->execute();
+
+        $db->close();
+        echo $response;
+    }
+    else{
+        $response = json_encode(
             array(
-                "status"=> "success", 
-                "message"=> "Added Successfully!!"
+                "status" => "success",
+                "message" => "Data synced successfully!"
             )
         );
+        $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+        $stmtU->bind_param('ss', $response, $invid);
+        $stmtU->execute();
+
+        $db->close();
+        echo $response;
     }
 } 
 else {
-    echo json_encode([
-        "status" => "failed",
-        "message" => "Invalid data received from API"
-    ]);
+    require_once 'db_connect.php';
+    $services = 'PullPO';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
+    $response = json_encode(
+        array(
+            "status" => "failed",
+            "message" => "Invalid data received from API"
+        )
+    );
+    $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+    $stmtU->bind_param('ss', $response, $invid);
+    $stmtU->execute();
+
+    $db->close();
+    echo $response;
 }
 ?>

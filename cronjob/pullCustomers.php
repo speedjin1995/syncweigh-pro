@@ -1,12 +1,12 @@
 <?php
-require_once 'requires/lookup.php';
+require_once __DIR__ . '/../php/requires/lookup.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 ini_set('memory_limit', '512M');
 set_time_limit(300);
 session_start();
 $uid = $_SESSION['username'];
 
-$url = "https://sturgeon-still-falcon.ngrok-free.app/shippers";
+$url = "https://sturgeon-still-falcon.ngrok-free.app/customers";
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -30,8 +30,8 @@ curl_close($curl);
 $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
-    require_once 'db_connect.php';
-    $services = 'PullTransporter';
+    require_once __DIR__ . '/../php/db_connect.php';
+    $services = 'PullCustomer';
     $requests = json_encode($data);
 
     $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
@@ -42,11 +42,15 @@ if (!empty($data['data'])) {
     
     foreach ($agents as $agent) {
         $code = $db->real_escape_string($agent['CODE']);
-        $desc = $db->real_escape_string($agent['DESCRIPTION']);
-        $active = ($agent['ISACTIVE'] === "True") ? 1 : 0;
+        $name = $db->real_escape_string($agent['COMPANYNAME']);
+        $addr1 = $db->real_escape_string($agent['ADDRESS1']);
+        $addr2 = $db->real_escape_string($agent['ADDRESS2']);
+        $addr3 = $db->real_escape_string($agent['ADDRESS3']);
+        $addr4 = $db->real_escape_string($agent['ADDRESS4']);
+        $active = ($agent['STATUS'] === "A") ? 1 : 0;
 
         // Check if the agent already exists
-        $checkQuery = "SELECT COUNT(*) AS count FROM Transporter WHERE transporter_code = ?";
+        $checkQuery = "SELECT COUNT(*) AS count FROM Customer WHERE customer_code = ?";
         $stmt = $db->prepare($checkQuery);
         $stmt->bind_param("s", $code);
         $stmt->execute();
@@ -55,16 +59,16 @@ if (!empty($data['data'])) {
 
         if ($result['count'] > 0) {
             // Update if exists
-            $updateQuery = "UPDATE Transporter SET name = ?, modified_by = ? WHERE transporter_code = ?";
+            $updateQuery = "UPDATE Customer SET name = ?, address_line_1 = ?, address_line_2 = ?, address_line_3 = ?, address_line_4 = ?, modified_by = ? WHERE customer_code = ?";
             $updateStmt = $db->prepare($updateQuery);
-            $updateStmt->bind_param("sss", $desc, $uid, $code);
+            $updateStmt->bind_param("sssssss", $name, $addr1, $addr2, $addr3, $addr4, $uid, $code);
             $updateStmt->execute();
             $updateStmt->close();
         } else {
             // Insert if not exists
-            $insertQuery = "INSERT INTO Transporter (transporter_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)";
+            $insertQuery = "INSERT INTO Customer (customer_code, name, address_line_1, address_line_2, address_line_3, address_line_4, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $insertStmt = $db->prepare($insertQuery);
-            $insertStmt->bind_param("ssss", $code, $desc, $uid, $uid);
+            $insertStmt->bind_param("ssssssss", $code, $name, $addr1, $addr2, $addr3, $addr4, $uid, $uid);
             $insertStmt->execute();
             $insertStmt->close();
         }
@@ -86,8 +90,8 @@ if (!empty($data['data'])) {
     echo $response;
 } 
 else {
-    require_once 'db_connect.php';
-    $services = 'PullTransporter';
+    require_once __DIR__ . '/../php/db_connect.php';
+    $services = 'PullCustomer';
     $requests = json_encode($data);
 
     $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");

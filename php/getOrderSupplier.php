@@ -218,8 +218,10 @@ if(isset($_POST['type'])){
         $count = 1;
     
         if ($type == 'Purchase'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND status='Open' AND deleted='0'")) {
-                $update_stmt->bind_param('sss', $code, $material, $plant);
+            //if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND status='Open' AND deleted='0'")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND status='Open' AND deleted='0'")) {
+                //$update_stmt->bind_param('sss', $code, $material, $plant);
+                $update_stmt->bind_param('ss', $code, $material);
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
@@ -291,8 +293,10 @@ if(isset($_POST['type'])){
                 }
             }
         }else{
-            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=?  AND status='Open' AND deleted='0'")) {
-                $update_stmt->bind_param('sss', $code, $material, $plant);
+            //if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=?  AND status='Open' AND deleted='0'")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND status='Open' AND deleted='0'")) {
+                //$update_stmt->bind_param('sss', $code, $material, $plant);
+                $update_stmt->bind_param('ss', $code, $material);
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
