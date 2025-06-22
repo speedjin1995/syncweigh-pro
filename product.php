@@ -3,9 +3,10 @@
 
 <?php
     require_once "php/db_connect.php";
-    $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+    $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
     $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
     $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
 ?>
 
 <head>
@@ -275,11 +276,13 @@
                                                                                 <table class="table table-primary">
                                                                                     <thead>
                                                                                         <tr>
-                                                                                            <th width="10%">No</th>
-                                                                                            <th>Raw Material</th>
-                                                                                            <th width="30%">Basic UOM</th>
+                                                                                            <th width="7%">No</th>
+                                                                                            <th width="17%">Raw Material</th>
+                                                                                            <th width="20%">Basic UOM</th>
                                                                                             <th>Weight (KG)</th>
-                                                                                            <th>Action</th>
+                                                                                            <th width="15%">Plant</th>
+                                                                                            <th width="15%">By-Batch/By-Drum</th>
+                                                                                            <th width="5%">Action</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody id="rawMaterialTable"></tbody>
@@ -440,13 +443,13 @@
         <tr class="details">
             <td>
                 <input type="text" class="form-control" id="no" name="no" readonly>
-                <input type="text" class="form-control" id="productRawMatId" name="productRawMatId" hidden>
+                <input type="text" class="form-control" id="productRawMatCode" name="productRawMatCode" hidden>
                 <input type="text" class="form-control" id="rawMatBasicUomUnitId" name="rawMatBasicUomUnitId" hidden>
             </td>
             <td>
                 <select class="form-control select2" style="width: 100%; background-color:white;" id="rawMats" name="rawMats">
                     <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                        <option value="<?=$rowRawMat['raw_mat_code'] ?>" data-name="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>"><?=$rowRawMat['raw_mat_code'] . ' - ' . $rowRawMat['name']?></option>
+                        <option value="<?=$rowRawMat['id'] ?>" data-name="<?=$rowRawMat['name'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>"><?=$rowRawMat['name']?></option>
                     <?php } ?>
                 </select>
             </td>
@@ -460,6 +463,19 @@
             </td>
             <td>
                 <input type="number" class="form-control input-readonly" id="rawMatWeight" name="rawMatWeight" style="background-color:white;" value="0" readonly>
+            </td>
+            <td>
+                <select class="form-control select2" style="width: 100%; background-color:white;" id="plant" name="plant">
+                    <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
+                        <option value="<?=$rowPlant['id'] ?>" data-name="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>"><?=$rowPlant['name']?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <select class="form-control select2" style="width: 100%; background-color:white;" id="batchDrum" name="batchDrum">
+                    <option value="Batch">By-Batch</option>
+                    <option value="Drum">By-Drum</option>
+                </select>
             </td>
             <td class="d-flex" style="text-align:center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -759,7 +775,7 @@ $(function () {
         // Retrieve the input's attributes
         const rawMatBasicUomThis = $(this);
         var basicUom = $(this).val();
-        var rawMatId = $(this).closest('.details').find('select[id^="rawMats"]').find(":selected").data('id');
+        var rawMatId = $(this).closest('.details').find('select[id^="rawMats"]').val();
         var basicUomUnitId = rawMatBasicUomThis.closest('.details').find('input[id^="rawMatBasicUomUnitId"]').val();
 
         if (rawMatId){
@@ -798,8 +814,9 @@ $(function () {
     // Event delegation to calculate product percentage from order weight
     $("#rawMaterialTable").on('change', 'select[id^="rawMats"]', function(){
         // Retrieve the input's attributes
-        var rawMatCode = $(this).val();
+        var rawMatCode = $(this).closest('.details').find('select[id^="rawMats"]').find(":selected").data('code');
         const rawMatThis = $(this);
+        rawMatThis.closest('.details').find('input[id^="productRawMatCode"]').val(rawMatCode);
 
         if (rawMatCode){
             $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, type: 'PO', action: 'getBasicUOM'}, function(data)
@@ -837,7 +854,7 @@ $(function () {
         $("#rawMaterialTable").find('#remove:last').attr("id", "remove" + rowCount);
 
         $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowNoCount);
-        $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount);
+        $("#rawMaterialTable").find('#productRawMatCode:last').attr('name', 'productRawMatCode['+rowCount+']').attr("id", "productRawMatCode" + rowCount);
         $("#rawMaterialTable").find('#rawMatBasicUomUnitId:last').attr('name', 'rawMatBasicUomUnitId['+rowCount+']').attr("id", "rawMatBasicUomUnitId" + rowCount);
         $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).select2({
             allowClear: true,
@@ -847,6 +864,16 @@ $(function () {
         $("#rawMaterialTable").find('#rawMatBasicUom:last').attr('name', 'rawMatBasicUom['+rowCount+']').attr("id", "rawMatBasicUom" + rowCount);
         $("#rawMaterialTable").find('#rawMatBasicUnit:last').attr('name', 'rawMatBasicUnit['+rowCount+']').attr("id", "rawMatBasicUnit" + rowCount);
         $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount);
+        $("#rawMaterialTable").find('#plant:last').attr('name', 'plant['+rowCount+']').attr("id", "plant" + rowCount).select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
+        });
+        $("#rawMaterialTable").find('#batchDrum:last').attr('name', 'batchDrum['+rowCount+']').attr("id", "batchDrum" + rowCount).select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
+        });
 
         rowCount++;
         rowNoCount++;
@@ -1004,14 +1031,25 @@ function edit(id){
                     $("#rawMaterialTable").find('#remove:last').attr("id", "remove" + rowCount);
 
                     $("#rawMaterialTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(item.no);
-                    $("#rawMaterialTable").find('#productRawMatId:last').attr('name', 'productRawMatId['+rowCount+']').attr("id", "productRawMatId" + rowCount).val(item.id);
-                    $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).val(item.raw_mat_code).select2({
+                    $("#rawMaterialTable").find('#productRawMatCode:last').attr('name', 'productRawMatCode['+rowCount+']').attr("id", "productRawMatCode" + rowCount).val(item.raw_mat_code);
+                    $("#rawMaterialTable").find('#rawMatBasicUomUnitId:last').attr('name', 'rawMatBasicUomUnitId['+rowCount+']').attr("id", "rawMatBasicUomUnitId" + rowCount).val(item.basic_uom_unit_id);
+                    $("#rawMaterialTable").find('#rawMats:last').attr('name', 'rawMats['+rowCount+']').attr("id", "rawMats" + rowCount).val(item.raw_mat_id).select2({
                         allowClear: true,
                         placeholder: "Please Select",
                         dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
                     });
                     $("#rawMaterialTable").find('#rawMatBasicUom:last').attr('name', 'rawMatBasicUom['+rowCount+']').attr("id", "rawMatBasicUom" + rowCount).val(item.raw_mat_basic_uom);
                     $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount).val(item.raw_mat_weight);
+                    $("#rawMaterialTable").find('#plant:last').attr('name', 'plant['+rowCount+']').attr("id", "plant" + rowCount).val(item.plant_id).select2({
+                        allowClear: true,
+                        placeholder: "Please Select",
+                        dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
+                    });
+                    $("#rawMaterialTable").find('#batchDrum:last').attr('name', 'batchDrum['+rowCount+']').attr("id", "batchDrum" + rowCount).val(item.batch_drum).select2({
+                        allowClear: true,
+                        placeholder: "Please Select",
+                        dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
+                    });
 
                     // Apply custom styling to Select2 elements in addModal
                     $('#rawMaterialTable .select2-container .select2-selection--single').css({

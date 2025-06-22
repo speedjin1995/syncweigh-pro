@@ -25,12 +25,6 @@ if (isset($_POST['productCode'])) {
         $productCode = trim($_POST["productCode"]);
     }
 
-    if (empty($_POST["description"])) {
-        $description = null;
-    } else {
-        $description = trim($_POST["description"]);
-    }
-
     if (empty($_POST["productName"])) {
         $productName = null;
     } else {
@@ -41,6 +35,12 @@ if (isset($_POST['productCode'])) {
         $productPrice = '0.00';
     } else {
         $productPrice = trim($_POST["productPrice"]);
+    }
+
+    if (empty($_POST["description"])) {
+        $description = null;
+    } else {
+        $description = trim($_POST["description"]);
     }
 
     if (empty($_POST["varianceType"])) {
@@ -65,7 +65,7 @@ if (isset($_POST['productCode'])) {
         $basicUom = null;
     } else {
         $basicUom = trim($_POST["basicUom"]);
-    }
+    } 
 
     if(! empty($productId))
     {
@@ -88,10 +88,15 @@ if (isset($_POST['productCode'])) {
                 # Product_RawMat 
                 if (isset($_POST['no'])){
                     $no = $_POST['no'];
-                    $productRawMatId = $_POST['productRawMatId'];
+                    $productRawMatCode = $_POST['productRawMatCode'];
                     $rawMats =  $_POST['rawMats'];
                     $rawMatBasicUom = $_POST['rawMatBasicUom'];
+                    $rawMatBasicUomUnitId = $_POST['rawMatBasicUomUnitId'];
                     $rawMatWeight = $_POST['rawMatWeight'];
+                    $plant = $_POST['plant'];
+                    $plantCode = $_POST['plantCode'];
+                    $plantName = $_POST['plantName'];
+                    $batchDrum = $_POST['batchDrum'];
                     $deleteStatus = 1;
                     if(isset($no) && $no != null && count($no) > 0){
                         # Delete all existing product rawmat records tied to the product id then reinsert
@@ -109,8 +114,8 @@ if (isset($_POST['productCode'])) {
                             }
                             else{
                                 foreach ($no as $key => $rawMatNo) {
-                                    if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_basic_uom, raw_mat_weight) VALUES (?, ?, ?, ?)")){
-                                        $product_stmt->bind_param('ssss', $productId, $rawMats[$key], $rawMatBasicUom[$key], $rawMatWeight[$key]);
+                                    if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
+                                        $product_stmt->bind_param('ssssssss', $productId, $rawMats[$key], $productRawMatCode[$key], $rawMatBasicUom[$key], $rawMatBasicUomUnitId[$key], $rawMatWeight[$key], $plant[$key], $batchDrum[$key]);
                                         $product_stmt->execute();
                                     }
                                 }
@@ -235,17 +240,24 @@ if (isset($_POST['productCode'])) {
                 # Product_RawMat 
                 if(isset($_POST['no'])){
                     $no = $_POST['no'];
+                    $productRawMatCode = $_POST['productRawMatCode'];
                     $rawMats =  $_POST['rawMats'];
                     $rawMatBasicUom = $_POST['rawMatBasicUom'];
+                    $rawMatBasicUomUnitId = $_POST['rawMatBasicUomUnitId'];
                     $rawMatWeight = $_POST['rawMatWeight'];
+                    $plant = $_POST['plant'];
+                    $plantCode = $_POST['plantCode'];
+                    $plantName = $_POST['plantName'];
+                    $batchDrum = $_POST['batchDrum'];
 
                     if(isset($no) && $no != null && count($no) > 0){
                         foreach ($no as $key => $rawMatNo) {
-                            if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_basic_uom, raw_mat_weight) VALUES (?, ?, ?, ?)")){
-                                $product_stmt->bind_param('ssss', $productId, $rawMats[$key], $rawMatBasicUom[$key], $rawMatWeight[$key]);
+                            if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
+                                $product_stmt->bind_param('ssssssss', $productId, $rawMats[$key], $productRawMatCode[$key], $rawMatBasicUom[$key], $rawMatBasicUomUnitId[$key], $rawMatWeight[$key], $plant[$key], $batchDrum[$key]);
                                 $product_stmt->execute();
                             }
                         }
+
 
                         /*for ($i=1; $i <= count($no); $i++) { 
                             if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
