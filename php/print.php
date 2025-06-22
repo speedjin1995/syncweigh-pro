@@ -192,7 +192,42 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                             }
                         }
                     }
-                    
+
+                    # Weight_Product
+                    $weightProduct = array();
+                    // retrieve products
+                    $empQuery = "SELECT * FROM Weight_Product WHERE weight_id = $id AND status = '0' ORDER BY id ASC";
+                    $empRecords = mysqli_query($db, $empQuery);
+                    $products = array();
+                    $productCount = 1;
+    
+                    while($row4 = mysqli_fetch_assoc($empRecords)) {
+                        $products[] = array(
+                            "no" => $productCount,
+                            "id" => $row4['id'],
+                            "weight_id" => $row4['weight_id'],
+                            "product" => $row4['product'],
+                            "product_packing" => $row4['product_packing'],
+                            "product_gross" => $row4['product_gross'],
+                            "product_tare" => $row4['product_tare'],
+                            "product_nett" => $row4['product_nett']
+                        );
+                        $productCount++;
+                    }
+
+                    if ($weight_product_stmt = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=? AND status='0' ORDER BY id ASC")) {
+                        $weight_product_stmt->bind_param('s', $row['id']);
+                        
+                        // Execute the prepared query.
+                        if ($weight_product_stmt->execute()) {
+                            $weightProductResult = $weight_product_stmt->get_result();
+                            
+                            while ($weightProductRow = $weightProductResult->fetch_assoc()) {
+                                $weightProduct[] = $weightProductRow;
+                            }
+                        }
+                    }
+
                     $message = 
                     '<html>
                         <head>
@@ -299,16 +334,16 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
 
                                         $message .='    
                                             <br>
-                                            <span><b>Net Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 17.5px">:&nbsp; '.($finalWeight ? formatWeight($finalWeight).' kg' : '-').'</b></span><br>
+                                            <!-- <span><b>Net Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 17.5px">:&nbsp; '.($finalWeight ? formatWeight($finalWeight).' kg' : '-').'</b></span><br>-->
                                             <span">Variance &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="margin-left: 18.5px">:&nbsp; '.($weightDifference ? formatWeight($weightDifference).' kg' : '-').'</span><br>';
 
                                             if ($row['weight_type'] == 'Normal'){
                                                 $message .= '<span>Product Code &nbsp;&nbsp;</span><span style="margin-left: 19px">:&nbsp; '.($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] : $row['raw_mat_code']) .'</span><br>';
                                             }
 
-                                            if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
-                                                $message .= '<span>Pending Bin No. &nbsp;&nbsp;</span><span style="margin-left: 2px">:&nbsp; '. $row['replacement_container'] .'</span><br>';
-                                            }
+                                            // if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
+                                            //     $message .= '<span>Pending Bin No. &nbsp;&nbsp;</span><span style="margin-left: 2px">:&nbsp; '. $row['replacement_container'] .'</span><br>';
+                                            // }
 
                                         $message .= '
                                         </p>
@@ -319,13 +354,13 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                             </table>';
 
                             if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
-                                $message .= '
-                                <table style="width:100%; border:0px solid black; margin-top:-15px; margin-bottom: 0px;">
-                                    <tr style="font-size: 14px;">
-                                        <th style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
-                                        <th style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
-                                    </tr>
-                                </table>';
+                                // $message .= '
+                                // <table style="width:100%; border:0px solid black; margin-top:-15px; margin-bottom: 0px;">
+                                //     <tr>
+                                //         <th style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
+                                //         <th style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
+                                //     </tr>
+                                // </table>';
                             }else{
                                 $message .= '
                                 <table style="width:100%; border:0px solid black; margin-bottom: 0px;">
@@ -452,84 +487,201 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                 //     </div>
                                 // ';
 
-                                $message .= '
-                                    <table style="width:100%; border: 1px solid black; margin-top:5px; text-align: left; font-size: 14px;">
-                                        <tr style="text-align: center; border: 1px solid black;">
-                                            <th class="table-border">Bin</th>
-                                            <th class="table-border">Date/Time</th>
-                                            <th class="table-border">Vehicle</th>
-                                            <th class="table-border">Gross Weight</th>
-                                            <th class="table-border" colspan="2">Tare Weight</th>
-                                            <th class="table-border">Nett Weight</th>
-                                        </tr>
-                                        <tr style="text-align: center;">
-                                            <th colspan="4"></th>
-                                            <th class="table-border">Vehicle</th>
-                                            <th class="table-border">Bin</th>
-                                        </tr>
-                                        <tr style="text-align: center;">
-                                            <td class="table-border">'.$row['container_no'].'</td>
-                                            <td class="table-border">
-                                                Date In: '.$row['gross_weight1_date'].'<br>
-                                                Date Out: '.$row['tare_weight2_date'].'
-                                            </td>
-                                            <td class="table-border">
-                                                In: '.$row['lorry_plate_no1'].'<br>
-                                                Out: '.$row['lorry_plate_no2'].'
-                                            </td>
-                                            <td class="table-border">
-                                                '.$row['gross_weight1'].' kg<br>
-                                                '.$row['tare_weight2'].' kg
-                                            </td>
-                                            <td class="table-border">
-                                                '.$row['tare_weight1'].' kg<br>
-                                                '.$row['lorry_no2_weight'].' kg
-                                            </td>
-                                            <td class="table-border">
-                                                -<br>
-                                                '.$row['nett_weight1'].' kg
-                                            </td>
-                                            <td class="table-border">
-                                                -<br>
-                                                '.$row['nett_weight2'].' kg
-                                            </td>
-                                        </tr>
-                                        <tr style="text-align: center;">
-                                            <td class="table-border">'.$row['replacement_container'].'</td>
-                                            <td class="table-border">
-                                                Date In: '.$row['gross_weight2_date'].'
-                                            </td>
-                                            <td class="table-border">
-                                                In: '.$row['lorry_plate_no2'].'
-                                            </td>
-                                            <td class="table-border">
-                                                '.$row['gross_weight2'].' kg
-                                            </td>
-                                            <td class="table-border">
-                                                '.$row['lorry_no2_weight'].' kg
-                                            </td>
-                                            <td class="table-border">
-                                                '.$row['empty_container2_weight'].' kg
-                                            </td>
-                                            <td class="table-border">
-                                                -
-                                            </td>
-                                        </tr>
-                                        <tr style="text-align: center;">
-                                            <td class="table-border" colspan="6" style="text-align: right; padding-right: 20px;">
-                                                Final Weight
-                                            </td>
-                                            <td class="table-border">
-                                                '.$row['final_weight'].' kg
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div style="margin-top: 5px; font-size: 14px;">
-                                        <span>Transporter&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['transporter'].'</span><br>
-                                        <span>Remarks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'.$row['remarks'].'</span>
-                                    </div>
-                                ';
-                                
+                                if (count($weightProduct) > 0){
+                                    $message .= '
+                                        <table style="width:100%; border: 1px solid black; margin-top: 0px; text-align: left; font-size: 14px;">
+                                            <tr style="text-align: center; font-size: 14px;">
+                                                <th colspan="3" style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
+                                                <th colspan="4" style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
+                                            </tr>
+                                            <tr style="text-align: center; border: 1px solid black;">
+                                                <th rowspan="2" class="table-border">Bin</th>
+                                                <th rowspan="2" class="table-border">Date/Time</th>
+                                                <th rowspan="2" class="table-border">Vehicle</th>
+                                                <th rowspan="2" class="table-border">Gross Weight</th>
+                                                <th colspan="2" class="table-border">Tare Weight</th>
+                                                <th rowspan="2" class="table-border">Nett Weight</th>
+                                            </tr>
+                                            <tr style="text-align: center;">
+                                                <!-- These headers will now correctly appear under "Tare Weight" -->
+                                                <th class="table-border">Vehicle</th>
+                                                <th class="table-border">Bin</th>
+                                            </tr>
+                                            <tr style="text-align: center;">
+                                                <td class="table-border">'.$row['container_no'].'</td>
+                                                <td class="table-border">
+                                                    Date In: '.$row['gross_weight1_date'].'<br>
+                                                    Date Out: '.$row['tare_weight2_date'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    In: '.$row['lorry_plate_no1'].'<br>
+                                                    Out: '.$row['lorry_plate_no2'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['gross_weight1'].' kg<br>
+                                                    '.$row['tare_weight2'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['tare_weight1'].' kg<br>
+                                                    '.$row['lorry_no2_weight'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    -<br>
+                                                    '.$row['nett_weight1'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    -<br>
+                                                    '.$row['nett_weight2'].' kg
+                                                </td>
+                                            </tr>
+                                            <tr style="text-align: center;">
+                                                <td class="table-border">'.$row['replacement_container'].'</td>
+                                                <td class="table-border">
+                                                    Date In: '.$row['gross_weight2_date'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    In: '.$row['lorry_plate_no2'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['gross_weight2'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['lorry_no2_weight'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['empty_container2_weight'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    -
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="7" style="font-weight:bold; text-align: center;">Additional Products</td>
+                                            </tr>
+                                        ';
+
+                                        $totalProductWeight = 0;
+                                        foreach ($weightProduct as $key => $product) {
+                                            $message .= '
+                                                <tr style="font-size: 14px;text-align: center;">
+                                                    <td style="border:1px solid black;">'.($key+1).'</td>
+                                                    <td style="border:1px solid black;">'.$product['product'].'</td>
+                                                    <td style="border:1px solid black;">'.$product['product_packing'].'</td>
+                                                    <td style="border:1px solid black;">'.$product['product_gross'].'</td>
+                                                    <td colspan="2" style="border:1px solid black;">'.$product['product_tare'].'</td>
+                                                    <td style="border:1px solid black;">'.$product['product_nett'].'</td>
+                                                </tr>
+                                            ';
+
+                                            $totalProductWeight += floatval($product['product_nett']);
+                                        }
+
+                                        $finalWeight = floatval($row['final_weight']) + $totalProductWeight;
+
+                                        $message .= '
+                                            <tr style="text-align: center;">
+                                                <td class="table-border" colspan="4">
+                                                    Note : Pending Bin No. : '.$row['replacement_container'].'
+                                                </td>
+                                                <td class="table-border" colspan="2">
+                                                    Final Weight
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$finalWeight.' kg
+                                                </td>
+                                            </tr>
+                                            </table>
+                                        ';
+
+                                    $message .= '
+                                        <div style="margin-top: 5px; font-size: 14px;">
+                                            <span>Transporter&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['transporter'].'</span><br>
+                                            <span>Remarks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'.$row['remarks'].'</span>
+                                        </div>
+                                    ';
+                                }else{
+                                    $message .= '
+                                        <table style="width:100%; border: 1px solid black; text-align: left; font-size: 14px;">
+                                            <tr style="text-align: center; font-size: 14px;">
+                                                <th colspan="3" style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
+                                                <th colspan="4" style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
+                                            </tr>
+                                            <tr style="text-align: center; border: 1px solid black;">
+                                                <th class="table-border">Bin</th>
+                                                <th class="table-border">Date/Time</th>
+                                                <th class="table-border">Vehicle</th>
+                                                <th class="table-border">Gross Weight</th>
+                                                <th class="table-border" colspan="2">Tare Weight</th>
+                                                <th class="table-border">Nett Weight</th>
+                                            </tr>
+                                            <tr style="text-align: center;">
+                                                <th colspan="4"></th>
+                                                <th class="table-border">Vehicle</th>
+                                                <th class="table-border">Bin</th>
+                                            </tr>
+                                            <tr style="text-align: center;">
+                                                <td class="table-border">'.$row['container_no'].'</td>
+                                                <td class="table-border">
+                                                    Date In: '.$row['gross_weight1_date'].'<br>
+                                                    Date Out: '.$row['tare_weight2_date'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    In: '.$row['lorry_plate_no1'].'<br>
+                                                    Out: '.$row['lorry_plate_no2'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['gross_weight1'].' kg<br>
+                                                    '.$row['tare_weight2'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['tare_weight1'].' kg<br>
+                                                    '.$row['lorry_no2_weight'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    -<br>
+                                                    '.$row['nett_weight1'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    -<br>
+                                                    '.$row['nett_weight2'].' kg
+                                                </td>
+                                            </tr>
+                                            <tr style="text-align: center;">
+                                                <td class="table-border">'.$row['replacement_container'].'</td>
+                                                <td class="table-border">
+                                                    Date In: '.$row['gross_weight2_date'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    In: '.$row['lorry_plate_no2'].'
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['gross_weight2'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['lorry_no2_weight'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['empty_container2_weight'].' kg
+                                                </td>
+                                                <td class="table-border">
+                                                    -
+                                                </td>
+                                            </tr>
+                                            <tr style="text-align: center;">
+                                                <td class="table-border" colspan="6" style="text-align: right; padding-right: 20px;">
+                                                    Final Weight
+                                                </td>
+                                                <td class="table-border">
+                                                    '.$row['final_weight'].' kg
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div style="margin-top: 5px; font-size: 14px;">
+                                            <span>Transporter&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['transporter'].'</span><br>
+                                            <span>Remarks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;'.$row['remarks'].'</span>
+                                        </div>
+                                    ';
+                                }
                             }
                             else{
                                 $message .= '<br>
@@ -573,30 +725,24 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                 </table><br>';
                             }
                             
-                            $message .= '<table style="margin-top:50px">
-                                <!--<tr style="visibility: hidden; border:0px;">
-                                    <th width="24%">Vehicle No</th>
-                                    <th width="23%">Product</th>
-                                    <th width="23%">Time</th>
-                                    <th colspan="2" width="30%">Weight (kg)</th>
-                                </tr>-->
+                            $message .= '
+                            <table style="width: 100%; margin-top:30px">
                                 <tr>
-                                    <td style="vertical-align: top; font-size: 14px;">
-                                        <hr width="80%" style="margin-left: 0; text-align: left;">
-                                        <span>1st Weight by : '.$row['gross_weight_by1'].'</span><br>
-                                        <span>2nd Weight by : '.$row['tare_weight_by1'].'</span>
+                                    <!-- This empty cell pushes the content to the right -->
+                                    <td style="width: 50%;"></td>
+
+                                    <td style="vertical-align: top; font-size: 14px; width: 28%;">
+                                        <hr width="100%" style="margin-left: 0; text-align: left;">
+                                        <span>Acknowledge By Administrator</span>
                                     </td>
-                                    <td style="vertical-align: top; font-size: 14px;">
-                                        <hr width="80%" style="margin-left: 0; text-align: left;">
-                                        <span>Acknowledge By <br> Administrator</span>
-                                    </td>
-                                    <td style="vertical-align: top; font-size: 14px;">
-                                        <hr width="80%" style="margin-left: 0; text-align: left;">
+                                    <td style="width: 2%;"></td>
+                                    <td style="vertical-align: top; font-size: 14px; width: 20%;">
+                                        <hr width="100%" style="margin-left: 0; text-align: left;">
                                         <span>Received By</span><br>
                                         <span>Name: </span><br>
                                         <span>I/C: </span>
                                     </td>
-                                <tr>
+                                </tr>
                             </table>
                             
                         </body>

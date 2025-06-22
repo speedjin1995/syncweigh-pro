@@ -762,6 +762,50 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     );
                 }
                 else{
+                    # Weight_Product 
+                    $no = isset($_POST['no']) ? $_POST['no']: [];
+                    $weightProductId = isset($_POST['weightProductId']) ? $_POST['weightProductId']: [];
+                    $product =  isset($_POST['product']) ? $_POST['product']: [];
+                    $productPacking = isset($_POST['productPacking']) ? $_POST['productPacking']: [];
+                    $productGross = isset($_POST['productGross']) ? $_POST['productGross']: [];
+                    $productTare = isset($_POST['productTare']) ? $_POST['productTare']: [];
+                    $productNett = isset($_POST['productNett']) ? $_POST['productNett']: [];
+
+                    if(isset($no) && $no != null && count($no) > 0){ 
+                        # Set all Weight_Product records deleted to 1 first
+                        if ($delete_prod_stmt = $db->prepare("UPDATE Weight_Product SET status = '1' WHERE weight_id=?")){
+                            $delete_prod_stmt->bind_param('s', $weightId);
+                            
+                            if ($delete_prod_stmt->execute()){
+                                $delete_prod_stmt->close();
+
+                                foreach ($no as $i => $no) {
+                                    if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){ // Update FE existing product deleted to 0 but deleted products remain deleted='1'
+                                        if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product=?, product_packing=?, product_gross=?, product_tare=?, product_nett=?, status='0' WHERE id=?")){
+                                            $product_stmt->bind_param('sssssss', $weightId, $product[$i], $productPacking[$i], $productGross[$i], $productTare[$i], $productNett[$i], $weightProductId[$i]);
+                                            $product_stmt->execute();
+                                        }
+                                    }
+                                    else{ // if got new then insert new record
+                                        if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product, product_packing, product_gross, product_tare, product_nett) VALUES (?, ?, ?, ?, ?, ?)")){
+                                            $product_stmt->bind_param('ssssss', $weightId, $product[$i], $productPacking[$i], $productGross[$i], $productTare[$i], $productNett[$i]);
+                                            $product_stmt->execute();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        $product_stmt->close();
+                    }else{
+                        # Added this section to update all weight product related to the weighing to deleted
+                        if ($update_prod_stmt = $db->prepare("UPDATE Weight_Product SET status = '1' WHERE weight_id=?")){
+                            $update_prod_stmt->bind_param('s', $weightId);
+                            $update_prod_stmt->execute();
+                            $update_prod_stmt->close();
+                        }
+                    }
+
                     // update empty container status
                     if(!empty($containerNo) && $weightType == 'Different Container'){
                         if ($update_container = $db->prepare("UPDATE Weight_Container SET is_cancel=? WHERE container_no=? AND status='0'")){
@@ -1056,6 +1100,26 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 }
                             }
 
+                            # Weight_Product 
+                            $no = isset($_POST['no']) ? $_POST['no']: [];
+                            $weightProductId = isset($_POST['weightProductId']) ? $_POST['weightProductId']: [];
+                            $product =  isset($_POST['product']) ? $_POST['product']: [];
+                            $productPacking = isset($_POST['productPacking']) ? $_POST['productPacking']: [];
+                            $productGross = isset($_POST['productGross']) ? $_POST['productGross']: [];
+                            $productTare = isset($_POST['productTare']) ? $_POST['productTare']: [];
+                            $productNett = isset($_POST['productNett']) ? $_POST['productNett']: [];
+
+                            if(isset($no) && $no != null && count($no) > 0){ 
+                                foreach ($no as $i => $no) {
+                                    if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product, product_packing, product_gross, product_tare, product_nett) VALUES (?, ?, ?, ?, ?, ?)")){
+                                        $product_stmt->bind_param('ssssss', $id, $product[$i], $productPacking[$i], $productGross[$i], $productTare[$i], $productNett[$i]);
+                                        $product_stmt->execute();
+                                    }
+                                }
+                                
+                                $product_stmt->close();
+                            }
+
                             // update empty container status
                             if(!empty($containerNo) && $weightType == 'Different Container'){
                                 if ($update_container = $db->prepare("UPDATE Weight_Container SET is_cancel=? WHERE container_no=? AND status='0'")){
@@ -1120,6 +1184,50 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     );
                 }
                 else{
+                    # Weight_Product 
+                    $no = isset($_POST['no']) ? $_POST['no']: [];
+                    $weightProductId = isset($_POST['weightProductId']) ? $_POST['weightProductId']: [];
+                    $product =  isset($_POST['product']) ? $_POST['product']: [];
+                    $productPacking = isset($_POST['productPacking']) ? $_POST['productPacking']: [];
+                    $productGross = isset($_POST['productGross']) ? $_POST['productGross']: [];
+                    $productTare = isset($_POST['productTare']) ? $_POST['productTare']: [];
+                    $productNett = isset($_POST['productNett']) ? $_POST['productNett']: [];
+
+                    if(isset($no) && $no != null && count($no) > 0){ 
+                        # Set all Weight_Product records deleted to 1 first
+                        if ($delete_prod_stmt = $db->prepare("UPDATE Weight_Product SET status = '1' WHERE weight_id=?")){
+                            $delete_prod_stmt->bind_param('s', $weightId);
+                            
+                            if ($delete_prod_stmt->execute()){
+                                $delete_prod_stmt->close();
+
+                                foreach ($no as $i => $no) {
+                                    if(isset($weightProductId[$i]) && $weightProductId[$i] > 0){ // Update FE existing product deleted to 0 but deleted products remain deleted='1'
+                                        if ($product_stmt = $db->prepare("UPDATE Weight_Product SET weight_id=?, product=?, product_packing=?, product_gross=?, product_tare=?, product_nett=?, status='0' WHERE id=?")){
+                                            $product_stmt->bind_param('sssssss', $weightId, $product[$i], $productPacking[$i], $productGross[$i], $productTare[$i], $productNett[$i], $weightProductId[$i]);
+                                            $product_stmt->execute();
+                                        }
+                                    }
+                                    else{ // if got new then insert new record
+                                        if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product, product_packing, product_gross, product_tare, product_nett) VALUES (?, ?, ?, ?, ?, ?)")){
+                                            $product_stmt->bind_param('ssssss', $weightId, $product[$i], $productPacking[$i], $productGross[$i], $productTare[$i], $productNett[$i]);
+                                            $product_stmt->execute();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        $product_stmt->close();
+                    }else{
+                        # Added this section to update all weight product related to the weighing to deleted
+                        if ($update_prod_stmt = $db->prepare("UPDATE Weight_Product SET status = '1' WHERE weight_id=?")){
+                            $update_prod_stmt->bind_param('s', $weightId);
+                            $update_prod_stmt->execute();
+                            $update_prod_stmt->close();
+                        }
+                    }
+
                     // update empty container status
                     if(!empty($containerNo) && $weightType == 'Container'){
                         if ($update_container = $db->prepare("UPDATE Weight_Container SET is_cancel=? WHERE container_no=? AND status='0'")){
@@ -1249,6 +1357,26 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             $updatePoSoStmt->execute();
         
                             $updatePoSoStmt->close();*/
+
+                            # Weight_Product 
+                            $no = isset($_POST['no']) ? $_POST['no']: [];
+                            $weightProductId = isset($_POST['weightProductId']) ? $_POST['weightProductId']: [];
+                            $product =  isset($_POST['product']) ? $_POST['product']: [];
+                            $productPacking = isset($_POST['productPacking']) ? $_POST['productPacking']: [];
+                            $productGross = isset($_POST['productGross']) ? $_POST['productGross']: [];
+                            $productTare = isset($_POST['productTare']) ? $_POST['productTare']: [];
+                            $productNett = isset($_POST['productNett']) ? $_POST['productNett']: [];
+
+                            if(isset($no) && $no != null && count($no) > 0){ 
+                                foreach ($no as $i => $no) {
+                                    if ($product_stmt = $db->prepare("INSERT INTO Weight_Product (weight_id, product, product_packing, product_gross, product_tare, product_nett) VALUES (?, ?, ?, ?, ?, ?)")){
+                                        $product_stmt->bind_param('ssssss', $id, $product[$i], $productPacking[$i], $productGross[$i], $productTare[$i], $productNett[$i]);
+                                        $product_stmt->execute();
+                                    }
+                                }
+                                
+                                $product_stmt->close();
+                            }
 
                             // update empty container status
                             if(!empty($containerNo) && $weightType == 'Container'){
