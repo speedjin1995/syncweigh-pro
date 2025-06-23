@@ -3818,6 +3818,15 @@ else{
                 var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
                 var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
                 var current = Math.abs(nett1 - nett2);
+
+                // Enhancement to add additional product weight
+                if ($('#productTable tr').length > 0){
+                    let
+                    $('#productTable tr').each(function () {
+                        let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
+                        totalNett += nettVal;
+                    });
+                }
             }
 
             $('#currentWeight').text(current.toFixed(0));
