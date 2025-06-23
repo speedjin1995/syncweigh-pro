@@ -200,8 +200,8 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                 @media print {
                                     @page {
                                         size: A5 landscape;
-                                        margin-left: 0.1in;
-                                        margin-right: 0.1in;
+                                        margin-left: 0.5in;
+                                        margin-right: 0.5in;
                                         margin-top: 0.1in;
                                         margin-bottom: 0.1in;
                                     }
@@ -291,10 +291,10 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                     <td style="vertical-align: top;">
                                         <p style="vertical-align: top; margin-top: 5px; margin-left:30px; font-size: 14px;">';
                                             if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc'){
-                                                $message .= '<span>Order Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="margin-left:2.5px">:</span>&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
+                                                $message .= '<br><span>Order Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="margin-left:2.5px">:</span>&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
                                             }
                                             else{
-                                                $message .= '<span>Supply Weight &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="margin-left: 1.5px">:</span>&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
+                                                $message .= '<br><span>Supply Weight &nbsp;:&nbsp; '.($orderSuppWeight != null ? formatWeight($orderSuppWeight).' kg' : '-').'</span>';
                                             }
 
                                         $message .='    
@@ -306,11 +306,12 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                 $message .= '<span>Product Code &nbsp;&nbsp;</span><span style="margin-left: 19px">:&nbsp; '.($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' ? $row['product_code'] : $row['raw_mat_code']) .'</span><br>';
                                             }
 
-                                            if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
+                                            if ($row['weight_type'] == 'Different Container'){
                                                 $message .= '<span>Pending Bin No. &nbsp;&nbsp;</span><span style="margin-left: 2px">:&nbsp; '. $row['replacement_container'] .'</span><br>';
                                             }
 
                                         $message .= '
+                                            <br>
                                         </p>
 
                                         <p style="vertical-align: top; margin-left:50px;"><br></p>
@@ -320,7 +321,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
 
                             if ($row['weight_type'] == 'Different Container' && $_POST['isEmptyContainer'] == 'N'){
                                 $message .= '
-                                <table style="width:100%; border:0px solid black; margin-top:-15px; margin-bottom: 0px;">
+                                <table style="width:100%; border:0px solid black; margin-top:-40px; margin-bottom: 0px;">
                                     <tr style="font-size: 14px;">
                                         <th style="border:1px solid black;">Product&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['product_name'].'</th>
                                         <th style="border:1px solid black;">Destination&nbsp;&nbsp;:&nbsp;&nbsp; '.$row['destination'].'</th>
@@ -328,7 +329,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                 </table>';
                             }else{
                                 $message .= '
-                                <table style="width:100%; border:0px solid black; margin-bottom: 0px;">
+                                <table style="width:100%; border:0px solid black; margin-top:-20px; margin-bottom: 0px;">
                                     <tr style="font-size: 14px;text-align: center;">
                                         <th style="border:1px solid black;">Container No.1</th>
                                         <th style="border:1px solid black;">Seal No.1</th>
