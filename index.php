@@ -3818,15 +3818,17 @@ else{
                 var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
                 var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
                 var current = Math.abs(nett1 - nett2);
+            }
 
-                // Enhancement to add additional product weight
-                if ($('#productTable tr').length > 0){
-                    let
-                    $('#productTable tr').each(function () {
-                        let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
-                        totalNett += nettVal;
-                    });
-                }
+            // Enhancement to add additional product weight
+            if ($('#productTable tr').length > 0){
+                let totalNett = 0;
+                $('#productTable tr').each(function () {
+                    let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
+                    totalNett += nettVal;
+                });
+
+                current = current + totalNett;
             }
 
             $('#currentWeight').text(current.toFixed(0));
@@ -3845,6 +3847,18 @@ else{
                 var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
                 var current = Math.abs(nett1 - nett2);
             }
+
+            // Enhancement to add additional product weight
+            if ($('#productTable tr').length > 0){
+                let totalNett = 0;
+                $('#productTable tr').each(function () {
+                    let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
+                    totalNett += nettVal;
+                });
+
+                current = current + totalNett;
+            }
+
             var reduce = $(this).val() ? parseFloat($(this).val()) : 0;
             //var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
             var final = Math.abs(current - reduce);
@@ -3916,7 +3930,7 @@ else{
 
                 // Container 1 weights
                 var emptyContainer1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
-                var nett = Math.abs(tare2 - vehicleWeight2 - emptyContainer1); console.log(nett);
+                var nett = Math.abs(tare2 - vehicleWeight2 - emptyContainer1);
 
                 $('#emptyContainerWeight2').val(emptyContainerWeight2);
             }else{
@@ -3949,9 +3963,6 @@ else{
                 var tare2 = $(this).val() ? parseFloat($(this).val()) : 0;
                 var vehicleWeight2 = $('#vehicleWeight2').val() ? parseFloat($('#vehicleWeight2').val()) : 0;
                 var emptyContainerWeight2 = Math.abs(gross2 - vehicleWeight2);
-                console.log($('#grossIncoming2').val());
-                console.log(vehicleWeight2);
-                console.log(emptyContainerWeight2);
                 $('#emptyContainerWeight2').val(emptyContainerWeight2);
 
                 // Container 1 weights
@@ -3989,6 +4000,17 @@ else{
                 var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
                 var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
                 var current = Math.abs(nett1 - nett2);
+            }
+
+            // Enhancement to add additional product weight
+            if ($('#productTable tr').length > 0){
+                let totalNett = 0;
+                $('#productTable tr').each(function () {
+                    let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
+                    totalNett += nettVal;
+                });
+
+                current = current + totalNett;
             }
 
             $('#currentWeight').text(current.toFixed(0));
@@ -4362,6 +4384,7 @@ else{
 
             // Update the respective inputs for productNett
             $(this).closest('.details').find('input[id^="productNett"]').val(nettWeight);
+            $('#nettWeight').trigger('change');
         });
 
         // Event delegation for tare weight to calculate nett weight
@@ -4373,6 +4396,7 @@ else{
 
             // Update the respective inputs for productNett
             $(this).closest('.details').find('input[id^="productNett"]').val(nettWeight);
+            $('#nettWeight').trigger('change');
         });
 
         // Add additional products
