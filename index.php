@@ -865,6 +865,35 @@ else{
                                                             </div>
                                                         </div>
                                                         <div class="row col-12">
+                                                            <div class="col-xxl-12 col-lg-12">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                                                <button type="button" class="btn btn-success add-product" id="addProduct">Add Product</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <table class="table table-primary" style="text-align: center;">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="5%">No</th>
+                                                                                        <th>Product</th>
+                                                                                        <th>Packing</th>
+                                                                                        <th>Gross Weight (kg)</th>
+                                                                                        <th>Tare Weight (kg)</th>
+                                                                                        <th>Nett Weight (kg)</th>
+                                                                                        <th>Action</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody id="productTable"></tbody>
+                                                                            </table>                                            
+                                                                        </div><!-- end row -->     
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row col-12">
                                                             <div class="col-xxl-4 col-lg-4" id="normalCard">
                                                                 <div class="card bg-light">
                                                                     <div class="card-body">
@@ -1040,7 +1069,7 @@ else{
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-xxl-4 col-lg-4 mb-3">
+                                                            <div class="col-xxl-4 col-lg-4">
                                                                 <div class="row">
                                                                     <label for="otherRemarks" class="col-sm-2 col-form-label">Other Remarks</label>
                                                                     <div class="col-sm-10">
@@ -1605,6 +1634,35 @@ else{
         <!-- end main content-->
 
     </div>
+
+    <script type="text/html" id="productDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="no" name="no" readonly>
+                <input type="text" class="form-control" id="weightProductId" name="weightProductId" hidden>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="product" name="product" style="background-color:white;" required>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="productPacking" name="productPacking" style="background-color:white;" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productGross" name="productGross" style="background-color:white;" value="0" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productTare" name="productTare" style="background-color:white;" value="0" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="productNett" name="productNett" style="background-color:white;" value="0" readonly required>
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
     <!-- END layout-wrapper -->
 
     <?php include 'layouts/customizer.php'; ?>
@@ -1643,6 +1701,7 @@ else{
     var tareOutgoingDatePicker; 
     var grossIncomingDatePicker2;
     var tareOutgoingDatePicker2; 
+    var rowCount = $("#productTable").find(".details").length;
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -3069,6 +3128,9 @@ else{
             $('#addModal').find('#purchaseOrderEdit').val("").hide();
             $('#addModal').find('#salesOrder').next('.select2-container').show();
 
+            $('#addModal').find('#productTable').html('');
+            rowCount = 0;
+
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
 
@@ -3758,6 +3820,17 @@ else{
                 var current = Math.abs(nett1 - nett2);
             }
 
+            // Enhancement to add additional product weight
+            if ($('#productTable tr').length > 0){
+                let totalNett = 0;
+                $('#productTable tr').each(function () {
+                    let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
+                    totalNett += nettVal;
+                });
+
+                current = current + totalNett;
+            }
+
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#reduceWeight').trigger('change');
@@ -3774,6 +3847,18 @@ else{
                 var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
                 var current = Math.abs(nett1 - nett2);
             }
+
+            // Enhancement to add additional product weight
+            if ($('#productTable tr').length > 0){
+                let totalNett = 0;
+                $('#productTable tr').each(function () {
+                    let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
+                    totalNett += nettVal;
+                });
+
+                current = current + totalNett;
+            }
+
             var reduce = $(this).val() ? parseFloat($(this).val()) : 0;
             //var nett1 = $('#finalWeight').val() ? parseFloat($('#finalWeight').val()) : 0;
             var final = Math.abs(current - reduce);
@@ -3845,7 +3930,7 @@ else{
 
                 // Container 1 weights
                 var emptyContainer1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
-                var nett = Math.abs(tare2 - vehicleWeight2 - emptyContainer1); console.log(nett);
+                var nett = Math.abs(tare2 - vehicleWeight2 - emptyContainer1);
 
                 $('#emptyContainerWeight2').val(emptyContainerWeight2);
             }else{
@@ -3878,9 +3963,6 @@ else{
                 var tare2 = $(this).val() ? parseFloat($(this).val()) : 0;
                 var vehicleWeight2 = $('#vehicleWeight2').val() ? parseFloat($('#vehicleWeight2').val()) : 0;
                 var emptyContainerWeight2 = Math.abs(gross2 - vehicleWeight2);
-                console.log($('#grossIncoming2').val());
-                console.log(vehicleWeight2);
-                console.log(emptyContainerWeight2);
                 $('#emptyContainerWeight2').val(emptyContainerWeight2);
 
                 // Container 1 weights
@@ -3918,6 +4000,17 @@ else{
                 var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
                 var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
                 var current = Math.abs(nett1 - nett2);
+            }
+
+            // Enhancement to add additional product weight
+            if ($('#productTable tr').length > 0){
+                let totalNett = 0;
+                $('#productTable tr').each(function () {
+                    let nettVal = parseFloat($(this).find('input[id^="productNett"]').val()) || 0;
+                    totalNett += nettVal;
+                });
+
+                current = current + totalNett;
             }
 
             $('#currentWeight').text(current.toFixed(0));
@@ -4269,6 +4362,61 @@ else{
             var x = $('#sealNoSearch').val();
             x = x.toUpperCase();
             $('#sealNoSearch').val(x);
+        });
+
+        // Find and remove selected table rows
+        $("#productTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+
+            $("#productTable tr").each(function (index) {
+                $(this).find('input[name^="no"]').val(index + 1);
+            });
+
+            rowCount--;
+        });
+
+        // Event delegation for gross weight to calculate nett weight
+        $("#productTable").on('change', 'input[id^="productGross"]', function(){
+            // Retrieve the input's attributes
+            var gross = parseFloat($(this).val());
+            var tare = parseFloat($(this).closest('.details').find('input[id^="productTare"]').val());
+            var nettWeight = Math.abs(gross - tare);
+
+            // Update the respective inputs for productNett
+            $(this).closest('.details').find('input[id^="productNett"]').val(nettWeight);
+            $('#nettWeight').trigger('change');
+        });
+
+        // Event delegation for tare weight to calculate nett weight
+        $("#productTable").on('change', 'input[id^="productTare"]', function(){
+            // Retrieve the input's attributes
+            var tare = $(this).val();
+            var gross = parseFloat($(this).closest('.details').find('input[id^="productGross"]').val());
+            var nettWeight = Math.abs(gross - tare);
+
+            // Update the respective inputs for productNett
+            $(this).closest('.details').find('input[id^="productNett"]').val(nettWeight);
+            $('#nettWeight').trigger('change');
+        });
+
+        // Add additional products
+        $(".add-product").click(function(){
+            var $addContents = $("#productDetail").clone();
+            $("#productTable").append($addContents.html());
+
+            $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+            $("#productTable").find('.details:last').attr("data-index", rowCount);
+            $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+            $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+            $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount);
+            $("#productTable").find('#product:last').attr('name', 'product['+rowCount+']').attr("id", "product" + rowCount);
+            $("#productTable").find('#productPacking:last').attr('name', 'productPacking['+rowCount+']').attr("id", "productPacking" + rowCount);
+            $("#productTable").find('#productGross:last').attr('name', 'productGross['+rowCount+']').attr("id", "productGross" + rowCount);
+            $("#productTable").find('#productTare:last').attr('name', 'productTare['+rowCount+']').attr("id", "productTare" + rowCount);
+            $("#productTable").find('#productNett:last').attr('name', 'productNett['+rowCount+']').attr("id", "productNett" + rowCount);
+
+            rowCount++;
         });
 
         <?php
@@ -4688,6 +4836,32 @@ else{
                         });
                     });
                 }
+
+                $('#productTable').html('');
+                rowCount = 0;
+
+                if (obj.message.products.length > 0){
+                    for(var i = 0; i < obj.message.products.length; i++){
+                        var item = obj.message.products[i];
+                        var $addContents = $("#productDetail").clone();
+                        $("#productTable").append($addContents.html());
+
+                        $("#productTable").find('.details:last').attr("id", "detail" + rowCount);
+                        $("#productTable").find('.details:last').attr("data-index", rowCount);
+                        $("#productTable").find('#remove:last').attr("id", "remove" + rowCount);
+
+                        $("#productTable").find('#no:last').attr('name', 'no['+rowCount+']').attr("id", "no" + rowCount).val(rowCount + 1);
+                        $("#productTable").find('#weightProductId:last').attr('name', 'weightProductId['+rowCount+']').attr("id", "weightProductId" + rowCount).val(item.id);
+                        $("#productTable").find('#product:last').attr('name', 'product['+rowCount+']').attr("id", "product" + rowCount).val(item.product);
+                        $("#productTable").find('#productPacking:last').attr('name', 'productPacking['+rowCount+']').attr("id", "productPacking" + rowCount).val(item.product_packing);
+                        $("#productTable").find('#productGross:last').attr('name', 'productGross['+rowCount+']').attr("id", "productGross" + rowCount).val(item.product_gross);
+                        $("#productTable").find('#productTare:last').attr('name', 'productTare['+rowCount+']').attr("id", "productTare" + rowCount).val(item.product_tare);
+                        $("#productTable").find('#productNett:last').attr('name', 'productNett['+rowCount+']').attr("id", "productNett" + rowCount).val(item.product_nett);
+
+                        rowCount++;
+                    }
+                }
+
 
                 // Load these field after PO/SO is loaded
                 /*$('#addModal').on('orderLoaded', function() {

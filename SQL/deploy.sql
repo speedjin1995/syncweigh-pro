@@ -496,3 +496,19 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_WEIGHT_CONTAINER` BEFORE UPDATE ON `Weight_Co
 END
 $$
 DELIMITER ;
+
+-- 22/06/2025 --
+CREATE TABLE `weight_product` (
+  `id` int(11) NOT NULL,
+  `weight_id` int(11) DEFAULT NULL,
+  `product` varchar(100) DEFAULT NULL,
+  `product_packing` varchar(100) DEFAULT NULL,
+  `product_gross` varchar(100) DEFAULT NULL,
+  `product_tare` varchar(100) DEFAULT NULL,
+  `product_nett` varchar(100) DEFAULT NULL,
+  `status` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Weight_Product` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Weight_Product` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
