@@ -12,6 +12,8 @@ else{
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
 
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+
 ?>
 
 <head>
@@ -191,7 +193,7 @@ else{
         <!-- end main content-->
         <!-- /.modal-dialog -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-dialog modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalScrollableTitle">Add Bitumen</h5>
@@ -200,20 +202,34 @@ else{
                     </div>
                     <div class="modal-body">
                         <form role="form" id="siteForm" class="needs-validation" novalidate autocomplete="off">
-                            <div class=" row col-12">
+                            <input type="hidden" class="form-control" id="id" name="id">
+                            <div class="row col-12">
                                 <div class="col-xxl-12 col-lg-12">
                                     <div class="card bg-light">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-xxl-12 col-lg-12 mb-3">
                                                     <div class="row">
-                                                        <label for="rawMatCode" class="col-sm-4 col-form-label">60/70</label>
+                                                        <label for="destination" class="col-sm-4 col-form-label">Destination</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="rawMatCode" name="rawMatCode" placeholder="60/70">
+                                                            <select class="form-select select2" id="destination" name="destination" required>
+                                                                <option selected="-">-</option>
+                                                                <?php while($rowDestination=mysqli_fetch_assoc($destination)){ ?>
+                                                                    <option value="<?=$rowDestination['id'] ?>" data-code="<?=$rowDestination['destination_code'] ?>"><?=$rowDestination['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>  
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="datetime" class="col-sm-4 col-form-label">Date/Time</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="date" class="form-control" data-provider="flatpickr" id="datetime" name="datetime" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-xxl-12 col-lg-12 mb-3">
                                                     <div class="row">
                                                         <label for="rawMatName" class="col-sm-4 col-form-label">PG76</label>
                                                         <div class="col-sm-8">
@@ -244,15 +260,149 @@ else{
                                                             <input type="number" class="form-control" id="diesel" name="diesel" placeholder="Diesel">
                                                         </div>
                                                     </div>
-                                                </div>                                                    
+                                                </div>                                                     -->
                                                 <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
-                            
+                            <div class="row col-12">
+                                <div class="col-xxl-12 col-lg-12">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <table class="table table-primary" style="text-align: center;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>BITUMEN</th>
+                                                            <th>1</th>
+                                                            <th>2</th>
+                                                            <th>3</th>
+                                                            <th>4</th>
+                                                            <th>5</th>
+                                                            <th>6</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>60/70</td>
+                                                            <td><input type="number" class="form-control" id="sixtysevn1" name="sixtysevn1"></td>
+                                                            <td><input type="number" class="form-control" id="sixtysevn2" name="sixtysevn2"></td>
+                                                            <td><input type="number" class="form-control" id="sixtysevn3" name="sixtysevn3"></td>
+                                                            <td><input type="number" class="form-control" id="sixtysevn4" name="sixtysevn4"></td>
+                                                            <td><input type="number" class="form-control" id="sixtysevn5" name="sixtysevn5"></td>
+                                                            <td><input type="number" class="form-control" id="sixtysevn6" name="sixtysevn6" readonly></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Temperature (&deg;C)</td>
+                                                            <td><input type="number" class="form-control" id="temp1" name="temp1"></td>
+                                                            <td><input type="number" class="form-control" id="temp2" name="temp2"></td>
+                                                            <td><input type="number" class="form-control" id="temp3" name="temp3"></td>
+                                                            <td><input type="number" class="form-control" id="temp4" name="temp4"></td>
+                                                            <td><input type="number" class="form-control" id="temp5" name="temp5"></td>
+                                                            <td><input type="number" class="form-control" id="temp6" name="temp6" readonly></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Level (cm)</td>
+                                                            <td><input type="number" class="form-control" id="level1" name="level1"></td>
+                                                            <td><input type="number" class="form-control" id="level2" name="level2"></td>
+                                                            <td><input type="number" class="form-control" id="level3" name="level3"></td>
+                                                            <td><input type="number" class="form-control" id="level4" name="level4"></td>
+                                                            <td><input type="number" class="form-control" id="level5" name="level5"></td>
+                                                            <td><input type="number" class="form-control" id="level6" name="level6" readonly></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>LFO</th>
+                                                            <th>1</th>
+                                                            <th>2</th>
+                                                            <th>Diesel</th>
+                                                            <th>Transport</th>
+                                                            <th>Hotoil</th>
+                                                            <th>Burner</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><input type="number" class="form-control" id="lfo" name="lfo"></td>
+                                                            <td><input type="number" class="form-control" id="lfo1" name="lfo1"></td>
+                                                            <td><input type="number" class="form-control" id="lfo2" name="lfo2"></td>
+                                                            <td><input type="number" class="form-control" id="diesel" name="diesel"></td>
+                                                            <td><input type="number" class="form-control" id="transport" name="transport"></td>
+                                                            <td><input type="number" class="form-control" id="hotoil" name="hotoil"></td>
+                                                            <td><input type="number" class="form-control" id="burner" name="burner"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Aggregrates</th>
+                                                            <th>40mm</th>
+                                                            <th>28mm</th>
+                                                            <th>20mm</th>
+                                                            <th>14mm</th>
+                                                            <th>10mm</th>
+                                                            <th>QD</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Quantity (mt)</td>
+                                                            <td><input type="number" class="form-control" id="40mm" name="40mm"></td>
+                                                            <td><input type="number" class="form-control" id="28mm" name="28mm"></td>
+                                                            <td><input type="number" class="form-control" id="20mm" name="20mm"></td>
+                                                            <td><input type="number" class="form-control" id="14mm" name="14mm"></td>
+                                                            <td><input type="number" class="form-control" id="10mm" name="10mm"></td>
+                                                            <td><input type="number" class="form-control" id="QD" name="QD"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>All Fibre</th>
+                                                            <th>MR6</th>
+                                                            <th>RPF</th>
+                                                            <th>Nova Fiber</th>
+                                                            <th>Forta Fiber</th>
+                                                            <th colspan="2">OPC</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Type (kg/bag)</td>
+                                                            <td><input type="number" class="form-control" id="typeMR6" name="typeMR6"></td>
+                                                            <td><input type="number" class="form-control" id="typeRPF" name="typeRPF"></td>
+                                                            <td><input type="number" class="form-control" id="typeNovaFiber" name="typeNovaFiber"></td>
+                                                            <td><input type="number" class="form-control" id="typeFortaFiber" name="typeFortaFiber"></td>
+                                                            <td>Incoming (mt)</td>
+                                                            <td><input type="number" class="form-control" id="opcIncoming" name="opcIncoming"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Quantity (mt)</td>
+                                                            <td><input type="number" class="form-control" id="qtyMR6" name="qtyMR6"></td>
+                                                            <td><input type="number" class="form-control" id="qtyRPF" name="qtyRPF"></td>
+                                                            <td><input type="number" class="form-control" id="qtyNovaFiber" name="qtyNovaFiber"></td>
+                                                            <td><input type="number" class="form-control" id="qtyFortaFiber" name="qtyFortaFiber"></td>
+                                                            <td>D/O No</td>
+                                                            <td><input type="number" class="form-control" id="opcDo" name="opcDo"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Emulsion</th>
+                                                            <th>RS1-K</th>
+                                                            <th>K1-40</th>
+                                                            <th>SS1K</th>
+                                                            <th>Others</th>
+                                                            <th colspan="2">Lime</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Quantity (dr)</td>
+                                                            <td><input type="number" class="form-control" id="rs1k" name="rs1k"></td>
+                                                            <td><input type="number" class="form-control" id="k140" name="k140"></td>
+                                                            <td><input type="number" class="form-control" id="ss1k" name="ss1k"></td>
+                                                            <td><input type="number" class="form-control" id="others" name="others"></td>
+                                                            <td>Incoming (mt)</td>
+                                                            <td><input type="number" class="form-control" id="limeIncoming" name="limeIncoming"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="5"></td>
+                                                            <td>D/O No</td>
+                                                            <td><input type="number" class="form-control" id="limeDo" name="limeDo"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-lg-12">
                                 <div class="hstack gap-2 justify-content-end">
                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
@@ -302,6 +452,25 @@ else{
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        // Apply custom styling to Select2 elements in addModal
+        $('#addModal .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#addModal .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
         $('#fromDateSearch').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: yesterday
@@ -309,6 +478,11 @@ else{
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
+            defaultDate: today
+        });
+
+        $('#datetime').flatpickr({
+            dateFormat: "d-m-Y H:i:s",
             defaultDate: today
         });
 
