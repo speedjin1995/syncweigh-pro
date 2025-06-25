@@ -578,7 +578,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                     -<br>
                                                     '.$row['nett_weight1'].' kg
                                                 </td>
-                                                <td rowspan="2" class="table-border">
+                                                <td class="table-border">
                                                     '.$row['reduce_weight'].' kg
                                                 </td>
                                                 <td class="table-border">
@@ -586,7 +586,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                     '.$row['nett_weight2'].' kg
                                                 </td>
                                             </tr>
-                                            <tr style="text-align: center;">
+                                            <!--<tr style="text-align: center;">
                                                 <td class="table-border">'.$row['replacement_container'].'</td>
                                                 <td class="table-border">
                                                     Date In: '.$row['gross_weight2_date'].'
@@ -606,7 +606,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                 <td class="table-border">
                                                     -
                                                 </td>
-                                            </tr>
+                                            </tr>-->
                                             <tr>
                                                 <td colspan="7" style="font-size: 5px; font-weight:bold; text-align: center; visibility:hidden;">Additional Products</td>
                                             </tr>
@@ -690,7 +690,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                     '.$row['nett_weight2'].' kg
                                                 </td>
                                             </tr>
-                                            <tr style="text-align: center;">
+                                            <!--<tr style="text-align: center;">
                                                 <td class="table-border">'.$row['replacement_container'].'</td>
                                                 <td class="table-border">
                                                     Date In: '.$row['gross_weight2_date'].'
@@ -710,7 +710,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                 <td class="table-border">
                                                     -
                                                 </td>
-                                            </tr>
+                                            </tr>-->
                                             <tr style="text-align: center;">
                                                 <td class="table-border" colspan="6" style="text-align: right; padding-right: 20px;">
                                                     Final Weight
