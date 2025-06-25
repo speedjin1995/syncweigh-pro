@@ -4688,7 +4688,7 @@ else{
                 }
                 else{
                     $('#addModal').find('#vehiclePlateNo1Edit').val('EDIT');
-                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).select2('destroy').select2();
                     $('#manualVehicle').val(0);
                     $('#manualVehicle').prop("checked", false);
                     $('.index-vehicle').show();
@@ -4703,7 +4703,7 @@ else{
                     $('#vehicleNoTxt2').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2).trigger('change');
+                    $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2).select2('destroy').select2();
                     $('#manualVehicle2').val(0);
                     $('#manualVehicle2').prop("checked", false);
                     $('.index-vehicle2').show();
@@ -4722,9 +4722,10 @@ else{
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
                 $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
-                $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
+                $('#addModal').find('#customerName').val(obj.message.customer_name).select2('destroy').select2();
+                $('#addModal').find('#customerCode').val(obj.message.customer_code);
+                $('#addModal').find('#supplierName').val(obj.message.supplier_name).select2('destroy').select2();
                 $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change')
                 $('#addModal').find('#siteCode').val(obj.message.site_code);
                 $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
                 $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
