@@ -543,10 +543,10 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                     $message .= '
                                         <table style="width:100%; text-align: left; font-size: 14px; margin-top: 5px;">
                                             <tr style="text-align: center; border: 1px solid black;">
-                                                <th rowspan="2" class="table-border">Bin</th>
-                                                <th rowspan="2" class="table-border">Date/Time</th>
+                                                <th rowspan="2" class="table-border" width="10%">Bin</th>
+                                                <th rowspan="2" class="table-border" width="25%">Date/Time</th>
                                                 <th rowspan="2" class="table-border">Vehicle</th>
-                                                <th rowspan="2" class="table-border">Gross <br> Weight</th>
+                                                <th rowspan="2" class="table-border" width="10%">Gross <br> Weight</th>
                                                 <th colspan="2" class="table-border">Tare Weight</th>
                                                 <th rowspan="2" class="table-border">Reduce <br> Weight</th>
                                                 <th rowspan="2" class="table-border">Nett <br> Weight</th>
@@ -640,7 +640,7 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                                     Final Weight
                                                 </td>
                                                 <td class="table-border" colspan="2" style="text-align: center;">
-                                                    '.$finalWeight.' kg
+                                                    '.$row['final_weight'].' kg
                                                 </td>
                                             </tr>
                                             <tr>
@@ -652,10 +652,10 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                     $message .= '
                                         <table style="width:100%; border: 1px solid black; text-align: left; font-size: 14px; margin-top: 5px;">
                                             <tr style="text-align: center; border: 1px solid black;">
-                                                <th rowspan="2" class="table-border">Bin</th>
-                                                <th rowspan="2" class="table-border">Date/Time</th>
+                                                <th rowspan="2" class="table-border" width="10%">Bin</th>
+                                                <th rowspan="2" class="table-border" width="25%">Date/Time</th>
                                                 <th rowspan="2" class="table-border">Vehicle</th>
-                                                <th rowspan="2" class="table-border">Gross Weight</th>
+                                                <th rowspan="2" class="table-border" width="10%">Gross Weight</th>
                                                 <th class="table-border" colspan="2">Tare Weight</th>
                                                 <th rowspan="2" class="table-border">Nett Weight</th>
                                             </tr>
