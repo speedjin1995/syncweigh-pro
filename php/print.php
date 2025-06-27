@@ -76,12 +76,13 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $high = '';
                     $low = '';
 
+                    $transactionDate = date("d/m/Y", strtotime($row['transaction_date']));
                     $datetime = explode(' ', date('d/m/Y h:i:s A', strtotime($row['transaction_date'])), 2);
                     list($date, $time) = $datetime;
                     $inDate = $row['gross_weight1_date'] != null ? date('d/m/Y - h:i:s A', strtotime($row['gross_weight1_date'])) : "";
                     $outDate = $row['tare_weight1_date'] != null ? date('d/m/Y - h:i:s A', strtotime($row['tare_weight1_date'])) : "";
                     
-                    if($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'MISC'){
+                    if($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc' || $row['transaction_status'] == 'Rental'){
                         if ($row['customer_is_manual'] == 'Y'){
                             $customer = $row['customer_name'];
                         }else{
@@ -216,294 +217,556 @@ if(isset($_POST['userID'], $_POST["file"])){
                             ));
                     }
 
-                    $message = '<!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Weighing Slip</title>
-                        <style>
-                            @media print{ 
-                                @page {
-                                    size: a5 landscape;
-                                    margin-left: 0.25in;
-                                    margin-right: 0.3in;
-                                    margin-top: 0.1in;
-                                    margin-bottom: 0.1in;
-                                }
+                    $message = '';
+
+                    if($row['transaction_status'] == 'Rental'){
+                        $message = 
+                        '<html>
+                            <head>
+                                <style>
+                                    @page {
+                                        size: A5 landscape;
+                                        margin: 15mm;
+                                    }
+
+                                    * {
+                                        margin: 0;
+                                        padding: 0;
+                                        box-sizing: border-box;
+                                    }
+
+                                    body {
+                                        font-family: Arial, sans-serif;
+                                        font-size: 14px;
+                                        line-height: 1.3;
+                                        color: #000;
+                                        background: white;
+                                        padding: 10px;
+                                    }
+
+                                    .dispatch-slip {
+                                        width: 100%;
+                                        height: calc(100vh - 30px);
+                                        padding: 5px;
+                                        display: flex;
+                                        flex-direction: column;
+                                        margin: 5px;
+                                    }
+
+                                    .header {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: flex-start;
+                                        margin-bottom: 8px;
+                                        border-bottom: 1px solid #000;
+                                        padding-bottom: 5px;
+                                    }
+
+                                    .company-info {
+                                        flex: 1;
+                                    }
+
+                                    .company-name {
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                        margin-bottom: 6px;
+                                    }
+
+                                    .company-address {
+                                        font-size: 12px;
+                                        line-height: 1.4;
+                                    }
+
+                                    .slip-info {
+                                        text-align: right;
+                                        flex-shrink: 0;
+                                    }
+
+                                    .slip-title {
+                                        font-size: 14px;
+                                        font-weight: bold;
+                                        text-decoration: underline;
+                                        margin-bottom: 6px;
+                                    }
+
+                                    .slip-details {
+                                        font-size: 12px;
+                                        line-height: 1.4;
+                                    }
+
+                                    .lorry-section {
+                                        margin: 5px 0;
+                                        padding-bottom: 5px;
+                                    }
+
+                                    .lorry-plate {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 12px;
+                                    }
+
+                                    .lorry-label {
+                                        font-weight: bold;
+                                        font-size: 12px;
+                                    }
+
+                                    .chinese-label {
+                                        font-size: 12px;
+                                        color: #666;
+                                    }
+
+                                    .plate-number {
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                        letter-spacing: 2px;
+                                    }
+
+                                    .weight-table {
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                        margin: 5px 0;
+                                        flex: 1;
+                                    }
+
+                                    .weight-table th,
+                                    .weight-table td {
+                                        border: 1px solid #000;
+                                        padding: 5px;
+                                        text-align: center;
+                                        vertical-align: middle;
+                                    }
+
+                                    .weight-table th {
+                                        background-color: #f5f5f5;
+                                        font-weight: bold;
+                                        font-size: 13px;
+                                    }
+
+                                    .weight-table .chinese-row {
+                                        font-size: 11px;
+                                        color: #666;
+                                        background-color: #f9f9f9;
+                                    }
+
+                                    .weight-data {
+                                        font-size: 14px;
+                                        font-weight: 500;
+                                    }
+
+                                    .footer {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: flex-end;
+                                        margin-top: auto;
+                                        padding-top: 3px;
+                                    }
+
+                                    .signature-section {
+                                        flex: 1;
+                                    }
+
+                                    .signature-line {
+                                        border-bottom: 1px solid #000;
+                                        width: 220px;
+                                        margin-bottom: 6px;
+                                    }
+
+                                    .signature-label {
+                                        text-align: center;
+                                        font-size: 13px;
+                                        margin-bottom: 10px;
+                                    }
+
+                                    .signature-fields {
+                                        font-size: 13px;
+                                        line-height: 1.6;
+                                    }
+
+                                    .disclaimer {
+                                        flex: 2;
+                                        text-align: left;
+                                        font-size: 10px;
+                                        line-height: 1.4;
+                                        margin-left: 80px;
+                                    }
+
+                                    .disclaimer-en {
+                                        margin-bottom: 3px;
+                                        font-weight: 500;
+                                    }
+
+                                    .disclaimer-auth {
+                                        margin-bottom: 3px;
+                                        font-weight: 500;
+                                    }
+
+                                    .disclaimer-cn {
+                                        color: black;
+                                        font-weight: bold;
+                                    }
+
+                                    @media print {
+                                        body {
+                                            -webkit-print-color-adjust: exact;
+                                            print-color-adjust: exact;
+                                        }
+                                    }
+
+                                    @media screen {
+                                        body {
+                                            background-color: #f0f0f0;
+                                        }
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="dispatch-slip">
+                                    <!-- Header Section -->
+                                    <div class="header">
+                                        <div class="company-info">
+                                            <div class="company-name">'.$compname.'</div>
+                                            <div class="company-address">
+                                                '.$compaddress.' '.$compaddress2.'<br>
+                                                '.$compaddress3.'
+                                            </div>
+                                        </div>
+                                        <div class="slip-info">
+                                            <div class="slip-title">'.$row['transaction_status'].' SLIP</div>
+                                            <div class="slip-details">
+                                                '.$row['transaction_id'].'<br>
+                                                DATE : '.$transactionDate.'
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Lorry Plate Section -->
+                                    <div class="lorry-section">
+                                        <div class="lorry-plate">
+                                            <span class="lorry-label">Lorry Plate<br>(车牌号)</span>
+                                            <span style="margin: 0 10px; font-size: 13px;">&nbsp;&nbsp;:</span>
+                                            <span class="plate-number">'.$row['lorry_plate_no1'].'</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Weight Table -->
+                                    <table class="weight-table">
+                                        <thead>
+                                            <tr>
+                                                <th>In Weight<br>进重(kg)</th>
+                                                <th>1st Date / Time<br>进重日期时间</th>
+                                                <th>Out Weight<br>出重(kg)</th>
+                                                <th>2nd Date / Time<br>出重日期时间</th>
+                                                <th>Nett Weight<br>净重(kg)</th>
+                                                <th>Price<br>收费</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="weight-data">
+                                                <td>'.$row['gross_weight1'].' kg</td>
+                                                <td>'.$inDate.'</td>
+                                                <td>'.$row['tare_weight1'].' kg</td>
+                                                <td>'.$outDate.'</td>
+                                                <td>'.$row['final_weight'].' kg</td>
+                                                <td>RM '.$row['total_price'].' kg</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p style="font-size:20px;">REMARKS: '.$row['remarks'].'</p>
+
+                                    <!-- Footer Section -->
+                                    <div class="footer" style="margin-top: 60px;">
+                                        <div class="signature-section">
+                                            <div class="signature-line"></div>
+                                            <div class="signature-label">(Received By)</div>
+                                            <div class="signature-fields">
+                                                <strong>Name :</strong><br>
+                                                <strong>I/C No :</strong>
+                                            </div>
+                                        </div>
+                                        <div class="disclaimer">
+                                            <div class="disclaimer-en">THIS WEIGHING SLIP IS COMPUTER GENERATED AND REQUIRES NO SIGNATURE & CHOP</div>
+                                            <div class="disclaimer-auth">AUTHORISED BY: '.$compname.'</div>
+                                            <div class="disclaimer-cn">此称重单由电脑生成, 无需签名印章. 授权人: '.$compname.'</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </body>
+                        </html>';
+                    }
+                    else{
+                        $message = '<!DOCTYPE html>
+                            <html lang="en">
+                            <head>
+                                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>Weighing Slip</title>
+                                <style>
+                                    @media print{ 
+                                        @page {
+                                            size: a5 landscape;
+                                            margin-left: 0.25in;
+                                            margin-right: 0.3in;
+                                            margin-top: 0.1in;
+                                            margin-bottom: 0.1in;
+                                        }
+                                        
+                                    }
+
+                                    /* Ensure the body content is contained within the page size */
+                                        body {
+                                            zoom: 67%; 
+                                            width: 100%; /* Full width of the A5 landscape */
+                                            height: 100%; /* Full height of the A5 landscape */
+                                            margin: 0;
+                                            padding: 0;
+                                            box-sizing: border-box; /* Ensure padding and borders are accounted for */
+                                        }
+                                        table {
+                                            width: 100%;
+                                            border-collapse: collapse;
+                                            /* border: 1px solid black; */
+                                        }
+                                        th, td {
+                                            border: 1px solid black;
+                                            padding: 5px;
+                                            /* margin: 0; */
+                                            text-align: center;
+                                            vertical-align: top;
+                                            border-collapse: collapse;
+                                        }
+                                        td:nth-child(1), td:nth-child(2) {
+                                            text-align: left;
+                                        }
+                                        .left-align {
+                                            text-align: left;
+                                        }
+                                        .right-align {
+                                            text-align: right;
+                                        }
+                                        .right-align td {
+                                            text-align: right;
+                                        }
+                                        .no-border {
+                                            border: none;
+                                        }
+                                        .container {
+                                            display: flex;
+                                            justify-content: space-between;
+                                        }
+                                        .weight table, .product table {
+                                            width: 100%;
+                                            border-collapse: collapse;
+                                        }     
+                                        .weight td, .product td, .weight tr, .product tr {
+                                            border-collapse: collapse;
+                                        }         
+                                        .weight, .product {
+                                            padding: 0;
+                                            margin: 0;
+                                            vertical-align: top;
+                                        }
+                                        .left-section {
+                                            width: 40%;
+                                            text-align: left;
+                                        }
+                                        .right-section {
+                                            width: 40%;
+                                            text-align: right;
+                                        }
+                                        .computer-section {
+                                            width: 40%;
+                                            text-align: center;
+                                            float: right;
+                                        }
+                                        .info-table {
+                                            width: 100%;
+                                            border: none;
+                                        }
+                                        .info-table td {
+                                            padding: 2px 4px;
+                                            border: none;
+                                        }
+                                        .info-table .label {
+                                            font-weight: bold;
+                                            text-align: left;
+                                            white-space: nowrap;
+                                        }
+                                        .info-table .value {
+                                            text-align: left;
+                                            padding-left: 10px;
+                                        }
+                                        .info-table td:first-child {
+                                            width: 50px;
+                                        }
+                                        .signature-section {
+                                            display: flex;
+                                            justify-content: space-between;
+                                            margin-top:55px;
+                                        }
+                                        .signature-box {
+                                            width: 100%;
+                                            text-align: center;
+                                        }
+                                        .dotted-line {
+                                            border-bottom: 1px dotted black;
+                                            width: 100%;
+                                            display: inline-block;
+                                        }
+                                        .driver-sign {
+                                            text-align: center; 
+                                        }
+                                        hr {
+                                            border: 2px solid black; /* Adjust thickness and color */
+                                        }
+                                        .border-none {
+                                            border:0;
+                                        }
+                                </style>
+                            </head>
+                            <body>
+                                <div style="display: flex;">
+                                    <span style="font-size:30px; font-weight:bold; margin-top: 10px;">'.$compname.'</span><br>
+                                    <span style="font-size:28px; font-weight:bold; margin-top: 10px; margin-left: 140px;">WEIGHING SLIP</span><br>
+                                </div>
+                                <span style="margin-bottom: 10px; font-size: 20px;">Co.Registration No: '.$compnewreg.' ('.$compreg.') / Tin No: '.$comptinno.'<br>
+                                '.$plantAddress1.' '.$plantAddress2.' '.$plantAddress3.'<br>
+                                Tel: '.$plantPhoneNo.' Mobile No: '.$plantFaxNo.'</span>
+                                <hr>
                                 
+                                <div class="container">
+                                    <table class="info-table left-section" style="padding:0; font-size: 18px;">';
+                                        if ($row['transaction_status'] == 'Purchase'){
+                                            $message .= '<tr><td class="label">Supplier</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
+                                        }else{
+                                            $message .= '<tr><td class="label">Customer</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
+                                        }
+
+                                    $message .= '
+                                        <tr><td class="label">Co. Reg</td><td>:</td><td class="value">'.$customerNR.' - ('.$customerR.')</td></tr>
+                                        <tr><td class="label">Tin No</td><td>:</td><td class="value">'.$customerTN.' - (I/C No : '.$customerIC.')</td></tr>
+                                        <tr><td class="label">Driver Name</td><td>:</td><td class="value">'.$row['driver_name'].'</td></tr>
+                                        <tr><td class="label">I/C No.</td><td>:</td><td class="value">'.$row['driver_ic'].'</td></tr>
+                                        <tr><td class="label">Transporter.</td><td>:</td><td class="value">'.$row['transporter'].'</td></tr>
+                                    </table>
+                                    <table class="info-table right-section" style="width:40%; font-size: 18px;">
+                                        <tr><td class="label">Weight Status</td><td>:</td><td class="value">'.$row['transaction_status'].'</td></tr>
+                                        <tr><td class="label">Weight No</td><td>:</td><td class="value">'.$row['transaction_id'].'</td></tr>
+                                        <tr><td class="label">Weight By</td><td>:</td><td class="value">'.$row['modified_by'].'</td></tr>
+                                        <tr><td class="label">Weight Date</td><td>:</td><td class="value">'.$date.'</td></tr>
+                                        <tr><td class="label">Destination</td><td>:</td><td class="value">'.$row['destination'].'</td></tr>
+                                        <tr><td class="label">Vehicle Plate</td><td>:</td><td class="value">'.$row['lorry_plate_no1'].'</td></tr>
+                                    </table>
+                                </div>
+                                <br>
+                                <table style="border: none; font-size: 18px;">
+                                    <tr>
+                                        <td class="weight">
+                                            <table style="border: none;">
+                                                <tr>
+                                                    <th style="border-top:none; border-left:none;">Date / Time <br> <span style="visibility:hidden">empty</span></th>
+                                                    <th class="border-none" colspan="2">Weight (kg)</th>
+                                                </tr> 
+                                                <tr>
+                                                    <td style="text-align:center;font-weight:bold; border-left:none;font-size:15px;">'.$inDate.'</td>
+                                                    <td style="text-align:center" width="15%">IN</td>
+                                                    <td style="text-align:center; border-right:none;" width="25%">'.($row['gross_weight1'] ?? '0').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:center;font-weight:bold; border-left:none;font-size:15px;">'.$outDate.'</td>
+                                                    <td style="text-align:center">OUT</td>
+                                                    <td style="text-align:center; border-right:none;">'.($row['tare_weight1'] ?? '0').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" class="right-align" style="border-left:none; padding-left: 15px;">Total Weight (kg)</td>
+                                                    <td style="text-align:center; border-right:none;">'.($row['final_weight'] ?? '0').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" class="right-align" style="border-left:none; padding-left: 15px;">Deduct (kg)</td>
+                                                    <td style="text-align:center; border-right:none;">'.($row['reduce_weight'] ?? '0').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" class="right-align" style="border-left:none; border-bottom: none; padding-left: 15px;">Net Weight (kg)</td>
+                                                    <td style="text-align:center;font-weight:bold; border-right:none; border-bottom: none;">'.($row['nett_weight1'] ?? '0').'</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3" style="border-left:none; border-right:none; border-bottom: none; visibility:hidden">empty space</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td class="product">
+                                            <table style="border: none; font-size: 18px;">
+                                                <tr>
+                                                    <th style="border-top:none; border-left:none;">Product Description</th>
+                                                    <th style="border-top:none;">(%)</th>
+                                                    <th style="border-top:none;">Weight <br>(kg)</th>
+                                                    <th style="border-top:none;">Reduce <br>(kg)</th>
+                                                    <th style="border-top:none;">Total <br>(kg)</th>
+                                                    <th style="border-top:none;">U/Price <br>(RM)</th>
+                                                    <th style="border-top:none; border-right:none;">Total Price <br>(RM)</th>
+                                                </tr>';
+
+                            $rowCount = 1;
+
+                            if (!empty($weighProducts)){
+                                foreach($weighProducts as $row2) {
+                                    $message .=  '<tr>
+                                                        <td class="left-align" style="border-left:none;">'.$rowCount. ' '.$row2['product_name'].'</td>
+                                                        <td style="text-align: center">'.$row2['percentage'].'</td>
+                                                        <td style="text-align: center">'.$row2['item_weight'].'</td>
+                                                        <td style="text-align: center">'.$row2['reduce_weight'].'</td>
+                                                        <td style="text-align: center">'.$row2['total_weight'].'</td>
+                                                        <td class="right-align" style="padding-right: 10px;">'.($row2['unit_price'] ?? '-').'</td>
+                                                        <td class="right-align" style="font-weight:bold; border-right:none; padding-right: 10px">'.($row2['total_price'] ?? '-').'</td>
+                                                    </tr>';
+                                    $rowCount++;
+                                }
                             }
 
-                            /* Ensure the body content is contained within the page size */
-                                body {
-                                    zoom: 67%; 
-                                    width: 100%; /* Full width of the A5 landscape */
-                                    height: 100%; /* Full height of the A5 landscape */
-                                    margin: 0;
-                                    padding: 0;
-                                    box-sizing: border-box; /* Ensure padding and borders are accounted for */
-                                }
-                                table {
-                                    width: 100%;
-                                    border-collapse: collapse;
-                                    /* border: 1px solid black; */
-                                }
-                                th, td {
-                                    border: 1px solid black;
-                                    padding: 5px;
-                                    /* margin: 0; */
-                                    text-align: center;
-                                    vertical-align: top;
-                                    border-collapse: collapse;
-                                }
-                                td:nth-child(1), td:nth-child(2) {
-                                    text-align: left;
-                                }
-                                .left-align {
-                                    text-align: left;
-                                }
-                                .right-align {
-                                    text-align: right;
-                                }
-                                .right-align td {
-                                    text-align: right;
-                                }
-                                .no-border {
-                                    border: none;
-                                }
-                                .container {
-                                    display: flex;
-                                    justify-content: space-between;
-                                }
-                                .weight table, .product table {
-                                    width: 100%;
-                                    border-collapse: collapse;
-                                }     
-                                .weight td, .product td, .weight tr, .product tr {
-                                    border-collapse: collapse;
-                                }         
-                                .weight, .product {
-                                    padding: 0;
-                                    margin: 0;
-                                    vertical-align: top;
-                                }
-                                .left-section {
-                                    width: 40%;
-                                    text-align: left;
-                                }
-                                .right-section {
-                                    width: 40%;
-                                    text-align: right;
-                                }
-                                .computer-section {
-                                    width: 40%;
-                                    text-align: center;
-                                    float: right;
-                                }
-                                .info-table {
-                                    width: 100%;
-                                    border: none;
-                                }
-                                .info-table td {
-                                    padding: 2px 4px;
-                                    border: none;
-                                }
-                                .info-table .label {
-                                    font-weight: bold;
-                                    text-align: left;
-                                    white-space: nowrap;
-                                }
-                                .info-table .value {
-                                    text-align: left;
-                                    padding-left: 10px;
-                                }
-                                .info-table td:first-child {
-                                    width: 50px;
-                                }
-                                .signature-section {
-                                    display: flex;
-                                    justify-content: space-between;
-                                    margin-top:55px;
-                                }
-                                .signature-box {
-                                    width: 100%;
-                                    text-align: center;
-                                }
-                                .dotted-line {
-                                    border-bottom: 1px dotted black;
-                                    width: 100%;
-                                    display: inline-block;
-                                }
-                                .driver-sign {
-                                    text-align: center; 
-                                }
-                                hr {
-                                    border: 2px solid black; /* Adjust thickness and color */
-                                }
-                                .border-none {
-                                    border:0;
-                                }
-                        </style>
-                    </head>
-                    <body>
-                        <div style="display: flex;">
-                            <span style="font-size:30px; font-weight:bold; margin-top: 10px;">'.$compname.'</span><br>
-                            <span style="font-size:28px; font-weight:bold; margin-top: 10px; margin-left: 140px;">WEIGHING SLIP</span><br>
-                        </div>
-                        <span style="margin-bottom: 10px; font-size: 20px;">Co.Registration No: '.$compnewreg.' ('.$compreg.') / Tin No: '.$comptinno.'<br>
-                        '.$plantAddress1.' '.$plantAddress2.' '.$plantAddress3.'<br>
-                        Tel: '.$plantPhoneNo.' Mobile No: '.$plantFaxNo.'</span>
-                        <hr>
-                        
-                        <div class="container">
-                            <table class="info-table left-section" style="padding:0; font-size: 18px;">';
-                                if ($row['transaction_status'] == 'Purchase'){
-                                    $message .= '<tr><td class="label">Supplier</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
-                                }else{
-                                    $message .= '<tr><td class="label">Customer</td><td>:</td></td><td class="value">'.$customer.'</td></tr>';
-                                }
-
-                            $message .= '
-                                <tr><td class="label">Co. Reg</td><td>:</td><td class="value">'.$customerNR.' - ('.$customerR.')</td></tr>
-                                <tr><td class="label">Tin No</td><td>:</td><td class="value">'.$customerTN.' - (I/C No : '.$customerIC.')</td></tr>
-                                <tr><td class="label">Driver Name</td><td>:</td><td class="value">'.$row['driver_name'].'</td></tr>
-                                <tr><td class="label">I/C No.</td><td>:</td><td class="value">'.$row['driver_ic'].'</td></tr>
-                                <tr><td class="label">Transporter.</td><td>:</td><td class="value">'.$row['transporter'].'</td></tr>
-                            </table>
-                            <table class="info-table right-section" style="width:40%; font-size: 18px;">
-                                <tr><td class="label">Weight Status</td><td>:</td><td class="value">'.$row['transaction_status'].'</td></tr>
-                                <tr><td class="label">Weight No</td><td>:</td><td class="value">'.$row['transaction_id'].'</td></tr>
-                                <tr><td class="label">Weight By</td><td>:</td><td class="value">'.$row['modified_by'].'</td></tr>
-                                <tr><td class="label">Weight Date</td><td>:</td><td class="value">'.$date.'</td></tr>
-                                <tr><td class="label">Destination</td><td>:</td><td class="value">'.$row['destination'].'</td></tr>
-                                <tr><td class="label">Vehicle Plate</td><td>:</td><td class="value">'.$row['lorry_plate_no1'].'</td></tr>
-                            </table>
-                        </div>
-                        <br>
-                        <table style="border: none; font-size: 18px;">
-                            <tr>
-                                <td class="weight">
-                                    <table style="border: none;">
-                                        <tr>
-                                            <th style="border-top:none; border-left:none;">Date / Time <br> <span style="visibility:hidden">empty</span></th>
-                                            <th class="border-none" colspan="2">Weight (kg)</th>
-                                        </tr> 
-                                        <tr>
-                                            <td style="text-align:center;font-weight:bold; border-left:none;font-size:15px;">'.$inDate.'</td>
-                                            <td style="text-align:center" width="15%">IN</td>
-                                            <td style="text-align:center; border-right:none;" width="25%">'.($row['gross_weight1'] ?? '0').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="text-align:center;font-weight:bold; border-left:none;font-size:15px;">'.$outDate.'</td>
-                                            <td style="text-align:center">OUT</td>
-                                            <td style="text-align:center; border-right:none;">'.($row['tare_weight1'] ?? '0').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" class="right-align" style="border-left:none; padding-left: 15px;">Total Weight (kg)</td>
-                                            <td style="text-align:center; border-right:none;">'.($row['final_weight'] ?? '0').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" class="right-align" style="border-left:none; padding-left: 15px;">Deduct (kg)</td>
-                                            <td style="text-align:center; border-right:none;">'.($row['reduce_weight'] ?? '0').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" class="right-align" style="border-left:none; border-bottom: none; padding-left: 15px;">Net Weight (kg)</td>
-                                            <td style="text-align:center;font-weight:bold; border-right:none; border-bottom: none;">'.($row['nett_weight1'] ?? '0').'</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" style="border-left:none; border-right:none; border-bottom: none; visibility:hidden">empty space</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td class="product">
-                                    <table style="border: none; font-size: 18px;">
-                                        <tr>
-                                            <th style="border-top:none; border-left:none;">Product Description</th>
-                                            <th style="border-top:none;">(%)</th>
-                                            <th style="border-top:none;">Weight <br>(kg)</th>
-                                            <th style="border-top:none;">Reduce <br>(kg)</th>
-                                            <th style="border-top:none;">Total <br>(kg)</th>
-                                            <th style="border-top:none;">U/Price <br>(RM)</th>
-                                            <th style="border-top:none; border-right:none;">Total Price <br>(RM)</th>
-                                        </tr>';
-
-                    $rowCount = 1;
-
-                    if (!empty($weighProducts)){
-                        foreach($weighProducts as $row2) {
-                            $message .=  '<tr>
-                                                <td class="left-align" style="border-left:none;">'.$rowCount. ' '.$row2['product_name'].'</td>
-                                                <td style="text-align: center">'.$row2['percentage'].'</td>
-                                                <td style="text-align: center">'.$row2['item_weight'].'</td>
-                                                <td style="text-align: center">'.$row2['reduce_weight'].'</td>
-                                                <td style="text-align: center">'.$row2['total_weight'].'</td>
-                                                <td class="right-align" style="padding-right: 10px;">'.($row2['unit_price'] ?? '-').'</td>
-                                                <td class="right-align" style="font-weight:bold; border-right:none; padding-right: 10px">'.($row2['total_price'] ?? '-').'</td>
+                            // Add empty rows if less than 5
+                            while ($rowCount <= 5) {
+                                $message .= '<tr>
+                                                <td class="left-align" style="border-left:none; visibility:hidden">' . $rowCount . '</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="right-align"></td>
+                                                <td class="right-align" style="border-right:none;"></td>
                                             </tr>';
-                            $rowCount++;
-                        }
-                    }
-
-                    // Add empty rows if less than 5
-                    while ($rowCount <= 5) {
-                        $message .= '<tr>
-                                        <td class="left-align" style="border-left:none; visibility:hidden">' . $rowCount . '</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td class="right-align"></td>
-                                        <td class="right-align" style="border-right:none;"></td>
-                                    </tr>';
-                        $rowCount++;
-                    }
-
-                    /*if ($select_stmt3 = $db->prepare("SELECT SUM(total_price) AS total_amount FROM Weight_Product WHERE weight_id=?")) {
-                        $select_stmt3->bind_param('s', $wid);
-                        
-                        // Execute the prepared query.
-                        if ($select_stmt3->execute()) {
-                            $result = $select_stmt3->get_result();
-                            
-                            if ($row3 = $result->fetch_assoc()) {
-                                $totalAmount = $row3['total_amount'];
+                                $rowCount++;
                             }
 
-                            $totalAmount = number_format((float)$totalAmount, 2, '.', ''); // "123.00"
 
-                        }
-                    }*/
-
-                                        $message .= '<tr>
-                                            <td colspan="6" style="text-align:right; border-bottom: none; border-left: none; font-weight:bold;">Total Amount</td>
-                                            <td class="right-align" style="font-weight:bold; border-bottom: none; border-right: none; padding-right: 10px; text-align:right; padding-right: 10px;">'.$row['total_price'].'</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="font-size: 18px;"><strong>Remark: '.$row['remarks'].'</strong></p>
-                        <div class="signature-section">
-                            <div class="left-section">
-                                <span class="dotted-line"></span>
-                                <table class="info-table">
-                                    <tr><td colspan="3" style="text-align:center; font-weight:bold; font-size: 20px">(Received By)</td></tr>
-                                    <tr><td class="label" style="font-size: 18px;">Name</td><td>:</td></td><td class="value"></td></tr>
-                                    <tr><td class="label" style="font-size: 18px;">I/C No.</td><td>:</td><td class="value"></td></tr>
+                                                $message .= '<tr>
+                                                    <td colspan="6" style="text-align:right; border-bottom: none; border-left: none; font-weight:bold;">Total Amount</td>
+                                                    <td class="right-align" style="font-weight:bold; border-bottom: none; border-right: none; padding-right: 10px; text-align:right; padding-right: 10px;">'.$row['total_price'].'</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
                                 </table>
-                            </div>
-                            <div style="margin-top:10px;">
-                                <p style="text-align:center;font-size: 18px;">
-                                    THIS WEIGHING SLIP IS COMPUTER GENERATED AND<br>
-                                    REQUIRES NO SIGNATURE & CHOP<br>
-                                    AUTHORISED BY: '.$compname.'
-                                </p>
-                            </div>
-                        </div>
-                    </body>
-                    </html>';
-                    
+                                <p style="font-size: 18px;"><strong>Remark: '.$row['remarks'].'</strong></p>
+                                <div class="signature-section">
+                                    <div class="left-section">
+                                        <span class="dotted-line"></span>
+                                        <table class="info-table">
+                                            <tr><td colspan="3" style="text-align:center; font-weight:bold; font-size: 20px">(Received By)</td></tr>
+                                            <tr><td class="label" style="font-size: 18px;">Name</td><td>:</td></td><td class="value"></td></tr>
+                                            <tr><td class="label" style="font-size: 18px;">I/C No.</td><td>:</td><td class="value"></td></tr>
+                                        </table>
+                                    </div>
+                                    <div style="margin-top:10px;">
+                                        <p style="text-align:center;font-size: 18px;">
+                                            THIS WEIGHING SLIP IS COMPUTER GENERATED AND<br>
+                                            REQUIRES NO SIGNATURE & CHOP<br>
+                                            AUTHORISED BY: '.$compname.'
+                                        </p>
+                                    </div>
+                                </div>
+                            </body>
+                        </html>';
+                    }
 
                     echo json_encode(
                         array(

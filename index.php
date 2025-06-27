@@ -212,7 +212,8 @@ if ($user != null && $user != ''){
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
-                                                                <option value="Misc">Misc / Rental</option>
+                                                                <option value="Rental">Rental</option>
+                                                                <option value="Misc">Misc</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -462,7 +463,8 @@ if ($user != null && $user != ''){
                                                                                                     <option value="Sales" selected>Sales</option>
                                                                                                     <option value="Purchase">Purchase</option>
                                                                                                     <option value="Local">Local</option>
-                                                                                                    <option value="Misc">Misc / Rental</option>
+                                                                                                    <option value="Rental">Rental</option>
+                                                                                                    <option value="Misc">Misc</option>
                                                                                                 </select>  
                                                                                             </div>
                                                                                         </div>
