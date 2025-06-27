@@ -148,6 +148,7 @@ if(isset($_POST['userID'])){
                     $message['customer_is_manual'] = $row['customer_is_manual'];
                     $message['customer_code'] = $row['customer_code'];
                     $message['customer_name'] = $row['customer_name'];
+                    $message['driver_is_manual'] = $row['driver_is_manual'];
                     $message['driver_code'] = $row['driver_code'];
                     $message['driver_name'] = $row['driver_name'];
                     $message['driver_ic'] = $row['driver_ic'];

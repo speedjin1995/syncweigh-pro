@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Service Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Print-friendly styling for A4 */
+    @media print {
+      body {
+        background: #fff !important;
+        font-size: 17px !important; 
+      }
+      .print-container {
+        width: 190mm !important;
+        max-width: 190mm !important;
+        margin: 0mm 5mm 1mm 5mm;
+        margin-top: -5px !important;
+      }
+    }
+
+    /* On screen styling */
+    .print-container {
+      margin: 40px auto;
+      background: #fff;
+      padding: 24px;
+      max-width: 800px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
+    }
+    /* Bootstrap 4 does not provide fw-bold or fs-3, so use font-weight/font-size directly */
+    /* .font-weight-bold { font-weight: bold !important; }
+    .font-italic { font-style: italic !important; }
+    .fs-3 { font-size: 1.75rem !important; }
+    .text-end { text-align: right !important; }
+    .me-2 { margin-right: .5rem !important; }
+    .me-4 { margin-right: 1.5rem !important; }
+    .mt-2 { margin-top: .5rem !important; }
+    .mt-3 { margin-top: 1rem !important; }
+    .mt-4 { margin-top: 1.5rem !important; }
+    .mb-0 { margin-bottom: 0 !important; }
+    .mb-1 { margin-bottom: .25rem !important; }
+    .mb-2 { margin-bottom: .5rem !important; }
+    .mb-4 { margin-bottom: 1.5rem !important; }
+    .pt-3 { padding-top: 1rem !important; }
+    .px-4 { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+    .py-5 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+    .p-2 { padding: .5rem !important; }
+    .p-4 { padding: 1.5rem !important; } */
+  </style>
+</head>
+<body class="bg-white">
+  <div class="container print-container mb-4">
+    <div class="row mb-2">
+      <div class="col-8">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST7TGa2Hwp1xnlfAD0xV4Lt1io_G4H1Y8SiQ&s" alt="HL Best Forklift Logo" width="50%">
+      </div>
+      <div class="col-4 mt-5" style="margin-left: -50px;">
+        <h2 class="text-danger font-weight-bold">Service Report</h2>
+        <div class="ml-3">
+          <div><span class="font-weight-bold">REPORT NO</span><span class="ml-2">25046</span></div>
+          <div><span class="font-weight-bold mr-4">CR NO</span> <span class="ml-4">CR20250611-18</span></div>
+          <div><span class="font-weight-bold mr-4">Date &nbsp;&nbsp;</span> <span class="ml-4">11/6/2025</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-7">
+        <div class="d-flex flex-column">
+          <div class="d-flex">
+            <div class="font-weight-bold me-2" style="min-width: 140px;">Account No</div>
+            <div class="me-4">300-H008</div>
+          </div>
+          <div class="d-flex">
+            <div class="font-weight-bold me-2" style="min-width: 140px;">Company Name</div>
+            <div class="me-4">HL BEST FORKLIFT SDN BHD</div>
+          </div>
+          <div class="d-flex">
+            <div class="font-weight-bold me-2" style="min-width: 140px;">Contact Person</div>
+            <div class="me-4">MS AVIE</div>
+          </div>
+          <div class="d-flex">
+            <div class="font-weight-bold me-2" style="min-width: 140px;">Contact No</div>
+            <div class="me-4">60103883881</div>
+          </div>
+          <div class="d-flex">
+            <div class="font-weight-bold me-2" style="min-width: 140px;">P/O or Quotation No</div>
+            <div class="me-4">QT004/0625/TAN</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="font-weight-bold">Address</div>
+        <div>
+          NO 13A, LOT 23A, KUALA NEUTRON,<br>
+          LORONG KUALA NEUTRON,<br>
+          JALAN TUARAN BYPASS,<br>
+          88450 KOTA KINA BALU, SABAH.
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2" style="border: 2px solid black;">
+      <div class="col-6">
+        <div class="px-4 mt-4">
+          <div class="d-flex align-items-center justify-content-center py-5" style="height: 140px; border: 1px solid black;">
+            <span class="fs-3 font-italic">ALLAT TAN</span>
+          </div>
+          <div class="text-center font-weight-bold">Customer Signature</div>
+        </div>
+      </div>
+      <div class="col-1" style="visibility: hidden;">
+        placeholder
+      </div>
+      <div class="col-5">
+        <div class="p-2">
+          <div><span class="font-weight-bold mr-5">Customer Rating Comments&nbsp;&nbsp;&nbsp;</span> 5</div>
+          <div>
+            DFHAT<br> RHERHEH<br> RHRERH<br> RHRHEREHRE
+          </div>
+          <div class="mt-2">
+            <div><span class="font-weight-bold">Customer Name&nbsp;&nbsp;</span> <span>ALLAN</span></div>
+            <div><span class="font-weight-bold mr-4">IC / ID&nbsp;&nbsp;&nbsp;</span> <span class="ml-5">8888</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technician Detail -->
+    <div class="row mt-3" style="border-bottom: 1px solid black;">
+      <div class="col-6">
+        <span class="font-weight-bold">Technician ID</span><span class="ml-5">HL002</span><br>
+        <span class="font-weight-bold">Technician Name</span><span class="ml-3">JORDAN LIM</span>
+      </div>
+      <div class="col-6">
+        <span class="font-weight-bold mr-5">Time In</span><span class="font-weight-bold" style="margin-left:200px;">Time Out</span><br>
+        <span class="ml-5 mr-5">9:11:23</span><span style="margin-left:200px;">11:11:23</span>
+      </div>
+    </div>
+
+    <!-- Device Detail -->
+    <div class="row mt-3" style="border-bottom: 1px solid black;">
+      <div class="col-6">
+        <span class="font-weight-bold mr-3">Machine Type</span><span class="ml-4">HL002</span><br>
+        <span class="font-weight-bold mr-5">Model</span><span class="ml-5">JORDAN LIM</span><br>
+        <span class="font-weight-bold mr-5">EngineNo</span><span class="ml-4">JORDAN LIM</span>
+      </div>
+      <div class="col-6">
+        <br>
+        <span class="font-weight-bold mr-5">Chassis No</span><span class="ml-5">115862</span><br>
+        <span class="font-weight-bold mr-5">Transmission No</span><span class="ml-2">erferferfe</span>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <strong>Remarks</strong>
+      <ol class="mb-0">
+        <li>KEY</li><li>BOARD</li><li>CABLE</li><li>EIRING REPAIR</li><li>BJBHBJ</li>
+        <li>HJGCUJHDC</li><li>JVBKGHKGJUKIDF</li><li>UITYGFUTGJWD</li><li>UIOHUTDFHGJIO</li>
+        <li>JKBUHJIUKHF</li><li>HJBHUHKLHWJDAJKHNGIKLOJHGFLOWHEROLGFHWEIOHFIOQEHFIQEIOHFJQEWH</li>
+        <li>KBUYGUJIWD</li><li>JKJHYGUDICFVHI</li><li>HVFHVJGHJ</li>
+        <li>WREGHETJHERGHRHTRHJTRYHJTYUEYTYJFERFJYJYEFRYJYRTEYKJJYRETJEYR</li>
+        <li>HKJYGUYHGD</li><li>KJBHUJGBUKI</li><li>GJHKYUGUHWJD</li><li>HJGFHGUYGHWDVF</li>
+        <li>GJGVHJKGJBUHKWDF</li><li>UJHUJHJFSV</li><li>BKJIJHWK</li><li>KJHUIHOWD</li>
+        <li>LJGHUHJIUWDVF</li><li>UIGHUJHIUH</li>
+      </ol>
+    </div>
+
+    <div class="text-center mt-4 pt-3">
+      <strong>HL Best Forklift Sdn Bhd (201001012165 (1000089-T))<br>
+      No 13A, Lot 23A, Kuala Neutron, Lorong Kuala Neutron, Jalan Tuaran Bypass, 88450 Kota Kinabalu, Sabah, Malaysia.<br>
+      Tel: +6088 388 878 &nbsp; Fax: +6088 389 887 &nbsp; Email: sales@hlbest-forklift.com.my</strong><br>
+      <a href="http://www.hlbest-forklift.com.my">www.hlbest-forklift.com.my</a>
+    </div>
+  </div>
+</body>
+</html>

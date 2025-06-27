@@ -1,6 +1,17 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require_once 'db_connect.php';
+require '../vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+
 // // Load the database configuration file 
  
 // Filter the excel data 
@@ -123,7 +134,6 @@ if ($_GET["type"] == 'Weighing'){
 
     // Fetch records from database
     if($_GET["file"] == 'weight'){
-
         if ($_GET["isMulti"] == 'Y'){
             $ids = $_GET['id'];
             if ($weightStatus == 'Pending'){
@@ -144,9 +154,10 @@ if ($_GET["type"] == 'Weighing'){
         }
     }
 }else{
-    $fields = array('TRANSACTION ID', 'WEIGHT STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
-    'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 
-    'NETT WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
+    $fields = [];
+    // $fields = array('TRANSACTION ID', 'WEIGHT STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+    // 'SUPPLIER NODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'PO NO.', 'DO NO.', 'GROSS WEIGHT', 'TARE WEIGHT', 
+    // 'NETT WEIGHT', 'IN TIME', 'OUT TIME', 'MANUAL', 'WEIGHTED BY'); 
 
     if($_GET["file"] == 'weight'){
         $sql = "select * from Weight WHERE Weight.status = '0' and Weight.is_complete = 'Y' and Weight.is_cancel <> 'Y'".$searchQuery;
@@ -167,40 +178,228 @@ $excelData = implode("\t", array_values($fields)) . "\n";
 // Fetch records from database
 $query = $db->query($sql);
 
+// Begin spreadsheet
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
+
+// Set column widths
+$columns = ['A' => 18, 'B' => 20, 'C' => 16, 'D' => 24, 'E' => 18, 'F' => 18, 'G' => 16, 'H' => 10, 'I' => 16, 'J' => 16, 'K' => 20];
+foreach ($columns as $col => $width) {
+    $sheet->getColumnDimension($col)->setWidth($width);
+}
+
+$rowNum = 1;
+
 if($query->num_rows > 0){ 
+    $no = 1;
     // Output each row of the data 
     while($row = $query->fetch_assoc()){ 
+        $lineData = [];
         if ($_GET["type"] == 'Weighing'){
             if($_GET["file"] == 'weight'){
                 $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['lorry_plate_no1'], $row['gross_weight1'], 
                 $row['gross_weight1_date'], $row['tare_weight1'], $row['tare_weight1_date'], $row['nett_weight1']);
             }
-        }else{
-            if($_GET["file"] == 'weight'){
-                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
-                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], $row['product_code'], $row['product_name'], $row['product_description'], $row['purchase_order'],
-                $row['delivery_no'], $row['gross_weight1'], $row['tare_weight1'], $row['nett_weight1'], $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], 
-                $row['created_by']);
-            }else{
-                $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],
-                $row['totalPCS'], $row['moq'], $row['unitPrice'], $row['totalPrice'], $row['veh_number'], $row['lots_no'], $row['batchNo'], $row['invoiceNo']
-                , $row['deliveryNo'], $row['purchaseNo'], $row['customer_name'], $row['packages'], $row['dateTime'], $row['remark'], $row['status'], $deleted);
-            }
-        }
 
-        array_walk($lineData, 'filterData'); 
-        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+            array_walk($lineData, 'filterData'); 
+            $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+
+        }else{
+            // --- Add a uniform separator row ---
+            $sheet->mergeCells("A$rowNum:G$rowNum");
+            $sheet->setCellValue("A$rowNum", "Record $no");
+            $sheet->getStyle("A$rowNum:G$rowNum")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => 'FFFFFF']
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '444444'], // dark consistent gray
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+            $rowNum++; // Move to the next row for the next block
+            $no++;
+
+            // --- HEADER BLOCK (Customer/Supplier Info) ---
+            $sheet->setCellValue("A$rowNum", 'SERIAL NO');
+            $sheet->setCellValue("B$rowNum", 'STATUS');
+            $sheet->setCellValue("C$rowNum", 'TYPE');
+            $sheet->setCellValue("D$rowNum", 'CONTACT NAME');
+            $sheet->setCellValue("E$rowNum", 'IC NO. / REG NO.');
+            $sheet->setCellValue("F$rowNum", 'TIN NO');
+            $sheet->setCellValue("G$rowNum", 'CONTACT NO');
+            $sheet->mergeCells("A$rowNum:A$rowNum");
+            $sheet->mergeCells("B$rowNum:B$rowNum");
+            $sheet->mergeCells("C$rowNum:C$rowNum");
+            $sheet->mergeCells("D$rowNum:D$rowNum");
+            $sheet->mergeCells("E$rowNum:E$rowNum");
+            $sheet->mergeCells("F$rowNum:F$rowNum");
+            $sheet->mergeCells("G$rowNum:G$rowNum");
+            $sheet->getStyle("A$rowNum:G$rowNum")->applyFromArray([
+                'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '2172B9'],
+                ],
+                'borders' => [
+                    'allBorders' => ['borderStyle' => Border::BORDER_THIN],
+                ],
+            ]);
+            $rowNum++;
+
+            // Data row (fill with your query data, as in your business logic)
+            $status = '';
+            $customerContactName = '';
+            $customerIcNo = '';
+            $customerTinNo = '';
+            $customerContactNo = '';
+            if ($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Misc') {
+                if ($row['customer_is_manual'] == 'Y') {
+                    $status = 'Walk In Customer';
+                } else {
+                    $status = 'Existing Customer';
+                    if ($select_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status='0'")) {
+                        $select_stmt->bind_param('s', $row['customer_code']);
+                        $select_stmt->execute();
+                        $result = $select_stmt->get_result();
+                        if ($row2 = $result->fetch_assoc()) {
+                            $customerContactName = $row2['contact_name'];
+                            $customerIcNo = $row2['ic_no'];
+                            $customerTinNo = $row2['tin_no'];
+                            $customerContactNo = $row2['phone_no'];
+                        }
+                        $select_stmt->close();
+                    }
+                }
+            } else {
+                if ($row['supplier_is_manual'] == 'Y') {
+                    $status = 'Walk In Supplier';
+                } else {
+                    $status = 'Existing Supplier';
+                    if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status='0'")) {
+                        $select_stmt->bind_param('s', $row['supplier_code']);
+                        $select_stmt->execute();
+                        $result = $select_stmt->get_result();
+                        if ($row2 = $result->fetch_assoc()) {
+                            $customerContactName = $row2['contact_name'];
+                            $customerIcNo = $row2['ic_no'];
+                            $customerTinNo = $row2['tin_no'];
+                            $customerContactNo = $row2['phone_no'];
+                        }
+                        $select_stmt->close();
+                    }
+                }
+            }
+            $sheet->fromArray([
+                $row['transaction_id'], $status, $row['transaction_status'],
+                $customerContactName, $customerIcNo, $customerTinNo, $customerContactNo
+            ], null, "A$rowNum");
+            $sheet->getStyle("A$rowNum:G$rowNum")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+            ]);
+            $rowNum += 2;
+
+            // --- PRODUCT TABLE HEADER ---
+            $sheet->setCellValue("A$rowNum", 'DESCRIPTION');
+            $sheet->setCellValue("B$rowNum", 'WEIGHT');
+            $sheet->setCellValue("C$rowNum", 'REDUCE WEIGHT');
+            $sheet->setCellValue("D$rowNum", 'NETT');
+            $sheet->setCellValue("E$rowNum", 'UNIT PRICE');
+            $sheet->setCellValue("F$rowNum", 'TOTAL PRICE');
+            $sheet->setCellValue("G$rowNum", 'SUB TOTAL PRICE');
+            $sheet->getStyle("A$rowNum:G$rowNum")->applyFromArray([
+                'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '2172B9'],
+                ],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $rowNum++;
+
+            // --- PRODUCT ROWS ---
+            if ($product_stmt = $db->prepare("SELECT * FROM Weight_Product WHERE weight_id=? AND deleted='0'")) {
+                $product_stmt->bind_param('s', $row['id']);
+                $product_stmt->execute();
+                $result2 = $product_stmt->get_result();
+                while ($row3 = $result2->fetch_assoc()) {
+                    $sheet->fromArray([
+                        $row3['product_name'], $row3['item_weight'], $row3['reduce_weight'],
+                        $row3['total_weight'], $row3['unit_price'], $row3['total_price'], $row3['sub_total_price'] ?? ''
+                    ], null, "A$rowNum");
+                    $sheet->getStyle("A$rowNum:G$rowNum")->applyFromArray([
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    ]);
+                    $rowNum++;
+                }
+                $product_stmt->close();
+            }
+
+            $rowNum += 1;
+
+            // --- WEIGHING PERSON DETAIL ---
+            $isManual = ($row['manual_weight'] == 'true' ? 'MANUAL WEIGHT' : 'AUTO WEIGHT');
+            $sheet->setCellValue("A$rowNum", 'PIC USE ON');
+            $sheet->setCellValue("B$rowNum", 'LAST LOGIN BY');
+            $sheet->setCellValue("C$rowNum", 'STATUS');
+            $sheet->setCellValue("D$rowNum", 'LAST LOGIN DATE / TIME');
+            // Do NOT merge D:G here
+            $sheet->getStyle("A$rowNum:D$rowNum")->applyFromArray([
+                'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '2172B9'],
+                ],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $rowNum++;
+
+            $sheet->setCellValue("A$rowNum", $row['created_by']);
+            $sheet->setCellValue("B$rowNum", $row['modified_by']);
+            $sheet->setCellValue("C$rowNum", $isManual);
+            $sheet->setCellValue("D$rowNum", $row['modified_date']);
+            // Do NOT merge D:G here
+            $sheet->getStyle("A$rowNum:D$rowNum")->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $rowNum += 3; // space before next block
+        }
     } 
 }else{ 
-    $excelData .= 'No records found...'. "\n"; 
+    if ($_GET['type'] == 'Weighing'){
+        $excelData .= 'No records found...'. "\n"; 
+    }else{
+        $sheet->setCellValue("A1", "No records found...");
+    }
 } 
- 
-// Headers for download 
-header("Content-Type: application/vnd.ms-excel"); 
-header("Content-Disposition: attachment; filename=\"$fileName\""); 
- 
-// Render excel data 
-echo $excelData;
- 
-exit;
+
+if ($_GET["type"] == 'Weighing'){
+    // Headers for download 
+    header("Content-Type: application/vnd.ms-excel"); 
+    header("Content-Disposition: attachment; filename=\"$fileName\""); 
+    
+    // Render excel data 
+    echo $excelData;
+    
+    exit;
+}else{
+    // Output
+    $fileName = (isset($fileName) ? $fileName : "Report-data_" . date('Y-m-d') . ".xlsx");
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header("Content-Disposition: attachment; filename=\"$fileName\"");
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
 ?>
