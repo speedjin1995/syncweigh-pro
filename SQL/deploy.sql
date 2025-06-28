@@ -1163,3 +1163,78 @@ ALTER TABLE `Product_Rawmat` ADD `raw_mat_id` INT(11) NULL AFTER `product_id`;
 ALTER TABLE `Product_Rawmat` ADD `plant_id` INT(11) NULL AFTER `raw_mat_weight`, ADD `batch_drum` VARCHAR(5) NULL AFTER `plant_id`;
 
 ALTER TABLE `Product_Rawmat` ADD `basic_uom_unit_id` INT(5) NULL AFTER `raw_mat_basic_uom`;
+
+-- 27/06/2025 --
+ALTER TABLE `Bitumen` CHANGE `60/70` `60/70` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `pg76` `pg76` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `crmb` `crmb` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `lfo` `lfo` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `diesel` `diesel` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` ADD `hotoil` LONGTEXT NULL AFTER `diesel`, ADD `data` LONGTEXT NULL AFTER `hotoil`, ADD `declaration_datetime` DATETIME NULL AFTER `data`, ADD `plant_id` INT(11) NULL AFTER `declaration_datetime`;
+
+ALTER TABLE `Bitumen` ADD `created_by` VARCHAR(100) NULL AFTER `created_datetime`;
+
+ALTER TABLE `Bitumen` ADD `modified_datetime` DATETIME on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_by`, ADD `modified_by` VARCHAR(100) NULL DEFAULT CURRENT_TIMESTAMP AFTER `modified_datetime`;
+
+ALTER TABLE `Bitumen` CHANGE `modified_by` `modified_by` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+CREATE TABLE `Bitumen_Log` (
+  `id` int(10) NOT NULL,
+  `bitumen_id` INT(11) NOT NULL,
+  `60/70` longtext DEFAULT NULL,
+  `pg76` longtext DEFAULT NULL,
+  `crmb` longtext DEFAULT NULL,
+  `lfo` longtext DEFAULT NULL,
+  `diesel` longtext DEFAULT NULL,
+  `hotoil` longtext DEFAULT NULL,
+  `data` longtext DEFAULT NULL,
+  `declaration_datetime` datetime DEFAULT NULL,
+  `plant_id` int(11) DEFAULT NULL,
+  `plant_code` varchar(15) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Bitumen_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Bitumen_Log` MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_BITUMEN` AFTER INSERT ON `Bitumen`
+ FOR EACH ROW INSERT INTO Bitumen_Log (
+    bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, 1, NEW.created_by, NEW.created_datetime
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Bitumen_Log (
+        bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_datetime
+    );
+END
+$$
+DELIMITER ;
