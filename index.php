@@ -855,7 +855,7 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="replacementContainer" class="col-sm-4 col-form-label">New Empty Entrance Bin</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="replacementContainer" name="replacementContainer" placeholder="Replacement Container">
+                                                                                        <input type="text" class="form-control" id="replacementContainer" name="replacementContainer" placeholder="Replacement Container" required>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>

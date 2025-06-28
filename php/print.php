@@ -559,8 +559,8 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                             <tr style="text-align: center;">
                                                 <td class="table-border">'.$row['container_no'].'</td>
                                                 <td class="table-border">
-                                                    Date In: '.$row['gross_weight1_date'].'<br>
-                                                    Date Out: '.$row['tare_weight2_date'].'
+                                                    In: '.$row['gross_weight1_date'].'<br>
+                                                    Out: '.$row['tare_weight2_date'].'
                                                 </td>
                                                 <td class="table-border">
                                                     In: '.$row['lorry_plate_no1'].'<br>
@@ -666,8 +666,8 @@ if(isset($_POST['userID'], $_POST["file"], $_POST['isEmptyContainer'])){
                                             <tr style="text-align: center;">
                                                 <td class="table-border">'.$row['container_no'].'</td>
                                                 <td class="table-border">
-                                                    Date In: '.$row['gross_weight1_date'].'<br>
-                                                    Date Out: '.$row['tare_weight2_date'].'
+                                                    In: '.$row['gross_weight1_date'].'<br>
+                                                    Out: '.$row['tare_weight2_date'].'
                                                 </td>
                                                 <td class="table-border">
                                                     In: '.$row['lorry_plate_no1'].'<br>
