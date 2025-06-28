@@ -5,18 +5,18 @@
 require_once "php/db_connect.php";
 $plantId = $_SESSION['plant'];
 
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 $plantName = '-';
@@ -71,7 +71,18 @@ else{
         .modal-header {
             padding: var(1rem, 1rem) !important;
         }
+
+        .select2-container .select2-selection__choice {
+            color: black !important;
+            font-weight: bold !important;
+        }
+
+        .select2-container .select2-selection__choice__remove {
+            color: black !important;
+            font-weight: bold !important;
+        }
     </style>
+    
 </head>
 
 <?php include 'layouts/body.php'; ?>
@@ -149,8 +160,7 @@ else{
                                                     <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="customerNoSearch" name="customerNoSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
                                                                 <?php } ?>
@@ -197,8 +207,7 @@ else{
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="productSearch" class="form-label">Product</label>
-                                                            <select id="productSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="productSearch" name="productSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
                                                                 <?php } ?>
@@ -635,13 +644,12 @@ else{
             defaultDate: today
         });
 
-        $('.select2').each(function() {
-            $(this).select2({
-                allowClear: true,
-                placeholder: "Please Select",
-                // Conditionally set dropdownParent based on the element’s location
-                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
-            });
+        $('.select2').select2({
+            placeholder: "Please Select",
+            allowClear: true,
+            dropdownParent: $(this).closest('.modal').length 
+                ? $(this).closest('.modal-body') 
+                : $(document.body)
         });
 
         // Apply custom styling to Select2 elements in addModal
@@ -664,11 +672,11 @@ else{
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var customerNoI = $('#customerNoSearch').val() || [];
         var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var productI = $('#productSearch').val() || [];
         var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
@@ -747,11 +755,11 @@ else{
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() || [];
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var productI = $('#productSearch').val() || [];
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';

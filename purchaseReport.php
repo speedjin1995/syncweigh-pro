@@ -5,19 +5,19 @@
 require_once "php/db_connect.php";
 $plantId = $_SESSION['plant'];
 
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0'");
 
 $plantName = '-';
@@ -71,6 +71,16 @@ else{
 
         .modal-header {
             padding: var(1rem, 1rem) !important;
+        }
+
+        .select2-container .select2-selection__choice {
+            color: black !important;
+            font-weight: bold !important;
+        }
+
+        .select2-container .select2-selection__choice__remove {
+            color: black !important;
+            font-weight: bold !important;
         }
     </style>
 </head>
@@ -161,8 +171,7 @@ else{
                                                     <div class="col-3" id="supplierSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="supplierSearch" class="form-label">Supplier No</label>
-                                                            <select id="supplierSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="supplierSearch" name="supplierSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
                                                                     <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
                                                                 <?php } ?>
@@ -209,8 +218,7 @@ else{
                                                     <div class="col-3" id="rawMatSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="rawMatSearch" class="form-label">Raw Material</label>
-                                                            <select id="rawMatSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="rawMatSearch" name="rawMatSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
                                                                     <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
@@ -665,11 +673,11 @@ else{
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
         var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-        var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+        var supplierNoI = $('#supplierSearch').val() || [];
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
         var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-        var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+        var rawMatI = $('#rawMatSearch').val() || [];
         var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var poI = $('#poSearch').val() ? $('#poSearch').val() : '';

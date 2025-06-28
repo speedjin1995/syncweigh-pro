@@ -86,7 +86,7 @@ if (!empty($data['data'])) {
             $ProductName = searchProductNameByCode($ProductCode, $db);
         }
         $VehNumber = (isset($rows['ITEMDESC2']) && !empty($rows['ITEMDESC2']) && $rows['ITEMDESC2'] !== '' && $rows['ITEMDESC2'] !== null) ? trim($rows['ITEMDESC2']) : '';
-        $Remarks = !empty($rows['REMARKS']) ? trim($rows['REMARKS']) : '';
+        $Remarks = !empty($rows['DOCREF4']) ? trim($rows['DOCREF4']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
         $DestinationCode = '';
         if(!empty($DestinationName)){

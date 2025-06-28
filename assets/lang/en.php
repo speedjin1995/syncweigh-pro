@@ -15,6 +15,10 @@
     $lang["t-po"]="Purchase Order";
     $lang["t-gr"]="Goods Received";
 
+    $lang["t-stock"]="Stock Management";
+    $lang["t-bitumen"]="Bitumen";
+    $lang["t-inventory"]="Inventory";
+
     $lang["t-masterdata"]="Master Data";
     $lang["t-customer"]="Customer";
     $lang["t-supplier"]="Supplier";
@@ -24,7 +28,6 @@
     $lang["t-user"]="User";
     $lang["t-unit"]="Unit";
     $lang["t-vehicle"]="Vehicle";
-    $lang["t-inventory"]="Inventory";
     $lang["t-agent"]="Sales Representative";
     $lang["t-raw-mat"]="Raw Materials";
     $lang["t-site"]="Site";
@@ -42,7 +45,6 @@
     $lang["t-crm"]="CRM";
     $lang["t-billboard"]="Billboard";
     $lang["t-weighing"]="Weighing";
-    $lang["t-bitumen"]="Bitumen";
     $lang["t-crypto"]="Crypto";
     $lang["t-projects"]="Projects";
     $lang["t-apps" ]="Apps";

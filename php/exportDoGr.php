@@ -87,7 +87,7 @@ if ($isMulti == 'N'){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' AND unit_price > 0";
                 $doRecords = mysqli_query($db, $doQuery);
                 $weighingData = array();
 
@@ -242,7 +242,7 @@ if ($isMulti == 'N'){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' AND unit_price > 0";
                 $doRecords = mysqli_query($db, $doQuery);
                 $weighingData = array();
 
