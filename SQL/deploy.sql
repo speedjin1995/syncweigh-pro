@@ -1238,3 +1238,99 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
 END
 $$
 DELIMITER ;
+
+-- 29/06/2025 --
+CREATE TABLE `Stock_Take_Log` (
+  `id` int(11) NOT NULL,
+  `declaration_datetime` datetime NOT NULL,
+  `plant_id` int(11) DEFAULT NULL,
+  `sixty_seventy_production` varchar(50) DEFAULT NULL,
+  `sixty_seventy_os` varchar(50) DEFAULT NULL,
+  `sixty_seventy_incoming` varchar(50) DEFAULT NULL,
+  `sixty_seventy_usage` varchar(50) DEFAULT NULL,
+  `sixty_seventy_bookstock` varchar(50) DEFAULT NULL,
+  `sixty_seventy_ps` varchar(50) DEFAULT NULL,
+  `sixty_seventy_diffstock` varchar(50) DEFAULT NULL,
+  `sixty_seventy_actual_usage` varchar(50) DEFAULT NULL,
+  `lfo_production` varchar(50) DEFAULT NULL,
+  `lfo_os` varchar(50) DEFAULT NULL,
+  `lfo_incoming` varchar(50) DEFAULT NULL,
+  `lfo_ps` varchar(50) DEFAULT NULL,
+  `lfo_usage` varchar(50) DEFAULT NULL,
+  `lfo_actual_usage` varchar(50) DEFAULT NULL,
+  `diesel_production` varchar(50) DEFAULT NULL,
+  `diesel_os` varchar(50) DEFAULT NULL,
+  `diesel_incoming` varchar(50) DEFAULT NULL,
+  `diesel_mreading` varchar(50) DEFAULT NULL,
+  `diesel_transport` varchar(50) DEFAULT NULL,
+  `diesel_ps` varchar(50) DEFAULT NULL,
+  `diesel_usage` varchar(50) DEFAULT NULL,
+  `diesel_actual_usage` varchar(50) DEFAULT NULL,
+  `status` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Stock_Take_Log`  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Stock_Take_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `Inventory` ADD `plant_id` INT(11) NOT NULL AFTER `raw_mat_count`;
+
+ALTER TABLE `Inventory_Log` ADD `plant_id` INT(11) NOT NULL AFTER `raw_mat_count`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER TRG_INS_INV
+AFTER INSERT ON Raw_Mat
+FOR EACH ROW
+BEGIN
+    -- Insert one inventory row for each plant
+    INSERT INTO Inventory (raw_mat_id, plant_id, plant_code, created_by, modified_by)
+    SELECT NEW.id, p.id, p.plant_code, NEW.created_by, NEW.modified_by
+    FROM Plant p WHERE status = '0';
+END
+$$
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_INV_LOG` AFTER INSERT ON `Inventory`
+ FOR EACH ROW INSERT INTO Inventory_Log (
+    inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Inventory_Log (
+        inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+UPDATE Inventory i
+LEFT JOIN Plant p ON i.plant_code = p.plant_code
+SET i.plant_id = p.id
+WHERE i.plant_code IS NOT NULL;
+
+UPDATE Inventory_Log i
+LEFT JOIN Plant p ON i.plant_code COLLATE utf8mb4_unicode_ci = p.plant_code COLLATE utf8mb4_unicode_ci
+SET i.plant_id = p.id
+WHERE i.plant_code IS NOT NULL;
