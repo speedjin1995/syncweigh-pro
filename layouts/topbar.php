@@ -7,6 +7,7 @@ $salesList = array();
 $purchaseList = array();
 $localList = array();
 $miscList = array();
+$rentalList = array();
 $count = 0;
 
 $salesList2 = array();
@@ -31,6 +32,13 @@ while($row=mysqli_fetch_assoc($weighing)){
     }
     else if($row['transaction_status'] == 'Misc'){
         $miscList[] = array(
+            "id" => $row['id'],
+            "transaction_id" => $row['transaction_id'],
+            "weight_type" => $row['weight_type']
+        );
+    }
+    else if($row['transaction_status'] == 'Rental'){
+        $rentalList[] = array(
             "id" => $row['id'],
             "transaction_id" => $row['transaction_id'],
             "weight_type" => $row['weight_type']
@@ -69,7 +77,7 @@ while($row2=mysqli_fetch_assoc($weighing2)){
     }
 }
 
-$count = count($salesList) + count($purchaseList) + count($localList) + count($miscList);
+$count = count($salesList) + count($purchaseList) + count($localList) + count($miscList) + count($rentalList);
 $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
 
 $compids = '1';
@@ -713,9 +721,15 @@ $date = date('d/m/Y - h:i:sA');
                                         </a>
                                     </li>
                                     <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#alerts-tab" role="tab"
+                                        <a class="nav-link" data-bs-toggle="tab" href="#misc-tab" role="tab"
                                             aria-selected="false">
                                             Misc <?php echo (count($miscList) == 0 ? '' : '('.count($miscList).')'); ?>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item waves-effect waves-light">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#rental-tab" role="tab"
+                                            aria-selected="false">
+                                            Rental <?php echo (count($rentalList) == 0 ? '' : '('.count($rentalList).')'); ?>
                                         </a>
                                     </li>
                                 </ul>
@@ -778,7 +792,7 @@ $date = date('d/m/Y - h:i:sA');
                                 </div>
                             </div>
 
-                            <div class="tab-pane fade p-4" id="alerts-tab" role="tabpanel" aria-labelledby="alerts-tab">
+                            <div class="tab-pane fade p-4" id="misc-tab" role="tabpanel" aria-labelledby="misc-tab">
                                 <div data-simplebar style="max-height: 300px;" class="pe-2">
                                     <?php for($i=0; $i<count($miscList); $i++){ ?>
                                         <div class="text-reset notification-item d-block dropdown-item position-relative">
@@ -786,6 +800,24 @@ $date = date('d/m/Y - h:i:sA');
                                                 <div class="flex-1">
                                                     <a href="index.php?weight=<?=$miscList[$i]['id'] ?>" class="stretched-link">
                                                         <h6 class="mt-0 mb-2 lh-base">There is a <?=$miscList[$i]['weight_type'] ?> weighing with <b><?=$localList[$i]['transaction_id'] ?></b>
+                                                            is <span class="text-secondary">Pending</span>
+                                                        </h6>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade p-4" id="rental-tab" role="tabpanel" aria-labelledby="rental-tab">
+                                <div data-simplebar style="max-height: 300px;" class="pe-2">
+                                    <?php for($i=0; $i<count($rentalList); $i++){ ?>
+                                        <div class="text-reset notification-item d-block dropdown-item position-relative">
+                                            <div class="d-flex">
+                                                <div class="flex-1">
+                                                    <a href="index.php?weight=<?=$rentalList[$i]['id'] ?>" class="stretched-link">
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$rentalList[$i]['weight_type'] ?> weighing with <b><?=$localList[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending</span>
                                                         </h6>
                                                     </a>
