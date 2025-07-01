@@ -50,36 +50,36 @@ if($_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
     // $plantId = searchPlantIdByCode($username, $db);
 
-    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
-    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
-    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
-    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
-    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
-    $driver = $db->query("SELECT * FROM Driver WHERE status = '0' and plant IN ('$plantId')");
-    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' and plant IN ('$plantId')");
-    $destination = $db->query("SELECT * FROM Destination WHERE status = '0' and plant IN ('$plantId')");
-    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId')");
-    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId')");
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
-    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
+    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId') ORDER BY veh_number ASC");
+    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId') ORDER BY veh_number ASC");
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $driver = $db->query("SELECT * FROM Driver WHERE status = '0' and plant IN ('$plantId') ORDER BY driver_name ASC");
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $destination = $db->query("SELECT * FROM Destination WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
 }
 else{
-    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-    $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
-    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-    $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
-    $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
+    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+    $driver = $db->query("SELECT * FROM Driver WHERE status = '0' ORDER BY driver_name ASC");
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+    $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
 }
 
 $role = 'NORMAL';
@@ -207,7 +207,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select">
+                                                            <select id="statusSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
@@ -220,7 +220,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label" id="labelCustomer">Customer Name</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
@@ -237,7 +237,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
-                                                            <select id="invoiceNoSearch" class="form-select"  >
+                                                            <select id="invoiceNoSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
                                                                 <!--option value="Container">Container</option-->
@@ -253,7 +253,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3" style="display:none;">
                                                         <div class="mb-3">
                                                             <label for="batchNoSearch" class="form-label">Status</label>
-                                                            <select id="batchNoSearch" class="form-select">
+                                                            <select id="batchNoSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="N" selected>Pending</option>
                                                                 <option value="Y">Complete</option>
@@ -263,7 +263,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatusSearch" class="form-select" >
+                                                            <select id="transactionStatusSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
@@ -459,7 +459,7 @@ if ($user != null && $user != ''){
                                                                                         <div class="row">
                                                                                             <label for="transactionStatus" class="col-sm-4 col-form-label">Transaction Status *</label>
                                                                                             <div class="col-sm-8">
-                                                                                                <select id="transactionStatus" name="transactionStatus" class="form-select">
+                                                                                                <select id="transactionStatus" name="transactionStatus" class="form-select select2">
                                                                                                     <option value="Sales" selected>Sales</option>
                                                                                                     <option value="Purchase">Purchase</option>
                                                                                                     <option value="Local">Local</option>
@@ -516,7 +516,7 @@ if ($user != null && $user != ''){
                                                                                                     </div>
                                                                                                     <input type="text" class="form-control" id="vehicleNoTxt" name="vehicleNoTxt" placeholder="Vehicle Plate No" style="display:none" required>
                                                                                                     <div class="col-10 index-vehicle">
-                                                                                                        <select class="form-select" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
+                                                                                                        <select class="form-select select2" id="vehiclePlateNo1" name="vehiclePlateNo1" required>
                                                                                                             <option selected="-">-</option>
                                                                                                             <?php while($row2=mysqli_fetch_assoc($vehicles)){ ?>
                                                                                                                 <option value="<?=$row2['veh_number'] ?>" data-weight="<?=$row2['vehicle_weight'] ?>"><?=$row2['veh_number'] ?></option>
@@ -534,7 +534,7 @@ if ($user != null && $user != ''){
                                                                                         <div class="row">
                                                                                             <label for="transporter" class="col-sm-4 col-form-label">Transporter</label>
                                                                                             <div class="col-sm-8">
-                                                                                                <select class="form-select" id="transporter" name="transporter" >
+                                                                                                <select class="form-select select2" id="transporter" name="transporter" >
                                                                                                     <option selected="-">-</option>
                                                                                                     <?php while($rowTransporter=mysqli_fetch_assoc($transporter)){ ?>
                                                                                                         <option value="<?=$rowTransporter['name'] ?>" data-code="<?=$rowTransporter['transporter_code'] ?>"><?=$rowTransporter['name'] ?></option>
@@ -596,7 +596,7 @@ if ($user != null && $user != ''){
                                                                                             </div>
                                                                                             <input type="text" class="form-control" id="customerNameTxt" name="customerNameTxt" placeholder="Customer Name" style="display:none" required>
                                                                                             <div class="col-10 index-customer">
-                                                                                                <select class="form-select js-choice" id="customerName" name="customerName">
+                                                                                                <select class="form-select select2 js-choice" id="customerName" name="customerName">
                                                                                                     <option selected="-">-</option>
                                                                                                     <?php while($rowCustomer=mysqli_fetch_assoc($customer)){ ?>
                                                                                                         <option value="<?=$rowCustomer['name'] ?>" data-code="<?=$rowCustomer['customer_code'] ?>"><?=$rowCustomer['name'] ?></option>
@@ -622,7 +622,7 @@ if ($user != null && $user != ''){
                                                                                             </div>
                                                                                             <input type="text" class="form-control" id="supplierNameTxt" name="supplierNameTxt" placeholder="Supplier Name" style="display:none" required>
                                                                                             <div class="col-10 index-supplier">
-                                                                                                <select class="form-select js-choice" id="supplierName" name="supplierName">
+                                                                                                <select class="form-select select2 js-choice" id="supplierName" name="supplierName">
                                                                                                     <option selected="-">-</option>
                                                                                                     <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
                                                                                                         <option value="<?=$rowSupplier['name'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
@@ -680,7 +680,7 @@ if ($user != null && $user != ''){
                                                                                             </div>
                                                                                             <input type="text" class="form-control" id="driverNameTxt" name="driverNameTxt" placeholder="Driver Name" style="display:none" required>
                                                                                             <div class="col-10 index-driver">
-                                                                                                <select class="form-select js-choice" id="driverName" name="driverName">
+                                                                                                <select class="form-select select2 js-choice" id="driverName" name="driverName">
                                                                                                     <option selected="-">-</option>
                                                                                                     <?php while($rowDriver=mysqli_fetch_assoc($driver)){ ?>
                                                                                                         <option data-ic="<?=$rowDriver['driver_ic'] ?>" value="<?=$rowDriver['driver_name'] ?>" data-code="<?=$rowDriver['driver_code'] ?>" data-phone="<?=$rowDriver['driver_phone'] ?>"><?=$rowDriver['driver_name'] ?></option>
@@ -1335,6 +1335,43 @@ if ($user != null && $user != ''){
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        // Initialize all Select2 elements in the search bar
+        $('#collapseSearch .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+        });
+
+        // Apply custom styling to Select2 elements in search bar
+        $('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
+        // Initialize all Select2 elements in the modal
+        $('#addModal .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+        });
+
+        // Apply custom styling to Select2 elements in addModal
+        $('#addModal .select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('#addModal .select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+
         // Date picker
         $('#fromDateSearch').flatpickr({
             dateFormat: "d-m-Y",
@@ -1578,6 +1615,28 @@ if ($user != null && $user != ''){
 
             pass = true;
 
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
+
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
 
@@ -1752,6 +1811,28 @@ if ($user != null && $user != ''){
             }
 
             pass = true;
+
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    isValid = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                }
+            });
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -2283,35 +2364,35 @@ if ($user != null && $user != ''){
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
-            $('#addModal').find('#vehiclePlateNo1').val("");
-            $('#addModal').find('#vehiclePlateNo2').val("");
+            $('#addModal').find('#vehiclePlateNo1').val("").trigger('change');
+            $('#addModal').find('#vehiclePlateNo2').val("").trigger('change');
             $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
             $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#supplierWeight').val("");
             $('#addModal').find('#bypassReason').val("");
             $('#addModal').find('#customerCode').val("");
-            $('#addModal').find('#customerName').val("");
+            $('#addModal').find('#customerName').val("").trigger('change');
             $('#addModal').find('#manualCustomer').prop('checked', false).trigger('change');
             $('#addModal').find('#driverCode').val("");
-            $('#addModal').find('#driverName').val("");
+            $('#addModal').find('#driverName').val("").trigger('change');
             $('#addModal').find('#driverICNo').val("");
             $('#addModal').find('#manualDriverName').prop('checked', false).trigger('change');
             $('#addModal').find('#supplierCode').val("");
-            $('#addModal').find('#supplierName').val("");
+            $('#addModal').find('#supplierName').val("").trigger('change');
             $('#addModal').find('#manualSupplier').prop('checked', false).trigger('change');
             $('#addModal').find('#productCode').val("");
             $('#addModal').find('#plantCode').val("");
             $('#addModal').find('#plant').val("<?=$plantName ?>").trigger('change');
-            $('#addModal').find('#productName').val("");
+            $('#addModal').find('#productName').val("").trigger('change');
             $('#addModal').find('#containerNo').val("");
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#purchaseOrder').val("");
             $('#addModal').find('#supplyWeight').val("");
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#transporterCode').val("");
-            $('#addModal').find('#transporter').val("");
+            $('#addModal').find('#transporter').val("").trigger('change');
             $('#addModal').find('#destinationCode').val("");
-            $('#addModal').find('#destination').val("");
+            $('#addModal').find('#destination').val("").trigger('change');
             $('#addModal').find('#remarks').val("");
             $('#addModal').find('#grossIncoming').val("");
             grossIncomingDatePicker.clear();
@@ -2351,6 +2432,18 @@ if ($user != null && $user != ''){
             $('#addModal').find('#finalWeight').val("");
             $('#addModal').find('#productTable').html('');
             rowCount = 0;
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container');
+                
+                select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                select2Container.next('.select2-error').remove(); // Remove error message
+            });
+
             $('#addModal').modal('show');
             
             $('#weightForm').validate({
@@ -3304,7 +3397,7 @@ if ($user != null && $user != ''){
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
-                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status);
+                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
                 $('#addModal').find('#weightType').val(obj.message.weight_type);
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));
                 $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
@@ -3337,7 +3430,7 @@ if ($user != null && $user != ''){
                     $('#vehicleNoTxt').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1);
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).select2('destroy').select2();
                     $('#manualVehicle').val(0);
                     $('#manualVehicle').prop("checked", false);
                     $('.index-vehicle').show();
@@ -3352,7 +3445,7 @@ if ($user != null && $user != ''){
                     $('#vehicleNoTxt2').show();
                 }
                 else{
-                    $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2);
+                    $('#addModal').find('#vehiclePlateNo2').val(obj.message.lorry_plate_no2).select2('destroy').select2();
                     $('#manualVehicle2').val(0);
                     $('#manualVehicle2').prop("checked", false);
                     $('.index-vehicle2').show();
@@ -3361,7 +3454,7 @@ if ($user != null && $user != ''){
                 
                 if(obj.message.customer_is_manual == 'Y'){
                     $('#addModal').find('#customerNameTxt').val(obj.message.customer_name);
-                    $('#addModal').find('#customerName').val('-');
+                    $('#addModal').find('#customerName').val('-').trigger('change');
                     $('#manualCustomer').val(1);
                     $('#manualCustomer').prop("checked", true);
                     $('.index-customer').hide();
@@ -3369,7 +3462,7 @@ if ($user != null && $user != ''){
                 }
                 else{
                     $('#addModal').find('#customerNameTxt').val('');
-                    $('#addModal').find('#customerName').val(obj.message.customer_name);
+                    $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
                     $('#manualCustomer').val(0);
                     $('#manualCustomer').prop("checked", false);
                     $('.index-customer').show();
@@ -3378,7 +3471,7 @@ if ($user != null && $user != ''){
                 
                 if(obj.message.supplier_is_manual == 'Y'){
                     $('#addModal').find('#supplierNameTxt').val(obj.message.supplier_name);
-                    $('#addModal').find('#supplierName').val('-');
+                    $('#addModal').find('#supplierName').val('-').trigger('change');
                     $('#manualSupplier').val(1);
                     $('#manualSupplier').prop("checked", true);
                     $('.index-supplier').hide();
@@ -3386,7 +3479,7 @@ if ($user != null && $user != ''){
                 }
                 else{
                     $('#addModal').find('#supplierNameTxt').val('');
-                    $('#addModal').find('#supplierName').val(obj.message.supplier_name);
+                    $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change');
                     $('#manualSupplier').val(0);
                     $('#manualSupplier').prop("checked", false);
                     $('.index-supplier').show();
@@ -3395,7 +3488,7 @@ if ($user != null && $user != ''){
 
                 if(obj.message.driver_is_manual == 'Y'){
                     $('#addModal').find('#driverNameTxt').val(obj.message.driver_name);
-                    $('#addModal').find('#driverName').val('-');
+                    $('#addModal').find('#driverName').val('-').trigger('change');
                     $('#manualDriverName').val(1);
                     $('#manualDriverName').prop("checked", true);
                     $('.index-driver').hide();
@@ -3403,7 +3496,7 @@ if ($user != null && $user != ''){
                 }
                 else{
                     $('#addModal').find('#driverNameTxt').val('');
-                    $('#addModal').find('#driverName').val(obj.message.driver_name);
+                    $('#addModal').find('#driverName').val(obj.message.driver_name).trigger('change');
                     $('#manualDriverName').val(0);
                     $('#manualDriverName').prop("checked", false);
                     $('.index-driver').show();
@@ -3422,9 +3515,9 @@ if ($user != null && $user != ''){
                 $('#addModal').find('#supplyWeight').val(obj.message.supply_weight); // 
                 $('#addModal').find('#deliveryNo').val(obj.message.delivery_no);
                 $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
-                $('#addModal').find('#transporter').val(obj.message.transporter);
+                $('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                $('#addModal').find('#destination').val(obj.message.destination);
+                $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
                 $('#addModal').find('#remarks').val(obj.message.remarks); //
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                 grossIncomingDatePicker.setDate(new Date(obj.message.gross_weight1_date));
@@ -3499,6 +3592,36 @@ if ($user != null && $user != ''){
                     $("#manualPriceNo").prop("checked", true);
                     $('#manualPriceNo').trigger('click');
                 }
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
+
+                // Remove Validation Error Message
+                $('#addModal .is-invalid').removeClass('is-invalid');
+
+                $('#addModal .select2[required]').each(function () {
+                    var select2Field = $(this);
+                    var select2Container = select2Field.next('.select2-container');
+                    
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+                });
 
                 $('#addModal').modal('show');
             

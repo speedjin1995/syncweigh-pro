@@ -8,6 +8,10 @@
 <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 <!-- custom Css-->
 <link href="assets/css/custom.min.css" id="app-style" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+<script src="plugins/select2/js/select2.min.js"></script>
 <style>
     .table {
         background-color: #e3eedd; !important
