@@ -301,6 +301,12 @@ else{
                                                             <input type="text" class="form-control" id="sealNoSearch" name="sealNoSearch" placeholder="Seal No">                                                                                  
                                                         </div>
                                                     </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="invDelPoSearch" class="form-label">INV/DO/PO No</label>
+                                                            <input type="text" class="form-control" id="invDelPoSearch" name="invDelPoSearch" placeholder="INV/DO/PO No">                                                                                  
+                                                        </div>
+                                                    </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-success" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -1861,6 +1867,7 @@ else{
         var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
         var containerNoI = $('#containerNoSearch').val() ? $('#containerNoSearch').val() : '';
         var sealNoI = $('#sealNoSearch').val() ? $('#sealNoSearch').val() : '';
+        var invDelPoI = $('#invDelPoSearch').val() ? $('#invDelPoSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1885,7 +1892,8 @@ else{
                     plant: plantNoI,
                     transactionId: transactionIdI,
                     containerNo: containerNoI,
-                    sealNo: sealNoI
+                    sealNo: sealNoI,
+                    invDelPoI: invDelPoI
                 } 
             },
             'columns': [
@@ -2767,6 +2775,7 @@ else{
             var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
             var containerNoI = $('#containerNoSearch').val() ? $('#containerNoSearch').val() : '';
             var sealNoI = $('#sealNoSearch').val() ? $('#sealNoSearch').val() : '';
+            var invDelPoI = $('#invDelPoSearch').val() ? $('#invDelPoSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -2796,7 +2805,8 @@ else{
                         plant: plantNoI,
                         transactionId: transactionIdI,
                         containerNo: containerNoI,
-                        sealNo: sealNoI
+                        sealNo: sealNoI,
+                        invDelPo: invDelPoI
                     } 
                 },
                 'columns': [

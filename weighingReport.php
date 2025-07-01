@@ -250,6 +250,12 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="invDelPoSearch" class="form-label">INV/DO/PO No</label>
+                                                            <input type="text" class="form-control" id="invDelPoSearch" name="invDelPoSearch" placeholder="INV/DO/PO No">                                                                                  
+                                                        </div>
+                                                    </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-success" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -575,6 +581,7 @@ else{
         var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+        var invDelPoI = $('#invDelPoSearch').val() ? $('#invDelPoSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -598,7 +605,8 @@ else{
                     rawMaterial: rawMatI,
                     destination: destinationI,
                     plant: plantI,
-                    status: statusI
+                    status: statusI,
+                    invDelPo: invDelPoI
                 } 
             },
             'columns': [
@@ -661,6 +669,7 @@ else{
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var invDelPoI = $('#invDelPoSearch').val() ? $('#invDelPoSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -688,7 +697,8 @@ else{
                         rawMaterial: rawMatI,
                         destination: destinationI,
                         plant: plantI,
-                        status: statusI
+                        status: statusI,
+                        invDelPo: invDelPoI
                     } 
                 },
                 'columns': [
