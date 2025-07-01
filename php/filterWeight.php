@@ -75,6 +75,10 @@ if($_POST['sealNo'] != null && $_POST['sealNo'] != '' && $_POST['sealNo'] != '-'
 	$searchQuery .= " and (seal_no like '%".$_POST['sealNo']."%' OR seal_no2 like '%".$_POST['sealNo']."%')";
 }
 
+if($_POST['invDelPo'] != null && $_POST['invDelPo'] != '' && $_POST['invDelPo'] != '-'){
+	$searchQuery .= " and (purchase_order like '%".$_POST['invDelPo']."%' OR invoice_no like '%".$_POST['invDelPo']."%' OR delivery_no like '%".$_POST['invDelPo']."%')";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
