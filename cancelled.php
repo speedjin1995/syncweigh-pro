@@ -37,36 +37,36 @@ if($_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
     // $plantId = searchPlantIdByCode($username, $db);
 
-    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
-    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId')");
-    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
-    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
-    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId')");
-    $driver = $db->query("SELECT * FROM Driver WHERE status = '0' and plant IN ('$plantId')");
-    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' and plant IN ('$plantId')");
-    $destination = $db->query("SELECT * FROM Destination WHERE status = '0' and plant IN ('$plantId')");
-    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId')");
-    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId')");
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
-    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId')");
+    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId') ORDER BY veh_number ASC");
+    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' and plant IN ('$plantId') ORDER BY veh_number ASC");
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $driver = $db->query("SELECT * FROM Driver WHERE status = '0' and plant IN ('$plantId') ORDER BY driver_name ASC");
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $destination = $db->query("SELECT * FROM Destination WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' and plant IN ('$plantId') ORDER BY name ASC");
 }
 else{
-    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-    $customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-    $driver = $db->query("SELECT * FROM Driver WHERE status = '0'");
-    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-    $destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $product = $db->query("SELECT * FROM Product WHERE status = '0'");
-    $product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
+    $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+    $vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+    $customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+    $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+    $customer3 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+    $driver = $db->query("SELECT * FROM Driver WHERE status = '0' ORDER BY driver_name ASC");
+    $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+    $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+    $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+    $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+    $product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
 }
 
 $role = 'NORMAL';
@@ -194,7 +194,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select">
+                                                            <select id="statusSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
@@ -206,7 +206,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label" id="labelCustomer">Customer Name</label>
-                                                            <select id="customerNoSearch" class="form-select" >
+                                                            <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
@@ -223,7 +223,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3" style="display:none;">
                                                         <div class="mb-3">
                                                             <label for="invoiceNoSearch" class="form-label">Weighing Type</label>
-                                                            <select id="invoiceNoSearch" class="form-select"  >
+                                                            <select id="invoiceNoSearch" class="form-select select2"  >
                                                                 <option selected>-</option>
                                                                 <option value="Normal">Normal</option>
                                                                 <!--option value="Container">Container</option-->
@@ -239,7 +239,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3" style="display:none;">
                                                         <div class="mb-3">
                                                             <label for="batchNoSearch" class="form-label">Status</label>
-                                                            <select id="batchNoSearch" class="form-select">
+                                                            <select id="batchNoSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <option value="N">Pending</option>
                                                                 <option value="Y">Complete</option>
@@ -249,7 +249,7 @@ if ($user != null && $user != ''){
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatusSearch" class="form-select" >
+                                                            <select id="transactionStatusSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
@@ -1232,6 +1232,24 @@ if ($user != null && $user != ''){
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        // Initialize all Select2 elements in the search bar
+        $('#collapseSearch .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
+        });
+
+        // Apply custom styling to Select2 elements in search bar
+        $('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+
+        $('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+        
         //Date picker
         $('#fromDateSearch').flatpickr({
             dateFormat: "d-m-Y",
