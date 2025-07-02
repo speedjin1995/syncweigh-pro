@@ -171,7 +171,7 @@ if ($user != null && $user != ''){
 
                             <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #a8d190;">
+                                    <div class="card-header text-white fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #405189;">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
@@ -1012,10 +1012,10 @@ if ($user != null && $user != ''){
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="card">
-                                                    <div class="card-header" style="background-color: #a8d190;">
+                                                    <div class="card-header" style="background-color: #405189;">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Previous Records</h5>
+                                                                <h5 class="card-title text-white mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <button type="button" id="exportPdf" class="btn btn-info waves-effect waves-light">

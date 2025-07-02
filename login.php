@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="auth-page-wrapper pt-5">
             <!-- auth page bg -->
             <div class="auth-one-bg-position auth-one-bg"  id="auth-particles">
-                <div class="bg-overlay" style="background: #316b31;opacity: 1;"></div>
+                <div class="bg-overlay"></div>
                 
                 <div class="shape">
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1440 120">
@@ -136,7 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="text-center mt-sm-5 mb-4 text-white-50" style="margin-top: 0rem !important;!i;!;">
                                 <div>
                                     <a href="index.php" class="d-inline-block auth-logo">
-                                        <img src="assets/images/logo-lg.jpeg" alt="assets/images/logo-sm.png" height="200">
+                                        <img src="assets/images/logo-lg.png" alt="assets/images/logo-sm.jpg" height="100">
                                     </a>
                                 </div>
                                 <p class="mt-3 fs-15 fw-medium"> </p>
@@ -181,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             </div-->
                                             
                                             <div class="mt-4">
-                                                <button class="btn btn-success w-100" style="background-color: #008001;" type="submit">Sign In</button>
+                                                <button class="btn btn-success w-100" type="submit">Sign In</button>
                                             </div>
 
                                             <!--div class="mt-4 text-center">

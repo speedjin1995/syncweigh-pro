@@ -12,12 +12,3 @@
 <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
 <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 <script src="plugins/select2/js/select2.min.js"></script>
-<style>
-    .table {
-        background-color: #e3eedd; !important
-    }
-
-    .table>thead {
-        background-color: #a8d190; !important
-    }
-</style>

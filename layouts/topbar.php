@@ -93,7 +93,7 @@ if ($rowc = $resultC->fetch_assoc()) {
 
 $date = date('d/m/Y - h:i:sA');
 ?>
-<header id="page-topbar" style="background-color: #316b31;">
+<header id="page-topbar" >
     <div class="layout-width">
         <div class="navbar-header">
             <div class="d-flex">
@@ -127,7 +127,7 @@ $date = date('d/m/Y - h:i:sA');
                     </span>
                 </button>
 
-                <h3 style="color: white; margin-top: 4%"><?=$compname ?></h3>
+                <h3 style="margin-top: 4%"><?=$compname ?></h3>
 
                 <!-- App Search-->
                 <!--form class="app-search d-none d-md-block">
@@ -679,7 +679,7 @@ $date = date('d/m/Y - h:i:sA');
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                         id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                        aria-haspopup="true" aria-expanded="false" style="color: white;">
+                        aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-bell fs-22'></i>
                         <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger"><?=$count ?>
                         <span class="visually-hidden">unread messages</span></span>
@@ -687,7 +687,7 @@ $date = date('d/m/Y - h:i:sA');
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                         aria-labelledby="page-header-notifications-dropdown">
 
-                        <div class="dropdown-head bg-pattern rounded-top" style="background-color: #548233;">
+                        <div class="dropdown-head bg-primary bg-pattern rounded-top">
                             <div class="p-3">
                                 <div class="row align-items-center">
                                     <div class="col">
@@ -839,7 +839,7 @@ $date = date('d/m/Y - h:i:sA');
                     </div>
                 </div>
 
-                <div class="dropdown ms-sm-3 header-item topbar-user" style="background-color: #a8d190;">
+                <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
