@@ -70,88 +70,77 @@ if ($isMulti == 'N'){
         // Excel file name for download 
         $fileName = "DO-data_" . date('Y-m-d') . ".xls";
 
-        ## Fetch records
-        $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." order by plant_code asc, purchase_order asc";
-
+        // Fetch records from database
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' AND purchase_order != '-'".$searchQuery." group by purchase_order order by id asc";
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by plant_code asc, purchase_order asc";
+            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username') AND purchase_order != '-'".$searchQuery." group by purchase_order order by id asc";
         }
-        
+
         $do_stmt = $db->query($query);
         if($do_stmt->num_rows > 0){  
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
-                $lineData = []; // Ensure it starts as an empty array each iteration
-                $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row['tare_weight1_date']);
-                $tareDateTime = $tareDate->format('d/m/Y');
-                $exDel = ($row['ex_del'] == 'EX') ? 'E' : 'D';
-                $orderNo = $row['purchase_order'];
+                $soNo = $row['purchase_order']; 
+                $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
+                $fromDateTime = $fromDate->format('Y-m-d H:i:00');
+                $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
+                $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                $soNo = '';
-                $uom = '';
-                $qty = '';
-                $amt = '';
-                $unitPrice = 0;
+                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' AND unit_price > 0";
+                $doRecords = mysqli_query($db, $doQuery);
+                $weighingData = array();
 
-                $productId = searchProductIdByCode($row['product_code'], $db);
-                $uom = searchProductBasicUomByCode($row['product_code'], $db);
-                if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
-                    $update_stmt->bind_param('s', $productId);
-                    $update_stmt->execute();
-                    $result2 = $update_stmt->get_result();
-                    if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
-                    }
-                    $update_stmt->close();
-                }
-                
-                if ($orderNo == '-' || $orderNo == '' || $orderNo == null) {
-                    $unitPrice = $row['unit_price'];
-                    $amt = $qty * $unitPrice;
-                }else{
+                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                    $lineData = []; // Ensure it starts as an empty array each iteration
+                    $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
+                    $tareDateTime = $tareDate->format('d/m/Y');
+                    $exDel = ($row2['ex_del'] == 'EX') ? 'E' : 'D';
+                    $orderNo = $row2['purchase_order'];
+
+                    $soNo = '';
+                    $uom = '';
+                    $qty = '';
+                    $amt = '';
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
-                        $select_stmt->bind_param('sss', $orderNo, $row['product_code'], $row['plant_code']);
+                        $select_stmt->bind_param('sss', $orderNo, $row2['product_code'], $row2['plant_code']);
                         $select_stmt->execute();
                         $result = $select_stmt->get_result();
                         if ($row3 = $result->fetch_assoc()) {
-                            $unitPrice = $row3['unit_price'] ?? 0;
+                            $uom = searchUnitById($row3['converted_unit'], $db);
+                            $productId = searchProductIdByCode($row3['product_code'], $db);
+                            $unitPrice = $row3['unit_price'];
                             $soNo = $row3['so_no'];
-                            $amt = $qty * $unitPrice;                            
+
+                            if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
+                                $update_stmt->bind_param('s', $productId);
+                                $update_stmt->execute();
+                                $result2 = $update_stmt->get_result();
+                                if ($row4 = $result2->fetch_assoc()) {
+                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $amt = $qty * $unitPrice;
+                                }
+                                $update_stmt->close();
+                            }
                         }
                         $select_stmt->close();
                     }
-                }
-                
-                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $row['plant_code'], $row['plant_code'], $unitPrice, $amt);
+                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
 
-                # Added checking to fix duplicated issue
-                if (!empty($lineData)) {
-                    foreach($lineData as $key => $value) {
-                        if($key == 3) { // lorry_plate_no1 is at index 3
-                            $lineData[$key] = " " . $value;
-                        } else {
-                            // Apply normal filtering to other columns
-                            filterData($lineData[$key]); 
+                    # Added checking to fix duplicated issue
+                    if (!empty($lineData)) {
+                        foreach($lineData as $key => $value) {
+                            if($key == 3) { // lorry_plate_no1 is at index 3
+                                $lineData[$key] = " " . $value;
+                            } else {
+                                // Apply normal filtering to other columns
+                                filterData($lineData[$key]); 
+                            }
                         }
+
+                        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
-
-                    $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                 }
-
-                // $soNo = $row['purchase_order']; 
-                // $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
-                // $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-                // $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
-                // $toDateTime = $toDate->format('Y-m-d H:i:59');
-
-                // $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' AND unit_price > 0";
-                // $doRecords = mysqli_query($db, $doQuery);
-                // $weighingData = array();
-
-                // while($row2 = mysqli_fetch_assoc($doRecords)) {
-                    
-                // }
             } 
         }else{ 
             $excelData .= 'No records found...'. "\n"; 
