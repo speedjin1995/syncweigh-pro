@@ -108,7 +108,7 @@ $role = $_SESSION["roles"];
 
                             <div class="col-xxl-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #a8d190;">
+                                    <div class="card-header text-white fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch" style="background-color: #405189;">
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
@@ -160,9 +160,9 @@ $role = $_SESSION["roles"];
                                                 <table id="dashboardTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%;">
                                                     <thead style="text-align: center; font-size: 14px;">
                                                         <tr>
-                                                            <th colspan="3" style="background-color: rgb(49, 107, 49); color: white;"> Dashboard</th>
+                                                            <th colspan="3" style="background-color: #405189; color: white;"> Dashboard</th>
                                                         </tr>
-                                                        <tr style="background-color: #a8d190;">
+                                                        <tr style="background-color: #405189;">
                                                             <th>Pending</th>
                                                             <th>Complete</th>
                                                             <th>Cancelled</th>

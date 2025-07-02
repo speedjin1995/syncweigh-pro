@@ -799,7 +799,7 @@ $date = date('d/m/Y - h:i:sA');
                                             <div class="d-flex">
                                                 <div class="flex-1">
                                                     <a href="index.php?weight=<?=$miscList[$i]['id'] ?>" class="stretched-link">
-                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$miscList[$i]['weight_type'] ?> weighing with <b><?=$localList[$i]['transaction_id'] ?></b>
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$miscList[$i]['weight_type'] ?> weighing with <b><?=$miscList[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending</span>
                                                         </h6>
                                                     </a>
@@ -817,7 +817,7 @@ $date = date('d/m/Y - h:i:sA');
                                             <div class="d-flex">
                                                 <div class="flex-1">
                                                     <a href="index.php?weight=<?=$rentalList[$i]['id'] ?>" class="stretched-link">
-                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$rentalList[$i]['weight_type'] ?> weighing with <b><?=$localList[$i]['transaction_id'] ?></b>
+                                                        <h6 class="mt-0 mb-2 lh-base">There is a <?=$rentalList[$i]['weight_type'] ?> weighing with <b><?=$rentalList[$i]['transaction_id'] ?></b>
                                                             is <span class="text-secondary">Pending</span>
                                                         </h6>
                                                     </a>

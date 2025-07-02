@@ -84,10 +84,10 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="card">
-                                        <div class="card-header" style="background-color: #a8d190;">
+                                        <div class="card-header" style="background-color: #405189;">
                                             <div class="d-flex justify-content-between">
                                                 <div>
-                                                    <h5 class="card-title mb-0">User Records</h5>
+                                                    <h5 class="card-title text-white mb-0">User Records</h5>
                                                 </div>
                                                 <div class="flex-shrink-0">
                                                     <!--a href="template/User_Template.xlsx" download>
