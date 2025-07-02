@@ -45,7 +45,7 @@ while($row=mysqli_fetch_assoc($normalWeighing)){
     } elseif ($row['weight_type'] == 'Container') {
         $weightType = 'Primer Mover';
     } else if($row['weight_type'] == 'Different Container'){
-        $weightType = 'Primer Mover + Different Container';
+        $weightType = 'Primer Mover + Different Bins';
     } else {
         $weightType = $row['weight_type'];
     }
@@ -85,7 +85,7 @@ while($row3=mysqli_fetch_assoc($containerWeighing)){
     if ($row3['weight_type'] == 'Empty Container') {
         $weightType = 'Primer Mover + Container';
     } else if($row3['weight_type'] == 'Different Container'){
-        $weightType = 'Primer Mover + Different Container';
+        $weightType = 'Primer Mover + Different Bins';
     } elseif ($row3['weight_type'] == 'Container') {
         $weightType = 'Primer Mover';
     } else {

@@ -4503,7 +4503,7 @@ else{
         }else if(row.weight_type == 'Normal'){
             weightType = 'Normal Weighing';
         }else if(row.weight_type == 'Different Container'){
-            weightType = 'Primer Mover + Different Container';
+            weightType = 'Primer Mover + Different Bins';
         }else{
             weightType = row.weight_type;
         }
