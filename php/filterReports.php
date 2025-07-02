@@ -146,7 +146,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   }elseif($row['weight_type'] == 'Empty Container'){
     $weightType = 'Primer Mover + Container';
   }else if($row['weight_type'] == 'Different Container'){
-    $weightType = 'Primer Mover + Different Container';
+    $weightType = 'Primer Mover + Different Bins';
   } else{
     $weightType = $row['weight_type'];
   }
