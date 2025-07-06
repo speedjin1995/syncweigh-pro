@@ -8,7 +8,7 @@ require_once "php/db_connect.php";
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
 
-$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' AND id IN ('27','28','31','32') ORDER BY name ASC");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' AND id IN ('27','31','32') ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
@@ -580,31 +580,14 @@ $(function () {
     }
 
     $('#exportExcel').on('click', function(){
-        var selectedValue = $('#reportType').val();
         var fromDateSearch = $('#fromDateSearch').val();
         var toDateSearch = $('#toDateSearch').val();
-        var customerCode = $('#customerCode').val();
-        var destinationCode = $('#destinationCode').val();
-        var productCode = $('#productCode').val();
-        var rawMatCode = $('#rawMatCode').val();
-        var supplierCode = $('#supplierCode').val();
-        var vehicleNo = $('#vehicleNo').val();
-        var agentCode = $('#agentCode').val();
-        var transporterCode = $('#transporterCode').val();
-        var unit = $('#unit').val();
-        var userCode = $('#userCode').val();
-        var plantCode = $('#plantCode').val();
-        var siteCode = $('#siteCode').val();
-        var weight = $('#weight').val();
-        var custPoNo = $('#custPoNo').val();
-        var poNo = $('#poNo').val();
+        var plantSearch = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var rawMatSearch = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
 
-        window.open("php/exportAuditExcel.php?selectedValue="+selectedValue+"&fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+
-        "&customerCode="+customerCode+"&destinationCode="+destinationCode+"&productCode="+productCode+"&rawMatCode="+rawMatCode+"&supplierCode="+supplierCode+
-        "&vehicleNo="+vehicleNo+"&agentCode="+agentCode+"&transporterCode="+transporterCode+"&unit="+unit+"&userCode="+userCode+"&plantCode="+plantCode+
-        +"&siteCode="+siteCode+"&weight="+weight+"&custPoNo="+custPoNo+"&poNo="+poNo);
+
+        window.open("php/exportStockTake.php?fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+"&plant="+plantSearch+"&rawMaterial="+rawMatSearch);
     });
-
 });
 
 function format (row) {
