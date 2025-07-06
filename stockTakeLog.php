@@ -500,7 +500,7 @@ $(function () {
                     { data: 'sixty_seventy_actual_usage' }
                 ]
             });
-        }else if (selectedValue == '31'){
+        }else if (selectedValue == '32'){
             // Destroy and clean existing DataTable
             if ($.fn.DataTable.isDataTable("#lfoTable")) {
                 $('#lfoTable').DataTable().clear().destroy();
@@ -535,6 +535,45 @@ $(function () {
                     { data: 'lfo_ps' },
                     { data: 'lfo_usage' },
                     { data: 'lfo_actual_usage' }
+                ]
+            });
+        }else if (selectedValue == '31'){
+            // Destroy and clean existing DataTable
+            if ($.fn.DataTable.isDataTable("#dieselTable")) {
+                $('#dieselTable').DataTable().clear().destroy();
+            }
+
+            //Create new Datatable
+            dieselTable = $("#dieselTable").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                'processing': true,
+                'serverSide': true,
+                'paging': false,
+                'searching': false,
+                'info': false,
+                'lengthChange': false,
+                'ordering': false,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url':'php/filterStockTakeLog.php',
+                    'data': {
+                        fromDateSearch: $('#fromDateSearch').val(),
+                        toDateSearch: $('#toDateSearch').val(),
+                        rawMat: $('#rawMatSearch').val(),
+                        plant: $('#plantSearch').val(),
+                    } 
+                },
+                'columns': [
+                    { data: 'declaration_datetime' },
+                    { data: 'diesel_production' },
+                    { data: 'diesel_os' },
+                    { data: 'diesel_incoming' },
+                    { data: 'diesel_mreading' },
+                    { data: 'diesel_transport' },
+                    { data: 'diesel_ps' },
+                    { data: 'diesel_usage' },
+                    { data: 'diesel_actual_usage' }
                 ]
             });
         }

@@ -5,321 +5,326 @@ require_once 'requires/lookup.php';
 session_start();
 
 $id = $_SESSION['id'];
-$startDate = date("Y-m-d 00:00:00");
-$endDate = date("Y-m-d 23:59:59");
+$plant = [26, 27, 28];
 
-// Query Bitumen table to get all records where the declaration_datetime is today
-$query = "SELECT * FROM Bitumen WHERE declaration_datetime >= '$startDate' AND declaration_datetime <= '$endDate' AND status = '0'";
-$result = mysqli_query($db, $query);
-$count = 0;
-if ($result) {
-    if (mysqli_num_rows($result) === 0) {
-        ## If no records found for today, insert a new record with default values for all plants
-        $declarationDateTime = date("Y-m-d H:i:s");
-        $sixty_seventy_production = 0;
-        $sixty_seventy_os = 0;
-        $sixty_seventy_incoming = 0;
-        $sixty_seventy_usage = 0;
-        $sixty_seventy_bookstock = 0;
-        $sixty_seventy_ps = 0;
-        $sixty_seventy_diffstock = 0;
-        $sixty_seventy_actual_usage = 0;
-        $lfo_production = 0;
-        $lfo_os = 0;
-        $lfo_incoming = 0;
-        $lfo_ps = 0;
-        $lfo_usage = 0;
-        $lfo_actual_usage = 0;
-        $diesel_production = 0;
-        $diesel_os = 0;
-        $diesel_incoming = 0;
-        $diesel_mreading = 0;
-        $diesel_transport = 0;
-        $diesel_ps = 0;
-        $diesel_usage = 0;
-        $diesel_actual_usage = 0;
-        $plant = [26, 27, 28];
-        $plantList = implode(',', $plant);
+$today = "2025-08-04";
+$startDate = $today . " 00:00:00";
+$endDate = $today . " 23:59:59";
 
-        // Loop through each plant
-        foreach ($plant as $plantId) {
-            // No records for today, get the latest Bitumen record for each plant before today
-            $bitumenQuery = " SELECT * FROM Bitumen WHERE plant_id = '$plantId' AND declaration_datetime < '$startDate' ORDER BY declaration_datetime DESC LIMIT 1";
-            $bitumenResult = mysqli_query($db, $bitumenQuery);
-            $latestBitumenPerPlant = [];
-            if ($bitumenResult) {
-                while ($bitumenRow = mysqli_fetch_assoc($bitumenResult)) {
-                    $latestBitumenPerPlant = $bitumenRow;
+foreach ($plant as $plantId) {
+    // 1. Check if today has declaration for this plant
+    $bitumenQuery = "SELECT * FROM Bitumen WHERE plant_id = '$plantId' AND declaration_datetime >= '$startDate' AND declaration_datetime <= '$endDate' AND status = '0' ORDER BY declaration_datetime LIMIT 1";
+    $bitumenResult = mysqli_query($db, $bitumenQuery);
+    $hasDeclaration = mysqli_num_rows($bitumenResult) > 0;
+
+    // 2. Get previous declaration date for this plant
+    $prevQuery = "SELECT * FROM Bitumen WHERE plant_id = '$plantId' AND declaration_datetime < '$startDate' AND status = '0' ORDER BY declaration_datetime DESC LIMIT 1";
+    $prevResult = mysqli_query($db, $prevQuery);
+    $prevRow = mysqli_fetch_assoc($prevResult);
+    $prev_ps_6070 = $prevRow ? (json_decode($prevRow['60/70'], true)['totalSixtySeventy'] ?? 0) : 0;
+    $prev_ps_lfo = $prevRow ? (json_decode($prevRow['lfo'], true)['totalLfo'] ?? 0) : 0;
+    $prev_ps_diesel = $prevRow ? (json_decode($prevRow['diesel'], true)['totalDiesel'] ?? 0) : 0;
+    $prev_date = $prevRow ? substr($prevRow['declaration_datetime'], 0, 10) : $today;
+
+    if (!$hasDeclaration) {
+        // CASE 1: No declaration for today: insert previous PS as OS/bookstock/PS, others 0
+        $sixty_seventy_os = $sixty_seventy_bookstock = $sixty_seventy_ps = (float) number_format($prev_ps_6070, 2);
+        $sixty_seventy_production = $sixty_seventy_incoming = $sixty_seventy_usage = $sixty_seventy_diffstock = $sixty_seventy_actual_usage = 0;
+
+        $lfo_os = $lfo_bookstock = $lfo_ps = (float) number_format($prev_ps_lfo, 2);
+        $lfo_production = $lfo_incoming = $lfo_usage = $lfo_diffstock = $lfo_actual_usage = 0;
+
+        $diesel_os = $diesel_bookstock = $diesel_ps = (float) number_format($prev_ps_diesel, 2);
+        $diesel_production = $diesel_incoming = $diesel_mreading = $diesel_transport = $diesel_usage = $diesel_diffstock = $diesel_actual_usage = 0;
+
+    } else {
+        // CASE 2 or 3: There is a declaration for today
+        $todayRow = mysqli_fetch_assoc($bitumenResult);
+
+        // Determine if there is a gap between today and previous declaration
+        $gapDays = $prev_date ? (strtotime($today) - strtotime($prev_date)) / 86400 : 1;
+        $plantCode = searchPlantCodeById($plantId, $db);
+
+        if ($gapDays > 1) {
+            // ---- GAP LOGIC: SUM FIELDS FROM TRANSACTIONAL TABLES ----
+
+            $sumStart = date('Y-m-d', strtotime($prev_date . ' +1 day'));
+            $sumEnd = $today;
+
+            // 1. 60/70 (raw_mat_id=27, raw_mat_code='BTBI001')
+            // Production
+            $productionQuery = "SELECT SUM(nett_weight1)/1000 as total_prod FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Sales'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$sumStart 00:00:00'
+                AND tare_weight1_date <= '$sumEnd 23:59:59'
+                AND status = '0'";
+            $productionResult = mysqli_query($db, $productionQuery);
+            $production_sum = ($productionResult && $row = mysqli_fetch_assoc($productionResult)) ? floatval($row['total_prod'] ?? 0) : 0;
+
+            // Incoming
+            $incomingQuery = "SELECT SUM(supplier_weight)/1000 as total_in FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$sumStart 00:00:00'
+                AND tare_weight1_date <= '$sumEnd 23:59:59'
+                AND raw_mat_code = 'BTBI001'
+                AND status = '0'";
+            $incomingResult = mysqli_query($db, $incomingQuery);
+            $incoming_sum = ($incomingResult && $row = mysqli_fetch_assoc($incomingResult)) ? floatval($row['total_in'] ?? 0) : 0;
+
+            // Usage: (opening + incoming - closing)
+            $usageQuery = "(
+                                SELECT raw_mat_weight/1000 as cs
+                                FROM Inventory_Log
+                                WHERE plant_id = '$plantId' AND raw_mat_id = 27
+                                    AND DATE(event_date) >= '$prev_date'
+                                ORDER BY event_date DESC
+                                LIMIT 1
+                                )
+                                UNION ALL
+                                (
+                                SELECT raw_mat_weight/1000 as cs
+                                FROM Inventory_Log
+                                WHERE plant_id = '$plantId' AND raw_mat_id = 27
+                                    AND DATE(event_date) < '$sumEnd'
+                                ORDER BY event_date DESC
+                                LIMIT 1
+                            )";
+            $usageResult = mysqli_query($db, $usageQuery);
+            if ($usageResult) {
+                $usageCount = 0; 
+                $closing = 0;
+                $opening = 0;
+                while ($row = mysqli_fetch_assoc($usageResult)) {
+                    if ($usageCount === 0) {
+                        // First row is the closing from previous declaration date
+                        $closing = floatval($row['cs'] ?? 0);
+                        $usageCount++;
+                    } else {
+                        // Second row is the closing from today
+                        $opening = floatval($row['cs'] ?? 0);
+                    }
                 }
             }
 
-            if (!empty($latestBitumenPerPlant)){
-                ### Process 60/70 Data ###
-                $sixtySeventyData = json_decode($latestBitumenPerPlant['60/70'], true);
-                if (!empty($sixtySeventyData)) {
-                    $totalSixtySeventy = $sixtySeventyData['totalSixtySeventy'] ?? 0;
-                } else{
-                    $totalSixtySeventy = 0;
-                }
+            $usage_sum = ($opening + $incoming_sum) - $closing; 
 
-                $sixty_seventy_os = (float) number_format($totalSixtySeventy,2) ?? 0.00;
-                $sixty_seventy_bookstock = (float) number_format($totalSixtySeventy,2) ?? 0.00;
-                $sixty_seventy_ps = (float) number_format($totalSixtySeventy,2) ?? 0.00;
+            // Today's P/S
+            $sixtySeventyData = json_decode($todayRow['60/70'], true);
+            $ps_6070_today = $sixtySeventyData['totalSixtySeventy'] ?? 0;
 
-                ### Process LFO Data ###
-                $lfoData = json_decode($latestBitumenPerPlant['lfo'], true);
-                if (!empty($lfoData)) {
-                    $totalLfo = $lfoData['totalLfo'] ?? 0;
-                } else {
-                    $totalLfo = 0;
-                }
+            $sixty_seventy_os = number_format($prev_ps_6070, 2);
+            $sixty_seventy_production = number_format($production_sum, 2);
+            $sixty_seventy_incoming = number_format($incoming_sum, 2);
+            $sixty_seventy_usage = number_format($usage_sum, 2);
+            $sixty_seventy_bookstock = number_format((float) $prev_ps_6070 + (float) $sixty_seventy_incoming - (float) $sixty_seventy_usage, 2);
+            $sixty_seventy_ps = number_format($ps_6070_today, 2);
+            $sixty_seventy_diffstock = number_format((float) $sixty_seventy_ps - (float) $sixty_seventy_bookstock, 2);
+            $sixty_seventy_actual_usage = $production_sum > 0 ? number_format(((($prev_ps_6070+$incoming_sum)-$ps_6070_today) / $production_sum) * 100, 2) : 0;
 
-                $lfo_os = (float) number_format($totalLfo,2) ?? 0.00;
-                $lfo_ps = (float) number_format($totalLfo,2) ?? 0.00;
+            // 2. LFO (raw_mat_id=31, raw_mat_code='LFFO001')
+            // Incoming
+            $lfoIncoming = 0;
+            $lfoIncomingQuery = "SELECT SUM(supplier_weight)/1000 as total_in FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$sumStart 00:00:00'
+                AND tare_weight1_date <= '$sumEnd 23:59:59'
+                AND raw_mat_code = 'LFFO001'
+                AND status = '0'";
+            $lfoIncomingResult = mysqli_query($db, $lfoIncomingQuery);
+            if ($lfoIncomingResult && $row = mysqli_fetch_assoc($lfoIncomingResult)) {
+                $lfoIncoming = floatval($row['total_in'] ?? 0);
+            }
 
+            // Today's LFO P/S
+            $lfoData = json_decode($todayRow['lfo'], true);
+            $ps_lfo_today = $lfoData['totalLfo'] ?? 0;
 
-                ### Process Diesel Data ###
-                $dieselData = json_decode($latestBitumenPerPlant['diesel'], true);
-                if (!empty($dieselData)) {
-                    $totalDiesel = $dieselData['totalDiesel'] ?? 0;
-                } else {
-                    $totalDiesel = 0;
-                }
-                
-                $diesel_os = (float) number_format($totalDiesel,2) ?? 0.00;
-                $diesel_ps = (float) number_format($totalDiesel,2) ?? 0.00;
+            $lfo_production = number_format($production_sum, 2);
+            $lfo_os = number_format($prev_ps_lfo, 2);
+            $lfo_incoming = number_format($lfoIncoming, 2);
+            $lfo_ps = number_format($ps_lfo_today, 2);
+            $lfoUsageCalculation = ((float) $prev_ps_lfo + (float)$lfoIncoming) - (float)$ps_lfo_today;
+            $lfo_usage = number_format($lfoUsageCalculation, 2); 
+            $lfo_actual_usage = number_format(((float)$lfoUsageCalculation / (float)$production_sum), 2);
 
+            // 3. Diesel (raw_mat_id=32, raw_mat_code='DIE001')
+            // Incoming
+            $dieselIncoming = 0;
+            $dieselIncomingQuery = "SELECT SUM(supplier_weight)/1000 as total_in FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$sumStart 00:00:00'
+                AND tare_weight1_date <= '$sumEnd 23:59:59'
+                AND raw_mat_code = 'DIE001'
+                AND status = '0'";
+            $dieselIncomingResult = mysqli_query($db, $dieselIncomingQuery);
+            if ($dieselIncomingResult && $row = mysqli_fetch_assoc($dieselIncomingResult)) {
+                $dieselIncoming = floatval($row['total_in'] ?? 0);
             }
             
-            // Insert into StockTakeLog table
-            if ($insert_stmt = $db->prepare("INSERT INTO Stock_Take_Log (declaration_datetime, plant_id, sixty_seventy_production, sixty_seventy_os, sixty_seventy_incoming, sixty_seventy_usage, sixty_seventy_bookstock, sixty_seventy_ps, sixty_seventy_diffstock, sixty_seventy_actual_usage, lfo_production, lfo_os, lfo_incoming, lfo_ps, lfo_usage, lfo_actual_usage, diesel_production, diesel_os, diesel_incoming, diesel_mreading, diesel_transport, diesel_ps, diesel_usage, diesel_actual_usage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                $insert_stmt->bind_param("ssssssssssssssssssssssss", $declarationDateTime, $plantId, $sixty_seventy_production, $sixty_seventy_os, $sixty_seventy_incoming, $sixty_seventy_usage, $sixty_seventy_bookstock, $sixty_seventy_ps, $sixty_seventy_diffstock, $sixty_seventy_actual_usage, $lfo_production, $lfo_os, $lfo_incoming, $lfo_ps, $lfo_usage, $lfo_actual_usage, $diesel_production, $diesel_os, $diesel_incoming, $diesel_mreading, $diesel_transport, $diesel_ps, $diesel_usage, $diesel_actual_usage);
+            $dieselData = json_decode($todayRow['diesel'], true);
+            $diesel_lfo_today = $dieselData['totalDiesel'] ?? 0;
 
-                // Execute the prepared query.
-                if (! $insert_stmt->execute()) {
-                    echo json_encode(
-                        array(
-                            "status"=> "failed", 
-                            "message"=> $update_stmt->error
-                        )
-                    );
-                }else{
-                    $insert_stmt->close();
-                }
-            }
-        }
-    }else{
-        while ($row = mysqli_fetch_assoc($result)) { 
-            // Process each row
-            $plantId = $row['plant_id'];
-            $plantCode = searchPlantCodeById($plantId, $db);
-            $productCode = searchRawMatCodeById($plantId, $db);
-            $declarationDateTime = $row['declaration_datetime'];
+            $diesel_production = number_format($production_sum, 2);
+            $diesel_os = number_format($prev_ps_diesel, 2);
+            $diesel_incoming = number_format($dieselIncoming, 2);
+            $diesel_mreading = 0.00;
+            $diesel_transport = 0.00;
+            $diesel_ps = number_format($diesel_lfo_today, 2);
+            $diesel_usage = number_format((float) $prev_ps_diesel + (float) $dieselIncoming - (float) $diesel_lfo_today, 2);
+            $diesel_actual_usage = number_format((float) $diesel_usage / (float) $production_sum, 2);
+        } else {
+            // ---- NORMAL DECLARATION DAY (NO GAP): Use only today's data ----
 
-            // Get Production Weight
-            $productionWeight = 0; // Default value if no production weight found
-            $doQuery = "SELECT * FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Sales' AND plant_code = '$plantCode' AND tare_weight1_date >= '$startDate' AND tare_weight1_date <= '$endDate' AND status = '0'";
-            $doResult = mysqli_query($db, $doQuery);
-            if ($doResult) {
-                while ($doRow = mysqli_fetch_assoc($doResult)) {
-                    $productionWeight += $doRow['nett_weight1']/1000 ?? 0; // Sum up the order weights
-                }
-            }
+            // Production (60/70)
+            $productionQuery = "SELECT SUM(nett_weight1)/1000 as total_prod FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Sales'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$startDate'
+                AND tare_weight1_date <= '$endDate'
+                AND status = '0'";
+            $productionResult = mysqli_query($db, $productionQuery);
+            $production_sum = ($productionResult && $row = mysqli_fetch_assoc($productionResult)) ? floatval($row['total_prod'] ?? 0) : 0; 
 
-            // 1. Get previous day's last record for ALL raw_mat_id in one query (MySQL 8+)
-            $prevRawMatQuery = "
-                SELECT *
-                FROM (
-                    SELECT *,
-                        ROW_NUMBER() OVER (PARTITION BY raw_mat_id ORDER BY event_date DESC) as rn
-                    FROM Inventory_Log
-                    WHERE plant_id = '$plantId'
-                    AND raw_mat_id IN (27,31,32)
-                    AND event_date < '$startDate'
-                ) t
-                WHERE t.rn = 1
-            ";
-            $prevRawMatResult = mysqli_query($db, $prevRawMatQuery);
-            $previousRawMaterials = [];
-            if ($prevRawMatResult) {
-                while ($prevRawMatRow = mysqli_fetch_assoc($prevRawMatResult)) {
-                    $previousRawMaterials[$prevRawMatRow['raw_mat_id']]['previous_balance'] = (float) $prevRawMatRow['raw_mat_weight']/1000 ?? 0;
-                }
-            }
+            // Incoming (60/70)
+            $incomingQuery = "SELECT SUM(supplier_weight)/1000 as total_in FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$startDate'
+                AND tare_weight1_date <= '$endDate'
+                AND raw_mat_code = 'BTBI001'
+                AND status = '0'";
+            $incomingResult = mysqli_query($db, $incomingQuery);
+            $incoming_sum = ($incomingResult && $row = mysqli_fetch_assoc($incomingResult)) ? floatval($row['total_in'] ?? 0) : 0;
 
-            // 2. Get today's latest record for all raw_mat_id in one query (MySQL 8+)
-            $currRawMatQuery = "
-                SELECT *
-                FROM (
-                    SELECT *,
-                        ROW_NUMBER() OVER (PARTITION BY raw_mat_id ORDER BY event_date DESC) as rn
-                    FROM Inventory_Log
-                    WHERE plant_id = '$plantId'
-                    AND raw_mat_id IN (27,31,32)
-                    AND event_date >= '$startDate'
-                    AND event_date <= '$endDate'
-                ) t
-                WHERE t.rn = 1
-            ";
-            $currRawMatResult = mysqli_query($db, $currRawMatQuery);
-            $currentRawMaterials = [];
-            if ($currRawMatResult) {
-                while ($currRawMatRow = mysqli_fetch_assoc($currRawMatResult)) {
-                    $currentRawMaterials[$currRawMatRow['raw_mat_id']]['current_balance'] = $currRawMatRow['raw_mat_weight']/1000 ?? 0;
-                }
-            }
-
-            // Get previous day's P/S
-            $previous6070PS = 0; 
-            $previousLfoPS = 0; 
-            $previousDieselPS = 0; 
-            if ($prev_day_stmt = $db->prepare("SELECT * FROM Bitumen WHERE plant_id = ? AND declaration_datetime < ? ORDER BY declaration_datetime DESC LIMIT 1")) {
-                $prev_day_stmt->bind_param("ss", $plantId, $declarationDateTime);
-                $prev_day_stmt->execute();
-                $prev_day_result = $prev_day_stmt->get_result();
-                if ($prev_day_row = $prev_day_result->fetch_assoc()) {
-                    $previous6070PS = json_decode($prev_day_row['60/70'], true)['totalSixtySeventy'] ?? 0;
-                    $previousLfoPS = json_decode($prev_day_row['lfo'], true)['totalLfo'] ?? 0;
-                    $previousDieselPS = json_decode($prev_day_row['diesel'], true)['totalDiesel'] ?? 0;
-                } else {
-                    $previous6070PS = 0; // Default value if no previous record found
-                    $previousLfoPS = 0; // Default value if no previous record found
-                    $previousDieselPS = 0; // Default value if no previous record found
-                }
-                $prev_day_stmt->close();
-            } else {
-                echo json_encode(
-                    array(
-                        "status"=> "failed", 
-                        "message"=> "Query failed: " . mysqli_error($db)
-                    )
-                );
-            }
-
-            $sixtySeventyData = json_decode($row['60/70'], true); 
-            if (!empty($sixtySeventyData)) {
-                // get total incoming for 60/70
-                $sixtySeventyIncoming = 0;
-                $sixtySeventyIncomingQuery = "SELECT * FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase' AND plant_code = '$plantCode' AND tare_weight1_date >= '$startDate' AND tare_weight1_date <= '$endDate' AND raw_mat_code = 'BTBI001' AND status = '0'";
-                $sixtySeventyIncomingResult = mysqli_query($db, $sixtySeventyIncomingQuery);
-                if ($sixtySeventyIncomingResult) {
-                    while ($sixtySeventyIncomingRow = mysqli_fetch_assoc($sixtySeventyIncomingResult)) {
-                        $sixtySeventyIncoming += $sixtySeventyIncomingRow['supplier_weight']/1000 ?? 0; // Sum up the supplier weights
+            // Usage: (opening + incoming - closing)
+            $usageQuery = "(
+                                SELECT raw_mat_weight/1000 as cs
+                                FROM Inventory_Log
+                                WHERE plant_id = '$plantId' AND raw_mat_id = 27
+                                    AND DATE(event_date) < '$endDate'
+                                ORDER BY event_date DESC
+                                LIMIT 1
+                                )
+                                UNION ALL
+                                (
+                                SELECT raw_mat_weight/1000 as cs
+                                FROM Inventory_Log
+                                WHERE plant_id = '$plantId' AND raw_mat_id = 27
+                                    AND DATE(event_date) < '$startDate'
+                                ORDER BY event_date DESC
+                                LIMIT 1
+                            )";
+            $usageResult = mysqli_query($db, $usageQuery);
+            if ($usageResult) {
+                $usageCount = 0; 
+                $closing = 0;
+                $opening = 0;
+                while ($row = mysqli_fetch_assoc($usageResult)) {
+                    if ($usageCount === 0) {
+                        // First row is the closing from previous declaration date
+                        $closing = floatval($row['cs'] ?? 0);
+                        $usageCount++;
+                    } else {
+                        // Second row is the closing from today
+                        $opening = floatval($row['cs'] ?? 0);
                     }
                 }
+            }
+            $usage_sum = ($opening + $incoming_sum) - $closing; 
 
-                // get total usage for 60/70
-                $sixty70PrevBalance = isset($previousRawMaterials[27]['previous_balance']) ? $previousRawMaterials[27]['previous_balance'] : 0;
-                $sixty70CurrBalance = isset($currentRawMaterials[27]['current_balance']) ? $currentRawMaterials[27]['current_balance'] : 0;
-                $sixtySeventyUsage = ($sixty70PrevBalance + $sixtySeventyIncoming) - $sixty70CurrBalance ?? 0; // Calculate usage in tonnes
+            // Today's P/S
+            $sixtySeventyData = json_decode($todayRow['60/70'], true);
+            $ps_6070_today = $sixtySeventyData['totalSixtySeventy'] ?? 0;
 
-                $sixty_seventy_production = (float) number_format($productionWeight, 2) ?? 0.00;
-                $sixty_seventy_os = (float) number_format($previous6070PS, 2) ?? 0.00;
-                $sixty_seventy_incoming = (float) number_format($sixtySeventyIncoming, 2) ?? 0.00;
-                $sixty_seventy_usage = (float) number_format($sixtySeventyUsage, 2) ?? 0.00;
-                $sixty_seventy_bookstock = (float) number_format($sixty_seventy_os + $sixty_seventy_incoming - $sixty_seventy_usage, 2) ?? 0.00;
-                $sixty_seventy_ps = (float) number_format($sixtySeventyData['totalSixtySeventy'], 2) ?? 0.00;
-                $sixty_seventy_diffstock = (float) number_format($sixty_seventy_ps - $sixty_seventy_bookstock, 2) ?? 0.00;
-                $sixty_seventy_actual_usage = (float) number_format((($sixty_seventy_os + $sixty_seventy_incoming) - $sixty_seventy_ps)/($sixty_seventy_production ?: 1) * 100, 2) ?? 0.00;
-            } else {
-                // Default values if data is empty
-                $sixty_seventy_production = (float) number_format($productionWeight, 2) ?? 0;
-                $sixty_seventy_os = (float) number_format($previous6070PS, 2) ?? 0;
-                $sixty_seventy_incoming = 0;
-                $sixty_seventy_usage = 0;
-                $sixty_seventy_bookstock = (float) number_format($previous6070PS, 2) ?? 0;
-                $sixty_seventy_ps = (float) number_format($previous6070PS, 2) ?? 0;
-                $sixty_seventy_diffstock = 0;
-                $sixty_seventy_actual_usage = 0;
+            $sixty_seventy_os = number_format($prev_ps_6070, 2);
+            $sixty_seventy_production = number_format($production_sum, 2);
+            $sixty_seventy_incoming = number_format($incoming_sum, 2);
+            $sixty_seventy_usage = number_format($usage_sum, 2);
+            $sixty_seventy_bookstock = number_format((float) $prev_ps_6070 + (float) $sixty_seventy_incoming - (float) $sixty_seventy_usage, 2);
+            $sixty_seventy_ps = number_format($ps_6070_today, 2);
+            $sixty_seventy_diffstock = number_format((float) $sixty_seventy_ps - (float) $sixty_seventy_bookstock, 2);
+            $sixty_seventy_actual_usage = $production_sum > 0 ? number_format(((($prev_ps_6070+$incoming_sum)-$ps_6070_today) / $production_sum) * 100, 2) : 0;
+
+            // 2. LFO (raw_mat_id=31, raw_mat_code='LFFO001')
+            // Incoming
+            $lfoIncoming = 0;
+            $lfoIncomingQuery = "SELECT SUM(supplier_weight)/1000 as total_in FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$startDate'
+                AND tare_weight1_date <= '$endDate'
+                AND raw_mat_code = 'LFFO001'
+                AND status = '0'";
+            $lfoIncomingResult = mysqli_query($db, $lfoIncomingQuery);
+            if ($lfoIncomingResult && $row = mysqli_fetch_assoc($lfoIncomingResult)) {
+                $lfoIncoming = floatval($row['total_in'] ?? 0);
             }
 
-            $lfoData = json_decode($row['lfo'], true);
-            if (!empty($lfoData)) {
-                // get total incoming for lfo
-                $lfoIncoming = 0;
-                $lfoIncomingQuery = "SELECT * FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase' AND plant_code = '$plantCode' AND tare_weight1_date >= '$startDate' AND tare_weight1_date <= '$endDate' AND raw_mat_code = 'LFFO001' AND status = '0'";
-                $lfoIncomingResult = mysqli_query($db, $lfoIncomingQuery);
-                if ($lfoIncomingResult) {
-                    while ($lfoIncomingRow = mysqli_fetch_assoc($lfoIncomingResult)) {
-                        $lfoIncoming += $lfoIncomingRow['supplier_weight']/1000 ?? 0; // Sum up the supplier weights
-                    }
-                } 
+            // Today's LFO P/S
+            $lfoData = json_decode($todayRow['lfo'], true);
+            $ps_lfo_today = $lfoData['totalLfo'] ?? 0;
 
-                $lfo_production = (float) number_format($productionWeight, 2) ?? 0;
-                $lfo_os = (float) number_format($previousLfoPS, 2) ?? 0;
-                $lfo_incoming = (float) number_format($lfoIncoming, 2) ?? 0;
-                $lfo_ps = (float) number_format($lfoData['totalLfo'], 2) ?? 0;
-                $lfo_usage = (float) number_format(($lfo_os + $lfo_incoming - $lfo_ps), 2) ?? 0;
-                $lfo_actual_usage = (float) number_format(($lfo_usage/($lfo_production ?: 1)), 2) ?? 0;
-            } else {
-                // Default values if data is empty
-                $lfo_production = (float) number_format($productionWeight, 2) ?? 0;
-                $lfo_os = (float) number_format($previousLfoPS, 2) ?? 0;
-                $lfo_incoming = 0;
-                $lfo_ps = (float) number_format($previousLfoPS, 2) ?? 0;
-                $lfo_usage = 0;
-                $lfo_actual_usage = 0;
+            $lfo_production = number_format($production_sum, 2);
+            $lfo_os = number_format($prev_ps_lfo, 2);
+            $lfo_incoming = number_format($lfoIncoming, 2);
+            $lfo_ps = number_format($ps_lfo_today, 2);
+            $lfoUsageCalculation = ((float) $prev_ps_lfo + (float)$lfoIncoming) - (float)$ps_lfo_today;
+            $lfo_usage = number_format($lfoUsageCalculation, 2); 
+            $lfo_actual_usage = number_format(((float)$lfoUsageCalculation / (float)$production_sum), 2);
+
+            // 3. Diesel (raw_mat_id=32, raw_mat_code='DIE001')
+            // Incoming
+            $dieselIncoming = 0;
+            $dieselIncomingQuery = "SELECT SUM(supplier_weight)/1000 as total_in FROM Weight
+                WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase'
+                AND plant_code = '$plantCode'
+                AND tare_weight1_date >= '$startDate'
+                AND tare_weight1_date <= '$endDate'
+                AND raw_mat_code = 'DIE001'
+                AND status = '0'";
+            $dieselIncomingResult = mysqli_query($db, $dieselIncomingQuery);
+            if ($dieselIncomingResult && $row = mysqli_fetch_assoc($dieselIncomingResult)) {
+                $dieselIncoming = floatval($row['total_in'] ?? 0);
             }
+            
+            $dieselData = json_decode($todayRow['diesel'], true);
+            $diesel_lfo_today = $dieselData['totalDiesel'] ?? 0;
 
-            $dieselData = json_decode($row['diesel'], true);
-            if (!empty($dieselData)) {
-                // get total incoming for lfo
-                $dieselIncoming = 0;
-                $dieselIncomingQuery = "SELECT * FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND transaction_status = 'Purchase' AND plant_code = '$plantCode' AND tare_weight1_date >= '$startDate' AND tare_weight1_date <= '$endDate' AND raw_mat_code = 'DIE001' AND status = '0'";
-                $dieselIncomingResult = mysqli_query($db, $dieselIncomingQuery);
-                if ($dieselIncomingResult) {
-                    while ($dieselIncomingRow = mysqli_fetch_assoc($dieselIncomingResult)) {
-                        $dieselIncoming += $dieselIncomingRow['supplier_weight']/1000 ?? 0; // Sum up the supplier weights
-                    }
-                } 
-
-                $diesel_production = (float) number_format($productionWeight, 2) ?? 0;
-                $diesel_os = (float) number_format($previousDieselPS, 2) ?? 0;
-                $diesel_incoming = (float) number_format($dieselIncoming, 2) ?? 0;
-                $diesel_mreading = 0;
-                $diesel_transport = 0;
-                $diesel_ps = (float) number_format($dieselData['totalDiesel'], 2) ?? 0;
-                $diesel_usage = (float) number_format(($diesel_os + $diesel_incoming - $diesel_ps), 2) ?? 0;
-                $diesel_actual_usage = (float) number_format(($diesel_usage/$diesel_production), 2) ?? 0;
-            } else {
-                // Default values if data is empty
-                $diesel_production = (float) number_format($productionWeight. 2) ?? 0;
-                $diesel_os = (float) number_format($previousDieselPS, 2) ?? 0;
-                $diesel_incoming = 0;
-                $diesel_mreading = 0;
-                $diesel_transport = 0;
-                $diesel_ps = (float) number_format($previousDieselPS, 2) ?? 0;
-                $diesel_usage = 0;
-                $diesel_actual_usage = 0;
-            }
-
-            // Insert into StockTakeLog table
-            if ($insert_stmt = $db->prepare("INSERT INTO Stock_Take_Log (declaration_datetime, plant_id, sixty_seventy_production, sixty_seventy_os, sixty_seventy_incoming, sixty_seventy_usage, sixty_seventy_bookstock, sixty_seventy_ps, sixty_seventy_diffstock, sixty_seventy_actual_usage, lfo_production, lfo_os, lfo_incoming, lfo_ps, lfo_usage, lfo_actual_usage, diesel_production, diesel_os, diesel_incoming, diesel_mreading, diesel_transport, diesel_ps, diesel_usage, diesel_actual_usage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                $insert_stmt->bind_param("ssssssssssssssssssssssss", $declarationDateTime, $plantId, $sixty_seventy_production, $sixty_seventy_os, $sixty_seventy_incoming, $sixty_seventy_usage, $sixty_seventy_bookstock, $sixty_seventy_ps, $sixty_seventy_diffstock, $sixty_seventy_actual_usage, $lfo_production, $lfo_os, $lfo_incoming, $lfo_ps, $lfo_usage, $lfo_actual_usage, $diesel_production, $diesel_os, $diesel_incoming, $diesel_mreading, $diesel_transport, $diesel_ps, $diesel_usage, $diesel_actual_usage);
-
-                // Execute the prepared query.
-                if (! $insert_stmt->execute()) {
-                    echo json_encode(
-                        array(
-                            "status"=> "failed", 
-                            "message"=> $update_stmt->error
-                        )
-                    );
-                }else{
-                    $insert_stmt->close();
-                }
-            }
+            $diesel_production = number_format($production_sum, 2);
+            $diesel_os = number_format($prev_ps_diesel, 2);
+            $diesel_incoming = number_format($dieselIncoming, 2);
+            $diesel_mreading = 0.00;
+            $diesel_transport = 0.00;
+            $diesel_ps = number_format($diesel_lfo_today, 2);
+            $diesel_usage = number_format((float) $prev_ps_diesel + (float) $dieselIncoming - (float) $diesel_lfo_today, 2);
+            $diesel_actual_usage = number_format((float) $diesel_usage / (float) $production_sum, 2);
         }
     }
-    $db->close();
-} else {
-    // Handle query error
-    echo json_encode(
-        array(
-            "status"=> "failed", 
-            "message"=> "Query failed: " . mysqli_error($db)
-        )
-    );
-}
 
+    // Insert into Stock_Take_Log
+    if ($insert_stmt = $db->prepare("INSERT INTO Stock_Take_Log (
+        declaration_datetime, plant_id, 
+        sixty_seventy_production, sixty_seventy_os, sixty_seventy_incoming, sixty_seventy_usage, 
+        sixty_seventy_bookstock, sixty_seventy_ps, sixty_seventy_diffstock, sixty_seventy_actual_usage, 
+        lfo_production, lfo_os, lfo_incoming, lfo_ps, lfo_usage, lfo_actual_usage, 
+        diesel_production, diesel_os, diesel_incoming, diesel_mreading, diesel_transport, 
+        diesel_ps, diesel_usage, diesel_actual_usage
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        $declarationDateTime = $endDate;
+        $insert_stmt->bind_param("ssssssssssssssssssssssss",
+            $declarationDateTime, $plantId,
+            $sixty_seventy_production, $sixty_seventy_os, $sixty_seventy_incoming, $sixty_seventy_usage,
+            $sixty_seventy_bookstock, $sixty_seventy_ps, $sixty_seventy_diffstock, $sixty_seventy_actual_usage,
+            $lfo_production, $lfo_os, $lfo_incoming, $lfo_ps, $lfo_usage, $lfo_actual_usage,
+            $diesel_production, $diesel_os, $diesel_incoming, $diesel_mreading, $diesel_transport, $diesel_ps, $diesel_usage, $diesel_actual_usage
+        );
+        $insert_stmt->execute();
+        $insert_stmt->close();
+    }
+}
+$db->close();
 ?>
