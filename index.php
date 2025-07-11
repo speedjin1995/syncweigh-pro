@@ -4275,7 +4275,7 @@ else{
 
                         
                         $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
-                        $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1); console.log(obj.message.gross_weight1_date);
+                        $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
                         grossIncomingDatePicker.setDate(new Date(obj.message.gross_weight1_date)); 
                         // $('#addModal').find('#grossIncomingDate').val(obj.message.gross_weight1_date);
                         $('#addModal').find('#grossWeightBy1').val(obj.message.gross_weight_by1);
