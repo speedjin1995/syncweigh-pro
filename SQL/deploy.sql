@@ -1255,20 +1255,6 @@ ALTER TABLE `Weight_Log` ADD `plant_id` INT(11) NULL AFTER `order_weight`, ADD `
 
 DELIMITER $$
 
-CREATE OR REPLACE TRIGGER TRG_INS_INV
-AFTER INSERT ON Raw_Mat
-FOR EACH ROW
-BEGIN
-    -- Insert one inventory row for each plant
-    INSERT INTO Inventory (raw_mat_id, plant_id, plant_code, created_by, modified_by)
-    SELECT NEW.id, p.id, p.plant_code, NEW.created_by, NEW.modified_by
-    FROM Plant p WHERE status = '0';
-END
-$$
-DELIMITER ;
-
-DELIMITER $$
-
 CREATE OR REPLACE TRIGGER `TRG_INS_INV_LOG` AFTER INSERT ON `Inventory`
  FOR EACH ROW INSERT INTO Inventory_Log (
     inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, action_id, action_by, event_date
@@ -1290,7 +1276,7 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
         SET action_value = 2;
     END IF;
 
-    -- Insert into Sales_Order table
+    -- Insert into Inventory_Log table
     INSERT INTO Inventory_Log (
         inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, action_id, action_by, event_date
     ) 
@@ -1368,7 +1354,6 @@ END
 $$
 DELIMITER ;
 
--- 14/06/2025 --
 UPDATE Inventory i
 LEFT JOIN Plant p ON i.plant_code = p.plant_code
 SET i.plant_id = p.id

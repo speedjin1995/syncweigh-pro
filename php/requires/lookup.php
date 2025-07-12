@@ -24,7 +24,7 @@ function searchCustomerByCode($value, $db) {
 }
 
 function searchSupplierByCode($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Supplier WHERE supplier_code=? AND status='0'")) {
@@ -32,7 +32,7 @@ function searchSupplierByCode($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['name'];
+                $id = $row;
             }
             $select_stmt->close();
         }
@@ -224,7 +224,7 @@ function searchUnitIdByCode($value, $db) {
 }
 
 function searchRawNameByCode($value, $db) {
-    $id = '';
+    $id = [];
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=? AND status = '0'")) {
@@ -232,7 +232,7 @@ function searchRawNameByCode($value, $db) {
             $select_stmt->execute();
             $result = $select_stmt->get_result();
             if ($row = $result->fetch_assoc()) {
-                $id = $row['name'];
+                $id = $row;
             }
             $select_stmt->close();
         }

@@ -1667,9 +1667,9 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 22 columns
-        while (headers.length < 22) {
-            headers.push(''); // Adding empty headers to reach 22 columns
+        // Ensure we handle cases where there may be less than 23 columns
+        while (headers.length < 23) {
+            headers.push(''); // Adding empty headers to reach 23 columns
         }
 
         // Create HTML table headers
@@ -1681,15 +1681,21 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         // Iterate over the data and create table rows
         for (var i = 1; i < jsonData.length; i++) {
-            htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 22 cells in a row
-            while (rowData.length < 22) {
+            // Check if all cells in the row are empty
+            var isEmptyRow = rowData.every(function(cell) {
+                return cell === null || cell === undefined || cell === '';
+            });
+            if (isEmptyRow) continue; // Skip this row
+
+            // Ensure we handle cases where there may be less than 23 cells in a row
+            while (rowData.length < 23) {
                 rowData.push(''); // Adding empty cells to reach 22 columns
             }
 
-            for (var j = 0; j < 22; j++) {
+            htmlTable += '<tr>';
+            for (var j = 0; j < 23; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 

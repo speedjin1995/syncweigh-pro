@@ -45,6 +45,7 @@ if (!empty($data['data'])) {
     $invid = $stmtL->insert_id;
 
     # Company Details
+    $CompanyId = '';
     $CompanyCode = '';
     $CompanyName = '';
 
@@ -53,6 +54,7 @@ if (!empty($data['data'])) {
     $companyRow = mysqli_fetch_assoc($companyDetail);
 
     if (!empty($companyRow)) {
+        $CompanyId = $companyRow['id'];
         $CompanyCode = $companyRow['company_code'];
         $CompanyName = $companyRow['name'];
     }
@@ -61,101 +63,72 @@ if (!empty($data['data'])) {
     $errorSoProductArray = [];
     
     foreach ($agents as $rows) { 
+        // Extract and sanitize input data
         $OrderDate = (isset($rows['DOCDATE']) && !empty($rows['DOCDATE']) && $rows['DOCDATE'] !== '' && $rows['DOCDATE'] !== null) ? DateTime::createFromFormat('j/n/Y', $rows['DOCDATE'])->format('Y-m-d H:i:s') : '';
-        $PONumber = (isset($rows['DOCNO']) && !empty($rows['DOCNO']) && $rows['DOCNO'] !== '' && $rows['DOCNO'] !== null) ? trim($rows['DOCNO']) : '';
-        $SupplierCode = (isset($rows['CODE']) && !empty($rows['CODE']) && $rows['CODE'] !== '' && $rows['CODE'] !== null) ? trim($rows['CODE']) : '';
-        // $SupplierName = (isset($rows['COMPANYNAME']) && !empty($rows['COMPANYNAME']) && $rows['COMPANYNAME'] !== '' && $rows['COMPANYNAME'] !== null) ? trim($rows['COMPANYNAME']) : '';
-        $SupplierName = '';
-        if (!empty($SupplierCode)) {
-            $SupplierName = searchSupplierByCode($SupplierCode, $db);
-        }
-        $TransporterCode = (isset($rows['SHIPPER']) && !empty($rows['SHIPPER']) && $rows['SHIPPER'] !== '' && $rows['SHIPPER'] !== null) ? trim($rows['SHIPPER']) : '';
-        $TransporterName = '';
-        if (!empty($TransporterCode)) {
-            $TransporterName = searchTransporterNameByCode($TransporterCode, $db);
-        }
-        $AgentCode = (isset($rows['AGENT']) && !empty($rows['AGENT']) && $rows['AGENT'] !== '' && $rows['AGENT'] !== null) ? trim($rows['AGENT']) : '';
-        $AgentName = '';
-        if (!empty($AgentCode)) {
-            $AgentName = searchAgentNameByCode($AgentCode, $db);
-        }
-        $RawMaterialCode = (isset($rows['ITEMCODE']) && !empty($rows['ITEMCODE']) && $rows['ITEMCODE'] !== '' && $rows['ITEMCODE'] !== null) ? trim($rows['ITEMCODE']) : '';
-        // $RawMaterialName = (isset($rows['DESCRIPTION']) && !empty($rows['DESCRIPTION']) && $rows['DESCRIPTION'] !== '' && $rows['DESCRIPTION'] !== null) ? trim($rows['DESCRIPTION']) : '';
-        $RawMaterialName = '';
-        if (!empty($RawMaterialCode)) {
-            $RawMaterialName = searchRawNameByCode($RawMaterialCode, $db);
-        }
-        $VehNumber = (isset($rows['ITEMDESC2']) && !empty($rows['ITEMDESC2']) && $rows['ITEMDESC2'] !== '' && $rows['ITEMDESC2'] !== null) ? trim($rows['ITEMDESC2']) : '';
-        $Remarks = !empty($rows['DOCREF4']) ? trim($rows['DOCREF4']) : '';
-        $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
-        $DestinationCode = '';
-        if(!empty($DestinationName)){
-            $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
-        }
-        $ExOrDel = (isset($rows['DOCREF1']) && !empty($rows['DOCREF1']) && $rows['DOCREF1'] !== '' && $rows['DOCREF1'] !== null) ? trim($rows['DOCREF1']) : '';
-        $ConvertedSupplierQuantity = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
-        $ConvertedBalance = (isset($rows['QTY']) && !empty($rows['QTY']) && $rows['QTY'] !== '' && $rows['QTY'] !== null) ? trim($rows['QTY']) : '';
-        $ConvertedUnitId = (isset($rows['UOM']) && !empty($rows['UOM']) && $rows['UOM'] !== '' && $rows['UOM'] !== null) ? searchUnitIdByCode(trim($rows['UOM']), $db) : '';
-        $PlantCode = (isset($rows['PROJECT']) && !empty($rows['PROJECT']) && $rows['PROJECT'] !== '' && $rows['PROJECT'] !== null) ? trim($rows['PROJECT']) : '';
-        $PlantName = '';
-        if (!empty($PlantCode)) {
-            $PlantName = searchPlantNameByCode($PlantCode, $db);
-        }
-        $UnitPrice = (isset($rows['UNITPRICE']) && !empty($rows['UNITPRICE']) && $rows['UNITPRICE'] !== '' && $rows['UNITPRICE'] !== null) ? (float) trim($rows['UNITPRICE']) : '';
+        $PONumber = (isset($rows['DOCNO']) && trim($rows['DOCNO']) !== '') ? trim($rows['DOCNO']) : '';
+        $SupplierCode = (isset($rows['CODE']) && trim($rows['CODE']) !== '') ? trim($rows['CODE']) : '';
+        $TransporterCode = (isset($rows['SHIPPER']) && trim($rows['SHIPPER']) !== '') ? trim($rows['SHIPPER']) : '';
+        $AgentCode = (isset($rows['AGENT']) && trim($rows['AGENT']) !== '') ? trim($rows['AGENT']) : '';
+        $RawMaterialCode = (isset($rows['ITEMCODE']) && trim($rows['ITEMCODE']) !== '') ? trim($rows['ITEMCODE']) : '';
+        $VehNumber = (isset($rows['DESCRIPTION2']) && trim($rows['DESCRIPTION2']) !== '') ? trim($rows['DESCRIPTION2']) : '';
+        $Remarks = (isset($rows['DOCREF4']) && trim($rows['DOCREF4']) !== '') ? trim($rows['DOCREF4']) : '';
+        $DestinationName = (isset($rows['REMARK2']) && trim($rows['REMARK2']) !== '') ? trim($rows['REMARK2']) : '';
+        $ExOrDel = (isset($rows['DOCREF1']) && trim($rows['DOCREF1']) !== '') ? trim($rows['DOCREF1']) : '';
+        $ConvertedSupplierQuantity = (isset($rows['QTY']) && trim($rows['QTY']) !== '') ? trim($rows['QTY']) : '';
+        $ConvertedBalance = $ConvertedSupplierQuantity;
+        $ConvertedUnitId = (isset($rows['UOM']) && trim($rows['UOM']) !== '') ? searchUnitIdByCode(trim($rows['UOM']), $db) : '';
+        $PlantCode = (isset($rows['PROJECT']) && trim($rows['PROJECT']) !== '') ? trim($rows['PROJECT']) : '';
+        $UnitPrice = (isset($rows['UNITPRICE']) && trim($rows['UNITPRICE']) !== '') ? (float) trim($rows['UNITPRICE']) : '';
         $status = 'Open';
         $actionId = 1;
 
-        # Supplier Checking & Processing
-        if($SupplierCode != null && $SupplierCode != ''){
-            $supplierQuery = "SELECT * FROM Supplier WHERE supplier_code = '$SupplierCode' AND status = '0'";
-            $supplierDetail = mysqli_query($db, $supplierQuery);
-            $supplierRow = mysqli_fetch_assoc($supplierDetail);
-            
-            if(empty($supplierRow)){
-                $errMsg = "Supplier: ".$SupplierCode." doesn't exist in master data.";
-                $errorSoProductArray[] = $errMsg;
+        // Lookup Supplier
+        $SupplierId = '';
+        $SupplierName = '';
+        if ($SupplierCode !== null && trim($SupplierCode) !== '') {
+            $supplierData = searchSupplierByCode($SupplierCode, $db);
+            if (empty($supplierData)) {
+                $errorSoProductArray[] = "Supplier: $SupplierCode doesn't exist in master data.";
                 continue;
             }
-        }
-        else{
-            $errMsg = "Supplier: ".$SupplierCode." doesn't exist in master data.";
-            $errorSoProductArray[] = $errMsg;
+            $SupplierId = $supplierData['id'];
+            $SupplierName = $supplierData['name'];
+        } else {
+            $errorSoProductArray[] = "Supplier: $SupplierCode doesn't exist in master data.";
             continue;
         }
 
-        # Transporter Checking & Processing
-        if($TransporterCode != null && $TransporterCode != ''){
-            $transporterQuery = "SELECT * FROM Transporter WHERE transporter_code = '$TransporterCode' AND status = '0'";
-            $transporterDetail = mysqli_query($db, $transporterQuery);
-            $transporterSite = mysqli_fetch_assoc($transporterDetail);
-            
-            if(empty($transporterSite)){
-                $errMsg = "Transporter: ".$TransporterCode." doesn't exist in master data.";
-                $errorSoProductArray[] = $errMsg;
+        // Lookup Transporter
+        $TransporterId = '';
+        $TransporterName = '';
+        if ($TransporterCode !== null && trim($TransporterCode) !== '') {
+            $transporterData = searchTransporterNameByCode($TransporterCode, $db);
+            if (empty($transporterData)) {
+                $errorSoProductArray[] = "Transporter: $TransporterCode doesn't exist in master data.";
                 continue;
             }
-        }
-        else{
-            $errMsg = "Transporter: ".$TransporterCode." doesn't exist in master data.";
-            $errorSoProductArray[] = $errMsg;
+            $TransporterId = $transporterData['id'];
+            $TransporterName = $transporterData['name'];
+        } else {
+            $errorSoProductArray[] = "Transporter: $TransporterCode doesn't exist in master data.";
             continue;
         }
 
-        # Agent Checking & Processing
-        if($AgentCode != null && $AgentCode != ''){
-            $agentQuery = "SELECT * FROM Agents WHERE agent_code = '$AgentCode' AND status = '0'";
-            $agentDetail = mysqli_query($db, $agentQuery);
-            $agentRow = mysqli_fetch_assoc($agentDetail);
-            
-            if(empty($agentRow)){
-                $errMsg = "Sales Representative: ".$AgentCode." doesn't exist in master data.";
-                $errorSoProductArray[] = $errMsg;
+        // Lookup Agent
+        $AgentId = '';
+        $AgentName = '';
+        if ($AgentCode !== null && trim($AgentCode) !== '') {
+            $agentData = searchAgentNameByCode($AgentCode, $db);
+            if (empty($agentData)) {
+                $errorSoProductArray[] = "Sales Representative: $AgentCode doesn't exist in master data.";
                 continue;
             }
+            $AgentId = $agentData['id'];
+            $AgentName = $agentData['name'];
         }
-        
-        # Vehicle Checking & Processing
-        if($VehNumber != null && $VehNumber != ''){
+
+        // Vehicle - Insert if missing
+        if($VehNumber !== null && $VehNumber !== ''){
             $vehQuery = "SELECT * FROM Vehicle WHERE veh_number = '$VehNumber' AND status = '0'";
             $vehDetail = mysqli_query($db, $vehQuery);
             $vehRow = mysqli_fetch_assoc($vehDetail);
@@ -193,149 +166,129 @@ if (!empty($data['data'])) {
             }
         }
         
-        # Destination Checking & Processing
-        if($DestinationName != null && $DestinationName != ''){
-            $destinationQuery = "SELECT * FROM Destination WHERE name = '$DestinationName' AND status = '0'";
-            $destinationDetail = mysqli_query($db, $destinationQuery);
-            $destinationRow = mysqli_fetch_assoc($destinationDetail);
-            
-            if(empty($destinationRow)){
+        // Lookup Destination, Insert if missing
+        $DestinationId = '';
+        $DestinationCode = '';
+        if ($DestinationName !== null && trim($DestinationName) !== '') {
+            $destinationData = searchDestinationCodeByName($DestinationName, $db);
+            if (empty($destinationData)) {
+                // Generate new code
                 $code = 'destination';
-                $firstChar = substr($DestinationName, 0, 1);
-                if (ctype_alpha($firstChar)) { //Check if letter is alphabet 
-                    $firstChar = strtoupper($firstChar);
-                }
-
-                // Auto gen destination code
-                if($update_stmt2 = $db->prepare("SELECT * FROM miscellaneous WHERE code=? AND name=?")){
-                    $update_stmt2->bind_param('ss', $code, $firstChar);
-
-                    if (! $update_stmt2->execute()) {
-                        echo json_encode(
-                            array(
-                                "status" => "failed",
-                                "message" => "Something went wrong when generating destination code"
-                            )
-                        ); 
-                    }
-                    else{
-                        $result2 = $update_stmt2->get_result();
-                        $DestinationCode = $firstChar."-";
-                        if ($row2 = $result2->fetch_assoc()) {
-                            $charSize = strlen($row2['value']);
-                            $misValue = $row2['value'];
-
-                            for($i=0; $i<(5-(int)$charSize); $i++){
-                                $DestinationCode.='0';  // S0000
-                            }
-                    
-                            $DestinationCode .= $misValue;  //S00009
-
-                            $misValue++;
+                $firstChar = strtoupper(substr($DestinationName, 0, 1));
+                $update_stmt2 = $db->prepare("SELECT * FROM miscellaneous WHERE code=? AND name=?");
+                $update_stmt2->bind_param('ss', $code, $firstChar);
+                if ($update_stmt2->execute()) {
+                    $result2 = $update_stmt2->get_result();
+                    $DestinationCode = $firstChar."-";
+                    if ($row2 = $result2->fetch_assoc()) {
+                        $charSize = strlen($row2['value']);
+                        $misValue = $row2['value'];
+                        for($i=0; $i<(5-(int)$charSize); $i++){
+                            $DestinationCode.='0';
                         }
+                        $DestinationCode .= $misValue;
+                        $misValue++;
                     }
                 }
+                $update_stmt2->close();
 
+                // Insert destination and log
                 if($insert_destination = $db->prepare("INSERT INTO Destination (destination_code, name, created_by, modified_by) VALUES (?, ?, ?, ?)")) {
                     $insert_destination->bind_param('ssss', $DestinationCode, $DestinationName, $uid, $uid);
                     $insert_destination->execute();
-                    $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
+                    $destinationId = $insert_destination->insert_id;
                     $insert_destination->close();
-                    
                     if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
                         $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
                         $insert_destination_log->execute();
                         $insert_destination_log->close();
-                    }    
+                    }
                 }
-
-                // $errMsg = "Destination: ".$DestinationCode." doesn't exist in master data.";
-                // $errorSoProductArray[] = $errMsg;
-                // continue;
+            } else {
+                $DestinationId = $destinationData['id'];
+                $DestinationCode = $destinationData['destination_code'];
             }
         }
 
-        # Plant Checking & Processing
-        if($PlantCode != null && $PlantCode != ''){
-            $plantQuery = "SELECT * FROM Plant WHERE plant_code = '$PlantCode' AND status = '0'";
-            $plantDetail = mysqli_query($db, $plantQuery);
-            $plantRow = mysqli_fetch_assoc($plantDetail);
-            
-            if(empty($plantRow)){
-                $errMsg = "Plant: ".$PlantCode." doesn't exist in master data.";
-                $errorSoProductArray[] = $errMsg;
+        // Lookup Plant
+        $PlantId = '';
+        $PlantName = '';
+        if ($PlantCode !== null && trim($PlantCode) !== '') {
+            $plantData = searchPlantNameByCode($PlantCode, $db);
+            if (empty($plantData)) {
+                $errorSoProductArray[] = "Plant: $PlantCode doesn't exist in master data.";
                 continue;
             }
-        }
-        else{
-            $errMsg = "Plant: ".$PlantCode." doesn't exist in master data.";
-            $errorSoProductArray[] = $errMsg;
+            $PlantId = $plantData['id'];
+            $PlantName = $plantData['name'];
+        } else {
+            $errorSoProductArray[] = "Plant: $PlantCode doesn't exist in master data.";
             continue;
         }
 
-        # Raw Material Checking & Processing
-        $rawMatId = '';
-        if($RawMaterialCode != null && $RawMaterialCode != ''){
-            $rawMatQuery = "SELECT * FROM Raw_Mat WHERE raw_mat_code = '$RawMaterialCode' AND status = '0'";
-            $rawMatDetail = mysqli_query($db, $rawMatQuery);
-            $rawMatRow = mysqli_fetch_assoc($rawMatDetail);
-            
-            if(empty($rawMatRow)){
-                $errMsg = "Raw Material: ".$RawMaterialCode." doesn't exist in master data.";
-                $errorSoProductArray[] = $errMsg;
+        // Lookup Raw Material
+        $RawMaterialId = '';
+        $RawMaterialName = '';
+        if ($RawMaterialCode !== null && trim($RawMaterialCode) !== '') {
+            $rawMatData = searchRawNameByCode($RawMaterialCode, $db);
+            if (empty($rawMatData)) {
+                $errorSoProductArray[] = "Raw Material: $RawMaterialCode doesn't exist in master data.";
                 continue;
             }
-            else{
-                $rawMatId = $rawMatRow['id'];
-            }
-        }
-        else{
-            $errMsg = "Raw Material: ".$RawMaterialCode." doesn't exist in master data.";
-            $errorSoProductArray[] = $errMsg;
+            $RawMaterialId = $rawMatData['id'];
+            $RawMaterialName = $rawMatData['name'];
+        } else {
+            $errorSoProductArray[] = "Raw Material: $RawMaterialCode doesn't exist in master data.";
             continue;
         }
 
-        //Checking to pull rate in raw mat
+        // Raw Material UOM
         $SupplierQuantity = 0;
-        if (isset($rawMatId) && !empty($rawMatId)){
-            $rawMatUomQuery = "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id = '$rawMatId' AND unit_id = '2' AND status = '0'";
+        if ($RawMaterialId !== null && trim($RawMaterialId) !== '') {
+            $rawMatUomQuery = "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id = '$RawMaterialId' AND unit_id = '2' AND status = '0'";
             $rawMatUomDetail = mysqli_query($db, $rawMatUomQuery);
             $rawMatUomRow = mysqli_fetch_assoc($rawMatUomDetail);
-
-            if (empty($rawMatUomRow)){
-                $errMsg = "Raw Material UOM for raw material code: ".$RawMaterialCode." and UOM: KG doesn't exist in master data.";
-                $errorSoProductArray[] = $errMsg;
+            if (empty($rawMatUomRow)) {
+                $errorSoProductArray[] = "Raw Material UOM for raw material code: $RawMaterialCode and UOM: KG doesn't exist in master data.";
                 continue;
             }
-            else{                
-                $SupplierQuantity = $ConvertedSupplierQuantity / $rawMatUomRow['rate'];
-            }
+            $SupplierQuantity = $ConvertedSupplierQuantity / $rawMatUomRow['rate'];
         }
 
-        # Checking for existing PO No.
-        if($PONumber != null && $PONumber != ''){
+        // PO Duplication check
+        if ($PONumber !== null && trim($PONumber) !== '') {
             $poQuery = "SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = '$PONumber' AND raw_mat_code = '$RawMaterialCode' AND deleted = '0'";
             $poDetail = mysqli_query($db, $poQuery);
             $poRow = mysqli_fetch_assoc($poDetail);
             $poCount = (int) $poRow['count'];
-            
-            if($poCount < 1){
+            if ($poCount < 1) {
                 $TotalPrice = 0;
-                if (isset($UnitPrice) && !empty($UnitPrice) && isset($SupplierQuantity) && !empty($SupplierQuantity)){
+                if (!empty($UnitPrice) && !empty($SupplierQuantity)) {
                     $supplierQtyMt = $SupplierQuantity/1000;
                     $TotalPrice = $UnitPrice * $supplierQtyMt;
                 }
-
                 $system = 'SYSTEM';
-
-                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_code, company_name, supplier_code, supplier_name, order_date, po_no, agent_code, agent_name, destination_code, destination_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, converted_order_qty, converted_balance, converted_unit, order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrDel, $ConvertedSupplierQuantity, $ConvertedBalance, $ConvertedUnitId, $SupplierQuantity, $SupplierQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
+                if ($insert_stmt = $db->prepare("INSERT INTO Purchase_Order (company_id, company_code, company_name, supplier_id, supplier_code, supplier_name, order_date, po_no, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, raw_mat_id, raw_mat_code, raw_mat_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, converted_order_qty, converted_balance, converted_unit,order_quantity, balance, unit_price, total_price, remarks, status, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssssssssssssssssssssssssssssss', 
+                        $CompanyId, $CompanyCode, $CompanyName,
+                        $SupplierId, $SupplierCode, $SupplierName,
+                        $OrderDate, $PONumber,
+                        $AgentId, $AgentCode, $AgentName,
+                        $DestinationId, $DestinationCode, $DestinationName,
+                        $RawMaterialId, $RawMaterialCode, $RawMaterialName,
+                        $PlantId, $PlantCode, $PlantName,
+                        $TransporterId, $TransporterCode, $TransporterName,
+                        $VehNumber, $ExOrDel,
+                        $ConvertedSupplierQuantity, $ConvertedBalance, $ConvertedUnitId,
+                        $SupplierQuantity, $SupplierQuantity,
+                        $UnitPrice, $TotalPrice,
+                        $Remarks, $status, $system, $system
+                    );
                     $insert_stmt->execute();
-                    $insert_stmt->close(); 
+                    $insert_stmt->close();
                 }
-            }else{
-                $errMsg = "Purchase order for P/O No: ".$PONumber." + Raw Material: ".$RawMaterialName." already exist.";
-                $errorSoProductArray[] = $errMsg;
+            } else {
+                $errorSoProductArray[] = "Purchase order for P/O No: $PONumber + Raw Material: $RawMaterialName already exist.";
             }
         }
     }
