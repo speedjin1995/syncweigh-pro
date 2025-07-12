@@ -63,7 +63,7 @@ if (!empty($data)) {
             $ProductName = $ProductData['name'];
         }
         $VehNumber = (isset($rows['DESCRIPTION2']) && !empty($rows['DESCRIPTION2']) && $rows['DESCRIPTION2'] !== '' && $rows['DESCRIPTION2'] !== null) ? trim($rows['DESCRIPTION2']) : '';
-        $Remarks = !empty($rows['REMARKS']) ? trim($rows['REMARKS']) : '';
+        $Remarks = !empty($rows['DOCREF4']) ? trim($rows['DOCREF4']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
         $DestinationId = '';
         $DestinationCode = '';

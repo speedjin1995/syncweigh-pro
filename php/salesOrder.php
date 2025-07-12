@@ -276,14 +276,28 @@ if (isset($_POST['orderNo'])) {
             }
             else{
                 $update_stmt->close();
-                $db->close();
+                if ($update_unit_price_stmt = $db->prepare("UPDATE Weight SET unit_price=?, sub_total=?*final_weight, sst = final_weight*?*0.08, total_price=(?*final_weight) + (final_weight*?*0.08) WHERE purchase_order=? AND plant_code=? AND product_code=?")) {
+                    $update_unit_price_stmt->bind_param('ssssssss', $unitPrice, $unitPrice, $unitPrice, $unitPrice, $unitPrice, $orderNo, $plantCode, $productCode);
 
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Updated Successfully!!",
-                    )
-                );
+                    if (! $update_unit_price_stmt->execute()) {
+                        echo json_encode(
+                            array(
+                                "status"=> "failed", 
+                                "message"=> $update_unit_price_stmt->error
+                            )
+                        );
+                    }else{
+                        $update_unit_price_stmt->close();
+
+                        echo json_encode(
+                            array(
+                                "status"=> "success", 
+                                "message"=> "Updated Successfully!!",
+                            )
+                        );
+                    }
+                } 
+                $db->close();
             }
         }
     }

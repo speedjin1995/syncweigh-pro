@@ -12,16 +12,16 @@ $company2 = $db->query("SELECT * FROM Company");
 $site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
 $site2 = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
 $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
 $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
-$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0'");
+$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0' ORDER BY po_no ASC");
 ?>
 
 <head>
@@ -553,6 +553,10 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <button type="button" id="exportReceivedExcel" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Received Excel
+                                                                </button>
                                                                 <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
@@ -572,7 +576,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <th>Company Name</th> -->
                                                                     <th>Supplier Code</th>
                                                                     <th>Supplier Name</th>
-                                                                    <th>Plant Code</th>
+                                                                    <!-- <th>Plant Code</th> -->
                                                                     <th>Plant Name</th>
                                                                     <th>Raw Material Code</th>
                                                                     <th>Raw Material Name</th>
@@ -580,6 +584,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <th>P/O No.</th>
                                                                     <th>Order Date</th>
                                                                     <th>EXQ/DEL</th>
+                                                                    <th>Supplier Quantity</th>
                                                                     <th>Balance</th>
                                                                     <th>Status</th>
                                                                     <th>Modified Date</th>
@@ -750,7 +755,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     class: 'supplier_column'
                 },
                 { data: 'supplier_name' },
-                { data: 'plant_code' },
+                // { data: 'plant_code' },
                 { data: 'plant_name' },
                 { data: 'raw_mat_code' },
                 { data: 'raw_mat_name' },
@@ -758,6 +763,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 { data: 'po_no' },
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
+                { data: 'order_quantity' },
                 { data: 'balance' },
                 { data: 'status' },
                 { data: 'modified_date' },
@@ -851,7 +857,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                         class: 'supplier_column'
                     },
                     { data: 'supplier_name' },
-                    { data: 'plant_code' },
+                    // { data: 'plant_code' },
                     { data: 'plant_name' },
                     { data: 'raw_mat_code' },
                     { data: 'raw_mat_name' },
@@ -859,6 +865,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     { data: 'po_no' },
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
+                    { data: 'order_quantity' },
                     { data: 'balance' },
                     { data: 'status' },
                     { data: 'modified_date' },
@@ -1142,6 +1149,21 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
 
             window.open("php/exportSoPo.php?type=Purchase&fromDate="+fromDateI+"&toDate="+toDateI+
+            "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
+            "&customer="+supplierNoI+"&product="+rawMatI);
+        });
+
+        $('#exportReceivedExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
+            var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+
+            window.open("php/exportSoPo.php?type=Purchase&report=received&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
             "&customer="+supplierNoI+"&product="+rawMatI);
         });

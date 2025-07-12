@@ -604,7 +604,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     $currentBalance = $soPoQuantity - $orderSuppWeight;
                 }
             
-                $poSoStatus = ($currentBalance <= 0) ? 'Close' : 'Open';
+                $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
 
                 # Inventory Logic
                 $previousNettWeight = 0;
@@ -856,7 +856,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                     $currentBalance = $soPoQuantity - $orderSuppWeight;
                                 }
                             
-                                $poSoStatus = ($currentBalance <= 0) ? 'Close' : 'Open';
+                                $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
 
                                 if ($transactionStatus == 'Purchase'){
                                     $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
