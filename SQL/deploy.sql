@@ -1505,9 +1505,9 @@ WHERE PO.transporter_code IS NOT NULL;
 UPDATE Purchase_Order
 SET company_id = '1';
 
--- Update SO Log
+-- Update PO Log
 -- 1. Update supplier_id
-UPDATE Purchase_Order PO
+UPDATE Purchase_Order_Log PO
 LEFT JOIN Supplier c ON PO.supplier_code = c.supplier_code
 SET PO.supplier_id = c.id
 WHERE PO.supplier_code IS NOT NULL;
@@ -1530,8 +1530,8 @@ LEFT JOIN Destination d ON PO.destination_code = d.destination_code
 SET PO.destination_id = d.id
 WHERE PO.destination_code IS NOT NULL;
 
--- 5. Update product_id
-UPDATE Purchase_Order PO
+-- 5. Update raw_mat_id
+UPDATE Purchase_Order_Log PO
 LEFT JOIN Raw_Mat p ON PO.raw_mat_code = p.raw_mat_code
 SET PO.raw_mat_id = p.id
 WHERE PO.raw_mat_code IS NOT NULL;
@@ -1551,3 +1551,113 @@ WHERE PO.transporter_code IS NOT NULL;
 -- 8. Set company_id to '1'
 UPDATE Purchase_Order_Log
 SET company_id = '1';
+
+-- Update Weight Table
+-- 1. Update plant_id
+UPDATE Weight W
+LEFT JOIN Plant pl ON W.plant_code = pl.plant_code
+SET W.plant_id = pl.id
+WHERE W.plant_code IS NOT NULL;
+
+-- 2. Update site_id
+UPDATE Weight W
+LEFT JOIN Site s ON W.site_code = s.site_code
+SET W.site_id = s.id
+WHERE W.site_code IS NOT NULL;
+
+-- 3. Update agent_id
+UPDATE Weight W
+LEFT JOIN Agents a ON W.agent_code = a.agent_code
+SET W.agent_id = a.id
+WHERE W.agent_code IS NOT NULL;
+
+-- 4. Update customer_id
+UPDATE Weight W
+LEFT JOIN Customer c ON W.customer_code = c.customer_code
+SET W.customer_id = c.id
+WHERE W.customer_code IS NOT NULL;
+
+-- 5. Update supplier_id
+UPDATE Weight W
+LEFT JOIN Supplier c ON W.supplier_code = c.supplier_code
+SET W.supplier_id = c.id
+WHERE W.supplier_code IS NOT NULL;
+
+-- 6. Update product_id
+UPDATE Weight W
+LEFT JOIN Product p ON W.product_code = p.product_code
+SET W.product_id = p.id
+WHERE W.product_code IS NOT NULL;
+
+-- 7. Update raw_mat_id
+UPDATE Weight W
+LEFT JOIN Raw_Mat p ON W.raw_mat_code = p.raw_mat_code
+SET W.raw_mat_id = p.id
+WHERE W.raw_mat_code IS NOT NULL;
+
+-- 8. Update transporter_id
+UPDATE Weight W
+LEFT JOIN Transporter t ON W.transporter_code = t.transporter_code
+SET W.transporter_id = t.id
+WHERE W.transporter_code IS NOT NULL;
+
+-- 9. Update destination_id
+UPDATE Weight W
+LEFT JOIN Destination d ON W.destination_code = d.destination_code
+SET W.destination_id = d.id
+WHERE W.destination_code IS NOT NULL;
+
+-- Update Weight Log Table
+-- 1. Update plant_id
+UPDATE Weight_Log W
+LEFT JOIN Plant pl ON W.plant_code = pl.plant_code
+SET W.plant_id = pl.id
+WHERE W.plant_code IS NOT NULL;
+
+-- 2. Update site_id
+UPDATE Weight_Log W
+LEFT JOIN Site s ON W.site_code = s.site_code
+SET W.site_id = s.id
+WHERE W.site_code IS NOT NULL;
+
+-- 3. Update agent_id
+UPDATE Weight_Log W
+LEFT JOIN Agents a ON W.agent_code = a.agent_code
+SET W.agent_id = a.id
+WHERE W.agent_code IS NOT NULL;
+
+-- 4. Update customer_id
+UPDATE Weight_Log W
+LEFT JOIN Customer c ON W.customer_code = c.customer_code
+SET W.customer_id = c.id
+WHERE W.customer_code IS NOT NULL;
+
+-- 5. Update supplier_id
+UPDATE Weight_Log W
+LEFT JOIN Supplier c ON W.supplier_code = c.supplier_code
+SET W.supplier_id = c.id
+WHERE W.supplier_code IS NOT NULL;
+
+-- 6. Update product_id
+UPDATE Weight_Log W
+LEFT JOIN Product p ON W.product_code = p.product_code
+SET W.product_id = p.id
+WHERE W.product_code IS NOT NULL;
+
+-- 7. Update raw_mat_id
+UPDATE Weight_Log W
+LEFT JOIN Raw_Mat p ON W.raw_mat_code = p.raw_mat_code
+SET W.raw_mat_id = p.id
+WHERE W.raw_mat_code IS NOT NULL;
+
+-- 8. Update transporter_id
+UPDATE Weight_Log W
+LEFT JOIN Transporter t ON W.transporter_code = t.transporter_code
+SET W.transporter_id = t.id
+WHERE W.transporter_code IS NOT NULL;
+
+-- 9. Update destination_id
+UPDATE Weight_Log W
+LEFT JOIN Destination d ON W.destination_code = d.destination_code
+SET W.destination_id = d.id
+WHERE W.destination_code IS NOT NULL;
