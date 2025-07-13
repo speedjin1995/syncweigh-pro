@@ -32,23 +32,23 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+	$searchQuery .= " and customer_id = '".$_POST['customer']."'";
 }
 
 if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
-	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
+	$searchQuery .= " and supplier_id = '".$_POST['supplier']."'";
 }
 
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
-	$searchQuery .= " and product_code = '".$_POST['product']."'";
+	$searchQuery .= " and product_id = '".$_POST['product']."'";
 }
 
 if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMaterial'] != '-'){
-	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
+	$searchQuery .= " and raw_mat_id = '".$_POST['rawMaterial']."'";
 }
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
-	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+	$searchQuery .= " and plant_id = '".$_POST['plant']."'";
 }
 
 if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
@@ -61,8 +61,12 @@ if($searchValue != ''){
 
 $allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' group by purchase_order";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = implode("', '", $_SESSION["plant"]);
-  $allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' and plant_code IN ('$username') group by purchase_order";
+  // $username = implode("', '", $_SESSION["plant"]);
+  $plantIds = array_map('intval', $_SESSION["plant_id"]); // sanitize input
+  $plantIdStr = implode(",", $plantIds);
+
+  // $allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' and plant_code IN ('$username') group by purchase_order";
+  $allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' and plant_id IN ($plantIdStr) group by purchase_order";
 }
 
 $sel = mysqli_query($db, $allQuery); 
@@ -88,8 +92,11 @@ while($row2 = mysqli_fetch_assoc($sel)) {
 $empQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 // var_dump($empQuery);
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-  $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $plantIds = array_map('intval', $_SESSION["plant_id"]); // sanitize input
+  $plantIdStr = implode(",", $plantIds);
+  // $username = implode("', '", $_SESSION["plant"]);
+
+  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_id IN ($plantIdStr)".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery); 

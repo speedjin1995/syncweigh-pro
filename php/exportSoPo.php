@@ -90,9 +90,11 @@ if($_GET["type"] == 'Sales'){
                 $balance = 0;
                 if($row['order_no'] != null && $row['order_no'] != ''){
                     $customerPONo = $row['order_no'];
-                    $productCode = $row['product_code'];
-                    $plantCode = $row['plant_code'];
-                    $weightQuery = "SELECT SUM(nett_weight1) AS total_weight FROM Weight WHERE purchase_order = '$customerPONo' AND product_code = '$productCode' AND status = '0' AND transaction_status = 'Sales' ORDER BY id ASC";
+                    $productId = $row['product_id'];
+                    $plantId = $row['plant_id'];
+                    // $productCode = $row['product_code'];
+                    // $plantCode = $row['plant_code'];
+                    $weightQuery = "SELECT SUM(nett_weight1) AS total_weight FROM Weight WHERE purchase_order = '$customerPONo' AND product_id = '$productId' AND status = '0' AND transaction_status = 'Sales' ORDER BY id ASC";
                     $weightRecords = mysqli_query($db, $weightQuery);
 
                     while($weightRow = mysqli_fetch_assoc($weightRecords)) {
@@ -102,9 +104,15 @@ if($_GET["type"] == 'Sales'){
                     }   
                 }
 
+                $customerDetails = searchCustomerDataById($row['customer_id'], $db);
+                $customerCode = $customerDetails['customer_code'];
+                $customerName = $customerDetails['name'];
+                $productDetails = searchProductDataById($row['product_id'], $db);
+                $productCode = $productDetails['product_code'];
+                $productName = $productDetails['name'];
                 $balance = (float) $row['order_quantity'] - (float) $totalWeight;
 
-                $lineData = array($row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_quantity'], $totalWeight, $balance);
+                $lineData = array($customerCode, $customerName, $productCode, $productName, $row['order_no'], $row['so_no'], $row['order_quantity'], $totalWeight, $balance);
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {
@@ -165,9 +173,9 @@ if($_GET["type"] == 'Sales'){
                 $balance = 0;
                 if($row['po_no'] != null && $row['po_no'] != ''){
                     $poNo = $row['po_no'];
-                    $rawMatCode = $row['raw_mat_code'];
+                    $rawMatId = $row['raw_mat_id'];
                     $plantCode = $row['plant_code'];
-                    $weightQuery = "SELECT SUM(supplier_weight) AS total_weight FROM Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$rawMatCode' AND status = '0' AND transaction_status = 'Purchase' ORDER BY id ASC";
+                    $weightQuery = "SELECT SUM(supplier_weight) AS total_weight FROM Weight WHERE purchase_order = '$poNo' AND raw_mat_id = '$rawMatId' AND status = '0' AND transaction_status = 'Purchase' ORDER BY id ASC";
                     $weightRecords = mysqli_query($db, $weightQuery);
 
                     while($weightRow = mysqli_fetch_assoc($weightRecords)) {

@@ -5,18 +5,18 @@
 require_once "php/db_connect.php";
 $plantId = $_SESSION['plant'];
 
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 $plantName = '-';
@@ -32,12 +32,13 @@ if($plantId != null && count($plantId) > 0){
     }
 }
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-}
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN') {
+    // Get plant_ids, ensure they're integers
+    $plantIds = array_map('intval', $_SESSION["plant_id"]); // sanitize input
+    $plantIdStr = implode(",", $plantIds);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and id IN ($plantIdStr)");
+} else {
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
 }
 ?>
 
@@ -144,7 +145,7 @@ else{
                                                             <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                    <option value="<?=$rowPF['id'] ?>"><?=$rowPF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -155,7 +156,7 @@ else{
                                                             <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                    <option value="<?=$rowProductF['id'] ?>"><?=$rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -166,7 +167,7 @@ else{
                                                             <select id="plantSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
-                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                    <option value="<?=$rowPlantF['id'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
