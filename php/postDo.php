@@ -32,15 +32,15 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+	$searchQuery .= " and customer_id = '".$_POST['customer']."'";
 }
 
 if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
-	$searchQuery .= " and product_code = '".$_POST['product']."'";
+	$searchQuery .= " and product_id = '".$_POST['product']."'";
 }
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
-	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+	$searchQuery .= " and plant_id = '".$_POST['plant']."'";
 }
 
 if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
@@ -91,8 +91,11 @@ if ($type == "MULTI"){
 }else{
     $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." group by purchase_order";
     if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-        $username = implode("', '", $_SESSION["plant"]);
-        $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order";
+        // $username = implode("', '", $_SESSION["plant"]);
+        $plantIds = array_map('intval', $_SESSION["plant_id"]); // sanitize input
+        $plantIdStr = implode(",", $plantIds);
+
+        $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_id IN ($plantIdStr)".$searchQuery." group by purchase_order";
     }
 
     if ($stmt2 = $db->prepare($sql)){

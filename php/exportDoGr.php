@@ -31,23 +31,23 @@ if($_GET['status'] != null && $_GET['status'] != '' && $_GET['status'] != '-'){
 }
 
 if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != '-'){
-	$searchQuery .= " and customer_code = '".$_GET['customer']."'";
+	$searchQuery .= " and customer_id = '".$_GET['customer']."'";
 }
 
 if($_GET['supplier'] != null && $_GET['supplier'] != '' && $_GET['supplier'] != '-'){
-	$searchQuery .= " and supplier_code = '".$_GET['supplier']."'";
+	$searchQuery .= " and supplier_id = '".$_GET['supplier']."'";
 }
 
 if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'){
-	$searchQuery .= " and product_code = '".$_GET['product']."'";
+	$searchQuery .= " and product_id = '".$_GET['product']."'";
 }
 
 if($_GET['rawMaterial'] != null && $_GET['rawMaterial'] != '' && $_GET['rawMaterial'] != '-'){
-	$searchQuery .= " and raw_mat_code = '".$_GET['rawMaterial']."'";
+	$searchQuery .= " and raw_mat_id = '".$_GET['rawMaterial']."'";
 }
 
 if($_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
-	$searchQuery .= " and plant_code = '".$_GET['plant']."'";
+	$searchQuery .= " and plant_id = '".$_GET['plant']."'";
 }
 
 if($_GET['purchaseOrder'] != null && $_GET['purchaseOrder'] != '' && $_GET['purchaseOrder'] != '-'){
@@ -71,11 +71,13 @@ if ($isMulti == 'N'){
         $fileName = "DO-data_" . date('Y-m-d') . ".xls";
 
         ## Fetch records
-        $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." order by plant_code asc, purchase_order asc";
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." order by plant_id asc, purchase_order asc";
 
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-            $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by plant_code asc, purchase_order asc";
+            $plantIds = array_map('intval', $_SESSION["plant_id"]); // sanitize input
+            $plantIdStr = implode(",", $plantIds);
+            // $username = implode("', '", $_SESSION["plant"]);
+            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_id IN ($plantIdStr)".$searchQuery." order by plant_id asc, purchase_order asc";
         }
         
         $do_stmt = $db->query($query);
@@ -94,8 +96,11 @@ if ($isMulti == 'N'){
                 $amt = '';
                 $unitPrice = 0;
 
-                $productId = searchProductIdByCode($row['product_code'], $db);
-                $uom = searchProductBasicUomByCode($row['product_code'], $db);
+                $productId = $row['product_id'];
+                $uom = searchProductBasicUomById($row['product_id'], $db);
+
+                // $productId = searchProductIdByCode($row['product_code'], $db);
+                // $uom = searchProductBasicUomByCode($row['product_code'], $db);
                 if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
                     $update_stmt->bind_param('s', $productId);
                     $update_stmt->execute();
@@ -110,8 +115,8 @@ if ($isMulti == 'N'){
                     $unitPrice = $row['unit_price'];
                     $amt = $qty * $unitPrice;
                 }else{
-                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
-                        $select_stmt->bind_param('sss', $orderNo, $row['product_code'], $row['plant_code']);
+                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_id=? AND plant_id=? AND deleted='0'")) {
+                        $select_stmt->bind_param('sss', $orderNo, $row['product_id'], $row['plant_id']);
                         $select_stmt->execute();
                         $result = $select_stmt->get_result();
                         if ($row3 = $result->fetch_assoc()) {
@@ -122,8 +127,22 @@ if ($isMulti == 'N'){
                         $select_stmt->close();
                     }
                 }
-                
-                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $row['plant_code'], $row['plant_code'], $unitPrice, $amt);
+
+                $customerDetails = searchCustomerDataById($row['customer_id'], $db);
+                $customerCode = $customerDetails['customer_code'];
+                $customerName = $customerDetails['name'];
+                $productDetails = searchProductDataById($row['product_id'], $db);
+                $productCode = $productDetails['product_code'];
+                $productName = $productDetails['name'];
+                $destinationDetails = searchDestinationDataById($row['destination_id'], $db);
+                $destinationCode = $destinationDetails['destination_code'];
+                $destinationName = $destinationDetails['name'];
+                $transporterDetails = searchTransporterDataById($row['transporter_id'], $db);
+                $transporterCode = $transporterDetails['transporter_code'];
+                $plantDetails = searchPlantDataById($row['plant_id'], $db);
+                $plantCode = $plantDetails['plant_code'];
+
+                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $customerCode, $customerName, $productCode, $productName, $destinationName, $transporterCode, $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $plantCode, $plantCode, $unitPrice, $amt);
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {
@@ -268,13 +287,14 @@ if ($isMulti == 'N'){
                     $uom = '';
                     $qty = '';
                     $amt = '';
-                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
-                        $select_stmt->bind_param('sss', $orderNo, $row2['product_code'], $row2['plant_code']);
+                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_id=? AND plant_id=? AND deleted='0'")) {
+                        $select_stmt->bind_param('sss', $orderNo, $row2['product_id'], $row2['plant_id']);
                         $select_stmt->execute();
                         $result = $select_stmt->get_result();
                         if ($row3 = $result->fetch_assoc()) {
                             $uom = searchUnitById($row3['converted_unit'], $db);
-                            $productId = searchProductIdByCode($row3['product_code'], $db);
+                            $productId = $row3['product_id'];
+                            // $productId = searchProductIdByCode($row3['product_code'], $db);
                             $unitPrice = $row3['unit_price'];
                             $soNo = $row3['so_no'];
 
@@ -291,7 +311,22 @@ if ($isMulti == 'N'){
                         }
                         $select_stmt->close();
                     }
-                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+
+                    $customerDetails = searchCustomerDataById($row2['customer_id'], $db);
+                    $customerCode = $customerDetails['customer_code'];
+                    $customerName = $customerDetails['name'];
+                    $productDetails = searchProductDataById($row2['product_id'], $db);
+                    $productCode = $productDetails['product_code'];
+                    $productName = $productDetails['name'];
+                    $destinationDetails = searchDestinationDataById($row2['destination_id'], $db);
+                    $destinationCode = $destinationDetails['destination_code'];
+                    $destinationName = $destinationDetails['name'];
+                    $transporterDetails = searchTransporterDataById($row2['transporter_id'], $db);
+                    $transporterCode = $transporterDetails['transporter_code'];
+                    $plantDetails = searchPlantDataById($row['plant_id'], $db);
+                    $plantCode = $plantDetails['plant_code'];
+
+                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $customerCode, $customerName, $productCode, $productName, $destinationName, $transporterCode, $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $plantCode, $plantCode, $unitPrice, $amt);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {

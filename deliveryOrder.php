@@ -386,9 +386,9 @@ if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN') {
                         return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
                     }
                 },           
-                { data: 'customer_name' },
-                { data: 'plant_name' },
-                { data: 'product_name' },
+                { data: 'customerName' },
+                { data: 'plantName' },
+                { data: 'productName' },
                 { data: 'purchase_order' },
                 { data: 'tare_weight1_date' },
                 { data: 'order_weight' },
@@ -456,9 +456,9 @@ if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN') {
                             return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
                         }
                     },
-                    { data: 'customer_name' },
-                    { data: 'plant_name' },
-                    { data: 'product_name' },
+                    { data: 'customerName' },
+                    { data: 'plantName' },
+                    { data: 'productName' },
                     { data: 'purchase_order' },
                     { data: 'tare_weight1_date' },
                     { data: 'order_weight' },

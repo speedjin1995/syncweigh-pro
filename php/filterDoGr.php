@@ -89,14 +89,14 @@ while($row2 = mysqli_fetch_assoc($sel)) {
 // $totalRecordwithFilter = $records['allcount']; 
 
 ## Fetch records
-$empQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select w.*, pl.name as plantName, pl.plant_code as plantCode, c.name as customerName, c.customer_code as customerCode, s.name as supplierName, s.supplier_code as supplierCode, p.product_code as productCode, p.name as productName, r.name as rawMatName, r.raw_mat_code as rawMatCode from Weight w LEFT JOIN Plant pl ON w.plant_id = pl.id LEFT JOIN Customer c ON w.customer_id = c.id LEFT JOIN Supplier s ON w.supplier_id = s.id LEFT JOIN Product p ON w.product_id = p.id LEFT JOIN Raw_Mat r ON w.raw_mat_id = r.id where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 // var_dump($empQuery);
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $plantIds = array_map('intval', $_SESSION["plant_id"]); // sanitize input
   $plantIdStr = implode(",", $plantIds);
   // $username = implode("', '", $_SESSION["plant"]);
 
-  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_id IN ($plantIdStr)".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select w.*, pl.name as plantName, pl.plant_code as plantCode, c.name as customerName, c.customer_code as customerCode, s.name as supplierName, s.supplier_code as supplierCode, p.product_code as productCode, p.name as productName, r.name as rawMatName, r.raw_mat_code as rawMatCode from Weight w LEFT JOIN Plant pl ON w.plant_id = pl.id LEFT JOIN Customer c ON w.customer_id = c.id LEFT JOIN Supplier s ON w.supplier_id = s.id LEFT JOIN Product p ON w.product_id = p.id LEFT JOIN Raw_Mat r ON w.raw_mat_id = r.id where is_complete = 'Y' AND is_cancel <> 'Y' and plant_id IN ($plantIdStr)".$searchQuery." group by purchase_order order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
 
 $empRecords = mysqli_query($db, $empQuery); 
@@ -110,15 +110,17 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "transaction_status"=>$row['transaction_status'],
     "weight_type"=>$row['weight_type'],
     "transaction_date"=>$row['transaction_date'],
-    "customer_code"=>$row['customer_code'],
-    "customer_name"=>$row['customer_name'],
-    "supplier_name"=>$row['supplier_name'],
-    "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
-    "product_code"=>($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
-    "product_name"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
+    "customerName"=>$row['customerName'],
+    "customerCode"=>$row['customerCode'],
+    "supplierName"=>$row['supplierName'],
+    "supplierCode"=>$row['supplierCode'],
+    "productName"=>$row['productName'],
+    "productCode"=>$row['productCode'],
+    "rawMatName"=>$row['rawMatName'],
+    "rawMatCode"=>$row['rawMatCode'],
+    "plantName"=>$row['plantName'],
+    "plantCode"=>$row['plantCode'],
     "purchase_order"=>$row['purchase_order'],
-    "plant_code"=>$row['plant_code'],
-    "plant_name"=>$row['plant_name'],
     "delivery_no"=>$row['delivery_no'],
     "order_weight"=>$row['order_weight'],
     "supplier_weight"=>$row['supplier_weight'],
