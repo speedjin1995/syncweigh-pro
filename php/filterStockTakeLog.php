@@ -44,7 +44,7 @@ if($_POST['plant'] != null && $_POST['plant'] != '')
 // $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from Stock_Take_Log WHERE status = '0'".$searchQuery." order by declaration_datetime asc";
+$empQuery = "select * from Stock_Take WHERE status = '0'".$searchQuery." order by declaration_datetime asc";
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
