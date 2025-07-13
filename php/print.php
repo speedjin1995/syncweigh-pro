@@ -707,8 +707,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                                             <div class="col-8 body_1">
                                                 <p>WEIGHING DATE<span style="margin-left: 44.5px; margin-right:10px;">:</span>'.$transDateOnly.'</p>
                                                 <p>VEHICLE NO.<span style="margin-left: 66.5px; margin-right:10px;">:</span>'.$lorryNo.'</p>
-                                                <p>TRANSPORTER CODE<span style="margin-left: 10px; margin-right:10px;">:</span>'.$transportCode . '<span style="margin-left:89px">' .$transportName.'</span></p>
-                                                <p>SUPPLIER CODE<span style="margin-left: 43.5px; margin-right:10px;">:</span>'.$customerCode. '<span style="margin-left:82px">' .$customerCode.'</span></p>
+                                                <p>TRANSPORTER CODE<span style="margin-left: 10px; margin-right:10px;">:</span>'.$transportCode . '<span style="margin-left:59px">' .$transportName.'</span></p>
+                                                <p>SUPPLIER CODE<span style="margin-left: 43.5px; margin-right:10px;">:</span>'.$customerCode. '<span style="margin-left:52px">' .$customerName.'</span></p>
                                                 <p>PRODUCT CODE<span style="margin-left: 43.5px; margin-right:10px;">:</span>'.$productCode. '<span style="margin-left:57.5px">' .$productName.'</span></p>
                                                 <p>DESTINATION CODE<span style="margin-left: 21px; margin-right:10px;">:</span>'.$destinationCode. '<span style="margin-left:60px">' .$destinationName.'</span></p>
                                                 <p>P/O NO.<span style="margin-left: 99px; margin-right:10px;">:</span>'.$poNo.' D/O No. : '.$doNo.'</p>
