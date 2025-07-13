@@ -1148,7 +1148,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
 
-            window.open("php/exportSoPo.php?type=Purchase&fromDate="+fromDateI+"&toDate="+toDateI+
+            window.open("php/exportSoPo.php?type=Purchase&report=po&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
             "&customer="+supplierNoI+"&product="+rawMatI);
         });

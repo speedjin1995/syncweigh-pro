@@ -1158,7 +1158,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
             
-            window.open("php/exportSoPo.php?type=Sales&fromDate="+fromDateI+"&toDate="+toDateI+
+            window.open("php/exportSoPo.php?type=Sales&report=so&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
             "&customer="+customerNoI+"&product="+productI);
         });
