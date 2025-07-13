@@ -305,8 +305,8 @@ foreach ($plant as $plantId) {
         }
     }
 
-    // Insert into Stock_Take_Log
-    if ($insert_stmt = $db->prepare("INSERT INTO Stock_Take_Log (
+    // Insert into Stock_Take
+    if ($insert_stmt = $db->prepare("INSERT INTO Stock_Take (
         declaration_datetime, plant_id, 
         sixty_seventy_production, sixty_seventy_os, sixty_seventy_incoming, sixty_seventy_usage, 
         sixty_seventy_bookstock, sixty_seventy_ps, sixty_seventy_diffstock, sixty_seventy_actual_usage, 

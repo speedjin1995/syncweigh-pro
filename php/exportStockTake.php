@@ -64,7 +64,7 @@ if (!empty($_GET['fromDateSearch']) && !empty($_GET['toDateSearch'])) {
     }
 }
 
-$sql = "select * from Stock_Take_Log".$searchQuery;
+$sql = "select * from Stock_Take".$searchQuery;
 $empRecords = mysqli_query($db, $sql);
 $data = array();
 

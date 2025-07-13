@@ -1334,3 +1334,6 @@ UPDATE Inventory_Log i
 LEFT JOIN Plant p ON i.plant_code COLLATE utf8mb4_unicode_ci = p.plant_code COLLATE utf8mb4_unicode_ci
 SET i.plant_id = p.id
 WHERE i.plant_code IS NOT NULL;
+
+ALTER TABLE `Stock_Take_Log` RENAME TO `Stock_Take`;
+
