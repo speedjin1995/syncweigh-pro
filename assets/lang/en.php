@@ -17,6 +17,7 @@
 
     $lang["t-stock"]="Stock Management";
     $lang["t-bitumen"]="Bitumen";
+    $lang["t-stockTakeLog"]="Stock Take Log";
     $lang["t-inventory"]="Inventory";
 
     $lang["t-masterdata"]="Master Data";

@@ -129,7 +129,7 @@ if ($isMulti == 'N'){
                 if (!empty($lineData)) {
                     foreach($lineData as $key => $value) {
                         if($key == 3) { // lorry_plate_no1 is at index 3
-                            $lineData[$key] = " " . $value;
+                            $lineData[$key] = '="' . $value . '"';
                         } else {
                             // Apply normal filtering to other columns
                             filterData($lineData[$key]); 
@@ -219,7 +219,7 @@ if ($isMulti == 'N'){
                     if (!empty($lineData)) {
                         foreach($lineData as $key => $value) {
                             if($key == 3) { // lorry_plate_no1 is at index 3
-                                $lineData[$key] = " " . $value;
+                                $lineData[$key] = '="' . $value . '"';
                             } else {
                                 // Apply normal filtering to other columns
                                 filterData($lineData[$key]); 
@@ -297,7 +297,7 @@ if ($isMulti == 'N'){
                     if (!empty($lineData)) {
                         foreach($lineData as $key => $value) {
                             if($key == 3) { // lorry_plate_no1 is at index 3
-                                $lineData[$key] = " " . $value;
+                                $lineData[$key] = '="' . $value . '"';
                             } else {
                                 // Apply normal filtering to other columns
                                 filterData($lineData[$key]); 
@@ -369,7 +369,7 @@ if ($isMulti == 'N'){
                     if (!empty($lineData)) {
                         foreach($lineData as $key => $value) {
                             if($key == 3) { // lorry_plate_no1 is at index 3
-                                $lineData[$key] = " " . $value;
+                                $lineData[$key] = '="' . $value . '"';
                             } else {
                                 // Apply normal filtering to other columns
                                 filterData($lineData[$key]); 
