@@ -1328,90 +1328,184 @@ WHERE i.plant_code IS NOT NULL;
 -- 12/07/2025 --
 ALTER TABLE `Stock_Take_Log` RENAME TO `Stock_Take`;
 
+CREATE TABLE `Stock_Take_Log` (
+    `id` int(11) NOT NULL,
+    `stock_take_id` int(11) NOT NULL,
+    `declaration_datetime` datetime NOT NULL,
+    `plant_id` int(11) DEFAULT NULL,
+    `sixty_seventy_production` varchar(50) DEFAULT NULL,
+    `sixty_seventy_os` varchar(50) DEFAULT NULL,
+    `sixty_seventy_incoming` varchar(50) DEFAULT NULL,
+    `sixty_seventy_usage` varchar(50) DEFAULT NULL,
+    `sixty_seventy_bookstock` varchar(50) DEFAULT NULL,
+    `sixty_seventy_ps` varchar(50) DEFAULT NULL,
+    `sixty_seventy_diffstock` varchar(50) DEFAULT NULL,
+    `sixty_seventy_actual_usage` varchar(50) DEFAULT NULL,
+    `lfo_production` varchar(50) DEFAULT NULL,
+    `lfo_os` varchar(50) DEFAULT NULL,
+    `lfo_incoming` varchar(50) DEFAULT NULL,
+    `lfo_ps` varchar(50) DEFAULT NULL,
+    `lfo_usage` varchar(50) DEFAULT NULL,
+    `lfo_actual_usage` varchar(50) DEFAULT NULL,
+    `diesel_production` varchar(50) DEFAULT NULL,
+    `diesel_os` varchar(50) DEFAULT NULL,
+    `diesel_incoming` varchar(50) DEFAULT NULL,
+    `diesel_mreading` varchar(50) DEFAULT NULL,
+    `diesel_transport` varchar(50) DEFAULT NULL,
+    `diesel_ps` varchar(50) DEFAULT NULL,
+    `diesel_usage` varchar(50) DEFAULT NULL,
+    `diesel_actual_usage` varchar(50) DEFAULT NULL,
+    `action_id` int(11) NOT NULL,
+    `action_by` varchar(50) NOT NULL,
+    `event_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-ALTER TABLE `Purchase_Order` ADD `company_id` INT(11) NULL AFTER `id`, ADD `supplier_id` INT(11) NULL AFTER `company_name`, ADD `site_id` INT(11) NULL AFTER `supplier_name`, ADD `agent_id` INT(11) NULL AFTER `delivery_date`, ADD `destination_id` INT(11) NULL AFTER `agent_name`, ADD `raw_mat_id` INT(11) NULL AFTER `deliver_to_name`, ADD `plant_id` INT(11) NULL AFTER `raw_mat_name`, ADD `transporter_id` INT(11) NULL AFTER `plant_name`;
+ALTER TABLE `Stock_Take_Log`  ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `Purchase_Order_Log` ADD `company_id` INT(11) NULL AFTER `id`, ADD `supplier_id` INT(11) NULL AFTER `company_name`, ADD `site_id` INT(11) NULL AFTER `supplier_name`, ADD `agent_id` INT(11) NULL AFTER `delivery_date`, ADD `destination_id` INT(11) NULL AFTER `agent_name`, ADD `raw_mat_id` INT(11) NULL AFTER `deliver_to_name`, ADD `plant_id` INT(11) NULL AFTER `raw_mat_name`, ADD `transporter_id` INT(11) NULL AFTER `plant_name`;
-
-ALTER TABLE `Sales_Order` ADD `company_id` INT(11) NULL AFTER `id`, ADD `customer_id` INT(11) NULL AFTER `company_name`, ADD `site_id` INT(11) NULL AFTER `customer_name`, ADD `agent_id` INT(11) NULL AFTER `delivery_date`, ADD `destination_id` INT(11) NULL AFTER `agent_name`, ADD `product_id` INT(11) NULL AFTER `deliver_to_name`, ADD `plant_id` INT(11) NULL AFTER `product_name`, ADD `transporter_id` INT(11) NULL AFTER `plant_name`;
-
-ALTER TABLE `Sales_Order_Log` ADD `company_id` INT(11) NULL AFTER `id`, ADD `customer_id` INT(11) NULL AFTER `company_name`, ADD `site_id` INT(11) NULL AFTER `customer_name`, ADD `agent_id` INT(11) NULL AFTER `delivery_date`, ADD `destination_id` INT(11) NULL AFTER `agent_name`, ADD `product_id` INT(11) NULL AFTER `deliver_to_name`, ADD `plant_id` INT(11) NULL AFTER `product_name`, ADD `transporter_id` INT(11) NULL AFTER `plant_name`;
-
-ALTER TABLE `Vehicle` ADD `transporter_id` INT(11) NULL AFTER `vehicle_weight`, ADD `customer_id` INT(11) NULL AFTER `ex_del`;
-
-ALTER TABLE `Vehicle_Log` ADD `transporter_id` INT(11) NULL AFTER `vehicle_weight`, ADD `customer_id` INT(11) NULL AFTER `ex_del`;
-
-ALTER TABLE `Weight` ADD `plant_id` INT(11) NULL AFTER `order_weight`, ADD `site_id` INT(11) NULL AFTER `plant_name`, ADD `agent_id` INT(11) NULL AFTER `site_name`, ADD `customer_id` INT(11) NULL AFTER `agent_name`, ADD `supplier_id` INT(11) NULL AFTER `customer_name`, ADD `product_id` INT(11) NULL AFTER `supplier_name`, ADD `raw_mat_id` INT(11) NULL AFTER `ex_del`, ADD `transporter_id` INT(11) NULL AFTER `delivery_no`, ADD `destination_id` INT(11) NULL AFTER `transporter`;
-
-ALTER TABLE `Weight_Log` ADD `plant_id` INT(11) NULL AFTER `order_weight`, ADD `site_id` INT(11) NULL AFTER `plant_name`, ADD `agent_id` INT(11) NULL AFTER `site_name`, ADD `customer_id` INT(11) NULL AFTER `agent_name`, ADD `supplier_id` INT(11) NULL AFTER `customer_name`, ADD `product_id` INT(11) NULL AFTER `supplier_name`, ADD `raw_mat_id` INT(11) NULL AFTER `ex_del`, ADD `transporter_id` INT(11) NULL AFTER `delivery_no`, ADD `destination_id` INT(11) NULL AFTER `transporter`;
+ALTER TABLE `Stock_Take_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 DELIMITER $$
-CREATE OR REPLACE TRIGGER `TRG_INS_SO` AFTER INSERT ON `Sales_Order`
- FOR EACH ROW INSERT INTO Sales_Order_Log (
-    company_id, company_code, company_name, customer_id, customer_code, customer_name, site_id, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, product_id, product_code, product_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
-) 
-VALUES (
-    NEW.company_id, NEW.company_code, NEW.company_name, NEW.customer_id, NEW.customer_code, NEW.customer_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_id, NEW.product_code, NEW.product_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+
+-- INSERT TRIGGER
+CREATE OR REPLACE TRIGGER `TRG_INS_STK_TAKE_LOG` AFTER INSERT ON `Stock_Take`
+FOR EACH ROW
+INSERT INTO Stock_Take_Log (
+    stock_take_id,
+    declaration_datetime,
+    plant_id,
+    sixty_seventy_production,
+    sixty_seventy_os,
+    sixty_seventy_incoming,
+    sixty_seventy_usage,
+    sixty_seventy_bookstock,
+    sixty_seventy_ps,
+    sixty_seventy_diffstock,
+    sixty_seventy_actual_usage,
+    lfo_production,
+    lfo_os,
+    lfo_incoming,
+    lfo_ps,
+    lfo_usage,
+    lfo_actual_usage,
+    diesel_production,
+    diesel_os,
+    diesel_incoming,
+    diesel_mreading,
+    diesel_transport,
+    diesel_ps,
+    diesel_usage,
+    diesel_actual_usage,
+    action_id,
+    action_by
 )
+VALUES (
+    NEW.id,
+    NEW.declaration_datetime,
+    NEW.plant_id,
+    NEW.sixty_seventy_production,
+    NEW.sixty_seventy_os,
+    NEW.sixty_seventy_incoming,
+    NEW.sixty_seventy_usage,
+    NEW.sixty_seventy_bookstock,
+    NEW.sixty_seventy_ps,
+    NEW.sixty_seventy_diffstock,
+    NEW.sixty_seventy_actual_usage,
+    NEW.lfo_production,
+    NEW.lfo_os,
+    NEW.lfo_incoming,
+    NEW.lfo_ps,
+    NEW.lfo_usage,
+    NEW.lfo_actual_usage,
+    NEW.diesel_production,
+    NEW.diesel_os,
+    NEW.diesel_incoming,
+    NEW.diesel_mreading,
+    NEW.diesel_transport,
+    NEW.diesel_ps,
+    NEW.diesel_usage,
+    NEW.diesel_actual_usage,
+    1,
+    'SYSTEM'
+);
 $$
-DELIMITER ;
-DELIMITER $$
-CREATE OR REPLACE TRIGGER `TRG_UPD_SO` BEFORE UPDATE ON `Sales_Order`
- FOR EACH ROW BEGIN
+
+-- UPDATE TRIGGER
+CREATE OR REPLACE TRIGGER `TRG_UPD_STK_TAKE_LOG` BEFORE UPDATE ON `Stock_Take`
+FOR EACH ROW
+BEGIN
     DECLARE action_value INT;
 
     -- Check if deleted = 1, set action_id to 3, otherwise set to 2
-    IF NEW.deleted = 1 THEN
+    IF NEW.status = 1 THEN
         SET action_value = 3;
     ELSE
         SET action_value = 2;
     END IF;
 
-    -- Insert into Sales_Order table
-    INSERT INTO Sales_Order_Log (
-        company_id, company_code, company_name, customer_id, customer_code, customer_name, site_id, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, product_id, product_code, product_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
-    ) 
+    INSERT INTO Stock_Take_Log (
+        stock_take_id,
+        declaration_datetime,
+        plant_id,
+        sixty_seventy_production,
+        sixty_seventy_os,
+        sixty_seventy_incoming,
+        sixty_seventy_usage,
+        sixty_seventy_bookstock,
+        sixty_seventy_ps,
+        sixty_seventy_diffstock,
+        sixty_seventy_actual_usage,
+        lfo_production,
+        lfo_os,
+        lfo_incoming,
+        lfo_ps,
+        lfo_usage,
+        lfo_actual_usage,
+        diesel_production,
+        diesel_os,
+        diesel_incoming,
+        diesel_mreading,
+        diesel_transport,
+        diesel_ps,
+        diesel_usage,
+        diesel_actual_usage,
+        action_id,
+        action_by
+    )
     VALUES (
-        NEW.company_id, NEW.company_code, NEW.company_name, NEW.customer_id, NEW.customer_code, NEW.customer_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_id, NEW.product_code, NEW.product_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+        NEW.id,
+        NEW.declaration_datetime,
+        NEW.plant_id,
+        NEW.sixty_seventy_production,
+        NEW.sixty_seventy_os,
+        NEW.sixty_seventy_incoming,
+        NEW.sixty_seventy_usage,
+        NEW.sixty_seventy_bookstock,
+        NEW.sixty_seventy_ps,
+        NEW.sixty_seventy_diffstock,
+        NEW.sixty_seventy_actual_usage,
+        NEW.lfo_production,
+        NEW.lfo_os,
+        NEW.lfo_incoming,
+        NEW.lfo_ps,
+        NEW.lfo_usage,
+        NEW.lfo_actual_usage,
+        NEW.diesel_production,
+        NEW.diesel_os,
+        NEW.diesel_incoming,
+        NEW.diesel_mreading,
+        NEW.diesel_transport,
+        NEW.diesel_ps,
+        NEW.diesel_usage,
+        NEW.diesel_actual_usage,
+        action_value,
+        'SYSTEM'
     );
 END
 $$
+
 DELIMITER ;
 
-DELIMITER $$
-
-CREATE OR REPLACE TRIGGER `TRG_INS_PO` AFTER INSERT ON `Purchase_Order`
- FOR EACH ROW INSERT INTO Purchase_Order_Log (
-    company_id, company_code, company_name, supplier_id, supplier_code, supplier_name, site_id, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, raw_mat_id, raw_mat_code, raw_mat_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
-) 
-VALUES (
-    NEW.company_id, NEW.company_code, NEW.company_name, NEW.supplier_id, NEW.supplier_code, NEW.supplier_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_id, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
-)
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE OR REPLACE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
- FOR EACH ROW BEGIN
-    DECLARE action_value INT;
-
-    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
-    IF NEW.deleted = 1 THEN
-        SET action_value = 3;
-    ELSE
-        SET action_value = 2;
-    END IF;
-
-    -- Insert into Purchase_Order table
-    INSERT INTO Purchase_Order_Log (
-        company_id, company_code, company_name, supplier_id, supplier_code, supplier_name, site_id, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_id, agent_code, agent_name, destination_id, destination_code, destination_name, deliver_to_name, raw_mat_id, raw_mat_code, raw_mat_name, plant_id, plant_code, plant_name, transporter_id, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
-    ) 
-    VALUES (
-        NEW.company_id, NEW.company_code, NEW.company_name, NEW.supplier_id, NEW.supplier_code, NEW.supplier_name, NEW.site_id, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_id, NEW.agent_code, NEW.agent_name, NEW.destination_id, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_id, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_id, NEW.plant_code, NEW.plant_name, NEW.transporter_id, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
-    );
-END
-$$
-DELIMITER ;
-
+-- 14/07/2025 --
 -- Update SO
 -- 1. Update customer_id
 UPDATE Sales_Order SO
