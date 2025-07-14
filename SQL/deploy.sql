@@ -1326,6 +1326,9 @@ SET i.plant_id = p.id
 WHERE i.plant_code IS NOT NULL;
 
 -- 12/07/2025 --
+ALTER TABLE `Stock_Take_Log` RENAME TO `Stock_Take`;
+
+
 ALTER TABLE `Purchase_Order` ADD `company_id` INT(11) NULL AFTER `id`, ADD `supplier_id` INT(11) NULL AFTER `company_name`, ADD `site_id` INT(11) NULL AFTER `supplier_name`, ADD `agent_id` INT(11) NULL AFTER `delivery_date`, ADD `destination_id` INT(11) NULL AFTER `agent_name`, ADD `raw_mat_id` INT(11) NULL AFTER `deliver_to_name`, ADD `plant_id` INT(11) NULL AFTER `raw_mat_name`, ADD `transporter_id` INT(11) NULL AFTER `plant_name`;
 
 ALTER TABLE `Purchase_Order_Log` ADD `company_id` INT(11) NULL AFTER `id`, ADD `supplier_id` INT(11) NULL AFTER `company_name`, ADD `site_id` INT(11) NULL AFTER `supplier_name`, ADD `agent_id` INT(11) NULL AFTER `delivery_date`, ADD `destination_id` INT(11) NULL AFTER `agent_name`, ADD `raw_mat_id` INT(11) NULL AFTER `deliver_to_name`, ADD `plant_id` INT(11) NULL AFTER `raw_mat_name`, ADD `transporter_id` INT(11) NULL AFTER `plant_name`;
