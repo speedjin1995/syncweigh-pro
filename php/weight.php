@@ -700,10 +700,10 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
                             $upd_inv_stmt->bind_param('sss', $addedBasicNettWeight, $addedWeight, $invId);
                             $upd_inv_stmt->execute();
+                            $upd_inv_stmt->close();
                         }
 
                         $inventory_stmt->close();
-                        $upd_inv_stmt->close();
                     }
                 }elseif ($transactionStatus == 'Sales') {
                     if ($isComplete == 'Y' && $isCancel == 'N'){
@@ -911,10 +911,10 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                     $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
                                     $upd_inv_stmt->bind_param('sss', $addedBasicNettWeight, $addedWeight, $invId);
                                     $upd_inv_stmt->execute();
+                                    $upd_inv_stmt->close();
                                 }
 
                                 $inventory_stmt->close();
-                                $upd_inv_stmt->close();
                             }
                         }elseif ($transactionStatus == 'Sales') {
                             if ($isComplete == 'Y' && $isCancel == 'N'){
@@ -974,7 +974,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 $productRawMat_stmt->close();
                             }
                         }
-                        
+
                         echo json_encode(
                             array(
                                 "status"=> "success", 
