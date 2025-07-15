@@ -1337,3 +1337,180 @@ WHERE i.plant_code IS NOT NULL;
 
 ALTER TABLE `Stock_Take_Log` RENAME TO `Stock_Take`;
 
+-- 13/07/2025 --
+CREATE TABLE `Stock_Take_Log` (
+    `id` int(11) NOT NULL,
+    `stock_take_id` int(11) NOT NULL,
+    `declaration_datetime` datetime NOT NULL,
+    `plant_id` int(11) DEFAULT NULL,
+    `sixty_seventy_production` varchar(50) DEFAULT NULL,
+    `sixty_seventy_os` varchar(50) DEFAULT NULL,
+    `sixty_seventy_incoming` varchar(50) DEFAULT NULL,
+    `sixty_seventy_usage` varchar(50) DEFAULT NULL,
+    `sixty_seventy_bookstock` varchar(50) DEFAULT NULL,
+    `sixty_seventy_ps` varchar(50) DEFAULT NULL,
+    `sixty_seventy_diffstock` varchar(50) DEFAULT NULL,
+    `sixty_seventy_actual_usage` varchar(50) DEFAULT NULL,
+    `lfo_production` varchar(50) DEFAULT NULL,
+    `lfo_os` varchar(50) DEFAULT NULL,
+    `lfo_incoming` varchar(50) DEFAULT NULL,
+    `lfo_ps` varchar(50) DEFAULT NULL,
+    `lfo_usage` varchar(50) DEFAULT NULL,
+    `lfo_actual_usage` varchar(50) DEFAULT NULL,
+    `diesel_production` varchar(50) DEFAULT NULL,
+    `diesel_os` varchar(50) DEFAULT NULL,
+    `diesel_incoming` varchar(50) DEFAULT NULL,
+    `diesel_mreading` varchar(50) DEFAULT NULL,
+    `diesel_transport` varchar(50) DEFAULT NULL,
+    `diesel_ps` varchar(50) DEFAULT NULL,
+    `diesel_usage` varchar(50) DEFAULT NULL,
+    `diesel_actual_usage` varchar(50) DEFAULT NULL,
+    `action_id` int(11) NOT NULL,
+    `action_by` varchar(50) NOT NULL,
+    `event_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Stock_Take_Log`  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Stock_Take_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+-- INSERT TRIGGER
+CREATE OR REPLACE TRIGGER `TRG_INS_STK_TAKE_LOG` AFTER INSERT ON `Stock_Take`
+FOR EACH ROW
+INSERT INTO Stock_Take_Log (
+    stock_take_id,
+    declaration_datetime,
+    plant_id,
+    sixty_seventy_production,
+    sixty_seventy_os,
+    sixty_seventy_incoming,
+    sixty_seventy_usage,
+    sixty_seventy_bookstock,
+    sixty_seventy_ps,
+    sixty_seventy_diffstock,
+    sixty_seventy_actual_usage,
+    lfo_production,
+    lfo_os,
+    lfo_incoming,
+    lfo_ps,
+    lfo_usage,
+    lfo_actual_usage,
+    diesel_production,
+    diesel_os,
+    diesel_incoming,
+    diesel_mreading,
+    diesel_transport,
+    diesel_ps,
+    diesel_usage,
+    diesel_actual_usage,
+    action_id,
+    action_by
+)
+VALUES (
+    NEW.id,
+    NEW.declaration_datetime,
+    NEW.plant_id,
+    NEW.sixty_seventy_production,
+    NEW.sixty_seventy_os,
+    NEW.sixty_seventy_incoming,
+    NEW.sixty_seventy_usage,
+    NEW.sixty_seventy_bookstock,
+    NEW.sixty_seventy_ps,
+    NEW.sixty_seventy_diffstock,
+    NEW.sixty_seventy_actual_usage,
+    NEW.lfo_production,
+    NEW.lfo_os,
+    NEW.lfo_incoming,
+    NEW.lfo_ps,
+    NEW.lfo_usage,
+    NEW.lfo_actual_usage,
+    NEW.diesel_production,
+    NEW.diesel_os,
+    NEW.diesel_incoming,
+    NEW.diesel_mreading,
+    NEW.diesel_transport,
+    NEW.diesel_ps,
+    NEW.diesel_usage,
+    NEW.diesel_actual_usage,
+    1,
+    'SYSTEM'
+);
+$$
+
+-- UPDATE TRIGGER
+CREATE OR REPLACE TRIGGER `TRG_UPD_STK_TAKE_LOG` BEFORE UPDATE ON `Stock_Take`
+FOR EACH ROW
+BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    INSERT INTO Stock_Take_Log (
+        stock_take_id,
+        declaration_datetime,
+        plant_id,
+        sixty_seventy_production,
+        sixty_seventy_os,
+        sixty_seventy_incoming,
+        sixty_seventy_usage,
+        sixty_seventy_bookstock,
+        sixty_seventy_ps,
+        sixty_seventy_diffstock,
+        sixty_seventy_actual_usage,
+        lfo_production,
+        lfo_os,
+        lfo_incoming,
+        lfo_ps,
+        lfo_usage,
+        lfo_actual_usage,
+        diesel_production,
+        diesel_os,
+        diesel_incoming,
+        diesel_mreading,
+        diesel_transport,
+        diesel_ps,
+        diesel_usage,
+        diesel_actual_usage,
+        action_id,
+        action_by
+    )
+    VALUES (
+        NEW.id,
+        NEW.declaration_datetime,
+        NEW.plant_id,
+        NEW.sixty_seventy_production,
+        NEW.sixty_seventy_os,
+        NEW.sixty_seventy_incoming,
+        NEW.sixty_seventy_usage,
+        NEW.sixty_seventy_bookstock,
+        NEW.sixty_seventy_ps,
+        NEW.sixty_seventy_diffstock,
+        NEW.sixty_seventy_actual_usage,
+        NEW.lfo_production,
+        NEW.lfo_os,
+        NEW.lfo_incoming,
+        NEW.lfo_ps,
+        NEW.lfo_usage,
+        NEW.lfo_actual_usage,
+        NEW.diesel_production,
+        NEW.diesel_os,
+        NEW.diesel_incoming,
+        NEW.diesel_mreading,
+        NEW.diesel_transport,
+        NEW.diesel_ps,
+        NEW.diesel_usage,
+        NEW.diesel_actual_usage,
+        action_value,
+        'SYSTEM'
+    );
+END
+$$
+
+DELIMITER ;
