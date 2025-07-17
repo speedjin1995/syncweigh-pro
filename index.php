@@ -2641,7 +2641,8 @@ else{
             $('#addModal').find('#productVariance').val("");
             $('#addModal').find('#rawMaterialCode').val("");
             $('#addModal').find('#rawMaterialName').val("").trigger('change');
-
+            $('#addModal').find('#currentWeight').text(0);
+            
             // Show select and hide input readonly
             $('#addModal').find('#salesOrderEdit').val("").hide();
             $('#addModal').find('#purchaseOrderEdit').val("").hide();
@@ -2740,6 +2741,9 @@ else{
                     $('#subTotalPriceDisplay').show();
                     $('#sstDisplay').show();
                     $('#totalPriceDisplay').show();
+
+                    $('#addModal').find('#salesOrder').prop('disabled', true);
+                    $('#addModal').find('#purchaseOrder').prop('disabled', true);
                 }
                 else
                 {
@@ -2747,6 +2751,9 @@ else{
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+
+                    $('#addModal').find('#salesOrder').prop('disabled', false);
+                    $('#addModal').find('#purchaseOrder').prop('disabled', false);
                 }
             }
         });
@@ -3610,7 +3617,10 @@ else{
     
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
                             $('#addModal').find('#balance').val(balance);
-                            $('#addModal').find('#otherRemarks').val(remarks);
+
+                            if (!$('#addModal').find('#otherRemarks').val()) {
+                                $('#addModal').find('#otherRemarks').val(remarks);
+                            }
                             $('#addModal').find('#unitPrice').val(unitPrice).trigger('change');
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
@@ -3899,7 +3909,10 @@ else{
                             
                             $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                             $('#addModal').find('#balance').val(balance);
-                            $('#addModal').find('#otherRemarks').val(remarks);
+
+                            if (!$('#addModal').find('#otherRemarks').val()) {
+                                $('#addModal').find('#otherRemarks').val(remarks);
+                            }
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
                         }
