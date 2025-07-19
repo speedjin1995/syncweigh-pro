@@ -514,7 +514,50 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>                                                              
+                                    </div> 
+                                    <div class="modal fade" id="pullSqlModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Pull SQL</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-xxl-6 col-lg-6">
+                                                                <div class="row">
+                                                                    <label for="fromDate" class="col-form-label">From Date</label>
+                                                                    <div>
+                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="fromDate" name="fromDate" required>
+                                                                        <div class="invalid-feedback">
+                                                                            Please fill in the field.
+                                                                        </div>    
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xxl-6 col-lg-6">
+                                                                <div class="row">
+                                                                    <label for="endDate" class="col-form-label">End Date</label>
+                                                                    <div>
+                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="endDate" name="endDate" required>
+                                                                        <div class="invalid-feedback">
+                                                                            Please fill in the field.
+                                                                        </div>    
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="pullSo">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>                                                                
                                 </div>
                             </div> <!-- end row-->
 
@@ -666,6 +709,20 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         $('#deliveryDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        $('#fromDate').flatpickr({
+            dateFormat: "d-m-Y",
+            enableTime: true,
+            time_24hr: true,
+            defaultDate: today
+        });
+
+        $('#endDate').flatpickr({
+            dateFormat: "d-m-Y",
+            enableTime: true,
+            time_24hr: true,
+            defaultDate: today
         });
 
         // Initialize all Select2 elements in the search bar
@@ -1330,46 +1387,65 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         });
 
         $('#pullSql').on('click', function(){
+            $('#pullSqlModal').modal('show');
+        });
+
+        $('#pullSqlModal').find('#pullSo').on('click', function(){
             $('#spinnerLoading').show();
             // Send the JSON array to the server
-            $.ajax({
-                url: 'php/pullPurchaseOrder.php',
-                type: 'POST',
-                contentType: 'application/json',
-                success: function(response) {
-                    var obj = JSON.parse(response);
-                    if (obj.status === 'success') {
-                        $('#spinnerLoading').hide();
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                        window.location.reload();
-                    } 
-                    else if (obj.status === 'failed') {
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                        alert(obj.message);
-                    } 
-                    else if (obj.status === 'error') {
-                        $('#spinnerLoading').hide();
-                        $('#uploadModal').modal('hide');
-                        // alert(obj.message);
-                        // $("#failBtn").attr('data-toast-text', obj.message );
-                        // $("#failBtn").click();
-                        $('#errorModal').find('#errorList').empty();
-                        var errorMessage = obj.message;
-                        for (var i = 0; i < errorMessage.length; i++) {
-                            $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+            $('#pullSqlModal').modal('hide');
+
+            var fromDate = $('#pullSqlModal').find('#fromDate').val();
+            var endDate = $('#pullSqlModal').find('#endDate').val();
+
+            if (fromDate && endDate){
+                $.ajax({
+                    url: 'php/pullPurchaseOrder.php',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        fromDate: fromDate,
+                        endDate: endDate
+                    }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        var obj = JSON.parse(response);
+                        if (obj.status === 'success') {
+                            $('#spinnerLoading').hide();
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                            window.location.reload();
+                        } 
+                        else if (obj.status === 'failed') {
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                            alert(obj.message);
+                        } 
+                        else if (obj.status === 'error') {
+                            $('#spinnerLoading').hide();
+                            $('#uploadModal').modal('hide');
+                            // alert(obj.message);
+                            // $("#failBtn").attr('data-toast-text', obj.message );
+                            // $("#failBtn").click();
+                            $('#errorModal').find('#errorList').empty();
+                            var errorMessage = obj.message;
+                            for (var i = 0; i < errorMessage.length; i++) {
+                                $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                            }
+                            $('#errorModal').modal('show');
+                        } 
+                        else {
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
                         }
-                        $('#errorModal').modal('show');
-                    } 
-                    else {
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
                     }
-                }
-            });
+                });
+            }else{
+                alert("Please fill in the date range.");
+                $('#spinnerLoading').hide();
+            }
+            
         });
     });
 

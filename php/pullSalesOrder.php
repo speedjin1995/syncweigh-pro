@@ -5,12 +5,32 @@ ini_set('memory_limit', '512M');
 set_time_limit(300);
 session_start();
 $uid = $_SESSION['username'];
+$postData = file_get_contents('php://input');
+$pullSqlData = json_decode($postData, true);
 
-$startDate = '5/7/2025'; // Hardcoded or dynamic as needed
-$endDate = date('n/j/Y'); // Today’s date in m/d/Y format, e.g., 4/29/2025
-//$endDate = '6/30/2025';
+if (empty($pullSqlData)) {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "No data received"
+    ]);
+    exit;
+}
 
-$url = "https://sturgeon-still-falcon.ngrok-free.app/sales_orders?start_date=$endDate&end_date=$endDate";
+if($pullSqlData['fromDate'] != null && $pullSqlData['fromDate'] != ''){
+    $fromDate = DateTime::createFromFormat('d-m-Y', $pullSqlData['fromDate']);
+    $startDate = $fromDate->format('n/j/Y'); // Convert to m/d/Y format
+}else{
+    $startDate = date('n/j/Y'); //default to today's date
+}
+
+if ($pullSqlData['endDate'] != null && $pullSqlData['endDate'] != ''){
+    $toDate = DateTime::createFromFormat('d-m-Y', $pullSqlData['endDate']);
+    $endDate = $toDate->format('n/j/Y'); // Convert to m/d/Y format
+}else{
+    $endDate = date('n/j/Y'); //default to today's date
+}
+
+$url = "https://sturgeon-still-falcon.ngrok-free.app/sales_orders?start_date=$startDate&end_date=$endDate";
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
