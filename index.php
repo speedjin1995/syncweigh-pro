@@ -892,19 +892,10 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <div class="form-check align-radio mr-2">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="batchDrum" id="batchDrum_batch" value="true" checked>
-                                                                                            <label class="form-check-label" for="batchDrum_batch">
-                                                                                               By-Batch
-                                                                                            </label>
-                                                                                        </div>
-
-                                                                                        <div class="form-check align-radio">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="batchDrum" id="batchDrum_drum" value="false">
-                                                                                            <label class="form-check-label" for="batchDrum_drum">
-                                                                                               By-Drum
-                                                                                            </label>
-                                                                                        </div>
+                                                                                        <select id="batchDrum" class="form-select select2" required>
+                                                                                            <option value="Batch">Batch</option>
+                                                                                            <option value="Drum">Drum</option>
+                                                                                        </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -2612,7 +2603,7 @@ else{
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
-            $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
+            $('#addModal').find('#batchDrum').val("").trigger('change');
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
@@ -3702,16 +3693,12 @@ else{
             var plantId = $('#plant :selected').data('id');
             $('#plantCode').val(plantCode);
 
-            if (plantId && !isEdit){
+            if (plantId){
                 $.post('php/getPlant.php', {userID: plantId}, function(data)
                 {
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
-                        if (obj.message.default_type == 'Batch'){
-                            $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
-                        }else if (obj.message.default_type == 'Drum'){
-                            $('#addModal').find("input[name='batchDrum'][value='false']").prop("checked", true);
-                        }
+                        $('#addModal').find('#batchDrum').val(obj.message.default_type).trigger('change');
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();

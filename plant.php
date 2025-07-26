@@ -180,8 +180,9 @@
                                                                                     <label for="defaultType" class="col-sm-4 col-form-label">Default Type</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select id="defaultType" name="defaultType" class="form-select">
-                                                                                            <option value="Batch" selected>Batch</option>
-                                                                                            <option value="Drum" selected>Drum</option>
+                                                                                            <option value="" selected>-</option>
+                                                                                            <option value="Batch">Batch</option>
+                                                                                            <option value="Drum">Drum</option>
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
