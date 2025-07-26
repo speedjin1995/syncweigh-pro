@@ -1889,8 +1889,6 @@ else{
 
             pass = true;
 
-            var isValid = true;
-
             // custom validation for select2
             $('#addModal .select2[required]').each(function () {
                 var select2Field = $(this);
@@ -1906,12 +1904,39 @@ else{
                         select2Container.after(errorMsg);
                     }
 
-                    isValid = false;
+                    pass = false;
                 } else {
                     select2Container.find('.select2-selection').css('border', ''); // Remove red border
                     select2Container.next('.select2-error').remove(); // Remove error message
+
+                    pass = true;
                 }
             });
+
+            if ($('#customerType').val() == 'Cash' && pass == true) {
+                var unitPrice = parseFloat($('#addModal').find('#unitPrice').val());
+
+                if (!unitPrice || unitPrice <= 0) {
+                    alert('Unit price must be more than 0.');
+                    pass = false;
+                    return;
+                }else{
+                    var productId = $('#addModal').find('#productId').val();
+                    $.post('php/getProduct.php', { userID: productId }, function (data) {
+                        var obj = JSON.parse(data);
+                        if (obj.status === 'success') {
+                            var price = obj.message.price;
+                            if (unitPrice < price) {
+                                alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                pass = false;
+                                return;
+                            }else{
+                                pass = true;
+                            }
+                        }
+                    });
+                }
+            }
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -2047,6 +2072,55 @@ else{
             }
 
             pass = true;
+
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    pass = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+
+                    pass = true;
+                }
+            });
+
+            if ($('#customerType').val() == 'Cash' && pass == true) {
+                var unitPrice = parseFloat($('#addModal').find('#unitPrice').val());
+
+                if (!unitPrice || unitPrice <= 0) {
+                    alert('Unit price must be more than 0.');
+                    pass = false;
+                    return;
+                }else{
+                    var productId = $('#addModal').find('#productId').val();
+                    $.post('php/getProduct.php', { userID: productId }, function (data) {
+                        var obj = JSON.parse(data);
+                        if (obj.status === 'success') {
+                            var price = obj.message.price;
+                            if (unitPrice < price) {
+                                alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                pass = false;
+                                return;
+                            }else{
+                                pass = true;
+                            }
+                        }
+                    });
+                }
+            }
 
             if(pass && $('#weightForm').valid()){
                 $('#spinnerLoading').show();
@@ -2735,6 +2809,10 @@ else{
 
                     $('#addModal').find('#salesOrder').prop('disabled', true);
                     $('#addModal').find('#purchaseOrder').prop('disabled', true);
+                    
+                    // Remove required attribute for cash transactions
+                    $('#addModal').find('#salesOrder').removeAttr('required');
+                    $('#addModal').find('#purchaseOrder').removeAttr('required');
                 }
                 else
                 {
@@ -2745,6 +2823,10 @@ else{
 
                     $('#addModal').find('#salesOrder').prop('disabled', false);
                     $('#addModal').find('#purchaseOrder').prop('disabled', false);
+                    
+                    // Add required attribute back for non-cash transactions
+                    $('#addModal').find('#salesOrder').attr('required', 'required');
+                    $('#addModal').find('#purchaseOrder').attr('required', 'required');
                 }
             }
         });
