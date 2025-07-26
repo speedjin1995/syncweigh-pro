@@ -3961,9 +3961,13 @@ else{
                                 var prodRawMat = obj.message;
                                 $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
                                 for (var i = 0; i < prodRawMat.length; i++) {
-                                    $('#addModal').find('#rawMaterialName').append(
-                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
-                                    );                   
+                                    // Check if option with this value already exists
+                                    var existingOption = $('#addModal').find('#rawMaterialName option[value="' + prodRawMat[i].prodMatName + '"]');
+                                    if (existingOption.length === 0) {
+                                        $('#addModal').find('#rawMaterialName').append(
+                                            `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                        );
+                                    }                   
                                 }
                             }
 
@@ -4005,9 +4009,13 @@ else{
                                 var prodRawMat = obj.message;
                                 $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
                                 for (var i = 0; i < prodRawMat.length; i++) {
-                                    $('#addModal').find('#productName').append(
-                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
-                                    );                   
+                                    // Check if option with this value already exists
+                                    var existingOption = $('#addModal').find('#productName option[value="' + prodRawMat[i].prodMatName + '"]');
+                                    if (existingOption.length === 0) {
+                                        $('#addModal').find('#productName').append(
+                                            `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
+                                        );
+                                    }                   
                                 }
                             }
 
