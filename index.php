@@ -2688,14 +2688,24 @@ else{
             }else{
                 if($(this).val() == "Cash")
                 {
-                    $('#unitPriceDisplay').show();
-                    $('#subTotalPriceDisplay').show();
-                    $('#sstDisplay').show();
-                    $('#totalPriceDisplay').show();
-                    $('#tinNoDisplay').show();
-                    $('#idNoDisplay').show();
-                    $('#idTypeDisplay').show();
-
+                    if (transactionStatus == 'Sales'){
+                        $('#unitPriceDisplay').show();
+                        $('#subTotalPriceDisplay').show();
+                        $('#sstDisplay').show();
+                        $('#totalPriceDisplay').show();
+                        $('#tinNoDisplay').show();
+                        $('#idNoDisplay').show();
+                        $('#idTypeDisplay').show();
+                    }else{
+                        $('#unitPriceDisplay').hide();
+                        $('#subTotalPriceDisplay').hide();
+                        $('#sstDisplay').hide();
+                        $('#totalPriceDisplay').hide();
+                        $('#tinNoDisplay').hide();
+                        $('#idNoDisplay').hide();
+                        $('#idTypeDisplay').hide();
+                    }
+                    
                     $('#addModal').find('#salesOrder').prop('disabled', true);
                     $('#addModal').find('#purchaseOrder').prop('disabled', true);
                     
@@ -3456,23 +3466,13 @@ else{
                 }
                 ?>
 
-                if (customerType == 'Cash'){
-                    $('#unitPriceDisplay').show();
-                    $('#subTotalPriceDisplay').show();
-                    $('#sstDisplay').show();
-                    $('#totalPriceDisplay').show();
-                    $('#tinNoDisplay').show();
-                    $('#idNoDisplay').show();
-                    $('#idTypeDisplay').show();
-                }else{
-                    $('#unitPriceDisplay').hide();
-                    $('#subTotalPriceDisplay').hide();
-                    $('#sstDisplay').hide();
-                    $('#totalPriceDisplay').hide();
-                    $('#tinNoDisplay').hide();
-                    $('#idNoDisplay').hide();
-                    $('#idTypeDisplay').hide();
-                }
+                $('#unitPriceDisplay').hide();
+                $('#subTotalPriceDisplay').hide();
+                $('#sstDisplay').hide();
+                $('#totalPriceDisplay').hide();
+                $('#tinNoDisplay').hide();
+                $('#idNoDisplay').hide();
+                $('#idTypeDisplay').hide();
             }
             else{
                 $('#divOrderWeight').show();
