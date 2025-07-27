@@ -201,6 +201,9 @@ if(isset($_POST['userID'])){
                         $message['supplier_weight'] = $row['supplier_weight'];
                         $message['po_supply_weight'] = $row['po_supply_weight'];
                         $message['order_weight'] = $row['order_weight'];
+                        $message['tin_no'] = $row['tin_no'];
+                        $message['id_no'] = $row['id_no'];
+                        $message['id_type'] = $row['id_type'];
                         $message['customer_code'] = $row['customer_code'];
                         $message['customer_name'] = $row['customer_name'];
                         $message['plant_code'] = $row['plant_code'];

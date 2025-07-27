@@ -4518,6 +4518,9 @@ else{
                 }
 
                 $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#tinNo').val(obj.message.tin_no);
+                $('#addModal').find('#idNo').val(obj.message.id_no);
+                $('#addModal').find('#idType').val(obj.message.id_type);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
                 $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
