@@ -936,8 +936,33 @@ else{
                                                                                         </select>        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>      
-                                                                                             
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="tinNoDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="tinNo" class="col-sm-4 col-form-label">Tin No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="tinNo" name="tinNo" placeholder="Tin No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="idNoDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="idNo" class="col-sm-4 col-form-label">Id No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="idNo" name="idNo" placeholder="Id No">  
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="idTypeDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="idType" class="col-sm-4 col-form-label">Id Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="idType" name="idType" placeholder="Id Type">  
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2806,6 +2831,9 @@ else{
                     $('#subTotalPriceDisplay').show();
                     $('#sstDisplay').show();
                     $('#totalPriceDisplay').show();
+                    $('#tinNoDisplay').show();
+                    $('#idNoDisplay').show();
+                    $('#idTypeDisplay').show();
 
                     $('#addModal').find('#salesOrder').prop('disabled', true);
                     $('#addModal').find('#purchaseOrder').prop('disabled', true);
@@ -2820,6 +2848,9 @@ else{
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
 
                     $('#addModal').find('#salesOrder').prop('disabled', false);
                     $('#addModal').find('#purchaseOrder').prop('disabled', false);
@@ -3508,6 +3539,9 @@ else{
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
                 }else{
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                     // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
@@ -3521,11 +3555,17 @@ else{
                         $('#subTotalPriceDisplay').show();
                         $('#sstDisplay').show();
                         $('#totalPriceDisplay').show();
+                        $('#tinNoDisplay').show();
+                        $('#idNoDisplay').show();
+                        $('#idTypeDisplay').show();
                     }else{
                         $('#unitPriceDisplay').hide();
                         $('#subTotalPriceDisplay').hide();
                         $('#sstDisplay').hide();
                         $('#totalPriceDisplay').hide();
+                        $('#tinNoDisplay').hide();
+                        $('#idNoDisplay').hide();
+                        $('#idTypeDisplay').hide();
                     }
                 }
             }
@@ -3560,11 +3600,17 @@ else{
                     $('#subTotalPriceDisplay').show();
                     $('#sstDisplay').show();
                     $('#totalPriceDisplay').show();
+                    $('#tinNoDisplay').show();
+                    $('#idNoDisplay').show();
+                    $('#idTypeDisplay').show();
                 }else{
                     $('#unitPriceDisplay').hide();
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
                 }
             }
             else{
@@ -3598,11 +3644,17 @@ else{
                     $('#subTotalPriceDisplay').show();
                     $('#sstDisplay').show();
                     $('#totalPriceDisplay').show();
+                    $('#tinNoDisplay').show();
+                    $('#idNoDisplay').show();
+                    $('#idTypeDisplay').show();
                 }else{
                     $('#unitPriceDisplay').hide();
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
                 }
             }
         });
