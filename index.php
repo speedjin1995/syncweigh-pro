@@ -1943,54 +1943,37 @@ else{
 
                 if (!unitPrice || unitPrice <= 0) {
                     alert('Unit price must be more than 0.');
-                    pass = false;
                     return;
-                }else{
+                } else {
                     var productId = $('#addModal').find('#productId').val();
                     $.post('php/getProduct.php', { userID: productId }, function (data) {
-                        var obj = JSON.parse(data);
-                        if (obj.status === 'success') {
-                            var price = obj.message.price;
-                            if (unitPrice < price) {
-                                alert('Unit price doesn\'t meet the minimum value of RM ' + price);
-                                pass = false;
-                                return;
-                            }else{
-                                pass = true;
+                        try {
+                            var obj = JSON.parse(data);
+                            if (obj.status === 'success') {
+                                var price = obj.message.price;
+                                if (unitPrice < price) {
+                                    alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                    return;
+                                } else {
+                                    // Price validation passed, submit the form
+                                    submitWeightForm();
+                                }
+                            } else {
+                                alert('Error validating product price');
                             }
+                        } catch (e) {
+                            alert('Error processing product validation response');
                         }
+                    }).fail(function() {
+                        alert('Error connecting to server for price validation');
                     });
+                    return; // Exit here to prevent immediate form submission
                 }
             }
 
+            // If not cash or validation passed, submit form
             if(pass && $('#weightForm').valid()){
-                $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        <?php
-                            if(isset($_GET['weight'])){
-                                echo "window.location = 'index.php';";
-                            }
-                        ?>
-                        table.ajax.reload();
-                        window.location = 'index.php';
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
+                submitWeightForm();
             }
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
@@ -2127,156 +2110,34 @@ else{
 
                 if (!unitPrice || unitPrice <= 0) {
                     alert('Unit price must be more than 0.');
-                    pass = false;
                     return;
                 }else{
                     var productId = $('#addModal').find('#productId').val();
                     $.post('php/getProduct.php', { userID: productId }, function (data) {
-                        var obj = JSON.parse(data);
-                        if (obj.status === 'success') {
-                            var price = obj.message.price;
-                            if (unitPrice < price) {
-                                alert('Unit price doesn\'t meet the minimum value of RM ' + price);
-                                pass = false;
-                                return;
-                            }else{
-                                pass = true;
-                            }
-                        }
-                    });
-                }
-            }
-
-            if(pass && $('#weightForm').valid()){
-                $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-
-                        $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
-                            var obj2 = JSON.parse(data);
-
-                            if(obj2.status === 'success'){
-                                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                printWindow.document.write(obj2.message);
-                                printWindow.document.close();
-                                setTimeout(function(){
-                                    printWindow.print();
-                                    printWindow.close();
-                                    table.ajax.reload();
-                                    //window.location = 'index.php';
-                                    
-                                    setTimeout(function () {
-                                        if (confirm("Do you need to reprint?")) {
-                                            $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
-                                                var obj = JSON.parse(data);
-                                                if (obj.status === 'success') {
-                                                    var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                                    reprintWindow.document.write(obj.message);
-                                                    reprintWindow.document.close();
-                                                    setTimeout(function () {
-                                                        reprintWindow.print();
-                                                        reprintWindow.close();
-                                                        <?php
-                                                            if(isset($_GET['weight'])){
-                                                                echo "window.location = 'index.php';";
-                                                            }
-                                                        ?>
-                                                    }, 500);
-                                                } 
-                                                else {
-                                                    window.location = 'index.php';
-                                                }
-                                            });
-                                        }
-                                        else{
-                                            <?php
-                                                if(isset($_GET['weight'])){
-                                                    echo "window.location = 'index.php';";
-                                                }
-                                            ?>
-                                        }
-                                    }, 500);
-                                }, 500);
-                            }
-                            else if(obj.status === 'failed'){
-                                $("#failBtn").attr('data-toast-text', obj.message );
-                                $("#failBtn").click();
-                            }
-                            else{
-                                $("#failBtn").attr('data-toast-text', "Something wrong when print");
-                                $("#failBtn").click();
-                            }
-                        });
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
-            }
-            /*else{
-                let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
-                if (userChoice) {
-                    $('#addModal').find('#status').val("pending");
-                    $('#spinnerLoading').show();
-                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                        var obj = JSON.parse(data); 
-                        if(obj.status === 'success'){
-                            <?php
-                                if(isset($_GET['weight'])){
-                                    echo "window.location = 'index.php';";
+                        try {
+                            var obj = JSON.parse(data);
+                            if (obj.status === 'success') {
+                                var price = obj.message.price;
+                                if (unitPrice < price) {
+                                    alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                    return;
+                                }else{
+                                    // Continue with form submission after price validation
+                                    submitWeightPrintForm();
                                 }
-                            ?>
-                            table.ajax.reload();
-                            window.location = 'index.php';
-                            $('#spinnerLoading').hide();
-                            $('#addModal').modal('hide');
-                            $("#successBtn").attr('data-toast-text', obj.message);
-                            $("#successBtn").click();
-                        }
-                        else if(obj.status === 'failed'){
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', 'Failed to save');
-                            $("#failBtn").click();
+                            } else {
+                                alert('Error validating product price.');
+                            }
+                        } catch (e) {
+                            alert('Error processing product validation response.');
                         }
                     });
-                } 
-                else {
-                    $('#bypassModal').find('#passcode').val("");
-                    $('#bypassModal').find('#reason').val("");
-                    $('#bypassModal').modal('show');
-            
-                    $('#bypassForm').validate({
-                        errorElement: 'span',
-                        errorPlacement: function (error, element) {
-                            error.addClass('invalid-feedback');
-                            element.closest('.form-group').append(error);
-                        },
-                        highlight: function (element, errorClass, validClass) {
-                            $(element).addClass('is-invalid');
-                        },
-                        unhighlight: function (element, errorClass, validClass) {
-                            $(element).removeClass('is-invalid');
-                        }
-                    });
+                    return; // Exit here, will continue in callback
                 }
-            }*/
+            }
+
+            // Direct submission if not cash or validation passed
+            submitWeightPrintForm();
         });
 
         $('#submitBypass').on('click', function(){
@@ -4277,6 +4138,120 @@ else{
             }
         ?>
     });
+
+    // Function to handle weight form submission without printing
+    function submitWeightForm() {
+        if ($('#weightForm').valid()) {
+            $('#spinnerLoading').show();
+            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success'){
+                    <?php
+                        if(isset($_GET['weight'])){
+                            echo "window.location = 'index.php';";
+                        }
+                    ?>
+                    table.ajax.reload();
+                    window.location = 'index.php';
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    // Function to handle weight form submission with printing
+    function submitWeightPrintForm() {
+        if ($('#weightForm').valid()) {
+            $('#spinnerLoading').show();
+            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success'){
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+
+                    $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
+                        var obj2 = JSON.parse(data);
+
+                        if(obj2.status === 'success'){
+                            var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                            printWindow.document.write(obj2.message);
+                            printWindow.document.close();
+                            setTimeout(function(){
+                                printWindow.print();
+                                printWindow.close();
+                                table.ajax.reload();
+                                
+                                setTimeout(function () {
+                                    if (confirm("Do you need to reprint?")) {
+                                        $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
+                                            var obj = JSON.parse(data);
+                                            if (obj.status === 'success') {
+                                                var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                                reprintWindow.document.write(obj.message);
+                                                reprintWindow.document.close();
+                                                setTimeout(function () {
+                                                    reprintWindow.print();
+                                                    reprintWindow.close();
+                                                    <?php
+                                                        if(isset($_GET['weight'])){
+                                                            echo "window.location = 'index.php';";
+                                                        }
+                                                    ?>
+                                                }, 500);
+                                            } 
+                                            else {
+                                                window.location = 'index.php';
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        <?php
+                                            if(isset($_GET['weight'])){
+                                                echo "window.location = 'index.php';";
+                                            }
+                                        ?>
+                                    }
+                                }, 500);
+                            }, 500);
+                        }
+                        else if(obj.status === 'failed'){
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
 
     function getSoPo(){
         var transactionStatus = $('#addModal').find('#transactionStatus').val();
