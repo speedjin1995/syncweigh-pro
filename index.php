@@ -3356,6 +3356,15 @@ else{
             var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
             var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
             var current = Math.abs(nett1 - nett2);
+
+            if ($('#weightType').val() == "Container"){
+                var gross1 = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
+                var tare1 = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
+                var gross2 = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
+                var tare2 = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
+                current = Math.abs((gross1 + gross2) - (tare1 + tare2));
+            }
+
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
