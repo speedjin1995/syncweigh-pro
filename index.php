@@ -3589,17 +3589,18 @@ else{
                             if (!$('#addModal').find('#plant').val()) {
                                 $('#addModal').find('#plant').val(plantName).trigger('change');
                             }
-                            if (!$('#addModal').find('#transporter').val()) {
-                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                            }
                             if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
                             }
-    
+
                             if (exDel == 'E') {
                                 $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                             } else {
                                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                            }
+
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
     
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
@@ -3611,6 +3612,25 @@ else{
                             $('#addModal').find('#unitPrice').val(unitPrice).trigger('change');
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
+
+                            // Initialize all Select2 elements in the modal
+                            $('#addModal .select2').select2({
+                                allowClear: true,
+                                placeholder: "Please Select",
+                                dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                            });
+
+                            // Apply custom styling to Select2 elements in addModal
+                            $('#addModal .select2-container .select2-selection--single').css({
+                                'padding-top': '4px',
+                                'padding-bottom': '4px',
+                                'height': 'auto'
+                            });
+
+                            $('#addModal .select2-container .select2-selection__arrow').css({
+                                'padding-top': '33px',
+                                'height': 'auto'
+                            });
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -3685,19 +3705,21 @@ else{
                             if (!$('#addModal').find('#plant').val()) {
                                 $('#addModal').find('#plant').val(plantName).trigger('change');
                             }
-                            if (!$('#addModal').find('#transporter').val()) {
-                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                            }
+                            
                             if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
                             }
-    
+
                             if (exDel == 'E') {
                                 $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                             } else {
                                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
                             }
                             
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                            }
+
                             $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                             $('#addModal').find('#balance').val(balance);
 
@@ -3706,6 +3728,25 @@ else{
                             }
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
+
+                            // Initialize all Select2 elements in the modal
+                            $('#addModal .select2').select2({
+                                allowClear: true,
+                                placeholder: "Please Select",
+                                dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                            });
+
+                            // Apply custom styling to Select2 elements in addModal
+                            $('#addModal .select2-container .select2-selection--single').css({
+                                'padding-top': '4px',
+                                'padding-bottom': '4px',
+                                'height': 'auto'
+                            });
+
+                            $('#addModal .select2-container .select2-selection__arrow').css({
+                                'padding-top': '33px',
+                                'height': 'auto'
+                            });
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
