@@ -143,14 +143,14 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 
-            'PLANT CODE', 'PLANT NAME', 'WEIGHTED BY'); 
+            'PLANT CODE', 'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
     else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
-            'PLANT NAME', 'WEIGHTED BY'); 
+            'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
 }
 else{
@@ -159,13 +159,13 @@ else{
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
-            'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY'); 
+            'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
-            'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY'); 
+            'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }
 }
 
@@ -220,7 +220,7 @@ if($query->num_rows > 0){
                     number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                     ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
                     number_format((float)$row['weight_different'] / 1000, 2, '.', ''), $row['gross_weight1_date'], $row['tare_weight1_date'], 
-                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $row['created_by'])
+                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $row['created_by'], $row['remarks'])
                 );
             }
             else{
@@ -260,7 +260,7 @@ if($query->num_rows > 0){
                     number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                     ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
                     number_format((float)$row['weight_different'] / 1000, 2, '.', ''), $row['gross_weight1_date'], $row['tare_weight1_date'], 
-                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $unitPrice, $totalPrice, $row['created_by'])
+                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $unitPrice, $totalPrice, $row['created_by'], $row['remarks'])
                 );
             }
                 
