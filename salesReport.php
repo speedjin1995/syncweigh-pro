@@ -1080,12 +1080,12 @@ else{
             if (selectedIds.length > 0) {
                 window.open("php/export.php?file=weight&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-                "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
+                "&weighingType="+customerTypeI+"&product="+productI+"&rawMat="+rawMatI+
                 "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI+"&id="+selectedIds);
             }else{
                 window.open("php/export.php?file=weight&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
                 "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-                "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
+                "&weighingType="+customerTypeI+"&product="+productI+"&rawMat="+rawMatI+
                 "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
             }
             

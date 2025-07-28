@@ -892,19 +892,10 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <div class="form-check align-radio mr-2">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="batchDrum" id="batchDrum_batch" value="true" checked>
-                                                                                            <label class="form-check-label" for="batchDrum_batch">
-                                                                                               By-Batch
-                                                                                            </label>
-                                                                                        </div>
-
-                                                                                        <div class="form-check align-radio">
-                                                                                            <input class="form-check-input radio-manual-weight" type="radio" name="batchDrum" id="batchDrum_drum" value="false">
-                                                                                            <label class="form-check-label" for="batchDrum_drum">
-                                                                                               By-Drum
-                                                                                            </label>
-                                                                                        </div>
+                                                                                        <select id="batchDrum" class="form-select select2" required>
+                                                                                            <option value="Batch">Batch</option>
+                                                                                            <option value="Drum">Drum</option>
+                                                                                        </select>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -945,8 +936,33 @@ else{
                                                                                         </select>        
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>      
-                                                                                             
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="tinNoDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="tinNo" class="col-sm-4 col-form-label">Tin No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="tinNo" name="tinNo" placeholder="Tin No">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="idNoDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="idNo" class="col-sm-4 col-form-label">Id No</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="idNo" name="idNo" placeholder="Id No">  
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="idTypeDisplay">
+                                                                                <div class="row">
+                                                                                    <label for="idType" class="col-sm-4 col-form-label">Id Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="text" class="form-control" id="idType" name="idType" placeholder="Id Type">  
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1898,8 +1914,6 @@ else{
 
             pass = true;
 
-            var isValid = true;
-
             // custom validation for select2
             $('#addModal .select2[required]').each(function () {
                 var select2Field = $(this);
@@ -1915,41 +1929,51 @@ else{
                         select2Container.after(errorMsg);
                     }
 
-                    isValid = false;
+                    pass = false;
                 } else {
                     select2Container.find('.select2-selection').css('border', ''); // Remove red border
                     select2Container.next('.select2-error').remove(); // Remove error message
+
+                    pass = true;
                 }
             });
 
-            if(pass && $('#weightForm').valid()){
-                $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        <?php
-                            if(isset($_GET['weight'])){
-                                echo "window.location = 'index.php';";
+            if ($('#customerType').val() == 'Cash' && pass == true) {
+                var unitPrice = parseFloat($('#addModal').find('#unitPrice').val());
+
+                if (!unitPrice || unitPrice <= 0) {
+                    alert('Unit price must be more than 0.');
+                    return;
+                } else {
+                    var productId = $('#addModal').find('#productId').val();
+                    $.post('php/getProduct.php', { userID: productId }, function (data) {
+                        try {
+                            var obj = JSON.parse(data);
+                            if (obj.status === 'success') {
+                                var price = obj.message.price;
+                                if (unitPrice < price) {
+                                    alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                    return;
+                                } else {
+                                    // Price validation passed, submit the form
+                                    submitWeightForm();
+                                }
+                            } else {
+                                alert('Error validating product price');
                             }
-                        ?>
-                        table.ajax.reload();
-                        window.location = 'index.php';
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
+                        } catch (e) {
+                            alert('Error processing product validation response');
+                        }
+                    }).fail(function() {
+                        alert('Error connecting to server for price validation');
+                    });
+                    return; // Exit here to prevent immediate form submission
+                }
+            }
+
+            // If not cash or validation passed, submit form
+            if(pass && $('#weightForm').valid()){
+                submitWeightForm();
             }
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
@@ -2057,136 +2081,63 @@ else{
 
             pass = true;
 
-            if(pass && $('#weightForm').valid()){
-                $('#spinnerLoading').show();
-                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    if(obj.status === 'success'){
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
-                            var obj2 = JSON.parse(data);
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
 
-                            if(obj2.status === 'success'){
-                                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                printWindow.document.write(obj2.message);
-                                printWindow.document.close();
-                                setTimeout(function(){
-                                    printWindow.print();
-                                    printWindow.close();
-                                    table.ajax.reload();
-                                    //window.location = 'index.php';
-                                    
-                                    setTimeout(function () {
-                                        if (confirm("Do you need to reprint?")) {
-                                            $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
-                                                var obj = JSON.parse(data);
-                                                if (obj.status === 'success') {
-                                                    var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                                    reprintWindow.document.write(obj.message);
-                                                    reprintWindow.document.close();
-                                                    setTimeout(function () {
-                                                        reprintWindow.print();
-                                                        reprintWindow.close();
-                                                        <?php
-                                                            if(isset($_GET['weight'])){
-                                                                echo "window.location = 'index.php';";
-                                                            }
-                                                        ?>
-                                                    }, 500);
-                                                } 
-                                                else {
-                                                    window.location = 'index.php';
-                                                }
-                                            });
-                                        }
-                                        else{
-                                            <?php
-                                                if(isset($_GET['weight'])){
-                                                    echo "window.location = 'index.php';";
-                                                }
-                                            ?>
-                                        }
-                                    }, 500);
-                                }, 500);
-                            }
-                            else if(obj.status === 'failed'){
-                                $("#failBtn").attr('data-toast-text', obj.message );
-                                $("#failBtn").click();
-                            }
-                            else{
-                                $("#failBtn").attr('data-toast-text', "Something wrong when print");
-                                $("#failBtn").click();
-                            }
-                        });
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
                     }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
-                    }
-                });
-            }
-            /*else{
-                let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
-                if (userChoice) {
-                    $('#addModal').find('#status').val("pending");
-                    $('#spinnerLoading').show();
-                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                        var obj = JSON.parse(data); 
-                        if(obj.status === 'success'){
-                            <?php
-                                if(isset($_GET['weight'])){
-                                    echo "window.location = 'index.php';";
-                                }
-                            ?>
-                            table.ajax.reload();
-                            window.location = 'index.php';
-                            $('#spinnerLoading').hide();
-                            $('#addModal').modal('hide');
-                            $("#successBtn").attr('data-toast-text', obj.message);
-                            $("#successBtn").click();
-                        }
-                        else if(obj.status === 'failed'){
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', 'Failed to save');
-                            $("#failBtn").click();
-                        }
-                    });
-                } 
-                else {
-                    $('#bypassModal').find('#passcode').val("");
-                    $('#bypassModal').find('#reason').val("");
-                    $('#bypassModal').modal('show');
-            
-                    $('#bypassForm').validate({
-                        errorElement: 'span',
-                        errorPlacement: function (error, element) {
-                            error.addClass('invalid-feedback');
-                            element.closest('.form-group').append(error);
-                        },
-                        highlight: function (element, errorClass, validClass) {
-                            $(element).addClass('is-invalid');
-                        },
-                        unhighlight: function (element, errorClass, validClass) {
-                            $(element).removeClass('is-invalid');
-                        }
-                    });
+
+                    pass = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+
+                    pass = true;
                 }
-            }*/
+            });
+
+            if ($('#customerType').val() == 'Cash' && pass == true) {
+                var unitPrice = parseFloat($('#addModal').find('#unitPrice').val());
+
+                if (!unitPrice || unitPrice <= 0) {
+                    alert('Unit price must be more than 0.');
+                    return;
+                }else{
+                    var productId = $('#addModal').find('#productId').val();
+                    $.post('php/getProduct.php', { userID: productId }, function (data) {
+                        try {
+                            var obj = JSON.parse(data);
+                            if (obj.status === 'success') {
+                                var price = obj.message.price;
+                                if (unitPrice < price) {
+                                    alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                    return;
+                                }else{
+                                    // Continue with form submission after price validation
+                                    submitWeightPrintForm();
+                                }
+                            } else {
+                                alert('Error validating product price.');
+                            }
+                        } catch (e) {
+                            alert('Error processing product validation response.');
+                        }
+                    });
+                    return; // Exit here, will continue in callback
+                }
+            }
+
+            // Direct submission if not cash or validation passed
+            submitWeightPrintForm();
         });
 
         $('#submitBypass').on('click', function(){
@@ -2612,7 +2563,7 @@ else{
             $('#addModal').find('#totalPrice').val("0.00");
             $('#addModal').find('#finalWeight').val("");
             $('#addModal').find("input[name='loadDrum'][value='true']").prop("checked", true).trigger('change');
-            $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
+            $('#addModal').find('#batchDrum').val("").trigger('change');
             $('#addModal').find('#noOfDrum').val("");
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#insufficientBalDisplay').hide();
@@ -2737,13 +2688,30 @@ else{
             }else{
                 if($(this).val() == "Cash")
                 {
-                    $('#unitPriceDisplay').show();
-                    $('#subTotalPriceDisplay').show();
-                    $('#sstDisplay').show();
-                    $('#totalPriceDisplay').show();
-
+                    if (transactionStatus == 'Sales'){
+                        $('#unitPriceDisplay').show();
+                        $('#subTotalPriceDisplay').show();
+                        $('#sstDisplay').show();
+                        $('#totalPriceDisplay').show();
+                        $('#tinNoDisplay').show();
+                        $('#idNoDisplay').show();
+                        $('#idTypeDisplay').show();
+                    }else{
+                        $('#unitPriceDisplay').hide();
+                        $('#subTotalPriceDisplay').hide();
+                        $('#sstDisplay').hide();
+                        $('#totalPriceDisplay').hide();
+                        $('#tinNoDisplay').hide();
+                        $('#idNoDisplay').hide();
+                        $('#idTypeDisplay').hide();
+                    }
+                    
                     $('#addModal').find('#salesOrder').prop('disabled', true);
                     $('#addModal').find('#purchaseOrder').prop('disabled', true);
+                    
+                    // Remove required attribute for cash transactions
+                    $('#addModal').find('#salesOrder').removeAttr('required');
+                    $('#addModal').find('#purchaseOrder').removeAttr('required');
                 }
                 else
                 {
@@ -2751,9 +2719,16 @@ else{
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
 
                     $('#addModal').find('#salesOrder').prop('disabled', false);
                     $('#addModal').find('#purchaseOrder').prop('disabled', false);
+                    
+                    // Add required attribute back for non-cash transactions
+                    $('#addModal').find('#salesOrder').attr('required', 'required');
+                    $('#addModal').find('#purchaseOrder').attr('required', 'required');
                 }
             }
         });
@@ -3381,6 +3356,15 @@ else{
             var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
             var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
             var current = Math.abs(nett1 - nett2);
+
+            if ($('#weightType').val() == "Container"){
+                var gross1 = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
+                var tare1 = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
+                var gross2 = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
+                var tare2 = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
+                current = Math.abs((gross1 + gross2) - (tare1 + tare2));
+            }
+
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
@@ -3435,6 +3419,9 @@ else{
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
                 }else{
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
                     // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
@@ -3448,11 +3435,17 @@ else{
                         $('#subTotalPriceDisplay').show();
                         $('#sstDisplay').show();
                         $('#totalPriceDisplay').show();
+                        $('#tinNoDisplay').show();
+                        $('#idNoDisplay').show();
+                        $('#idTypeDisplay').show();
                     }else{
                         $('#unitPriceDisplay').hide();
                         $('#subTotalPriceDisplay').hide();
                         $('#sstDisplay').hide();
                         $('#totalPriceDisplay').hide();
+                        $('#tinNoDisplay').hide();
+                        $('#idNoDisplay').hide();
+                        $('#idTypeDisplay').hide();
                     }
                 }
             }
@@ -3482,17 +3475,13 @@ else{
                 }
                 ?>
 
-                if (customerType == 'Cash'){
-                    $('#unitPriceDisplay').show();
-                    $('#subTotalPriceDisplay').show();
-                    $('#sstDisplay').show();
-                    $('#totalPriceDisplay').show();
-                }else{
-                    $('#unitPriceDisplay').hide();
-                    $('#subTotalPriceDisplay').hide();
-                    $('#sstDisplay').hide();
-                    $('#totalPriceDisplay').hide();
-                }
+                $('#unitPriceDisplay').hide();
+                $('#subTotalPriceDisplay').hide();
+                $('#sstDisplay').hide();
+                $('#totalPriceDisplay').hide();
+                $('#tinNoDisplay').hide();
+                $('#idNoDisplay').hide();
+                $('#idTypeDisplay').hide();
             }
             else{
                 $('#divOrderWeight').show();
@@ -3525,11 +3514,17 @@ else{
                     $('#subTotalPriceDisplay').show();
                     $('#sstDisplay').show();
                     $('#totalPriceDisplay').show();
+                    $('#tinNoDisplay').show();
+                    $('#idNoDisplay').show();
+                    $('#idTypeDisplay').show();
                 }else{
                     $('#unitPriceDisplay').hide();
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
                 }
             }
         });
@@ -3558,12 +3553,13 @@ else{
             var salesOrder = $('#addModal').find('#salesOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
             var productName = $('#productName :selected').data('code');
+            var customerCode = $('#addModal').find('#customerCode').val();
             var plant = $('#addModal').find('#plantCode').val();
 
             //if (salesOrder && salesOrder != '-' && plant && productName){
-            if (salesOrder && salesOrder != '-' && productName){
+            if (salesOrder && salesOrder != '-' && productName && customerCode){
                 //if (!isEdit){
-                    $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant}, function (data){
+                    $.post('php/getOrderSupplier.php', {code: salesOrder, type: type, material: productName, plant: plant, customer: customerCode}, function (data){
                         var obj = JSON.parse(data);
     
                         if (obj.status == 'success'){
@@ -3584,9 +3580,9 @@ else{
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
                             // Change Details
-                            if (!$('#addModal').find('#customerName').val()) {
-                                $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
-                            }
+                            // if (!$('#addModal').find('#customerName').val()) {
+                            //     $('#addModal').find('#customerName').val(customerSupplierName).trigger('change');
+                            // }
                             if (!$('#addModal').find('#destination').val()) {
                                 $('#addModal').find('#destination').val(destinationName).trigger('change');
                             }
@@ -3602,17 +3598,18 @@ else{
                             if (!$('#addModal').find('#plant').val()) {
                                 $('#addModal').find('#plant').val(plantName).trigger('change');
                             }
-                            if (!$('#addModal').find('#transporter').val()) {
-                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                            }
                             if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
                             }
-    
+
                             if (exDel == 'E') {
                                 $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
                             } else {
                                 $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                            }
+
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
     
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
@@ -3624,6 +3621,25 @@ else{
                             $('#addModal').find('#unitPrice').val(unitPrice).trigger('change');
                             // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
                             // $('#addModal').find('#basicUOMUnit').text(convertedOrderSupplierUnit);
+
+                            // Initialize all Select2 elements in the modal
+                            $('#addModal .select2').select2({
+                                allowClear: true,
+                                placeholder: "Please Select",
+                                dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                            });
+
+                            // Apply custom styling to Select2 elements in addModal
+                            $('#addModal .select2-container .select2-selection--single').css({
+                                'padding-top': '4px',
+                                'padding-bottom': '4px',
+                                'height': 'auto'
+                            });
+
+                            $('#addModal .select2-container .select2-selection__arrow').css({
+                                'padding-top': '33px',
+                                'height': 'auto'
+                            });
                         }
                         else if(obj.status === 'failed'){
                             $('#spinnerLoading').hide();
@@ -3647,6 +3663,123 @@ else{
             }
         });
 
+        //rawMaterialName
+        $('#rawMaterialName').on('change', function(){
+            $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
+            $('#rawMaterialId').val($('#rawMaterialName :selected').data('id'));
+            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+            var type = $('#addModal').find('#transactionStatus').val();
+            var rawMat = $('#rawMaterialName :selected').data('code');
+            var supplierCode = $('#addModal').find('#supplierCode').val();
+            var plant = $('#addModal').find('#plantCode').val();
+
+            //if (purchaseOrder && purchaseOrder != '-' && plant && rawMat){
+            if (purchaseOrder && purchaseOrder != '-' && rawMat && supplierCode){
+                //if (!isEdit){
+                    $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant, supplier: supplierCode}, function (data){
+                        var obj = JSON.parse(data);
+    
+                        if (obj.status == 'success'){
+                            var customerSupplierName = obj.message.customer_supplier_name;
+                            var destinationName = obj.message.destination_name;
+                            var siteName = obj.message.site_name;
+                            var agentName = obj.message.agent_name;
+                            var productName = obj.message.product_name;
+                            var plantName = obj.message.plant_name;
+                            var transporterName = obj.message.transporter_name;
+                            var vehNo = obj.message.veh_number;
+                            var exDel = obj.message.ex_del;
+                            var orderSupplierWeight = obj.message.order_supplier_weight;
+                            var balance = obj.message.balance;
+                            var remarks = obj.message.remarks; console.log(remarks);
+                            // var finalWeight = obj.message.final_weight;
+                            // var previousRecordsTag = obj.message.previousRecordsTag;
+    
+                            // Change Details
+                            // if (!$('#addModal').find('#supplierName').val()) {
+                            //     $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
+                            // }
+                            if (!$('#addModal').find('#destination').val()) {
+                                $('#addModal').find('#destination').val(destinationName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#siteName').val()) {
+                                $('#addModal').find('#siteName').val(siteName).trigger('change');
+                            }
+                            if (!$('#addModal').find('#agent').val()) {
+                                $('#addModal').find('#agent').val(agentName).trigger('change');
+                            }
+                            // if (!$('#addModal').find('#rawMaterialName').val()) {
+                            //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
+                            // }
+                            if (!$('#addModal').find('#plant').val()) {
+                                $('#addModal').find('#plant').val(plantName).trigger('change');
+                            }
+                            
+                            if (!$('#addModal').find('#vehiclePlateNo1').val()) {
+                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
+                            }
+
+                            if (exDel == 'E') {
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
+                            } else {
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
+                            }
+                            
+                            if (!$('#addModal').find('#transporter').val()) {
+                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
+                            }
+
+                            $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
+                            $('#addModal').find('#balance').val(balance);
+
+                            if (!$('#addModal').find('#otherRemarks').val()) {
+                                $('#addModal').find('#otherRemarks').val(remarks);
+                            }
+                            // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
+                            // $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
+
+                            // Initialize all Select2 elements in the modal
+                            $('#addModal .select2').select2({
+                                allowClear: true,
+                                placeholder: "Please Select",
+                                dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                            });
+
+                            // Apply custom styling to Select2 elements in addModal
+                            $('#addModal .select2-container .select2-selection--single').css({
+                                'padding-top': '4px',
+                                'padding-bottom': '4px',
+                                'height': 'auto'
+                            });
+
+                            $('#addModal .select2-container .select2-selection__arrow').css({
+                                'padding-top': '33px',
+                                'height': 'auto'
+                            });
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                /*}
+                else{
+                    $('#addModal').trigger('orderLoaded');
+                }*/
+            }
+            else{
+                // if (!soPoTag && !addNewTag){
+                //     getSoPo();
+                // }
+            }
+        });
+
         $('#unitPrice').on('change', function() {
             var unitPrice = $(this).val() ? parseFloat($(this).val()).toFixed(2) : 0.00;
             var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
@@ -3664,9 +3797,14 @@ else{
             $('#supplierCode').val($('#supplierName :selected').data('code'));
 
             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
+            var rawMatName = $('#addModal').find('#rawMaterialName').val();
 
             if (!purchaseOrder && !soPoTag && !addNewTag){
                 getSoPo();
+            }
+
+            if (purchaseOrder && purchaseOrder != '-' && $(this).val() && rawMatName){
+                $('#addModal').find('#rawMaterialName').trigger('change');
             }
         });
 
@@ -3702,16 +3840,12 @@ else{
             var plantId = $('#plant :selected').data('id');
             $('#plantCode').val(plantCode);
 
-            if (plantId && !isEdit){
+            if (plantId){
                 $.post('php/getPlant.php', {userID: plantId}, function(data)
                 {
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
-                        if (obj.message.default_type == 'Batch'){
-                            $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
-                        }else if (obj.message.default_type == 'Drum'){
-                            $('#addModal').find("input[name='batchDrum'][value='false']").prop("checked", true);
-                        }
+                        $('#addModal').find('#batchDrum').val(obj.message.default_type).trigger('change');
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
@@ -3777,9 +3911,14 @@ else{
             $('#custName').val($(this).val());
 
             var salesOrder = $('#addModal').find('#salesOrder').val();
-
+            var productName = $('#addModal').find('#productName').val(); 
+            
             if (!salesOrder && !soPoTag && !addNewTag){
                 getSoPo();
+            }
+
+            if (salesOrder && salesOrder != '-' && $(this).val() && productName){
+                $('#addModal').find('#productName').trigger('change');
             }
         });
 
@@ -3844,101 +3983,6 @@ else{
             isSyncing = false;
         });
 
-        //rawMaterialName
-        $('#rawMaterialName').on('change', function(){
-            $('#rawMaterialCode').val($('#rawMaterialName :selected').data('code'));
-            $('#rawMaterialId').val($('#rawMaterialName :selected').data('id'));
-            var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
-            var type = $('#addModal').find('#transactionStatus').val();
-            var rawMat = $('#rawMaterialName :selected').data('code');
-            var plant = $('#addModal').find('#plantCode').val();
-
-            //if (purchaseOrder && purchaseOrder != '-' && plant && rawMat){
-            if (purchaseOrder && purchaseOrder != '-' && rawMat){
-                //if (!isEdit){
-                    $.post('php/getOrderSupplier.php', {code: purchaseOrder, type: type, material: rawMat, plant: plant}, function (data){
-                        var obj = JSON.parse(data);
-    
-                        if (obj.status == 'success'){
-                            var customerSupplierName = obj.message.customer_supplier_name;
-                            var destinationName = obj.message.destination_name;
-                            var siteName = obj.message.site_name;
-                            var agentName = obj.message.agent_name;
-                            var productName = obj.message.product_name;
-                            var plantName = obj.message.plant_name;
-                            var transporterName = obj.message.transporter_name;
-                            var vehNo = obj.message.veh_number;
-                            var exDel = obj.message.ex_del;
-                            var orderSupplierWeight = obj.message.order_supplier_weight;
-                            var balance = obj.message.balance;
-                            var remarks = obj.message.remarks; console.log(remarks);
-                            // var finalWeight = obj.message.final_weight;
-                            // var previousRecordsTag = obj.message.previousRecordsTag;
-    
-                            // Change Details
-                            if (!$('#addModal').find('#supplierName').val()) {
-                                $('#addModal').find('#supplierName').val(customerSupplierName).trigger('change');
-                            }
-                            if (!$('#addModal').find('#destination').val()) {
-                                $('#addModal').find('#destination').val(destinationName).trigger('change');
-                            }
-                            if (!$('#addModal').find('#siteName').val()) {
-                                $('#addModal').find('#siteName').val(siteName).trigger('change');
-                            }
-                            if (!$('#addModal').find('#agent').val()) {
-                                $('#addModal').find('#agent').val(agentName).trigger('change');
-                            }
-                            // if (!$('#addModal').find('#rawMaterialName').val()) {
-                            //     $('#addModal').find('#rawMaterialName').val(productName).trigger('change');
-                            // }
-                            if (!$('#addModal').find('#plant').val()) {
-                                $('#addModal').find('#plant').val(plantName).trigger('change');
-                            }
-                            if (!$('#addModal').find('#transporter').val()) {
-                                $('#addModal').find('#transporter').val(transporterName).trigger('change');
-                            }
-                            if (!$('#addModal').find('#vehiclePlateNo1').val()) {
-                                $('#addModal').find('#vehiclePlateNo1').val(vehNo).trigger('change');
-                            }
-    
-                            if (exDel == 'E') {
-                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true);
-                            } else {
-                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true);
-                            }
-                            
-                            $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
-                            $('#addModal').find('#balance').val(balance);
-
-                            if (!$('#addModal').find('#otherRemarks').val()) {
-                                $('#addModal').find('#otherRemarks').val(remarks);
-                            }
-                            // $('#addModal').find('#basicUOM').val(convertedOrderSupplierWeight);
-                            // $('#addModal').find('#basicUOMUnit').val(convertedOrderSupplierUnit).trigger('change');
-                        }
-                        else if(obj.status === 'failed'){
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            $('#spinnerLoading').hide();
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                    });
-                /*}
-                else{
-                    $('#addModal').trigger('orderLoaded');
-                }*/
-            }
-            else{
-                // if (!soPoTag && !addNewTag){
-                //     getSoPo();
-                // }
-            }
-        });
-
         //siteName
         $('#siteName').on('change', function(){
             $('#siteCode').val($('#siteName :selected').data('code'));
@@ -3969,14 +4013,42 @@ else{
 
                         if (obj.status == 'success'){
                             if (obj.message.length > 0){
+                                var purchaseOrders = obj.message;
                                 $('#addModal').find('#rawMaterialName').empty();
-
-                                var prodRawMat = obj.message;
                                 $('#addModal').find('#rawMaterialName').append(`<option selected="-">-</option>`);
-                                for (var i = 0; i < prodRawMat.length; i++) {
-                                    $('#addModal').find('#rawMaterialName').append(
-                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
-                                    );                   
+                                for (var i = 0; i < purchaseOrders.length; i++) {
+                                    // Check if option with this value already exists
+                                    var existingOption = $('#addModal').find('#rawMaterialName option[value="' + purchaseOrders[i].prodMatName + '"]');
+                                    if (existingOption.length === 0) {
+                                        $('#addModal').find('#rawMaterialName').append(
+                                            `<option value="${purchaseOrders[i].prodMatName}" data-id="${purchaseOrders[i].prodMatId}" data-code="${purchaseOrders[i].prodMatCode}">${purchaseOrders[i].prodMatName}</option>`
+                                        );
+                                    }                   
+                                }
+
+
+                                // Supplier Logic
+                                var supplierName = $('#addModal').find('#supplierName').val();
+
+                                $('#addModal').find('#supplierName').empty();
+                                $('#addModal').find('#supplierName').append(`<option selected="-">-</option>`);
+                                for (var i = 0; i < purchaseOrders.length; i++) {
+                                    // Check if option with this value already exists
+                                    var existingOption = $('#addModal').find('#supplierName option[value="' + purchaseOrders[i].custSuppName + '"]');
+                                    if (existingOption.length === 0) {
+                                        $('#addModal').find('#supplierName').append(
+                                            `<option value="${purchaseOrders[i].custSuppName}" data-id="${purchaseOrders[i].custSuppId}" data-code="${purchaseOrders[i].custSuppCode}">${purchaseOrders[i].custSuppName}</option>`
+                                        );
+                                    }                   
+                                }
+
+                                if (!supplierName){
+                                    var suppCount = $('#addModal').find('#supplierName option').length;
+                                    if (suppCount == 2){
+                                        $('#addModal').find('#supplierName').val(purchaseOrders[0].custSuppName).trigger('change');
+                                    }
+                                }else{
+                                    $('#addModal').find('#supplierName').val(supplierName).trigger('change');
                                 }
                             }
 
@@ -4013,14 +4085,43 @@ else{
 
                         if (obj.status == 'success'){
                             if (obj.message.length > 0){
-                                $('#addModal').find('#productName').empty();
+                                var salesOrders = obj.message;
 
-                                var prodRawMat = obj.message;
+                                // Product Logic
+                                $('#addModal').find('#productName').empty();
                                 $('#addModal').find('#productName').append(`<option selected="-">-</option>`);
-                                for (var i = 0; i < prodRawMat.length; i++) {
-                                    $('#addModal').find('#productName').append(
-                                        `<option value="${prodRawMat[i].prodMatName}" data-id="${prodRawMat[i].prodMatId}" data-code="${prodRawMat[i].prodMatCode}">${prodRawMat[i].prodMatName}</option>`
-                                    );                   
+                                for (var i = 0; i < salesOrders.length; i++) {
+                                    // Check if option with this value already exists
+                                    var existingOption = $('#addModal').find('#productName option[value="' + salesOrders[i].prodMatName + '"]');
+                                    if (existingOption.length === 0) {
+                                        $('#addModal').find('#productName').append(
+                                            `<option value="${salesOrders[i].prodMatName}" data-id="${salesOrders[i].prodMatId}" data-code="${salesOrders[i].prodMatCode}">${salesOrders[i].prodMatName}</option>`
+                                        );
+                                    }                   
+                                }
+
+                                // Customer Logic
+                                var customerName = $('#addModal').find('#customerName').val();
+
+                                $('#addModal').find('#customerName').empty();
+                                $('#addModal').find('#customerName').append(`<option selected="-">-</option>`);
+                                for (var i = 0; i < salesOrders.length; i++) {
+                                    // Check if option with this value already exists
+                                    var existingOption = $('#addModal').find('#customerName option[value="' + salesOrders[i].custSuppName + '"]');
+                                    if (existingOption.length === 0) {
+                                        $('#addModal').find('#customerName').append(
+                                            `<option value="${salesOrders[i].custSuppName}" data-id="${salesOrders[i].custSuppId}" data-code="${salesOrders[i].custSuppCode}">${salesOrders[i].custSuppName}</option>`
+                                        );
+                                    }                   
+                                }
+
+                                if (!customerName){
+                                    var custCount = $('#addModal').find('#customerName option').length;
+                                    if (custCount == 2){
+                                        $('#addModal').find('#customerName').val(salesOrders[0].custSuppName).trigger('change');
+                                    }
+                                }else{
+                                    $('#addModal').find('#customerName').val(customerName).trigger('change');
                                 }
                             }
 
@@ -4046,7 +4147,7 @@ else{
         //     var value = $(this).val();
         //     var transactionStatus = $('#transactionStatus').val();
         //     var unit = $('#orderWeightUnitId').val();
-        //     var prodRawMatCode = '';
+        //     = '';
 
         //     if (transactionStatus == 'Purchase'){
         //         prodRawMatCode = $('#rawMaterialName :selected').data('id');
@@ -4149,6 +4250,120 @@ else{
         ?>
     });
 
+    // Function to handle weight form submission without printing
+    function submitWeightForm() {
+        if ($('#weightForm').valid()) {
+            $('#spinnerLoading').show();
+            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success'){
+                    <?php
+                        if(isset($_GET['weight'])){
+                            echo "window.location = 'index.php';";
+                        }
+                    ?>
+                    table.ajax.reload();
+                    window.location = 'index.php';
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    // Function to handle weight form submission with printing
+    function submitWeightPrintForm() {
+        if ($('#weightForm').valid()) {
+            $('#spinnerLoading').show();
+            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success'){
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+
+                    $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
+                        var obj2 = JSON.parse(data);
+
+                        if(obj2.status === 'success'){
+                            var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                            printWindow.document.write(obj2.message);
+                            printWindow.document.close();
+                            setTimeout(function(){
+                                printWindow.print();
+                                printWindow.close();
+                                table.ajax.reload();
+                                
+                                setTimeout(function () {
+                                    if (confirm("Do you need to reprint?")) {
+                                        $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
+                                            var obj = JSON.parse(data);
+                                            if (obj.status === 'success') {
+                                                var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                                reprintWindow.document.write(obj.message);
+                                                reprintWindow.document.close();
+                                                setTimeout(function () {
+                                                    reprintWindow.print();
+                                                    reprintWindow.close();
+                                                    <?php
+                                                        if(isset($_GET['weight'])){
+                                                            echo "window.location = 'index.php';";
+                                                        }
+                                                    ?>
+                                                }, 500);
+                                            } 
+                                            else {
+                                                window.location = 'index.php';
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        <?php
+                                            if(isset($_GET['weight'])){
+                                                echo "window.location = 'index.php';";
+                                            }
+                                        ?>
+                                    }
+                                }, 500);
+                            }, 500);
+                        }
+                        else if(obj.status === 'failed'){
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
     function getSoPo(){
         var transactionStatus = $('#addModal').find('#transactionStatus').val();
         var manualVehicle = $('#addModal').find('#manualVehicle').val();
@@ -4175,25 +4390,24 @@ else{
 
                     if (obj.status == 'success'){
                         if (obj.message.length > 0){
-                            $('#addModal').find('#purchaseOrder').empty();
-
                             var soPo = obj.message;
+                            $('#addModal').find('#purchaseOrder').empty();
                             $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
                             for (var i = 0; i < soPo.length; i++) {
-                                if (soPo.length == 1){
-                                    $('#addModal').find('#purchaseOrder').append(
-                                        `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
-                                    );   
-
-                                    $('#addModal').find('#purchaseOrder').trigger('change');
-                                }else{
+                                // Check if option with this value already exists
+                                var existingOption = $('#addModal').find('#purchaseOrder option[value="' + soPo[i] + '"]');
+                                if (existingOption.length === 0) {
                                     $('#addModal').find('#purchaseOrder').append(
                                         `<option value="${soPo[i]}">${soPo[i]}</option>`
-                                    );   
-                                }           
+                                    );
+                                }                   
                             }
 
-                            $('#addModal').find('#purchaseOrder').val("");
+                            if ($('#addModal').find('#purchaseOrder option').length == 2){
+                                $('#addModal').find('#purchaseOrder').val(soPo[0]).trigger('change');
+                            }else{
+                                $('#addModal').find('#purchaseOrder').val("");
+                            }
                         }else{
                             $('#addModal').find('#purchaseOrder').empty();
                         }
@@ -4227,26 +4441,24 @@ else{
 
                     if (obj.status == 'success'){
                         if (obj.message.length > 0){
-                            $('#addModal').find('#salesOrder').empty();
-
                             var soPo = obj.message;
+                            $('#addModal').find('#salesOrder').empty();
                             $('#addModal').find('#salesOrder').append(`<option selected="-">-</option>`);
                             for (var i = 0; i < soPo.length; i++) {
-                                if (soPo.length == 1){
-                                    $('#addModal').find('#salesOrder').append(
-                                        `<option value="${soPo[i]}" selected>${soPo[i]}</option>`
-                                    ); 
-
-                                    $('#addModal').find('#salesOrder').trigger('change');
-                                }else{
+                                // Check if option with this value already exists
+                                var existingOption = $('#addModal').find('#salesOrder option[value="' + soPo[i] + '"]');
+                                if (existingOption.length === 0) {
                                     $('#addModal').find('#salesOrder').append(
                                         `<option value="${soPo[i]}">${soPo[i]}</option>`
-                                    ); 
-                                }                 
+                                    );
+                                }                   
                             }
 
-                            $('#addModal').find('#salesOrder').val("");
-
+                            if ($('#addModal').find('#salesOrder option').length == 2){
+                                $('#addModal').find('#salesOrder').val(soPo[0]).trigger('change');
+                            }else{
+                                $('#addModal').find('#salesOrder').val("");
+                            }
                         }else{
                             $('#addModal').find('#salesOrder').empty();
                         }
@@ -4414,6 +4626,9 @@ else{
                 }
 
                 $('#addModal').find('#id').val(obj.message.id);
+                $('#addModal').find('#tinNo').val(obj.message.tin_no);
+                $('#addModal').find('#idNo').val(obj.message.id_no);
+                $('#addModal').find('#idType').val(obj.message.id_type);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
                 $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
                 $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');

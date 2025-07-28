@@ -414,8 +414,8 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Bitumen PG 79</h5>
-                                                    <button type="button" class="btn btn-danger add-pg-79" id="addpg79">Add PG 79</button>
+                                                    <h5 class="card-title mb-0">Bitumen PG 76</h5>
+                                                    <button type="button" class="btn btn-danger add-pg-79" id="addpg79">Add PG 76</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -425,7 +425,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                     <thead>
                                                         <tr>
                                                             <th width="10%">No</th>
-                                                            <th>Bitumen PG 79</th>
+                                                            <th>Bitumen PG 76</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -554,7 +554,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                             <th>K1-40</th>
                                                             <th>SS1K</th>
                                                             <th>Others</th>
-                                                            <th colspan="2">Lime</th>
+                                                            <th colspan="2">Lime/Filler</th>
                                                         </tr>
                                                         <tr>
                                                             <td>Quantity (dr)</td>
