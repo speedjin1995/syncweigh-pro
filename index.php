@@ -812,7 +812,7 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3"  <?php 
-                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN'){
+                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER'){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -892,7 +892,7 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <select id="batchDrum" class="form-select select2" required>
+                                                                                        <select id="batchDrum" name="batchDrum" class="form-select select2" required>
                                                                                             <option value="Batch">Batch</option>
                                                                                             <option value="Drum">Drum</option>
                                                                                         </select>
@@ -4737,13 +4737,8 @@ else{
                     $('#addModal').find("input[name='loadDrum'][value='false']").prop("checked", true).trigger('change');
                 }
                 
-                $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);
-                
-                if (obj.message.batch_drum == 'Batch'){
-                    $('#addModal').find("input[name='batchDrum'][value='true']").prop("checked", true);
-                }else{
-                    $('#addModal').find("input[name='batchDrum'][value='false']").prop("checked", true);
-                }
+                $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);                
+                $('#addModal').find('#batchDrum').val(obj.message.batch_drum).trigger('change');
 
                 if (obj.message.transaction_status == 'Purchase'){
                     //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
