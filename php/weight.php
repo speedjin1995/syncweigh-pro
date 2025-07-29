@@ -534,11 +534,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     if (empty($_POST["batchDrum"])) {
         $batchDrum = null;
     } else {
-        if ($_POST["batchDrum"] == 'true'){
-            $batchDrum = 'Batch';
-        }else{
-            $batchDrum = 'Drum';
-        }
+        $batchDrum = trim($_POST["batchDrum"]);
     }
 
     if(isset($_POST['balance']) && $_POST['balance'] != null && $_POST['balance'] != ''){
