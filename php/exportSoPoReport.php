@@ -198,6 +198,13 @@ if(isset($_POST["type"])){
     $sql = '';
 
     if($_POST["type"] == 'Sales'){
+        if ($_POST['status'] == 'Local') {
+            $reportType = "Public";
+        }
+        else {
+            $reportType = "Sales";
+        }
+
         if ($isMulti == 'Y'){
             $id = $_POST['id'];
             $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date";
@@ -1144,7 +1151,7 @@ if(isset($_POST["type"])){
                                         <h5 class="fw-bold">'.$companyName.'</h5>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <p>Sales Weighing Summary Report By '.$groupBy.'</p>
+                                        <p>'.$reportType.' Weighing Summary Report By '.$groupBy.'</p>
                                     </div>
                                 </div>
                                 <div class="row">
