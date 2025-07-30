@@ -145,7 +145,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
-    "transaction_status"=>$row['transaction_status'],
+    "transaction_status"=>($row['transaction_status'] == 'Local' ? 'Public' : $row['transaction_status']),
     "weight_type"=>$row['weight_type'],
     "transaction_date"=>$row['transaction_date'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],

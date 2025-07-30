@@ -141,14 +141,14 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     if ($_GET['status'] == 'Sales'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
-            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 
             'PLANT CODE', 'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
     else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
-            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
             'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
@@ -157,13 +157,13 @@ else{
     if ($_GET['status'] == 'Sales'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE','CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
-            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
             'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
-            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
             ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
             'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }
@@ -215,7 +215,7 @@ if($query->num_rows > 0){
                     ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
                     ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
                     $row['product_description'], $row['destination_code'], $row['destination'], $row['transporter_code'], 
-                    $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], 
+                    $row['transporter'], $exDel, $row['batch_drum'], $row['purchase_order'], $row['delivery_no'], 
                     number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), 
                     number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                     ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
@@ -255,7 +255,7 @@ if($query->num_rows > 0){
                     ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
                     ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
                     $row['product_description'], $row['destination_code'], $row['destination'], $row['transporter_code'], 
-                    $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], 
+                    $row['transporter'], $exDel, $row['batch_drum'], $row['purchase_order'], $row['delivery_no'], 
                     number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), 
                     number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
                     ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
