@@ -1567,3 +1567,42 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_WEIGHT` BEFORE UPDATE ON `Weight`
 END
 $$
 DELIMITER ;
+
+-- 29/07/2025--
+ALTER TABLE `Bitumen` ADD `fibre` LONGTEXT NULL AFTER `hotoil`;
+
+ALTER TABLE `Bitumen_Log` ADD `fibre` LONGTEXT NULL AFTER `hotoil`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_BITUMEN` AFTER INSERT ON `Bitumen`
+ FOR EACH ROW INSERT INTO Bitumen_Log (
+    bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, fibre, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, 1, NEW.created_by, NEW.created_datetime
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Bitumen_Log table
+    INSERT INTO Bitumen_Log (
+        bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, fibre, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_datetime
+    );
+END
+$$
+DELIMITER ;

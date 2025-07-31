@@ -26,6 +26,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $weightId = trim($_POST["id"]);
     }
 
+    if (empty($_POST["plantId"])) {
+        $plantId = null;
+    } else {
+        $plantId = trim($_POST["plantId"]);
+    }
+
     if (empty($_POST["plantCode"])) {
         $plantCode = null;
     } else {
@@ -602,6 +608,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 $weighing_stmt->bind_param('ssssss', $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant, $weightId);
                 $weighing_stmt->execute();
                 $result = $weighing_stmt->get_result(); 
+                $weighing_stmt->close();
 
                 if ($result->num_rows > 0) {
                     $orderSuppWeights = 0;
@@ -630,7 +637,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 $weight_log_stmt->bind_param('s', $transactionId);
                 $weight_log_stmt->execute();
                 $weight_log_result = $weight_log_stmt->get_result();
-
+                $weight_log_stmt->close();
+                
                 if ($weight_log_result->num_rows > 0){
                     $weightLogRow = $weight_log_result->fetch_assoc();
                     $previousNettWeight = $weightLogRow['nett_weight1'];
@@ -638,6 +646,22 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
                 $nettWeightDifference = (float) $nettWeight - (float) $previousNettWeight;
             }
+        }elseif($transactionStatus == 'WIP'){
+            # Inventory Logic
+            $previousNettWeight = 0;
+            // Query previous weight log
+            $weight_log_stmt = $db->prepare("SELECT * FROM Weight_Log WHERE transaction_id=? ORDER BY 1 DESC");
+            $weight_log_stmt->bind_param('s', $transactionId);
+            $weight_log_stmt->execute();
+            $weight_log_result = $weight_log_stmt->get_result();
+            $weight_log_stmt->close();
+
+            if ($weight_log_result->num_rows > 0){
+                $weightLogRow = $weight_log_result->fetch_assoc();
+                $previousNettWeight = $weightLogRow['nett_weight1'];
+            }
+
+            $nettWeightDifference = (float) $nettWeight - (float) $previousNettWeight;
         }
 
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight=?, po_supply_weight=?, order_weight=?, tin_no=?, id_no=?, id_type=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
@@ -724,8 +748,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     }
                 }elseif ($transactionStatus == 'Sales') {
                     if ($isComplete == 'Y' && $isCancel == 'N'){
-                        $productRawMat_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND status='0'");
-                        $productRawMat_stmt->bind_param('s', $productId);
+                        $productRawMat_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND plant_id=? AND status='0'");
+                        $productRawMat_stmt->bind_param('ss', $productId, $plantId);
                         $productRawMat_stmt->execute();
                         $productRawMat_result = $productRawMat_stmt->get_result();
 
@@ -765,6 +789,99 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
                         $productRawMat_stmt->close();
                     }
+                }elseif ($transactionStatus == 'WIP') {
+                    // Logic to minus materials need for WIP product then add amount for WIP product (EDIT VERSION)
+                    if ($isComplete == 'Y' && $isCancel == 'N'){
+                        if($product_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND plant_id=? AND status='0'")){
+                            $product_stmt->bind_param('ss', $productId, $plantId);
+                            $product_stmt->execute();
+                            $product_result = $product_stmt->get_result();
+
+                            while ($productRow = $product_result->fetch_assoc()) {
+                                $rawMatId = $productRow['raw_mat_id'];
+                                $rawMatWeight = $productRow['raw_mat_weight'];
+
+                                $deltaRawMatWeight = (float) $rawMatWeight * $nettWeightDifference; // Use weight difference for edit
+
+                                // Query for rate conversion
+                                $unitId = '2'; // KG unit ID
+                                $rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status='0'");
+                                $rate_stmt->bind_param('ss', $rawMatId, $unitId);
+                                $rate_stmt->execute();
+                                $rate_result = $rate_stmt->get_result();
+                                $rate_row = $rate_result->fetch_assoc();
+                                $rate_stmt->close();
+
+                                if (!empty($rate_row) && isset($rate_row) && $rate_row != null) {
+                                    $rate = $rate_row['rate'];
+
+                                    if ($inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")){
+                                        $inventory_stmt->bind_param('ss', $rawMatId, $plantId);
+                                        $inventory_stmt->execute();
+                                        $inventory_result = $inventory_stmt->get_result();
+
+                                        while ($inventoryRow = $inventory_result->fetch_assoc()) {
+                                            $inventoryBalance = $inventoryRow['raw_mat_weight'];
+                                            $inventoryId = $inventoryRow['id'];
+
+                                            $newInventoryBalance = (float) $inventoryBalance - (float) $deltaRawMatWeight;
+                                            $newInvBasicUom = $newInventoryBalance * $rate;
+
+                                            // Update Inventory
+                                            if ($upd_inventory_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                                $upd_inventory_stmt->bind_param('sss', $newInventoryBalance, $newInvBasicUom, $inventoryId);
+                                                $upd_inventory_stmt->execute();
+                                                $upd_inventory_stmt->close();
+                                            }
+                                        }
+
+                                        $inventory_stmt->close();
+                                    }
+                                }
+                            }
+
+                            $product_stmt->close();
+
+                            // Add WIP product Inventory - After all raw materials are deducted (EDIT VERSION)
+                            if ($wip_inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")) {
+                                $wip_inventory_stmt->bind_param('ss', $productId, $plantId);
+                                $wip_inventory_stmt->execute();
+                                $wip_inventory_result = $wip_inventory_stmt->get_result();
+
+                                if ($wip_inventory_row = $wip_inventory_result->fetch_assoc()) {
+                                    $currentWipWeight = $wip_inventory_row['raw_mat_weight'];
+                                    $wipInventoryId = $wip_inventory_row['id'];
+
+                                    // Get product UOM rate for conversion
+                                    $wipUnitId = 2;
+                                    $wip_product_rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_Uom WHERE raw_mat_id=? AND unit_id=? AND status='0'");
+                                    $wip_product_rate_stmt->bind_param('ss', $productId, $wipUnitId);
+                                    $wip_product_rate_stmt->execute();
+                                    $wip_product_rate_result = $wip_product_rate_stmt->get_result();
+                                    $wip_product_rate_row = $wip_product_rate_result->fetch_assoc();
+                                    $wip_product_rate_stmt->close();
+
+                                    $wipRate = 1; // Default rate
+                                    if (!empty($wip_product_rate_row) && isset($wip_product_rate_row) && $wip_product_rate_row != null) {
+                                        $wipRate = $wip_product_rate_row['rate'];
+
+                                        // Add the weight difference to WIP inventory
+                                        $newWipWeight = (float) $currentWipWeight + (float) $nettWeightDifference;
+                                        $newWipBasicUom = $newWipWeight * $wipRate;
+
+                                        // Update WIP inventory
+                                        if ($upd_wip_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                            $upd_wip_inv_stmt->bind_param('sss', $newWipWeight, $newWipBasicUom, $wipInventoryId);
+                                            $upd_wip_inv_stmt->execute();
+                                            $upd_wip_inv_stmt->close();
+                                        }
+                                    }
+                                }
+
+                                $wip_inventory_stmt->close();
+                            }
+                        }
+                    }
                 }
 
                 $update_stmt->close();
@@ -783,7 +900,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     else{
         $action = "1"; 
-
+        
         if ($insert_stmt = $db->prepare("INSERT INTO Weight (transaction_id, transaction_status, weight_type, customer_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, po_supply_weight, order_weight, tin_no, id_no, id_type, customer_code, customer_name, supplier_code, supplier_name,
         product_code, product_name, ex_del, raw_mat_code, raw_mat_name, site_code, site_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1,
         gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, manual_weight, indicator_id, weighbridge_id, created_by, modified_by, indicator_id_2, 
@@ -989,6 +1106,98 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 }
 
                                 $productRawMat_stmt->close();
+                            }
+                        }elseif ($transactionStatus == 'WIP') {
+                            // Logic to minus materials need for WIP product then add amount for WIP product
+                            if ($isComplete == 'Y' && $isCancel == 'N'){
+                                if($product_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND plant_id=? AND status='0'")){
+                                    $product_stmt->bind_param('ss', $productId, $plantId);
+                                    $product_stmt->execute();
+                                    $product_result = $product_stmt->get_result();
+
+                                    while ($productRow = $product_result->fetch_assoc()) {
+                                        $rawMatId = $productRow['raw_mat_id'];
+                                        $rawMatWeight = $productRow['raw_mat_weight'];
+
+                                        $calculatedWeight = (float) $nettWeight * (float) $rawMatWeight;
+
+                                        // Query for rate conversion
+                                        $unitId = '2'; // KG unit ID
+                                        $rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status='0'");
+                                        $rate_stmt->bind_param('ss', $rawMatId, $unitId);
+                                        $rate_stmt->execute();
+                                        $rate_result = $rate_stmt->get_result();
+                                        $rate_row = $rate_result->fetch_assoc();
+                                        $rate_stmt->close();
+
+                                        if (!empty($rate_row) && isset($rate_row) && $rate_row != null) {
+                                            $rate = $rate_row['rate'];
+
+                                            if ($inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")){
+                                                $inventory_stmt->bind_param('ss', $rawMatId, $plantId);
+                                                $inventory_stmt->execute();
+                                                $inventory_result = $inventory_stmt->get_result();
+
+                                                while ($inventoryRow = $inventory_result->fetch_assoc()) {
+                                                    $inventoryBalance = $inventoryRow['raw_mat_weight'];
+                                                    $inventoryId = $inventoryRow['id'];
+
+                                                    $newInventoryBalance = (float) $inventoryBalance - (float) $calculatedWeight;
+                                                    $newInvBasicUom = $newInventoryBalance * $rate;
+
+                                                    // Update Inventory
+                                                    if ($upd_inventory_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                                        $upd_inventory_stmt->bind_param('sss', $newInventoryBalance, $newInvBasicUom, $inventoryId);
+                                                        $upd_inventory_stmt->execute();
+                                                        $upd_inventory_stmt->close();
+                                                    }
+                                                }
+
+                                                $inventory_stmt->close();
+                                            }
+                                        }
+                                    }
+
+                                    $product_stmt->close();
+
+                                    // Add WIP product Inventory - After all raw materials are deducted
+                                    if ($wip_inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_id=? AND status='0'")) {
+                                        $wip_inventory_stmt->bind_param('ss', $productId, $plantId);
+                                        $wip_inventory_stmt->execute();
+                                        $wip_inventory_result = $wip_inventory_stmt->get_result();
+
+                                        if ($wip_inventory_row = $wip_inventory_result->fetch_assoc()) {
+                                            $currentWipWeight = $wip_inventory_row['raw_mat_weight'];
+                                            $wipInventoryId = $wip_inventory_row['id'];
+
+                                            // Get product UOM rate for conversion
+                                            $wipUnitId = 2;
+                                            $wip_product_rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_Uom WHERE raw_mat_id=? AND unit_id=? AND status='0'");
+                                            $wip_product_rate_stmt->bind_param('ss', $productId, $wipUnitId);
+                                            $wip_product_rate_stmt->execute();
+                                            $wip_product_rate_result = $wip_product_rate_stmt->get_result();
+                                            $wip_product_rate_row = $wip_product_rate_result->fetch_assoc();
+                                            $wip_product_rate_stmt->close();
+
+                                            $wipRate = 1; // Default rate
+                                            if (!empty($wip_product_rate_row) && isset($wip_product_rate_row) && $wip_product_rate_row != null) {
+                                                $wipRate = $wip_product_rate_row['rate'];
+
+                                                // Add the produced PG76 to inventory
+                                                $newWipWeight = (float) $currentWipWeight + (float) $nettWeight;
+                                                $newWipBasicUom = $newWipWeight * $wipRate;
+
+                                                // Update WIP inventory
+                                                if ($upd_wip_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_basic_uom=? WHERE id=?")) {
+                                                    $upd_wip_inv_stmt->bind_param('sss', $newWipWeight, $newWipBasicUom, $wipInventoryId);
+                                                    $upd_wip_inv_stmt->execute();
+                                                    $upd_wip_inv_stmt->close();
+                                                }
+                                            }
+                                        }
+                                        $wip_inventory_result->close();
+                                    }
+                                }
                             }
                         }
 

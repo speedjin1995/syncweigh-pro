@@ -255,6 +255,56 @@ else{
                                             </div><!-- /.modal-content -->
                                         </div><!-- /.modal-dialog -->
                                     </div><!-- /.modal -->
+                                    
+                                    <!-- /.modal-dialog -->
+                                    <div class="modal fade" id="stockTakeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalScrollableTitle">Generate Stock Take Report</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form role="form" id="stockTakeForm" class="needs-validation" novalidate autocomplete="off">
+                                                        <div class=" row col-12">
+                                                            <div class="col-xxl-12 col-lg-12">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="fromDateTime" class="col-sm-4 col-form-label">From Date/Time</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="fromDateTime" name="fromDateTime" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                            
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="toDateTime" class="col-sm-4 col-form-label">To Date/Time</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="toDateTime" name="toDateTime" required>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-lg-12">
+                                                            <div class="hstack gap-2 justify-content-end">
+                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-danger" id="submitStockTake">Submit</button>
+                                                            </div>
+                                                        </div><!--end col-->                                                               
+                                                    </form>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal -->
 
                                 </div>
                             </div> <!-- end row-->
@@ -272,6 +322,10 @@ else{
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <button type="button" id="genStockTake" class="btn btn-danger waves-effect waves-light">
+                                                                    <i class="ri-stock-line align-middle me-1"></i>
+                                                                    Generate Stock Take
+                                                                </button>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
@@ -390,8 +444,21 @@ let lfoTable;
 let dieselTable;
 
 $(function () {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    const yesterday = new Date(today);
     var startDate = new Date();
     startDate.setDate(startDate.getDate() - 1);
+
+    $('#fromDateTime').flatpickr({
+        dateFormat: "Y-m-d",
+        defaultDate: today
+    });
+
+    $('#toDateTime').flatpickr({
+        dateFormat: "Y-m-d",
+        defaultDate: today
+    });
 
     $(".flatpickrStart").flatpickr({
         defaultDate: new Date(startDate), 
@@ -459,126 +526,6 @@ $(function () {
         }
     });
 
-    // Function to update the DataTable
-    function updateDataTable(selectedValue) {
-        if (selectedValue == '27') {
-            // Destroy and clean existing DataTable
-            if ($.fn.DataTable.isDataTable("#sixtySeventyTable")) {
-                $('#sixtySeventyTable').DataTable().clear().destroy();
-            }
-
-            //Create new Datatable
-            sixtySeventyTable = $("#sixtySeventyTable").DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                'processing': true,
-                'serverSide': true,
-                'paging': false,
-                'searching': false,
-                'info': false,
-                'lengthChange': false,
-                'ordering': false,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url':'php/filterStockTakeLog.php',
-                    'data': {
-                        fromDateSearch: $('#fromDateSearch').val(),
-                        toDateSearch: $('#toDateSearch').val(),
-                        rawMat: $('#rawMatSearch').val(),
-                        plant: $('#plantSearch').val(),
-                    } 
-                },
-                'columns': [
-                    { data: 'declaration_datetime' },
-                    { data: 'sixty_seventy_production' },
-                    { data: 'sixty_seventy_os' },
-                    { data: 'sixty_seventy_incoming' },
-                    { data: 'sixty_seventy_usage' },
-                    { data: 'sixty_seventy_bookstock' },
-                    { data: 'sixty_seventy_ps' },
-                    { data: 'sixty_seventy_diffstock' },
-                    { data: 'sixty_seventy_actual_usage' }
-                ]
-            });
-        }else if (selectedValue == '32'){
-            // Destroy and clean existing DataTable
-            if ($.fn.DataTable.isDataTable("#lfoTable")) {
-                $('#lfoTable').DataTable().clear().destroy();
-            }
-
-            //Create new Datatable
-            lfoTable = $("#lfoTable").DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                'processing': true,
-                'serverSide': true,
-                'paging': false,
-                'searching': false,
-                'info': false,
-                'lengthChange': false,
-                'ordering': false,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url':'php/filterStockTakeLog.php',
-                    'data': {
-                        fromDateSearch: $('#fromDateSearch').val(),
-                        toDateSearch: $('#toDateSearch').val(),
-                        rawMat: $('#rawMatSearch').val(),
-                        plant: $('#plantSearch').val(),
-                    } 
-                },
-                'columns': [
-                    { data: 'declaration_datetime' },
-                    { data: 'lfo_production' },
-                    { data: 'lfo_os' },
-                    { data: 'lfo_incoming' },
-                    { data: 'lfo_ps' },
-                    { data: 'lfo_usage' },
-                    { data: 'lfo_actual_usage' }
-                ]
-            });
-        }else if (selectedValue == '31'){
-            // Destroy and clean existing DataTable
-            if ($.fn.DataTable.isDataTable("#dieselTable")) {
-                $('#dieselTable').DataTable().clear().destroy();
-            }
-
-            //Create new Datatable
-            dieselTable = $("#dieselTable").DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                'processing': true,
-                'serverSide': true,
-                'paging': false,
-                'searching': false,
-                'info': false,
-                'lengthChange': false,
-                'ordering': false,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url':'php/filterStockTakeLog.php',
-                    'data': {
-                        fromDateSearch: $('#fromDateSearch').val(),
-                        toDateSearch: $('#toDateSearch').val(),
-                        rawMat: $('#rawMatSearch').val(),
-                        plant: $('#plantSearch').val(),
-                    } 
-                },
-                'columns': [
-                    { data: 'declaration_datetime' },
-                    { data: 'diesel_production' },
-                    { data: 'diesel_os' },
-                    { data: 'diesel_incoming' },
-                    { data: 'diesel_mreading' },
-                    { data: 'diesel_transport' },
-                    { data: 'diesel_ps' },
-                    { data: 'diesel_usage' },
-                    { data: 'diesel_actual_usage' }
-                ]
-            });
-        }
-    }
-
     $('#exportExcel').on('click', function(){
         var fromDateSearch = $('#fromDateSearch').val();
         var toDateSearch = $('#toDateSearch').val();
@@ -588,7 +535,152 @@ $(function () {
 
         window.open("php/exportStockTake.php?fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+"&plant="+plantSearch+"&rawMaterial="+rawMatSearch);
     });
+
+    $('#genStockTake').on('click', function(){
+        $(('#stockTakeModal')).modal('show');
+    });
+
+    $('#submitStockTake').on('click', function(){
+        if($('#stockTakeForm').valid()){
+            $('#spinnerLoading').show();
+            $.post('php/insertStockTakeLog.php', $('#stockTakeForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success'){
+                    window.location.reload();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $("#failBtn").attr('data-toast-text', 'Something went wrong!' );
+                    $("#failBtn").click();
+                }
+            });
+        }
+    });
 });
+
+// Function to update the DataTable
+function updateDataTable(selectedValue) {
+    if (selectedValue == '27') {
+        // Destroy and clean existing DataTable
+        if ($.fn.DataTable.isDataTable("#sixtySeventyTable")) {
+            $('#sixtySeventyTable').DataTable().clear().destroy();
+        }
+
+        //Create new Datatable
+        sixtySeventyTable = $("#sixtySeventyTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'lengthChange': false,
+            'ordering': false,
+            'serverMethod': 'post',
+            'ajax': {
+                'url':'php/filterStockTakeLog.php',
+                'data': {
+                    fromDateSearch: $('#fromDateSearch').val(),
+                    toDateSearch: $('#toDateSearch').val(),
+                    rawMat: $('#rawMatSearch').val(),
+                    plant: $('#plantSearch').val(),
+                } 
+            },
+            'columns': [
+                { data: 'declaration_datetime' },
+                { data: 'sixty_seventy_production' },
+                { data: 'sixty_seventy_os' },
+                { data: 'sixty_seventy_incoming' },
+                { data: 'sixty_seventy_usage' },
+                { data: 'sixty_seventy_bookstock' },
+                { data: 'sixty_seventy_ps' },
+                { data: 'sixty_seventy_diffstock' },
+                { data: 'sixty_seventy_actual_usage' }
+            ]
+        });
+    }else if (selectedValue == '32'){
+        // Destroy and clean existing DataTable
+        if ($.fn.DataTable.isDataTable("#lfoTable")) {
+            $('#lfoTable').DataTable().clear().destroy();
+        }
+
+        //Create new Datatable
+        lfoTable = $("#lfoTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'lengthChange': false,
+            'ordering': false,
+            'serverMethod': 'post',
+            'ajax': {
+                'url':'php/filterStockTakeLog.php',
+                'data': {
+                    fromDateSearch: $('#fromDateSearch').val(),
+                    toDateSearch: $('#toDateSearch').val(),
+                    rawMat: $('#rawMatSearch').val(),
+                    plant: $('#plantSearch').val(),
+                } 
+            },
+            'columns': [
+                { data: 'declaration_datetime' },
+                { data: 'lfo_production' },
+                { data: 'lfo_os' },
+                { data: 'lfo_incoming' },
+                { data: 'lfo_ps' },
+                { data: 'lfo_usage' },
+                { data: 'lfo_actual_usage' }
+            ]
+        });
+    }else if (selectedValue == '31'){
+        // Destroy and clean existing DataTable
+        if ($.fn.DataTable.isDataTable("#dieselTable")) {
+            $('#dieselTable').DataTable().clear().destroy();
+        }
+
+        //Create new Datatable
+        dieselTable = $("#dieselTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'paging': false,
+            'searching': false,
+            'info': false,
+            'lengthChange': false,
+            'ordering': false,
+            'serverMethod': 'post',
+            'ajax': {
+                'url':'php/filterStockTakeLog.php',
+                'data': {
+                    fromDateSearch: $('#fromDateSearch').val(),
+                    toDateSearch: $('#toDateSearch').val(),
+                    rawMat: $('#rawMatSearch').val(),
+                    plant: $('#plantSearch').val(),
+                } 
+            },
+            'columns': [
+                { data: 'declaration_datetime' },
+                { data: 'diesel_production' },
+                { data: 'diesel_os' },
+                { data: 'diesel_incoming' },
+                { data: 'diesel_mreading' },
+                { data: 'diesel_transport' },
+                { data: 'diesel_ps' },
+                { data: 'diesel_usage' },
+                { data: 'diesel_actual_usage' }
+            ]
+        });
+    }
+}
 
 function format (row) {
     var custSupplier = '';

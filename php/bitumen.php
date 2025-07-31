@@ -175,65 +175,177 @@ if (empty($_POST["QD"])) {
     $qd = trim($_POST["QD"]);
 } 
 
-if (empty($_POST["typeMR6"])) {
-    $typeMR6 = null;
+if (empty($_POST["fibreNameMr6"])) {
+    $fibreNameMr6 = null;
 } else {
-    $typeMR6 = trim($_POST["typeMR6"]);
-} 
+    $fibreNameMr6 = trim($_POST["fibreNameMr6"]);
+}
 
-if (empty($_POST["typeRPF"])) {
-    $typeRPF = null;
+if (empty($_POST["fibreTypeMr6"])) {
+    $fibreTypeMr6 = 0.00;
 } else {
-    $typeRPF = trim($_POST["typeRPF"]);
-} 
+    $fibreTypeMr6 = trim($_POST["fibreTypeMr6"]);
+}
 
-if (empty($_POST["typeNovaFiber"])) {
-    $typeNovaFiber = null;
+if (empty($_POST["fibreBagsMr6"])) {
+    $fibreBagsMr6 = 0;
 } else {
-    $typeNovaFiber = trim($_POST["typeNovaFiber"]);
-} 
+    $fibreBagsMr6 = trim($_POST["fibreBagsMr6"]);
+}
 
-if (empty($_POST["typeFortaFiber"])) {
-    $typeFortaFiber = null;
+if (empty($_POST["fibreQtyMr6"])) {
+    $fibreQtyMr6 = 0.00;
 } else {
-    $typeFortaFiber = trim($_POST["typeFortaFiber"]);
-} 
+    $fibreQtyMr6 = trim($_POST["fibreQtyMr6"]);
+}
 
-if (empty($_POST["opcIncoming"])) {
-    $opcIncoming = null;
+if (empty($_POST["fibreNameRpf"])) {
+    $fibreNameRpf = null;
 } else {
-    $opcIncoming = trim($_POST["opcIncoming"]);
-} 
+    $fibreNameRpf = trim($_POST["fibreNameRpf"]);
+}
 
-if (empty($_POST["qtyMR6"])) {
-    $qtyMR6 = null;
+if (empty($_POST["fibreTypeRpf"])) {
+    $fibreTypeRpf = 0.00;
 } else {
-    $qtyMR6 = trim($_POST["qtyMR6"]);
-} 
+    $fibreTypeRpf = trim($_POST["fibreTypeRpf"]);
+}
 
-if (empty($_POST["qtyRPF"])) {
-    $qtyRPF = null;
+if (empty($_POST["fibreBagsRpf"])) {
+    $fibreBagsRpf = 0;
 } else {
-    $qtyRPF = trim($_POST["qtyRPF"]);
-} 
+    $fibreBagsRpf = trim($_POST["fibreBagsRpf"]);
+}
 
-if (empty($_POST["qtyNovaFiber"])) {
-    $qtyNovaFiber = null;
+if (empty($_POST["fibreQtyRpf"])) {
+    $fibreQtyRpf = 0.00;
 } else {
-    $qtyNovaFiber = trim($_POST["qtyNovaFiber"]);
-} 
+    $fibreQtyRpf = trim($_POST["fibreQtyRpf"]);
+}
 
-if (empty($_POST["qtyFortaFiber"])) {
-    $qtyFortaFiber = null;
+if (empty($_POST["fibreNameNova"])) {
+    $fibreNameNova = null;
 } else {
-    $qtyFortaFiber = trim($_POST["qtyFortaFiber"]);
-} 
+    $fibreNameNova = trim($_POST["fibreNameNova"]);
+}
 
-if (empty($_POST["opcDo"])) {
-    $opcDo = null;
+if (empty($_POST["fibreTypeNova"])) {
+    $fibreTypeNova = 0.00;
 } else {
-    $opcDo = trim($_POST["opcDo"]);
-} 
+    $fibreTypeNova = trim($_POST["fibreTypeNova"]);
+}
+
+if (empty($_POST["fibreBagsNova"])) {
+    $fibreBagsNova = 0;
+} else {
+    $fibreBagsNova = trim($_POST["fibreBagsNova"]);
+}
+
+if (empty($_POST["fibreQtyNova"])) {
+    $fibreQtyNova = 0.00;
+} else {
+    $fibreQtyNova = trim($_POST["fibreQtyNova"]);
+}
+
+if (empty($_POST["fibreNameForta"])) {
+    $fibreNameForta = null;
+} else {
+    $fibreNameForta = trim($_POST["fibreNameForta"]);
+}
+
+if (empty($_POST["fibreTypeForta"])) {
+    $fibreTypeForta = 0.00;
+} else {
+    $fibreTypeForta = trim($_POST["fibreTypeForta"]);
+}
+
+if (empty($_POST["fibreBagsForta"])) {
+    $fibreBagsForta = 0;
+} else {
+    $fibreBagsForta = trim($_POST["fibreBagsForta"]);
+}
+
+if (empty($_POST["fibreQtyForta"])) {
+    $fibreQtyForta = 0.00;
+} else {
+    $fibreQtyForta = trim($_POST["fibreQtyForta"]);
+}
+
+# Processing for fibreNo data
+if (!empty($_POST["fibreNo"]) && count($_POST["fibreNo"]) > 0) {
+    $fibreData = [];
+    $fibreNo = $_POST["fibreNo"];
+    $fibreName = $_POST["fibreName"];
+    $fibreType = $_POST["fibreType"];
+    $fibreNoOfBags = $_POST["fibreNoOfBags"];
+    $fibreQty = $_POST["fibreQty"];
+
+    $fibreData[] = array(
+        "fibreNameMr6" => $fibreNameMr6,
+        "fibreTypeMr6" => $fibreTypeMr6,
+        "fibreBagsMr6" => $fibreBagsMr6,
+        "fibreQtyMr6" => $fibreQtyMr6,
+    );
+    $fibreData[] = array(
+        "fibreNameRpf" => $fibreNameRpf,
+        "fibreTypeRpf" => $fibreTypeRpf,
+        "fibreBagsRpf" => $fibreBagsRpf,
+        "fibreQtyRpf" => $fibreQtyRpf,
+    );
+    $fibreData[] = array(
+        "fibreNameNova" => $fibreNameNova,
+        "fibreTypeNova" => $fibreTypeNova,
+        "fibreBagsNova" => $fibreBagsNova,
+        "fibreQtyNova" => $fibreQtyNova,
+    );
+    $fibreData[] = array(
+        "fibreNameForta" => $fibreNameForta,
+        "fibreTypeForta" => $fibreTypeForta,
+        "fibreBagsForta" => $fibreBagsForta,
+        "fibreQtyForta" => $fibreQtyForta,
+    );
+
+    foreach ($fibreNo as $key => $no) {
+        $fibreData[] = array(
+            "no" => $no,
+            "fibreName" => $fibreName[$key],
+            "fibreType" => $fibreType[$key],
+            "fibreBags" => $fibreNoOfBags[$key],
+            "fibreQty" => $fibreQty[$key],
+        );
+    }
+
+    $fibreData = json_encode($fibreData, JSON_PRETTY_PRINT);
+} else {
+    $fibreData = [];
+
+    $fibreData[] = array(
+        "fibreNameMr6" => $fibreNameMr6,
+        "fibreTypeMr6" => $fibreTypeMr6,
+        "fibreBagsMr6" => $fibreBagsMr6,
+        "fibreQtyMr6" => $fibreQtyMr6,
+    );
+    $fibreData[] = array(
+        "fibreNameRpf" => $fibreNameRpf,
+        "fibreTypeRpf" => $fibreTypeRpf,
+        "fibreBagsRpf" => $fibreBagsRpf,
+        "fibreQtyRpf" => $fibreQtyRpf,
+    );
+    $fibreData[] = array(
+        "fibreNameNova" => $fibreNameNova,
+        "fibreTypeNova" => $fibreTypeNova,
+        "fibreBagsNova" => $fibreBagsNova,
+        "fibreQtyNova" => $fibreQtyNova,
+    );
+    $fibreData[] = array(
+        "fibreNameForta" => $fibreNameForta,
+        "fibreTypeForta" => $fibreTypeForta,
+        "fibreBagsForta" => $fibreBagsForta,
+        "fibreQtyForta" => $fibreQtyForta,
+    );
+
+    $fibreData = json_encode($fibreData, JSON_PRETTY_PRINT);
+}
 
 if (empty($_POST["rs1k"])) {
     $rs1k = null;
@@ -259,12 +371,6 @@ if (empty($_POST["others"])) {
     $others = trim($_POST["others"]);
 } 
 
-if (empty($_POST["limeIncoming"])) {
-    $limeIncoming = null;
-} else {
-    $limeIncoming = trim($_POST["limeIncoming"]);
-} 
-
 if (empty($_POST["transport"])) {
     $transport = null;
 } else {
@@ -277,10 +383,40 @@ if (empty($_POST["burner"])) {
     $burner = trim($_POST["burner"]);
 } 
 
+if (empty($_POST["opcDo"])) {
+    $opcDo = null;
+} else {
+    $opcDo = trim($_POST["opcDo"]);
+} 
+
+if (empty($_POST["opcIncoming"])) {
+    $opcIncoming = null;
+} else {
+    $opcIncoming = trim($_POST["opcIncoming"]);
+} 
+
+if (empty($_POST["opcQty"])) {
+    $opcQty = null;
+} else {
+    $opcQty = trim($_POST["opcQty"]);
+} 
+
 if (empty($_POST["limeDo"])) {
     $limeDo = null;
 } else {
     $limeDo = trim($_POST["limeDo"]);
+} 
+
+if (empty($_POST["limeIncoming"])) {
+    $limeIncoming = null;
+} else {
+    $limeIncoming = trim($_POST["limeIncoming"]);
+} 
+
+if (empty($_POST["limeQty"])) {
+    $limeQty = null;
+} else {
+    $limeQty = trim($_POST["limeQty"]);
 } 
 
 # Processing for data
@@ -291,31 +427,25 @@ $data = array(
     "14mm" => $fourteen_mm,
     "10mm" => $ten_mm,
     "QD" => $qd,
-    "typeMR6" => $typeMR6,
-    "typeRPF" => $typeRPF,
-    "typeNovaFiber" => $typeNovaFiber,
-    "typeFortaFiber" => $typeFortaFiber,
-    "opcIncoming" => $opcIncoming,
-    "qtyMR6" => $qtyMR6,
-    "qtyRPF" => $qtyRPF,
-    "qtyNovaFiber" => $qtyNovaFiber,
-    "qtyFortaFiber" => $qtyFortaFiber,
-    "opcDo" => $opcDo,
     "rs1k" => $rs1k,
     "k140" => $k140,
     "ss1k" => $ss1k,
     "others" => $others,
-    "limeIncoming" => $limeIncoming,
     "transport" => $transport,
     "burner" => $burner,
-    "limeDo" => $limeDo
+    "opcDo" => $opcDo,
+    "opcIncoming" => $opcIncoming,
+    "opcQty" => $opcQty,
+    "limeDo" => $limeDo,
+    "limeIncoming" => $limeIncoming,
+    "limeQty" => $limeQty,
 );
 
 $data = json_encode($data, JSON_PRETTY_PRINT);
 
 if(!empty($bitumenId)){
-    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `hotoil`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, modified_by=? WHERE id=?")) {
-        $update_stmt->bind_param('sssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $data, $declarationDatetime, $plant, $plantCode, $username, $bitumenId);
+    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `hotoil`=?, `fibre`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, modified_by=? WHERE id=?")) {
+        $update_stmt->bind_param('ssssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $username, $bitumenId);
 
         // Execute the prepared query.
         if (! $update_stmt->execute()) {
@@ -341,8 +471,8 @@ if(!empty($bitumenId)){
 }
 else
 { 
-    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `hotoil`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-        $insert_stmt->bind_param('ssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $data, $declarationDatetime, $plant, $plantCode, $username);
+    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        $insert_stmt->bind_param('sssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $username);
 
         // Execute the prepared query.
         if (! $insert_stmt->execute()) {

@@ -197,6 +197,7 @@ else{
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Public</option>
+                                                                <option value="WIP">WIP</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -663,6 +664,7 @@ else{
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
                                                                                             <option value="Local">Public</option>
+                                                                                            <option value="WIP">WIP</option>
                                                                                         </select>  
                                                                                     </div>
                                                                                 </div>
@@ -1122,6 +1124,7 @@ else{
                                                         <input type="hidden" id="customerCode" name="customerCode">
                                                         <input type="hidden" id="custName" name="custName">
                                                         <input type="hidden" id="destinationCode" name="destinationCode">
+                                                        <input type="hidden" id="plantId" name="plantId">
                                                         <input type="hidden" id="plantCode" name="plantCode">
                                                         <input type="hidden" id="agentCode" name="agentCode">
                                                         <input type="hidden" id="status" name="status">
@@ -3839,6 +3842,7 @@ else{
             var plantCode = $('#plant :selected').data('code');
             var plantId = $('#plant :selected').data('id');
             $('#plantCode').val(plantCode);
+            $('#plantId').val(plantId);
 
             if (plantId){
                 $.post('php/getPlant.php', {userID: plantId}, function(data)
