@@ -176,7 +176,7 @@ if(isset($_POST["file"])){
                 $sql = "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC";
             }else{
                 $sql = "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC";
-            } var_dump($sql);die;
+            }
 
             if ($select_stmt = $db->prepare($sql)){
 
