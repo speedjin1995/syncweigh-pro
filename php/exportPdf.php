@@ -38,10 +38,10 @@ if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''
 if(isset($_POST['status']) && $_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
     if($_POST["file"] == 'weight'){
         if($_POST['status'] == 'Sales'){
-            $searchQuery .= " and Weight.transaction_status = '".$_POST['status']."'";
+            $searchQuery .= " and Weight.transaction_status = '".$_POST['status']."' AND Weight.product_code <> '501A-011'";
         }
         else{
-            $searchQuery .= " and Weight.transaction_status IN ('Purchase', 'Local')";
+            $searchQuery .= " and Weight.transaction_status IN ('Purchase', 'Local') AND Weight.raw_mat_code <> '501A-011'";
         }
     }
     else{
