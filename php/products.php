@@ -94,8 +94,8 @@ if (isset($_POST['productCode'])) {
                     $rawMatBasicUomUnitId = $_POST['rawMatBasicUomUnitId'];
                     $rawMatWeight = $_POST['rawMatWeight'];
                     $plant = $_POST['plant'];
-                    $plantCode = $_POST['plantCode'];
-                    $plantName = $_POST['plantName'];
+                    // $plantCode = $_POST['plantCode'];
+                    // $plantName = $_POST['plantName'];
                     $batchDrum = $_POST['batchDrum'];
                     $deleteStatus = 1;
                     if(isset($no) && $no != null && count($no) > 0){

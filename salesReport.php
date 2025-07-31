@@ -516,7 +516,7 @@ else{
                                             <input type="hidden" class="form-control" id="id" name="id"> 
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group1">Group 1</label>
                                                         <select id="group1" name="group1" class="form-select">
                                                             <option value=""></option>
@@ -526,9 +526,10 @@ else{
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group2">Group 2</label>
                                                         <select id="group2" name="group2" class="form-select">
                                                             <option value=""></option>
@@ -538,10 +539,10 @@ else{
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
-                                                    
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group3">Group 3</label>
                                                         <select id="group3" name="group3" class="form-select">
                                                             <option value=""></option>
@@ -551,6 +552,20 @@ else{
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
+                                                        </select>         
+                                                    </div>
+                                                    <div class="form-group col-4 mb-3">
+                                                        <label for="group4">Group 4</label>
+                                                        <select id="group4" name="group4" class="form-select">
+                                                            <option value=""></option>
+                                                            <option value="customer_code">Customer</option>
+                                                            <option value="product_code">Product</option>
+                                                            <option value="lorry_plate_no1">Vehicle</option>
+                                                            <option value="destination_code">Destination</option>
+                                                            <option value="transporter_code">Transporter</option>
+                                                            <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
                                                 </div>
@@ -936,6 +951,7 @@ else{
                     var group1 = $('#exportSoRepModal').find('#group1').val();
                     var group2 = $('#exportSoRepModal').find('#group2').val();
                     var group3 = $('#exportSoRepModal').find('#group3').val();
+                    var group4 = $('#exportSoRepModal').find('#group4').val();
 
                     // Added checking to ensure previous group is selected
                     if (group2 && !group1) {
@@ -944,6 +960,10 @@ else{
                     }
                     if (group3 && (!group1 || !group2)) {
                         alert("Please select Group 1 and Group 2 before selecting Group 3.");
+                        return;
+                    }
+                    if (group4 && (!group1 || !group2 || !group3)) {
+                        alert("Please select Group 1, Group 2, and Group 3 before selecting Group 4.");
                         return;
                     }
 
@@ -1038,6 +1058,7 @@ else{
             $("#exportSoRepModal").find('#group1').val('');
             $("#exportSoRepModal").find('#group2').val('');
             $("#exportSoRepModal").find('#group3').val('');
+            $("#exportSoRepModal").find('#group4').val('');
             $("#exportSoRepModal").find('select[id^="group"] option').prop('disabled', false);
             $("#exportSoRepModal").modal("show");
 
@@ -1336,6 +1357,7 @@ else{
             $('#exportSoRepModal').find('#group1').val(),
             $('#exportSoRepModal').find('#group2').val(),
             $('#exportSoRepModal').find('#group3').val(),
+            $('#exportSoRepModal').find('#group4').val(),
         ];
 
         $('select[id^="group"]').each(function () {

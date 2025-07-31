@@ -148,6 +148,27 @@ if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
         //i remove this because both(billboard and weight) also call this print page.
         //AND weight.pStatus = 'Pending'
+
+        // Company Details
+        $companyCode = '';
+        $companyName = '';
+
+        if ($company_stmt = $db->prepare("SELECT * FROM Company")) {
+            if (! $company_stmt->execute()) {
+                echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+            }else{
+                $result = $company_stmt->get_result();
+                $companyData = $result->fetch_assoc();
+                $companyCode = $companyData['company_code'];
+                $companyName = $companyData['name'];
+            }
+        }
+
+
         $sql = '';
         if ($_POST['reportType'] == 'SUMMARY') {
             if ($isMulti == 'Y'){
@@ -191,7 +212,7 @@ if(isset($_POST["file"])){
                                     <div class="header">
                                         <div class="row">
                                             <div class="d-flex justify-content-center">
-                                                <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
+                                                <h5 class="fw-bold">'.$companyName.'</h5>
                                             </div>
                                             <div class="d-flex justify-content-center">
                                                 <p>Sales Weighing Summary Report By Date</p>
@@ -202,7 +223,7 @@ if(isset($_POST["file"])){
                                             <p>
                                                 Start Date : '.$fromDate.' Last Date : '.$toDate.'
                                                 <br>
-                                                Start/Last Company : ERMSB / ERMSB
+                                                Start/Last Company : '.$companyCode.' / '.$companyCode.'
                                             </p>
                                             <br>
                                             <br>
@@ -352,7 +373,7 @@ if(isset($_POST["file"])){
                                     <div class="header">
                                         <div class="row">
                                             <div class="d-flex justify-content-center">
-                                                <h5 class="fw-bold">EAST ROCK MARKETING SDN. BHD.</h5>
+                                                <h5 class="fw-bold">'.$companyName.'</h5>
                                             </div>
                                             <div class="d-flex justify-content-center">
                                                 <p>Sales Weighing Summary Report By Product</p>
@@ -363,7 +384,7 @@ if(isset($_POST["file"])){
                                             <p>
                                                 Start Date : '.$fromDate.' Last Date : '.$toDate.'
                                                 <br>
-                                                Start/Last Company : ERMSB / ERMSB
+                                                Start/Last Company : '.$companyCode.' / '.$companyCode.'
                                                 Start Product / Last Product : / QD
                                             </p>
                                             <br>
@@ -565,7 +586,9 @@ if(isset($_POST["file"])){
                                                     $message .= '<th>EXQ/DEL</th>';
                                                 }
                                                 
-                                                $message .= '<th>PO NO.</th>
+                                                $message .= '
+                                                <th>BATCH/DRUM</th>
+                                                <th>PO NO.</th>
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
@@ -646,7 +669,9 @@ if(isset($_POST["file"])){
                                                         $message .= '<td>' . $exDel . '</td>';
                                                     }
                                                     
-                                                    $message .= '<td>' . $row['purchase_order'] . '</td>
+                                                    $message .= '
+                                                    <td>' . $row['batch_drum'] . '</td>
+                                                    <td>' . $row['purchase_order'] . '</td>
                                                     <td>' . $row['delivery_no'] . '</td>
                                                     <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
@@ -800,6 +825,7 @@ if(isset($_POST["file"])){
                                                 
                                                 $message .= '<th>'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MATERIAL').'</th>
                                                 <th>EXQ/DEL</th>
+                                                <th>BATCH/DRUM</th>
                                                 <th>PO NO.</th>
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
@@ -842,6 +868,7 @@ if(isset($_POST["file"])){
                                                 $message .= '
                                                 <td>' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
                                                 <td>' . $exDel . '</td>
+                                                <td>' . $row['batch_drum'] . '</td>
                                                 <td>' . $row['purchase_order'] . '</td>
                                                 <td>' . $row['delivery_no'] . '</td>
                                                 <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
@@ -972,7 +999,9 @@ if(isset($_POST["file"])){
                                                     $message .= '<th>EXQ/DEL</th>';
                                                 }
                                                 
-                                                $message .= '<th>PO NO.</th>
+                                                $message .= '
+                                                <th>BATCH/DRUM</th>
+                                                <th>PO NO.</th>
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
@@ -1054,7 +1083,9 @@ if(isset($_POST["file"])){
                                                         $message .= '<td style="font-size: 10px; text-align: center;">' . $exDel . '</td>';
                                                     }
                                                     
-                                                    $message .= '<td>' . $row['purchase_order'] . '</td>
+                                                    $message .= '
+                                                    <td>' . $row['batch_drum'] . '</td>
+                                                    <td>' . $row['purchase_order'] . '</td>
                                                     <td>' . $row['delivery_no'] . '</td>
                                                     <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>

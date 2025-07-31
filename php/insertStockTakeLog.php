@@ -7,7 +7,7 @@ session_start();
 $id = $_SESSION['id'];
 $plant = [26, 27, 28];
 
-$today = "2025-08-04";
+$today = date('Y-m-d');
 $startDate = $today . " 00:00:00";
 $endDate = $today . " 23:59:59";
 

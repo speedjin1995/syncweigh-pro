@@ -18,7 +18,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
 $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
-$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0'");
+$salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 $plantName = '-';
 
@@ -157,21 +157,21 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="customerSearchDisplay" style="display:none">
+                                                    <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="customerNoSearch" name="customerNoSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="supplierSearchDisplay">
+                                                    <div class="col-3" id="supplierSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="supplierSearch" class="form-label">Supplier No</label>
-                                                            <select id="supplierSearch" name="supplierSearch[]" class="select2" multiple data-placeholder="Please Select">
+                                                            <select id="supplierSearch" class="form-select select2" >
+                                                                <option selected>-</option>
                                                                 <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
                                                                     <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
                                                                 <?php } ?>
@@ -204,21 +204,21 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="productSearchDisplay" style="display:none">
+                                                    <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="productSearch" class="form-label">Product</label>
-                                                            <select id="productSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="productSearch" name="productSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="rawMatSearchDisplay">
+                                                    <div class="col-3" id="rawMatSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="rawMatSearch" class="form-label">Raw Material</label>
-                                                            <select id="rawMatSearch" name="rawMatSearch[]" class="select2" multiple data-placeholder="Please Select">
+                                                            <select id="rawMatSearch" class="form-select select2" >
+                                                                <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
                                                                     <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
@@ -249,15 +249,15 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="poSearch" class="form-label">PO No</label>
-                                                            <select id="poSearch" class="form-select select2" >
+                                                            <label for="soSearch" class="form-label">Customer P/O No</label>
+                                                            <select id="soSearch" class="form-select select2">
                                                                 <option selected>-</option>
-                                                                <?php while($rowPo = mysqli_fetch_assoc($purchaseOrder)){ ?>
-                                                                    <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
+                                                                <?php while($rowSo = mysqli_fetch_assoc($salesOrder)){ ?>
+                                                                    <option value="<?=$rowSo['order_no'] ?>"><?=$rowSo['order_no'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
-                                                    </div><!--end col--> 
+                                                    </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="batchDrumSearch" class="form-label">By-Batch/By-Drum</label>
@@ -394,10 +394,10 @@ else{
                                                                     <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction Id</th>
                                                                     <th>Status</th>
-                                                                    <th>Supplier</th>
+                                                                    <th>Customer</th>
                                                                     <th>Vehicle</th>
-                                                                    <th>Raw Material</th>
-                                                                    <th>P/O No</th>
+                                                                    <th>Product</th>
+                                                                    <th>Customer P/O No</th>
                                                                     <th>DO</th>
                                                                     <th>Incoming(Gross Weight)</th>
                                                                     <th>Incoming(Gross) Date Time</th>
@@ -515,41 +515,58 @@ else{
                                             <input type="hidden" class="form-control" id="id" name="id"> 
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group1">Group 1</label>
                                                         <select id="group1" name="group1" class="form-select">
                                                             <option value=""></option>
-                                                            <option value="supplier_code">Supplier</option>
-                                                            <option value="raw_mat_code">Raw Material</option>
+                                                            <option value="customer_code">Customer</option>
+                                                            <option value="product_code">Product</option>
                                                             <option value="lorry_plate_no1">Vehicle</option>
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group2">Group 2</label>
                                                         <select id="group2" name="group2" class="form-select">
                                                             <option value=""></option>
-                                                            <option value="supplier_code">Supplier</option>
-                                                            <option value="raw_mat_code">Raw Material</option>
+                                                            <option value="customer_code">Customer</option>
+                                                            <option value="product_code">Product</option>
                                                             <option value="lorry_plate_no1">Vehicle</option>
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
                                                     
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group3">Group 3</label>
                                                         <select id="group3" name="group3" class="form-select">
                                                             <option value=""></option>
-                                                            <option value="supplier_code">Supplier</option>
-                                                            <option value="raw_mat_code">Raw Material</option>
+                                                            <option value="customer_code">Customer</option>
+                                                            <option value="product_code">Product</option>
                                                             <option value="lorry_plate_no1">Vehicle</option>
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
+                                                        </select>         
+                                                    </div>
+                                                    
+                                                    <div class="form-group col-4 mb-3">
+                                                        <label for="group4">Group 4</label>
+                                                        <select id="group4" name="group4" class="form-select">
+                                                            <option value=""></option>
+                                                            <option value="customer_code">Customer</option>
+                                                            <option value="product_code">Product</option>
+                                                            <option value="lorry_plate_no1">Vehicle</option>
+                                                            <option value="destination_code">Destination</option>
+                                                            <option value="transporter_code">Transporter</option>
+                                                            <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
                                                 </div>
@@ -936,6 +953,7 @@ else{
                     var group1 = $('#exportPoRepModal').find('#group1').val();
                     var group2 = $('#exportPoRepModal').find('#group2').val();
                     var group3 = $('#exportPoRepModal').find('#group3').val();
+                    var group4 = $('#exportPoRepModal').find('#group4').val();
 
                     // Added checking to ensure previous group is selected
                     if (group2 && !group1) {
@@ -944,6 +962,10 @@ else{
                     }
                     if (group3 && (!group1 || !group2)) {
                         alert("Please select Group 1 and Group 2 before selecting Group 3.");
+                        return;
+                    }
+                    if (group4 && (!group1 || !group2 || !group3)) {
+                        alert("Please select Group 1, Group 2, and Group 3 before selecting Group 4.");
                         return;
                     }
 
@@ -986,7 +1008,7 @@ else{
                     $('#exportPoRepForm').find('#destination').val(destinationI);
                     $('#exportPoRepForm').find('#plant').val(plantI);
                     $('#exportPoRepForm').find('#batchDrum').val(batchDrumSearchI);
-                    $('#exportPoRepForm').find('#type').val('Purchase');
+                    $('#exportPoRepForm').find('#type').val('Sales');
                     $('#exportPoRepModal').modal('hide');
 
                     $.post('php/exportSoPoReport.php', $('#exportPoRepForm').serialize(), function(response){
@@ -1038,6 +1060,7 @@ else{
             $("#exportPoRepModal").find('#group1').val('');
             $("#exportPoRepModal").find('#group2').val('');
             $("#exportPoRepModal").find('#group3').val('');
+            $("#exportPoRepModal").find('#group4').val('');
             $("#exportPoRepModal").find('select[id^="group"] option').prop('disabled', false);
             $("#exportPoRepModal").modal("show");
 
@@ -1335,6 +1358,7 @@ else{
             $('#exportPoRepModal').find('#group1').val(),
             $('#exportPoRepModal').find('#group2').val(),
             $('#exportPoRepModal').find('#group3').val(),
+            $('#exportPoRepModal').find('#group4').val(),
         ];
 
         $('select[id^="group"]').each(function () {
