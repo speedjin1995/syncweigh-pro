@@ -444,66 +444,68 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                             <div class="row col-12">
                                 <div class="col-xxl-12 col-lg-12">
                                     <div class="card bg-light">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-12 d-flex justify-content-between align-items-center">
+                                                    <h5 class="card-title mb-0">Fibre</h5>
+                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre">Add Fibre</button>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="card-body">
                                             <div class="row">
                                                 <table class="table table-primary" style="text-align: center;">
-                                                    <!-- <thead>
+                                                    <thead>
                                                         <tr>
-                                                            <th>BITUMEN</th>
-                                                            <th>1</th>
-                                                            <th>2</th>
-                                                            <th>3</th>
-                                                            <th>4</th>
-                                                            <th>5</th>
-                                                            <th>6</th>
+                                                            <th>Name</th>
+                                                            <th>Type (kg/bag)</th>
+                                                            <th>No. of Bags</th>
+                                                            <th>Quantity (mt)</th>
+                                                            <th>Action</th>
                                                         </tr>
-                                                    </thead> -->
+                                                    </thead>
+                                                    <tr>
+                                                        <td><input type="text" class="form-control text-center" id="fibreNameMr6" name="fibreNameMr6" value="MR6" readonly></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeMr6" name="fibreTypeMr6" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsMr6" name="fibreBagsMr6" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreQtyMr6" name="fibreQtyMr6" value="0.00" readonly></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" class="form-control text-center" id="fibreNameRpf" name="fibreNameRpf" value="RPF" readonly></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeRpf" name="fibreTypeRpf" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsRpf" name="fibreBagsRpf" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreQtyRpf" name="fibreQtyRpf" value="0.00" readonly></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" class="form-control text-center" id="fibreNameNova" name="fibreNameNova" value="Nova Fiber" readonly></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeNova" name="fibreTypeNova" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsNova" name="fibreBagsNova" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreQtyNova" name="fibreQtyNova" value="0.00" readonly></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" class="form-control text-center" id="fibreNameForta" name="fibreNameForta" value="Forta Fiber" readonly></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreTypeForta" name="fibreTypeForta" value="0.00"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreBagsForta" name="fibreBagsForta" value="0"></td>
+                                                        <td><input type="number" class="form-control text-center" id="fibreQtyForta" name="fibreQtyForta" value="0.00" readonly></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tbody id="fibreTable"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row col-12">
+                                <div class="col-xxl-12 col-lg-12">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <table class="table table-primary" style="text-align: center;">
                                                     <tbody>
-                                                        <!-- <tr>
-                                                            <td>60/70</td>
-                                                            <td><input type="number" class="form-control" id="sixtysevn1" name="sixtysevn1"></td>
-                                                            <td><input type="number" class="form-control" id="sixtysevn2" name="sixtysevn2"></td>
-                                                            <td><input type="number" class="form-control" id="sixtysevn3" name="sixtysevn3"></td>
-                                                            <td><input type="number" class="form-control" id="sixtysevn4" name="sixtysevn4"></td>
-                                                            <td><input type="number" class="form-control" id="sixtysevn5" name="sixtysevn5"></td>
-                                                            <td><input type="number" class="form-control" id="sixtysevn6" name="sixtysevn6" readonly></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Temperature (&deg;C)</td>
-                                                            <td><input type="number" class="form-control" id="temp1" name="temp1"></td>
-                                                            <td><input type="number" class="form-control" id="temp2" name="temp2"></td>
-                                                            <td><input type="number" class="form-control" id="temp3" name="temp3"></td>
-                                                            <td><input type="number" class="form-control" id="temp4" name="temp4"></td>
-                                                            <td><input type="number" class="form-control" id="temp5" name="temp5"></td>
-                                                            <td><input type="number" class="form-control" id="temp6" name="temp6" readonly></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Level (cm)</td>
-                                                            <td><input type="number" class="form-control" id="level1" name="level1"></td>
-                                                            <td><input type="number" class="form-control" id="level2" name="level2"></td>
-                                                            <td><input type="number" class="form-control" id="level3" name="level3"></td>
-                                                            <td><input type="number" class="form-control" id="level4" name="level4"></td>
-                                                            <td><input type="number" class="form-control" id="level5" name="level5"></td>
-                                                            <td><input type="number" class="form-control" id="level6" name="level6" readonly></td>
-                                                        </tr> -->
-                                                        <!-- <tr>
-                                                            <th>LFO</th>
-                                                            <th>1</th>
-                                                            <th>2</th>
-                                                            <th>Diesel</th>
-                                                            <th>Transport</th>
-                                                            <th>Hotoil</th>
-                                                            <th>Burner</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><input type="number" class="form-control" id="lfo" name="lfo"></td>
-                                                            <td><input type="number" class="form-control" id="lfo1" name="lfo1"></td>
-                                                            <td><input type="number" class="form-control" id="lfo2" name="lfo2"></td>
-                                                            <td><input type="number" class="form-control" id="diesel" name="diesel"></td>
-                                                            <td><input type="number" class="form-control" id="transport" name="transport"></td>
-                                                            <td><input type="number" class="form-control" id="hotoil" name="hotoil"></td>
-                                                            <td><input type="number" class="form-control" id="burner" name="burner"></td>
-                                                        </tr> -->
                                                         <tr>
                                                             <th>Aggregrates</th>
                                                             <th>40mm</th>
@@ -523,38 +525,13 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                             <td><input type="number" class="form-control" id="QD" name="QD"></td>
                                                         </tr>
                                                         <tr>
-                                                            <th>All Fibre</th>
-                                                            <th>MR6</th>
-                                                            <th>RPF</th>
-                                                            <th>Nova Fiber</th>
-                                                            <th>Forta Fiber</th>
-                                                            <th colspan="2">OPC</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Type (kg/bag)</td>
-                                                            <td><input type="number" class="form-control" id="typeMR6" name="typeMR6"></td>
-                                                            <td><input type="number" class="form-control" id="typeRPF" name="typeRPF"></td>
-                                                            <td><input type="number" class="form-control" id="typeNovaFiber" name="typeNovaFiber"></td>
-                                                            <td><input type="number" class="form-control" id="typeFortaFiber" name="typeFortaFiber"></td>
-                                                            <td>Incoming (mt)</td>
-                                                            <td><input type="number" class="form-control" id="opcIncoming" name="opcIncoming"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Quantity (mt)</td>
-                                                            <td><input type="number" class="form-control" id="qtyMR6" name="qtyMR6"></td>
-                                                            <td><input type="number" class="form-control" id="qtyRPF" name="qtyRPF"></td>
-                                                            <td><input type="number" class="form-control" id="qtyNovaFiber" name="qtyNovaFiber"></td>
-                                                            <td><input type="number" class="form-control" id="qtyFortaFiber" name="qtyFortaFiber"></td>
-                                                            <td>D/O No</td>
-                                                            <td><input type="number" class="form-control" id="opcDo" name="opcDo"></td>
-                                                        </tr>
-                                                        <tr>
                                                             <th>Emulsion</th>
                                                             <th>RS1-K</th>
                                                             <th>K1-40</th>
                                                             <th>SS1K</th>
                                                             <th>Others</th>
-                                                            <th colspan="2">Lime/Filler</th>
+                                                            <th>Transport</th>
+                                                            <th>Burner</th>
                                                         </tr>
                                                         <tr>
                                                             <td>Quantity (dr)</td>
@@ -562,21 +539,31 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                             <td><input type="number" class="form-control" id="k140" name="k140"></td>
                                                             <td><input type="number" class="form-control" id="ss1k" name="ss1k"></td>
                                                             <td><input type="number" class="form-control" id="others" name="others"></td>
-                                                            <td>Incoming (mt)</td>
-                                                            <td><input type="number" class="form-control" id="limeIncoming" name="limeIncoming"></td>
+                                                            <td><input type="number" class="form-control" id="transport" name="transport"></td>
+                                                            <td><input type="number" class="form-control" id="burner" name="burner"></td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Transport</th>
-                                                            <td>
-                                                                <input type="number" class="form-control" id="transport" name="transport">
-                                                            </td>
-                                                            <th>Burner</th>
-                                                            <td>
-                                                                <input type="number" class="form-control" id="burner" name="burner">
-                                                            </td>
-                                                            <td></td>
+                                                            <th colspan="3">OPC</th>
+                                                            <th colspan="3">Lime/Filler</th>
+                                                            <th></th>
+                                                        </tr>
+                                                        <tr>
                                                             <td>D/O No</td>
+                                                            <td>Incoming (mt)</td>
+                                                            <td>Quantity (mt)</td>
+                                                            <td>D/O No</td>
+                                                            <td>Incoming (mt)</td>
+                                                            <td>Quantity (mt)</td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><input type="number" class="form-control" id="opcDo" name="opcDo"></td>
+                                                            <td><input type="number" class="form-control" id="opcIncoming" name="opcIncoming"></td>
+                                                            <td><input type="number" class="form-control" id="opcQty" name="opcQty"></td>
                                                             <td><input type="number" class="form-control" id="limeDo" name="limeDo"></td>
+                                                            <td><input type="number" class="form-control" id="limeIncoming" name="limeIncoming"></td>
+                                                            <td><input type="number" class="form-control" id="limeQty" name="limeQty"></td>
+                                                            <td></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -685,6 +672,29 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
         </tr>
     </script>
 
+    <script type="text/html" id="fibreDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="fibreNo" name="fibreNo" hidden>
+                <input type="text" class="form-control" id="fibreName" name="fibreName" style="background-color:white;" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="fibreType" name="fibreType" style="background-color:white;" value="0.00" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="fibreNoOfBags" name="fibreNoOfBags" style="background-color:white;" value="0" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="fibreQty" name="fibreQty" style="background-color:white;" value="0.00" readonly>
+            </td>
+            <td class="d-flex justify-content-center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
     <?php include 'layouts/customizer.php'; ?>
     <?php include 'layouts/vendor-scripts.php'; ?>
     <!-- apexcharts -->
@@ -719,6 +729,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
     var dieselCount = $("#dieselTable").find(".details").length;
     var hotoilCount = $("#hotoilTable").find(".details").length;
     var pg79Count = $("#pg79Table").find(".details").length;
+    var fibreCount = $("#fibreTable").find(".details").length;
 
     $(function () {
         const today = new Date();
@@ -755,7 +766,6 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             dateFormat: "d-m-Y",
             defaultDate: today
         });
-
         
         $('#datetime').flatpickr({
             dateFormat: "d-m-Y H:i",
@@ -888,30 +898,37 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             $('#addModal').find('#totalHotoil').val(0);
             $('#pg79Table').html('');
             $('#addModal').find('#totalPgSevenNine').val(0);
+            $('#addModal').find('#fibreTypeMr6').val(0.00);
+            $('#addModal').find('#fibreBagsMr6').val(0);
+            $('#addModal').find('#fibreQtyMr6').val(0.00);
+            $('#addModal').find('#fibreTypeRpf').val(0.00);
+            $('#addModal').find('#fibreBagsRpf').val(0);
+            $('#addModal').find('#fibreQtyRpf').val(0.00);
+            $('#addModal').find('#fibreTypeNova').val(0.00);
+            $('#addModal').find('#fibreBagsNova').val(0);
+            $('#addModal').find('#fibreQtyNova').val(0.00);
+            $('#addModal').find('#fibreTypeForta').val(0.00);
+            $('#addModal').find('#fibreBagsForta').val(0);
+            $('#addModal').find('#fibreQtyForta').val(0.00);
+            $('#fibreTable').html('');
             $('#addModal').find('#40mm').val("");
             $('#addModal').find('#28mm').val("");
             $('#addModal').find('#20mm').val("");
             $('#addModal').find('#14mm').val("");
             $('#addModal').find('#10mm').val("");
             $('#addModal').find('#QD').val("");
-            $('#addModal').find('#typeMR6').val("");
-            $('#addModal').find('#typeRPF').val("");
-            $('#addModal').find('#typeNovaFiber').val("");
-            $('#addModal').find('#typeFortaFiber').val("");
-            $('#addModal').find('#opcIncoming').val("");
-            $('#addModal').find('#qtyMR6').val("");
-            $('#addModal').find('#qtyRPF').val("");
-            $('#addModal').find('#qtyNovaFiber').val("");
-            $('#addModal').find('#qtyFortaFiber').val("");
-            $('#addModal').find('#opcDo').val("");
             $('#addModal').find('#rs1k').val("");
             $('#addModal').find('#k140').val("");
             $('#addModal').find('#ss1k').val("");
             $('#addModal').find('#others').val("");
-            $('#addModal').find('#limeIncoming').val("");
             $('#addModal').find('#transport').val("");
             $('#addModal').find('#burner').val("");
             $('#addModal').find('#limeDo').val("");
+            $('#addModal').find('#limeIncoming').val("");
+            $('#addModal').find('#limeQty').val("");
+            $('#addModal').find('#opcDo').val("");
+            $('#addModal').find('#opcIncoming').val("");
+            $('#addModal').find('#opcQty').val("");
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -1273,6 +1290,115 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
 
             pg79Count++;
         });
+
+        // Find and remove selected table rows for fibreTable
+        $("#fibreTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+
+            $("#fibreTable tr").each(function (index) {
+                $(this).find('input[name^="fibreNo"]').val(index + 1);
+            });
+
+            fibreCount--;
+        });
+
+        // Event delegation for order weight to calculate fibreQty for each fibre type
+        $("#fibreTable").on('change', 'input[id^="fibreType"]', function(){
+            $(this).closest('.details').find('input[id^="fibreQty"]').trigger('change');
+        });
+
+        $("#fibreTable").on('change', 'input[id^="fibreNoOfBags"]', function(){
+            $(this).closest('.details').find('input[id^="fibreQty"]').trigger('change');
+        });
+
+        $("#fibreTable").on('change', 'input[id^="fibreQty"]', function(){
+            var type = parseFloat($(this).closest('.details').find('input[id^="fibreType"]').val()) || 0;
+            var bags = parseFloat($(this).closest('.details').find('input[id^="fibreNoOfBags"]').val()) || 0;
+
+            var qty = type * bags;
+            $(this).val(qty.toFixed(2));
+        });
+
+        $(".add-fibre").click(function(){
+            var $addContents = $("#fibreDetail").clone();
+            $("#fibreTable").append($addContents.html());
+
+            $("#fibreTable").find('.details:last').attr("id", "detail" + fibreCount);
+            $("#fibreTable").find('.details:last').attr("data-index", fibreCount);
+            $("#fibreTable").find('#remove:last').attr("id", "remove" + fibreCount);
+
+            $("#fibreTable").find('#fibreNo:last').attr('name', 'fibreNo['+fibreCount+']').attr("id", "fibreNo" + fibreCount).css("text-align", "center").val(fibreCount + 1);
+            $("#fibreTable").find('#fibreName:last').attr('name', 'fibreName['+fibreCount+']').attr("id", "fibreName" + fibreCount).css("text-align", "center");
+            $("#fibreTable").find('#fibreType:last').attr('name', 'fibreType['+fibreCount+']').attr("id", "fibreType" + fibreCount).css("text-align", "center");
+            $("#fibreTable").find('#fibreNoOfBags:last').attr('name', 'fibreNoOfBags['+fibreCount+']').attr("id", "fibreNoOfBags" + fibreCount).css("text-align", "center");
+            $("#fibreTable").find('#fibreQty:last').attr('name', 'fibreQty['+fibreCount+']').attr("id", "fibreQty" + fibreCount).css("text-align", "center");
+
+            fibreCount++;
+        });
+
+        $('#fibreTypeMr6').on('keyup', function(){
+            $('#fibreQtyMr6').trigger('change');
+        });
+
+        $('#fibreBagsMr6').on('keyup', function(){
+            $('#fibreQtyMr6').trigger('change');
+        });
+
+        $('#fibreQtyMr6').on('change', function(){
+            // Handle the change event for fibreQtyMr6
+            var type = parseFloat($('#fibreTypeMr6').val());
+            var bags = parseFloat($('#fibreBagsMr6').val());
+            var qty = type * bags;
+            $(this).val(qty.toFixed(2));
+        });
+
+        $('#fibreTypeRpf').on('keyup', function(){
+            $('#fibreQtyRpf').trigger('change');
+        });
+
+        $('#fibreBagsRpf').on('keyup', function(){
+            $('#fibreQtyRpf').trigger('change');
+        });
+
+        $('#fibreQtyRpf').on('change', function(){
+            // Handle the change event for fibreQtyRpf
+            var type = parseFloat($('#fibreTypeRpf').val());
+            var bags = parseFloat($('#fibreBagsRpf').val());
+            var qty = type * bags;
+            $(this).val(qty.toFixed(2));
+        });
+
+        $('#fibreTypeNova').on('keyup', function(){
+            $('#fibreQtyNova').trigger('change');
+        });
+
+        $('#fibreBagsNova').on('keyup', function(){
+            $('#fibreQtyNova').trigger('change');
+        });
+
+        $('#fibreQtyNova').on('change', function(){
+            // Handle the change event for fibreQtyNova
+            var type = parseFloat($('#fibreTypeNova').val());
+            var bags = parseFloat($('#fibreBagsNova').val());
+            var qty = type * bags;
+            $(this).val(qty.toFixed(2));
+        });
+
+        $('#fibreTypeForta').on('keyup', function(){
+            $('#fibreQtyForta').trigger('change');
+        });
+
+        $('#fibreBagsForta').on('keyup', function(){
+            $('#fibreQtyForta').trigger('change');
+        });
+
+        $('#fibreQtyForta').on('change', function(){
+            // Handle the change event for fibreQtyForta
+            var type = parseFloat($('#fibreTypeForta').val());
+            var bags = parseFloat($('#fibreBagsForta').val());
+            var qty = type * bags;
+            $(this).val(qty.toFixed(2));
+        });
     });
 
     function edit(id){
@@ -1395,6 +1521,46 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                 }
                 $('#addModal').find('#totalPgSevenNine').val(obj.message.totalPgSevenNine);
 
+                // Fibre Table Processing
+                $('#addModal').find('#fibreNameMr6').val(obj.message.fibreNameMr6);
+                $('#addModal').find('#fibreTypeMr6').val(obj.message.fibreTypeMr6);
+                $('#addModal').find('#fibreBagsMr6').val(obj.message.fibreBagsMr6);
+                $('#addModal').find('#fibreQtyMr6').val(obj.message.fibreQtyMr6);
+                $('#addModal').find('#fibreNameRpf').val(obj.message.fibreNameRpf);
+                $('#addModal').find('#fibreTypeRpf').val(obj.message.fibreTypeRpf);
+                $('#addModal').find('#fibreBagsRpf').val(obj.message.fibreBagsRpf);
+                $('#addModal').find('#fibreQtyRpf').val(obj.message.fibreQtyRpf);
+                $('#addModal').find('#fibreNameNova').val(obj.message.fibreNameNova);
+                $('#addModal').find('#fibreTypeNova').val(obj.message.fibreTypeNova);
+                $('#addModal').find('#fibreBagsNova').val(obj.message.fibreBagsNova);
+                $('#addModal').find('#fibreQtyNova').val(obj.message.fibreQtyNova);
+                $('#addModal').find('#fibreNameForta').val(obj.message.fibreNameForta);
+                $('#addModal').find('#fibreTypeForta').val(obj.message.fibreTypeForta);
+                $('#addModal').find('#fibreBagsForta').val(obj.message.fibreBagsForta);
+                $('#addModal').find('#fibreQtyForta').val(obj.message.fibreQtyForta);
+
+                $('#fibreTable').html('');
+                fibreCount = 0;
+                if (obj.message.fibre.length > 0){ 
+                    for(var i = 0; i < obj.message.fibre.length; i++){
+                        var item = obj.message.fibre[i];
+                        var $addContents = $("#fibreDetail").clone();
+                        $("#fibreTable").append($addContents.html());
+
+                        $("#fibreTable").find('.details:last').attr("id", "detail" + fibreCount);
+                        $("#fibreTable").find('.details:last').attr("data-index", fibreCount);
+                        $("#fibreTable").find('#remove:last').attr("id", "remove" + fibreCount);
+
+                        $("#fibreTable").find('#fibreNo:last').attr('name', 'fibreNo['+fibreCount+']').attr("id", "fibreNo" + fibreCount).css("text-align", "center").val(fibreCount + 1);
+                        $("#fibreTable").find('#fibreName:last').attr('name', 'fibreName['+fibreCount+']').attr("id", "fibreName" + fibreCount).css("text-align", "center").val(item.fibreName);
+                        $("#fibreTable").find('#fibreType:last').attr('name', 'fibreType['+fibreCount+']').attr("id", "fibreType" + fibreCount).css("text-align", "center").val(item.fibreType);
+                        $("#fibreTable").find('#fibreNoOfBags:last').attr('name', 'fibreNoOfBags['+fibreCount+']').attr("id", "fibreNoOfBags" + fibreCount).css("text-align", "center").val(item.fibreBags);
+                        $("#fibreTable").find('#fibreQty:last').attr('name', 'fibreQty['+fibreCount+']').attr("id", "fibreQty" + fibreCount).css("text-align", "center").val(item.fibreQty);
+
+                        fibreCount++;
+                    }
+                }
+
                 // Remaining Fields Processing
                 $('#addModal').find('#40mm').val(obj.message.fortymm);
                 $('#addModal').find('#28mm').val(obj.message.twentyeightmm);
@@ -1402,24 +1568,19 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                 $('#addModal').find('#14mm').val(obj.message.fourteenMM);
                 $('#addModal').find('#10mm').val(obj.message.tenMM);
                 $('#addModal').find('#QD').val(obj.message.QD);
-                $('#addModal').find('#typeMR6').val(obj.message.typeMR6);
-                $('#addModal').find('#typeRPF').val(obj.message.typeRPF);
-                $('#addModal').find('#typeNovaFiber').val(obj.message.typeNovaFiber);
-                $('#addModal').find('#typeFortaFiber').val(obj.message.typeFortaFiber);
-                $('#addModal').find('#opcIncoming').val(obj.message.opcIncoming);
-                $('#addModal').find('#qtyMR6').val(obj.message.qtyMR6);
-                $('#addModal').find('#qtyRPF').val(obj.message.qtyRPF);
-                $('#addModal').find('#qtyNovaFiber').val(obj.message.qtyNovaFiber);
-                $('#addModal').find('#qtyFortaFiber').val(obj.message.qtyFortaFiber);
-                $('#addModal').find('#opcDo').val(obj.message.opcDo);
                 $('#addModal').find('#rs1k').val(obj.message.rs1k);
                 $('#addModal').find('#k140').val(obj.message.k140);
                 $('#addModal').find('#ss1k').val(obj.message.ss1k);
                 $('#addModal').find('#others').val(obj.message.others);
-                $('#addModal').find('#limeIncoming').val(obj.message.limeIncoming);
                 $('#addModal').find('#transport').val(obj.message.transport);
                 $('#addModal').find('#burner').val(obj.message.burner);
-                $('#addModal').find('#limeDo').val(obj.message.limeDo);                
+                $('#addModal').find('#opcDo').val(obj.message.opcDo);
+                $('#addModal').find('#opcIncoming').val(obj.message.opcIncoming);
+                $('#addModal').find('#opcQty').val(obj.message.opcQty);
+                $('#addModal').find('#limeDo').val(obj.message.limeDo);
+                $('#addModal').find('#limeIncoming').val(obj.message.limeIncoming);
+                $('#addModal').find('#limeQty').val(obj.message.limeQty);
+
                 $('#addModal').modal('show');
             
                 $('#siteForm').validate({

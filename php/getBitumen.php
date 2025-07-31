@@ -38,7 +38,7 @@ if(isset($_POST['userID'])){
                 $message['totalSixtySeventy'] = $sixtySeventyTemp["totalSixtySeventy"] ?? 0;
                 $message['totalTemp'] = $sixtySeventyTemp["totalTemperature"] ?? 0;
                 $message['totalLevel'] = $sixtySeventyTemp["totalLevel"] ?? 0;
-                ######################
+                ########################################################################################
 
                 ## lfo Processing ##
                 $lfoTemp = json_decode($row['lfo'], true);
@@ -52,7 +52,7 @@ if(isset($_POST['userID'])){
                 }
                 $message['lfo'] = $lfoRows;
                 $message['totalLfo'] = $lfoTemp["totalLfo"] ?? 0;
-                ######################
+                ########################################################################################
 
                 ## diesel Processing ##
                 $dieselTemp = json_decode($row['diesel'], true);
@@ -66,7 +66,7 @@ if(isset($_POST['userID'])){
                 }
                 $message['diesel'] = $dieselRows;
                 $message['totalDiesel'] = $dieselTemp["totalDiesel"] ?? 0;
-                ######################
+                ########################################################################################
 
                 ## hotoil Processing ##
                 $hotoilTemp = json_decode($row['hotoil'], true);
@@ -80,7 +80,7 @@ if(isset($_POST['userID'])){
                 }
                 $message['hotoil'] = $hotoilRows;
                 $message['totalHotoil'] = $hotoilTemp["totalHotoil"] ?? 0;
-                ######################
+                ########################################################################################
 
                 ## pg76 Processing ##
                 $pg76Temp = json_decode($row['pg76'], true);
@@ -94,7 +94,44 @@ if(isset($_POST['userID'])){
                 } 
                 $message['pgSeventyNine'] = $pg76Rows;
                 $message['totalPgSevenNine'] = $pg76Temp["totalPgSevenNine"] ?? 0;
-                ######################
+                ########################################################################################
+
+                ## fibre Processing ##
+                $fibreTemp = json_decode($row['fibre'], true);
+                $message['fibreNameMr6'] = $fibreTemp[0]['fibreNameMr6'] ?? 'MR6';
+                $message['fibreTypeMr6'] = $fibreTemp[0]['fibreTypeMr6'] ?? 0.00;
+                $message['fibreBagsMr6'] = $fibreTemp[0]['fibreBagsMr6'] ?? 0;
+                $message['fibreQtyMr6'] = $fibreTemp[0]['fibreQtyMr6'] ?? 0.00;
+                $message['fibreNameRpf'] = $fibreTemp[1]['fibreNameRpf'] ?? 'RPF';
+                $message['fibreTypeRpf'] = $fibreTemp[1]['fibreTypeRpf'] ?? 0.00;
+                $message['fibreBagsRpf'] = $fibreTemp[1]['fibreBagsRpf'] ?? 0;
+                $message['fibreQtyRpf'] = $fibreTemp[1]['fibreQtyRpf'] ?? 0.00;
+                $message['fibreNameNova'] = $fibreTemp[2]['fibreNameNova'] ?? 'Nova Fiber';
+                $message['fibreTypeNova'] = $fibreTemp[2]['fibreTypeNova'] ?? 0.00;
+                $message['fibreBagsNova'] = $fibreTemp[2]['fibreBagsNova'] ?? 0;
+                $message['fibreQtyNova'] = $fibreTemp[2]['fibreQtyNova'] ?? 0.00;
+                $message['fibreNameForta'] = $fibreTemp[3]['fibreNameForta'] ?? 'Forta Fiber';
+                $message['fibreTypeForta'] = $fibreTemp[3]['fibreTypeForta'] ?? 0.00;
+                $message['fibreBagsForta'] = $fibreTemp[3]['fibreBagsForta'] ?? 0;
+                $message['fibreQtyForta'] = $fibreTemp[3]['fibreQtyForta'] ?? 0.00;
+
+                // Unset first 4 elements in the array for the default fibre data
+                unset($fibreTemp[0]);
+                unset($fibreTemp[1]);
+                unset($fibreTemp[2]);
+                unset($fibreTemp[3]);
+
+                $fibreRows = [];
+                if (!empty($fibreTemp)) {
+                    foreach ($fibreTemp as $fibreKey => $fibreRow) {
+                        if (is_numeric($fibreKey)) {
+                            $fibreRows[] = $fibreRow;
+                        }
+                    }
+                }
+
+                $message['fibre'] = $fibreRows;
+                ########################################################################################
 
                 ## Data Processing ##
                 $data = json_decode($row['data'], true);
@@ -104,24 +141,18 @@ if(isset($_POST['userID'])){
                 $message['fourteenMM'] = $data['14mm'] ?? 0;
                 $message['tenMM'] = $data['10mm'] ?? 0;
                 $message['QD'] = $data['QD'] ?? 0;
-                $message['typeMR6'] = $data['typeMR6'] ?? 0;
-                $message['typeRPF'] = $data['typeRPF'] ?? 0;
-                $message['typeNovaFiber'] = $data['typeNovaFiber'] ?? 0;
-                $message['typeFortaFiber'] = $data['typeFortaFiber'] ?? 0;
-                $message['opcIncoming'] = $data['opcIncoming'] ?? 0;
-                $message['qtyMR6'] = $data['qtyMR6'] ?? 0;
-                $message['qtyRPF'] = $data['qtyRPF'] ?? 0;
-                $message['qtyNovaFiber'] = $data['qtyNovaFiber'] ?? 0;
-                $message['qtyFortaFiber'] = $data['qtyFortaFiber'] ?? 0;
-                $message['opcDo'] = $data['opcDo'] ?? 0;
                 $message['rs1k'] = $data['rs1k'] ?? 0;
                 $message['k140'] = $data['k140'] ?? 0;
                 $message['ss1k'] = $data['ss1k'] ?? 0;
                 $message['others'] = $data['others'] ?? 0;
-                $message['limeIncoming'] = $data['limeIncoming'] ?? 0;
                 $message['transport'] = $data['transport'] ?? 0;
                 $message['burner'] = $data['burner'] ?? 0;
+                $message['opcDo'] = $data['opcDo'] ?? 0;
+                $message['opcIncoming'] = $data['opcIncoming'] ?? 0;
+                $message['opcQty'] = $data['opcQty'] ?? 0;
                 $message['limeDo'] = $data['limeDo'] ?? 0;
+                $message['limeIncoming'] = $data['limeIncoming'] ?? 0;
+                $message['limeQty'] = $data['limeQty'] ?? 0;
 
                 $message['crmb'] = $row['crmb'];
                 $message['plant_id'] = $row['plant_id'];
