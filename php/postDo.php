@@ -54,7 +54,7 @@ if ($type == "MULTI"){
         $ids = $_POST['userID'];
     }
 
-    if ($stmt2 = $db->prepare("SELECT * FROM Weight WHERE id IN ($ids)")) {
+    if ($stmt2 = $db->prepare("SELECT * FROM Weight WHERE id IN ($ids) AND synced = 'N'")) {
         if($stmt2->execute()){
             $result = $stmt2->get_result();
 
@@ -196,7 +196,7 @@ if ($type == "MULTI"){
         );
     }
 }else{
-    $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery;
+    $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND synced = 'N'".$searchQuery;
     if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
         $username = implode("', '", $_SESSION["plant"]);
         $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
