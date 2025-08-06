@@ -128,10 +128,16 @@ if(isset($_POST['userID'])){
 
                         if ($acctType == 'DO'){
                             $soNo = $row['purchase_order'];
-                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND is_complete = 'Y' AND status = '0'";
+                            $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+                            $fromDateTime = $fromDate->format('Y-m-d H:i:00');
+                            $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+                            $toDateTime = $toDate->format('Y-m-d H:i:59');
+
+                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                             $doRecords = mysqli_query($db, $doQuery);
                             $weighingData = array();
 
+                            $totalDeliverAmt = 0;
                             while($row = mysqli_fetch_assoc($doRecords)) {
                                 $weighingData[] = array( 
                                     "id"=>$row['id'],
@@ -147,13 +153,20 @@ if(isset($_POST['userID'])){
                                     "tare_weight1_date"=>$row['tare_weight1_date'],
                                     "nett_weight1"=>$row['nett_weight1']        
                                 );
-                            }
 
+                                $totalDeliverAmt += $row['nett_weight1'];
+                            }
+                            $message['totalDeliverAmt'] = $totalDeliverAmt;
                             $message['weights'] = $weighingData;
 
                         }elseif ($acctType == 'GR') {
                             $poNo = $row['purchase_order'];
-                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND is_complete = 'Y' AND status = '0'";
+                            $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+                            $fromDateTime = $fromDate->format('Y-m-d H:i:00');
+                            $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+                            $toDateTime = $toDate->format('Y-m-d H:i:59');
+
+                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                             $grRecords = mysqli_query($db, $grQuery);
                             $weighingData = array();
 
@@ -186,7 +199,11 @@ if(isset($_POST['userID'])){
                         $message['lorry_plate_no1'] = $row['lorry_plate_no1'];
                         $message['lorry_plate_no2'] = $row['lorry_plate_no2'];
                         $message['supplier_weight'] = $row['supplier_weight'];
+                        $message['po_supply_weight'] = $row['po_supply_weight'];
                         $message['order_weight'] = $row['order_weight'];
+                        $message['tin_no'] = $row['tin_no'];
+                        $message['id_no'] = $row['id_no'];
+                        $message['id_type'] = $row['id_type'];
                         $message['customer_code'] = $row['customer_code'];
                         $message['customer_name'] = $row['customer_name'];
                         $message['plant_code'] = $row['plant_code'];
@@ -242,6 +259,7 @@ if(isset($_POST['userID'])){
                         $message['final_weight'] = $row['final_weight'];
                         $message['load_drum'] = $row['load_drum'];
                         $message['no_of_drum'] = $row['no_of_drum'];
+                        $message['batch_drum'] = $row['batch_drum'];
 
                         if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
                             $update_stmt2->bind_param('s', $row['lorry_plate_no1']);

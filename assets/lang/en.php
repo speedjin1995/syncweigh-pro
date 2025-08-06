@@ -4,6 +4,7 @@
     $lang["t-analytics"]="Analytics";
 
     $lang["t-companyProfile"]="Company Profile";
+    $lang["t-cronjobSetup"]="Cronjob Setup";
     $lang["t-portSetup"]="Port Setup";
     $lang["t-myProfile"]="My Profile";
     $lang["t-changePassword"]="Change Password";
@@ -14,6 +15,11 @@
     $lang["t-po"]="Purchase Order";
     $lang["t-gr"]="Goods Received";
 
+    $lang["t-stock"]="Stock Management";
+    $lang["t-bitumen"]="Bitumen";
+    $lang["t-stockTakeLog"]="Stock Take Log";
+    $lang["t-inventory"]="Inventory";
+
     $lang["t-masterdata"]="Master Data";
     $lang["t-customer"]="Customer";
     $lang["t-supplier"]="Supplier";
@@ -23,7 +29,6 @@
     $lang["t-user"]="User";
     $lang["t-unit"]="Unit";
     $lang["t-vehicle"]="Vehicle";
-    $lang["t-inventory"]="Inventory";
     $lang["t-agent"]="Sales Representative";
     $lang["t-raw-mat"]="Raw Materials";
     $lang["t-site"]="Site";
@@ -33,13 +38,14 @@
     $lang["t-weighingReport"]="Weighing Report";
     $lang["t-soReport"]="Sales Report";
     $lang["t-poReport"]="Purchase Report";
+    $lang["t-publicReport"]="Public Report";
     $lang["t-auditLog"]="Audit Log";
+    $lang["t-apiLog"]="Api Log";
     $lang["t-logout"]="Log out";
 
     $lang["t-crm"]="CRM";
     $lang["t-billboard"]="Billboard";
     $lang["t-weighing"]="Weighing";
-    $lang["t-bitumen"]="Bitumen";
     $lang["t-crypto"]="Crypto";
     $lang["t-projects"]="Projects";
     $lang["t-apps" ]="Apps";

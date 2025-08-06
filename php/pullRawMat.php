@@ -11,7 +11,7 @@ $url = "https://sturgeon-still-falcon.ngrok-free.app/items";
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_HTTPGET, true);
-curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+curl_setopt($curl, CURLOPT_TIMEOUT, 100);
 curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 $response = curl_exec($curl);
@@ -31,6 +31,13 @@ $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
     require_once 'db_connect.php';
+    $services = 'PullRawMaterials';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
     $agents = $data['data'];
     
     foreach ($agents as $agent) {
@@ -113,16 +120,40 @@ if (!empty($data['data'])) {
         }
     }
 
-    $db->close();
+    $response = json_encode(
+        array(
+            "status" => "success",
+            "message" => "Data synced successfully!"
+        )
+    );
+    $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+    $stmtU->bind_param('ss', $response, $invid);
+    $stmtU->execute();
 
-    echo json_encode([
-        "status" => "success",
-        "message" => "Data synced successfully!"
-    ]);
-} else {
-    echo json_encode([
-        "status" => "failed",
-        "message" => "Invalid data received from API"
-    ]);
+    $db->close();
+    echo $response;
+} 
+else {
+    require_once 'db_connect.php';
+    $services = 'PullRawMaterials';
+    $requests = json_encode($data);
+
+    $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+    $stmtL->bind_param('ss', $services, $requests);
+    $stmtL->execute();
+    $invid = $stmtL->insert_id;
+
+    $response = json_encode(
+        array(
+            "status" => "failed",
+            "message" => "Invalid data received from API"
+        )
+    );
+    $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+    $stmtU->bind_param('ss', $response, $invid);
+    $stmtU->execute();
+
+    $db->close();
+    echo $response;
 }
 ?>

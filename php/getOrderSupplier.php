@@ -27,6 +27,14 @@ if(isset($_POST['type'])){
         $plant = $_POST['plant'];
     }
 
+    if (isset($_POST['customer']) && $_POST['customer'] != ''){
+        $customer = $_POST['customer'];
+    }
+
+    if (isset($_POST['supplier']) && $_POST['supplier'] != ''){
+        $supplier = $_POST['supplier'];
+    }
+
     $searchQuery = '';
     /*if (isset($_POST['vehicle']) && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
         $searchQuery .= " and veh_number = '".$_POST['vehicle']."'";
@@ -64,6 +72,8 @@ if(isset($_POST['type'])){
                     while ($row = $result->fetch_assoc()) {
                         $rawMatCode = $row['raw_mat_code'];
                         $rawMatName = $row['raw_mat_name']; 
+                        $suppCode = $row['supplier_code'];
+                        $suppName = $row['supplier_name'];
 
                         // Query for raw mat
                         $rawMatId = '';
@@ -81,6 +91,8 @@ if(isset($_POST['type'])){
                             "prodMatId"=>$rawMatId,
                             "prodMatCode"=>$rawMatCode,
                             "prodMatName"=>$rawMatName,
+                            "custSuppCode"=>$suppCode,
+                            "custSuppName"=>$suppName,
                         );
                         
                     }
@@ -112,6 +124,8 @@ if(isset($_POST['type'])){
                     while ($row = $result->fetch_assoc()) {
                         $productCode = $row['product_code'];
                         $productName = $row['product_name']; 
+                        $customerCode = $row['customer_code'];
+                        $customerName = $row['customer_name'];
 
                         // Query for product
                         $productId = '';
@@ -129,6 +143,8 @@ if(isset($_POST['type'])){
                             "prodMatId"=>$productId,
                             "prodMatCode"=>$productCode,
                             "prodMatName"=>$productName,
+                            "custSuppCode"=>$customerCode,
+                            "custSuppName"=>$customerName,
                         );
                     }
                     
@@ -213,13 +229,16 @@ if(isset($_POST['type'])){
         $order_supplier_weight = 0;
         $converted_order_supplier_weight = 0;
         $converted_order_supplier_unit = 0;
+        $unitPrice = 0;
 
         // $previousRecordsTag = true;
         $count = 1;
     
         if ($type == 'Purchase'){
-            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND status='Open' AND deleted='0'")) {
-                $update_stmt->bind_param('sss', $code, $material, $plant);
+            //if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND status='Open' AND deleted='0'")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND supplier_code=? AND status='Open' AND deleted='0'")) {
+                //$update_stmt->bind_param('sss', $code, $material, $plant);
+                $update_stmt->bind_param('sss', $code, $material, $supplier);
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
@@ -248,6 +267,8 @@ if(isset($_POST['type'])){
                         $converted_order_supplier_weight = $row['converted_order_qty'];
                         $converted_order_supplier_unit = searchUnitById($row['converted_unit'], $db);
                         $converted_order_supplier_unitId = $row['converted_unit'];
+                        $unitPrice = $row['unit_price'];
+                        $remarks = $row['remarks'];
                     }
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -277,6 +298,8 @@ if(isset($_POST['type'])){
                     $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
                     $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
                     $message['converted_order_supplier_unitId'] = $converted_order_supplier_unitId;
+                    $message['unit_price'] = $unitPrice;
+                    $message['remarks'] = $remarks;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     
@@ -289,8 +312,10 @@ if(isset($_POST['type'])){
                 }
             }
         }else{
-            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=?  AND status='Open' AND deleted='0'")) {
-                $update_stmt->bind_param('sss', $code, $material, $plant);
+            //if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=?  AND status='Open' AND deleted='0'")) {
+            if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND status='Open' AND deleted='0'")) {
+                //$update_stmt->bind_param('sss', $code, $material, $plant);
+                $update_stmt->bind_param('sss', $code, $material, $customer);
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
@@ -319,6 +344,8 @@ if(isset($_POST['type'])){
                         $converted_order_supplier_weight = $row['converted_order_qty'];
                         $converted_order_supplier_unit = searchUnitById($row['converted_unit'], $db);
                         $converted_order_supplier_unitId = $row['converted_unit'];
+                        $unitPrice = $row['unit_price'];
+                        $remarks = $row['remarks'];
                     }  
     
                     // $empQuery = "SELECT * FROM Weight WHERE status = '0' AND purchase_order = '$code' AND transaction_status = '$type' ORDER BY id ASC"; 
@@ -348,6 +375,8 @@ if(isset($_POST['type'])){
                     $message['converted_order_supplier_weight'] = $converted_order_supplier_weight;
                     $message['converted_order_supplier_unit'] = $converted_order_supplier_unit;
                     $message['converted_order_supplier_unitId'] = $converted_order_supplier_unitId;
+                    $message['unit_price'] = $unitPrice;
+                    $message['remarks'] = $remarks;
                     // $message['final_weight'] = $finalWeight;
                     // $message['previousRecordsTag'] = $previousRecordsTag;
     

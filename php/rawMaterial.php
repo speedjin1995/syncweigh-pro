@@ -166,6 +166,7 @@ if (isset($_POST['productCode'])) {
     else
     {
         $action = "1";
+
         if ($insert_stmt = $db->prepare("INSERT INTO Raw_Mat (raw_mat_code, name, price, description, variance, high, low, basic_uom, type, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             $insert_stmt->bind_param('sssssssssss', $productCode, $productName,  $productPrice, $description, $varianceType, $high, $low, $basicUom, $type, $username, $username);
 
@@ -179,12 +180,7 @@ if (isset($_POST['productCode'])) {
                 );
             }
             else{
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
-                    )
-                );
+                $productId = $insert_stmt->insert_id;
 
                 # Raw_Mat_UOM
                 if (isset($_POST['uomNo'])){
@@ -208,7 +204,6 @@ if (isset($_POST['productCode'])) {
                                 );
                             }
                             else{
-
                                 foreach ($uomNo as $key => $no) {
                                     if ($product_stmt = $db->prepare("INSERT INTO Raw_Mat_UOM (raw_mat_id, unit_id, rate) VALUES (?, ?, ?)")){
                                         $product_stmt->bind_param('sss', $productId, $uom[$key], $rate[$key]);
@@ -220,6 +215,13 @@ if (isset($_POST['productCode'])) {
                         } 
                     }
                 }
+
+                echo json_encode(
+                    array(
+                        "status"=> "success", 
+                        "message"=> "Added Successfully!!" 
+                    )
+                );
                 
                 $sel = mysqli_query($db,"select count(*) as allcount from Product");
                 $records = mysqli_fetch_assoc($sel);

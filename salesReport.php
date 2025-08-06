@@ -5,18 +5,18 @@
 require_once "php/db_connect.php";
 $plantId = $_SESSION['plant'];
 
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 $plantName = '-';
@@ -71,7 +71,18 @@ else{
         .modal-header {
             padding: var(1rem, 1rem) !important;
         }
+
+        .select2-container .select2-selection__choice {
+            color: black !important;
+            font-weight: bold !important;
+        }
+
+        .select2-container .select2-selection__choice__remove {
+            color: black !important;
+            font-weight: bold !important;
+        }
     </style>
+    
 </head>
 
 <?php include 'layouts/body.php'; ?>
@@ -149,8 +160,7 @@ else{
                                                     <div class="col-3" id="customerSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="customerNoSearch" name="customerNoSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
                                                                     <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
                                                                 <?php } ?>
@@ -197,8 +207,7 @@ else{
                                                     <div class="col-3" id="productSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="productSearch" class="form-label">Product</label>
-                                                            <select id="productSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                            <select id="productSearch" name="productSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
                                                                     <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
                                                                 <?php } ?>
@@ -249,6 +258,16 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col--> 
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="batchDrumSearch" class="form-label">By-Batch/By-Drum</label>
+                                                            <select id="batchDrumSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <option value="Batch">Batch</option>
+                                                                <option value="Drum">Drum</option>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -373,6 +392,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Transaction Id</th>
                                                                     <th>Status</th>
                                                                     <th>Customer</th>
@@ -384,7 +404,7 @@ else{
                                                                     <th>Incoming(Gross) Date Time</th>
                                                                     <th>Outgoing(Tare) Weight</th>
                                                                     <th>Outgoing(Tare) Date Time</th>
-                                                                    <th>ToTal Nett Weight</th>
+                                                                    <th>Total Nett Weight</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -440,6 +460,7 @@ else{
                                                             <option value="PRODUCT">Product Report</option>
                                                             <option value="S&P">Overall Report - Product</option>
                                                             <option value="S&PC">Overall Report - Customer</option>
+                                                            <option value="DO">Overall Report - DO</option>
                                                         </select>   
                                                     </div>
                                                 </div>
@@ -456,7 +477,9 @@ else{
                                             <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
                                             <input type="hidden" class="form-control" id="destination" name="destination">     
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
+                                            <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
                                             <input type="hidden" class="form-control" id="file" name="file">     
+                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
                                         </div>
                                     </div>
                                 </div>
@@ -493,7 +516,7 @@ else{
                                             <input type="hidden" class="form-control" id="id" name="id"> 
                                             <div class="col-12">
                                                 <div class="row">
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group1">Group 1</label>
                                                         <select id="group1" name="group1" class="form-select">
                                                             <option value=""></option>
@@ -503,9 +526,10 @@ else{
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group2">Group 2</label>
                                                         <select id="group2" name="group2" class="form-select">
                                                             <option value=""></option>
@@ -515,10 +539,10 @@ else{
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
-                                                    
-                                                    <div class="form-group col-4">
+                                                    <div class="form-group col-4 mb-3">
                                                         <label for="group3">Group 3</label>
                                                         <select id="group3" name="group3" class="form-select">
                                                             <option value=""></option>
@@ -528,6 +552,20 @@ else{
                                                             <option value="destination_code">Destination</option>
                                                             <option value="transporter_code">Transporter</option>
                                                             <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
+                                                        </select>         
+                                                    </div>
+                                                    <div class="form-group col-4 mb-3">
+                                                        <label for="group4">Group 4</label>
+                                                        <select id="group4" name="group4" class="form-select">
+                                                            <option value=""></option>
+                                                            <option value="customer_code">Customer</option>
+                                                            <option value="product_code">Product</option>
+                                                            <option value="lorry_plate_no1">Vehicle</option>
+                                                            <option value="destination_code">Destination</option>
+                                                            <option value="transporter_code">Transporter</option>
+                                                            <option value="plant_code">Plant</option>
+                                                            <option value="batch_drum">Batch/Drum</option>
                                                         </select>         
                                                     </div>
                                                 </div>
@@ -544,7 +582,9 @@ else{
                                             <input type="hidden" class="form-control" id="rawMat" name="rawMat">   
                                             <input type="hidden" class="form-control" id="destination" name="destination">     
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
+                                            <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
                                             <input type="hidden" class="form-control" id="type" name="type">     
+                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
                                         </div>
                                     </div>
                                 </div>
@@ -619,13 +659,12 @@ else{
             defaultDate: today
         });
 
-        $('.select2').each(function() {
-            $(this).select2({
-                allowClear: true,
-                placeholder: "Please Select",
-                // Conditionally set dropdownParent based on the element’s location
-                dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal-body') : undefined
-            });
+        $('.select2').select2({
+            placeholder: "Please Select",
+            allowClear: true,
+            dropdownParent: $(this).closest('.modal').length 
+                ? $(this).closest('.modal-body') 
+                : $(document.body)
         });
 
         // Apply custom styling to Select2 elements in addModal
@@ -640,18 +679,24 @@ else{
             'height': 'auto'
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+        
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var customerNoI = $('#customerNoSearch').val() || [];
         var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
         var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
         var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var productI = $('#productSearch').val() || [];
         var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
+        var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -674,10 +719,20 @@ else{
                     rawMaterial: rawMatI,
                     destination: destinationI,
                     plant: plantI,
-                    purchaseOrder: soI
+                    purchaseOrder: soI,
+                    batchDrum: batchDrumSearchI
                 } 
             },
             'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
                 { 
                     data: 'transaction_id',
                     class: 'transaction-column'
@@ -715,15 +770,16 @@ else{
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() || [];
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var productI = $('#productSearch').val() || [];
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
+            var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -750,10 +806,20 @@ else{
                         rawMaterial: rawMatI,
                         destination: destinationI,
                         plant: plantI,
-                        purchaseOrder: soI
+                        purchaseOrder: soI,
+                        batchDrum: batchDrumSearchI
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { 
                         data: 'transaction_id',
                         class: 'transaction-column'
@@ -794,7 +860,7 @@ else{
             var row = table.row(tr);
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -827,6 +893,21 @@ else{
                     var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+                    var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+
+                    var selectedIds = []; // An array to store the selected 'id' values
+                    $("#weightTable tbody input[type='checkbox']").each(function () {
+                        if (this.checked) {
+                            selectedIds.push($(this).val());
+                        }
+                    });
+
+                    if (selectedIds.length > 0) {
+                        $('#exportPdfForm').find('#id').val(selectedIds);
+                        $('#exportPdfForm').find('#isMulti').val('Y');
+                    }else{
+                        $('#exportPdfForm').find('#isMulti').val('N');
+                    }
 
                     $('#exportPdfForm').find('#fromDate').val(fromDateI);
                     $('#exportPdfForm').find('#toDate').val(toDateI);
@@ -839,6 +920,7 @@ else{
                     $('#exportPdfForm').find('#rawMat').val(rawMatI);
                     $('#exportPdfForm').find('#destination').val(destinationI);
                     $('#exportPdfForm').find('#plant').val(plantI);
+                    $('#exportPdfForm').find('#batchDrum').val(batchDrumSearchI);
                     $('#exportPdfForm').find('#file').val('weight');
                     $('#exportPdfModal').modal('hide');
 
@@ -869,6 +951,7 @@ else{
                     var group1 = $('#exportSoRepModal').find('#group1').val();
                     var group2 = $('#exportSoRepModal').find('#group2').val();
                     var group3 = $('#exportSoRepModal').find('#group3').val();
+                    var group4 = $('#exportSoRepModal').find('#group4').val();
 
                     // Added checking to ensure previous group is selected
                     if (group2 && !group1) {
@@ -877,6 +960,10 @@ else{
                     }
                     if (group3 && (!group1 || !group2)) {
                         alert("Please select Group 1 and Group 2 before selecting Group 3.");
+                        return;
+                    }
+                    if (group4 && (!group1 || !group2 || !group3)) {
+                        alert("Please select Group 1, Group 2, and Group 3 before selecting Group 4.");
                         return;
                     }
 
@@ -891,6 +978,21 @@ else{
                     var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+                    var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+
+                    var selectedIds = []; // An array to store the selected 'id' values
+                    $("#weightTable tbody input[type='checkbox']").each(function () {
+                        if (this.checked) {
+                            selectedIds.push($(this).val());
+                        }
+                    });
+
+                    if (selectedIds.length > 0) {
+                        $('#exportSoRepForm').find('#id').val(selectedIds);
+                        $('#exportSoRepForm').find('#isMulti').val('Y');
+                    }else{
+                        $('#exportSoRepForm').find('#isMulti').val('N');
+                    }
 
                     $('#exportSoRepForm').find('#fromDate').val(fromDateI);
                     $('#exportSoRepForm').find('#toDate').val(toDateI);
@@ -903,6 +1005,7 @@ else{
                     $('#exportSoRepForm').find('#rawMat').val(rawMatI);
                     $('#exportSoRepForm').find('#destination').val(destinationI);
                     $('#exportSoRepForm').find('#plant').val(plantI);
+                    $('#exportSoRepForm').find('#batchDrum').val(batchDrumSearchI);
                     $('#exportSoRepForm').find('#type').val('Sales');
                     $('#exportSoRepModal').modal('hide');
 
@@ -955,6 +1058,7 @@ else{
             $("#exportSoRepModal").find('#group1').val('');
             $("#exportSoRepModal").find('#group2').val('');
             $("#exportSoRepModal").find('#group3').val('');
+            $("#exportSoRepModal").find('#group4').val('');
             $("#exportSoRepModal").find('select[id^="group"] option').prop('disabled', false);
             $("#exportSoRepModal").modal("show");
 
@@ -985,11 +1089,27 @@ else{
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+
+            var selectedIds = []; // An array to store the selected 'id' values
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                window.open("php/export.php?file=weight&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+customerTypeI+"&product="+productI+"&rawMat="+rawMatI+
+                "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI+"&id="+selectedIds);
+            }else{
+                window.open("php/export.php?file=weight&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
+                "&weighingType="+customerTypeI+"&product="+productI+"&rawMat="+rawMatI+
+                "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
+            }
             
-            window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
-            "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-            "&weighingType=Normal&product="+productI+"&rawMat="+rawMatI+
-            "&destination="+destinationI+"&plant="+plantI);
         });
 
         $('#statusSearch').on('change', function(){
@@ -1237,6 +1357,7 @@ else{
             $('#exportSoRepModal').find('#group1').val(),
             $('#exportSoRepModal').find('#group2').val(),
             $('#exportSoRepModal').find('#group3').val(),
+            $('#exportSoRepModal').find('#group4').val(),
         ];
 
         $('select[id^="group"]').each(function () {

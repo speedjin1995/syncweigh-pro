@@ -917,3 +917,692 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_WEIGHT` BEFORE UPDATE ON `Weight`
 END
 $$
 DELIMITER ;
+
+-- 18/05/2025 -- 
+ALTER TABLE `Plant` ADD `default_type` VARCHAR(5) NULL AFTER `do_no`;
+
+ALTER TABLE `Plant_Log` ADD `default_type` VARCHAR(5) NULL AFTER `do_no`;
+
+ALTER TABLE `Weight` ADD `batch_drum` VARCHAR(5) NULL AFTER `no_of_drum`;
+
+ALTER TABLE `Weight_Log` ADD `batch_drum` VARCHAR(5) NULL AFTER `no_of_drum`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_WEIGHT` AFTER INSERT ON `Weight`
+ FOR EACH ROW INSERT INTO Weight_Log (
+    transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, po_supply_weight, order_weight, plant_code, plant_name, site_code, site_name, agent_code, agent_name, customer_code, customer_name, supplier_code, supplier_name, product_code, product_name, product_description, ex_del, raw_mat_code,raw_mat_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1, gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, is_approved, manual_weight, indicator_id, weighbridge_id, indicator_id_2, unit_price, sub_total, sst, total_price, load_drum, no_of_drum, batch_drum, status, approved_by, approved_reason, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.transaction_id, NEW.transaction_status, NEW.weight_type, NEW.transaction_date, NEW.lorry_plate_no1, NEW.lorry_plate_no2, NEW.supplier_weight, NEW.po_supply_weight, NEW.order_weight, NEW.plant_code, NEW.plant_name, NEW.site_code, NEW.site_name, NEW.agent_code, NEW.agent_name, NEW.customer_code, NEW.customer_name, NEW.supplier_code, NEW.supplier_name, NEW.product_code, NEW.product_name, NEW.product_description, NEW.ex_del, NEW.raw_mat_code, NEW.raw_mat_name, NEW.container_no, NEW.invoice_no, NEW.purchase_order, NEW.delivery_no, NEW.transporter_code, NEW.transporter, NEW.destination_code, NEW.destination, NEW.remarks, NEW.gross_weight1, NEW.gross_weight1_date, NEW.tare_weight1, NEW.tare_weight1_date, NEW.nett_weight1, NEW.gross_weight2, NEW.gross_weight2_date, NEW.tare_weight2, NEW.tare_weight2_date, NEW.nett_weight2, NEW.reduce_weight, NEW.final_weight, NEW.weight_different, NEW.is_complete, NEW.is_cancel, NEW.is_approved, NEW.manual_weight, NEW.indicator_id, NEW.weighbridge_id, NEW.indicator_id_2, NEW.unit_price, NEW.sub_total, NEW.sst, NEW.total_price, NEW.load_drum, NEW.no_of_drum, NEW.batch_drum, NEW.status, NEW.approved_by, NEW.approved_reason, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_WEIGHT` BEFORE UPDATE ON `Weight`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if status = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Weight_Log table
+    INSERT INTO Weight_Log (
+        transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, po_supply_weight, order_weight, plant_code, plant_name, site_code, site_name, agent_code, agent_name, customer_code, customer_name, supplier_code, supplier_name, product_code, product_name, product_description, ex_del, raw_mat_code,raw_mat_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1, gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, is_approved, manual_weight, indicator_id, weighbridge_id, indicator_id_2, unit_price, sub_total, sst, total_price, load_drum, no_of_drum, batch_drum, status, approved_by, approved_reason, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.transaction_id, NEW.transaction_status, NEW.weight_type, NEW.transaction_date, 
+        NEW.lorry_plate_no1, NEW.lorry_plate_no2, NEW.supplier_weight, NEW.po_supply_weight, 
+        NEW.order_weight, NEW.plant_code, NEW.plant_name, NEW.site_code, NEW.site_name, 
+        NEW.agent_code, NEW.agent_name, NEW.customer_code, NEW.customer_name, 
+        NEW.supplier_code, NEW.supplier_name, NEW.product_code, NEW.product_name, 
+        NEW.product_description, NEW.ex_del, NEW.raw_mat_code, NEW.raw_mat_name, 
+        NEW.container_no, NEW.invoice_no, NEW.purchase_order, NEW.delivery_no, 
+        NEW.transporter_code, NEW.transporter, NEW.destination_code, NEW.destination, 
+        NEW.remarks, NEW.gross_weight1, NEW.gross_weight1_date, NEW.tare_weight1, 
+        NEW.tare_weight1_date, NEW.nett_weight1, NEW.gross_weight2, NEW.gross_weight2_date, 
+        NEW.tare_weight2, NEW.tare_weight2_date, NEW.nett_weight2, NEW.reduce_weight, 
+        NEW.final_weight, NEW.weight_different, NEW.is_complete, NEW.is_cancel, 
+        NEW.is_approved, NEW.manual_weight, NEW.indicator_id, NEW.weighbridge_id, 
+        NEW.indicator_id_2, NEW.unit_price, NEW.sub_total, NEW.sst, NEW.total_price, NEW.load_drum, 
+        NEW.no_of_drum, NEW.batch_drum, NEW.status, NEW.approved_by, NEW.approved_reason, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+-- 04/06/2025 --
+ALTER TABLE `Inventory` ADD `raw_mat_basic_uom` VARCHAR(10) NOT NULL DEFAULT '0' AFTER `raw_mat_id`;
+
+ALTER TABLE `Product_RawMat` ADD `raw_mat_basic_uom` VARCHAR(10) NOT NULL DEFAULT '0' AFTER `raw_mat_code`;
+
+CREATE TABLE `Api_Log` (
+  `id` int(15) NOT NULL,
+  `request` longtext DEFAULT NULL,
+  `response` longtext DEFAULT NULL,
+  `error_message` longtext DEFAULT NULL,
+  `services` varchar(50) DEFAULT NULL,
+  `created_datetime` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Api_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Api_Log` MODIFY `id` int(15) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Cronjob_Table` (
+  `id` int(11) NOT NULL,
+  `cronjob_name` varchar(50) NOT NULL,
+  `cronjob_file` text NOT NULL,
+  `duration` varchar(10) NOT NULL,
+  `unit` varchar(30) NOT NULL,
+  `status` int(2) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Cronjob_Table` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Cronjob_Table` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 07/06/2025 --
+ALTER TABLE `Purchase_Order_Log` ADD `unit_price` VARCHAR(50) NULL AFTER `converted_unit`, ADD `total_price` VARCHAR(50) NULL AFTER `unit_price`;
+
+ALTER TABLE `Sales_Order_Log` ADD `unit_price` VARCHAR(50) NULL AFTER `converted_unit`, ADD `total_price` VARCHAR(50) NULL AFTER `unit_price`;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_SO` AFTER INSERT ON `Sales_Order`
+ FOR EACH ROW INSERT INTO Sales_Order_Log (
+    company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.plant_code, NEW.plant_name, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.remarks, NEW.converted_unit, NEW.unit_price, NEW.total_price, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_SO` BEFORE UPDATE ON `Sales_Order`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Sales_Order_Log (
+        company_code, company_name, customer_code, customer_name, site_code, site_name, order_date, order_no, so_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, product_code, product_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.customer_code, NEW.customer_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.so_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.product_code, NEW.product_name, NEW.plant_code, NEW.plant_name, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_PO` AFTER INSERT ON `Purchase_Order`
+ FOR EACH ROW INSERT INTO Purchase_Order_Log (
+    company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code, agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_code, NEW.plant_name, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Purchase_Order table
+    INSERT INTO Purchase_Order_Log (
+        company_code, company_name, supplier_code, supplier_name, site_code, site_name, order_date, order_no, po_no, delivery_date, agent_code,
+        agent_name, destination_code, destination_name, deliver_to_name, raw_mat_code, raw_mat_name, plant_code, plant_name, transporter_code, transporter_name, veh_number, exquarry_or_delivered, order_load, order_quantity, balance, converted_order_qty, converted_balance, converted_unit, unit_price, total_price, remarks, status, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.company_code, NEW.company_name, NEW.supplier_code, NEW.supplier_name, NEW.site_code, NEW.site_name, NEW.order_date, NEW.order_no, NEW.po_no, NEW.delivery_date, NEW.agent_code, NEW.agent_name, NEW.destination_code, NEW.destination_name, NEW.deliver_to_name, NEW.raw_mat_code, NEW.raw_mat_name, NEW.plant_code, NEW.plant_name, NEW.transporter_code, NEW.transporter_name, NEW.veh_number, NEW.exquarry_or_delivered, NEW.order_load, NEW.order_quantity, NEW.balance, NEW.converted_order_qty, NEW.converted_balance, NEW.converted_unit, NEW.unit_price, NEW.total_price, NEW.remarks, NEW.status, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+ALTER TABLE `Inventory` ADD `created_by` VARCHAR(50) NULL DEFAULT 'SYSTEM' AFTER `plant_code`, ADD `created_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_by`, ADD `modified_by` VARCHAR(50) NULL DEFAULT 'SYSTEM' AFTER `created_date`, ADD `modified_date` TIMESTAMP on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `modified_by`;
+
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER TRG_INS_INV
+AFTER INSERT ON Raw_Mat
+FOR EACH ROW
+BEGIN
+    -- Insert one inventory row for each plant
+    INSERT INTO Inventory (raw_mat_id, plant_code, created_by, modified_by)
+    SELECT NEW.id, p.plant_code, NEW.created_by, NEW.modified_by
+    FROM Plant p WHERE status = '0';
+END$$
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER TRG_INS_INV AFTER INSERT ON Raw_Mat
+ FOR EACH ROW BEGIN
+    -- Insert one inventory row for each plant
+    INSERT INTO Inventory (raw_mat_id, plant_code, created_by, modified_by)
+    SELECT NEW.id, p.plant_code, NEW.created_by, NEW.modified_by
+    FROM Plant p WHERE status = '0';
+END
+$$
+DELIMITER ;
+
+CREATE TABLE `Inventory_Log` (
+  `id` int(5) NOT NULL,
+  `inventory_id` int(11) NOT NULL,
+  `raw_mat_id` int(5) NOT NULL,
+  `raw_mat_basic_uom` varchar(10) DEFAULT NULL,
+  `raw_mat_weight` varchar(10) DEFAULT NULL,
+  `raw_mat_count` varchar(10) DEFAULT NULL,
+  `plant_code` varchar(15) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Inventory_Log` ADD PRIMARY KEY (`id`);
+  
+ALTER TABLE `Inventory_Log` MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_INV_LOG` AFTER INSERT ON `Inventory`
+ FOR EACH ROW INSERT INTO Inventory_Log (
+    inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_code, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Inventory_Log (
+        inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+-- 22/06/2025 --
+ALTER TABLE `Product_Rawmat` ADD `raw_mat_id` INT(11) NULL AFTER `product_id`;
+
+ALTER TABLE `Product_Rawmat` ADD `plant_id` INT(11) NULL AFTER `raw_mat_weight`, ADD `batch_drum` VARCHAR(5) NULL AFTER `plant_id`;
+
+ALTER TABLE `Product_Rawmat` ADD `basic_uom_unit_id` INT(5) NULL AFTER `raw_mat_basic_uom`;
+
+-- 27/06/2025 --
+ALTER TABLE `Bitumen` CHANGE `60/70` `60/70` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `pg76` `pg76` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `crmb` `crmb` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `lfo` `lfo` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` CHANGE `diesel` `diesel` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL;
+
+ALTER TABLE `Bitumen` ADD `hotoil` LONGTEXT NULL AFTER `diesel`, ADD `data` LONGTEXT NULL AFTER `hotoil`, ADD `declaration_datetime` DATETIME NULL AFTER `data`, ADD `plant_id` INT(11) NULL AFTER `declaration_datetime`;
+
+ALTER TABLE `Bitumen` ADD `created_by` VARCHAR(100) NULL AFTER `created_datetime`;
+
+ALTER TABLE `Bitumen` ADD `modified_datetime` DATETIME on update CURRENT_TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `created_by`, ADD `modified_by` VARCHAR(100) NULL DEFAULT CURRENT_TIMESTAMP AFTER `modified_datetime`;
+
+ALTER TABLE `Bitumen` CHANGE `modified_by` `modified_by` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+CREATE TABLE `Bitumen_Log` (
+  `id` int(10) NOT NULL,
+  `bitumen_id` INT(11) NOT NULL,
+  `60/70` longtext DEFAULT NULL,
+  `pg76` longtext DEFAULT NULL,
+  `crmb` longtext DEFAULT NULL,
+  `lfo` longtext DEFAULT NULL,
+  `diesel` longtext DEFAULT NULL,
+  `hotoil` longtext DEFAULT NULL,
+  `data` longtext DEFAULT NULL,
+  `declaration_datetime` datetime DEFAULT NULL,
+  `plant_id` int(11) DEFAULT NULL,
+  `plant_code` varchar(15) DEFAULT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `Bitumen_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Bitumen_Log` MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_BITUMEN` AFTER INSERT ON `Bitumen`
+ FOR EACH ROW INSERT INTO Bitumen_Log (
+    bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, 1, NEW.created_by, NEW.created_datetime
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Bitumen_Log (
+        bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_datetime
+    );
+END
+$$
+DELIMITER ;
+
+-- 29/06/2025 --
+CREATE TABLE `Stock_Take_Log` (
+  `id` int(11) NOT NULL,
+  `declaration_datetime` datetime NOT NULL,
+  `plant_id` int(11) DEFAULT NULL,
+  `sixty_seventy_production` varchar(50) DEFAULT NULL,
+  `sixty_seventy_os` varchar(50) DEFAULT NULL,
+  `sixty_seventy_incoming` varchar(50) DEFAULT NULL,
+  `sixty_seventy_usage` varchar(50) DEFAULT NULL,
+  `sixty_seventy_bookstock` varchar(50) DEFAULT NULL,
+  `sixty_seventy_ps` varchar(50) DEFAULT NULL,
+  `sixty_seventy_diffstock` varchar(50) DEFAULT NULL,
+  `sixty_seventy_actual_usage` varchar(50) DEFAULT NULL,
+  `lfo_production` varchar(50) DEFAULT NULL,
+  `lfo_os` varchar(50) DEFAULT NULL,
+  `lfo_incoming` varchar(50) DEFAULT NULL,
+  `lfo_ps` varchar(50) DEFAULT NULL,
+  `lfo_usage` varchar(50) DEFAULT NULL,
+  `lfo_actual_usage` varchar(50) DEFAULT NULL,
+  `diesel_production` varchar(50) DEFAULT NULL,
+  `diesel_os` varchar(50) DEFAULT NULL,
+  `diesel_incoming` varchar(50) DEFAULT NULL,
+  `diesel_mreading` varchar(50) DEFAULT NULL,
+  `diesel_transport` varchar(50) DEFAULT NULL,
+  `diesel_ps` varchar(50) DEFAULT NULL,
+  `diesel_usage` varchar(50) DEFAULT NULL,
+  `diesel_actual_usage` varchar(50) DEFAULT NULL,
+  `status` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Stock_Take_Log`  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Stock_Take_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `Inventory` ADD `plant_id` INT(11) NOT NULL AFTER `raw_mat_count`;
+
+ALTER TABLE `Inventory_Log` ADD `plant_id` INT(11) NOT NULL AFTER `raw_mat_count`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER TRG_INS_INV
+AFTER INSERT ON Raw_Mat
+FOR EACH ROW
+BEGIN
+    -- Insert one inventory row for each plant
+    INSERT INTO Inventory (raw_mat_id, plant_id, plant_code, created_by, modified_by)
+    SELECT NEW.id, p.id, p.plant_code, NEW.created_by, NEW.modified_by
+    FROM Plant p WHERE status = '0';
+END
+$$
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_INV_LOG` AFTER INSERT ON `Inventory`
+ FOR EACH ROW INSERT INTO Inventory_Log (
+    inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Inventory_Log (
+        inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+UPDATE Inventory i
+LEFT JOIN Plant p ON i.plant_code = p.plant_code
+SET i.plant_id = p.id
+WHERE i.plant_code IS NOT NULL;
+
+UPDATE Inventory_Log i
+LEFT JOIN Plant p ON i.plant_code COLLATE utf8mb4_unicode_ci = p.plant_code COLLATE utf8mb4_unicode_ci
+SET i.plant_id = p.id
+WHERE i.plant_code IS NOT NULL;
+
+ALTER TABLE `Stock_Take_Log` RENAME TO `Stock_Take`;
+
+-- 13/07/2025 --
+CREATE TABLE `Stock_Take_Log` (
+    `id` int(11) NOT NULL,
+    `stock_take_id` int(11) NOT NULL,
+    `declaration_datetime` datetime NOT NULL,
+    `plant_id` int(11) DEFAULT NULL,
+    `sixty_seventy_production` varchar(50) DEFAULT NULL,
+    `sixty_seventy_os` varchar(50) DEFAULT NULL,
+    `sixty_seventy_incoming` varchar(50) DEFAULT NULL,
+    `sixty_seventy_usage` varchar(50) DEFAULT NULL,
+    `sixty_seventy_bookstock` varchar(50) DEFAULT NULL,
+    `sixty_seventy_ps` varchar(50) DEFAULT NULL,
+    `sixty_seventy_diffstock` varchar(50) DEFAULT NULL,
+    `sixty_seventy_actual_usage` varchar(50) DEFAULT NULL,
+    `lfo_production` varchar(50) DEFAULT NULL,
+    `lfo_os` varchar(50) DEFAULT NULL,
+    `lfo_incoming` varchar(50) DEFAULT NULL,
+    `lfo_ps` varchar(50) DEFAULT NULL,
+    `lfo_usage` varchar(50) DEFAULT NULL,
+    `lfo_actual_usage` varchar(50) DEFAULT NULL,
+    `diesel_production` varchar(50) DEFAULT NULL,
+    `diesel_os` varchar(50) DEFAULT NULL,
+    `diesel_incoming` varchar(50) DEFAULT NULL,
+    `diesel_mreading` varchar(50) DEFAULT NULL,
+    `diesel_transport` varchar(50) DEFAULT NULL,
+    `diesel_ps` varchar(50) DEFAULT NULL,
+    `diesel_usage` varchar(50) DEFAULT NULL,
+    `diesel_actual_usage` varchar(50) DEFAULT NULL,
+    `action_id` int(11) NOT NULL,
+    `action_by` varchar(50) NOT NULL,
+    `event_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Stock_Take_Log`  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Stock_Take_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+-- INSERT TRIGGER
+CREATE OR REPLACE TRIGGER `TRG_INS_STK_TAKE_LOG` AFTER INSERT ON `Stock_Take`
+FOR EACH ROW
+INSERT INTO Stock_Take_Log (
+    stock_take_id,
+    declaration_datetime,
+    plant_id,
+    sixty_seventy_production,
+    sixty_seventy_os,
+    sixty_seventy_incoming,
+    sixty_seventy_usage,
+    sixty_seventy_bookstock,
+    sixty_seventy_ps,
+    sixty_seventy_diffstock,
+    sixty_seventy_actual_usage,
+    lfo_production,
+    lfo_os,
+    lfo_incoming,
+    lfo_ps,
+    lfo_usage,
+    lfo_actual_usage,
+    diesel_production,
+    diesel_os,
+    diesel_incoming,
+    diesel_mreading,
+    diesel_transport,
+    diesel_ps,
+    diesel_usage,
+    diesel_actual_usage,
+    action_id,
+    action_by
+)
+VALUES (
+    NEW.id,
+    NEW.declaration_datetime,
+    NEW.plant_id,
+    NEW.sixty_seventy_production,
+    NEW.sixty_seventy_os,
+    NEW.sixty_seventy_incoming,
+    NEW.sixty_seventy_usage,
+    NEW.sixty_seventy_bookstock,
+    NEW.sixty_seventy_ps,
+    NEW.sixty_seventy_diffstock,
+    NEW.sixty_seventy_actual_usage,
+    NEW.lfo_production,
+    NEW.lfo_os,
+    NEW.lfo_incoming,
+    NEW.lfo_ps,
+    NEW.lfo_usage,
+    NEW.lfo_actual_usage,
+    NEW.diesel_production,
+    NEW.diesel_os,
+    NEW.diesel_incoming,
+    NEW.diesel_mreading,
+    NEW.diesel_transport,
+    NEW.diesel_ps,
+    NEW.diesel_usage,
+    NEW.diesel_actual_usage,
+    1,
+    'SYSTEM'
+);
+$$
+
+-- UPDATE TRIGGER
+CREATE OR REPLACE TRIGGER `TRG_UPD_STK_TAKE_LOG` BEFORE UPDATE ON `Stock_Take`
+FOR EACH ROW
+BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    INSERT INTO Stock_Take_Log (
+        stock_take_id,
+        declaration_datetime,
+        plant_id,
+        sixty_seventy_production,
+        sixty_seventy_os,
+        sixty_seventy_incoming,
+        sixty_seventy_usage,
+        sixty_seventy_bookstock,
+        sixty_seventy_ps,
+        sixty_seventy_diffstock,
+        sixty_seventy_actual_usage,
+        lfo_production,
+        lfo_os,
+        lfo_incoming,
+        lfo_ps,
+        lfo_usage,
+        lfo_actual_usage,
+        diesel_production,
+        diesel_os,
+        diesel_incoming,
+        diesel_mreading,
+        diesel_transport,
+        diesel_ps,
+        diesel_usage,
+        diesel_actual_usage,
+        action_id,
+        action_by
+    )
+    VALUES (
+        NEW.id,
+        NEW.declaration_datetime,
+        NEW.plant_id,
+        NEW.sixty_seventy_production,
+        NEW.sixty_seventy_os,
+        NEW.sixty_seventy_incoming,
+        NEW.sixty_seventy_usage,
+        NEW.sixty_seventy_bookstock,
+        NEW.sixty_seventy_ps,
+        NEW.sixty_seventy_diffstock,
+        NEW.sixty_seventy_actual_usage,
+        NEW.lfo_production,
+        NEW.lfo_os,
+        NEW.lfo_incoming,
+        NEW.lfo_ps,
+        NEW.lfo_usage,
+        NEW.lfo_actual_usage,
+        NEW.diesel_production,
+        NEW.diesel_os,
+        NEW.diesel_incoming,
+        NEW.diesel_mreading,
+        NEW.diesel_transport,
+        NEW.diesel_ps,
+        NEW.diesel_usage,
+        NEW.diesel_actual_usage,
+        action_value,
+        'SYSTEM'
+    );
+END
+$$
+
+DELIMITER ;
+
+-- 27/07/2025 --
+ALTER TABLE `Weight` ADD `tin_no` VARCHAR(100) NULL AFTER `order_weight`, ADD `id_no` VARCHAR(100) NULL AFTER `tin_no`, ADD `id_type` VARCHAR(100) NULL AFTER `id_no`;
+
+ALTER TABLE `Weight_Log` ADD `tin_no` VARCHAR(100) NULL AFTER `order_weight`, ADD `id_no` VARCHAR(100) NULL AFTER `tin_no`, ADD `id_type` VARCHAR(100) NULL AFTER `id_no`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_WEIGHT` AFTER INSERT ON `Weight`
+ FOR EACH ROW INSERT INTO Weight_Log (
+    transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, po_supply_weight, order_weight, tin_no, id_no, id_type, plant_code, plant_name, site_code, site_name, agent_code, agent_name, customer_code, customer_name, supplier_code, supplier_name, product_code, product_name, product_description, ex_del, raw_mat_code,raw_mat_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1, gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, is_approved, manual_weight, indicator_id, weighbridge_id, indicator_id_2, unit_price, sub_total, sst, total_price, load_drum, no_of_drum, batch_drum, status, approved_by, approved_reason, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.transaction_id, NEW.transaction_status, NEW.weight_type, NEW.transaction_date, NEW.lorry_plate_no1, NEW.lorry_plate_no2, NEW.supplier_weight, NEW.po_supply_weight, NEW.order_weight, NEW.tin_no, NEW.id_no, NEW.id_type, NEW.plant_code, NEW.plant_name, NEW.site_code, NEW.site_name, NEW.agent_code, NEW.agent_name, NEW.customer_code, NEW.customer_name, NEW.supplier_code, NEW.supplier_name, NEW.product_code, NEW.product_name, NEW.product_description, NEW.ex_del, NEW.raw_mat_code, NEW.raw_mat_name, NEW.container_no, NEW.invoice_no, NEW.purchase_order, NEW.delivery_no, NEW.transporter_code, NEW.transporter, NEW.destination_code, NEW.destination, NEW.remarks, NEW.gross_weight1, NEW.gross_weight1_date, NEW.tare_weight1, NEW.tare_weight1_date, NEW.nett_weight1, NEW.gross_weight2, NEW.gross_weight2_date, NEW.tare_weight2, NEW.tare_weight2_date, NEW.nett_weight2, NEW.reduce_weight, NEW.final_weight, NEW.weight_different, NEW.is_complete, NEW.is_cancel, NEW.is_approved, NEW.manual_weight, NEW.indicator_id, NEW.weighbridge_id, NEW.indicator_id_2, NEW.unit_price, NEW.sub_total, NEW.sst, NEW.total_price, NEW.load_drum, NEW.no_of_drum, NEW.batch_drum, NEW.status, NEW.approved_by, NEW.approved_reason, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_WEIGHT` BEFORE UPDATE ON `Weight`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if status = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Weight_Log table
+    INSERT INTO Weight_Log (
+        transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight, po_supply_weight, order_weight, tin_no, id_no, id_type, plant_code, plant_name, site_code, site_name, agent_code, agent_name, customer_code, customer_name, supplier_code, supplier_name, product_code, product_name, product_description, ex_del, raw_mat_code,raw_mat_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1, gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, is_approved, manual_weight, indicator_id, weighbridge_id, indicator_id_2, unit_price, sub_total, sst, total_price, load_drum, no_of_drum, batch_drum, status, approved_by, approved_reason, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.transaction_id, NEW.transaction_status, NEW.weight_type, NEW.transaction_date, 
+        NEW.lorry_plate_no1, NEW.lorry_plate_no2, NEW.supplier_weight, NEW.po_supply_weight, 
+        NEW.order_weight, NEW.tin_no, NEW.id_no, NEW.id_type, NEW.plant_code, NEW.plant_name, NEW.site_code, NEW.site_name, 
+        NEW.agent_code, NEW.agent_name, NEW.customer_code, NEW.customer_name, 
+        NEW.supplier_code, NEW.supplier_name, NEW.product_code, NEW.product_name, 
+        NEW.product_description, NEW.ex_del, NEW.raw_mat_code, NEW.raw_mat_name, 
+        NEW.container_no, NEW.invoice_no, NEW.purchase_order, NEW.delivery_no, 
+        NEW.transporter_code, NEW.transporter, NEW.destination_code, NEW.destination, 
+        NEW.remarks, NEW.gross_weight1, NEW.gross_weight1_date, NEW.tare_weight1, 
+        NEW.tare_weight1_date, NEW.nett_weight1, NEW.gross_weight2, NEW.gross_weight2_date, 
+        NEW.tare_weight2, NEW.tare_weight2_date, NEW.nett_weight2, NEW.reduce_weight, 
+        NEW.final_weight, NEW.weight_different, NEW.is_complete, NEW.is_cancel, 
+        NEW.is_approved, NEW.manual_weight, NEW.indicator_id, NEW.weighbridge_id, 
+        NEW.indicator_id_2, NEW.unit_price, NEW.sub_total, NEW.sst, NEW.total_price, NEW.load_drum, 
+        NEW.no_of_drum, NEW.batch_drum, NEW.status, NEW.approved_by, NEW.approved_reason, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+-- 29/07/2025--
+ALTER TABLE `Bitumen` ADD `fibre` LONGTEXT NULL AFTER `hotoil`;
+
+ALTER TABLE `Bitumen_Log` ADD `fibre` LONGTEXT NULL AFTER `hotoil`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_BITUMEN` AFTER INSERT ON `Bitumen`
+ FOR EACH ROW INSERT INTO Bitumen_Log (
+    bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, fibre, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, 1, NEW.created_by, NEW.created_datetime
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Bitumen_Log table
+    INSERT INTO Bitumen_Log (
+        bitumen_id, `60/70`, pg76, crmb, lfo, diesel, hotoil, fibre, data, declaration_datetime, plant_id, plant_code, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.`60/70`, NEW.pg76, NEW.crmb, NEW.lfo, NEW.diesel, NEW.hotoil, NEW.fibre, NEW.data, NEW.declaration_datetime, NEW.plant_id, NEW.plant_code, action_value, NEW.modified_by, NEW.modified_datetime
+    );
+END
+$$
+DELIMITER ;

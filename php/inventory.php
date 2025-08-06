@@ -12,7 +12,7 @@ if(!isset($_SESSION['id'])){
 $id = $_SESSION['id'];
 
 // Processing form data when form is submitted
-if (isset($_POST['weight'], $_POST['drum'])) {
+if (isset($_POST['basicUom'], $_POST['weight'], $_POST['drum'])) {
 
     if (empty($_POST["id"])) {
         $transporterId = null;
@@ -20,21 +20,27 @@ if (isset($_POST['weight'], $_POST['drum'])) {
         $transporterId = trim($_POST["id"]);
     }
 
-    if (empty($_POST["weight"])) {
-        $transporterCode = '0';
+    if (empty($_POST["basicUom"])) {
+        $basicUom = '0';
     } else {
-        $transporterCode = trim($_POST["weight"]);
+        $basicUom = trim($_POST["basicUom"]);
+    }
+
+    if (empty($_POST["weight"])) {
+        $weight = '0';
+    } else {
+        $weight = trim($_POST["weight"]);
     }
 
     if (empty($_POST["drum"])) {
-        $companyName = '0';
+        $drum = '0';
     } else {
-        $companyName = trim($_POST["drum"]);
+        $drum = trim($_POST["drum"]);
     }
     
     if(! empty($transporterId)){
-        if ($update_stmt = $db->prepare("UPDATE Inventory SET raw_mat_weight=?, raw_mat_count=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $transporterCode, $companyName, $transporterId);
+        if ($update_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=?, raw_mat_count=? WHERE id=?")) {
+            $update_stmt->bind_param('ssss', $basicUom, $weight, $drum, $transporterId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -46,40 +52,6 @@ if (isset($_POST['weight'], $_POST['drum'])) {
                 );
             }
             else{
-
-                /*if ($insert_stmt = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssssssss', $transporterId, $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
-        
-                    // Execute the prepared query.
-                    if (! $insert_stmt->execute()) {
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "failed", 
-                        //         "message"=> $insert_stmt->error
-                        //     )
-                        // );
-                    }
-                    else{
-                        $insert_stmt->close();
-                        
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "success", 
-                        //         "message"=> "Added Successfully!!" 
-                        //     )
-                        // );
-                    }
-
-                    $update_stmt->close();
-                    $db->close();
-
-                    echo json_encode(
-                        array(
-                            "status"=> "success", 
-                            "message"=> "Updated Successfully!!" 
-                        )
-                    );
-                }*/
                 $update_stmt->close();
                 $db->close();
 
@@ -92,63 +64,6 @@ if (isset($_POST['weight'], $_POST['drum'])) {
             }
         }
     }
-    else
-    {
-        $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Site (site_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $username, $username);
-
-            // Execute the prepared query.
-            if (! $insert_stmt->execute()) {
-                echo json_encode(
-                    array(
-                        "status"=> "failed", 
-                        "message"=> $insert_stmt->error
-                    )
-                );
-            }
-            else{
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
-                    )
-                );
-
-                /*$sel = mysqli_query($db,"select count(*) as allcount from Transporter");
-                $records = mysqli_fetch_assoc($sel);
-                $totalRecords = $records['allcount'];
-
-                if ($insert_log = $db->prepare("INSERT INTO Transporter_Log (transporter_id, transporter_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_log->bind_param('sssssssssss', $totalRecords, $transporterCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $action, $username);
-        
-                    // Execute the prepared query.
-                    if (! $insert_log->execute()) {
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "failed", 
-                        //         "message"=> $insert_stmt->error
-                        //     )
-                        // );
-                    }
-                    else{
-                        $insert_log->close();
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "success", 
-                        //         "message"=> "Added Successfully!!" 
-                        //     )
-                        // );
-                    }
-                }*/
-
-                $insert_stmt->close();
-                $db->close();
-                
-            }
-        }
-    }
-    
 }
 else
 {

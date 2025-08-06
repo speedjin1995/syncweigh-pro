@@ -31,12 +31,22 @@ if($_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'
 	$searchQuery .= " and transaction_status = '".$_POST['status']."'";
 }
 
-if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
-	$searchQuery .= " and customer_code = '".$_POST['customer']."'";
+if (!empty($_POST['customer']) && is_array($_POST['customer'])) {
+  // Sanitize and quote each customer code
+  $customerList = array_map(function($cust) use ($db) {
+      return "'" . mysqli_real_escape_string($db, $cust) . "'";
+  }, $_POST['customer']);
+
+  $searchQuery .= " AND customer_code IN (" . implode(',', $customerList) . ")";
 }
 
-if($_POST['supplier'] != null && $_POST['supplier'] != '' && $_POST['supplier'] != '-'){
-	$searchQuery .= " and supplier_code = '".$_POST['supplier']."'";
+if (!empty($_POST['supplier']) && is_array($_POST['supplier'])) {
+  // Sanitize and quote each supplier code
+  $supplierList = array_map(function($supplier) use ($db) {
+      return "'" . mysqli_real_escape_string($db, $supplier) . "'";
+  }, $_POST['supplier']);
+
+  $searchQuery .= " AND supplier_code IN (" . implode(',', $supplierList) . ")";
 }
 
 if($_POST['vehicle'] != null && $_POST['vehicle'] != '' && $_POST['vehicle'] != '-'){
@@ -47,12 +57,22 @@ if($_POST['customerType'] != null && $_POST['customerType'] != '' && $_POST['cus
 	$searchQuery .= " and customer_type = '".$_POST['customerType']."'";
 }
 
-if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != '-'){
-	$searchQuery .= " and product_code = '".$_POST['product']."'";
+if (!empty($_POST['product']) && is_array($_POST['product'])) {
+  // Sanitize and quote each product code
+  $productList = array_map(function($product) use ($db) {
+      return "'" . mysqli_real_escape_string($db, $product) . "'";
+  }, $_POST['product']);
+
+  $searchQuery .= " AND product_code IN (" . implode(',', $productList) . ")";
 }
 
-if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMaterial'] != '-'){
-	$searchQuery .= " and raw_mat_code = '".$_POST['rawMaterial']."'";
+if (!empty($_POST['rawMaterial']) && is_array($_POST['rawMaterial'])) {
+  // Sanitize and quote each rawMat code
+  $rawMatList = array_map(function($rawMat) use ($db) {
+      return "'" . mysqli_real_escape_string($db, $rawMat) . "'";
+  }, $_POST['rawMaterial']);
+
+  $searchQuery .= " AND raw_mat_code IN (" . implode(',', $rawMatList) . ")";
 }
 
 if($_POST['destination'] != null && $_POST['destination'] != '' && $_POST['destination'] != '-'){
@@ -65,6 +85,10 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 
 if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
 	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
+}
+
+if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
+	$searchQuery .= " and batch_drum = '".$_POST['batchDrum']."'";
 }
 
 if($searchValue != ''){
@@ -121,7 +145,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
-    "transaction_status"=>$row['transaction_status'],
+    "transaction_status"=>($row['transaction_status'] == 'Local' ? 'Public' : $row['transaction_status']),
     "weight_type"=>$row['weight_type'],
     "transaction_date"=>$row['transaction_date'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],
@@ -131,9 +155,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "customer_name"=>$row['customer_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
-    "customer"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
-    "product_code"=>($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
-    "product_name"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
+    "customer"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['customer_name'] : $row['supplier_name']),
+    "product_code"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_code'] : $row['raw_mat_code']), 
+    "product_name"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_name'] : $row['raw_mat_name']), 
     "container_no"=>$row['container_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],

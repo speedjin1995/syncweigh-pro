@@ -210,11 +210,11 @@ else{
                                                                 <!-- <button type="button" id="exportPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Pdf
-                                                                </button>
+                                                                </button> -->
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
-                                                                </button> -->
+                                                                </button>
                                                                 <button type="button" id="postSQL" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Post to SQL
@@ -226,6 +226,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
+                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Supplier</th>
                                                                     <th>Plant</th>
                                                                     <th>Raw Material</th>
@@ -338,6 +339,11 @@ else{
             'height': 'auto'
         });
 
+        $('#selectAllCheckbox').on('change', function() {
+            var checkboxes = $('#weightTable tbody input[type="checkbox"]');
+            checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+        });
+
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var statusI = 'Purchase';
@@ -369,7 +375,16 @@ else{
                     purchaseOrder: poI
                 } 
             },
-            'columns': [                
+            'columns': [    
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },            
                 { data: 'supplier_name' },
                 { data: 'plant_name' },
                 { data: 'product_name' },
@@ -397,7 +412,7 @@ else{
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
-            var statusI = 'Sales';
+            var statusI = 'Purchase';
             var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
@@ -431,6 +446,15 @@ else{
                     } 
                 },
                 'columns': [
+                    {
+                        // Add a checkbox with a unique ID for each row
+                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                        className: 'select-checkbox',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        }
+                    },
                     { data: 'supplier_name' },
                     { data: 'plant_name' },
                     { data: 'product_name' },
@@ -460,9 +484,11 @@ else{
         $('#weightTable tbody').on('click', 'tr', function (e) {
             var tr = $(this); // The row that was clicked
             var row = table.row(tr);
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
 
             // Exclude specific td elements by checking the event target
-            if ($(e.target).closest('td').hasClass('transaction-column') || $(e.target).closest('td').hasClass('action-button')) {
+            if ($(e.target).closest('td').hasClass('select-checkbox') || $(e.target).closest('td').hasClass('action-button')) {
                 return;
             }
 
@@ -471,7 +497,7 @@ else{
                 row.child.hide();
                 tr.removeClass('shown');
             } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', acctType: 'GR' }, function (data) {
+                $.post('php/getWeight.php', { userID: row.data().id, fromDate: fromDateI, toDate: toDateI, format: 'EXPANDABLE', acctType: 'GR' }, function (data) {
                     var obj = JSON.parse(data);
                     if (obj.status === 'success') {
                         row.child(format(obj.message)).show();
@@ -627,6 +653,124 @@ else{
         // Trigger the function on change
         $('select[id^="group"]').on('change', function () {
             updateSelects();
+        });
+
+        // Post to SQL Handling
+        $('#postSQL').on('click', function () {
+            $('#spinnerLoading').show();
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = 'Purchase';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                if (confirm('Are you sure you want to post to SQL these items?')) {
+                    $.post('php/postGr.php', {
+                        fromDate: fromDateI,
+                        toDate: toDateI,
+                        status: statusI,
+                        supplier: supplierNoI,
+                        rawMat: rawMatI,
+                        plant: plantI,
+                        purchaseOrder: poI,
+                        userID: selectedIds, 
+                        type: 'MULTI'
+                    }, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            toastr["success"](obj.message, "Success:");
+                            $('#weightTable').DataTable().ajax.reload(null, false);
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            } 
+            else {
+                if (confirm('Are you sure you want to post to SQL?')) {
+                    $.post('php/postGr.php', {
+                        fromDate: fromDateI,
+                        toDate: toDateI,
+                        status: statusI,
+                        supplier: supplierNoI,
+                        rawMat: rawMatI,
+                        plant: plantI,
+                        purchaseOrder: poI,
+                        type: 'ALL'
+                    }, function(data){
+                        var obj = JSON.parse(data);
+                        
+                        if(obj.status === 'success'){
+                            toastr["success"](obj.message, "Success:");
+                            $('#weightTable').DataTable().ajax.reload(null, false);
+                            $('#spinnerLoading').hide();
+                        }
+                        else if(obj.status === 'failed'){
+                            toastr["error"](obj.message, "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                        else{
+                            toastr["error"]("Something wrong when activate", "Failed:");
+                            $('#spinnerLoading').hide();
+                        }
+                    });
+                }
+
+                $('#spinnerLoading').hide();
+            }     
+        });
+
+        // Export Excel
+        $('#exportExcel').on('click', function () {
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = 'Purchase';
+            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
+            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+            var selectedIds = []; // An array to store the selected 'id' values
+
+            $("#weightTable tbody input[type='checkbox']").each(function () {
+                if (this.checked) {
+                    selectedIds.push($(this).val());
+                }
+            });
+
+            if (selectedIds.length > 0) {
+                window.open("php/exportDoGr.php?type=gr&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+poI+"&id="+selectedIds);
+            } 
+            else {
+                window.open("php/exportDoGr.php?type=gr&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
+                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
+                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+poI);
+            }     
         });
     });
 

@@ -30,10 +30,10 @@ if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
     $formatted_date = $dateTime->format('Y-m-d H:i');
 
     if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date >= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date >= '".$formatted_date."'";
     }
 }
 
@@ -42,10 +42,10 @@ if($_GET['toDate'] != null && $_GET['toDate'] != ''){
     $formatted_date = $dateTime->format('Y-m-d H:i');
 
     if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
     }
     else{
-        $searchQuery .= " and count.transaction_date <= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date <= '".$formatted_date."'";
     }
 }
 
@@ -117,24 +117,56 @@ if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_
         $searchQuery .= " and Weight.plant_code = '".$_GET['plant']."'";
     }
     else{
-        $searchQuery .= " and count.raw_mat_code = '".$_GET['plant']."'";
+        $searchQuery .= " and count.plant_code = '".$_GET['plant']."'";
     }
+}
+
+if(isset($_GET['batchDrum']) && $_GET['batchDrum'] != null && $_GET['batchDrum'] != '' && $_GET['batchDrum'] != '-'){
+    if($_GET["file"] == 'weight'){
+        $searchQuery .= " and Weight.batch_drum = '".$_GET['batchDrum']."'";
+    }
+    else{
+        $searchQuery .= " and count.batch_drum = '".$_GET['batchDrum']."'";
+    }
+}
+
+$isMulti = '';
+if(isset($_GET['isMulti']) && $_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'){
+    $isMulti = $_GET['isMulti'];
 }
 
 // Column names 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
-        'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
-        'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-        ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT'), 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
-        'PLANT NAME', 'WEIGHTED BY'); 
+
+    if ($_GET['status'] == 'Sales'){
+        $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+            'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 
+            'PLANT CODE', 'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
+    }
+    else{
+        $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+            'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
+    }
 }
 else{
-    $fields = array('TRANSACTION ID', 'TRANSACTION STATUS', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
-        'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
-        'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-        ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT'), 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
-        'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY'); 
+    if ($_GET['status'] == 'Sales'){
+        $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE','CUSTOMER CODE', 'CUSTOMER NAME', 
+            'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
+    }else{
+        $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER CODE', 'CUSTOMER NAME', 
+            'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
+            'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
+            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
+    }
 }
 
 
@@ -143,7 +175,14 @@ $excelData = implode("\t", array_values($fields)) . "\n";
 
 // Fetch records from database
 if($_GET["file"] == 'weight'){
-    $query = $db->query("select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery);
+    if ($isMulti == 'Y'){
+        $id = $_GET['id']; 
+        $sql = "select * from Weight WHERE id IN ($id)";
+    }else{
+        $sql = "select * from Weight WHERE Weight.is_cancel = 'N'".$searchQuery;
+    }
+
+    $query = $db->query($sql);
 }
 else{
     $query = $db->query("select count.id, count.serialNo, vehicles.veh_number, lots.lots_no, count.batchNo, count.invoiceNo, count.deliveryNo, 
@@ -156,7 +195,7 @@ else{
 
 if($query->num_rows > 0){ 
     // Output each row of the data 
-    while($row = $query->fetch_assoc()){ 
+    while($row = $query->fetch_assoc()){
         $lineData = []; // Ensure it starts as an empty array each iteration
 
         if($_GET["file"] == 'weight'){
@@ -169,13 +208,20 @@ if($query->num_rows > 0){
             }
             
             if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
-                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
-                ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), $row['product_description'], $row['destination_code'], 
-                $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], 
-                number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), 
-                number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], $row['is_cancel'], 
-                $row['plant_code'], $row['plant_name'], $row['created_by']);
+                $lineData = array_merge(
+                    array($row['transaction_id'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1']),
+                    ($row['transaction_status'] == 'Sales' ? array($row['tin_no'], $row['id_no'], $row['id_type']) : array()),
+                    array($row['customer_code'], $row['customer_name'], $row['supplier_code'], $row['supplier_name'], 
+                    ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
+                    ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
+                    $row['product_description'], $row['destination_code'], $row['destination'], $row['transporter_code'], 
+                    $row['transporter'], $exDel, $row['batch_drum'], $row['purchase_order'], $row['delivery_no'], 
+                    number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), 
+                    number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
+                    ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
+                    number_format((float)$row['weight_different'] / 1000, 2, '.', ''), $row['gross_weight1_date'], $row['tare_weight1_date'], 
+                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $row['created_by'], $row['remarks'])
+                );
             }
             else{
                 $unitPrice = 0.0;
@@ -202,13 +248,20 @@ if($query->num_rows > 0){
                     }
                 }
 
-                $lineData = array($row['transaction_id'], $row['transaction_status'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1'], $row['customer_code'],
-                $row['customer_name'], $row['supplier_code'], $row['supplier_name'], ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
-                ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), $row['product_description'], $row['destination_code'], 
-                $row['destination'], $row['transporter_code'], $row['transporter'], $exDel, $row['purchase_order'], $row['delivery_no'], 
-                number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), 
-                number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), $row['gross_weight1_date'], $row['tare_weight1_date'], $row['manual_weight'], $row['is_cancel'], 
-                $row['plant_code'], $row['plant_name'], $unitPrice, $totalPrice, $row['created_by']);
+                $lineData = array_merge(
+                    array($row['transaction_id'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1']),
+                    ($row['transaction_status'] == 'Sales' ? array($row['tin_no'], $row['id_no'], $row['id_type']) : array()),
+                    array($row['customer_code'], $row['customer_name'], $row['supplier_code'], $row['supplier_name'], 
+                    ($row['transaction_status'] == 'Sales' ? $row['product_code'] : $row['raw_mat_code']), 
+                    ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']), 
+                    $row['product_description'], $row['destination_code'], $row['destination'], $row['transporter_code'], 
+                    $row['transporter'], $exDel, $row['batch_drum'], $row['purchase_order'], $row['delivery_no'], 
+                    number_format((float)$row['gross_weight1'] / 1000, 2, '.', ''), number_format((float)$row['tare_weight1'] / 1000, 2, '.', ''), 
+                    number_format((float)$row['nett_weight1'] / 1000, 2, '.', ''), 
+                    ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')), 
+                    number_format((float)$row['weight_different'] / 1000, 2, '.', ''), $row['gross_weight1_date'], $row['tare_weight1_date'], 
+                    $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $unitPrice, $totalPrice, $row['created_by'], $row['remarks'])
+                );
             }
                 
         }

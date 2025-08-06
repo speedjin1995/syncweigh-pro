@@ -370,7 +370,7 @@ else{
                                                                     <th>Incoming(Gross) Date Time</th>
                                                                     <th>Outgoing(Tare) Weight</th>
                                                                     <th>Outgoing(Tare) Date Time</th>
-                                                                    <th>ToTal Nett Weight</th>
+                                                                    <th>Total Nett Weight</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>

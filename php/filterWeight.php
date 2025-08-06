@@ -67,6 +67,10 @@ if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
 	$searchQuery .= " and purchase_order = '".$_POST['poNo']."'";
 }
 
+if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
+	$searchQuery .= " and batch_drum = '".$_POST['batchDrum']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
@@ -135,9 +139,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "agent_name"=>$row['agent_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
-    "customer"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['customer_name'] : $row['supplier_name']),
-    "product_code"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_code'] : $row['raw_mat_code']), 
-    "product_name"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_name'] : $row['raw_mat_name']), 
+    "customer"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' || $row['transaction_status'] == 'WIP' ? $row['customer_name'] : $row['supplier_name']),
+    "product_code"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' || $row['transaction_status'] == 'WIP' ? $row['product_code'] : $row['raw_mat_code']),
+    "product_name"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' || $row['transaction_status'] == 'WIP' ? $row['product_name'] : $row['raw_mat_name']),
     "container_no"=>$row['container_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],

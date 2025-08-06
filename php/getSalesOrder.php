@@ -69,7 +69,9 @@ if(isset($_POST['userID'])){
 
                     if($row['order_no'] != null && $row['order_no'] != ''){
                         $customerPONo = $row['order_no'];
-                        $weightQuery = "SELECT * FROM Weight WHERE purchase_order = '$customerPONo' AND status = '0' AND transaction_status = 'Sales' ORDER BY id ASC";
+                        $productCode = $row['product_code'];
+                        $plantCode = $row['plant_code'];
+                        $weightQuery = "SELECT * FROM Weight WHERE purchase_order = '$customerPONo' AND product_code = '$productCode' AND status = '0' AND transaction_status = 'Sales' ORDER BY id ASC";
                         $weightRecords = mysqli_query($db, $weightQuery);
 
                         while($weightRow = mysqli_fetch_assoc($weightRecords)) {
@@ -123,6 +125,7 @@ if(isset($_POST['userID'])){
                     $message['agent_code'] = $row['agent_code'];
                     $message['destination_code'] = $row['destination_code'];
                     $message['product_code'] = $row['product_code'];
+                    $message['product_name'] = $row['product_name'];
                     $message['plant_code'] = $row['plant_code'];
                     $message['transporter_code'] = $row['transporter_code'];
                     $message['veh_number'] = $row['veh_number'];
@@ -130,6 +133,7 @@ if(isset($_POST['userID'])){
                     $message['converted_order_qty'] = $row['converted_order_qty'];
                     $message['converted_balance'] = $row['converted_balance'];
                     $message['converted_unit'] = $row['converted_unit'];
+                    $message['converted_unit_text'] = searchUnitById($row['converted_unit'], $db);
                     $message['order_quantity'] = $row['order_quantity'];
                     $message['balance'] = $row['balance'];
                     $message['unit_price'] = $row['unit_price'];

@@ -5,23 +5,23 @@
 require_once "php/db_connect.php";
 // $plantId = $_SESSION['plant'];
 
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
-$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $company = $db->query("SELECT * FROM Company");
 $company2 = $db->query("SELECT * FROM Company");
-$site = $db->query("SELECT * FROM Site WHERE status = '0'");
-$site2 = $db->query("SELECT * FROM Site WHERE status = '0'");
-$agent = $db->query("SELECT * FROM Agents WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
-$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0'");
-$plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0'");
-$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0'");
+$site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$site2 = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
+$rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
+$plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
+$vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
+$unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
+$purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0' ORDER BY po_no ASC");
 ?>
 
 <head>
@@ -514,7 +514,50 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>                                                              
+                                    </div> 
+                                    <div class="modal fade" id="pullSqlModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                                            <div class="modal-content">
+                                                <form role="form" id="uploadForm">
+                                                    <div class="modal-header bg-gray-dark color-palette">
+                                                        <h4 class="modal-title">Pull SQL</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-xxl-6 col-lg-6">
+                                                                <div class="row">
+                                                                    <label for="fromDate" class="col-form-label">From Date</label>
+                                                                    <div>
+                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="fromDate" name="fromDate" required>
+                                                                        <div class="invalid-feedback">
+                                                                            Please fill in the field.
+                                                                        </div>    
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xxl-6 col-lg-6">
+                                                                <div class="row">
+                                                                    <label for="endDate" class="col-form-label">End Date</label>
+                                                                    <div>
+                                                                        <input type="date" class="form-control" data-provider="flatpickr" id="endDate" name="endDate" required>
+                                                                        <div class="invalid-feedback">
+                                                                            Please fill in the field.
+                                                                        </div>    
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger" id="pullSo">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>                                                                
                                 </div>
                             </div> <!-- end row-->
 
@@ -545,6 +588,10 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <button type="button" id="exportReceivedExcel" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
+                                                                    Export Received Excel
+                                                                </button>
                                                                 <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
@@ -564,7 +611,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <th>Company Name</th> -->
                                                                     <th>Supplier Code</th>
                                                                     <th>Supplier Name</th>
-                                                                    <th>Plant Code</th>
+                                                                    <!-- <th>Plant Code</th> -->
                                                                     <th>Plant Name</th>
                                                                     <th>Raw Material Code</th>
                                                                     <th>Raw Material Name</th>
@@ -572,6 +619,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                     <th>P/O No.</th>
                                                                     <th>Order Date</th>
                                                                     <th>EXQ/DEL</th>
+                                                                    <th>Supplier Quantity</th>
                                                                     <th>Balance</th>
                                                                     <th>Status</th>
                                                                     <th>Modified Date</th>
@@ -633,6 +681,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
     <script type="text/javascript">
 
     var table = null;
+    let wasErrorModalShown = false;
 
     $(function () {
         const today = new Date();
@@ -660,6 +709,26 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         $('#deliveryDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: ''
+        });
+
+        $('#fromDate').flatpickr({
+            dateFormat: "d-m-Y",
+            enableTime: true,
+            time_24hr: true,
+            defaultDate: today
+        });
+
+        $('#endDate').flatpickr({
+            dateFormat: "d-m-Y",
+            enableTime: true,
+            time_24hr: true,
+            defaultDate: today
+        });
+
+        // Initialize all Select2 elements in the search bar
+        $('#collapseSearch .select2').select2({
+            allowClear: true,
+            placeholder: "Please Select",
         });
 
         // Initialize all Select2 elements in the modal
@@ -723,7 +792,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     class: 'supplier_column'
                 },
                 { data: 'supplier_name' },
-                { data: 'plant_code' },
+                // { data: 'plant_code' },
                 { data: 'plant_name' },
                 { data: 'raw_mat_code' },
                 { data: 'raw_mat_name' },
@@ -731,6 +800,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 { data: 'po_no' },
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
+                { data: 'order_quantity' },
                 { data: 'balance' },
                 { data: 'status' },
                 { data: 'modified_date' },
@@ -751,6 +821,13 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                 <div class="col-auto">
                                     <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
                                         <i class="fas fa-check"></i>
+                                    </button>
+                                </div>`;
+                            } else {
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
+                                        <i class="fas fa-undo"></i>
                                     </button>
                                 </div>`;
                             }
@@ -817,7 +894,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                         class: 'supplier_column'
                     },
                     { data: 'supplier_name' },
-                    { data: 'plant_code' },
+                    // { data: 'plant_code' },
                     { data: 'plant_name' },
                     { data: 'raw_mat_code' },
                     { data: 'raw_mat_name' },
@@ -825,6 +902,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     { data: 'po_no' },
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
+                    { data: 'order_quantity' },
                     { data: 'balance' },
                     { data: 'status' },
                     { data: 'modified_date' },
@@ -845,6 +923,13 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                     <div class="col-auto">
                                         <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
                                             <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>`;
+                                } else {
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
+                                            <i class="fas fa-undo"></i>
                                         </button>
                                     </div>`;
                                 }
@@ -1020,7 +1105,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             $('#addModal').find('#vehicle').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#convertedOrderQty').val("");
-            $('#addModal').find('#convertedQtyUnit').val("KG");
+            $('#addModal').find('#convertedQtyUnit').text("KG");
             $('#addModal').find('#convertedOrderQtyUnit').val('');
             $('#addModal').find('#balance').val("");
             $('#addModal').find('#balanceUnit').text("KG");
@@ -1100,7 +1185,22 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
 
-            window.open("php/exportSoPo.php?type=Purchase&fromDate="+fromDateI+"&toDate="+toDateI+
+            window.open("php/exportSoPo.php?report=Purchase&type=Purchase&fromDate="+fromDateI+"&toDate="+toDateI+
+            "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
+            "&customer="+supplierNoI+"&product="+rawMatI);
+        });
+
+        $('#exportReceivedExcel').on('click', function(){
+            var fromDateI = $('#fromDateSearch').val();
+            var toDateI = $('#toDateSearch').val();
+            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+            var companyI = $('#companySearch').val() ? $('#companySearch').val() : '';
+            var siteI = $('#siteSearch').val() ? $('#siteSearch').val() : '';
+            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var supplierNoI = $('#supplierNoSearch').val() ? $('#supplierNoSearch').val() : '';
+            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
+
+            window.open("php/exportSoPo.php?type=Purchase&report=received&fromDate="+fromDateI+"&toDate="+toDateI+
             "&status="+statusI+"&company="+companyI+"&site="+siteI+"&plant="+plantI+
             "&customer="+supplierNoI+"&product="+rawMatI);
         });
@@ -1178,18 +1278,10 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         });
 
         $('#orderQty').on('change', function(){
-            var orderWeight = parseFloat($(this).val())/1000;
+            var orderWeight = parseFloat($('#convertedOrderQty').val())/1000;
             var unitPrice = parseFloat($('#unitPrice').val());
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
 
-            $('#totalPrice').val(totalPrice);
-        });
-
-        $('#orderQty').on('change', function(){
-            var orderWeight = parseFloat($(this).val())/1000;
-            var unitPrice = parseFloat($('#unitPrice').val());
-            var totalPrice = (unitPrice * orderWeight).toFixed(2);
-            
             $('#totalPrice').val(totalPrice);
         });
 
@@ -1202,92 +1294,158 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#convertedOrderQty').on('change', function(){
             var convertedOrderWeight = parseFloat($(this).val());
-            var rawMatCode = $('#rawMat :selected').data('id');
+            var rawMatId = $('#rawMat :selected').data('id');
             var unitId = $('#convertedOrderQtyUnit').val(); 
+            var poNo = $('#poNo').val();
 
-            $('#balance').val(convertedOrderWeight); // update balance value
+            var previousWeight = 0;
+            var convertedBalance = 0;
+            // Query to PO log to see previous record supplier weight
+            if (poNo){
+                $.post('php/getSoPoLog.php', {userID: poNo, type: 'PO'}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        if (obj.message.length < 1){
+                            previousWeight = 0;
+                            convertedBalance = 0;
+                        }else {
+                            previousWeight = obj.message.converted_order_qty;
+                            convertedBalance = obj.message.converted_balance;
+                        }
 
-            if (unitId == 2){
-                $('#orderQty').val(convertedOrderWeight);
-                $('#convertedBal').val(convertedOrderWeight);
-            }else{
-                // Call to backend to get conversion rate
-                if (rawMatCode && convertedOrderWeight){
-                    $.post('php/getProdRawMatUOM.php', {userID: rawMatCode, type: 'PO'}, function(data)
-                    {
-                        var obj = JSON.parse(data);
-                        if(obj.status === 'success'){
-                            // Processing for order quantity (KG)
-                            var rate = parseFloat(obj.message.rate);
-                            var orderQty = convertedOrderWeight/rate;
+                        var weightDifference = parseFloat(previousWeight) - convertedOrderWeight;
+                        var currentOrderWeight = parseFloat(convertedBalance) - weightDifference; console.log(weightDifference); console.log(currentOrderWeight);
+ 
+                        $('#balance').val(currentOrderWeight); // update balance value
+                        if (unitId == 2){
+                            $('#orderQty').val(convertedOrderWeight);
+                            $('#convertedBal').val(currentOrderWeight);
+                            $('#unitPrice').trigger('change');
+                        }else{
+                            // Call to backend to get conversion rate
+                            if (rawMatId && convertedOrderWeight && currentOrderWeight){
+                                $.post('php/getProdRawMatUOM.php', {userID: rawMatId, type: 'PO'}, function(data)
+                                {
+                                    var obj = JSON.parse(data);
+                                    if(obj.status === 'success'){
+                                        // Processing for order quantity (KG)
+                                        var rate = parseFloat(obj.message.rate);
+                                        var orderQty = parseInt(convertedOrderWeight/rate);
+                                        var balance = parseInt(currentOrderWeight/rate);
 
-                            $('#orderQty').val(orderQty).trigger('change');
-                            $('#convertedBal').val(orderQty);
+                                        $('#orderQty').val(orderQty).trigger('change');
+                                        $('#convertedBal').val(balance);
+                                        $('#unitPrice').trigger('change');
+                                    }
+                                    else if(obj.status === 'failed'){
+                                        alert(obj.message);
+                                        $("#failBtn").attr('data-toast-text', obj.message );
+                                        $("#failBtn").click();
+                                    }
+                                    else{
+                                        alert(obj.message);
+                                        $("#failBtn").attr('data-toast-text', obj.message );
+                                        $("#failBtn").click();
+                                    }
+                                });
+                            }
                         }
-                        else if(obj.status === 'failed'){
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                    });
-                }
+                        
+                    }
+                    else if(obj.status === 'failed'){
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        alert(obj.message);
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                });
             }
         });
 
         $('#unitPrice').on('change', function(){
             var unitPrice = parseFloat($(this).val());
-            var orderWeight = parseFloat($('#orderQty').val())/1000;
+            var orderWeight = parseFloat($('#orderQty').val());
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
 
             $('#totalPrice').val(totalPrice);
         });
 
+        $('#errorModal').on('shown.bs.modal', function () {
+            wasErrorModalShown = true;
+        });
+        
+        $('#errorModal').on('hidden.bs.modal', function () {
+            if (wasErrorModalShown) {
+                wasErrorModalShown = false; // Reset flag
+                window.location.reload();
+            }
+        });
+
         $('#pullSql').on('click', function(){
+            $('#pullSqlModal').modal('show');
+        });
+
+        $('#pullSqlModal').find('#pullSo').on('click', function(){
             $('#spinnerLoading').show();
             // Send the JSON array to the server
-            $.ajax({
-                url: 'php/pullPurchaseOrder.php',
-                type: 'POST',
-                contentType: 'application/json',
-                success: function(response) {
-                    var obj = JSON.parse(response);
-                    if (obj.status === 'success') {
-                        $('#spinnerLoading').hide();
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                        window.location.reload();
-                    } 
-                    else if (obj.status === 'failed') {
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                        alert(obj.message);
-                    } 
-                    else if (obj.status === 'error') {
-                        $('#spinnerLoading').hide();
-                        $('#uploadModal').modal('hide');
-                        // alert(obj.message);
-                        // $("#failBtn").attr('data-toast-text', obj.message );
-                        // $("#failBtn").click();
-                        $('#errorModal').find('#errorList').empty();
-                        var errorMessage = obj.message;
-                        for (var i = 0; i < errorMessage.length; i++) {
-                            $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+            $('#pullSqlModal').modal('hide');
+
+            var fromDate = $('#pullSqlModal').find('#fromDate').val();
+            var endDate = $('#pullSqlModal').find('#endDate').val();
+
+            if (fromDate && endDate){
+                $.ajax({
+                    url: 'php/pullPurchaseOrder.php',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        fromDate: fromDate,
+                        endDate: endDate
+                    }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        var obj = JSON.parse(response);
+                        if (obj.status === 'success') {
+                            $('#spinnerLoading').hide();
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                            window.location.reload();
+                        } 
+                        else if (obj.status === 'failed') {
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                            alert(obj.message);
+                        } 
+                        else if (obj.status === 'error') {
+                            $('#spinnerLoading').hide();
+                            $('#uploadModal').modal('hide');
+                            // alert(obj.message);
+                            // $("#failBtn").attr('data-toast-text', obj.message );
+                            // $("#failBtn").click();
+                            $('#errorModal').find('#errorList').empty();
+                            var errorMessage = obj.message;
+                            for (var i = 0; i < errorMessage.length; i++) {
+                                $('#errorModal').find('#errorList').append(`<li>${errorMessage[i]}</li>`);                            
+                            }
+                            $('#errorModal').modal('show');
+                        } 
+                        else {
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
                         }
-                        $('#errorModal').modal('show');
-                    } 
-                    else {
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', 'Failed to save');
-                        $("#failBtn").click();
                     }
-                }
-            });
+                });
+            }else{
+                alert("Please fill in the date range.");
+                $('#spinnerLoading').hide();
+            }
+            
         });
     });
 
@@ -1379,18 +1537,41 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 $('#addModal').find('#poNo').val(obj.message.po_no);
                 $('#addModal').find('#agent').val(obj.message.agent_code).trigger('change');
                 $('#addModal').find('#destinationCode').val(obj.message.destination_code).trigger('change');
-                $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).trigger('change');
+                $('#addModal').find('#rawMat').val(obj.message.raw_mat_code).select2('destroy').select2();
+                $('#addModal').find('#rawMatName').val(obj.message.raw_mat_name);
                 $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
-                $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
+                $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
+                $('#addModal').find('#convertedQtyUnit').text(obj.message.converted_unit_text);
+                $('#addModal').find('#balanceUnit').text(obj.message.converted_unit_text);
                 $('#addModal').find('#orderQty').val(obj.message.order_quantity);
-                $('#addModal').find('#balance').val(obj.message.convertedBal);
+                $('#addModal').find('#balance').val(obj.message.converted_balance);
                 $('#addModal').find('#convertedOrderQty').val(obj.message.converted_order_qty);
-                $('#addModal').find('#convertedQtyUnit').val(obj.message.converted_unit).trigger('change');
+                $('#addModal').find('#convertedOrderQtyUnit').val(obj.message.converted_unit);
+                $('#addModal').find('#convertedBal').val(obj.message.balance);
                 $('#addModal').find('#unitPrice').val(obj.message.unit_price);
                 $('#addModal').find('#totalPrice').val(obj.message.total_price);
                 $('#addModal').find('#remarks').val(obj.message.remarks);
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
@@ -1439,6 +1620,34 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         if (confirm('Are you sure you want to close this item?')) {
             $('#spinnerLoading').show();
             $.post('php/completePurchaseOrder.php', {userID: id}, function(data){
+                var obj = JSON.parse(data);
+                
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message);
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    function revert(id){
+        if (confirm('Are you sure you want to revert this PO back to Open?')) {
+            $('#spinnerLoading').show();
+            $.post('php/revertSoPo.php', {userID: id, type: 'Purchase'}, function(data){
                 var obj = JSON.parse(data);
                 
                 if(obj.status === 'success'){

@@ -30,6 +30,7 @@ if(isset($_POST['userID'])){
                 $message['address_line_3'] = $row['address_line_3'];
                 $message['phone_no'] = $row['phone_no'];
                 $message['fax_no'] = $row['fax_no'];
+                $message['default_type'] = $row['default_type'];
             }
             
             echo json_encode(

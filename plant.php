@@ -175,6 +175,18 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>                                                                        
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="defaultType" class="col-sm-4 col-form-label">Default Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select id="defaultType" name="defaultType" class="form-select">
+                                                                                            <option value="" selected>-</option>
+                                                                                            <option value="Batch">Batch</option>
+                                                                                            <option value="Drum">Drum</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                        
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -272,6 +284,7 @@
                                                                     <th>Address Line 3</th>
                                                                     <th>Phone No</th>
                                                                     <th>Fax No</th>
+                                                                    <th>Default Type</th>
                                                                     <th>Status</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -367,6 +380,7 @@ $(function () {
             { data: 'address_line_3' },
             { data: 'phone_no' },
             { data: 'fax_no' },
+            { data: 'default_type' },
             { data: 'status' },
             { 
                 data: 'id',
@@ -425,6 +439,7 @@ $(function () {
         $('#addModal').find('#addressLine3').val("");
         $('#addModal').find('#phoneNo').val("");
         $('#addModal').find('#faxNo').val("");
+        $('#addModal').find('#defaultType').val("");
 
         // Remove Validation Error Message
         $('#addModal .is-invalid').removeClass('is-invalid');
@@ -584,6 +599,7 @@ function edit(id){
             $('#addModal').find('#addressLine3').val(obj.message.address_line_3);
             $('#addModal').find('#phoneNo').val(obj.message.phone_no);
             $('#addModal').find('#faxNo').val(obj.message.fax_no);
+            $('#addModal').find('#defaultType').val(obj.message.default_type);
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');

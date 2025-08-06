@@ -149,6 +149,42 @@ function searchProductNameByCode($value, $db) {
     return $id;
 }
 
+function searchProductIdByCode($value, $db) {
+    $id = '';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Product WHERE product_code=? AND status = '0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['id'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
+function searchProductBasicUomByCode($value, $db) {
+    $id = '';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT Unit.* FROM Product JOIN Unit ON Product.basic_uom = Unit.id WHERE product_code=? AND Product.status = '0' AND Unit.status = '0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['unit'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
 function searchUnitById($value, $db) {
     $id = '';
 
@@ -192,6 +228,60 @@ function searchRawNameByCode($value, $db) {
 
     if(isset($value)){
         if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=? AND status = '0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['name'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
+function searchRawMatIdByCode($value, $db) {
+    $id = '';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=? AND status = '0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['id'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
+function searchRawMatCodeById($value, $db) {
+    $id = '';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE id=? AND status = '0'")) {
+            $select_stmt->bind_param('s', $value);
+            $select_stmt->execute();
+            $result = $select_stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $id = $row['raw_mat_code'];
+            }
+            $select_stmt->close();
+        }
+    }
+
+    return $id;
+}
+
+function searchRawMatNameById($value, $db) {
+    $id = '';
+
+    if(isset($value)){
+        if ($select_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE id=? AND status = '0'")) {
             $select_stmt->bind_param('s', $value);
             $select_stmt->execute();
             $result = $select_stmt->get_result();
