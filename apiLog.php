@@ -105,7 +105,7 @@
                                                 </div>                                                                                                                                                                                                                                                                                                                                        
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="button" class="btn btn-danger" id="searchLog">
+                                                        <button type="button" class="btn btn-primary" id="searchLog">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>

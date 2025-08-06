@@ -136,7 +136,7 @@ else{
                                                 </div>                                                                                                                                                                                                                                                                                                                                        
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="button" class="btn btn-danger" id="searchLog">
+                                                        <button type="button" class="btn btn-primary" id="searchLog">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -247,7 +247,7 @@ else{
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitTransporter">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitTransporter">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -297,7 +297,7 @@ else{
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitStockTake">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitStockTake">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -322,7 +322,7 @@ else{
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="genStockTake" class="btn btn-danger waves-effect waves-light">
+                                                                <button type="button" id="genStockTake" class="btn btn-primary waves-effect waves-light">
                                                                     <i class="ri-stock-line align-middle me-1"></i>
                                                                     Generate Stock Take
                                                                 </button>
