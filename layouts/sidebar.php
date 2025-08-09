@@ -52,7 +52,7 @@
                             </li>
                         </ul>
                     </div>
-                </li> -->
+                </li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAccounting" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAccounting">
@@ -74,7 +74,7 @@
                             </li>             
                         </ul>
                     </div>
-                </li>
+                </li-->
 
                 <?php
                     if($_SESSION["roles"] == 'MANAGER' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
@@ -86,12 +86,12 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
+                                    <!--li class="nav-item">
+                                        <a href="stockTake.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="stockTakeLog.php" class="nav-link"><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</a>
-                                    </li>
+                                    </li-->
                                     <li class="nav-item">
                                         <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</a>
                                     </li>              
@@ -108,9 +108,9 @@
                                     <li class="nav-item">
                                         <a href="customer.php" class="nav-link">'.$lang['t-customer'].'</a>
                                     </li>
-                                    <li class="nav-item">
+                                    <!--li class="nav-item">
                                         <a href="destination.php" class="nav-link">'.$lang['t-destination'].'</a>
-                                    </li>
+                                    </li-->
                                     <li class="nav-item">
                                         <a href="product.php" class="nav-link">'.$lang['t-product'].'</a>
                                     </li>
@@ -123,9 +123,9 @@
                                     <li class="nav-item">
                                         <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
                                     </li>   
-                                    <li class="nav-item">
+                                    <!--li class="nav-item">
                                         <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
-                                    </li>                   
+                                    </li-->                   
                                     <li class="nav-item">
                                         <a href="transporter.php" class="nav-link">'.$lang['t-transporter'].'</a>
                                     </li>
@@ -138,9 +138,9 @@
                                     <li class="nav-item">
                                         <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
                                     </li>                                    
-                                    <li class="nav-item">
+                                    <!--li class="nav-item">
                                         <a href="site.php" class="nav-link">'.$lang['t-site'].'</a>
-                                    </li>                   
+                                    </li-->                   
                                 </ul>
                             </div>
                         </li>';
@@ -153,12 +153,12 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
+                                    <!--li class="nav-item">
+                                        <a href="stockTake.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="stockTakeLog.php" class="nav-link"><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</a>
-                                    </li>
+                                    </li-->
                                     <li class="nav-item">
                                         <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</a>
                                     </li>              
@@ -172,9 +172,9 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarMasterdata">
                                 <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
+                                    <!--li class="nav-item">
                                         <a href="destination.php" class="nav-link">'.$lang['t-destination'].'</a>
-                                    </li>
+                                    </li-->
                                     <li class="nav-item">
                                         <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
                                     </li>       
@@ -210,9 +210,9 @@
                                             <li class="nav-item">
                                                 <a href="auditLog.php" class="nav-link">'.$lang['t-auditLog'].'</a>
                                             </li>
-                                            <li class="nav-item">
+                                            <!--li class="nav-item">
                                                 <a href="apiLog.php" class="nav-link">'.$lang['t-apiLog'].'</a>
-                                            </li>
+                                            </li-->
                                         ';
                                     }
                                 ?>                            

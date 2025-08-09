@@ -16,7 +16,7 @@
     $lang["t-gr"]="Goods Received";
 
     $lang["t-stock"]="Stock Management";
-    $lang["t-bitumen"]="Bitumen";
+    $lang["t-bitumen"]="Stock Take";
     $lang["t-stockTakeLog"]="Stock Take Log";
     $lang["t-inventory"]="Inventory";
 
