@@ -281,7 +281,7 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="soSearchDisplay">
+                                                    <!--div class="col-3" id="soSearchDisplay">
                                                         <div class="mb-3">
                                                             <label for="soSearch" class="form-label">Customer P/O No</label>
                                                             <select id="soSearch" class="form-select select2" >
@@ -292,7 +292,7 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3" id="poSearchDisplay" style="display:none">
+                                                    <!--div class="col-3" id="poSearchDisplay" style="display:none">
                                                         <div class="mb-3">
                                                             <label for="poSearch" class="form-label">PO No</label>
                                                             <select id="poSearch" class="form-select select2" >
@@ -303,7 +303,7 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-3">
+                                                    <!--div class="col-3">
                                                         <div class="mb-3">
                                                             <label for="batchDrumSearch" class="form-label">By-Batch/By-Drum</label>
                                                             <select id="batchDrumSearch" class="form-select select2">
@@ -325,7 +325,7 @@ else{
                                 </div>
                             </div>
                             
-                            <div class="row">
+                            <div class="row" style="display:none;">
                                 <div class="col-xl-4 col-md-6">
                                     <!-- card -->
                                     <div class="card card-animate">
@@ -402,7 +402,64 @@ else{
                                         </div><!-- end card body -->
                                     </div><!-- end card -->
                                 </div><!-- end col -->
+                            </div> <!-- end row-->
 
+                            <div class="row">
+                                <div class="col">
+                                    <div class="h-100">
+                                        <!--datatable--> 
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                <h5 class="card-title mb-0">Previous Records</h5>
+                                                            </div>
+                                                            <div class="flex-shrink-0">
+                                                                <!--a href="/template/Weight_Template.xlsx" download>
+                                                                    <button type="button" class="btn btn-info waves-effect waves-light">
+                                                                        <i class="mdi mdi-file-import-outline align-middle me-1"></i>
+                                                                        Download Template 
+                                                                    </button>
+                                                                </a>
+                                                                <button type="button" id="uploadExccl" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal">
+                                                                    <i class="mdi mdi-file-excel align-middle me-1"></i>
+                                                                    Import Orders
+                                                                </button-->
+                                                                <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add New Weight
+                                                                </button>
+                                                            </div> 
+                                                        </div> 
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Transaction <br>Id</th>
+                                                                    <th>Weight <br> Status</th>
+                                                                    <th>Customer/ <br> Supplier</th>
+                                                                    <th>Vehicle</th>
+                                                                    <th>Product/ <br> Raw Material</th>
+                                                                    <th>SO/PO</th>
+                                                                    <th>DO</th>
+                                                                    <th>Gross <br>Incoming</th>
+                                                                    <th>Incoming <br>Date</th>
+                                                                    <th>Tare <br>Outgoing</th>
+                                                                    <th>Outgoing <br>Date</th>
+                                                                    <th>Nett <br>Weight</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!--end row-->
+                                    </div> <!-- end .h-100-->
+                                </div> <!-- end col -->
                                 <div class="col-xl-3 col-md-6 add-new-weight">
                                     <!-- <button type="button" class="btn btn-lg btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i
                                             class="ri-add-circle-line align-middle me-1"></i>
@@ -508,7 +565,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divOrderWeight" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
                                                                                     <div class="col-sm-8">
@@ -1329,64 +1386,6 @@ else{
                                         </div>
                                     </div-->
                                 </div>
-                            </div> <!-- end row-->
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="h-100">
-                                        <!--datatable--> 
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <div class="d-flex justify-content-between">
-                                                            <div>
-                                                                <h5 class="card-title mb-0">Previous Records</h5>
-                                                            </div>
-                                                            <div class="flex-shrink-0">
-                                                                <!--a href="/template/Weight_Template.xlsx" download>
-                                                                    <button type="button" class="btn btn-info waves-effect waves-light">
-                                                                        <i class="mdi mdi-file-import-outline align-middle me-1"></i>
-                                                                        Download Template 
-                                                                    </button>
-                                                                </a>
-                                                                <button type="button" id="uploadExccl" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal">
-                                                                    <i class="mdi mdi-file-excel align-middle me-1"></i>
-                                                                    Import Orders
-                                                                </button-->
-                                                                <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                    Add New Weight
-                                                                </button>
-                                                            </div> 
-                                                        </div> 
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Transaction <br>Id</th>
-                                                                    <th>Weight <br> Status</th>
-                                                                    <th>Customer/ <br> Supplier</th>
-                                                                    <th>Vehicle</th>
-                                                                    <th>Product/ <br> Raw Material</th>
-                                                                    <th>SO/PO</th>
-                                                                    <th>DO</th>
-                                                                    <th>Gross <br>Incoming</th>
-                                                                    <th>Incoming <br>Date</th>
-                                                                    <th>Tare <br>Outgoing</th>
-                                                                    <th>Outgoing <br>Date</th>
-                                                                    <th>Nett <br>Weight</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div><!--end row-->
-                                    </div> <!-- end .h-100-->
-                                </div> <!-- end col -->
                             </div><!-- container-fluid -->
                         </div> <!-- end .h-100-->
 
