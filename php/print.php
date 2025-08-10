@@ -67,18 +67,24 @@ if(isset($_POST['userID'], $_POST["file"])){
                 }
 
                 // Info Section
+                $transactionStatus = $row['transaction_status'];
                 $ticketNo = $row['transaction_id'];
                 $vehicleNo = $row['lorry_plate_no1'];
                 $customerCode = $row['customer_code'];
                 $customerName = $row['customer_name'];
                 $supplierCode = $row['supplier_code'];
                 $supplierName = $row['supplier_name'];
-                $productCode = $row['product_code'];
-                $productName = $row['product_name'];
                 $transporterCode = $row['transporter_code'];
                 $transporterName = $row['transporter'];
-                $transactionStatus = $row['transaction_status'];
                 $remarks = $row['remarks'];
+
+                if ($transactionStatus == 'Purchase') {
+                    $productCode = $row['raw_mat_code'];
+                    $productName = $row['raw_mat_name'];
+                }else{
+                    $productCode = $row['product_code'];
+                    $productName = $row['product_name'];
+                }
 
                 // Weighing Section
                 $transactionDate = new DateTime($row['transaction_date']);

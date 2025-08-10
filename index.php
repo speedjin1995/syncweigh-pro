@@ -2834,6 +2834,7 @@ else{
                                 if (exDel == 'EX'){
                                     $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
 
+                                    $('#addModal').find('#transporter').val('');
                                     if (!$('#addModal').find('#transporter').val()) {
                                         $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                         if (transporterName){
@@ -2845,21 +2846,22 @@ else{
                                         $('#addModal').find('#transporterCode').val(transporterCode);
                                     }
 
-                                    if (!$('#addModal').find('#customerName').val()) {
-                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
-                                        if (customerName){
-                                            // $('#addModal').find('#customerName').attr('disabled', true);
-                                            $('#addModal').find('#custName').val(customerName);
-                                        }else{
-                                            // $('#addModal').find('#customerName').attr('disabled', false);
-                                            $('#addModal').find('#custName').val(customerName);
-                                        }
-                                        $('#addModal').find('#customerCode').val(customerCode);
-                                    }
+                                    // if (!$('#addModal').find('#customerName').val()) {
+                                    //     $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                    //     if (customerName){
+                                    //         // $('#addModal').find('#customerName').attr('disabled', true);
+                                    //         $('#addModal').find('#custName').val(customerName);
+                                    //     }else{
+                                    //         // $('#addModal').find('#customerName').attr('disabled', false);
+                                    //         $('#addModal').find('#custName').val(customerName);
+                                    //     }
+                                    //     $('#addModal').find('#customerCode').val(customerCode);
+                                    // }
                                 }
                                 else{
                                     $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
 
+                                    $('#addModal').find('#transporter').val('');
                                     if (!$('#addModal').find('#transporter').val()) {
                                         $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                         if (transporterName){
@@ -2872,11 +2874,11 @@ else{
                                         $('#addModal').find('#transporterCode').val(transporterCode);
                                     }
 
-                                    if (!$('#addModal').find('#customerName').val()) {
-                                        $('#addModal').find('#customerName').val('').trigger('change');
-                                        // $('#addModal').find('#customerName').attr('disabled', false);
-                                        $('#addModal').find('#customerCode').val('');
-                                    }
+                                    // if (!$('#addModal').find('#customerName').val()) {
+                                    //     $('#addModal').find('#customerName').val('').trigger('change');
+                                    //     // $('#addModal').find('#customerName').attr('disabled', false);
+                                    //     $('#addModal').find('#customerCode').val('');
+                                    // }
                                 } 
                             }
                         }    
@@ -3047,6 +3049,7 @@ else{
                                     if (exDel == 'EX'){
                                         $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
 
+                                        $('#addModal').find('#transporter').val('');
                                         if (!$('#addModal').find('#transporter').val()) {
                                             $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                             if (transporterName){
@@ -3058,22 +3061,23 @@ else{
                                             $('#addModal').find('#transporterCode').val(transporterCode);
                                         }
 
-                                        if (!$('#addModal').find('#customerName').val()) {
-                                            $('#addModal').find('#customerName').val(customerName).trigger('change');
-                                            if (customerName){
-                                                // $('#addModal').find('#customerName').attr('disabled', true);
-                                                $('#addModal').find('#custName').val(customerName);
-                                            }else{
-                                                // $('#addModal').find('#customerName').attr('disabled', false);
-                                                $('#addModal').find('#custName').val(customerName);
-                                            }
-                                            $('#addModal').find('#customerCode').val(customerCode);
-                                        }
+                                        // if (!$('#addModal').find('#customerName').val()) {
+                                        //     $('#addModal').find('#customerName').val(customerName).trigger('change');
+                                        //     if (customerName){
+                                        //         // $('#addModal').find('#customerName').attr('disabled', true);
+                                        //         $('#addModal').find('#custName').val(customerName);
+                                        //     }else{
+                                        //         // $('#addModal').find('#customerName').attr('disabled', false);
+                                        //         $('#addModal').find('#custName').val(customerName);
+                                        //     }
+                                        //     $('#addModal').find('#customerCode').val(customerCode);
+                                        // }
                                     }
                                     else{
                                         $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
 
-                                        if (!$('#addModal').find('#transporter').val()) {
+                                        $('#addModal').find('#transporter').val('');
+                                        if (!$('#addModal').find('#transporter').val() && $('#addModal').find('#transporter').val() != '-') {
                                             $('#addModal').find('#transporter').val(transporterName).trigger('change');
                                             if (transporterName){
                                                 // $('#addModal').find('#transporter').attr('disabled', true);
@@ -3085,11 +3089,11 @@ else{
                                             $('#addModal').find('#transporterCode').val(transporterCode);
                                         }
 
-                                        if (!$('#addModal').find('#customerName').val()) {
-                                            $('#addModal').find('#customerName').val('').trigger('change');
-                                            // $('#addModal').find('#customerName').attr('disabled', false);
-                                            $('#addModal').find('#customerCode').val('');
-                                        }
+                                        // if (!$('#addModal').find('#customerName').val()) {
+                                        //     $('#addModal').find('#customerName').val('').trigger('change');
+                                        //     // $('#addModal').find('#customerName').attr('disabled', false);
+                                        //     $('#addModal').find('#customerCode').val('');
+                                        // }
                                     } 
                                 }
                             }    
