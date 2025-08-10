@@ -2369,6 +2369,15 @@ else{
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                     }
+                    else if(ind == 'M15'){
+                        var text = data.split(" ");
+                        let newtext = text[text.length - 1].slice(0, -1);
+                        if(newtext != null && newtext != ''){
+                            $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
+                            $('#indicatorConnected').addClass('bg-primary');
+                            $('#checkingConnection').removeClass('bg-danger'); 
+                        }
+                    }
                 }
                 else{
                     $('#indicatorWeight').html('0');
