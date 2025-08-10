@@ -84,16 +84,40 @@ if (isset($_POST['vehicleNo'])) {
                 );
             }
             else{
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Updated Successfully!!" 
-                    )
-                );
-            }
+                if ($insert_stmt = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, transporter_code, transporter_name, ex_del, customer_code, customer_name, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssssssss', $vehicleId, $vehicleNo, $vehicleWeight, $transporterCode, $transporter, $exDel, $customerCode, $customer, $action, $username);
+        
+                    // Execute the prepared query.
+                    if (! $insert_stmt->execute()) {
+                        // echo json_encode(
+                        //     array(
+                        //         "status"=> "failed", 
+                        //         "message"=> $insert_stmt->error
+                        //     )
+                        // );
+                    }
+                    else{
+                        $insert_stmt->close();
+                        
+                        // echo json_encode(
+                        //     array(
+                        //         "status"=> "success", 
+                        //         "message"=> "Added Successfully!!" 
+                        //     )
+                        // );
+                    }
 
-            $update_stmt->close();
-            $db->close();
+                    $update_stmt->close();
+                    $db->close();
+
+                    echo json_encode(
+                        array(
+                            "status"=> "success", 
+                            "message"=> "Updated Successfully!!" 
+                        )
+                    );
+                }
+            }
         }
     }
     else
@@ -127,21 +151,50 @@ if (isset($_POST['vehicleNo'])) {
                     );
                 }
                 else{
-                    $vehicleId = $insert_stmt->insert_id;
                     echo json_encode(
                         array(
                             "status"=> "success", 
                             "message"=> "Added Successfully!!" 
                         )
                     );
+    
+                    $vehicleId = $insert_stmt->insert_id;
+    
+                    $sel = mysqli_query($db,"select count(*) as allcount from Vehicle");
+                    $records = mysqli_fetch_assoc($sel);
+                    $totalRecords = $records['allcount'];
+    
+                    if ($insert_log = $db->prepare("INSERT INTO Vehicle_Log (vehicle_id, veh_number, vehicle_weight, transporter_code, transporter_name, ex_del, customer_code, customer_name, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                        $insert_log->bind_param('ssssssssss', $vehicleId, $vehicleNo, $vehicleWeight, $transporterCode, $transporter, $exDel, $customerCode, $customer, $action, $username);
+            
+                        // Execute the prepared query.
+                        if (! $insert_log->execute()) {
+                            // echo json_encode(
+                            //     array(
+                            //         "status"=> "failed", 
+                            //         "message"=> $insert_stmt->error
+                            //     )
+                            // );
+                        }
+                        else{
+                            $insert_log->close();
+                            // echo json_encode(
+                            //     array(
+                            //         "status"=> "success", 
+                            //         "message"=> "Added Successfully!!" 
+                            //     )
+                            // );
+                        }
+                    }
+    
+                    $insert_stmt->close();
+                    $db->close();
                 }
-
-                $insert_stmt->close();
-                $db->close();
             }
         }
         
     }
+    
 }
 else
 {

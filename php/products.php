@@ -69,6 +69,7 @@ if (isset($_POST['productCode'])) {
 
     if(! empty($productId))
     {
+        // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
         if ($update_stmt = $db->prepare("UPDATE Product SET product_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, basic_uom=?, created_by=?, modified_by=? WHERE id=?")) 
         {
@@ -182,16 +183,40 @@ if (isset($_POST['productCode'])) {
                     }
                 }
 
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Updated Successfully!!" 
-                    )
-                );
-            }
+                if ($insert_stmt = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, basic_uom, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssssssss', $productId, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $basicUom, $action, $username);
+        
+                    // Execute the prepared query.
+                    if (! $insert_stmt->execute()) {
+                        // echo json_encode(
+                        //     array(
+                        //         "status"=> "failed", 
+                        //         "message"=> $insert_stmt->error
+                        //     )
+                        // );
+                    }
+                    else{
+                        $insert_stmt->close();
+                        
+                        // echo json_encode(
+                        //     array(
+                        //         "status"=> "success", 
+                        //         "message"=> "Added Successfully!!" 
+                        //     )
+                        // );
+                    }
 
-            $update_stmt->close();
-            $db->close();
+                    $update_stmt->close();
+                    $db->close();
+
+                    echo json_encode(
+                        array(
+                            "status"=> "success", 
+                            "message"=> "Updated Successfully!!" 
+                        )
+                    );
+                }
+            }
         }
     }
     else
@@ -251,10 +276,37 @@ if (isset($_POST['productCode'])) {
                         "message"=> "Added Successfully!!" 
                     )
                 );
-            }
 
-            $insert_stmt->close();
-            $db->close();
+                $sel = mysqli_query($db,"select count(*) as allcount from Product");
+                $records = mysqli_fetch_assoc($sel);
+                $totalRecords = $records['allcount'];
+
+                if ($insert_log = $db->prepare("INSERT INTO Product_Log (product_id, product_code, name, price, description, variance, high, low, basic_uom, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_log->bind_param('sssssssssss', $totalRecords, $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $basicUom, $action, $username);
+        
+                    // Execute the prepared query.
+                    if (! $insert_log->execute()) {
+                        // echo json_encode(
+                        //     array(
+                        //         "status"=> "failed", 
+                        //         "message"=> $insert_stmt->error
+                        //     )
+                        // );
+                    }
+                    else{
+                        $insert_log->close();
+                        // echo json_encode(
+                        //     array(
+                        //         "status"=> "success", 
+                        //         "message"=> "Added Successfully!!" 
+                        //     )
+                        // );
+                    }
+                }
+
+                $insert_stmt->close();
+                $db->close();
+            }
         }
     }
     
