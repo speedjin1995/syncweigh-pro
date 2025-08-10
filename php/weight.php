@@ -352,7 +352,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
 
     if (empty($_POST["totalPrice"])) {
-        $totalPrice = null;
+        $totalPrice = '0.00';
     } else {
         $totalPrice = trim($_POST["totalPrice"]);
     }
