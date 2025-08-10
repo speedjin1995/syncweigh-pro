@@ -144,7 +144,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="exDel" class="col-sm-4 col-form-label">Ex-Quarry/Delivered</label>
                                                                                     <div class="col-sm-8">
@@ -179,7 +179,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="customer" class="col-sm-4 col-form-label">Customer</label>
                                                                                     <div class="col-sm-8">
@@ -285,9 +285,9 @@
                                                                     <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
                                                                     <th>Vehicle No</th>
                                                                     <!--th>Vehicle Weight</th-->
-                                                                    <th>EX-Quarry/Delivered</th>
+                                                                    <!--th>EX-Quarry/Delivered</th-->
                                                                     <th>Transporter</th>
-                                                                    <th>Customer</th>
+                                                                    <!--th>Customer</th-->
                                                                     <th>Status</th>
                                                                     <th>Action</th>
                                                                 </tr>
@@ -391,7 +391,7 @@ $(function () {
                 }
             },
             { data: 'veh_number' },
-            //{ data: 'vehicle_weight' },
+            /*{ data: 'vehicle_weight' },
             { 
                 data: 'ex_del',
                 render: function ( data, type, row ) {
@@ -401,9 +401,9 @@ $(function () {
                         return "Delivered";
                     }
                 }
-            },
+            },*/
             { data: 'transporter_name' },
-            { data: 'customer_name' },
+            //{ data: 'customer_name' },
             { data: 'status' },
             { 
                 data: 'id',
