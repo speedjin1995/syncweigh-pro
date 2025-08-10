@@ -50,9 +50,6 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
                 );
             }
             else{
-                $update_stmt->close();
-                $db->close();
-                
                 echo json_encode(
                     array(
                         "status"=> "success", 
@@ -60,6 +57,9 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
                     )
                 );
             }
+
+            $update_stmt->close();
+            $db->close();
         }
     }
     else{
@@ -77,9 +77,6 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
                 );
             }
             else{
-                $insert_stmt->close();
-                $db->close();
-                
                 echo json_encode(
                     array(
                         "status" => "success", 
@@ -88,39 +85,11 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
                     )
                 );
             }
+
+            $insert_stmt->close();
+            $db->close();
         }
     }
-
-    /*if($action == "1"){
-        $sql3 = "INSERT INTO Users_Log (employee_code, username, user_department, status, password, action_id, action_by) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        if ($stmt3 = mysqli_prepare($link, $sql3)) {
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt3, "sssssss", $param_code, $param_username, $param_role, $param_status, $param_password, $param_action, $param_actionBy);
-
-            // Set parameters
-            $param_code = $employeeCode;
-            $param_username = $username;
-            $param_password = "123456"; // Creates a password hash
-            $param_role = $roles;
-            $param_status = "0";
-            $param_action = $action;
-            $param_actionBy = $name;
-
-            // Attempt to execute the prepared statement
-            if (mysqli_stmt_execute($stmt3)) {
-                echo "Added";
-            } else {
-                echo "Something went wrong. Please try again later.";
-            }
-
-            // Close statement
-            mysqli_stmt_close($stmt3);
-        }
-    }
-    else{
-
-    }*/
 }
 else{
     echo json_encode(

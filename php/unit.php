@@ -44,40 +44,16 @@ if (isset($_POST['unit'])) {
                 );
             }
             else{
-                if ($insert_stmt = $db->prepare("INSERT INTO Unit_Log (unit_id, unit, action_id, action_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssss', $unitId, $unit, $action, $username);
-        
-                    // Execute the prepared query.
-                    if (! $insert_stmt->execute()) {
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "failed", 
-                        //         "message"=> $insert_stmt->error
-                        //     )
-                        // );
-                    }
-                    else{
-                        $insert_stmt->close();
-                        
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "success", 
-                        //         "message"=> "Added Successfully!!" 
-                        //     )
-                        // );
-                    }
-
-                    $update_stmt->close();
-                    $db->close();
-
-                    echo json_encode(
-                        array(
-                            "status"=> "success", 
-                            "message"=> "Updated Successfully!!" 
-                        )
-                    );
-                }
+                echo json_encode(
+                    array(
+                        "status"=> "success", 
+                        "message"=> "Updated Successfully!!" 
+                    )
+                );
             }
+
+            $update_stmt->close();
+            $db->close();
         }
     }
     else
@@ -102,37 +78,10 @@ if (isset($_POST['unit'])) {
                         "message"=> "Added Successfully!!" 
                     )
                 );
-
-                $sel = mysqli_query($db,"select count(*) as allcount from Unit");
-                $records = mysqli_fetch_assoc($sel);
-                $totalRecords = $records['allcount'];
-
-                if ($insert_log = $db->prepare("INSERT INTO Unit_Log (unit_id, unit, action_id, action_by) VALUES (?, ?, ?, ?)")) {
-                    $insert_log->bind_param('ssss', $totalRecords, $unit, $action, $username);
-        
-                    // Execute the prepared query.
-                    if (! $insert_log->execute()) {
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "failed", 
-                        //         "message"=> $insert_stmt->error
-                        //     )
-                        // );
-                    }
-                    else{
-                        $insert_log->close();
-                        // echo json_encode(
-                        //     array(
-                        //         "status"=> "success", 
-                        //         "message"=> "Added Successfully!!" 
-                        //     )
-                        // );
-                    }
-                }
-
-                $insert_stmt->close();
-                $db->close();
             }
+
+            $insert_stmt->close();
+            $db->close();
         }
     }
     
