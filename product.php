@@ -103,7 +103,7 @@
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="submit" class="btn btn-danger">
+                                                        <button type="submit" class="btn btn-primary">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -233,7 +233,7 @@
                                                                                 <h5 class="card-title mb-0">UOM Conversion</h5>
                                                                             </div>
                                                                             <div class="flex-shrink-0">
-                                                                                <button type="button" class="btn btn-danger add-uom"><i class="ri-add-circle-line align-middle me-1"></i>Add UOM</button>
+                                                                                <button type="button" class="btn btn-primary add-uom"><i class="ri-add-circle-line align-middle me-1"></i>Add UOM</button>
                                                                             </div> 
                                                                         </div> 
                                                                     </div>
@@ -265,7 +265,7 @@
                                                                     <div class="card-header p-2">
                                                                         <div class="d-flex justify-content-end">
                                                                             <div class="flex-shrink-0">
-                                                                                <button type="button" class="btn btn-danger add-material"><i class="ri-add-circle-line align-middle me-1"></i>Add Raw Material</button>
+                                                                                <button type="button" class="btn btn-primary add-material"><i class="ri-add-circle-line align-middle me-1"></i>Add Raw Material</button>
                                                                             </div> 
                                                                         </div>
                                                                     </div>
@@ -297,7 +297,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-danger" id="submitProduct">Submit</button>
+                                                                <button type="button" class="btn btn-primary" id="submitProduct">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -365,7 +365,7 @@
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Product
                                                                 </button>
-                                                                <button type="button" id="addProduct" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addProduct" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Product
                                                                 </button>

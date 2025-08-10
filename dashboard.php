@@ -161,7 +161,7 @@
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger">
+                                                            <button type="submit" class="btn btn-primary">
                                                                 <i class="bx bx-search-alt"></i>
                                                                 Search</button>
                                                         </div>
@@ -275,7 +275,7 @@
                                                     <h5 class="card-title mb-0">Previous Records</h5>
                                                 </div>
                                                 <div class="flex-shrink-0">
-                                                    <button type="button" class="btn btn-danger waves-effect waves-light" id="excelSearch">
+                                                    <button type="button" class="btn btn-primary waves-effect waves-light" id="excelSearch">
                                                     <i class="mdi mdi-file-excel-outline"></i>
                                                     Export Excel
                                                     </button>

@@ -270,7 +270,7 @@ else{
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-primary" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -376,7 +376,7 @@ else{
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Summary Report
                                                                 </button>
-                                                                <button type="button" id="exportPurchasePdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="exportPurchasePdf" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Public Report
                                                                 </button>
@@ -488,7 +488,7 @@ else{
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
+                                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
@@ -595,7 +595,7 @@ else{
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger" id="submit">Submit</button>
+                                <button type="submit" class="btn btn-primary" id="submit">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>
