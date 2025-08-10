@@ -23,11 +23,17 @@ if(isset($_POST['userID'], $_POST["file"])){
     if ($select_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
         $select_stmt->bind_param('s', $id);
 
-        $compname = 'BIO ENECO SDN BHD';
-        $compaddress = 'LOT 6466, LORONG SUNGAI PULOH,';
-        $compaddress2 = 'BATU 6, JALAN KAPAR,';
-        $compaddress3 = '42100, KLANG, SELANGOR D.E.';
-        $compphone = '+03-9054 8138';
+        $compname = '';
+        if ($company_stmt = $db->prepare("SELECT * FROM Company WHERE id=?")) {
+            $companyId = 1;
+            $company_stmt->bind_param('s', $companyId);
+            $company_stmt->execute();
+            $company_result = $company_stmt->get_result();
+            if ($company_row = $company_result->fetch_assoc()) {
+                $compname = $company_row['name'];
+            }
+            $company_stmt->close();
+        }
 
         // Execute the prepared query.
         if (! $select_stmt->execute()) {
@@ -41,6 +47,25 @@ if(isset($_POST['userID'], $_POST["file"])){
             $result = $select_stmt->get_result();
                 
             if ($row = $result->fetch_assoc()) {
+                // Plant Info
+                $compaddress = '';
+                $compaddress2 = '';
+                $compaddress3 = '';
+                $compphone = '';
+
+                if ($plant_stmt = $db->prepare("SELECT * FROM Plant WHERE plant_code=?")) {
+                    $plant_stmt->bind_param('s', $row['plant_code']);
+                    $plant_stmt->execute();
+                    $plant_result = $plant_stmt->get_result();
+                    if ($plant_row = $plant_result->fetch_assoc()) {
+                        $compaddress = $plant_row['address_line_1'];
+                        $compaddress2 = $plant_row['address_line_2'];
+                        $compaddress3 = $plant_row['address_line_3'];
+                        $compphone = $plant_row['phone_no'];
+                    }
+                    $plant_stmt->close();
+                }
+
                 // Info Section
                 $ticketNo = $row['transaction_id'];
                 $vehicleNo = $row['lorry_plate_no1'];
