@@ -83,20 +83,20 @@
                                                         <label for="reportType" class="form-label">Status</label>
                                                         <select id="reportType" name="reportType" class="form-select" data-choices data-choices-sorting="true" >
                                                             <option value="Customer" selected>Customer</option>
-                                                            <option value="Destination">Destination</option>
+                                                            <!-- <option value="Destination">Destination</option> -->
                                                             <option value="Product">Product</option>
                                                             <option value="Raw Materials">Raw Material</option>
                                                             <option value="Supplier">Supplier</option>
                                                             <option value="Vehicle">Vehicle</option>
-                                                            <option value="Agent">Sales Representative</option>
+                                                            <!-- <option value="Agent">Sales Representative</option> -->
                                                             <option value="Transporter">Transporter</option>
                                                             <option value="Unit">Unit</option>
                                                             <option value="User">User</option>
                                                             <option value="Plant">Plant</option>
-                                                            <option value="Site">Site</option>
+                                                            <!-- <option value="Site">Site</option> -->
                                                             <option value="Weight">Weighing</option>
-                                                            <option value="SO">Sales Order</option>
-                                                            <option value="PO">Purchase Order</option>
+                                                            <!-- <option value="SO">Sales Order</option> -->
+                                                            <!-- <option value="PO">Purchase Order</option> -->
                                                         </select>
                                                     </div>
                                                 </div>
@@ -734,51 +734,48 @@ function format (row) {
         productRawMat = row.raw_mat_code + '-' + row.raw_mat_name;
         orderSuppWeight = row.supplier_weight;
     }
-
+    
     var returnString = `
-    <!-- Weighing Section -->
-    <div class="row">
-        <div class="col-3">
-            <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
-            <p><strong>CUSTOMER TYPE:</strong> ${row.weight_type}</p>
-            <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
-            <p><strong>TRANSACTION DATE:</strong> ${row.transaction_date}</p>
-            <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
-            <p><strong>MANUAL WEIGHT:</strong> ${row.manual_weight}</p>
-            <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
-            <p><strong>SO/PO NO:</strong> ${row.purchase_order}</p>
+        <!-- Section 01 -->
+        <div class="row">
+            <div class="col-6">
+                <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
+                <p><strong>CUSTOMER TYPE:</strong> ${row.weight_type}</p>
+                <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                <p><strong>TRANSACTION DATE:</strong> ${row.transaction_date}</p>
+                <p><strong>MANUAL WEIGHT:</strong> ${row.manual_weight}</p>
+                <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
+            </div>
+            <div class="col-6">
+                <p><strong>CONTAINER NO:</strong> ${row.container_no}</p>
+                <p><strong>CUSTOMER/SUPPLIER:</strong> ${custSupplier}</p>
+                <p><strong>PRODUCT/RAW MATERIAL:</strong> ${productRawMat}</p>
+                <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter}</p>
+                <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
+            </div>
+            
         </div>
-        <div class="col-3">
-            <p><strong>CONTAINER NO:</strong> ${row.container_no}</p>
-            <p><strong>CUSTOMER/SUPPLIER:</strong> ${custSupplier}</p>
-            <p><strong>PRODUCT/RAW MATERIAL:</strong> ${productRawMat}</p>
-            <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter}</p>
-            <p><strong>SALES REPRESENTATIVE:</strong> ${row.agent_code} - ${row.agent_name}</p>
-            <p><strong>DESTINATION:</strong> ${row.destination_code} - ${row.destination}</p>
-            <p><strong>SITE:</strong> ${row.site_code} - ${row.site_name}</p>
-            <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
+        <hr>
+        <!-- Section 02 -->
+        <div class="row">
+            <div class="col-6">
+                <p><strong>ORDER/SUPPLIER WEIGHT:</strong> ${orderSuppWeight}</p>
+                <p><strong>WEIGHT DIFFERENCE:</strong> ${row.reduce_weight}</p>
+                <p><strong>UNIT PRICE:</strong> ${row.unit_price}</p>
+                <p><strong>TOTAL PRICE:</strong> ${row.total_price}</p>
+                <p><strong>REMARK:</strong> ${row.remarks}</p>
+            </div>
+            <div class="col-6">
+                <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
+                <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} KG</p>
+                <p><strong>IN DATE/TIME:</strong> ${row.gross_weight1_date}</p>
+                <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} KG</p>
+                <p><strong>OUT DATE/TIME:</strong> ${row.tare_weight1_date}</p>
+                <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} KG</p>
+            </div>
         </div>
-        <div class="col-3">
-            <p><strong>EX-QUARRY/DELIVERED:</strong> ${exDel}</p>
-            <p><strong>BY-LOAD/BY-DRUM:</strong> ${loadDrum}</p>
-            <p><strong>ORDER/SUPPLIER WEIGHT:</strong> ${orderSuppWeight}</p>
-            <p><strong>WEIGHT DIFFERENCE:</strong> ${row.reduce_weight}</p>
-            <p><strong>UNIT PRICE:</strong> ${row.unit_price}</p>
-            <p><strong>SUB-TOTAL PRICE:</strong> ${row.sub_total}</p>
-            <p><strong>SST (6%):</strong> ${row.sst}</p>
-            <p><strong>TOTAL PRICE:</strong> ${row.total_price}</p>
-        </div>
-        <div class="col-3">
-            <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
-            <p><strong>NO OF DRUM:</strong> ${row.no_of_drum}</p>
-            <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} KG</p>
-            <p><strong>IN DATE/TIME:</strong> ${row.gross_weight1_date}</p>
-            <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1} KG</p>
-            <p><strong>OUT DATE/TIME:</strong> ${row.tare_weight1_date}</p>
-            <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} KG</p>
-            <p><strong>REMARK:</strong> ${row.remarks}</p>
-        </div>
-    </div>`;
+    
+    `;
     
     return returnString;
 }

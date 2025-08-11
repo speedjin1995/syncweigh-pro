@@ -41,6 +41,7 @@ if(isset($_POST['userID'])){
                     if ($row == null){
                         $row = '';
                     }
+
                     $message[$key] = $row;
                 }
 
@@ -50,6 +51,8 @@ if(isset($_POST['userID'])){
                         "message" => $message
                     ));  
             }
+
+            $update_stmt->close();
         }
     }else{
         if ($update_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
@@ -84,7 +87,9 @@ if(isset($_POST['userID'])){
                                     $message['address_line_3'] = $row2['address_line_3'] ?? '';
                                     $message['phone_no'] = $row2['phone_no'] ?? '';
                                     $message['fax_no'] = $row2['fax_no'] ?? '';
-                                } 
+                                }
+                                
+                                $customer_stmt->close();
                             }
                             $message['product_rawmat_name'] = $row['raw_mat_name'];
                         }else{
@@ -101,6 +106,8 @@ if(isset($_POST['userID'])){
                                     $message['phone_no'] = $row2['phone_no'] ?? '';
                                     $message['fax_no'] = $row2['fax_no'] ?? '';
                                 }
+
+                                $customer_stmt->close();
                             } 
 
                             $message['product_rawmat_name'] = $row['product_name'];
@@ -304,8 +311,12 @@ if(isset($_POST['userID'])){
                         "message" => $message
                     ));   
             }
+
+            $update_stmt->close();
         }
     }
+
+    $db->close();
 }
 else{
     echo json_encode(

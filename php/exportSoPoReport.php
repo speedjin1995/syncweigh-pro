@@ -358,33 +358,27 @@ if(isset($_POST["type"])){
                                 <td>'.$data['transaction_id'].'</td>
                                 <td>'.$data['transporter_code'].'</td>
                                 <td>'.$data['lorry_plate_no1'].'</td>
-                                <td>'.$data['agent_code'].'</td>
                                 <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                <td width="10%">'.$data['purchase_order'].'</td>
                                 <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                 <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
-                                <td>'.$exDel.'</td>
-                                <td>'.$data['batch_drum'].'</td>
                                 <td>'.searchNamebyId($data['created_by'], $db).'</td>
                             </tr>';                
                         }
 
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grpData).'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpNettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -403,10 +397,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -458,33 +451,27 @@ if(isset($_POST["type"])){
                                     <td>'.$data['transaction_id'].'</td>
                                     <td>'.$data['transporter_code'].'</td>
                                     <td>'.$data['lorry_plate_no1'].'</td>
-                                    <td>'.$data['agent_code'].'</td>
                                     <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                    <td width="10%">'.$data['purchase_order'].'</td>
                                     <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                     <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                     <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                    <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
-                                    <td>'.$exDel.'</td>
-                                    <td>'.$data['batch_drum'].'</td>
                                     <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                 </tr>';                
                             }
 
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($dateData).'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -500,10 +487,9 @@ if(isset($_POST["type"])){
 
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Records.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -522,10 +508,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -599,33 +584,27 @@ if(isset($_POST["type"])){
                                         <td>'.$data['transaction_id'].'</td>
                                         <td>'.$data['transporter_code'].'</td>
                                         <td>'.$data['lorry_plate_no1'].'</td>
-                                        <td>'.$data['agent_code'].'</td>
                                         <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                        <td width="10%">'.$data['purchase_order'].'</td>
                                         <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                         <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                         <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                        <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
-                                        <td>'.$exDel.'</td>
-                                        <td>'.$data['batch_drum'].'</td>
                                         <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                     </tr>';                
                                 }
 
                                 $rowData .= '
                                     <tr class="details fw-bold">
-                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
+                                        <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grp3Data).'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -642,10 +621,9 @@ if(isset($_POST["type"])){
 
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count[$grp2].'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2NettWeight[$grp2].'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -658,10 +636,9 @@ if(isset($_POST["type"])){
 
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -679,10 +656,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -771,33 +747,27 @@ if(isset($_POST["type"])){
                                             <td>'.$data['transaction_id'].'</td>
                                             <td>'.$data['transporter_code'].'</td>
                                             <td>'.$data['lorry_plate_no1'].'</td>
-                                            <td>'.$data['agent_code'].'</td>
                                             <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                            <td width="10%">'.$data['purchase_order'].'</td>
                                             <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                             <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                             <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                            <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
-                                            <td>'.$exDel.'</td>
-                                            <td>'.$data['batch_drum'].'</td>
                                             <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                         </tr>';                
                                     }
                     
                                     $rowData .= '
                                         <tr class="details fw-bold">
-                                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp4.'</td>
+                                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp4.'</td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4Count.'</td>
                                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -813,10 +783,9 @@ if(isset($_POST["type"])){
                     
                                 $rowData .= '
                                     <tr class="details fw-bold">
-                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.callLookup($groupOrder[2], $grp3, $db).'</td>
+                                        <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.callLookup($groupOrder[2], $grp3, $db).'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3Count.'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalNettWeight.'</td>
-                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -832,10 +801,9 @@ if(isset($_POST["type"])){
                     
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count.'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalNettWeight.'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -851,10 +819,9 @@ if(isset($_POST["type"])){
                     
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalNettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -871,10 +838,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -979,33 +945,27 @@ if(isset($_POST["type"])){
                                                 <td>'.$data['transaction_id'].'</td>
                                                 <td>'.$data['transporter_code'].'</td>
                                                 <td>'.$data['lorry_plate_no1'].'</td>
-                                                <td>'.$data['agent_code'].'</td>
                                                 <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                                <td width="10%">'.$data['purchase_order'].'</td>
                                                 <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                                 <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                                <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
-                                                <td>'.$exDel.'</td>
-                                                <td>'.$data['batch_drum'].'</td>
                                                 <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                             </tr>';                
                                         }
                     
                                         $rowData .= '
                                             <tr class="details fw-bold">
-                                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp5.'</td>
+                                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp5.'</td>
                                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp5Count.'</td>
                                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1021,10 +981,9 @@ if(isset($_POST["type"])){
                     
                                     $rowData .= '
                                         <tr class="details fw-bold">
-                                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[3].' Total : '.($groupOrder[3] == 'Batch Or Drum' || $groupOrder[3] == 'Vehicle' ? $grp4 : callLookup($groupOrder[3], $grp4, $db)).'</td>
+                                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[3].' Total : '.($groupOrder[3] == 'Batch Or Drum' || $groupOrder[3] == 'Vehicle' ? $grp4 : callLookup($groupOrder[3], $grp4, $db)).'</td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4Count.'</td>
                                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4TotalNettWeight.'</td>
-                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1040,10 +999,9 @@ if(isset($_POST["type"])){
                     
                                 $rowData .= '
                                     <tr class="details fw-bold">
-                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.($groupOrder[2] == 'Batch Or Drum' || $groupOrder[2] == 'Vehicle' ? $grp3 : callLookup($groupOrder[2], $grp3, $db)).'</td>
+                                        <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.($groupOrder[2] == 'Batch Or Drum' || $groupOrder[2] == 'Vehicle' ? $grp3 : callLookup($groupOrder[2], $grp3, $db)).'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3Count.'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalNettWeight.'</td>
-                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1059,10 +1017,9 @@ if(isset($_POST["type"])){
                     
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.($groupOrder[1] == 'Batch Or Drum' || $groupOrder[1] == 'Vehicle' ? $grp2 : callLookup($groupOrder[1], $grp2, $db)).'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.($groupOrder[1] == 'Batch Or Drum' || $groupOrder[1] == 'Vehicle' ? $grp2 : callLookup($groupOrder[1], $grp2, $db)).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count.'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalNettWeight.'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1078,10 +1035,9 @@ if(isset($_POST["type"])){
                     
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.($groupOrder[0] == 'Batch Or Drum' || $groupOrder[0] == 'Vehicle' ? $grp1 : callLookup($groupOrder[0], $grp1, $db)).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.($groupOrder[0] == 'Batch Or Drum' || $groupOrder[0] == 'Vehicle' ? $grp1 : callLookup($groupOrder[0], $grp1, $db)).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalNettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1098,10 +1054,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1162,11 +1117,7 @@ if(isset($_POST["type"])){
                                         <br>
                                         Start Customer / Last Customer : '.reset($headerGroup['Customer']).' / '.end($headerGroup['Customer']).'
                                         <br>
-                                        Start Destination / Last Destination : '.reset($headerGroup['Destination']).' / '.end($headerGroup['Destination']).'
-                                        <br>
                                         Start/Last Customer Type: /IN 
-                                        <br>
-                                        Start/Last Site : 
                                         <br>
                                         Start Product / Last Product : '.reset($headerGroup['Product']).' / '.end($headerGroup['Product']).'
                                     </p>
@@ -1181,18 +1132,14 @@ if(isset($_POST["type"])){
                                                     <th rowspan="2" class="text-start">Serial No.</th>
                                                     <th rowspan="2">Transport</th>
                                                     <th rowspan="2">Vehicle No.</th>
-                                                    <th rowspan="2">Salesman</th>
                                                     <th rowspan="2">Date</th>
-                                                    <th rowspan="2">P/O No</th>
                                                     <th colspan="2" class="pb-0 pt-0" style="border-bottom: none;">Time</th>
-                                                    <th colspan="5" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
+                                                    <th colspan="4" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
                                                     <th rowspan="2">Price <br>/Ton</th>
                                                     <th rowspan="2">Trans Rate</th>
                                                     <th rowspan="2">Ex_GST <br>(RM)</th>
                                                     <th rowspan="2">GST 0% <br>(RM)</th>
                                                     <th rowspan="2">Amount <br>(RM)</th>
-                                                    <th rowspan="2">E/D</th>
-                                                    <th rowspan="2">Batch/Drum</th>
                                                     <th rowspan="2"></th>
                                                 </tr>
                                                 <tr class="text-center">
@@ -1202,7 +1149,6 @@ if(isset($_POST["type"])){
                                                     <th>Out</th>
                                                     <th>Net</th>
                                                     <th>Order Weight</th>
-                                                    <th>Variance</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1390,33 +1336,27 @@ if(isset($_POST["type"])){
                                 <td>'.$data['transaction_id'].'</td>
                                 <td>'.$data['transporter_code'].'</td>
                                 <td>'.$data['lorry_plate_no1'].'</td>
-                                <td>'.$data['agent_code'].'</td>
                                 <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                <td width="10%">'.$data['purchase_order'].'</td>
                                 <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                 <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
-                                <td>'.$exDel.'</td>
-                                <td>'.$data['batch_drum'].'</td>
                                 <td>'.searchNamebyId($data['created_by'], $db).'</td>
                             </tr>';                
                         }
 
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grpData).'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpNettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1435,10 +1375,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1490,33 +1429,27 @@ if(isset($_POST["type"])){
                                     <td>'.$data['transaction_id'].'</td>
                                     <td>'.$data['transporter_code'].'</td>
                                     <td>'.$data['lorry_plate_no1'].'</td>
-                                    <td>'.$data['agent_code'].'</td>
                                     <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                    <td width="10%">'.$data['purchase_order'].'</td>
                                     <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                     <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                     <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                    <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
-                                    <td>'.$exDel.'</td>
-                                    <td>'.$data['batch_drum'].'</td>
                                     <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                 </tr>';                
                             }
 
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($dateData).'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1532,10 +1465,9 @@ if(isset($_POST["type"])){
 
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Records.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1554,10 +1486,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1631,33 +1562,27 @@ if(isset($_POST["type"])){
                                         <td>'.$data['transaction_id'].'</td>
                                         <td>'.$data['transporter_code'].'</td>
                                         <td>'.$data['lorry_plate_no1'].'</td>
-                                        <td>'.$data['agent_code'].'</td>
                                         <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                        <td width="10%">'.$data['purchase_order'].'</td>
                                         <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                         <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                         <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                        <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
-                                        <td>'.$exDel.'</td>
-                                        <td>'.$data['batch_drum'].'</td>
                                         <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                     </tr>';                
                                 }
 
                                 $rowData .= '
                                     <tr class="details fw-bold">
-                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
+                                        <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grp3Data).'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1674,10 +1599,9 @@ if(isset($_POST["type"])){
 
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count[$grp2].'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2NettWeight[$grp2].'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1690,10 +1614,9 @@ if(isset($_POST["type"])){
 
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1711,10 +1634,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1803,33 +1725,27 @@ if(isset($_POST["type"])){
                                             <td>'.$data['transaction_id'].'</td>
                                             <td>'.$data['transporter_code'].'</td>
                                             <td>'.$data['lorry_plate_no1'].'</td>
-                                            <td>'.$data['agent_code'].'</td>
                                             <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                            <td width="10%">'.$data['purchase_order'].'</td>
                                             <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                             <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                             <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                            <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
-                                            <td>'.$exDel.'</td>
-                                            <td>'.$data['batch_drum'].'</td>
                                             <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                         </tr>';                
                                     }
                     
                                     $rowData .= '
                                         <tr class="details fw-bold">
-                                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp4.'</td>
+                                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp4.'</td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4Count.'</td>
                                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1845,10 +1761,9 @@ if(isset($_POST["type"])){
                     
                                 $rowData .= '
                                     <tr class="details fw-bold">
-                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.callLookup($groupOrder[2], $grp3, $db).'</td>
+                                        <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.callLookup($groupOrder[2], $grp3, $db).'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3Count.'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalNettWeight.'</td>
-                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1864,10 +1779,9 @@ if(isset($_POST["type"])){
                     
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count.'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalNettWeight.'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1883,10 +1797,9 @@ if(isset($_POST["type"])){
                     
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalNettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1903,10 +1816,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2011,33 +1923,27 @@ if(isset($_POST["type"])){
                                                 <td>'.$data['transaction_id'].'</td>
                                                 <td>'.$data['transporter_code'].'</td>
                                                 <td>'.$data['lorry_plate_no1'].'</td>
-                                                <td>'.$data['agent_code'].'</td>
                                                 <td>'.date("d/m/Y", strtotime($data['transaction_date'])).'</td>
-                                                <td width="10%">'.$data['purchase_order'].'</td>
                                                 <td class="text-end">'.date("H:i", strtotime($data['gross_weight1_date'])).'</td>
                                                 <td class="text-end">'.date("H:i", strtotime($data['tare_weight1_date'])).'</td>
                                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                                <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
-                                                <td>'.$exDel.'</td>
-                                                <td>'.$data['batch_drum'].'</td>
                                                 <td>'.searchNamebyId($data['created_by'], $db).'</td>
                                             </tr>';                
                                         }
                     
                                         $rowData .= '
                                             <tr class="details fw-bold">
-                                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp5.'</td>
+                                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp5.'</td>
                                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp5Count.'</td>
                                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2053,10 +1959,9 @@ if(isset($_POST["type"])){
                     
                                     $rowData .= '
                                         <tr class="details fw-bold">
-                                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[3].' Total : '.($groupOrder[3] == 'Batch Or Drum' || $groupOrder[3] == 'Vehicle' ? $grp4 : callLookup($groupOrder[3], $grp4, $db)).'</td>
+                                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[3].' Total : '.($groupOrder[3] == 'Batch Or Drum' || $groupOrder[3] == 'Vehicle' ? $grp4 : callLookup($groupOrder[3], $grp4, $db)).'</td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4Count.'</td>
                                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4TotalNettWeight.'</td>
-                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2072,10 +1977,9 @@ if(isset($_POST["type"])){
                     
                                 $rowData .= '
                                     <tr class="details fw-bold">
-                                        <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.($groupOrder[2] == 'Batch Or Drum' || $groupOrder[2] == 'Vehicle' ? $grp3 : callLookup($groupOrder[2], $grp3, $db)).'</td>
+                                        <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.($groupOrder[2] == 'Batch Or Drum' || $groupOrder[2] == 'Vehicle' ? $grp3 : callLookup($groupOrder[2], $grp3, $db)).'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3Count.'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalNettWeight.'</td>
-                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2091,10 +1995,9 @@ if(isset($_POST["type"])){
                     
                             $rowData .= '
                                 <tr class="details fw-bold">
-                                    <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.($groupOrder[1] == 'Batch Or Drum' || $groupOrder[1] == 'Vehicle' ? $grp2 : callLookup($groupOrder[1], $grp2, $db)).'</td>
+                                    <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.($groupOrder[1] == 'Batch Or Drum' || $groupOrder[1] == 'Vehicle' ? $grp2 : callLookup($groupOrder[1], $grp2, $db)).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count.'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalNettWeight.'</td>
-                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2110,10 +2013,9 @@ if(isset($_POST["type"])){
                     
                         $rowData .= '
                             <tr class="details fw-bold">
-                                <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.($groupOrder[0] == 'Batch Or Drum' || $groupOrder[0] == 'Vehicle' ? $grp1 : callLookup($groupOrder[0], $grp1, $db)).'</td>
+                                <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.($groupOrder[0] == 'Batch Or Drum' || $groupOrder[0] == 'Vehicle' ? $grp1 : callLookup($groupOrder[0], $grp1, $db)).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalNettWeight.'</td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2130,10 +2032,9 @@ if(isset($_POST["type"])){
 
                     $compiledRowData .= '
                         <tr class="details fw-bold">
-                            <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
+                            <td colspan="4" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2194,11 +2095,7 @@ if(isset($_POST["type"])){
                                         <br>
                                         Start Supplier / Last Supplier : '.reset($headerGroup['Supplier']).' / '.end($headerGroup['Supplier']).'
                                         <br>
-                                        Start Destination / Last Destination : '.reset($headerGroup['Destination']).' / '.end($headerGroup['Destination']).'
-                                        <br>
                                         Start/Last Customer Type: /IN 
-                                        <br>
-                                        Start/Last Site : 
                                         <br>
                                         Start Raw Material / Last Raw Material : '.reset($headerGroup['Raw Material']).' / '.end($headerGroup['Raw Material']).'
                                     </p>
@@ -2213,18 +2110,14 @@ if(isset($_POST["type"])){
                                                     <th rowspan="2" class="text-start">Serial No.</th>
                                                     <th rowspan="2">Transport</th>
                                                     <th rowspan="2">Vehicle No.</th>
-                                                    <th rowspan="2">Salesman</th>
                                                     <th rowspan="2">Date</th>
-                                                    <th rowspan="2">P/O No</th>
                                                     <th colspan="2" class="pb-0 pt-0" style="border-bottom: none;">Time</th>
-                                                    <th colspan="5" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
+                                                    <th colspan="4" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
                                                     <th rowspan="2">Price <br>/Ton</th>
                                                     <th rowspan="2">Trans Rate</th>
                                                     <th rowspan="2">Ex_GST <br>(RM)</th>
                                                     <th rowspan="2">GST 0% <br>(RM)</th>
                                                     <th rowspan="2">Amount <br>(RM)</th>
-                                                    <th rowspan="2">E/D</th>
-                                                    <th rowspan="2">Batch/Drum</th>
                                                     <th rowspan="2"></th>
                                                 </tr>
                                                 <tr class="text-center">
@@ -2234,7 +2127,6 @@ if(isset($_POST["type"])){
                                                     <th>Out</th>
                                                     <th>Net</th>
                                                     <th>Supplier Weight</th>
-                                                    <th>Variance</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

@@ -705,7 +705,6 @@ if($_POST['selectedValue'] == "Weight")
             "Customer/Supplier"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
             "Vehicle"=>$row['lorry_plate_no1'],
             "Product/Raw Material"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']),
-            "SO/PO"=>$row['purchase_order'],
             "DO"=>$row['delivery_no'],
             "Gross Incoming"=>$row['gross_weight1'],
             "Incoming Date"=>$row['gross_weight1_date'],
@@ -718,7 +717,7 @@ if($_POST['selectedValue'] == "Weight")
         );
     }
 
-    $columnNames = ["Transaction Id", "Weight Status", "Customer/Supplier", "Vehicle", "Product/Raw Material", "SO/PO", "DO", "Gross Incoming", "Incoming Date", "Tare Outgoing", "Outgoing Date", "Nett Weight", "Action", "Action By", "Event Date"];
+    $columnNames = ["Transaction Id", "Weight Status", "Customer/Supplier", "Vehicle", "Product/Raw Material", "DO", "Gross Incoming", "Incoming Date", "Tare Outgoing", "Outgoing Date", "Nett Weight", "Action", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "SO")

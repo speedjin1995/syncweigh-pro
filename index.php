@@ -197,7 +197,7 @@ else{
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <option value="Local">Local</option>
-                                                                <option value="WIP">WIP</option>
+                                                                <!-- <option value="WIP">WIP</option> -->
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -438,13 +438,13 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Transaction <br>Id</th>
-                                                                    <th>Weight <br> Status</th>
+                                                                    <th>Transaction Id</th>
+                                                                    <th>Weight Status</th>
                                                                     <th>Customer/ <br> Supplier</th>
                                                                     <th>Vehicle</th>
                                                                     <th>Product/ <br> Raw Material</th>
-                                                                    <th>SO/PO</th>
-                                                                    <th>DO</th>
+                                                                    <!-- <th>SO/PO</th>
+                                                                    <th>DO</th> -->
                                                                     <th>Gross <br>Incoming</th>
                                                                     <th>Incoming <br>Date</th>
                                                                     <th>Tare <br>Outgoing</th>
@@ -1758,8 +1758,8 @@ else{
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },
                 { data: 'product_name' },
-                { data: 'purchase_order' },
-                { data: 'delivery_no' },
+                // { data: 'purchase_order' },
+                // { data: 'delivery_no' },
                 { data: 'gross_weight1' },
                 { data: 'gross_weight1_date' },
                 { data: 'tare_weight1' },
@@ -2440,8 +2440,8 @@ else{
                     { data: 'customer' },
                     { data: 'lorry_plate_no1' },
                     { data: 'product_name' },
-                    { data: 'purchase_order' },
-                    { data: 'delivery_no' },
+                    // { data: 'purchase_order' },
+                    // { data: 'delivery_no' },
                     { data: 'gross_weight1' },
                     { data: 'gross_weight1_date' },
                     { data: 'tare_weight1' },
@@ -4531,8 +4531,8 @@ else{
             <p><span><strong style="font-size:120%; text-decoration: underline;">Delivery Order Information</strong></span><br>
             <div class="col-6">
                 <p><strong>TRANSPORTER NAME:</strong> ${row.transporter}</p>
-                <p><strong>DESTINATION NAME:</strong> ${row.destination}</p>
-                <p><strong>SITE NAME:</strong> ${row.site_name}</p>
+                <!--<p><strong>DESTINATION NAME:</strong> ${row.destination}</p>-->
+                <!--<p><strong>SITE NAME:</strong> ${row.site_name}</p>-->
                 <p><strong>PLANT NAME:</strong> ${row.plant_name}</p>`;
                 if (row.transaction_status == 'Purchase'){
                     returnString += `<p><strong>RAW MATERIAL NAME:</strong> ${row.product_rawmat_name}</p>`;
@@ -4545,14 +4545,14 @@ else{
             <div class="col-6">
                 <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
                 <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
-                <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
+                <!--<p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>-->
                 <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>`;
 
-                if (row.transaction_status == 'Purchase'){
-                    returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
-                }else{
-                    returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
-                }
+                // if (row.transaction_status == 'Purchase'){
+                //     returnString += `<p><strong>PURCHASE ORDER:</strong> ${row.purchase_order}</p>`;
+                // }else{
+                //     returnString += `<p><strong>SALE ORDER:</strong> ${row.purchase_order}</p>`;
+                // }
             
             returnString += `
             </div>
@@ -4564,9 +4564,9 @@ else{
                 <p><strong>CREATED DATE:</strong> ${row.created_date}</p>
                 <p><strong>IN DATE / TIME:</strong> ${row.gross_weight1_date}</p>
                 <p><strong>OUT DATE / TIME:</strong> ${row.tare_weight1_date}</p>
+                <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
             </div>
             <div class="col-6">
-                <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
                 <p><strong>IN WEIGHT:</strong> ${row.gross_weight1}</p>
                 <p><strong>OUT WEIGHT:</strong> ${row.tare_weight1}</p>
                 <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1}</p>
