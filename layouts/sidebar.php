@@ -37,6 +37,9 @@
                     <a href="dashboard.php" class="nav-link"><i class="mdi mdi-billboard"></i><?=$lang['t-billboard']?></a>
                 </li-->
                 <li class="nav-item">
+                    <a href="weighingDashboard.php" class="nav-link"><i class="mdi mdi-view-dashboard"></i><?=$lang['t-dashboard']?></a>
+                </li>   
+                <li class="nav-item">
                     <a href="index.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
                 </li>                
                 
