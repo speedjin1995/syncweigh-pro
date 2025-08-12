@@ -1,5 +1,6 @@
 <?php
     $lang["t-menu"]="Menu";
+    $lang["t-dashboard"]="Dashboard";
     $lang["t-weightweighing"]="Weight Weighing";
     $lang["t-analytics"]="Analytics";
 
