@@ -722,17 +722,20 @@ function format (row) {
     var custSupplier = '';
     var productRawMat = '';
     var orderSuppWeight = '';
+    var transactionStatus = '';
     var loadDrum = (row.load_drum == 'LOAD') ? "By-Load" : "By-Drum";
     var exDel = (row.ex_del == 'EX') ? "EX-Quarry" : "Delivered";
 
-    if (row.transaction_status == 'Sales'){
+    if (row.transaction_status == 'Sales' || row.transaction_status == 'Local'){
         custSupplier = row.customer_code + '-' + row.customer_name;
         productRawMat = row.product_code + '-' + row.product_name;
         orderSuppWeight = row.order_weight;
+        transactionStatus = (row.transaction_status == 'Sales') ? 'S - Sales' : 'IT - Internal Transfer';
     }else{
         custSupplier = row.supplier_code + '-' + row.supplier_name;
         productRawMat = row.raw_mat_code + '-' + row.raw_mat_name;
         orderSuppWeight = row.supplier_weight;
+        transactionStatus = 'P - Local';
     }
     
     var returnString = `
@@ -741,7 +744,7 @@ function format (row) {
             <div class="col-6">
                 <p><strong>TRANSACTION ID:</strong> ${row.transaction_id}</p>
                 <p><strong>CUSTOMER TYPE:</strong> ${row.weight_type}</p>
-                <p><strong>WEIGHT STATUS:</strong> ${row.transaction_status}</p>
+                <p><strong>WEIGHT STATUS:</strong> ${transactionStatus}</p>
                 <p><strong>TRANSACTION DATE:</strong> ${row.transaction_date}</p>
                 <p><strong>MANUAL WEIGHT:</strong> ${row.manual_weight}</p>
                 <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
