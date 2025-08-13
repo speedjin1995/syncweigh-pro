@@ -71,7 +71,10 @@
                             </li>  
                             <li class="nav-item">
                                 <a href="goodsReceived.php" class="nav-link"><?=$lang['t-gr']?></a>
-                            </li>             
+                            </li>
+                            <li class="nav-item">
+                                <a href="stockUsed.php" class="nav-link"><?=$lang['t-stockUsed']?></a>
+                            </li>      
                         </ul>
                     </div>
                 </li>
