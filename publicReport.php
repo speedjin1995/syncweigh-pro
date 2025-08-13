@@ -153,7 +153,7 @@ else{
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select select2">
-                                                                <option value="Local">Public</option>
+                                                                <option value="Local">IT - Internal Transfer</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -162,7 +162,7 @@ else{
                                                             <label for="customerNoSearch" class="form-label">Customer No</label>
                                                             <select id="customerNoSearch" name="customerNoSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['customer_code'] . ' - ' . $rowPF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -209,7 +209,7 @@ else{
                                                             <label for="productSearch" class="form-label">Product</label>
                                                             <select id="productSearch" name="productSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['product_code'] . ' - ' . $rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -242,7 +242,7 @@ else{
                                                             <select id="plantSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
-                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['plant_code'] . ' - ' . $rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -378,7 +378,7 @@ else{
                                                                 </button>
                                                                 <button type="button" id="exportPurchasePdf" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
-                                                                    Export Public Report
+                                                                    Export Internal Transfer Report
                                                                 </button>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>

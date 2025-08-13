@@ -91,7 +91,7 @@ if(isset($_POST['userID'])){
                                 
                                 $customer_stmt->close();
                             }
-                            $message['product_rawmat_name'] = $row['raw_mat_name'];
+                            $message['product_rawmat_name'] = $row['raw_mat_code'] . ' - ' . $row['raw_mat_name'];
                         }else{
                             if ($customer_stmt = $db->prepare("SELECT * FROM Customer WHERE customer_code=? AND status = '0'")) {
                                 $customer_stmt->bind_param('s', $row['customer_code']);
@@ -110,15 +110,24 @@ if(isset($_POST['userID'])){
                                 $customer_stmt->close();
                             } 
 
-                            $message['product_rawmat_name'] = $row['product_name'];
+                            $message['product_rawmat_name'] = $row['product_code'] . ' - ' . $row['product_name'];
                         } 
-                        $message['transporter'] = $row['transporter'] ?? '';
+
+                        if ($row['transaction_status'] == 'Sales'){
+                            $transactionStatus = 'S - Sales';
+                        }else if ($row['transaction_status'] == 'Purchase'){
+                            $transactionStatus = 'P - Purchase';
+                        }else{
+                            $transactionStatus = 'IT - Internal Transfer';
+                        }
+
+                        $message['transporter'] = $row['transporter_code'] . ' - ' .$row['transporter'] ?? '';
                         $message['site_name'] = $row['site_name'] ?? '';
                         $message['destination'] = $row['destination'] ?? '';
-                        $message['plant_name'] = $row['plant_name'] ?? '';
+                        $message['plant_name'] = $row['plant_code'] . ' - ' .$row['plant_name'] ?? '';
                         $message['lorry_plate_no1'] = $row['lorry_plate_no1'] ?? '';
                         $message['transaction_id'] = $row['transaction_id'] ?? '';
-                        $message['transaction_status'] = $row['transaction_status'] ?? '';
+                        $message['transaction_status'] = $transactionStatus;
                         $message['invoice_no'] = $row['invoice_no'] ?? '';
                         $message['delivery_no'] = $row['delivery_no'] ?? '';
                         $message['purchase_order'] = $row['purchase_order'] ?? '';

@@ -134,18 +134,21 @@ $localCount = 0;
 while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['transaction_status'] == 'Sales'){
     $salesCount++;
+    $transactionStatus = 'S - Sales';
   }
   else if($row['transaction_status'] == 'Purchase'){
     $purchaseCount++;
+    $transactionStatus = 'P - Purchase';
   }
   else{
     $localCount++;
+    $transactionStatus = 'IT - Internal Transfer';
   }
 
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
-    "transaction_status"=>($row['transaction_status'] == 'Local' ? 'Public' : $row['transaction_status']),
+    "transaction_status"=>$transactionStatus,
     "weight_type"=>$row['weight_type'],
     "transaction_date"=>$row['transaction_date'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],
@@ -155,9 +158,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "customer_name"=>$row['customer_name'],
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
-    "customer"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['customer_name'] : $row['supplier_name']),
+    "customer"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['customer_code'] . ' - ' . $row['customer_name'] : $row['supplier_code'] . ' - ' . $row['supplier_name']),
     "product_code"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_code'] : $row['raw_mat_code']), 
-    "product_name"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ? $row['product_name'] : $row['raw_mat_name']), 
+    "product_name"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' ?  $row['product_code'] . ' - ' . $row['product_name'] :  $row['raw_mat_code'] . ' - ' . $row['raw_mat_name']), 
     "container_no"=>$row['container_no'],
     "invoice_no"=>$row['invoice_no'],
     "purchase_order"=>$row['purchase_order'],
