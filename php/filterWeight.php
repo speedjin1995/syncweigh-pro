@@ -113,19 +113,22 @@ $localCount = 0;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['transaction_status'] == 'Sales'){
+    $transactionStatus = 'S - Sales';
     $salesCount++;
   }
   else if($row['transaction_status'] == 'Purchase'){
+    $transactionStatus = 'P - Purchase';
     $purchaseCount++;
   }
   else{
+    $transactionStatus = 'IT - Internal Transfer';
     $localCount++;
   }
 
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
-    "transaction_status"=>$row['transaction_status'],
+    "transaction_status"=>$transactionStatus,
     "weight_type"=>$row['weight_type'],
     "transaction_date"=>$row['transaction_date'],
     "lorry_plate_no1"=>$row['lorry_plate_no1'],

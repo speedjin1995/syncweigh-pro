@@ -153,7 +153,7 @@ else{
                                                         <div class="mb-3">
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select select2">
-                                                                <option value="Purchase" selected>Purchase</option>
+                                                                <option value="Purchase" selected>P - Purchase</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -163,7 +163,7 @@ else{
                                                             <select id="customerNoSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowPF = mysqli_fetch_assoc($customer2)){ ?>
-                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['name'] ?></option>
+                                                                    <option value="<?=$rowPF['customer_code'] ?>"><?=$rowPF['customer_code'] . ' - ' . $rowPF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -173,7 +173,7 @@ else{
                                                             <label for="supplierSearch" class="form-label">Supplier No</label>
                                                             <select id="supplierSearch" name="supplierSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowSF=mysqli_fetch_assoc($supplier2)){ ?>
-                                                                    <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['name'] ?></option>
+                                                                    <option value="<?=$rowSF['supplier_code'] ?>"><?=$rowSF['supplier_code'] . ' - ' . $rowSF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -210,7 +210,7 @@ else{
                                                             <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['product_code'] . ' - ' . $rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -220,7 +220,7 @@ else{
                                                             <label for="rawMatSearch" class="form-label">Raw Material</label>
                                                             <select id="rawMatSearch" name="rawMatSearch[]" class="select2" multiple data-placeholder="Please Select">
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
-                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['raw_mat_code'] . ' - ' . $rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -242,7 +242,7 @@ else{
                                                             <select id="plantSearch" class="form-select select2">
                                                                 <option selected>-</option>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
-                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['plant_code'] . ' - ' . $rowPlantF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
