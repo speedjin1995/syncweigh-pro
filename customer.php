@@ -136,7 +136,7 @@
                                                                                 <div class="row">
                                                                                     <label for="companyName" class="col-sm-4 col-form-label">Company Name</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Customer Code">
+                                                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Customer Name">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
