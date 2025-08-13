@@ -191,17 +191,25 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             </div>
                                             <div class="col-12 mb-3">
                                                 <div class="row">
-                                                <label for="name" class="col-sm-4 col-form-label">User Name *</label>
+                                                <label for="name" class="col-sm-4 col-form-label">Employee Name *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="name" name="name" placeholder="User Name" required>
+                                                        <input type="text" class="form-control" id="name" name="name" placeholder="Employee Name" required>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12 mb-3">
                                                 <div class="row">
-                                                <label for="useremail" class="col-sm-4 col-form-label">User Email</label>
+                                                <label for="useremail" class="col-sm-4 col-form-label">Employee Email</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="useremail" name="useremail" placeholder="User Email">
+                                                        <input type="text" class="form-control" id="useremail" name="useremail" placeholder="Employee Email">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <div class="row">
+                                                <label for="userpassword" class="col-sm-4 col-form-label">Employee Password</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="password" class="form-control" id="userpassword" name="userpassword" placeholder="Employee Password">
                                                     </div>
                                                 </div>
                                             </div>
@@ -450,6 +458,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             $('#addModal').find('#username').val("");
             $('#addModal').find('#name').val("");
             $('#addModal').find('#useremail').val("");
+            $('#addModal').find('#userpassword').val("");
             $('#addModal').find('#roles').val("");
             $('#addModal').find('#plantId').val('').trigger('change');
 
@@ -616,7 +625,8 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#username').val(obj.message.username);
                 $('#addModal').find('#name').val(obj.message.name);
                 $('#addModal').find('#useremail').val(obj.message.useremail);
-                $('#addModal').find('#roles').val(obj.message.role_code);
+                $('#addModal').find('#userpassword').val('');
+                $('#addModal').find('#roles').val(obj.message.role_code).trigger('change');
                 $("#addModal").find("#plantId").val(JSON.parse(obj.message.plant)).trigger("change");
 
                 // Remove Validation Error Message
