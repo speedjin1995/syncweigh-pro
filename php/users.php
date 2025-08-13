@@ -8,7 +8,7 @@ if(!isset($_SESSION['username'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST['roles'])){
+if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST['roles'], $_POST['allowManual'])){
     $id = $_SESSION['id'];
     $name = $_SESSION["username"];
 
@@ -19,8 +19,9 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
     $param_useremail = filter_input(INPUT_POST, 'useremail', FILTER_SANITIZE_STRING);
     $param_username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
     $param_role = filter_input(INPUT_POST, 'roles', FILTER_SANITIZE_STRING);
+    $param_allowmanual = filter_input(INPUT_POST, 'allowManual', FILTER_SANITIZE_STRING);
     
-    if(isset($_POST['plantId']) && $_POST['plantId'] != null){
+    if(isset($_POST['employeeCode']) && $_POST['employeeCode'] != null){
         $param_code = filter_input(INPUT_POST, 'employeeCode', FILTER_SANITIZE_STRING);
     }
 
@@ -55,8 +56,8 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
             }
         }
 
-        if ($update_stmt = $db->prepare("UPDATE Users SET username=?, name=?, useremail=?, password=?, role=?, modified_by=?, plant_id=?, employee_code=? WHERE id=?")) {
-            $update_stmt->bind_param("sssssssss", $param_username, $param_name, $param_useremail, $param_password, $param_role, $param_modified_by, $param_plant, $param_code, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE Users SET username=?, name=?, useremail=?, password=?, role=?, modified_by=?, plant_id=?, allow_manual=?, employee_code=? WHERE id=?")) {
+            $update_stmt->bind_param("ssssssssss", $param_username, $param_name, $param_useremail, $param_password, $param_role, $param_modified_by, $param_plant, $param_allowmanual, $param_code, $_POST['id']);
             $action = "2";
             
             // Execute the prepared query.
@@ -98,8 +99,8 @@ if(isset($_POST['employeeCode'], $_POST['username'], $_POST['useremail'], $_POST
             return;
         }
 
-        if ($insert_stmt = $db->prepare("INSERT INTO Users (employee_code, useremail, username, name, password, token, role, plant_id, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param("ssssssssss", $param_code, $param_useremail, $param_username, $param_name, $param_password, $param_token, $param_role, $param_plant, $param_created_by, $param_modified_by);
+        if ($insert_stmt = $db->prepare("INSERT INTO Users (employee_code, useremail, username, name, password, token, role, plant_id, allow_manual, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param("sssssssssss", $param_code, $param_useremail, $param_username, $param_name, $param_password, $param_token, $param_role, $param_plant, $param_allowmanual, $param_created_by, $param_modified_by);
             $action = "1";
 
             // Execute the prepared query.

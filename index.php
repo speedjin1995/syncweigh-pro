@@ -6,6 +6,7 @@ require_once "php/db_connect.php";
 
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
+$allowManual = $_SESSION['allowManual'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
 $stmt->execute();
@@ -895,7 +896,7 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-6 col-lg-6 mb-3"  <?php 
-                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER' && $allowManual == 'N'){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -2555,7 +2556,7 @@ else{
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#otherRemarks').val("");
-            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#manualVehicle').prop('checked', true).trigger('change');
             $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             grossIncomingDatePicker.clear();
@@ -3426,12 +3427,12 @@ else{
                 $('#productNameDisplay').hide();
                 //$('#addModal').find('#divPoSupplyWeight').show();
                 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                <?php /*if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').show();";
                 }
                 else{
                     echo "//$('#doDisplay').show();";
-                }
+                }*/
                 ?>
                 
                 if ($(this).val() == "Purchase"){
@@ -3495,12 +3496,12 @@ else{
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                <?php /*if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').show();";
                 }
                 else{
                     echo "//$('#doDisplay').show();";
-                }
+                }*/
                 ?>
 
                 $('#unitPriceDisplay').hide();
@@ -3529,12 +3530,12 @@ else{
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                <?php /*if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').hide();";
                 }
                 else{
                     echo "//$('#doDisplay').hide();";
-                }
+                }*/
                 ?>
 
                 if (customerType == 'Cash'){
