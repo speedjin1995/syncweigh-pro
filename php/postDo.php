@@ -155,6 +155,18 @@ if ($type == "MULTI"){
             
             // Prepare loggable response JSON
             if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
+                foreach ($apiResponse["results"] as $item) {
+                    if (isset($item["status"]) && $item["status"] === "success") {
+                        $docref2 = $item["docref2"];
+            
+                        // Update weight table
+                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE docref2 = ?");
+                        $stmtUpdateWeight->bind_param('s', $docref2);
+                        $stmtUpdateWeight->execute();
+                        $stmtUpdateWeight->close();
+                    }
+                }
+                
                 $responseToLog = json_encode([
                     "status" => "success", 
                     "message" => "Post Successfully",
@@ -303,6 +315,19 @@ if ($type == "MULTI"){
             
             // Prepare loggable response JSON
             if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
+                // Loop through each result item
+                foreach ($apiResponse["results"] as $item) {
+                    if (isset($item["status"]) && $item["status"] === "success") {
+                        $docref2 = $item["docref2"];
+            
+                        // Update weight table
+                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE docref2 = ?");
+                        $stmtUpdateWeight->bind_param('s', $docref2);
+                        $stmtUpdateWeight->execute();
+                        $stmtUpdateWeight->close();
+                    }
+                }
+                
                 $responseToLog = json_encode([
                     "status" => "success", 
                     "message" => "Post Successfully",
