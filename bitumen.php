@@ -20,7 +20,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
 
 <head>
 
-    <title>Bitumen | Synctronix - Weighing System</title>
+    <title>Stock Take | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -147,12 +147,12 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                     <div class="card-header">
                                                         <div class="d-flex justify-content-between">
                                                             <div>
-                                                                <h5 class="card-title mb-0">Inventory</h5>
+                                                                <h5 class="card-title mb-0">Stock Take</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
                                                                 <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add Bitumen Used
+                                                                Add Stock Take
                                                                 </button>
                                                             </div> 
                                                         </div> 
@@ -201,7 +201,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             <div class="modal-dialog modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalScrollableTitle">Add Bitumen</h5>
+                        <h5 class="modal-title" id="exampleModalScrollableTitle">Add Stock Take</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
