@@ -1398,7 +1398,7 @@ if(isset($_POST["type"])){
                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
+                                <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                 <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
@@ -1498,7 +1498,7 @@ if(isset($_POST["type"])){
                                     <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                    <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
+                                    <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                     <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
@@ -1639,7 +1639,7 @@ if(isset($_POST["type"])){
                                         <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                        <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
+                                        <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                         <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
@@ -1811,7 +1811,7 @@ if(isset($_POST["type"])){
                                             <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                            <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
+                                            <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                             <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
@@ -2019,7 +2019,7 @@ if(isset($_POST["type"])){
                                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                                <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
+                                                <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                                 <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
