@@ -226,7 +226,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
+                                                                    <!--th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th-->
                                                                     <th>Supplier</th>
                                                                     <th>Plant</th>
                                                                     <th>Raw Material</th>
@@ -376,15 +376,15 @@ else{
                 } 
             },
             'columns': [    
-                {
+                /*{
                     // Add a checkbox with a unique ID for each row
                     data: 'id', // Assuming 'serialNo' is a unique identifier for each row
                     className: 'select-checkbox',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        //return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
                     }
-                },            
+                },  */          
                 { data: 'supplier_name' },
                 { data: 'plant_name' },
                 { data: 'product_name' },
@@ -446,15 +446,15 @@ else{
                     } 
                 },
                 'columns': [
-                    {
+                    /*{
                         // Add a checkbox with a unique ID for each row
                         data: 'id', // Assuming 'serialNo' is a unique identifier for each row
                         className: 'select-checkbox',
                         orderable: false,
                         render: function (data, type, row) {
-                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                            //return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
                         }
-                    },
+                    },*/
                     { data: 'supplier_name' },
                     { data: 'plant_name' },
                     { data: 'product_name' },

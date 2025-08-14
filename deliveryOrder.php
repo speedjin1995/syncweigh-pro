@@ -226,7 +226,7 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
+                                                                    <!--th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th-->
                                                                     <th>Customer</th>
                                                                     <th>Plant</th>
                                                                     <th>Product</th>
@@ -376,15 +376,15 @@ else{
                 } 
             },
             'columns': [     
-                {
+                /*{
                     // Add a checkbox with a unique ID for each row
                     data: 'id', // Assuming 'serialNo' is a unique identifier for each row
                     className: 'select-checkbox',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                        //return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
                     }
-                },           
+                },  */         
                 { data: 'customer_name' },
                 { data: 'plant_name' },
                 { data: 'product_name' },
@@ -446,15 +446,15 @@ else{
                     } 
                 },
                 'columns': [
-                    {
+                    /*{
                         // Add a checkbox with a unique ID for each row
                         data: 'id', // Assuming 'serialNo' is a unique identifier for each row
                         className: 'select-checkbox',
                         orderable: false,
                         render: function (data, type, row) {
-                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                            //return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
                         }
-                    },
+                    },*/
                     { data: 'customer_name' },
                     { data: 'plant_name' },
                     { data: 'product_name' },
@@ -466,7 +466,8 @@ else{
                     //     class: 'action-button',
                     //     render: function ( data, type, row ) {
                     //         // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-primary btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    //         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                    //         return '<div clas
+                    // s="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                     //         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
                     //         '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
                     //     }
