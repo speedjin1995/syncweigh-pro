@@ -56,9 +56,9 @@ $productNames = [
 
 // For stock used array with product name as key
 $fields = [
-    'Tonnage','60/70','PG76','CRMB','CMB','LMB','LEMB','% Bit Usage','Actual Bit Usage',
-    'Bit %','Plant Control Bit %','% Bit Usage 2','Q.Dust','10mm','14mm','20mm','28mm','40mm',
-    'OPC','Lime'
+    'Tonnage','BITUMEN 60/70','BITUMEN PG76','CRMB','CMB','LMB','LEMB','% Bit Usage','Actual Bit Usage',
+    'Bit %','Plant Control Bit %','% Bit Usage 2','QUARRY DUST','10MM AGGREGATE', '14MM AGGREGATE', 
+    '20MM AGGREGATE', '28MM AGGREGATE', '40MM AGGREGATE','OPC','Lime'
 ];
 
 $data = [];
@@ -81,8 +81,29 @@ while($row = mysqli_fetch_assoc($empRecords)) {
 }
 
 // Process data to add into the response data structure
+foreach ($products as $key => $value) {
+    $productId = searchProductIdByName($key, $db);
+    if ($prod_rawmat_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id = ? AND plant_id = ? AND status = '0'")){
+        $prod_rawmat_stmt->bind_param("ss", $productId, $_POST['plant']);
+        $prod_rawmat_stmt->execute();
+        $prod_rawmat_result = $prod_rawmat_stmt->get_result();
+
+        while ($prod_rawmat_row = $prod_rawmat_result->fetch_assoc()) {
+            $rawMatName = searchRawNameByCode($prod_rawmat_row['raw_mat_code'], $db);
+
+            // Calculate usage of each raw material needed for the product
+            $rawMatWeightNeeded = $value/$prod_rawmat_row['raw_mat_weight'];
+            
+            var_dump($value);
+            var_dump($data[$rawMatName][$key]);
+        }
 
 
+        $prod_rawmat_stmt->close();
+    }
+}
+
+die;
 ## Response
 $response = array(
   "aaData" => $data,
