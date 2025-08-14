@@ -151,16 +151,16 @@ if ($type == "MULTI"){
             curl_close($ch);
             
             // Decode API response (JSON string to array)
-            $apiResponse = json_decode($response, true);
+            $responseData = json_decode($response, true);
             
             // Prepare loggable response JSON
             if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
-                foreach ($apiResponse["results"] as $item) {
+                foreach ($responseData["results"] as $item) {
                     if (isset($item["status"]) && $item["status"] === "success") {
                         $docref2 = $item["docref2"];
             
                         // Update weight table
-                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE docref2 = ?");
+                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE transaction_id = ?");
                         $stmtUpdateWeight->bind_param('s', $docref2);
                         $stmtUpdateWeight->execute();
                         $stmtUpdateWeight->close();
@@ -311,17 +311,17 @@ if ($type == "MULTI"){
             curl_close($ch);
             
             // Decode API response (JSON string to array)
-            $apiResponse = json_decode($response, true);
+            $responseData = json_decode($response, true);
             
             // Prepare loggable response JSON
             if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
                 // Loop through each result item
-                foreach ($apiResponse["results"] as $item) {
+                foreach ($responseData["results"] as $item) {
                     if (isset($item["status"]) && $item["status"] === "success") {
                         $docref2 = $item["docref2"];
             
                         // Update weight table
-                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE docref2 = ?");
+                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE transaction_id = ?");
                         $stmtUpdateWeight->bind_param('s', $docref2);
                         $stmtUpdateWeight->execute();
                         $stmtUpdateWeight->close();
