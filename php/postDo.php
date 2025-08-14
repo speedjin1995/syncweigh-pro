@@ -54,7 +54,7 @@ if ($type == "MULTI"){
         $ids = $_POST['userID'];
     }
 
-    if ($stmt2 = $db->prepare("SELECT * FROM Weight WHERE id IN ($ids) AND synced = 'N'")) {
+    if ($stmt2 = $db->prepare("SELECT * FROM Weight WHERE id IN ($ids)")) {
         if($stmt2->execute()){
             $result = $stmt2->get_result();
 
@@ -103,18 +103,18 @@ if ($type == "MULTI"){
                 $amt = $qty * $unitPrice;
     
                 $records[] = [
-                    "DOCREF2"     => $row["docref2"],
-                    "DOCDATE"     => $row["docdate"],
-                    "DESCRIPTION2"=> $row["vehicle_no"],
-                    "CODE"        => "300-C0001", // hardcoded or dynamic if needed
+                    "DOCREF2"     => $row["transaction_id"],
+                    "DOCDATE"     => substr($row["tare_weight1_date"], 0, 10),
+                    "DESCRIPTION2"=> $row["lorry_plate_no1"],
+                    "CODE"        => $row["customer_code"] ?? "300-C0001", // hardcoded or dynamic if needed
                     "COMPANYNAME" => $row["customer_name"],
                     "ITEMCODE"    => $productCode,
                     "DESCRIPTION" => $row["product_name"],
                     "REMARK2"     => $row["destination"],
-                    "SHIPPER"     => $row["driver_code"] ?? "T01",
-                    "DOCREF1"     => "E",
+                    "SHIPPER"     => $row["transporter_code"] ?? "T01",
+                    "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                     "DOCNOEX"     => "-",
-                    "REMARK1"     => $row["doc_no"],
+                    "REMARK1"     => $row["delivery_no"],
                     "QTY"         => round($qty, 3),
                     "UOM"         => $uom,
                     "PROJECT"     => $row['plant_code'],
@@ -151,10 +151,22 @@ if ($type == "MULTI"){
             curl_close($ch);
             
             // Decode API response (JSON string to array)
-            $apiResponse = json_decode($response, true);
+            $responseData = json_decode($response, true);
             
             // Prepare loggable response JSON
             if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
+                foreach ($responseData["results"] as $item) {
+                    if (isset($item["status"]) && $item["status"] === "success") {
+                        $docref2 = $item["docref2"];
+            
+                        // Update weight table
+                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE transaction_id = ?");
+                        $stmtUpdateWeight->bind_param('s', $docref2);
+                        $stmtUpdateWeight->execute();
+                        $stmtUpdateWeight->close();
+                    }
+                }
+                
                 $responseToLog = json_encode([
                     "status" => "success", 
                     "message" => "Post Successfully",
@@ -196,7 +208,7 @@ if ($type == "MULTI"){
         );
     }
 }else{
-    $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND synced = 'N'".$searchQuery;
+    $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery;
     if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
         $username = implode("', '", $_SESSION["plant"]);
         $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
@@ -251,18 +263,18 @@ if ($type == "MULTI"){
                 $amt = $qty * $unitPrice;
     
                 $records[] = [
-                    "DOCREF2"     => $row["docref2"],
-                    "DOCDATE"     => $row["docdate"],
-                    "DESCRIPTION2"=> $row["vehicle_no"],
-                    "CODE"        => "300-C0001", // hardcoded or dynamic if needed
+                    "DOCREF2"     => $row["transaction_id"],
+                    "DOCDATE"     => substr($row["tare_weight1_date"], 0, 10),
+                    "DESCRIPTION2"=> $row["lorry_plate_no1"],
+                    "CODE"        => $row["customer_code"] ?? "300-C0001", // hardcoded or dynamic if needed
                     "COMPANYNAME" => $row["customer_name"],
                     "ITEMCODE"    => $productCode,
                     "DESCRIPTION" => $row["product_name"],
                     "REMARK2"     => $row["destination"],
-                    "SHIPPER"     => $row["driver_code"] ?? "T01",
-                    "DOCREF1"     => "E",
+                    "SHIPPER"     => $row["transporter_code"] ?? "T01",
+                    "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                     "DOCNOEX"     => "-",
-                    "REMARK1"     => $row["doc_no"],
+                    "REMARK1"     => $row["delivery_no"],
                     "QTY"         => round($qty, 3),
                     "UOM"         => $uom,
                     "PROJECT"     => $row['plant_code'],
@@ -299,10 +311,23 @@ if ($type == "MULTI"){
             curl_close($ch);
             
             // Decode API response (JSON string to array)
-            $apiResponse = json_decode($response, true);
+            $responseData = json_decode($response, true);
             
             // Prepare loggable response JSON
             if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
+                // Loop through each result item
+                foreach ($responseData["results"] as $item) {
+                    if (isset($item["status"]) && $item["status"] === "success") {
+                        $docref2 = $item["docref2"];
+            
+                        // Update weight table
+                        $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE transaction_id = ?");
+                        $stmtUpdateWeight->bind_param('s', $docref2);
+                        $stmtUpdateWeight->execute();
+                        $stmtUpdateWeight->close();
+                    }
+                }
+                
                 $responseToLog = json_encode([
                     "status" => "success", 
                     "message" => "Post Successfully",
