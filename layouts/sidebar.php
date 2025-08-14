@@ -3,27 +3,27 @@
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Dark Logo-->
-        <a href="index.php" class="logo logo-dark">
+        <!--a href="index.php" class="logo logo-dark">
             <span class="logo-sm">
                 <img src="assets/images/logo-sm.jpg" alt="assets/images/logo-sm-bk.png" height="70">
             </span>
             <span class="logo-lg">
                 <img src="assets/images/logo-lg.png" alt="assets/images/logo-lg-bk.png" height="60">
             </span>
-        </a>
+        </a-->
         <!-- Light Logo-->
-        <a href="index.php" class="logo logo-light">
+        <!--a href="index.php" class="logo logo-light">
             <span class="logo-sm">
                 <img src="assets/images/logo-sm.jpg" alt="assets/images/logo-sm-bk.png" height="70">
             </span>
             <span class="logo-lg">
                 <img src="assets/images/logo-lg.png" alt="assets/images/logo-lg-bk.png" height="60">
             </span>
-        </a>
-        <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+        </a-->
+        <!--button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
             id="vertical-hover">
             <i class="ri-record-circle-line"></i>
-        </button>
+        </button-->
     </div>
 
     <div id="scrollbar">

@@ -200,7 +200,7 @@
                                                 </div>                                                                                                                                                                                                                                                                                                                                        
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="button" class="btn btn-primary" id="searchLog">
+                                                        <button type="button" class="btn btn-danger" id="searchLog">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -311,7 +311,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitTransporter">Submit</button>
+                                                                <button type="button" class="btn btn-danger" id="submitTransporter">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>

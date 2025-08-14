@@ -106,7 +106,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                         <i class="fa-solid fa-ban align-middle me-1"></i>
                                                         Delete User
                                                     </button>
-                                                    <button type="button" id="addMembers" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                    <button type="button" id="addMembers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                         <i class="ri-add-circle-line align-middle me-1"></i>
                                                         Add New User
                                                     </button>
@@ -239,7 +239,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                         <div class="col-lg-12">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="submitMember">Submit</button>
+                                <button type="button" class="btn btn-danger" id="submitMember">Submit</button>
                             </div>
                         </div><!--end col-->                                                               
                     </form>

@@ -80,7 +80,7 @@
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="text-end mt-4">
-                                                        <button type="submit" class="btn btn-primary">
+                                                        <button type="submit" class="btn btn-danger">
                                                             <i class="bx bx-search-alt"></i>
                                                             Search</button>
                                                     </div>
@@ -154,7 +154,7 @@
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" id="submitDestination">Submit</button>
+                                                                <button type="button" class="btn btn-danger" id="submitDestination">Submit</button>
                                                             </div>
                                                         </div><!--end col-->                                                               
                                                     </form>
@@ -221,7 +221,7 @@
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Sales Rep
                                                                 </button>
-                                                                <button type="button" id="addDestination" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addDestination" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New SRP
                                                                 </button>
