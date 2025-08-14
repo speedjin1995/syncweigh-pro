@@ -169,7 +169,6 @@ else{
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th></th>
                                                                     <th>Product</th>
                                                                     <th>Tonnage</th>
                                                                     <th>60/70</th>
@@ -182,7 +181,6 @@ else{
                                                                     <th>Actual Bit Usage</th>
                                                                     <th>Bit %</th>
                                                                     <th>Plant Control Bit %</th>
-                                                                    <th>% Bit Usage</th>
                                                                     <th>Q.Dust</th>
                                                                     <th>10mm</th>
                                                                     <th>14mm</th>
@@ -321,13 +319,26 @@ else{
                 } 
             },
             'columns': [    
-                { data: 'declaration_datetime' },
-                { data: 'lfo_production' },
-                { data: 'lfo_os' },
-                { data: 'lfo_incoming' },
-                { data: 'lfo_ps' },
-                { data: 'lfo_usage' },
-                { data: 'lfo_actual_usage' }
+                { title: "Product", data: "Product" },
+                { title: "Tonnage", data: "Tonnage" },
+                { title: "60/70", data: "BITUMEN 60/70" },
+                { title: "PG76", data: "BITUMEN PG76" },
+                { title: "CRMB", data: "CRMB" },
+                { title: "CMB", data: "CMB" },
+                { title: "LMB", data: "LMB" },
+                { title: "LEMB", data: "LEMB" },
+                { title: "% bit usage", data: "% Bit Usage" },
+                { title: "Actual bit usage", data: "Actual Bit Usage" },
+                { title: "bit %", data: "Bit %" },
+                { title: "plant control bit %", data: "Plant Control Bit %" },
+                { title: "Q.Dust", data: "QUARRY DUST" },
+                { title: "10mm", data: "10MM AGGREGATE" },
+                { title: "14mm", data: "14MM AGGREGATE" },
+                { title: "20mm", data: "20MM AGGREGATE" },
+                { title: "28mm", data: "28MM AGGREGATE" },
+                { title: "40mm", data: "40MM AGGREGATE" },
+                { title: "OPC", data: "OPC" },
+                { title: "Lime", data: "Lime" }
             ],
             "drawCallback": function(settings) {
                 $('#salesInfo').text(settings.json.salesTotal);
@@ -365,13 +376,26 @@ else{
                     } 
                 },
                 'columns': [
-                    { data: 'declaration_datetime' },
-                    { data: 'lfo_production' },
-                    { data: 'lfo_os' },
-                    { data: 'lfo_incoming' },
-                    { data: 'lfo_ps' },
-                    { data: 'lfo_usage' },
-                    { data: 'lfo_actual_usage' }
+                    { title: "Product", data: "Product" },
+                    { title: "Tonnage", data: "Tonnage" },
+                    { title: "60/70", data: "BITUMEN 60/70" },
+                    { title: "PG76", data: "BITUMEN PG76" },
+                    { title: "CRMB", data: "CRMB" },
+                    { title: "CMB", data: "CMB" },
+                    { title: "LMB", data: "LMB" },
+                    { title: "LEMB", data: "LEMB" },
+                    { title: "% bit usage", data: "% Bit Usage" },
+                    { title: "Actual bit usage", data: "Actual Bit Usage" },
+                    { title: "bit %", data: "Bit %" },
+                    { title: "plant control bit %", data: "Plant Control Bit %" },
+                    { title: "Q.Dust", data: "QUARRY DUST" },
+                    { title: "10mm", data: "10MM AGGREGATE" },
+                    { title: "14mm", data: "14MM AGGREGATE" },
+                    { title: "20mm", data: "20MM AGGREGATE" },
+                    { title: "28mm", data: "28MM AGGREGATE" },
+                    { title: "40mm", data: "40MM AGGREGATE" },
+                    { title: "OPC", data: "OPC" },
+                    { title: "Lime", data: "Lime" }
                 ],
                 "drawCallback": function(settings) {
                     $('#salesInfo').text(settings.json.salesTotal);
@@ -418,31 +442,9 @@ else{
         $('#exportExcel').on('click', function () {
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
-            var statusI = 'Purchase';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
-            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
-            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
-            var selectedIds = []; // An array to store the selected 'id' values
-
-            $("#weightTable tbody input[type='checkbox']").each(function () {
-                if (this.checked) {
-                    selectedIds.push($(this).val());
-                }
-            });
-
-            if (selectedIds.length > 0) {
-                window.open("php/exportDoGr.php?type=gr&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
-                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
-                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+poI+"&id="+selectedIds);
-            } 
-            else {
-                window.open("php/exportDoGr.php?type=gr&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
-                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&product="+productI+
-                "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+poI);
-            }     
+            var plantSearchI = $('#plantSearch').val();
+            
+            window.open("php/exportStockUsed.php?fromDate="+fromDateI+"&toDate="+toDateI+"&plant="+plantSearchI); 
         });
     });
     </script>

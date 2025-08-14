@@ -1,26 +1,39 @@
 <?php
-## Database configuration
+
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
-
+// // Load the database configuration file 
+session_start();
+ 
+// Filter the excel data 
+function filterData(&$str){ 
+    $str = preg_replace("/\t/", "\\t", $str); 
+    $str = preg_replace("/\r?\n/", "\\n", $str); 
+    if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"'; 
+} 
+ 
 ## Search 
 $searchQuery = "";
 
-if(!empty($_POST['fromDate'])){
-    $fromDateTime = (new DateTime($_POST['fromDate']))->format("Y-m-d 00:00:00");
+if(!empty($_GET['fromDate'])){
+    $fromDateTime = (new DateTime($_GET['fromDate']))->format("Y-m-d 00:00:00");
     $searchQuery .= " AND tare_weight1_date >= '".$fromDateTime."'";
 }
 
-if(!empty($_POST['toDate'])){
-    $toDateTime = (new DateTime($_POST['toDate']))->format("Y-m-d 23:59:59");
+if(!empty($_GET['toDate'])){
+    $toDateTime = (new DateTime($_GET['toDate']))->format("Y-m-d 23:59:59");
     $searchQuery .= " AND tare_weight1_date <= '".$toDateTime."'";
 }
 
-$plantId = !empty($_POST['plant']) ? $_POST['plant'] : null;
+$plantId = !empty($_GET['plant']) ? $_GET['plant'] : null;
 if($plantId){
     $plantCode = searchPlantCodeById($plantId, $db);
+    $plantName = searchPlantNameById($plantId, $db);
     $searchQuery .= " AND plant_code = '".$plantCode."'";
 }
+
+// Excel file name for download 
+$fileName = $plantName . "-data_" . date('Y-m-d') . ".xls";
 
 // Products to track (columns in table)
 $fields = [
@@ -77,7 +90,7 @@ foreach ($products as $productName => $totalWeightMt) {
 
     $productId = searchProductIdByName($productName, $db);
     if ($prod_rawmat_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id = ? AND plant_id = ? AND status = '0'")){
-        $prod_rawmat_stmt->bind_param("ss", $productId, $_POST['plant']);
+        $prod_rawmat_stmt->bind_param("ss", $productId, $_GET['plant']);
         $prod_rawmat_stmt->execute();
         $prod_rawmat_result = $prod_rawmat_stmt->get_result();
 
@@ -131,12 +144,44 @@ if ($tableData[$lastIndex]['Product'] === 'Total') {
     }
 }
 
-// Return response
-$response = [
-    // "draw" => isset($_POST['draw']) ? intval($_POST['draw']) : 1,
-    // "recordsTotal" => count($tableData),
-    // "recordsFiltered" => count($tableData),
-    "data" => $tableData
-];
-echo json_encode($response);
+// Column names 
+$fields = array('Date', 'Product', 'Tonnage', '60/70', 'PG76', 'CRMB', 'CMB', 'LMB', 'LEMB', 
+    '% bit usage', 'Actual bit usage', 'bit %', 'plant control bit %', 'Q.Dust', '10mm', '14mm', 
+    '20mm', '28mm', '40mm', 'OPC', 'Lime'); 
+
+// Display column names as first row 
+$excelData = implode("\t", array_values($fields)) . "\n";
+
+$currentDate = !empty($_GET['fromDate']) ? $_GET['fromDate'] : date('Y-m-d');
+$monthYear = date('F Y', strtotime($currentDate));
+
+foreach ($tableData as $index => $row) {
+    $lineData = [];
+
+    $dateToShow = ($index === 0) ? $monthYear : ''; // only show month/year for the first row
+
+    // Prepare line data
+    $lineData = array(
+        $dateToShow, $row['Product'], $row['Tonnage'], $row['BITUMEN 60/70'], $row['BITUMEN PG76'], $row['CRMB'],
+        $row['CMB'], $row['LMB'], $row['LEMB'], $row['% Bit Usage'], $row['Actual Bit Usage'],
+        $row['Bit %'], $row['Plant Control Bit %'], $row['QUARRY DUST'],
+        $row['10MM AGGREGATE'], $row['14MM AGGREGATE'], $row['20MM AGGREGATE'], $row['28MM AGGREGATE'],
+        $row['40MM AGGREGATE'], $row['OPC'], $row['Lime']
+    );
+
+    # Added checking to fix duplicated issue
+    if (!empty($lineData)) {
+        array_walk($lineData, 'filterData'); 
+        $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+    }
+}
+ 
+// Headers for download 
+header("Content-Type: application/vnd.ms-excel"); 
+header("Content-Disposition: attachment; filename=\"$fileName\""); 
+ 
+// Render excel data 
+echo $excelData;
+ 
+exit;
 ?>
