@@ -14,10 +14,10 @@
     $lang["t-do"]="Delivery Order";
     $lang["t-po"]="Purchase Order";
     $lang["t-gr"]="Goods Received";
-    $lang["t-stockUsed"]="Stock Used";
+    $lang["t-stockUsed"]="Stock Take";
 
     $lang["t-stock"]="Stock Management";
-    $lang["t-bitumen"]="Bitumen";
+    $lang["t-bitumen"]="Stock Take";
     $lang["t-stockTakeLog"]="Stock Take Log";
     $lang["t-inventory"]="Inventory";
 
