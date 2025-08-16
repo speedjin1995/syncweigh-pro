@@ -3234,6 +3234,7 @@ else{
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
             var prodRawCode = '';
             var type = '';
+            var prodRawId = '';
             if(transactionStatus == 'Sales'){
                 prodRawId = $('#addModal').find('#productName :selected').data('id');
                 type = 'SO';
