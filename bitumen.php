@@ -428,8 +428,8 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Fibre</h5>
-                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre">Add Fibre</button>
+                                                    <h5 class="card-title mb-0">Fiber & Additive</h5>
+                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre">Add</button>
                                                 </div>
                                             </div>
                                         </div>
