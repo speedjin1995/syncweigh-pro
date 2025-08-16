@@ -127,7 +127,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-primary" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -150,7 +150,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                                 <h5 class="card-title mb-0">Stock Take</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addWeight" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add Stock Take
                                                                 </button>
@@ -279,7 +279,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title mb-0">Bitumen</h5>
-                                                    <button type="button" class="btn btn-primary add-bitumen" id="addBitumen">Add Bitumen</button>
+                                                    <button type="button" class="btn btn-danger add-bitumen" id="addBitumen">Add Bitumen</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -316,7 +316,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title mb-0">LFO</h5>
-                                                    <button type="button" class="btn btn-primary add-lfo" id="addLFO">Add LFO</button>
+                                                    <button type="button" class="btn btn-danger add-lfo" id="addLFO">Add LFO</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -349,7 +349,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title mb-0">Diesel</h5>
-                                                    <button type="button" class="btn btn-primary add-diesel" id="addDiesel">Add Diesel</button>
+                                                    <button type="button" class="btn btn-danger add-diesel" id="addDiesel">Add Diesel</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -382,7 +382,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title mb-0">Hotoil</h5>
-                                                    <button type="button" class="btn btn-primary add-hotoil" id="addHotoil">Add Hotoil</button>
+                                                    <button type="button" class="btn btn-danger add-hotoil" id="addHotoil">Add Hotoil</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -415,7 +415,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title mb-0">Bitumen PG 76</h5>
-                                                    <button type="button" class="btn btn-primary add-pg-79" id="addpg79">Add PG 76</button>
+                                                    <button type="button" class="btn btn-danger add-pg-79" id="addpg79">Add PG 76</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -448,7 +448,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <h5 class="card-title mb-0">Fibre</h5>
-                                                    <button type="button" class="btn btn-primary add-fibre" id="addFibre">Add Fibre</button>
+                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre">Add Fibre</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -575,7 +575,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                             <div class="col-lg-12">
                                 <div class="hstack gap-2 justify-content-end">
                                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="submitSite">Submit</button>
+                                    <button type="button" class="btn btn-danger" id="submitSite">Submit</button>
                                 </div>
                             </div><!--end col-->                                                               
                         </form>
