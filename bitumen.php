@@ -163,6 +163,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                                 <tr>
                                                                     <th>No</th>
                                                                     <th>Plant</th>
+                                                                    <th>Batch/ <br> Drum</th>
                                                                     <th>Declaration <br> Date</th>
                                                                     <th>Total (60/70) <br> Weight</th>
                                                                     <th>Total (60/70) <br> Temperature</th>
@@ -170,7 +171,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                                     <th>Total <br> LFO</th>
                                                                     <th>Total <br> Diesel</th>
                                                                     <th>Total <br> Hotoil</th>
-                                                                    <th>Total <br> PG79</th>
+                                                                    <th>Total <br> PG76</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -233,38 +234,18 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
                                                     <div class="row">
-                                                        <label for="rawMatName" class="col-sm-4 col-form-label">PG76</label>
+                                                        <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="rawMatName" name="rawMatName" placeholder="PG76">
+                                                            <select id="batchDrum" name="batchDrum" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <option value="Batch">Batch</option>
+                                                                <option value="Drum">Drum</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="weight" class="col-sm-4 col-form-label">CRMB</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="weight" name="weight" placeholder="crmb">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="drum" class="col-sm-4 col-form-label">LFO</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="drum" name="drum" placeholder="LFO">
-                                                        </div>
-                                                    </div>
-                                                </div>    
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="drum" class="col-sm-4 col-form-label">Diesel</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="diesel" name="diesel" placeholder="Diesel">
-                                                        </div>
-                                                    </div>
-                                                </div>                                                     -->
                                                 <input type="hidden" class="form-control" id="bitumenId" name="bitumenId"> 
                                                 <input type="hidden" class="form-control" id="plantCode" name="plantCode">
                                             </div>
@@ -807,6 +788,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             'columns': [
                 { data: 'no' },
                 { data: 'plant' },
+                { data: 'batch_drum' },
                 { data: 'declaration_datetime' },
                 { data: 'totalSixtySeventy' },
                 { data: 'totalTemperature' },
@@ -862,6 +844,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                 'columns': [
                     { data: 'no' },
                     { data: 'plant' },
+                    { data: 'batch_drum' },
                     { data: 'declaration_datetime' },
                     { data: 'totalSixtySeventy' },
                     { data: 'totalTemperature' },
@@ -885,6 +868,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
         $('#addWeight').on('click', function(){
             $('#addModal').find('#id').val("");
             $('#addModal').find('#plant').val("").trigger('change');
+            $('#addModal').find('#batchDrum').val("").trigger('change');
             $('#addModal').find('#datetime').val(formatDate4(today));
             $('#bitumenTable').html('');
             $('#addModal').find('#totalSixtySeventy').val(0);
@@ -1062,7 +1046,30 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
         });
 
         $('#plant').on('change', function(){
+            var plantId = $(this).val();
             $('#plantCode').val($('#plant :selected').data('code'));
+
+            if (plantId){
+                $.post('php/getPlant.php', {userID: plantId}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        $('#addModal').find('#batchDrum').val(obj.message.default_type).trigger('change');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    $('#spinnerLoading').hide();
+                });
+
+            }
         });
 
         // Find and remove selected table rows for bitumenTable
@@ -1408,8 +1415,9 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#bitumenId').val(obj.message.id);
-                $('#addModal').find('#plant').val(obj.message.plant_id).trigger('change ');
+                $('#addModal').find('#plant').val(obj.message.plant_id).select2('destroy').select2();
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
+                $('#addModal').find('#batchDrum').val(obj.message.batch_drum).select2('destroy').select2();
                 $('#addModal').find('#datetime').val(formatDate4(new Date(obj.message.declaration_datetime)));
 
                 // Bitumen Table Processing
@@ -1580,6 +1588,25 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                 $('#addModal').find('#limeDo').val(obj.message.limeDo);
                 $('#addModal').find('#limeIncoming').val(obj.message.limeIncoming);
                 $('#addModal').find('#limeQty').val(obj.message.limeQty);
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
 
                 $('#addModal').modal('show');
             

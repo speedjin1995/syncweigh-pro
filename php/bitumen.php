@@ -32,6 +32,12 @@ if (empty($_POST["plantCode"])) {
     $plantCode = trim($_POST["plantCode"]);
 } 
 
+if (empty($_POST["batchDrum"])) {
+    $batchDrum = null;
+} else {
+    $batchDrum = trim($_POST["batchDrum"]);
+} 
+
 if (empty($_POST["datetime"])) {
     $declarationDatetime = null;
 } else {
@@ -444,8 +450,8 @@ $data = array(
 $data = json_encode($data, JSON_PRETTY_PRINT);
 
 if(!empty($bitumenId)){
-    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `hotoil`=?, `fibre`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, modified_by=? WHERE id=?")) {
-        $update_stmt->bind_param('ssssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $username, $bitumenId);
+    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `hotoil`=?, `fibre`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, `batch_drum`=?, modified_by=? WHERE id=?")) {
+        $update_stmt->bind_param('sssssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username, $bitumenId);
 
         // Execute the prepared query.
         if (! $update_stmt->execute()) {
@@ -471,8 +477,8 @@ if(!empty($bitumenId)){
 }
 else
 { 
-    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-        $insert_stmt->bind_param('sssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $username);
+    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `batch_drum`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        $insert_stmt->bind_param('ssssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username);
 
         // Execute the prepared query.
         if (! $insert_stmt->execute()) {

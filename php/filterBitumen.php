@@ -76,6 +76,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "id"=>$row['id'],
     "no"=>$salesCount,
     "plant"=>$row['plant'],
+    "batch_drum"=>$row['batch_drum'],
     "totalSixtySeventy"=>$totalSixtySeventy,
     "totalTemperature"=>$totalTemperature,
     "totalLevel"=>$totalLevel,
