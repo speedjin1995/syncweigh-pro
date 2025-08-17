@@ -459,6 +459,44 @@ else{
                                                 </div>
                                             </div>
                                         </div><!--end row-->
+
+                                        <!-- Second Card for Empty Container -->
+                                        <!--div class="row">
+                                            <div class="col">
+                                                <div class="h-100">
+                                                    <!--datatable-> 
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <div>
+                                                                            <h5 class="card-title mb-0">Pending Internal Transfer Receive Records</h5>
+                                                                        </div>
+                                                                    </div> 
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <table id="emptyContainerTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Transaction <br>Id</th>
+                                                                                <th>Vehicle</th>
+                                                                                <th>Gross <br>Incoming</th>
+                                                                                <th>Incoming <br>Date</th>
+                                                                                <th>Tare <br>Outgoing</th>
+                                                                                <th>Outgoing <br>Date</th>
+                                                                                <th>Nett <br>Weight</th>
+                                                                                <th>Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!--end row->
+                                                </div> <!-- end .h-100->
+                                            </div> <!-- end col ->
+                                        </div><!-- container-fluid -->
                                     </div> <!-- end .h-100-->
                                 </div> <!-- end col -->
                                 <div class="col-xl-3 col-md-6 add-new-weight">
@@ -1551,6 +1589,11 @@ else{
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        <?php 
+        if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER' && $allowManual == 'N'){
+            echo 'style="display:none;"';
+        }?>
+
         grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
             enableTime: true,
             enableSeconds: true,
@@ -1558,10 +1601,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1575,10 +1618,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1592,10 +1635,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1609,10 +1652,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
