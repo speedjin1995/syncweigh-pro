@@ -2687,6 +2687,7 @@ else{
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#otherRemarks').val("");
+            $('#addModal').find('#vehicleNoTxt').val("");
             $('#addModal').find('#manualVehicle').prop('checked', true).trigger('change');
             $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
