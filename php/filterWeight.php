@@ -120,8 +120,12 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $transactionStatus = 'P - Purchase';
     $purchaseCount++;
   }
-  else{
+  else if($row['transaction_status'] == 'Local'){
     $transactionStatus = 'IT - Internal Transfer';
+    $localCount++;
+  }
+  else{
+    $transactionStatus = 'ITR - Internal Transfer Receive';
     $localCount++;
   }
 
