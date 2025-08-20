@@ -154,6 +154,7 @@ else{
                                                             <label for="statusSearch" class="form-label">Status</label>
                                                             <select id="statusSearch" class="form-select select2">
                                                                 <option value="Local">IT - Internal Transfer</option>
+                                                                <option value="Receive">ITR - Internal Transfer Receive</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->

@@ -78,7 +78,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $transporterName = $row['transporter'];
                 $remarks = $row['remarks'];
 
-                if ($transactionStatus == 'Purchase') {
+                if ($transactionStatus == 'Purchase' || $transactionStatus == 'Receive') {
                     $productCode = $row['raw_mat_code'];
                     $productName = $row['raw_mat_name'];
                 }else{
