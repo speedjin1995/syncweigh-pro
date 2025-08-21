@@ -6,6 +6,7 @@ require_once "php/db_connect.php";
 
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
+$allowManual = $_SESSION['allowManual'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $user);
 $stmt->execute();
@@ -197,6 +198,7 @@ else{
                                                                 <option value="Sales">S - Sales</option>
                                                                 <option value="Purchase">P - Purchase</option>
                                                                 <option value="Local">IT - Internal Transfer</option>
+                                                                <option value="Receive">ITR - Internal Transfer Receive</option>
                                                                 <!-- <option value="WIP">WIP</option> -->
                                                             </select>
                                                         </div>
@@ -458,6 +460,43 @@ else{
                                                 </div>
                                             </div>
                                         </div><!--end row-->
+
+                                        <!-- Second Card for Empty Container -->
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="h-100">
+                                                    <!--datatable--> 
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <div>
+                                                                            <h5 class="card-title mb-0">Pending Internal Transfer Receive Records</h5>
+                                                                        </div>
+                                                                    </div> 
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <table id="emptyContainerTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Transaction <br>Id</th>
+                                                                                <th>From</th>
+                                                                                <th>Vehicle</th>
+                                                                                <th>Gross <br>Incoming</th>
+                                                                                <th>Tare <br>Outgoing</th>
+                                                                                <th>Nett <br>Weight</th>
+                                                                                <th>Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div><!--end row-->
+                                                </div> <!-- end .h-100-->
+                                            </div> <!-- end col -->
+                                        </div><!-- container-fluid -->
                                     </div> <!-- end .h-100-->
                                 </div> <!-- end col -->
                                 <div class="col-xl-3 col-md-6 add-new-weight">
@@ -722,6 +761,7 @@ else{
                                                                                             <option value="Sales" selected>S - Sales</option>
                                                                                             <option value="Purchase">P - Purchase</option>
                                                                                             <option value="Local">IT - Internal Transfer</option>
+                                                                                            <option value="Receive">ITR - Internal Transfer Receive</option>
                                                                                             <!--option value="WIP">WIP</option-->
                                                                                         </select>  
                                                                                     </div>
@@ -895,7 +935,7 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-6 col-lg-6 mb-3"  <?php 
-                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER' && $allowManual == 'N'){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -1211,7 +1251,8 @@ else{
                                                         <input type="hidden" id="rawMaterialCode" name="rawMaterialCode">
                                                         <input type="hidden" id="rawMaterialId" name="rawMaterialId">
                                                         <input type="hidden" id="siteCode" name="siteCode">
-                                                        <input type="hidden" id="id" name="id">  
+                                                        <input type="hidden" id="id" name="id"> 
+                                                        <input type="hidden" id="rid" name="rid">  
                                                         <input type="hidden" id="weighbridge" name="weighbridge" value="Weigh1">
                                                         <input type="hidden" id="previousRecordsTag" name="previousRecordsTag">
                                                         <input type="hidden" id="basicNettWeight" name="basicNettWeight">
@@ -1529,6 +1570,7 @@ else{
 
     <script type="text/javascript">
     var table = null;
+    var table2 = null;
     let soPoTag = false;
     let addNewTag = false;
     let isSyncing = false;
@@ -1550,6 +1592,11 @@ else{
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        <?php 
+        if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER' && $allowManual == 'N'){
+            echo 'style="display:none;"';
+        }?>
+
         grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
             enableTime: true,
             enableSeconds: true,
@@ -1557,10 +1604,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1574,10 +1621,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1591,10 +1638,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1608,10 +1655,10 @@ else{
             dateFormat: "d/m/Y H:i:S",
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
-            allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1850,6 +1897,91 @@ else{
                 $('#purchaseInfo').text(settings.json.purchaseTotal);
                 $('#localInfo').text(settings.json.localTotal);
             }   
+        });
+
+        table2 = $("#emptyContainerTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'searching': true,
+            'serverMethod': 'post',
+            'ajax': {
+                'url':'php/loadReceived.php'
+            },
+            'columns': [
+                { data: 'transaction_id' },
+                { data: 'customer_name' },
+                { data: 'lorry_plate_no1' },
+                { data: 'gross_weight1' },
+                { data: 'tare_weight1' },
+                { data: 'nett_weight1' },
+                { 
+                    data: 'id',
+                    class: 'action-button',
+                    render: function (data, type, row) {
+                        let buttons = `<div class="row g-1 d-flex">`;
+
+                        /*if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            //if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
+                            //}
+                        }else {
+                            if (row.is_complete != 'Y' ){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fa-solid fa-weight-hanging"></i>
+                                    </button>
+                                </div>`;
+                            }
+                        }
+
+                        if (row.is_approved == 'Y') {
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                    <i class="fa-solid fa-print"></i>
+                                </button>
+                            </div>`;
+                        }
+
+                        if (row.is_approved == 'N') {
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Approve" type="button" id="approve${data}" onclick="approve(${data})" class="btn btn-success btn-sm">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </div>`;
+                        }
+
+                        if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>`;
+                        }*/
+
+                        buttons += `
+                            <div class="col-auto">
+                                <button title="Receive" type="button" id="receive${data}" onclick="receive(${data})" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                            </div>`;
+                            
+                        buttons += `</div>`;
+
+                        return buttons;
+                    }
+                }
+            ]  
         });
 
         // Add event listener for opening and closing details on row click
@@ -2555,7 +2687,8 @@ else{
             $('#addModal').find('#invoiceNo').val("");
             $('#addModal').find('#deliveryNo').val("");
             $('#addModal').find('#otherRemarks').val("");
-            $('#addModal').find('#manualVehicle').prop('checked', false).trigger('change');
+            $('#addModal').find('#vehicleNoTxt').val("");
+            $('#addModal').find('#manualVehicle').prop('checked', true).trigger('change');
             $('#addModal').find('#manualVehicle2').prop('checked', false).trigger('change');
             $('#addModal').find('#grossIncoming').val("");
             grossIncomingDatePicker.clear();
@@ -3415,7 +3548,7 @@ else{
         $('#transactionStatus').on('change', function(){
             var customerType = $('#addModal').find('#customerType').val();
 
-            if($(this).val() == "Purchase"){
+            if($(this).val() == "Purchase" || $(this).val() == "Receive"){
                 //$('#divWeightDifference').show();
                 //$('#divSupplierWeight').show();
                 $('#addModal').find('#orderWeight').val("");
@@ -3427,12 +3560,12 @@ else{
                 $('#productNameDisplay').hide();
                 //$('#addModal').find('#divPoSupplyWeight').show();
                 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                <?php /*if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').show();";
                 }
                 else{
                     echo "//$('#doDisplay').show();";
-                }
+                }*/
                 ?>
                 
                 if ($(this).val() == "Purchase"){
@@ -3496,12 +3629,12 @@ else{
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                <?php /*if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').show();";
                 }
                 else{
                     echo "//$('#doDisplay').show();";
-                }
+                }*/
                 ?>
 
                 $('#unitPriceDisplay').hide();
@@ -3530,12 +3663,12 @@ else{
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                <?php /*if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
                     echo "$('#doDisplay').hide();";
                 }
                 else{
                     echo "//$('#doDisplay').hide();";
-                }
+                }*/
                 ?>
 
                 if (customerType == 'Cash'){
@@ -3920,6 +4053,8 @@ else{
             $('#addModal').find('#rawMaterialName').val(data.raw_mat_name).trigger('change');
             $('#addModal').find('#productName').val(data.product_name).trigger('change');
             $('#addModal').find('#productCode').val(data.product_code);
+            $('#addModal').find('#transporterCode').val(data.transporter_code);
+            $('#addModal').find('#transporterName').val(data.transporter).trigger('change');
         
             // Optional: Show read-only fields instead of dropdown if needed
             // if (data.transaction_status === 'Purchase') {
@@ -4636,6 +4771,81 @@ else{
 
         var previewTable = document.getElementById('previewTable');
         previewTable.innerHTML = htmlTable;
+    }
+
+    function receive(id){
+        $('#spinnerLoading').show();
+        $.post('php/getWeight.php', {userID: id}, function(data){
+            var obj = JSON.parse(data);
+
+            if(obj.status === 'success'){
+                $('#addModal').find('#id').val('');
+                $('#addModal').find('#rid').val(obj.message.id);
+                $('#addModal').find('#tinNo').val(obj.message.tin_no);
+                $('#addModal').find('#idNo').val(obj.message.id_no);
+                $('#addModal').find('#idType').val(obj.message.id_type);
+                $('#addModal').find('#transactionId').val(obj.message.transaction_id);
+                $('#addModal').find('#transactionStatus').val('Receive').trigger('change');
+                $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
+                $('#addModal').find('#customerType').val(obj.message.customer_type).trigger('change');
+                $('#addModal').find('#transactionDate').val(formatDate2(new Date()));
+                $('#addModal').find('#supplierCode').val(obj.message.customer_code);
+                $('#addModal').find('#supplierName').val(obj.message.customer_name).trigger('change');
+                $('#addModal').find('#transporterCode').val(obj.message.transporter_code);
+                $('#addModal').find('#transporterName').val(obj.message.transporter).trigger('change');
+                $('#addModal').find('#rawMaterialCode').val(obj.message.product_code);
+                $('#addModal').find('#rawMaterialName').val(obj.message.product_name).trigger('change');
+
+                $('#addModal').find('#grossIncoming').val(obj.message.tare_weight1);
+                grossIncomingDatePicker.setDate(new Date());
+                $('#addModal').find('#tareOutgoing').val(obj.message.gross_weight1);
+                tareOutgoingDatePicker.setDate(new Date());
+                $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
+
+                if(obj.message.vehicleNoTxt != null){
+                    $('#addModal').find('#vehicleNoTxt').val(obj.message.vehicleNoTxt);
+                    $('#manualVehicle').val(1);
+                    $('#manualVehicle').prop("checked", true);
+                    $('.index-vehicle').hide();
+                    $('#vehicleNoTxt').show();
+                }
+                else{
+                    $('#addModal').find('#vehiclePlateNo1Edit').val('EDIT');
+                    $('#addModal').find('#vehiclePlateNo1').val(obj.message.lorry_plate_no1).trigger('change');
+                    $('#manualVehicle').val(0);
+                    $('#manualVehicle').prop("checked", false);
+                    $('.index-vehicle').show();
+                    $('#vehicleNoTxt').hide();
+                }
+
+                $('#addModal').modal('show');
+            
+                $('#weightForm').validate({
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
     }
 
     function edit(id){ 

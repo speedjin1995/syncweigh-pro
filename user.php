@@ -237,7 +237,18 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                         </select>
                                                     </div>
                                                 </div>
-                                            </div>                                              
+                                            </div>      
+                                            <div class="col-12 mb-3">
+                                                <div class="row">
+                                                    <label for="allowManual" class="col-sm-4 col-form-label">Allow Manual *</label>
+                                                    <div class="col-sm-8">
+                                                        <select id="allowManual" name="allowManual" class="form-control" required>
+                                                            <option value="Y">YES</option>
+                                                            <option value="N">NO</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>                                         
                                         </div>
                                     </div>
                                 </div>
@@ -461,6 +472,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
             $('#addModal').find('#userpassword').val("");
             $('#addModal').find('#roles').val("");
             $('#addModal').find('#plantId').val('').trigger('change');
+            $('#addModal').find('#allowManual').val("N");
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -628,6 +640,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 $('#addModal').find('#userpassword').val('');
                 $('#addModal').find('#roles').val(obj.message.role_code).trigger('change');
                 $("#addModal").find("#plantId").val(JSON.parse(obj.message.plant)).trigger("change");
+                $('#addModal').find('#allowManual').val(obj.message.allow_manual);
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
