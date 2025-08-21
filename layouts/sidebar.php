@@ -154,7 +154,7 @@
                         </li>';
                     }else{
                         echo '
-                        <li class="nav-item">
+                        <li class="nav-item" style="display:none">
                             <a class="nav-link menu-link" href="#sidebarStock" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarStock">
                                 <i class="ri-pages-line"></i> <span>'.$lang['t-stock'].'</span>
@@ -172,7 +172,7 @@
                                     </li>              
                                 </ul>
                             </div>
-                        </li> 
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarMasterdata">
