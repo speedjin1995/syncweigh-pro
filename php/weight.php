@@ -118,7 +118,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 							$charSize = strlen($row['curcount']);
 							$misValue = $row['curcount'];
 		
-							for($i=0; $i<(5-(int)$charSize); $i++){
+							for($i=0; $i<(6-(int)$charSize); $i++){
 								$transactionId.='0';  // S0000
 							}
 					
