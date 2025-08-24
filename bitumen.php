@@ -170,9 +170,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                                     <th>Batch/ <br> Drum</th>
                                                                     <th>Declaration <br> Date</th>
                                                                     <th>Total (60/70) <br> Weight</th>
-                                                                    <th>Total (60/70) <br> Temperature</th>
+                                                                    <!-- <th>Total (60/70) <br> Temperature</th> -->
                                                                     <th>Total (60/70) <br> Level</th>
-                                                                    <th>Total <br> LFO</th>
+                                                                    <!-- <th>Total <br> LFO</th> -->
                                                                     <th>Total <br> Diesel</th>
                                                                     <!-- <th>Total <br> Hotoil</th> -->
                                                                     <th>Total <br> PG76</th>
@@ -284,7 +284,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     <tfoot>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
-                                                        <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                        <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalLevel" name="totalLevel" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
                                                     </tfoot>
@@ -316,11 +316,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         </tr>
                                                     </thead>
                                                     <tbody id="lfoTable"></tbody>
-                                                    <tfoot>
+                                                    <!-- <tfoot>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalLfo" name="totalLfo" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
-                                                    </tfoot>
+                                                    </tfoot> -->
                                                 </table>
                                             </div>
                                         </div>
@@ -831,11 +831,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 { orderable: false, targets: [4] },
                 { orderable: false, targets: [5] },
                 { orderable: false, targets: [6] },
-                { orderable: false, targets: [7] },
-                { orderable: false, targets: [8] },
-                { orderable: false, targets: [9] },
-                { orderable: false, targets: [10] },
-            ],
+                { orderable: false, targets: [7] },            ],
             'ajax': {
                 'url':'php/filterBitumen.php',
                 'data': {
@@ -850,9 +846,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 { data: 'batch_drum' },
                 { data: 'declaration_datetime' },
                 { data: 'totalSixtySeventy' },
-                { data: 'totalTemperature' },
+                // { data: 'totalTemperature' },
                 { data: 'totalLevel' },
-                { data: 'totalLfo' },
+                //{ data: 'totalLfo' },
                 { data: 'totalDiesel' },
                 // { data: 'totalHotoil' },
                 { data: 'totalPgSevenNine' },
@@ -888,9 +884,6 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     { orderable: false, targets: [5] },
                     { orderable: false, targets: [6] },
                     { orderable: false, targets: [7] },
-                    { orderable: false, targets: [8] },
-                    { orderable: false, targets: [9] },
-                    { orderable: false, targets: [10] },
                 ],
                 'ajax': {
                     'url':'php/filterBitumen.php',
@@ -906,9 +899,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     { data: 'batch_drum' },
                     { data: 'declaration_datetime' },
                     { data: 'totalSixtySeventy' },
-                    { data: 'totalTemperature' },
+                    // { data: 'totalTemperature' },
                     { data: 'totalLevel' },
-                    { data: 'totalLfo' },
+                    // { data: 'totalLfo' },
                     { data: 'totalDiesel' },
                     // { data: 'totalHotoil' },
                     { data: 'totalPgSevenNine' },
@@ -931,10 +924,10 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#addModal').find('#datetime').val(formatDate4(today));
             $('#bitumenTable').html('');
             $('#addModal').find('#totalSixtySeventy').val(0);
-            $('#addModal').find('#totalTemp').val(0);
+            // $('#addModal').find('#totalTemp').val(0);
             $('#addModal').find('#totalLevel').val(0);
             $('#lfoTable').html('');
-            $('#addModal').find('#totalLfo').val(0);
+            // $('#addModal').find('#totalLfo').val(0);
             $('#dieselTable').html('');
             $('#addModal').find('#dieselSupplierTransport').val('').trigger('change');
             $('#addModal').find('#dieselSupplierHotoil').val('').trigger('change');
@@ -1163,17 +1156,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         });
 
         // Event delegation for order weight to calculate total temp
-        $("#bitumenTable").on('change', 'input[id^="temp"]', function(){
-            var totalSum = 0;
+        // $("#bitumenTable").on('change', 'input[id^="temp"]', function(){
+        //     var totalSum = 0;
 
-            // Loop through each temp input and sum up the values
-            $('input[id^="temp"]').each(function(){
-                totalSum += parseFloat($(this).val()) || 0;
-            });
+        //     // Loop through each temp input and sum up the values
+        //     $('input[id^="temp"]').each(function(){
+        //         totalSum += parseFloat($(this).val()) || 0;
+        //     });
 
-            // Set the total sum into the totalTemp input field
-            $('#totalTemp').val(totalSum.toFixed(2));
-        });
+        //     // Set the total sum into the totalTemp input field
+        //     $('#totalTemp').val(totalSum.toFixed(2));
+        // });
 
         // Event delegation for order weight to calculate total level
         $("#bitumenTable").on('change', 'input[id^="level"]', function(){
@@ -1218,17 +1211,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         });
 
         // Event delegation for order weight to calculate lfo total
-        $("#lfoTable").on('change', 'input[id^="lfoWeight"]', function(){
-            var totalSum = 0;
+        // $("#lfoTable").on('change', 'input[id^="lfoWeight"]', function(){
+        //     var totalSum = 0;
 
-            // Loop through each lfo input and sum up the values
-            $('input[id^="lfoWeight"]').each(function(){
-                totalSum += parseFloat($(this).val()) || 0;
-            });
+        //     // Loop through each lfo input and sum up the values
+        //     $('input[id^="lfoWeight"]').each(function(){
+        //         totalSum += parseFloat($(this).val()) || 0;
+        //     });
 
-            // Set the total sum into the lfo input field
-            $('#totalLfo').val(totalSum.toFixed(2));
-        });
+        //     // Set the total sum into the lfo input field
+        //     $('#totalLfo').val(totalSum.toFixed(2));
+        // });
 
         $(".add-lfo").click(function(){
             var $addContents = $("#lfoDetail").clone();
@@ -1541,7 +1534,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     }
                 }
                 $('#addModal').find('#totalSixtySeventy').val(obj.message.totalSixtySeventy);
-                $('#addModal').find('#totalTemp').val(obj.message.totalTemp);
+                // $('#addModal').find('#totalTemp').val(obj.message.totalTemp);
                 $('#addModal').find('#totalLevel').val(obj.message.totalLevel);
 
                 // LFO Table Processing
@@ -1563,7 +1556,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         lfoCount++;
                     }
                 }
-                $('#addModal').find('#totalLfo').val(obj.message.totalLfo);
+                // $('#addModal').find('#totalLfo').val(obj.message.totalLfo);
 
                 // Diesel Table Processing
                 $('#addModal').find('#dieselSupplierTransport').val(obj.message.dieselSupplierTransport);

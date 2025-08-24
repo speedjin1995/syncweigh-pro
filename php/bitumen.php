@@ -62,7 +62,7 @@ if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
     }
 
     $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
-    $sixtySeventyData['totalTemperature'] = $_POST["totalTemp"];
+    // $sixtySeventyData['totalTemperature'] = $_POST["totalTemp"];
     $sixtySeventyData['totalLevel'] = $_POST["totalLevel"];
     $sixtySeventyData = json_encode($sixtySeventyData, JSON_PRETTY_PRINT);
 } else {
@@ -82,7 +82,7 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
         );
     }
 
-    $lfoData['totalLfo'] = $_POST["totalLfo"];
+    // $lfoData['totalLfo'] = $_POST["totalLfo"];
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 } else {
     $lfoData = NULL;

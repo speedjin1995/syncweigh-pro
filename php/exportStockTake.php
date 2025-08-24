@@ -201,39 +201,30 @@ if (!empty($data)) {
             "Usage Ton 2"=>$secondUsageTon,
         );
     } elseif ($_GET['rawMaterial'] == '32') {
-        $totalProduction = 0;
-        $totalOS = (float) str_replace(',', '', $data[0]['O/S']) ?? 0;
-        $totalIncoming = 0;
-        $totalPS = (float) str_replace(',', '', end($data)['P/S']) ?? 0; 
-        $totalUsage = 0;
+        // Determine how many LFO sets exist by looking at first row
+        $sample = json_decode($data[0]['Production'], true);
+        $lfoCount = is_array($sample) ? count($sample) : 1;
 
-        foreach ($data as $row) {
-            $totalProduction += (float) str_replace(',', '', $row['Production']);
-            $totalIncoming += (float) str_replace(',', '', $row['Incoming']);
-            $totalUsage += (float) str_replace(',', '', $row['Usage']);
+        // Build datasets for each LFO index
+        $tables = [];
+        for ($i = 0; $i < $lfoCount; $i++) {
+            $lfoData = [];
+            foreach ($data as $row) {
+                $lfoRow = [];
+                $lfoRow['Date'] = $row['Date'];
+                $lfoRow['Production'] = json_decode($row['Production'], true)[$i] ?? 0;
+                $lfoRow['O/S'] = json_decode($row['O/S'], true)[$i] ?? 0;
+                $lfoRow['Incoming'] = json_decode($row['Incoming'], true)[$i] ?? 0;
+                $lfoRow['P/S'] = json_decode($row['P/S'], true)[$i] ?? 0;
+                $lfoRow['Usage'] = json_decode($row['Usage'], true)[$i] ?? 0;
+                $lfoRow['Actual LFO Usage (%)'] = json_decode($row['Actual LFO Usage (%)'], true)[$i] ?? 0;
+
+                $lfoData[] = $lfoRow;
+            }
+            $tables["LFO (" . ($i+1) . ")"] = $lfoData;
         }
-        $totalUsage = $totalOS + $totalIncoming - $totalPS;
-        $usage_ton = $totalUsage/$totalProduction;
 
-        $data[] = array( 
-            "Month"=>"Month",
-            "Production"=>"Production",
-            "O/S"=>"O/S",
-            "Incoming"=>"Incoming",
-            "P/S"=>"P/S",
-            "Usage"=>"Usage",
-            "% usage / ton"=>"% usage / ton"
-        );
-
-        $data[] = array( 
-            "Month Value"=>$months[0],
-            "Production Value"=>number_format($totalProduction, 2),
-            "O/S Value"=>number_format($totalOS, 2),
-            "Incoming Value"=>number_format($totalIncoming, 2),
-            "P/S Value"=>number_format($totalPS, 2),
-            "Usage Value"=>number_format($totalUsage, 2),
-            "% usage / ton (+/-)" => number_format($usage_ton, 2)
-        );
+        $excelData = $tables;
     } elseif ($_GET['rawMaterial'] == '31'){
         $totalProduction = 0;
         $totalOS = (float) str_replace(',', '', $data[0]['O/S']) ?? 0;
@@ -283,7 +274,7 @@ if (!empty($data)) {
         $totalUsage = 0;
 
         // LFO
-        $totalLfoProduction = 0; //var_dump($data);die;
+        $totalLfoProduction = 0;
         $totalLfoOS = (float) str_replace(',', '', $data[0]['LFO O/S']) ?? 0;
         $totalLfoIncoming = 0;
         $totalLfoPS = (float) str_replace(',', '', end($data)['LFO P/S']) ?? 0; 
@@ -403,9 +394,7 @@ $excelData .= implode("\t", array_values([$plantName.' DRUM PLANT', '','','PHYSI
 
 if ($_GET['rawMaterial'] == '27') {
     $excelData .= implode("\t", array_values(['BITUMEN (60/70)'])) . "\n\n";
-} elseif ($_GET['rawMaterial'] == '32') {
-    $excelData .= implode("\t", array_values(['LFO'])) . "\n\n";
-} elseif ($_GET['rawMaterial'] == '31') {
+}elseif ($_GET['rawMaterial'] == '31') {
     $excelData .= implode("\t", array_values(['DIESEL'])) . "\n\n";
 } else {
     $excelData .= implode("\t", array_values(['Bitumen (60/70)','','','','','','','','','','LFO', 'PENTAS FLORA','','','','', '','','BD'])) . "\n\n";
@@ -415,18 +404,46 @@ if ($_GET['rawMaterial'] == '27') {
 $excelData .= implode("\t", array_values($columnNames)) . "\n";
 
 if(count($data) > 0){
-    foreach ($data as $row){
-        unset($row['id']);
-        $lineData = []; // Ensure it starts as an empty array each iteration
+    if ($_GET['rawMaterial'] == '32') {
+        // Handle LFO case with multiple tables
+        $excelData = implode("\t", array_values(['BLACKTOP LANCHANG S/B'])) . "\n";
+        $excelData .= implode("\t", array_values([$plantName.' DRUM PLANT', '','','PHYSICAL STOCK FOR '.$months[0]])) . "\n";
+        $excelData .= implode("\t", array_values(['LFO'])) . "\n\n";
 
-        foreach ($row as $rowData) { 
-            $lineData[] = $rowData; 
+        // Process each LFO table
+        foreach ($tables as $tableName => $tableData) {
+            $excelData .= $tableName . "\n";
+            $excelData .= implode("\t", array_values($columnNames)) . "\n";
+            
+            // Add table data
+            foreach ($tableData as $row) {
+                $lineData = [];
+                foreach ($row as $cellData) {
+                    $lineData[] = $cellData;
+                }
+                
+                if (!empty($lineData)) {
+                    array_walk($lineData, 'filterData');
+                    $excelData .= implode("\t", array_values($lineData)) . "\n";
+                }
+            }
+            
+            $excelData .= "\n";
         }
+    }else{
+        foreach ($data as $row){
+            unset($row['id']);
+            $lineData = []; // Ensure it starts as an empty array each iteration
 
-        # Added checking to fix duplicated issue
-        if (!empty($lineData)) {
-            array_walk($lineData, 'filterData'); 
-            $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+            foreach ($row as $rowData) { 
+                $lineData[] = $rowData; 
+            }
+
+            # Added checking to fix duplicated issue
+            if (!empty($lineData)) {
+                array_walk($lineData, 'filterData'); 
+                $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+            }
         }
     }
 }else{
