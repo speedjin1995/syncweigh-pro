@@ -34,7 +34,7 @@ curl_close($curl);
 $data = json_decode($response, true);
 
 if (!empty($data['data'])) {
-    require_once __DIR__ . '/../php/db_connect.php';
+    require_once __DIR__ . '/../php/db_connect2.php';
     $services = 'PullSO';
     $requests = json_encode($data);
 
