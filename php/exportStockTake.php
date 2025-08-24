@@ -113,7 +113,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
 
         $columnNames = ['Date', 'Production', 'O/S', 'Incoming', 'M.Reading', 'Transport', 'P/S', 'Actual Burner Usage', 'Actual Diesel Usage (%)'];
     } else {
-        $columnNames = ['Date', 'Production', 'O/S', 'Incoming', 'Usage', 'Book Stock', 'P/S', 'Diff Stock', 'Actual Bit Usage (%)', ' ', 'Date', 'Production', 'O/S', 'Incoming', 'P/S', 'Usage', 'Actual LFO Usage (%)', ' ', 'Date', 'Production', 'O/S', 'Incoming', 'M.Reading', 'Transport', 'P/S', 'Actual Burner Usage', 'Actual Diesel Usage (%)'];
+        $columnNames = ['Date', 'Production', 'O/S', 'Incoming', 'Usage', 'Book Stock', 'P/S', 'Diff Stock', 'Actual Bit Usage (%)', ' ', 'Date', 'Production', 'O/S', 'Incoming', 'M.Reading', 'Transport', 'P/S', 'Actual Burner Usage', 'Actual Diesel Usage (%)'];
 
         $date = formatDate($row['declaration_datetime']);
         $data[] = array( 
@@ -128,14 +128,6 @@ while($row = mysqli_fetch_assoc($empRecords)) {
             "Diff Stock"=>$row['sixty_seventy_diffstock'],
             "Actual Bit Usage (%)"=>$row['sixty_seventy_actual_usage'],
             "Bitumen Space"=>" ",
-            "LFO Date"=>$date,
-            "LFO Production"=>$row['lfo_production'],
-            "LFO O/S"=>$row['lfo_os'],
-            "LFO P/S"=>$row['lfo_ps'],
-            "LFO Incoming"=>$row['lfo_incoming'],
-            "LFO Usage"=>$row['lfo_usage'],
-            "LFO Actual LFO Usage (%)"=>$row['lfo_actual_usage'],
-            "Diesel Space"=>" ",
             "Diesel Date"=>$date,
             "Diesel Production"=>$row['diesel_production'],
             "Diesel O/S"=>$row['diesel_os'],
@@ -145,6 +137,13 @@ while($row = mysqli_fetch_assoc($empRecords)) {
             "Diesel P/S"=>$row['diesel_ps'],
             "Diesel Actual Burner Usage"=>$row['diesel_usage'],
             "Diesel Actual Diesel Usage (%)"=>$row['diesel_actual_usage'],
+            // Store LFO data separately for table generation
+            "LFO Production"=>$row['lfo_production'],
+            "LFO O/S"=>$row['lfo_os'],
+            "LFO Incoming"=>$row['lfo_incoming'],
+            "LFO P/S"=>$row['lfo_ps'],
+            "LFO Usage"=>$row['lfo_usage'],
+            "LFO Actual LFO Usage (%)"=>$row['lfo_actual_usage'],
         );
     }
 }
@@ -273,13 +272,6 @@ if (!empty($data)) {
         $totalPS = (float) str_replace(',', '', end($data)['P/S']) ?? 0; 
         $totalUsage = 0;
 
-        // LFO
-        $totalLfoProduction = 0;
-        $totalLfoOS = (float) str_replace(',', '', $data[0]['LFO O/S']) ?? 0;
-        $totalLfoIncoming = 0;
-        $totalLfoPS = (float) str_replace(',', '', end($data)['LFO P/S']) ?? 0; 
-        $totalLfoUsage = 0;
-
         // Diesel
         $totalDieselProduction = 0;
         $totalDieselOS = (float) str_replace(',', '', $data[0]['Diesel O/S']) ?? 0;
@@ -287,32 +279,53 @@ if (!empty($data)) {
         $totalDieselPS = (float) str_replace(',', '', end($data)['Diesel P/S']) ?? 0; 
         $totalDieselTransport = 0;
         $totalDieselActualBurnerUsage = 0;
-        
+
+        // Determine LFO count from first row
+        $firstLfoData = json_decode($data[0]['LFO Production'], true) ?: [];
+        $lfoCount = count($firstLfoData);
+
+        // Build LFO datasets for each LFO index (similar to LFO-only export)
+        $lfoTables = [];
+        for ($i = 0; $i < $lfoCount; $i++) {
+            $lfoData = [];
+            foreach ($data as $row) {
+                $lfoRow = [];
+                $lfoRow['Date'] = $row['Bitumen Date'];
+                $lfoRow['Production'] = json_decode($row['LFO Production'], true)[$i] ?? 0;
+                $lfoRow['O/S'] = json_decode($row['LFO O/S'], true)[$i] ?? 0;
+                $lfoRow['Incoming'] = json_decode($row['LFO Incoming'], true)[$i] ?? 0;
+                $lfoRow['P/S'] = json_decode($row['LFO P/S'], true)[$i] ?? 0;
+                $lfoRow['Usage'] = json_decode($row['LFO Usage'], true)[$i] ?? 0;
+                $lfoRow['Actual LFO Usage (%)'] = json_decode($row['LFO Actual LFO Usage (%)'], true)[$i] ?? 0;
+
+                $lfoData[] = $lfoRow;
+            }
+            $lfoTables["LFO (" . ($i+1) . ")"] = $lfoData;
+        }
+        // $totalLfoProduction = 0;
+        // $totalLfoOS = (float) str_replace(',', '', $data[0]['LFO O/S']) ?? 0;
+        // $totalLfoIncoming = 0;
+        // $totalLfoPS = (float) str_replace(',', '', end($data)['LFO P/S']) ?? 0; 
+        // $totalLfoUsage = 0;
+
         foreach ($data as $row) {
             $totalProduction += (float) str_replace(',', '', $row['Production']);
             $totalIncoming += (float) str_replace(',', '', $row['Incoming']);
             $totalUsage += (float) str_replace(',', '', $row['Usage']);
-            $totalLfoProduction += (float) str_replace(',', '', $row['LFO Production']);
-            $totalLfoIncoming += (float) str_replace(',', '', $row['LFO Incoming']);
-            $totalLfoUsage += (float) str_replace(',', '', $row['LFO Usage']);
             $totalDieselProduction += (float) str_replace(',', '', $row['Diesel Production']);
             $totalDieselIncoming += (float) str_replace(',', '', $row['Diesel Incoming']);
             $totalDieselTransport += (float) str_replace(',', '', $row['Diesel Transport']);
             $totalDieselActualBurnerUsage += (float) str_replace(',', '', $row['Diesel Actual Burner Usage']);
         } 
 
-        // 60/70
+        // 60/70 calculations
         $firstTotalUsage = $totalOS + $totalIncoming - $totalPS;
         $secondTotalUsage = $totalUsage;
-        $firstUsageTon = ($firstTotalUsage / $totalProduction)*100;
-        $secondUsageTon = ($secondTotalUsage / $totalProduction)*100;
+        $firstUsageTon = $totalProduction > 0 ? ($firstTotalUsage / $totalProduction) * 100 : 0;
+        $secondUsageTon = $totalProduction > 0 ? ($secondTotalUsage / $totalProduction) * 100 : 0;
         $diffStock = $secondTotalUsage - $firstTotalUsage;
 
-        // LFO
-        $totalLfoUsage = $totalLfoOS + $totalLfoIncoming - $totalLfoPS;
-        $usage_lfo_ton = $totalLfoUsage/$totalLfoProduction;
-
-        // Diesel
+        // Diesel calculations
         $diesel_usage_day = $totalDieselActualBurnerUsage/31;
 
         // Footer Header Fields
@@ -327,14 +340,6 @@ if (!empty($data)) {
             "empty space"=>" ",
             "empty space2"=>" ",
             "empty space3"=>" ",
-            "LFO Month"=>"Month",
-            "LFO Production"=>"Production",
-            "LFO O/S"=>"O/S",
-            "LFO Incoming"=>"Incoming",
-            "LFO P/S"=>"P/S",
-            "LFO Usage"=>"Usage",
-            "LFO % usage / ton"=>"% usage / ton",
-            "empty space4"=>" ",
             "Diesel Month"=>"Month",
             "Diesel Production"=>"Production",
             "Diesel O/S"=>"O/S",
@@ -357,19 +362,11 @@ if (!empty($data)) {
             "Diff Stock Value"=>$diffStock,
             "value empty space"=>'',
             "value empty space2"=>'',
-            "LFO Month Value"=>$months[0],
-            "LFO Production Value"=>number_format($totalLfoProduction, 2),
-            "LFO O/S Value"=>number_format($totalLfoOS, 2),
-            "LFO Incoming Value"=>number_format($totalLfoIncoming, 2),
-            "LFO P/S Value"=>number_format($totalLfoPS, 2),
-            "LFO Usage Value"=>number_format($totalLfoUsage, 2),
-            "LFO % usage / ton (+/-)" => number_format($usage_lfo_ton, 2),
-            "value empty space3"=>'',
             "Diesel Month Value"=>$months[0],
             "Diesel Production Value"=>$totalDieselProduction,
             "Diesel O/S Value"=>$totalDieselOS,
             "Diesel Incoming Value"=>$totalDieselIncoming,
-            "Diesel P/S Value"=>$totalDieselIncoming,
+            "Diesel P/S Value"=>$totalDieselPS,
             "Diesel Shovel Usage"=>$totalDieselTransport,
             "Diesel Roadcare"=>0,
             "Diesel Burner Usage"=>$totalDieselActualBurnerUsage,
@@ -394,10 +391,10 @@ $excelData .= implode("\t", array_values([$plantName.' DRUM PLANT', '','','PHYSI
 
 if ($_GET['rawMaterial'] == '27') {
     $excelData .= implode("\t", array_values(['BITUMEN (60/70)'])) . "\n\n";
-}elseif ($_GET['rawMaterial'] == '31') {
+} elseif ($_GET['rawMaterial'] == '31') {
     $excelData .= implode("\t", array_values(['DIESEL'])) . "\n\n";
 } else {
-    $excelData .= implode("\t", array_values(['Bitumen (60/70)','','','','','','','','','','LFO', 'PENTAS FLORA','','','','', '','','BD'])) . "\n\n";
+    $excelData .= implode("\t", array_values(['Bitumen (60/70)','','','','','','','','','','Diesel'])) . "\n\n";
 }
 
 // Display column names as first row 
@@ -430,19 +427,53 @@ if(count($data) > 0){
             
             $excelData .= "\n";
         }
-    }else{
+    }else {
+        // Handle other cases including combined materials
         foreach ($data as $row){
             unset($row['id']);
-            $lineData = []; // Ensure it starts as an empty array each iteration
+            
+            // For combined materials, remove LFO data from main export since it will be in separate tables
+            if (empty($_GET['rawMaterial']) || $_GET['rawMaterial'] == '' || $_GET['rawMaterial'] == '-') {
+                unset($row['LFO Production']);
+                unset($row['LFO O/S']);
+                unset($row['LFO Incoming']);
+                unset($row['LFO P/S']);
+                unset($row['LFO Usage']);
+                unset($row['LFO Actual LFO Usage (%)']);
+            }
+            
+            $lineData = [];
 
             foreach ($row as $rowData) { 
                 $lineData[] = $rowData; 
             }
 
-            # Added checking to fix duplicated issue
             if (!empty($lineData)) {
                 array_walk($lineData, 'filterData'); 
                 $excelData .= implode("\t", array_values($lineData)) . "\n"; 
+            }
+        }
+        
+        // For combined materials, add LFO tables at the end
+        if (empty($_GET['rawMaterial']) || $_GET['rawMaterial'] == '' || $_GET['rawMaterial'] == '-') {
+            $excelData .= "\n\n";
+            foreach ($lfoTables as $tableName => $tableData) {
+                $excelData .= $tableName . "\t" . "PENTAS FLORA" . "\n";
+                $excelData .= implode("\t", array_values(['Date', 'Production', 'O/S', 'Incoming', 'P/S', 'Usage', 'Actual LFO Usage (%)'])) . "\n";
+                
+                foreach ($tableData as $row) {
+                    $lineData = [];
+                    foreach ($row as $cellData) {
+                        $lineData[] = $cellData;
+                    }
+                    
+                    if (!empty($lineData)) {
+                        array_walk($lineData, 'filterData');
+                        $excelData .= implode("\t", array_values($lineData)) . "\n";
+                    }
+                }
+                
+                $excelData .= "\n";
             }
         }
     }
