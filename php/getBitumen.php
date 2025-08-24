@@ -56,6 +56,15 @@ if(isset($_POST['userID'])){
 
                 ## diesel Processing ##
                 $dieselTemp = json_decode($row['diesel'], true);
+                $message['dieselSupplierTransport'] = $dieselTemp[0]['dieselSupplierTransport'];
+                $message['dieselSupplierHotoil'] = $dieselTemp[1]['dieselSupplierHotoil'];
+                $message['dieselSupplierBurner'] = $dieselTemp[2]['dieselSupplierBurner'];
+                $message['dieselWeightTransport'] = $dieselTemp[0]['dieselWeightTransport'] ?? 0.00;
+                $message['dieselWeightHotoil'] = $dieselTemp[1]['dieselWeightHotoil'] ?? 0.00;
+                $message['dieselWeightBurner'] = $dieselTemp[2]['dieselWeightBurner'] ?? 0.00;
+                unset($dieselTemp[0]);
+                unset($dieselTemp[1]);
+                unset($dieselTemp[2]);
                 $dieselRows = [];
                 if (!empty($dieselTemp)) {
                     foreach ($dieselTemp as $dieselKey => $dieselRow) {
@@ -66,6 +75,7 @@ if(isset($_POST['userID'])){
                 }
                 $message['diesel'] = $dieselRows;
                 $message['totalDiesel'] = $dieselTemp["totalDiesel"] ?? 0;
+                $message['lastMeterReading'] = $dieselTemp["lastMeterReading"] ?? 0;
                 ########################################################################################
 
                 ## hotoil Processing ##
@@ -157,6 +167,7 @@ if(isset($_POST['userID'])){
                 $message['crmb'] = $row['crmb'];
                 $message['plant_id'] = $row['plant_id'];
                 $message['plant_code'] = $row['plant_code'];
+                $message['batch_drum'] = $row['batch_drum'];
                 $message['declaration_datetime'] = $row['declaration_datetime'];
             }
             

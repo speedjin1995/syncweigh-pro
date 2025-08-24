@@ -61,12 +61,12 @@ while($row = mysqli_fetch_assoc($empRecords)) {
         "sixty_seventy_ps"=>$row['sixty_seventy_ps'],
         "sixty_seventy_diffstock"=>$row['sixty_seventy_diffstock'],
         "sixty_seventy_actual_usage"=>$row['sixty_seventy_actual_usage'],
-        "lfo_production"=>$row['lfo_production'],
-        "lfo_os"=>$row['lfo_os'],
-        "lfo_incoming"=>$row['lfo_incoming'],
-        "lfo_ps"=>$row['lfo_ps'],
-        "lfo_usage"=>$row['lfo_usage'],
-        "lfo_actual_usage"=>$row['lfo_actual_usage'],
+        "lfo_production"=>formatLfo($row['lfo_production']),
+        "lfo_os"=>formatLfo($row['lfo_os']),
+        "lfo_incoming"=>formatLfo($row['lfo_incoming']),
+        "lfo_ps"=>formatLfo($row['lfo_ps']),
+        "lfo_usage"=>formatLfo($row['lfo_usage']),
+        "lfo_actual_usage"=>formatLfo($row['lfo_actual_usage']),
         "diesel_production"=>$row['diesel_production'],
         "diesel_os"=>$row['diesel_os'],
         "diesel_incoming"=>$row['diesel_incoming'],
@@ -87,5 +87,16 @@ $response = array(
 );
 
 echo json_encode($response);
+
+// Helper function to format JSON array as HTML
+function formatLfo($jsonString) {
+    $array = json_decode($jsonString, true) ?: [];
+    $formatted = '';
+    foreach ($array as $key => $value) {
+        $formattedValue = number_format((float)$value, 2);
+        $formatted .= ($key + 1) . ': ' . $formattedValue . '<br>';
+    }
+    return rtrim($formatted, '<br>');
+}
 
 ?>

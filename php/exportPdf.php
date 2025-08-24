@@ -175,9 +175,9 @@ if(isset($_POST["file"])){
         if ($_POST['reportType'] == 'SUMMARY') {
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC";
+                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
             }else{
-                $sql = "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC";
+                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
             }
 
             if ($select_stmt = $db->prepare($sql)){
@@ -319,7 +319,7 @@ if(isset($_POST["file"])){
                     echo json_encode(
                         array(
                             "status" => "success",
-                            "query" => "SELECT DATE(transaction_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(transaction_date) ORDER BY DATE(transaction_date) ASC",
+                            "query" => "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC",
                             "message" => $message
                         )
                     );
@@ -693,7 +693,7 @@ if(isset($_POST["file"])){
                                         
                                             // Add product-wise subtotal
                                             $message .= '<tr style="font-size: 11px;">
-                                                <th colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Subtotal (' . $product . ')</th>
+                                                <th colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalNet/1000, 2) . '</th>
@@ -708,7 +708,7 @@ if(isset($_POST["file"])){
                                         $message .= '</tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Grand Total</th>
+                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Grand Total</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
@@ -1106,7 +1106,7 @@ if(isset($_POST["file"])){
                                         
                                             // Add product-wise subtotal
                                             $message .= '<tr>
-                                                <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Subtotal (' . $product . ')</th>
+                                                <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalNet/1000, 2) . '</th>
@@ -1121,7 +1121,7 @@ if(isset($_POST["file"])){
                                         $message .= '</tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '9' : '8').'">Grand Total</th>
+                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Grand Total</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>

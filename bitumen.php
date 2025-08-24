@@ -15,6 +15,10 @@ else{
 }
 
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier3 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 
 ?>
 
@@ -163,14 +167,15 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                                 <tr>
                                                                     <th>No</th>
                                                                     <th>Plant</th>
+                                                                    <th>Batch/ <br> Drum</th>
                                                                     <th>Declaration <br> Date</th>
                                                                     <th>Total (60/70) <br> Weight</th>
-                                                                    <th>Total (60/70) <br> Temperature</th>
+                                                                    <!-- <th>Total (60/70) <br> Temperature</th> -->
                                                                     <th>Total (60/70) <br> Level</th>
-                                                                    <th>Total <br> LFO</th>
+                                                                    <!-- <th>Total <br> LFO</th> -->
                                                                     <th>Total <br> Diesel</th>
-                                                                    <th>Total <br> Hotoil</th>
-                                                                    <th>Total <br> PG79</th>
+                                                                    <!-- <th>Total <br> Hotoil</th> -->
+                                                                    <th>Total <br> PG76</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -233,38 +238,18 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
                                                     <div class="row">
-                                                        <label for="rawMatName" class="col-sm-4 col-form-label">PG76</label>
+                                                        <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="rawMatName" name="rawMatName" placeholder="PG76">
+                                                            <select id="batchDrum" name="batchDrum" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <option value="Batch">Batch</option>
+                                                                <option value="Drum">Drum</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="weight" class="col-sm-4 col-form-label">CRMB</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="weight" name="weight" placeholder="crmb">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="drum" class="col-sm-4 col-form-label">LFO</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="drum" name="drum" placeholder="LFO">
-                                                        </div>
-                                                    </div>
-                                                </div>    
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="drum" class="col-sm-4 col-form-label">Diesel</label>
-                                                        <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="diesel" name="diesel" placeholder="Diesel">
-                                                        </div>
-                                                    </div>
-                                                </div>                                                     -->
                                                 <input type="hidden" class="form-control" id="bitumenId" name="bitumenId"> 
                                                 <input type="hidden" class="form-control" id="plantCode" name="plantCode">
                                             </div>
@@ -299,7 +284,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                     <tfoot>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
-                                                        <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                        <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalLevel" name="totalLevel" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
                                                     </tfoot>
@@ -331,11 +316,11 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                         </tr>
                                                     </thead>
                                                     <tbody id="lfoTable"></tbody>
-                                                    <tfoot>
+                                                    <!-- <tfoot>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalLfo" name="totalLfo" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
-                                                    </tfoot>
+                                                    </tfoot> -->
                                                 </table>
                                             </div>
                                         </div>
@@ -358,16 +343,63 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
+                                                            <th>Supplier</th>
+                                                            <th>Usage</th>
                                                             <th>Diesel</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
+                                                    <!-- Transport -->
+                                                    <tr>
+                                                        <td>
+                                                            <select class="form-select select2" id="dieselSupplierTransport" name="dieselSupplierTransport">
+                                                                <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
+                                                                    <option value="<?=$rowSupplier['id'] ?>"><?=$rowSupplier['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control text-center" id="dieselUsageTransport" name="dieselUsageTransport" value="Transport" readonly>
+                                                        </td>
+                                                        <td><input type="number" class="form-control text-center" id="dieselWeightTransport" name="dieselWeightTransport" value="0.00"></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <!-- Hotoil -->
+                                                    <tr>
+                                                        <td>
+                                                            <select class="form-select select2" id="dieselSupplierHotoil" name="dieselSupplierHotoil">
+                                                                <?php while($rowSupplier=mysqli_fetch_assoc($supplier2)){ ?>
+                                                                    <option value="<?=$rowSupplier['id'] ?>"><?=$rowSupplier['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control text-center" id="dieselUsageHotoil" name="dieselUsageHotoil" value="Hotoil" readonly>
+                                                        </td>
+                                                        <td><input type="number" class="form-control text-center" id="dieselWeightHotoil" name="dieselWeightHotoil" value="0.00"></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <!-- Burner -->
+                                                    <tr>
+                                                        <td>
+                                                            <select class="form-select select2" id="dieselSupplierBurner" name="dieselSupplierBurner">
+                                                                <?php while($rowSupplier=mysqli_fetch_assoc($supplier3)){ ?>
+                                                                    <option value="<?=$rowSupplier['id'] ?>"><?=$rowSupplier['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control text-center" id="dieselUsageBurner" name="dieselUsageBurner" value="Burner" readonly>
+                                                        </td>
+                                                        <td><input type="number" class="form-control text-center" id="dieselWeightBurner" name="dieselWeightBurner" value="0.00"></td>
+                                                        <td></td>
+                                                    </tr>
                                                     <tbody id="dieselTable"></tbody>
                                                     <tfoot>
+                                                        <th>Last Meter Reading</th>
+                                                        <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalDiesel" name="totalDiesel" style="background-color:white;text-align: center;" value="0" readonly></th>
-                                                        <th></th>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -375,7 +407,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                     </div>
                                 </div>
                             </div>
-                            <div class="row col-12">
+                            <div class="row col-12" style="display: none;">
                                 <div class="col-xxl-12 col-lg-12">
                                     <div class="card bg-light">
                                         <div class="card-header">
@@ -447,8 +479,8 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Fibre</h5>
-                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre">Add Fibre</button>
+                                                    <h5 class="card-title mb-0">Fiber & Additive</h5>
+                                                    <button type="button" class="btn btn-danger add-fibre" id="addFibre">Add</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -627,7 +659,15 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
     <script type="text/html" id="dieselDetail">
         <tr class="details">
             <td>
-                <input type="text" class="form-control" id="dieselNo" name="dieselNo" readonly>
+                <input type="text" class="form-control" id="dieselNo" name="dieselNo" hidden>
+                <select class="form-select select2" id="dieselSupplier" name="dieselSupplier" required>
+                    <?php while($rowSupplier=mysqli_fetch_assoc($supplier4)){ ?>
+                        <option value="<?=$rowSupplier['id'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="dieselUsage" name="dieselUsage" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="dieselWeight" name="dieselWeight" style="background-color:white;" value="0.00" required>
@@ -788,14 +828,10 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             'order': [[ 1, 'asc' ]],
             'columnDefs': [ 
                 { orderable: false, targets: [0] },
-                { orderable: false, targets: [3] },
                 { orderable: false, targets: [4] },
                 { orderable: false, targets: [5] },
                 { orderable: false, targets: [6] },
-                { orderable: false, targets: [7] },
-                { orderable: false, targets: [8] },
-                { orderable: false, targets: [9] }
-            ],
+                { orderable: false, targets: [7] },            ],
             'ajax': {
                 'url':'php/filterBitumen.php',
                 'data': {
@@ -807,13 +843,14 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             'columns': [
                 { data: 'no' },
                 { data: 'plant' },
+                { data: 'batch_drum' },
                 { data: 'declaration_datetime' },
                 { data: 'totalSixtySeventy' },
-                { data: 'totalTemperature' },
+                // { data: 'totalTemperature' },
                 { data: 'totalLevel' },
-                { data: 'totalLfo' },
+                //{ data: 'totalLfo' },
                 { data: 'totalDiesel' },
-                { data: 'totalHotoil' },
+                // { data: 'totalHotoil' },
                 { data: 'totalPgSevenNine' },
                 { 
                     data: 'id',
@@ -843,13 +880,10 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                 'order': [[ 1, 'asc' ]],
                 'columnDefs': [ 
                     { orderable: false, targets: [0] },
-                    { orderable: false, targets: [3] },
                     { orderable: false, targets: [4] },
                     { orderable: false, targets: [5] },
                     { orderable: false, targets: [6] },
                     { orderable: false, targets: [7] },
-                    { orderable: false, targets: [8] },
-                    { orderable: false, targets: [9] }
                 ],
                 'ajax': {
                     'url':'php/filterBitumen.php',
@@ -862,13 +896,14 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                 'columns': [
                     { data: 'no' },
                     { data: 'plant' },
+                    { data: 'batch_drum' },
                     { data: 'declaration_datetime' },
                     { data: 'totalSixtySeventy' },
-                    { data: 'totalTemperature' },
+                    // { data: 'totalTemperature' },
                     { data: 'totalLevel' },
-                    { data: 'totalLfo' },
+                    // { data: 'totalLfo' },
                     { data: 'totalDiesel' },
-                    { data: 'totalHotoil' },
+                    // { data: 'totalHotoil' },
                     { data: 'totalPgSevenNine' },
                     { 
                         data: 'id',
@@ -885,15 +920,23 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
         $('#addWeight').on('click', function(){
             $('#addModal').find('#id').val("");
             $('#addModal').find('#plant').val("").trigger('change');
+            $('#addModal').find('#batchDrum').val("").trigger('change');
             $('#addModal').find('#datetime').val(formatDate4(today));
             $('#bitumenTable').html('');
             $('#addModal').find('#totalSixtySeventy').val(0);
-            $('#addModal').find('#totalTemp').val(0);
+            // $('#addModal').find('#totalTemp').val(0);
             $('#addModal').find('#totalLevel').val(0);
             $('#lfoTable').html('');
-            $('#addModal').find('#totalLfo').val(0);
+            // $('#addModal').find('#totalLfo').val(0);
             $('#dieselTable').html('');
+            $('#addModal').find('#dieselSupplierTransport').val('').trigger('change');
+            $('#addModal').find('#dieselSupplierHotoil').val('').trigger('change');
+            $('#addModal').find('#dieselSupplierBurner').val('').trigger('change');
+            $('#addModal').find('#dieselWeightTransport').val(0.00).trigger('change');
+            $('#addModal').find('#dieselWeightHotoil').val(0.00).trigger('change');
+            $('#addModal').find('#dieselWeightBurner').val(0.00).trigger('change');
             $('#addModal').find('#totalDiesel').val(0);
+            $('#addModal').find('#dieselLastMeterReading').val(0);
             $('#hotoilTable').html('');
             $('#addModal').find('#totalHotoil').val(0);
             $('#pg79Table').html('');
@@ -1062,7 +1105,30 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
         });
 
         $('#plant').on('change', function(){
+            var plantId = $(this).val();
             $('#plantCode').val($('#plant :selected').data('code'));
+
+            if (plantId){
+                $.post('php/getPlant.php', {userID: plantId}, function(data)
+                {
+                    var obj = JSON.parse(data);
+                    if(obj.status === 'success'){
+                        $('#addModal').find('#batchDrum').val(obj.message.default_type).trigger('change');
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    $('#spinnerLoading').hide();
+                });
+
+            }
         });
 
         // Find and remove selected table rows for bitumenTable
@@ -1090,17 +1156,17 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
         });
 
         // Event delegation for order weight to calculate total temp
-        $("#bitumenTable").on('change', 'input[id^="temp"]', function(){
-            var totalSum = 0;
+        // $("#bitumenTable").on('change', 'input[id^="temp"]', function(){
+        //     var totalSum = 0;
 
-            // Loop through each temp input and sum up the values
-            $('input[id^="temp"]').each(function(){
-                totalSum += parseFloat($(this).val()) || 0;
-            });
+        //     // Loop through each temp input and sum up the values
+        //     $('input[id^="temp"]').each(function(){
+        //         totalSum += parseFloat($(this).val()) || 0;
+        //     });
 
-            // Set the total sum into the totalTemp input field
-            $('#totalTemp').val(totalSum.toFixed(2));
-        });
+        //     // Set the total sum into the totalTemp input field
+        //     $('#totalTemp').val(totalSum.toFixed(2));
+        // });
 
         // Event delegation for order weight to calculate total level
         $("#bitumenTable").on('change', 'input[id^="level"]', function(){
@@ -1145,17 +1211,17 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
         });
 
         // Event delegation for order weight to calculate lfo total
-        $("#lfoTable").on('change', 'input[id^="lfoWeight"]', function(){
-            var totalSum = 0;
+        // $("#lfoTable").on('change', 'input[id^="lfoWeight"]', function(){
+        //     var totalSum = 0;
 
-            // Loop through each lfo input and sum up the values
-            $('input[id^="lfoWeight"]').each(function(){
-                totalSum += parseFloat($(this).val()) || 0;
-            });
+        //     // Loop through each lfo input and sum up the values
+        //     $('input[id^="lfoWeight"]').each(function(){
+        //         totalSum += parseFloat($(this).val()) || 0;
+        //     });
 
-            // Set the total sum into the lfo input field
-            $('#totalLfo').val(totalSum.toFixed(2));
-        });
+        //     // Set the total sum into the lfo input field
+        //     $('#totalLfo').val(totalSum.toFixed(2));
+        // });
 
         $(".add-lfo").click(function(){
             var $addContents = $("#lfoDetail").clone();
@@ -1197,6 +1263,18 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             $('#totalDiesel').val(totalSum.toFixed(2));
         });
 
+        $('#dieselWeightTransport, #dieselWeightHotoil, #dieselWeightBurner').on('change', function() {
+            var totalSum = 0;
+
+            // Loop through each diesel input and sum up the values
+            $('input[id^="dieselWeight"]').each(function(){
+                totalSum += parseFloat($(this).val()) || 0;
+            });
+
+            // Set the total sum into the diesel input field
+            $('#totalDiesel').val(totalSum.toFixed(2));
+        });
+
         $(".add-diesel").click(function(){
             var $addContents = $("#dieselDetail").clone();
             $("#dieselTable").append($addContents.html());
@@ -1206,7 +1284,28 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             $("#dieselTable").find('#remove:last').attr("id", "remove" + dieselCount);
 
             $("#dieselTable").find('#dieselNo:last').attr('name', 'dieselNo['+dieselCount+']').attr("id", "dieselNo" + dieselCount).css("text-align", "center").val(dieselCount + 1);
+            $("#dieselTable").find('#dieselSupplier:last').attr('name', 'dieselSupplier['+dieselCount+']').attr("id", "dieselSupplier" + dieselCount).css("text-align", "center").val('').trigger('change');
+            $("#dieselTable").find('#dieselUsage:last').attr('name', 'dieselUsage['+dieselCount+']').attr("id", "dieselUsage" + dieselCount).css("text-align", "center").val('').trigger('change');
             $("#dieselTable").find('#dieselWeight:last').attr('name', 'dieselWeight['+dieselCount+']').attr("id", "dieselWeight" + dieselCount).css("text-align", "center");
+
+            // Initialize all Select2 elements in the modal
+            $('#addModal .select2').select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+            });
+
+            // Apply custom styling to Select2 elements in addModal
+            $('#addModal .select2-container .select2-selection--single').css({
+                'padding-top': '4px',
+                'padding-bottom': '4px',
+                'height': 'auto'
+            });
+
+            $('#addModal .select2-container .select2-selection__arrow').css({
+                'padding-top': '33px',
+                'height': 'auto'
+            });
 
             dieselCount++;
         });
@@ -1408,8 +1507,9 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#bitumenId').val(obj.message.id);
-                $('#addModal').find('#plant').val(obj.message.plant_id).trigger('change ');
+                $('#addModal').find('#plant').val(obj.message.plant_id).select2('destroy').select2();
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
+                $('#addModal').find('#batchDrum').val(obj.message.batch_drum).select2('destroy').select2();
                 $('#addModal').find('#datetime').val(formatDate4(new Date(obj.message.declaration_datetime)));
 
                 // Bitumen Table Processing
@@ -1434,7 +1534,7 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                     }
                 }
                 $('#addModal').find('#totalSixtySeventy').val(obj.message.totalSixtySeventy);
-                $('#addModal').find('#totalTemp').val(obj.message.totalTemp);
+                // $('#addModal').find('#totalTemp').val(obj.message.totalTemp);
                 $('#addModal').find('#totalLevel').val(obj.message.totalLevel);
 
                 // LFO Table Processing
@@ -1456,9 +1556,16 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                         lfoCount++;
                     }
                 }
-                $('#addModal').find('#totalLfo').val(obj.message.totalLfo);
+                // $('#addModal').find('#totalLfo').val(obj.message.totalLfo);
 
                 // Diesel Table Processing
+                $('#addModal').find('#dieselSupplierTransport').val(obj.message.dieselSupplierTransport);
+                $('#addModal').find('#dieselSupplierHotoil').val(obj.message.dieselSupplierHotoil);
+                $('#addModal').find('#dieselSupplierBurner').val(obj.message.dieselSupplierBurner);
+                $('#addModal').find('#dieselWeightTransport').val(obj.message.dieselWeightTransport);
+                $('#addModal').find('#dieselWeightHotoil').val(obj.message.dieselWeightHotoil);
+                $('#addModal').find('#dieselWeightBurner').val(obj.message.dieselWeightBurner);
+
                 $('#dieselTable').html('');
                 dieselCount = 0;
                 if (obj.message.diesel.length > 0){
@@ -1472,11 +1579,33 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                         $("#dieselTable").find('#remove:last').attr("id", "remove" + dieselCount);
 
                         $("#dieselTable").find('#dieselNo:last').attr('name', 'dieselNo['+dieselCount+']').attr("id", "dieselNo" + dieselCount).css("text-align", "center").val(dieselCount + 1);
+                        $("#dieselTable").find('#dieselSupplier:last').attr('name', 'dieselSupplier['+dieselCount+']').attr("id", "dieselSupplier" + dieselCount).css("text-align", "center").val(item.dieselSupplier).trigger('change');
+                        $("#dieselTable").find('#dieselUsage:last').attr('name', 'dieselUsage['+dieselCount+']').attr("id", "dieselUsage" + dieselCount).css("text-align", "center").val(item.dieselUsage).trigger('change');
                         $("#dieselTable").find('#dieselWeight:last').attr('name', 'dieselWeight['+dieselCount+']').attr("id", "dieselWeight" + dieselCount).css("text-align", "center").val(item.dieselWeight);
+
+                        // Initialize all Select2 elements in the modal
+                        $('#addModal .select2').select2({
+                            allowClear: true,
+                            placeholder: "Please Select",
+                            dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                        });
+
+                        // Apply custom styling to Select2 elements in addModal
+                        $('#addModal .select2-container .select2-selection--single').css({
+                            'padding-top': '4px',
+                            'padding-bottom': '4px',
+                            'height': 'auto'
+                        });
+
+                        $('#addModal .select2-container .select2-selection__arrow').css({
+                            'padding-top': '33px',
+                            'height': 'auto'
+                        });
 
                         dieselCount++;
                     }
                 }
+                $('#addModal').find('#dieselLastMeterReading').val(obj.message.lastMeterReading);
                 $('#addModal').find('#totalDiesel').val(obj.message.totalDiesel);
 
                 // Hotoil Table Processing
@@ -1580,6 +1709,25 @@ $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY
                 $('#addModal').find('#limeDo').val(obj.message.limeDo);
                 $('#addModal').find('#limeIncoming').val(obj.message.limeIncoming);
                 $('#addModal').find('#limeQty').val(obj.message.limeQty);
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
 
                 $('#addModal').modal('show');
             
