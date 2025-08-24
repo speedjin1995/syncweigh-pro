@@ -1,8 +1,8 @@
 <?php
+session_start();
 require_once 'db_connect.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 
 if(isset($post['id'], $post['oldPass'], $post['newPass'], $post['conPass'])){

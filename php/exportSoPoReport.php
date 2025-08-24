@@ -1,8 +1,7 @@
 <?php
-
+session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
-session_start();
 
 $searchQuery = "";
 $group1 = "";

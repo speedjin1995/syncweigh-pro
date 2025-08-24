@@ -1,7 +1,7 @@
 <?php
 ## Database configuration
-require_once 'db_connect.php';
 session_start();
+require_once 'db_connect.php';
 
 ## Read value
 $draw = $_POST['draw'];

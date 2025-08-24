@@ -61,13 +61,24 @@ while($row2=mysqli_fetch_assoc($weighing2)){
     }
 }
 
+$compids = '1';
+$stmtComp = $db->prepare("SELECT * FROM Company WHERE id=?");
+$stmtComp->bind_param('s', $compids);
+$stmtComp->execute();
+$resultC = $stmtComp->get_result();
+$compname = '';
+
+if ($rowc = $resultC->fetch_assoc()) {
+    $compname = $rowc['name'];
+}
+
 $count = count($salesList) + count($purchaseList) + count($localList);
 $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
 ?>
 <header id="page-topbar">
     <div class="layout-width">
         <div class="navbar-header">
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
                 <!-- LOGO -->
                 <div class="navbar-brand-box horizontal-logo">
                     <a href="index.php" class="logo logo-dark">
@@ -191,6 +202,7 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                         </div>
                     </div>
                 </form-->
+                 <h3><?=$compname ?></h3>
             </div>
 
             <div class="d-flex align-items-center">

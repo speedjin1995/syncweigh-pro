@@ -1,5 +1,6 @@
 <?php
 ## Database configuration
+session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
 
