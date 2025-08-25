@@ -1,10 +1,12 @@
 <?php
 require_once 'requires/lookup.php';
+$config = include(dirname(__DIR__, 2) . '/sql_config.php');
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 ini_set('memory_limit', '512M');
 set_time_limit(300);
 session_start();
 $uid = $_SESSION['username'];
+$companyKey = $_SESSION['company'] ?? null;
 $postData = file_get_contents('php://input');
 $pullSqlData = json_decode($postData, true);
 
@@ -30,7 +32,16 @@ if ($pullSqlData['endDate'] != null && $pullSqlData['endDate'] != ''){
     $endDate = date('n/j/Y'); //default to today's date
 }
 
-$url = "https://sturgeon-still-falcon.ngrok-free.app/purchase_orders?start_date=$startDate&end_date=$endDate";
+
+if (!$companyKey || !isset($config[$companyKey])) {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Invalid company session"
+    ]);
+    exit;
+}
+
+$url = rtrim($config[$companyKey], '/') . "/purchase_orders?start_date=$startDate&end_date=$endDate";
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

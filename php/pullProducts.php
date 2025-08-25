@@ -1,12 +1,22 @@
 <?php
 require_once 'requires/lookup.php';
+$config = include(dirname(__DIR__, 2) . '/sql_config.php');
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 ini_set('memory_limit', '512M');
 set_time_limit(300);
 session_start();
 $uid = $_SESSION['username'];
+$companyKey = $_SESSION['company'] ?? null;
 
-$url = "https://sturgeon-still-falcon.ngrok-free.app/items";
+if (!$companyKey || !isset($config[$companyKey])) {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Invalid company session"
+    ]);
+    exit;
+}
+
+$url = rtrim($config[$companyKey], '/') . "/items";
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -41,7 +51,7 @@ if (!empty($data['data'])) {
     $agents = $data['data'];
     
     foreach ($agents as $agent) {
-        if (!empty($agent['conversions']) && is_array($agent['conversions']) && isset($agent['UOM']) && !empty($agent['UOM'])) {
+        if (isset($agent['UOM']) && !empty($agent['UOM'])) {
             $code = $db->real_escape_string($agent['CODE']);
             $desc = $db->real_escape_string($agent['DESCRIPTION']);
             $active = ($agent['ISACTIVE'] === "True") ? 1 : 0;

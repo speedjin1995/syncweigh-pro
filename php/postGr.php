@@ -2,9 +2,11 @@
 session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
+$config = include(dirname(__DIR__, 2) . '/sql_config.php');
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $uid = $_SESSION['username'];
+$companyKey = $_SESSION['company'] ?? null;
 $type = '';
 
 if($_POST['type'] != null && $_POST['type'] != ''){
@@ -44,6 +46,14 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 
 if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
 	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
+}
+
+if (!$companyKey || !isset($config[$companyKey])) {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Invalid company session"
+    ]);
+    exit;
 }
 
 if ($type == "MULTI"){
@@ -135,7 +145,7 @@ if ($type == "MULTI"){
             $logId = $stmtL->insert_id;
             
             // POST to Python
-            $pythonUrl = "https://sturgeon-still-falcon.ngrok-free.app/goods_receive";
+            $pythonUrl = rtrim($config[$companyKey], '/') . "/goods_receive";
             $ch = curl_init($pythonUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
@@ -298,7 +308,7 @@ if ($type == "MULTI"){
             $logId = $stmtL->insert_id;
             
             // POST to Python
-            $pythonUrl = "https://sturgeon-still-falcon.ngrok-free.app/goods_receive";
+            $pythonUrl = rtrim($config[$companyKey], '/') . "/goods_receive";
             $ch = curl_init($pythonUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);

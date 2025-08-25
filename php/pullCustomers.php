@@ -1,17 +1,27 @@
 <?php
 require_once 'requires/lookup.php';
+$config = include(dirname(__DIR__, 2) . '/sql_config.php');
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 ini_set('memory_limit', '512M');
-set_time_limit(300);
+set_time_limit(400);
 session_start();
 $uid = $_SESSION['username'];
+$companyKey = $_SESSION['company'] ?? null;
 
-$url = "https://sturgeon-still-falcon.ngrok-free.app/customers";
+if (!$companyKey || !isset($config[$companyKey])) {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Invalid company session"
+    ]);
+    exit;
+}
+
+$url = rtrim($config[$companyKey], '/') . "/customers"; 
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($curl, CURLOPT_HTTPGET, true);
-curl_setopt($curl, CURLOPT_TIMEOUT, 100);
+curl_setopt($curl, CURLOPT_TIMEOUT, 300);
 curl_setopt($curl, CURLOPT_VERBOSE, true);
 
 $response = curl_exec($curl);

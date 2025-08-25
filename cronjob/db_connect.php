@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set('Asia/Kuala_Lumpur');
-$db = mysqli_connect("localhost", "u664110560_".$_SESSION["company"], "@Sync5500", "u664110560_".$_SESSION["company"]);
+$db = mysqli_connect("localhost", "u664110560_eastrock", "Aa@111222333", "u664110560_eastrock");
 
 if(mysqli_connect_errno()){
     echo 'Database connection failed with following errors: ' . mysqli_connect_error();

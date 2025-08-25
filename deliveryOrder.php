@@ -76,11 +76,11 @@ else{
 
 <?php include 'layouts/body.php'; ?>
 
-<!-- <div class="loading" id="spinnerLoading" style="display:none">
+<div class="loading" id="spinnerLoading" style="display:none">
   <div class='mdi mdi-loading' style='transform:scale(0.79);'>
     <div></div>
   </div>
-</div> -->
+</div>
 
 <!-- Begin page -->
 <div id="layout-wrapper">
@@ -658,7 +658,6 @@ else{
 
         // Post to SQL Handling
         $('#postSQL').on('click', function () {
-            $('#spinnerLoading').show();
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = 'Sales';
@@ -678,6 +677,7 @@ else{
 
             if (selectedIds.length > 0) {
                 if (confirm('Are you sure you want to post to SQL these items?')) {
+                    $('#spinnerLoading').show();
                     $.post('php/postDo.php', {
                         fromDate: fromDateI,
                         toDate: toDateI,
@@ -692,25 +692,24 @@ else{
                         var obj = JSON.parse(data);
                         
                         if(obj.status === 'success'){
-                            toastr["success"](obj.message, "Success:");
                             $('#weightTable').DataTable().ajax.reload(null, false);
                             $('#spinnerLoading').hide();
+                            toastr["success"](obj.message, "Success:");
                         }
                         else if(obj.status === 'failed'){
-                            toastr["error"](obj.message, "Failed:");
                             $('#spinnerLoading').hide();
+                            toastr["error"](obj.message, "Failed:");
                         }
                         else{
-                            toastr["error"]("Something wrong when activate", "Failed:");
                             $('#spinnerLoading').hide();
+                            toastr["error"]("Something wrong when activate", "Failed:");
                         }
                     });
                 }
-
-                $('#spinnerLoading').hide();
             } 
             else {
                 if (confirm('Are you sure you want to post to SQL?')) {
+                    $('#spinnerLoading').show();
                     $.post('php/postDo.php', {
                         fromDate: fromDateI,
                         toDate: toDateI,
@@ -724,22 +723,20 @@ else{
                         var obj = JSON.parse(data);
                         
                         if(obj.status === 'success'){
-                            toastr["success"](obj.message, "Success:");
                             $('#weightTable').DataTable().ajax.reload(null, false);
                             $('#spinnerLoading').hide();
+                            toastr["success"](obj.message, "Success:");
                         }
                         else if(obj.status === 'failed'){
-                            toastr["error"](obj.message, "Failed:");
                             $('#spinnerLoading').hide();
+                            toastr["error"](obj.message, "Failed:");
                         }
                         else{
-                            toastr["error"]("Something wrong when activate", "Failed:");
                             $('#spinnerLoading').hide();
+                            toastr["error"]("Something wrong when activate", "Failed:");
                         }
                     });
                 }
-
-                $('#spinnerLoading').hide();
             }     
         });
 
