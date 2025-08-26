@@ -3703,7 +3703,7 @@ else{
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
                             var balance = obj.message.balance;
-                            var remarks = obj.message.remarks; console.log(remarks);
+                            var remarks = obj.message.remarks;
                             // var finalWeight = obj.message.final_weight;
                             // var previousRecordsTag = obj.message.previousRecordsTag;
     
@@ -3991,6 +3991,27 @@ else{
                 //         $("#failBtn").click();
                 //     }
                 // });
+
+                $('#addModal').find('#transporter').val('').select2('destroy').select2();
+
+                // Initialize all Select2 elements in the modal
+                $('#addModal .select2').select2({
+                    allowClear: true,
+                    placeholder: "Please Select",
+                    dropdownParent: $('#addModal') // Ensures dropdown is not cut off
+                });
+
+                // Apply custom styling to Select2 elements in addModal
+                $('#addModal .select2-container .select2-selection--single').css({
+                    'padding-top': '4px',
+                    'padding-bottom': '4px',
+                    'height': 'auto'
+                });
+
+                $('#addModal .select2-container .select2-selection__arrow').css({
+                    'padding-top': '33px',
+                    'height': 'auto'
+                });
             }
 
             isSyncing = false;
