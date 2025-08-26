@@ -196,7 +196,11 @@ else{
                                                                 <option selected>-</option>
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
-                                                                <option value="Local">Public</option>
+                                                                <?php
+                                                                    if($role == 'ADMIN' || $role == 'SADMIN' || $role == 'MANAGER'){
+                                                                       echo '<option value="Local">Public</option>';
+                                                                    }
+                                                                ?>
                                                                 <option value="WIP">WIP</option>
                                                             </select>
                                                         </div>
@@ -663,7 +667,11 @@ else{
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select select2">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
-                                                                                            <option value="Local">Public</option>
+                                                                                            <?php 
+                                                                                                if($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER'){ 
+                                                                                                    echo '<option value="Local">Public</option>';
+                                                                                                }
+                                                                                            ?>                                                                                            
                                                                                             <option value="WIP">WIP</option>
                                                                                         </select>  
                                                                                     </div>

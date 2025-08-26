@@ -70,6 +70,10 @@ if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
 if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
 	$searchQuery .= " and batch_drum = '".$_POST['batchDrum']."'";
 }
+// Restrict normal user to only see non-local transactions
+if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER') {
+  $searchQuery .= " and transaction_status != 'Local'";
+}
 
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
@@ -81,7 +85,6 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
   $allQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')";
 }
-
 $sel = mysqli_query($db, $allQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
