@@ -934,7 +934,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-6 col-lg-6 mb-3"  <?php 
+                                                                            <div class="col-xxl-6 col-lg-6 mb-3" <?php 
                                                                                 if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER' && $allowManual == 'N'){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
@@ -1096,7 +1096,7 @@ else{
                                                                                         <!-- <div class="input-group-text">
                                                                                             <input class="form-check-input mt-0" id="manual" name="manual" type="checkbox" value="0" aria-label="Checkbox for following text input">
                                                                                         </div>                                                                                             -->
-                                                                                        <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly>
+                                                                                        <input type="number" class="form-control input-readonly" id="grossIncoming" name="grossIncoming" placeholder="0" readonly required>
                                                                                         <div class="input-group-text">KG</div>
                                                                                         <button class="input-group-text btn btn-primary fs-5" id="grossCapture" type="button"><i class="mdi mdi-sync"></i></button>
                                                                                     </div>
@@ -1106,7 +1106,7 @@ else{
                                                                             <div class="row mb-3">
                                                                                 <label for="grossIncomingDate" class="col-sm-4 col-form-label">Incoming Date</label>
                                                                                 <div class="col-sm-8">
-                                                                                    <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate">
+                                                                                    <input type="text" class="form-control input-readonly" id="grossIncomingDate" name="grossIncomingDate" required>
                                                                                 </div>
                                                                             </div>
 
@@ -1664,6 +1664,19 @@ else{
                 <?php endif; ?>
             }
         });
+        
+        $('#transactionDate').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: today,
+            allowInput: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y') ? 'true' : 'false' ?>,
+            onReady: function(selectedDates, dateStr, instance) {
+                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER' || $allowManual == 'Y')): ?>
+                    instance._input.setAttribute('readonly', true);
+                    instance.close();
+                <?php endif; ?>
+            }
+        });
 
         // Initialize all Select2 elements in the search bar
         $('#collapseSearch .select2').select2({
@@ -1708,11 +1721,6 @@ else{
         });
 
         $('#toDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
-            defaultDate: today
-        });
-
-        $('#transactionDate').flatpickr({
             dateFormat: "d-m-Y",
             defaultDate: today
         });

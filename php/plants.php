@@ -77,7 +77,7 @@ if (isset($_POST['plantCode'], $_POST['plantName'])) {
         $runningNoS = trim($_POST["runningNoS"]);
     }
 
-    if (empty($_POST["runningNoP"])) {
+    /*if (empty($_POST["runningNoP"])) {
         $runningNoP = 0;
     } else {
         $runningNoP = trim($_POST["runningNoP"]);
@@ -93,15 +93,15 @@ if (isset($_POST['plantCode'], $_POST['plantName'])) {
         $runningNoItr = 0;
     } else {
         $runningNoItr = trim($_POST["runningNoItr"]);
-    }
+    }*/
     
     if(! empty($transporterId))
     {
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Plant SET plant_code=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, default_type=?, sales=?, purchase=?, locals=?, receive=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Plant SET plant_code=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, default_type=?, do_no=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $defaultType, $runningNoS, $runningNoP, $runningNoIt, $runningNoItr, $username, $username, $transporterId);
+            $update_stmt->bind_param('ssssssssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $defaultType, $runningNoS, $username, $username, $transporterId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -128,8 +128,8 @@ if (isset($_POST['plantCode'], $_POST['plantName'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Plant (plant_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, default_type, sales, purchase, locals, receive, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $defaultType, $runningNoS, $runningNoP, $runningNoIt, $runningNoItr, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Plant (plant_code, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, default_type, do_no, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssss', $transporterCode, $companyName, $addressLine1, $addressLine2, $addressLine3, $phoneNo, $faxNo, $defaultType, $runningNoS, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

@@ -192,7 +192,11 @@
                     }
                 ?>
 
-                <li class="nav-item">
+                <li class="nav-item" <?php
+                        if($_SESSION["roles"] == 'NORMAL'){
+                            echo 'style="display:none;"';
+                        }
+                    ?>>
                     <a class="nav-link menu-link" href="#sidebarReport" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarReport">
                         <i class="ri-account-circle-line"></i> <span><?=$lang['t-report']?></span>
@@ -203,24 +207,37 @@
                                 <!-- <li class="nav-item">
                                     <a href="weighingReport.php" class="nav-link"><?=$lang['t-weighingReport']?></a>
                                 </li> -->
-                                <li class="nav-item">
-                                    <a href="salesReport.php" class="nav-link"><?=$lang['t-soReport']?></a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="purchaseReport.php" class="nav-link"><?=$lang['t-poReport']?></a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="publicReport.php" class="nav-link"><?=$lang['t-publicReport']?></a>
-                                </li>
                                 <?php
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                                         echo '
+                                            <li class="nav-item">
+                                                <a href="salesReport.php" class="nav-link">'.$lang['t-soReport'].'</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="purchaseReport.php" class="nav-link">'.$lang['t-poReport'].'</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="publicReport.php" class="nav-link">'.$lang['t-publicReport'].'</a>
+                                            </li>
                                             <li class="nav-item">
                                                 <a href="auditLog.php" class="nav-link">'.$lang['t-auditLog'].'</a>
                                             </li>
                                             <!--li class="nav-item">
                                                 <a href="apiLog.php" class="nav-link">'.$lang['t-apiLog'].'</a>
                                             </li-->
+                                        ';
+                                    }
+                                    else if($_SESSION["roles"] == 'MANAGER'){
+                                        echo '
+                                            <li class="nav-item">
+                                                <a href="salesReport.php" class="nav-link">'.$lang['t-soReport'].'</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="purchaseReport.php" class="nav-link">'.$lang['t-poReport'].'</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="publicReport.php" class="nav-link">'.$lang['t-publicReport'].'</a>
+                                            </li>
                                         ';
                                     }
                                 ?>                            

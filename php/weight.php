@@ -89,17 +89,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 					$transactionId .= $row2['prefix'];
 				}*/
 
-                $queryPlant = "SELECT sales as curcount FROM Plant WHERE plant_code='$plantCode'";
-
-                if($status == 'Purchase'){
-                    $queryPlant = "SELECT purchase as curcount FROM Plant WHERE plant_code='$plantCode'";
-                }
-                else if($status == 'Local'){
-                    $queryPlant = "SELECT locals as curcount FROM Plant WHERE plant_code='$plantCode'";
-                }
-                else if($status == 'Receive'){
-                    $queryPlant = "SELECT receive as curcount FROM Plant WHERE plant_code='$plantCode'";
-                }
+                $queryPlant = "SELECT do_no as curcount FROM Plant WHERE plant_code='$plantCode'";
 
 				if ($update_stmt = $db->prepare($queryPlant)) {
 					// Execute the prepared query.
@@ -206,7 +196,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
 
     if (empty($_POST["grossIncomingDate"])) {
-        $grossIncomingDate = null;
+        $grossIncomingDate = (new DateTime())->format('Y-m-d H:i:s');
     } 
     else {
         $grossIncomingDate = trim(str_replace(["AM", "PM"], "", $_POST["grossIncomingDate"]));
@@ -931,17 +921,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 $misValue++;
                 $id = $insert_stmt->insert_id;
 
-                $queryPlantU = "UPDATE Plant SET sales=? WHERE plant_code='$plantCode'";
-
-                if($transactionStatus == 'Purchase'){
-                    $queryPlantU = "UPDATE Plant SET purchase=? WHERE plant_code='$plantCode'";
-                }
-                else if($transactionStatus == 'Local'){
-                    $queryPlantU = "UPDATE Plant SET locals=? WHERE plant_code='$plantCode'";
-                }
-                else if($transactionStatus == 'Receive'){
-                    $queryPlantU = "UPDATE Plant SET receive=? WHERE plant_code='$plantCode'";
-                }
+                $queryPlantU = "UPDATE Plant SET do_no=? WHERE plant_code='$plantCode'";
                 
                 ///insert miscellaneous
                 if ($update_stmt = $db->prepare($queryPlantU)){

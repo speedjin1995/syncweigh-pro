@@ -104,6 +104,29 @@ if(isset($_POST['userID'], $_POST["file"])){
                         <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
                         <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
                         <style>
+                            @media print {
+                                * {
+                                    font-family: "Courier New", Courier, monospace !important;
+                                }
+                            
+                                body {
+                                    margin: 0;
+                                    padding: 0;
+                                }
+                            
+                                table, th, td {
+                                    border: 1px dashed black;
+                                    border-collapse: collapse;
+                                    text-align: center;
+                                    padding: 2px;
+                                }
+                            
+                                @page {
+                                    size: A5 landscape;
+                                    margin: 5mm;
+                                }
+                            }
+                            
                             @page {
                                 size: A5 landscape;
                                 margin: 10mm;
@@ -258,26 +281,26 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>DATE</th>
-                                        <th>TIME<br>IN</th>
-                                        <th>TIME<br>OUT</th>
-                                        <th>FIRST<br>WT (KG)</th>
-                                        <th>SECOND<br>WT (KG)</th>
-                                        <th>NETT<br>WT (KG)</th>
-                                        <th>MOISTURE<br>WT (KG)</th>
-                                        <th>FINAL<br>WT (KG)</th>
+                                        <th style="font-size: 12px;">DATE</th>
+                                        <th style="font-size: 12px;">TIME<br>IN</th>
+                                        <th style="font-size: 12px;">TIME<br>OUT</th>
+                                        <th style="font-size: 12px;">FIRST<br>WT (KG)</th>
+                                        <th style="font-size: 12px;">SECOND<br>WT (KG)</th>
+                                        <th style="font-size: 12px;">NETT<br>WT (KG)</th>
+                                        <th style="font-size: 12px;">MOISTURE<br>WT (KG)</th>
+                                        <th style="font-size: 12px;">FINAL<br>WT (KG)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>'.$formattedTransactionDate.'</td>
-                                        <td>'.$timeIn.'</td>
-                                        <td>'.$timeOut.'</td>
-                                        <td>'.$grossWeight1.'</td>
-                                        <td>'.$tareWeight1.'</td>
-                                        <td>'.$nettWeight1.'</td>
-                                        <td>0</td>
-                                        <td>'.$finalWeight.'</td>
+                                        <td style="font-size: 12px;">'.$formattedTransactionDate.'</td>
+                                        <td style="font-size: 12px;">'.$timeIn.'</td>
+                                        <td style="font-size: 12px;">'.$timeOut.'</td>
+                                        <td style="font-size: 12px;">'.$grossWeight1.'</td>
+                                        <td style="font-size: 12px;">'.$tareWeight1.'</td>
+                                        <td style="font-size: 12px;">'.$nettWeight1.'</td>
+                                        <td style="font-size: 12px;">0</td>
+                                        <td style="font-size: 12px;">'.$finalWeight.'</td>
                                     </tr>
                                 </tbody>
                             </table>

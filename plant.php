@@ -175,7 +175,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>                                                                        
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="defaultType" class="col-sm-4 col-form-label">Default Type</label>
                                                                                     <div class="col-sm-8">
@@ -190,7 +190,7 @@
                                                                             <?php
                                                                                 $role = $_SESSION["roles"];
                                                                                 
-                                                                                if ($role == 'ADMIN' || $role == 'SADMIN'){
+                                                                                if ($role == 'SADMIN'){
                                                                                     $display = '';
                                                                                 }else{
                                                                                     $display = 'style="display:none"';
@@ -198,6 +198,14 @@
                                                                             ?>
                                                                             <div id="runningNoSection" <?php echo $display; ?>>
                                                                                 <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                    <div class="row">
+                                                                                        <label for="runningNoS" class="col-sm-4 col-form-label">Running No</label>
+                                                                                        <div class="col-sm-8">
+                                                                                            <input type="number" class="form-control runningNoSection" id="runningNoS" name="runningNoS" placeholder="Running No (S)">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div> 
+                                                                                <!--div class="col-xxl-12 col-lg-12 mb-3">
                                                                                     <div class="row">
                                                                                         <label for="runningNoS" class="col-sm-4 col-form-label">Running No (S)</label>
                                                                                         <div class="col-sm-8">
@@ -228,7 +236,7 @@
                                                                                             <input type="number" class="form-control runningNoSection" id="runningNoItr" name="runningNoItr" placeholder="Running No (ITR)">
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
+                                                                                </div-->
                                                                             </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
@@ -484,9 +492,9 @@ $(function () {
         $('#addModal').find('#faxNo').val("");
         $('#addModal').find('#defaultType').val("");
         $('#addModal').find('#runningNoS').val(0);
-        $('#addModal').find('#runningNoP').val(0);
-        $('#addModal').find('#runningNoIt').val(0);
-        $('#addModal').find('#runningNoItr').val(0);
+        //$('#addModal').find('#runningNoP').val(0);
+        //$('#addModal').find('#runningNoIt').val(0);
+        //$('#addModal').find('#runningNoItr').val(0);
         $('#addModal').find('.runningNoSection').attr("readonly", true);
 
         // Remove Validation Error Message
@@ -649,9 +657,9 @@ function edit(id){
             $('#addModal').find('#faxNo').val(obj.message.fax_no);
             $('#addModal').find('#defaultType').val(obj.message.default_type);
             $('#addModal').find('#runningNoS').val(obj.message.sales);
-            $('#addModal').find('#runningNoP').val(obj.message.purchase);
-            $('#addModal').find('#runningNoIt').val(obj.message.locals);
-            $('#addModal').find('#runningNoItr').val(obj.message.receive);
+            //$('#addModal').find('#runningNoP').val(obj.message.purchase);
+            //$('#addModal').find('#runningNoIt').val(obj.message.locals);
+            //$('#addModal').find('#runningNoItr').val(obj.message.receive);
             $('#addModal').find('.runningNoSection').attr("readonly", false);
 
             // Remove Validation Error Message
