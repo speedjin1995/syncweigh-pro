@@ -134,7 +134,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                             body {
                                 font-family: "Courier New", monospace;
-                                font-size: 12px;
+                                font-size: 14px;
                                 line-height: 1.2;
                             }
 
@@ -146,7 +146,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                             .body_1 p {
                                 margin-bottom: 2px;
-                                font-size: 11px;
+                                font-size: 14px;
                             }
 
                             .info-section {
@@ -186,7 +186,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 width: 100%;
                                 border-collapse: collapse;
                                 margin: 15px 0;
-                                font-size: 10px;
+                                font-size: 14px;
                             }
 
                             table, th, td {
@@ -201,7 +201,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             .signature-section {
                                 display: flex;
                                 justify-content: space-between;
-                                margin-top: 100px;
+                                margin-top: 60px;
                                 text-align: center;
                             }
 
@@ -209,7 +209,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 width: 30%;
                                 border-top: 1px solid black;
                                 padding-top: 5px;
-                                font-size: 10px;
+                                font-size: 14px;
                             }
                         </style>
                     </head>
@@ -217,12 +217,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                     <body>
                         <div class="container-fluid">
                             <!-- Header -->
-                            <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="text-align: center; margin-bottom: 14px;">
                                 <h3 class="mb-1 fw-bold text-dark">'.$compname.'</h3>
-                                <p style="font-size: 12px; margin: 1px 0;">'.$compaddress.'</p>
-                                <p style="font-size: 12px; margin: 1px 0;">'.$compaddress2.'</p>
-                                <p style="font-size: 12px; margin: 1px 0;">'.$compaddress.'</p>
-                                <p style="font-size: 12px; margin: 1px 0;">TEL : '.$compphone.'</p>
+                                <p style="font-size: 14px; margin: 1px 0;">'.$compaddress.'</p>
+                                <p style="font-size: 14px; margin: 1px 0;">'.$compaddress2.'</p>
+                                <p style="font-size: 14px; margin: 1px 0;">'.$compaddress.'</p>
+                                <p style="font-size: 14px; margin: 1px 0;">TEL : '.$compphone.'</p>
                             </div>
 
                             <!-- Information Section -->
@@ -281,26 +281,26 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <table>
                                 <thead>
                                     <tr>
-                                        <th style="font-size: 12px;">DATE</th>
-                                        <th style="font-size: 12px;">TIME<br>IN</th>
-                                        <th style="font-size: 12px;">TIME<br>OUT</th>
-                                        <th style="font-size: 12px;">FIRST<br>WT (KG)</th>
-                                        <th style="font-size: 12px;">SECOND<br>WT (KG)</th>
-                                        <th style="font-size: 12px;">NETT<br>WT (KG)</th>
-                                        <th style="font-size: 12px;">MOISTURE<br>WT (KG)</th>
-                                        <th style="font-size: 12px;">FINAL<br>WT (KG)</th>
+                                        <th>DATE</th>
+                                        <th>TIME<br>IN</th>
+                                        <th>TIME<br>OUT</th>
+                                        <th>FIRST<br>WT (KG)</th>
+                                        <th>SECOND<br>WT (KG)</th>
+                                        <th>NETT<br>WT (KG)</th>
+                                        <th>MOISTURE<br>WT (KG)</th>
+                                        <th>FINAL<br>WT (KG)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td style="font-size: 12px;">'.$formattedTransactionDate.'</td>
-                                        <td style="font-size: 12px;">'.$timeIn.'</td>
-                                        <td style="font-size: 12px;">'.$timeOut.'</td>
-                                        <td style="font-size: 12px;">'.$grossWeight1.'</td>
-                                        <td style="font-size: 12px;">'.$tareWeight1.'</td>
-                                        <td style="font-size: 12px;">'.$nettWeight1.'</td>
-                                        <td style="font-size: 12px;">0</td>
-                                        <td style="font-size: 12px;">'.$finalWeight.'</td>
+                                        <td>'.$formattedTransactionDate.'</td>
+                                        <td>'.$timeIn.'</td>
+                                        <td>'.$timeOut.'</td>
+                                        <td>'.$grossWeight1.'</td>
+                                        <td>'.$tareWeight1.'</td>
+                                        <td>'.$nettWeight1.'</td>
+                                        <td>0</td>
+                                        <td>'.$finalWeight.'</td>
                                     </tr>
                                 </tbody>
                             </table>
