@@ -77,11 +77,25 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $transporterCode = $row['transporter_code'];
                 $transporterName = $row['transporter'];
                 $remarks = $row['remarks'];
+                $statusCode = 'S';
 
-                if ($transactionStatus == 'Purchase' || $transactionStatus == 'Receive') {
+                if ($transactionStatus == 'Purchase') {
                     $productCode = $row['raw_mat_code'];
                     $productName = $row['raw_mat_name'];
-                }else{
+                    $statusCode = 'P';
+                }
+                else if($transactionStatus == 'Receive'){
+                    $productCode = $row['raw_mat_code'];
+                    $productName = $row['raw_mat_name'];
+                    $statusCode = 'ITR';
+                }
+                else if($transactionStatus == 'Local'){
+                   $productCode = $row['product_code'];
+                    $productName = $row['product_name'];
+                    $statusCode = 'IT';
+                }
+                else{
+                    $statusCode = 'S';
                     $productCode = $row['product_code'];
                     $productName = $row['product_name'];
                 }
@@ -134,7 +148,7 @@ if(isset($_POST['userID'], $_POST["file"])){
 
                             body {
                                 font-family: "Courier New", monospace;
-                                font-size: 14px;
+                                font-size: 15px;
                                 line-height: 1.2;
                             }
 
@@ -152,7 +166,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             .info-section {
                                 display: flex;
                                 justify-content: space-between;
-                                margin: 10px 0;
+                                margin: 0px 0;
                             }
 
                             .info-left, .info-right {
@@ -185,8 +199,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                             table {
                                 width: 100%;
                                 border-collapse: collapse;
-                                margin: 15px 0;
-                                font-size: 14px;
+                                margin: 0px 0;
+                                font-size: 15px;
                             }
 
                             table, th, td {
@@ -196,12 +210,18 @@ if(isset($_POST['userID'], $_POST["file"])){
                             th, td {
                                 padding: 4px;
                                 text-align: center;
+                                font-weight: normal;
+                            }
+                            
+                            tbody tr td {
+                                padding: 8px 10px; /* Add space inside cells */
+                                line-height: 1; /* Adjust spacing vertically */
                             }
 
                             .signature-section {
                                 display: flex;
                                 justify-content: space-between;
-                                margin-top: 60px;
+                                margin-top: 50px;
                                 text-align: center;
                             }
 
@@ -217,7 +237,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                     <body>
                         <div class="container-fluid">
                             <!-- Header -->
-                            <div style="text-align: center; margin-bottom: 14px;">
+                            <div style="text-align: center; margin-bottom: 5px;">
                                 <h3 class="mb-1 fw-bold text-dark">'.$compname.'</h3>
                                 <p style="font-size: 14px; margin: 1px 0;">'.$compaddress.'</p>
                                 <p style="font-size: 14px; margin: 1px 0;">'.$compaddress2.'</p>
@@ -258,7 +278,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     </div>
                                     <div class="info-line">
                                         <span class="info-label">TRANSACTION TYPE</span>
-                                        <span class="info-code">: '.$transactionStatus.'</span>
+                                        <span class="info-code">: '.$statusCode.'</span>
+                                        <span class="info-code">'.$transactionStatus.'</span>
                                     </div>
                                     <div class="info-line">
                                         <span class="info-label">D.O. NUMBER</span>
@@ -311,11 +332,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     (W/B CLERK/SUPERVISOR)
                                 </div>
                                 <div class="signature-box">
-                                    <br>
                                     (LORRY DRIVER)
                                 </div>
                                 <div class="signature-box">
-                                    <br>
                                     (RECEIVED BY)
                                 </div>
                             </div>
