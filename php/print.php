@@ -167,6 +167,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 display: flex;
                                 justify-content: space-between;
                                 margin: 0px 0;
+                                white-space: nowrap;
                             }
 
                             .info-left, .info-right {
@@ -179,7 +180,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             }
 
                             .info-label {
-                                width: 150px;
+                                width: 170px;
                                 display: inline-block;
                             }
 
