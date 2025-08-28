@@ -1997,3 +1997,27 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
 END
 $$
 DELIMITER ;
+
+-- 28/08/2025 --
+CREATE TABLE `Reasons` (
+    `id` int(5) NOT NULL,
+    `reasons` varchar(100) NOT NULL,
+    `deleted` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Reasons` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Reasons` MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Reasons_Log` (
+    `id` int(5) NOT NULL,
+    `reasons` varchar(100) NOT NULL,
+    `deleted` int(11) NOT NULL DEFAULT 0,
+    `action_id` int(11) NOT NULL,
+    `action_by` varchar(50) NOT NULL,
+    `event_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Reasons_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Reasons_Log` MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
