@@ -550,7 +550,6 @@ if(isset($_POST['userID'])){
 						);
 					}
 					else{
-						$insert_stmt->close();
 						echo json_encode(
 							array(
 								"status"=> "success", 
@@ -558,10 +557,9 @@ if(isset($_POST['userID'])){
 							)
 						);
 					}
+					
+					$insert_stmt->close();
 				}
-	
-				$stmt2->close();
-				$db->close();
 			} else{
 				echo json_encode(
 					array(
@@ -579,22 +577,21 @@ if(isset($_POST['userID'])){
 				)
 			);
 		}
+
+		$stmt2->close();
+		$db->close();
 	}elseif ($type == 'Cronjob_Table') {
 		if ($stmt2 = $db->prepare("UPDATE Cronjob_Table SET status=? WHERE id=?")) {
 			$stmt2->bind_param('ss', $reactivate, $id);
 			
 			if($stmt2->execute()){
-				// Execute the prepared query.
-				$stmt2->close();
-				$db->close();
-				
+				// Execute the prepared query.				
 				echo json_encode(
 					array(
 						"status"=> "success", 
 						"message"=> "Reactivated"
 					)
 				);
-	
 			} else{
 				echo json_encode(
 					array(
@@ -612,6 +609,56 @@ if(isset($_POST['userID'])){
 				)
 			);
 		}
+
+		$stmt2->close();
+		$db->close();
+	}elseif ($type == 'Reason') {
+		if ($stmt2 = $db->prepare("UPDATE Reasons SET status=? WHERE id=?")) {
+			$stmt2->bind_param('ss', $reactivate, $id);
+			
+			if($stmt2->execute()){
+				if ($insert_stmt = $db->prepare("INSERT INTO Reasons_Log (reason_id, action_id, action_by) VALUES (?, ?, ?)")) {
+					$insert_stmt->bind_param('sss', $id, $action, $username);
+		
+					// Execute the prepared query.
+					if (! $insert_stmt->execute()) {
+						echo json_encode(
+							array(
+								"status"=> "failed", 
+								"message"=> $insert_stmt->error
+							)
+						);
+					}
+					else{
+						echo json_encode(
+							array(
+								"status"=> "success", 
+								"message"=> "Reactivated"
+							)
+						);
+					}
+					$insert_stmt->close();
+				}
+			} else{
+				echo json_encode(
+					array(
+						"status"=> "failed", 
+						"message"=> $stmt2->error
+					)
+				);
+			}
+		} 
+		else{
+			echo json_encode(
+				array(
+					"status"=> "failed", 
+					"message"=> "Somethings wrong"
+				)
+			);
+		}
+
+		$stmt2->close();
+		$db->close();
 	}
 } 
 else{

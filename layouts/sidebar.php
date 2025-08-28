@@ -144,6 +144,9 @@
                                     <li class="nav-item">
                                         <a href="site.php" class="nav-link">'.$lang['t-site'].'</a>
                                     </li>                   
+                                    <li class="nav-item">
+                                        <a href="reason.php" class="nav-link">'.$lang['t-reason'].'</a>
+                                    </li>                   
                                 </ul>
                             </div>
                         </li>';

@@ -2001,8 +2001,12 @@ DELIMITER ;
 -- 28/08/2025 --
 CREATE TABLE `Reasons` (
     `id` int(5) NOT NULL,
-    `reasons` varchar(100) NOT NULL,
-    `deleted` int(11) NOT NULL DEFAULT 0
+    `reason` varchar(100) NOT NULL,
+    `created_date` datetime NOT NULL DEFAULT current_timestamp(),
+    `created_by` varchar(50) NOT NULL,
+    `modified_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    `modified_by` varchar(50) NOT NULL,
+    `status` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE `Reasons` ADD PRIMARY KEY (`id`);
@@ -2011,8 +2015,8 @@ ALTER TABLE `Reasons` MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
 
 CREATE TABLE `Reasons_Log` (
     `id` int(5) NOT NULL,
-    `reasons` varchar(100) NOT NULL,
-    `deleted` int(11) NOT NULL DEFAULT 0,
+    `reason_id` int(11) NOT NULL,
+    `reason` varchar(100) NOT NULL,
     `action_id` int(11) NOT NULL,
     `action_by` varchar(50) NOT NULL,
     `event_date` datetime NOT NULL
@@ -2021,3 +2025,38 @@ CREATE TABLE `Reasons_Log` (
 ALTER TABLE `Reasons_Log` ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `Reasons_Log` MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+
+-- Reason Log Trigger Creation
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_REASON` AFTER INSERT ON `Reasons`
+ FOR EACH ROW INSERT INTO Reasons_Log (
+    reason_id, reason, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.reason, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_REASON` BEFORE UPDATE ON `Reasons`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Reasons_Log table
+    INSERT INTO Reasons_Log (
+        reason_id, reason, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.reason, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
