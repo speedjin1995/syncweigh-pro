@@ -124,7 +124,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 }
                             
                                 body {
-                                    margin: 0;
+                                    margin: 10px 0;
                                     padding: 0;
                                 }
                             
@@ -137,7 +137,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             
                                 @page {
                                     size: A5 landscape;
-                                    margin: 5mm;
+                                    margin: 10mm;
                                 }
                             }
                             
@@ -166,7 +166,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             .info-section {
                                 display: flex;
                                 justify-content: space-between;
-                                margin: 0px 0;
+                                margin: 0 10px;
                                 white-space: nowrap;
                             }
 
@@ -200,7 +200,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                             table {
                                 width: 100%;
                                 border-collapse: collapse;
-                                margin: 0px 0;
+                                margin: 0 10px;
                                 font-size: 15px;
                             }
 
