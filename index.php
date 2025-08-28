@@ -74,6 +74,7 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC")
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
+$reasons = $db->query("SELECT * FROM Reasons WHERE status = '0' ORDER BY reason ASC");
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
@@ -1294,16 +1295,26 @@ else{
                                             <div class="modal-content">
                                                 <form role="form" id="cancelForm">
                                                     <div class="modal-header bg-gray-dark color-palette">
-                                                        <h4 class="modal-title">Cancellation Reason</h4>
+                                                        <h4 class="modal-title">Cancellation</h4>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <div class="row">
+                                                        <input type="hidden" class="form-control" id="id" name="id">
+                                                        <div class="row mb-3">
                                                             <div class="form-group">
                                                                 <label>Cancellation Reason *</label>
+                                                                <select class="form-select select2" id="cancelId" name="cancelId" required>
+                                                                    <?php while($rowR=mysqli_fetch_assoc($reasons)){ ?>
+                                                                        <option value="<?=$rowR['id'] ?>"><?=$rowR['reason'] ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <label>Remarks / Other Reasons *</label>
                                                                 <textarea class="form-control" id="cancelReason" name="cancelReason" rows="3"></textarea>
                                                             </div>
-                                                            <input type="hidden" class="form-control" id="id" name="id">                                   
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
