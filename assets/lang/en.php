@@ -33,6 +33,7 @@
     $lang["t-agent"]="Sales Representative";
     $lang["t-raw-mat"]="Raw Materials";
     $lang["t-site"]="Site";
+    $lang["t-reason"]="Reason";
     $lang["t-plant"]="Plant";
 
     $lang["t-report"]="Report";

@@ -289,6 +289,23 @@ if($_GET['selectedValue'] == "Site")
     $columnNames = ["Site Code", "Site Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No"];
 }
 
+if($_GET['selectedValue'] == "Reason")
+{
+    ## Fetch records
+    $empQuery = "select * from Reasons WHERE status = '0'";
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
+
+    while($row = mysqli_fetch_assoc($empRecords)) {
+        $data[] = array( 
+        "id"=>$row['id'],
+        "Reason"=>$row['reason'],
+        );
+    }
+
+    $columnNames = ["Reason"];
+}
+
 // Display column names as first row 
 $excelData = implode("\t", array_values($columnNames)) . "\n";
 
