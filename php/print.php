@@ -243,7 +243,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <h3 class="mb-1 fw-bold text-dark">'.$compname.'</h3>
                                 <p style="font-size: 14px; margin: 1px 0;">'.$compaddress.'</p>
                                 <p style="font-size: 14px; margin: 1px 0;">'.$compaddress2.'</p>
-                                <p style="font-size: 14px; margin: 1px 0;">'.$compaddress.'</p>
+                                <p style="font-size: 14px; margin: 1px 0;">'.$compaddress3.'</p>
                                 <p style="font-size: 14px; margin: 1px 0;">TEL : '.$compphone.'</p>
                             </div>
 
