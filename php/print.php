@@ -90,12 +90,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $statusCode = 'ITR';
                 }
                 else if($transactionStatus == 'Local'){
-                   $productCode = $row['product_code'];
+                    $productCode = $row['product_code'];
                     $productName = $row['product_name'];
                     $statusCode = 'IT';
                     $transactionStatus = 'INTERNAL TRANSFER';
                     $supplierCode = $row['plant_code'];
-                    $supplierName = $row['plant_name'];
+                    $supplierName = 'BIO ENECO S/B';
                 }
                 else{
                     $statusCode = 'S';
