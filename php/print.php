@@ -94,6 +94,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                     $productName = $row['product_name'];
                     $statusCode = 'IT';
                     $transactionStatus = 'INTERNAL TRANSFER';
+                    $supplierCode = $row['plant_code'];
+                    $supplierName = $row['plant_name'];
                 }
                 else{
                     $statusCode = 'S';
