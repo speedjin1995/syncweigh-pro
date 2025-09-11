@@ -43,9 +43,11 @@ if($plantId != null && count($plantId) > 0){
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
 }
 else{
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
 ?>
 
@@ -770,8 +772,8 @@ else{
                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                     <div class="col-sm-8">
                                                                         <select class="form-select select2" id="plant" name="plant" required>
-                                                                            <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
-                                                                                <option value="<?=$rowPlant['name'] ?>" data-code="<?=$rowPlant['plant_code'] ?>" data-id="<?=$rowPlant['id'] ?>"><?=$rowPlant['name'] ?></option>
+                                                                            <?php while($rowPlantw=mysqli_fetch_assoc($plant2)){ ?>
+                                                                                <option value="<?=$rowPlantw['name'] ?>" data-code="<?=$rowPlantw['plant_code'] ?>" data-id="<?=$rowPlantw['id'] ?>"><?=$rowPlantw['name'] ?></option>
                                                                             <?php } ?>
                                                                         </select>        
                                                                     </div>
@@ -965,7 +967,7 @@ else{
                                         <div class="col-lg-12">
                                             <div class="hstack gap-2 justify-content-end">
                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button>
+                                                <!--button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button-->
                                                 <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
                                             </div>
                                         </div><!--end col-->   
@@ -1043,6 +1045,19 @@ else{
 
     <script type="text/javascript">
     var userRole = '<?=$_SESSION["roles"] ?>';
+    var table = null;
+    let soPoTag = false;
+    let addNewTag = false;
+    let isSyncing = false;
+    let isEdit = false;
+    let salesOption = $('#salesOrder option').clone();
+    let purchaseOption = $('#purchaseOrder option').clone();
+    let transporterOption = $('#transporter option').clone();
+    var grossIncomingDatePicker;
+    var tareOutgoingDatePicker; 
+    var grossIncomingDatePicker2;
+    var tareOutgoingDatePicker2; 
+
     $(function () {
         const today = new Date();
         const tomorrow = new Date(today);
@@ -1175,7 +1190,7 @@ else{
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var soI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
-        var table = $("#weightTable").DataTable({
+        table = $("#weightTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
@@ -1591,7 +1606,664 @@ else{
                 "&rawMaterial="+rawMatI+"&plant="+plantI+"&purchaseOrder="+soI);
             }     
         });
+
+        // Edit form sections
+        $('#submitWeight').on('click', function(){
+            // Check weight
+            var trueWeight = 0;
+            var variance = $('#productVariance').val() || '';
+            var high = $('#productHigh').val() || '';
+            var low = $('#productLow').val() || '';
+            var final = $('#finalWeight').val() || '0';
+            var completed = 'N';
+            var pass = true;
+
+            if($('#transactionStatus').val() == "Purchase"){
+                trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
+            }
+            else{
+                trueWeight = parseFloat($('#addModal').find('#orderWeight').val());
+            }
+
+            if($('#weightType').val() == 'Normal' && ($('#grossIncoming').val() && $('#tareOutgoing').val())){
+                isComplete = 'Y';
+            }
+            else if($('#weightType').val() == 'Container' && ($('#grossIncoming').val() && $('#tareOutgoing').val() && $('#grossIncoming2').val() && $('#tareOutgoing2').val())){
+                isComplete = 'Y';
+            }
+            else{
+                isComplete = 'N';
+            }
+
+            if (isComplete == 'Y' && variance != '') {
+                final = parseFloat(final);
+                low = low != '' ? parseFloat(low) : null;
+                high = high != '' ? parseFloat(high) : null;
+                
+                if (variance == 'W') {
+                    if (low !== null && (final < trueWeight - low)) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight + high)) {
+                        pass = false;
+                    }
+                } 
+                else if (variance == 'P') {
+                    if (low !== null && (final < trueWeight * (1 - low / 100))) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight * (1 + high / 100))) {
+                        pass = false;
+                    }
+                }
+            }
+
+            pass = true;
+
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    pass = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+
+                    pass = true;
+                }
+            });
+
+            if ($('#customerType').val() == 'Cash' && pass == true) {
+                var unitPrice = parseFloat($('#addModal').find('#unitPrice').val());
+
+                if (!unitPrice || unitPrice <= 0) {
+                    alert('Unit price must be more than 0.');
+                    return;
+                } else {
+                    var productId = $('#addModal').find('#productId').val();
+                    $.post('php/getProduct.php', { userID: productId }, function (data) {
+                        try {
+                            var obj = JSON.parse(data);
+                            if (obj.status === 'success') {
+                                var price = obj.message.price;
+                                if (unitPrice < price) {
+                                    alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                    return;
+                                } else {
+                                    // Price validation passed, submit the form
+                                    submitWeightForm();
+                                }
+                            } else {
+                                alert('Error validating product price');
+                            }
+                        } catch (e) {
+                            alert('Error processing product validation response');
+                        }
+                    }).fail(function() {
+                        alert('Error connecting to server for price validation');
+                    });
+                    return; // Exit here to prevent immediate form submission
+                }
+            }
+
+            // If not cash or validation passed, submit form
+            if(pass && $('#weightForm').valid()){
+                submitWeightForm();
+            }
+            /*else{
+                let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
+                if (userChoice) {
+                    $('#addModal').find('#status').val("pending");
+                    $('#spinnerLoading').show();
+                    $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                        var obj = JSON.parse(data); 
+                        if(obj.status === 'success'){
+                            <?php
+                                if(isset($_GET['weight'])){
+                                    echo "window.location = 'deliveryOrder.php';";
+                                }
+                            ?>
+                            table.ajax.reload();
+                            window.location = 'index.php';
+                            $('#spinnerLoading').hide();
+                            $('#addModal').modal('hide');
+                            $("#successBtn").attr('data-toast-text', obj.message);
+                            $("#successBtn").click();
+                        }
+                        else if(obj.status === 'failed'){
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $('#spinnerLoading').hide();
+                            $("#failBtn").attr('data-toast-text', 'Failed to save');
+                            $("#failBtn").click();
+                        }
+                    });
+                } 
+                else {
+                    $('#bypassModal').find('#passcode').val("");
+                    $('#bypassModal').find('#reason').val("");
+                    $('#bypassModal').modal('show');
+            
+                    $('#bypassForm').validate({
+                        errorElement: 'span',
+                        errorPlacement: function (error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-group').append(error);
+                        },
+                        highlight: function (element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function (element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        }
+                    });
+                }
+            }*/
+        });
+
+        $('#submitWeightPrint').on('click', function(){
+            // Check weight
+            var trueWeight = 0;
+            var variance = $('#productVariance').val() || '';
+            var high = $('#productHigh').val() || '';
+            var low = $('#productLow').val() || '';
+            var final = $('#finalWeight').val() || '0';
+            var completed = 'N';
+            var pass = true;
+
+            if($('#transactionStatus').val() == "Purchase"){
+                trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
+            }
+            else{
+                trueWeight = parseFloat($('#addModal').find('#orderWeight').val());
+            }
+
+            if($('#weightType').val() == 'Normal' && ($('#grossIncoming').val() && $('#tareOutgoing').val())){
+                isComplete = 'Y';
+            }
+            else if($('#weightType').val() == 'Container' && ($('#grossIncoming').val() && $('#tareOutgoing').val() && $('#grossIncoming2').val() && $('#tareOutgoing2').val())){
+                isComplete = 'Y';
+            }
+            else{
+                isComplete = 'N';
+            }
+
+            if (isComplete == 'Y' && variance != '') {
+                final = parseFloat(final);
+                low = low != '' ? parseFloat(low) : null;
+                high = high != '' ? parseFloat(high) : null;
+                
+                if (variance == 'W') {
+                    if (low !== null && (final < trueWeight - low)) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight + high)) {
+                        pass = false;
+                    }
+                } 
+                else if (variance == 'P') {
+                    if (low !== null && (final < trueWeight * (1 - low / 100))) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight * (1 + high / 100))) {
+                        pass = false;
+                    }
+                }
+            }
+
+            pass = true;
+
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    pass = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+
+                    pass = true;
+                }
+            });
+
+            if ($('#customerType').val() == 'Cash' && pass == true) {
+                var unitPrice = parseFloat($('#addModal').find('#unitPrice').val());
+
+                if (!unitPrice || unitPrice <= 0) {
+                    alert('Unit price must be more than 0.');
+                    return;
+                }else{
+                    var productId = $('#addModal').find('#productId').val();
+                    $.post('php/getProduct.php', { userID: productId }, function (data) {
+                        try {
+                            var obj = JSON.parse(data);
+                            if (obj.status === 'success') {
+                                var price = obj.message.price;
+                                if (unitPrice < price) {
+                                    alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                    return;
+                                }else{
+                                    // Continue with form submission after price validation
+                                    submitWeightPrintForm();
+                                }
+                            } else {
+                                alert('Error validating product price.');
+                            }
+                        } catch (e) {
+                            alert('Error processing product validation response.');
+                        }
+                    });
+                    return; // Exit here, will continue in callback
+                }
+            }
+
+            // Direct submission if not cash or validation passed
+            submitWeightPrintForm();
+        });
+
+        $('#transactionStatus').on('change', function(){
+            var customerType = $('#addModal').find('#customerType').val();
+
+            if($(this).val() == "Purchase"){
+                $('#divWeightDifference').show();
+                $('#divSupplierWeight').show();
+                $('#addModal').find('#orderWeight').val("");
+                $('#addModal').find('#supplierWeight').val("0");
+                $('#divSupplierName').show();
+                $('#divOrderWeight').hide();
+                $('#divCustomerName').hide();
+                $('#rawMaterialDisplay').show();
+                $('#productNameDisplay').hide();
+                $('#addModal').find('#divPoSupplyWeight').show();
+                
+                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                    echo "$('#doDisplay').show();";
+                }
+                else{
+                    echo "//$('#doDisplay').show();";
+                }
+                ?>
+                
+                if ($(this).val() == "Purchase"){
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
+                    // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Purchase Order');
+                    
+                    //Hide SO Select
+                    $('#divPurchaseOrder').find('#soSelect').hide();
+                    $('#divPurchaseOrder').find('#poSelect').show();
+
+                    // Hide Pricing Fields
+                    $('#unitPriceDisplay').hide();
+                    $('#subTotalPriceDisplay').hide();
+                    $('#sstDisplay').hide();
+                    $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
+                }else{
+                    $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                    // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+
+                    //Hide PO Select
+                    $('#divPurchaseOrder').find('#soSelect').show();
+                    $('#divPurchaseOrder').find('#poSelect').hide();
+
+                    if (customerType == 'Cash'){
+                        $('#unitPriceDisplay').show();
+                        $('#subTotalPriceDisplay').show();
+                        $('#sstDisplay').show();
+                        $('#totalPriceDisplay').show();
+                        $('#tinNoDisplay').show();
+                        $('#idNoDisplay').show();
+                        $('#idTypeDisplay').show();
+                    }else{
+                        $('#unitPriceDisplay').hide();
+                        $('#subTotalPriceDisplay').hide();
+                        $('#sstDisplay').hide();
+                        $('#totalPriceDisplay').hide();
+                        $('#tinNoDisplay').hide();
+                        $('#idNoDisplay').hide();
+                        $('#idTypeDisplay').hide();
+                    }
+                }
+            }
+            else if($(this).val() == "Local"){
+                $('#divOrderWeight').show();
+                $('#addModal').find('#orderWeight').val("0");
+                $('#addModal').find('#supplierWeight').val("");
+                $('#divWeightDifference').show();
+                $('#divSupplierWeight').hide();
+                $('#divSupplierName').hide();
+                $('#divCustomerName').show();
+                $('#rawMaterialDisplay').hide();
+                $('#productNameDisplay').show();
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                $('#addModal').find('#divPoSupplyWeight').hide();
+
+                //Hide PO Select
+                $('#divPurchaseOrder').find('#soSelect').show();
+                $('#divPurchaseOrder').find('#poSelect').hide();
+
+                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                    echo "$('#doDisplay').show();";
+                }
+                else{
+                    echo "//$('#doDisplay').show();";
+                }
+                ?>
+
+                $('#unitPriceDisplay').hide();
+                $('#subTotalPriceDisplay').hide();
+                $('#sstDisplay').hide();
+                $('#totalPriceDisplay').hide();
+                $('#tinNoDisplay').hide();
+                $('#idNoDisplay').hide();
+                $('#idTypeDisplay').hide();
+            }
+            else{
+                $('#divOrderWeight').show();
+                $('#addModal').find('#orderWeight').val("0");
+                $('#addModal').find('#supplierWeight').val("");
+                $('#divWeightDifference').show();
+                $('#divSupplierWeight').hide();
+                $('#divSupplierName').hide();
+                $('#divCustomerName').show();
+                $('#rawMaterialDisplay').hide();
+                $('#productNameDisplay').show();
+                $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Sale Order');
+                // $('#divPurchaseOrder').find('#purchaseOrder').attr('placeholder', 'Sale Order');
+                $('#addModal').find('#divPoSupplyWeight').hide();
+
+                //Hide PO Select
+                $('#divPurchaseOrder').find('#soSelect').show();
+                $('#divPurchaseOrder').find('#poSelect').hide();
+
+                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                    echo "$('#doDisplay').hide();";
+                }
+                else{
+                    echo "//$('#doDisplay').hide();";
+                }
+                ?>
+
+                if (customerType == 'Cash'){
+                    $('#unitPriceDisplay').show();
+                    $('#subTotalPriceDisplay').show();
+                    $('#sstDisplay').show();
+                    $('#totalPriceDisplay').show();
+                    $('#tinNoDisplay').show();
+                    $('#idNoDisplay').show();
+                    $('#idTypeDisplay').show();
+                }else{
+                    $('#unitPriceDisplay').hide();
+                    $('#subTotalPriceDisplay').hide();
+                    $('#sstDisplay').hide();
+                    $('#totalPriceDisplay').hide();
+                    $('#tinNoDisplay').hide();
+                    $('#idNoDisplay').hide();
+                    $('#idTypeDisplay').hide();
+                }
+            }
+        });
     });
+
+    // Function to handle weight form submission without printing
+    function submitWeightForm() {
+        if ($('#weightForm').valid()) {
+            $('#spinnerLoading').show();
+            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success'){
+                    <?php
+                        if(isset($_GET['weight'])){
+                            echo "window.location = 'deliveryOrder.php';";
+                        }
+                    ?>
+                    table.ajax.reload();
+                    window.location = 'deliveryOrder.php';
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    // Function to handle weight form submission with printing
+    function submitWeightPrintForm() {
+        if ($('#weightForm').valid()) {
+            $('#spinnerLoading').show();
+            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                var obj = JSON.parse(data); 
+                if(obj.status === 'success'){
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+
+                    $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
+                        var obj2 = JSON.parse(data);
+
+                        if(obj2.status === 'success'){
+                            var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                            printWindow.document.write(obj2.message);
+                            printWindow.document.close();
+                            setTimeout(function(){
+                                printWindow.print();
+                                printWindow.close();
+                                table.ajax.reload();
+                                
+                                setTimeout(function () {
+                                    if (confirm("Do you need to reprint?")) {
+                                        $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
+                                            var obj = JSON.parse(data);
+                                            if (obj.status === 'success') {
+                                                var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                                reprintWindow.document.write(obj.message);
+                                                reprintWindow.document.close();
+                                                setTimeout(function () {
+                                                    reprintWindow.print();
+                                                    reprintWindow.close();
+                                                    <?php
+                                                        if(isset($_GET['weight'])){
+                                                            echo "window.location = 'deliveryOrder.php';";
+                                                        }
+                                                    ?>
+                                                }, 500);
+                                            } 
+                                            else {
+                                                window.location = 'deliveryOrder.php';
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        <?php
+                                            if(isset($_GET['weight'])){
+                                                echo "window.location = 'deliveryOrder.php';";
+                                            }
+                                        ?>
+                                    }
+                                }, 500);
+                            }, 500);
+                        }
+                        else if(obj.status === 'failed'){
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', 'Failed to save');
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    function getSoPo(){
+        var transactionStatus = $('#addModal').find('#transactionStatus').val();
+        var manualVehicle = $('#addModal').find('#manualVehicle').val();
+        var transporter = $('#addModal').find('#transporter').val();
+
+        var vehicle = '';
+        if (manualVehicle == '1'){
+            vehicle = $('#addModal').find('#vehicleNoTxt').val();
+        }else{
+            vehicle = $('#addModal').find('#vehiclePlateNo1').val();
+        }
+
+        soPoTag = true;
+        if (transactionStatus == 'Purchase'){
+            var customerSupplier = $('#addModal').find('#supplierName').val();
+            // var options = $('#purchaseOrder option').clone();
+
+            if (isEdit){
+                $('#addModal').find('#purchaseOrder').empty();
+                $('#addModal').find('#purchaseOrder').append(purchaseOption);
+            }else{
+                $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            var soPo = obj.message;
+                            $('#addModal').find('#purchaseOrder').empty();
+                            $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < soPo.length; i++) {
+                                // Check if option with this value already exists
+                                var existingOption = $('#addModal').find('#purchaseOrder option[value="' + soPo[i] + '"]');
+                                if (existingOption.length === 0) {
+                                    $('#addModal').find('#purchaseOrder').append(
+                                        `<option value="${soPo[i]}">${soPo[i]}</option>`
+                                    );
+                                }                   
+                            }
+
+                            if ($('#addModal').find('#purchaseOrder option').length == 2){
+                                $('#addModal').find('#purchaseOrder').val(soPo[0]).trigger('change');
+                            }else{
+                                $('#addModal').find('#purchaseOrder').val("");
+                            }
+                        }else{
+                            $('#addModal').find('#purchaseOrder').empty();
+                        }
+
+                        soPoTag = false;
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                });
+            }
+            
+        }else if (transactionStatus == 'Sales'){
+            var customerSupplier = $('#addModal').find('#customerName').val();
+
+            if (isEdit){
+                $('#addModal').find('#salesOrder').empty();
+                $('#addModal').find('#salesOrder').append(salesOption);
+            }else{
+                $.post('php/getOrderSupplier.php', {type: transactionStatus, format: 'getSoPo', vehicle: vehicle, transporter: transporter, customerSupplier: customerSupplier}, function (data){
+                    var obj = JSON.parse(data);
+
+                    if (obj.status == 'success'){
+                        if (obj.message.length > 0){
+                            var soPo = obj.message;
+                            $('#addModal').find('#salesOrder').empty();
+                            $('#addModal').find('#salesOrder').append(`<option selected="-">-</option>`);
+                            for (var i = 0; i < soPo.length; i++) {
+                                // Check if option with this value already exists
+                                var existingOption = $('#addModal').find('#salesOrder option[value="' + soPo[i] + '"]');
+                                if (existingOption.length === 0) {
+                                    $('#addModal').find('#salesOrder').append(
+                                        `<option value="${soPo[i]}">${soPo[i]}</option>`
+                                    );
+                                }                   
+                            }
+
+                            if ($('#addModal').find('#salesOrder option').length == 2){
+                                $('#addModal').find('#salesOrder').val(soPo[0]).trigger('change');
+                            }else{
+                                $('#addModal').find('#salesOrder').val("");
+                            }
+                        }else{
+                            $('#addModal').find('#salesOrder').empty();
+                        }
+
+                        soPoTag = false;
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                        soPoTag = false;
+                    }
+                });
+            }
+        }
+    }
 
     function format(row) {
         var returnString = `
@@ -1856,25 +2528,25 @@ else{
 
 
                 // Load these field after PO/SO is loaded
-                /*$('#addModal').on('orderLoaded', function() {
-                    $('#addModal').find('#customerCode').val(obj.message.customer_code);
-                    $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
-                    $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
-                    $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change')
-                    $('#addModal').find('#siteCode').val(obj.message.site_code);
-                    $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
-                    $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
-                    $('#addModal').find('#agentCode').val(obj.message.agent_code);
-                    $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
-                    $('#addModal').find('#orderWeight').val(obj.message.order_weight);
-                    $('#addModal').find('#destinationCode').val(obj.message.destination_code);
-                    $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
-                    $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
-                    $('#addModal').find('#plantCode').val(obj.message.plant_code);
-                    $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
-                    $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
-                    $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
-                    $('#addModal').find('#productCode').val(obj.message.product_code);
+                //$('#addModal').on('orderLoaded', function() {
+                $('#addModal').find('#customerCode').val(obj.message.customer_code);
+                $('#addModal').find('#customerName').val(obj.message.customer_name).trigger('change');
+                $('#addModal').find('#supplierCode').val(obj.message.supplier_code);
+                $('#addModal').find('#supplierName').val(obj.message.supplier_name).trigger('change')
+                $('#addModal').find('#siteCode').val(obj.message.site_code);
+                $('#addModal').find('#siteName').val(obj.message.site_name).trigger('change');
+                $('#addModal').find('#agent').val(obj.message.agent_name).trigger('change');
+                $('#addModal').find('#agentCode').val(obj.message.agent_code);
+                $('#addModal').find('#supplierWeight').val(obj.message.supplier_weight);
+                $('#addModal').find('#orderWeight').val(obj.message.order_weight);
+                $('#addModal').find('#destinationCode').val(obj.message.destination_code);
+                $('#addModal').find('#destination').val(obj.message.destination).trigger('change');
+                $('#addModal').find('#plant').val(obj.message.plant_name).trigger('change');
+                $('#addModal').find('#plantCode').val(obj.message.plant_code);
+                $('#addModal').find('#rawMaterialCode').val(obj.message.raw_mat_code);
+                $('#addModal').find('#rawMaterialName').val(obj.message.raw_mat_name).trigger('change');
+                $('#addModal').find('#productName').val(obj.message.product_name).trigger('change');
+                $('#addModal').find('#productCode').val(obj.message.product_code);
 
                     // Hide select and show input readonly
                     // if (obj.message.transaction_status == 'Purchase'){
@@ -1884,7 +2556,7 @@ else{
                     //     $('#addModal').find('#salesOrder').next('.select2-container').hide();
                     //     $('#addModal').find('#salesOrderEdit').val(obj.message.purchase_order).show();
                     // }
-                });*/
+                //});
                 
                 isEdit = false;
 

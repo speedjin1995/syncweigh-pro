@@ -392,7 +392,6 @@ if ($type == "MULTI"){
                     ]);
                 }
                 
-                
                 $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
                 $alive = ($db && @$db->ping());
                 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
