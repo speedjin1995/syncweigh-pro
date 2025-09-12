@@ -70,70 +70,81 @@ if ($type == "MULTI"){
             $result = $stmt2->get_result();
 
             while ($row = $result->fetch_assoc()) {
-                $orderNo = $row['purchase_order'];
-                $productCode = $row['product_code'];
-                $plantCode = $row['plant_code'];
-    
-                $soNo = '';
-                $uom = '';
-                $qty = 0;
-                $amt = 0;
-                $unitPrice = 0;
-    
-                // Get product ID & basic UOM
-                $productId = searchProductIdByCode($productCode, $db);
-                $uom = searchProductBasicUomByCode($productCode, $db);
-    
-                // Convert weight to UOM-based quantity
-                if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
-                    $update_stmt->bind_param('s', $productId);
-                    $update_stmt->execute();
-                    $result2 = $update_stmt->get_result();
-                    if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
-                    }
-                    $update_stmt->close();
-                }
-    
-                // Get unit price and SO if available
-                if ($orderNo === '-' || empty($orderNo)) {
-                    $unitPrice = $row['unit_price'];
-                } else {
-                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
-                        $select_stmt->bind_param('sss', $orderNo, $productCode, $plantCode);
-                        $select_stmt->execute();
-                        $result3 = $select_stmt->get_result();
-                        if ($row3 = $result3->fetch_assoc()) {
-                            $unitPrice = $row3['unit_price'] ?? 0;
-                            $soNo = $row3['so_no'];
+                $soNo = $row['purchase_order'];
+                $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
+                $fromDateTime = $fromDate->format('Y-m-d H:i:00');
+                $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
+                $toDateTime = $toDate->format('Y-m-d H:i:59');
+
+                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                $doRecords = mysqli_query($db, $doQuery);
+
+                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                    $orderNo = $row2['purchase_order'];
+                    $productCode = $row2['product_code'];
+                    $plantCode = $row2['plant_code'];
+        
+                    $soNo = '';
+                    $uom = '';
+                    $qty = 0;
+                    $amt = 0;
+                    $unitPrice = 0;
+        
+                    // Get product ID & basic UOM
+                    $productId = searchProductIdByCode($productCode, $db);
+                    $uom = searchProductBasicUomByCode($productCode, $db);
+        
+                    // Convert weight to UOM-based quantity
+                    if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
+                        $update_stmt->bind_param('s', $productId);
+                        $update_stmt->execute();
+                        $result2 = $update_stmt->get_result();
+                        if ($row4 = $result2->fetch_assoc()) {
+                            $qty = $row2['nett_weight1'] * $row4['rate'];
                         }
-                        $select_stmt->close();
+                        $update_stmt->close();
                     }
+        
+                    // Get unit price and SO if available
+                    if ($orderNo === '-' || empty($orderNo)) {
+                        $unitPrice = $row['unit_price'];
+                    } else {
+                        if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
+                            $select_stmt->bind_param('sss', $orderNo, $productCode, $plantCode);
+                            $select_stmt->execute();
+                            $result3 = $select_stmt->get_result();
+                            if ($row3 = $result3->fetch_assoc()) {
+                                $unitPrice = $row3['unit_price'] ?? 0;
+                                $soNo = $row3['so_no'];
+                            }
+                            $select_stmt->close();
+                        }
+                    }
+        
+                    $amt = $qty * $unitPrice;
+        
+                    $records[] = [
+                        "DOCREF2"     => $row2["transaction_id"],
+                        "DOCDATE"     => substr($row2["tare_weight1_date"], 0, 10),
+                        "DESCRIPTION2"=> $row2["lorry_plate_no1"],
+                        "CODE"        => $row2["customer_code"] ?? "300-C0001", // hardcoded or dynamic if needed
+                        "COMPANYNAME" => $row2["customer_name"],
+                        "ITEMCODE"    => $productCode,
+                        "DESCRIPTION" => $row2["product_name"],
+                        "REMARK2"     => $row2["destination"],
+                        "SHIPPER"     => $row2["transporter_code"] ?? "T01",
+                        "DOCREF1"     => ($row2["ex_del"] == 'EX' ? 'E' : 'D'),
+                        "DOCNOEX"     => $orderNo,
+                        "REMARK1"     => $row2["delivery_no"],
+                        "QTY"         => round($qty, 3),
+                        "UOM"         => $uom,
+                        "PROJECT"     => $row2['plant_code'],
+                        "LOCATION"    => $row2['plant_code'],
+                        "UNITPRICE"   => round($unitPrice, 2),
+                        "AMOUNT"      => round($amt, 2),
+                        "SO_NUMBER"   => $soNo
+                    ];
                 }
-    
-                $amt = $qty * $unitPrice;
-    
-                $records[] = [
-                    "DOCREF2"     => $row["transaction_id"],
-                    "DOCDATE"     => substr($row["tare_weight1_date"], 0, 10),
-                    "DESCRIPTION2"=> $row["lorry_plate_no1"],
-                    "CODE"        => $row["customer_code"] ?? "300-C0001", // hardcoded or dynamic if needed
-                    "COMPANYNAME" => $row["customer_name"],
-                    "ITEMCODE"    => $productCode,
-                    "DESCRIPTION" => $row["product_name"],
-                    "REMARK2"     => $row["destination"],
-                    "SHIPPER"     => $row["transporter_code"] ?? "T01",
-                    "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
-                    "DOCNOEX"     => $orderNo,
-                    "REMARK1"     => $row["delivery_no"],
-                    "QTY"         => round($qty, 3),
-                    "UOM"         => $uom,
-                    "PROJECT"     => $row['plant_code'],
-                    "LOCATION"    => $row['plant_code'],
-                    "UNITPRICE"   => round($unitPrice, 2),
-                    "AMOUNT"      => round($amt, 2),
-                    "SO_NUMBER"   => $soNo
-                ];
             }
 
             $stmt2->close();
@@ -172,13 +183,13 @@ if ($type == "MULTI"){
                         $docref2 = $item["docref2"];
                         
                         $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
-            $alive = ($db && @$db->ping());
-            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-            
-            if (!$alive) {
-                if ($db) { @$db->close(); }
-                require 'db_connect.php';
-            }
+                        $alive = ($db && @$db->ping());
+                        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+                        
+                        if (!$alive) {
+                            if ($db) { @$db->close(); }
+                            require 'db_connect.php';
+                        }
             
                         // Update weight table
                         $stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");

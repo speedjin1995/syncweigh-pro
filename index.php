@@ -765,7 +765,7 @@ else{
                                                                                     <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control input-readonly" id="unitPrice" name="unitPrice" placeholder="0" required>
+                                                                                            <input type="number" class="form-control" id="unitPrice" name="unitPrice" placeholder="0">
                                                                                             <div class="input-group-text">RM</div>
                                                                                         </div>
                                                                                     </div>
@@ -1994,9 +1994,9 @@ else{
             }
 
             // If not cash or validation passed, submit form
-            if(pass && $('#weightForm').valid()){
-                submitWeightForm();
-            }
+            //if(pass && $('#weightForm').valid()){
+            submitWeightForm();
+            //}
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');
                 if (userChoice) {
@@ -2544,6 +2544,7 @@ else{
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
+            $('#addModal').find('#unitPrice').removeAttr('required');
             $('#addModal').find('#transactionDate').val(formatDate2(today));
             $('#addModal').find('#vehiclePlateNo1').val("").trigger('change');
             $('#addModal').find('#vehiclePlateNo2').val("").trigger('change');
@@ -2646,7 +2647,12 @@ else{
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
+                    if (element.parent('.input-group').length) {
+                        // if inside input-group → place error after the group
+                        element.parent().after(error);
+                    } else {
+                        element.closest('.form-group').append(error);
+                    }
                 },
                 highlight: function (element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
@@ -2712,6 +2718,7 @@ else{
                 {
                     if (transactionStatus == 'Sales'){
                         $('#unitPriceDisplay').show();
+                        $('#unitPrice').prop('required',true);
                         $('#subTotalPriceDisplay').show();
                         $('#sstDisplay').show();
                         $('#totalPriceDisplay').show();
@@ -2720,6 +2727,7 @@ else{
                         $('#idTypeDisplay').show();
                     }else{
                         $('#unitPriceDisplay').hide();
+                        $('#unitPrice').removeAttr('required');
                         $('#subTotalPriceDisplay').hide();
                         $('#sstDisplay').hide();
                         $('#totalPriceDisplay').hide();
@@ -2738,6 +2746,7 @@ else{
                 else
                 {
                     $('#unitPriceDisplay').hide();
+                    $('#unitPrice').removeAttr('required');
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
@@ -3439,6 +3448,7 @@ else{
 
                     // Hide Pricing Fields
                     $('#unitPriceDisplay').hide();
+                    $('#unitPrice').removeAttr('required');
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
@@ -3455,6 +3465,7 @@ else{
 
                     if (customerType == 'Cash'){
                         $('#unitPriceDisplay').show();
+                        $('#unitPrice').prop('required',true);
                         $('#subTotalPriceDisplay').show();
                         $('#sstDisplay').show();
                         $('#totalPriceDisplay').show();
@@ -3463,6 +3474,7 @@ else{
                         $('#idTypeDisplay').show();
                     }else{
                         $('#unitPriceDisplay').hide();
+                        $('#unitPrice').removeAttr('required');
                         $('#subTotalPriceDisplay').hide();
                         $('#sstDisplay').hide();
                         $('#totalPriceDisplay').hide();
@@ -3499,6 +3511,7 @@ else{
                 ?>
 
                 $('#unitPriceDisplay').hide();
+                $('#unitPrice').removeAttr('required');
                 $('#subTotalPriceDisplay').hide();
                 $('#sstDisplay').hide();
                 $('#totalPriceDisplay').hide();
@@ -3534,6 +3547,7 @@ else{
 
                 if (customerType == 'Cash'){
                     $('#unitPriceDisplay').show();
+                    $('#unitPrice').prop('required',true);
                     $('#subTotalPriceDisplay').show();
                     $('#sstDisplay').show();
                     $('#totalPriceDisplay').show();
@@ -3542,6 +3556,7 @@ else{
                     $('#idTypeDisplay').show();
                 }else{
                     $('#unitPriceDisplay').hide();
+                    $('#unitPrice').removeAttr('required');
                     $('#subTotalPriceDisplay').hide();
                     $('#sstDisplay').hide();
                     $('#totalPriceDisplay').hide();
@@ -4892,7 +4907,12 @@ else{
                     errorElement: 'span',
                     errorPlacement: function (error, element) {
                         error.addClass('invalid-feedback');
-                        element.closest('.form-group').append(error);
+                        if (element.parent('.input-group').length) {
+                        // if inside input-group → place error after the group
+                        element.parent().after(error);
+                        } else {
+                            element.closest('.form-group').append(error);
+                        }
                     },
                     highlight: function (element, errorClass, validClass) {
                         $(element).addClass('is-invalid');

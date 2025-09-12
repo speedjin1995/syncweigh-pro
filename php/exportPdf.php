@@ -905,6 +905,172 @@ if(isset($_POST["file"])){
                     ));
             }          
         }
+        else if ($_POST['reportType'] == 'CANCEL') {
+            if ($isMulti == 'Y'){
+                $id = $_POST['id'];
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY delivery_no ASC";
+            }else{
+                $sql = "select * from Weight WHERE is_cancel = 'Y'".$searchQuery.' ORDER BY delivery_no ASC';
+            }
+
+            if ($select_stmt = $db->prepare($sql)) {
+                // Execute the prepared query.
+                if (! $select_stmt->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Something went wrong"
+                        )); 
+                }
+                else{
+                    $result = $select_stmt->get_result();
+    
+                    $message = '<html>
+                                <head>
+                                    <style>
+                                        @media print {
+                                            @page {
+                                                margin-left: 0.5in;
+                                                margin-right: 0.5in;
+                                                margin-top: 0.1in;
+                                                margin-bottom: 0.1in;
+                                            }
+                                            
+                                        } 
+                                                
+                                        table {
+                                            width: 100%;
+                                            border-collapse: collapse;
+                                            
+                                        } 
+                                        
+                                        .table th, .table td {
+                                            padding: 0.70rem;
+                                            vertical-align: top;
+                                            border-top: 1px solid #dee2e6;
+                                            
+                                        } 
+                                        
+                                        .table-bordered {
+                                            border: 1px solid #000000;
+                                            
+                                        } 
+                                        
+                                        .table-bordered th, .table-bordered td {
+                                            border: 1px solid #000000;
+                                            font-family: sans-serif;
+                                            font-size: 12px;
+                                            
+                                        } 
+                                        
+                                        .row {
+                                            display: flex;
+                                            flex-wrap: wrap;
+                                            margin-top: 20px;
+                                            margin-right: -15px;
+                                            margin-left: -15px;
+                                            
+                                        } 
+                                        
+                                        .col-md-4{
+                                            position: relative;
+                                            width: 33.333333%;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <table style="width:100%;">
+                                        <thead>
+                                            <tr style="font-size: 9px;">
+                                                <th>NO</th>
+                                                <th>TRANSACTION <br>ID</th>
+                                                <th>TRANSACTION <br>DATE</th>
+                                                <th>LORRY <br>NO.</th>';
+                                                
+                                            if($_POST['status'] == 'Sales'){
+                                                $message .= '<th>CUSTOMER</th>';
+                                            }
+                                            else{
+                                                $message .= '<th>SUPPLIER</th>';
+                                            }
+                                                
+                                                $message .= '<th>'.($_POST['status'] == 'Sales' ? 'PRODUCT' : 'RAW MATERIAL').'</th>
+                                                <th>EXQ/DEL</th>
+                                                <th>BATCH/DRUM</th>
+                                                <th>PO NO.</th>
+                                                <th>DO NO.</th>
+                                                <th>INCOMING <br>(MT)</th>
+                                                <th>OUTGOING <br>(MT)</th>
+                                                <th>NETT <br>(MT)</th>
+                                                <th>IS CANCEL</th>
+                                                <th>CANCEL <br>REASON</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>';
+                                        
+                                        $noCount = 0;
+                                        while ($row = $result->fetch_assoc()) {
+                                            $noCount++;
+                                            $transactionDate =  new DateTime($row['transaction_date']);
+                                            $formattedtransactionDate = $transactionDate->format('d/m/Y');
+                                            $exDel = '';
+                                            
+                                            if ($row['ex_del'] == 'EX'){
+                                                $exDel = 'E';
+                                            }else{
+                                                $exDel = 'D';
+                                            }
+
+                                            $message .= '<tr style="text-align:center; font-size: 8px;"">
+                                                <td>' . $noCount . '</td>
+                                                <td>' . $row['transaction_id'] . '</td>
+                                                <td>' . $formattedtransactionDate . '</td>
+                                                <td>' . $row['lorry_plate_no1'] . '</td>';
+                                                
+                                                if($_POST['status'] == 'Sales'){
+                                                    $message .= '<td>' . $row['customer_name'] . '</td>';
+                                                }
+                                                else{
+                                                    $message .= '<td>' . $row['supplier_name'] . '</td>';
+                                                }
+                                                
+                                                $message .= '
+                                                <td>' . ($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']) . '</td>
+                                                <td>' . $exDel . '</td>
+                                                <td>' . $row['batch_drum'] . '</td>
+                                                <td>' . $row['purchase_order'] . '</td>
+                                                <td>' . $row['delivery_no'] . '</td>
+                                                <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
+                                                <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
+                                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                <td>' . $row['is_cancel'] . '</td>
+                                                <td>' . $row['cancelled_reason'] . '</td>
+                                            </tr>';
+                                            
+                                        }
+                                                                                
+                                    $message .= '
+                                        </tbody>
+                                    </table>
+                                </body>
+                            </html>';
+    
+                    echo json_encode(
+                        array(
+                            "status" => "success",
+                            "message" => $message
+                        )
+                    );
+                }
+            }
+            else{
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Something Goes Wrong"
+                    ));
+            }          
+        }
         else{
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
@@ -1092,6 +1258,7 @@ if(isset($_POST["file"])){
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
                                                     <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
+                                                    <td>' . number_format($row['weight_different']/1000, 2) . '</td>
                                                     <td>' . $formattedGrossWeightDate . '</td>
                                                     <td>' . $formattedTareWeightDate . '</td>
                                                     <td style="font-size: 10px; text-align: center;">' . $row['created_by'] . '</td>

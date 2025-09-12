@@ -91,7 +91,7 @@ if (!empty($data['data'])) {
     echo $response;
 } 
 else {
-    require_once __DIR__ . '/../php/db_connect.php';
+    require_once __DIR__ . '/../php/db_connect2.php';
     $services = 'PullSupplier';
     $requests = json_encode($data);
     

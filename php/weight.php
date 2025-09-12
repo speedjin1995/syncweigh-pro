@@ -690,11 +690,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         if ($transactionStatus == 'Purchase'){
                             $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
                             $prodRawId = $rawMaterialId;
-                            $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND plant_name=?");
+                            $supCustCode = $supplierCode;
+                            $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
                         }elseif($transactionStatus == 'Sales'){
                             $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
                             $prodRawId = $productId;
-                            $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND plant_code=? AND plant_name=?");
+                            $supCustCode = $customerCode;
+                            $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND customer_code=?");
                         }
 
                         // get conversion UOM
@@ -715,7 +717,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         $convertedBalance = $currentBalance * (float) $rate;
 
                         // Update Balance 
-                        $updatePoSoStmt->bind_param('sssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $plantCode, $plant);
+                        $updatePoSoStmt->bind_param('ssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $supCustCode);
                         $updatePoSoStmt->execute();
                         $updatePoSoStmt->close();
                     }
@@ -994,11 +996,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 if ($transactionStatus == 'Purchase'){
                                     $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
                                     $prodRawId = $rawMaterialId;
-                                    $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND plant_name=?");
+                                    $supCustCode = $supplierCode;
+                                    $updatePoSoStmt = $db->prepare("UPDATE Purchase_Order SET converted_balance=?, balance=?, status=? WHERE po_no=? AND raw_mat_code=? AND supplier_code=?");
                                 }elseif($transactionStatus == 'Sales'){
                                     $sql = "SELECT * FROM Product_UOM WHERE product_id=? AND unit_id=? AND status=?";
                                     $prodRawId = $productId;
-                                    $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND plant_code=? AND plant_name=?");
+                                    $supCustCode = $customerCode;
+                                    $updatePoSoStmt = $db->prepare("UPDATE Sales_Order SET converted_balance=?, balance=?, status=? WHERE order_no=? AND product_code=? AND customer_code=?");
                                 }
 
                                 // get conversion UOM
@@ -1019,7 +1023,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 $convertedBalance = $currentBalance * (float) $rate;
 
                                 // Update Balance 
-                                $updatePoSoStmt->bind_param('sssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $plantCode, $plant);
+                                $updatePoSoStmt->bind_param('ssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $supCustCode);
                                 $updatePoSoStmt->execute();
                                 $updatePoSoStmt->close();
                             }

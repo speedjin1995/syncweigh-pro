@@ -370,7 +370,7 @@ if (!empty($data['data'])) {
     }
 } 
 else {
-    require_once __DIR__ . '/../php/db_connect.php';
+    require_once __DIR__ . '/../php/db_connect2.php';
     $services = 'PullPO';
     $requests = json_encode($data);
 
