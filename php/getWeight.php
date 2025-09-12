@@ -187,7 +187,12 @@ if(isset($_POST['userID'])){
                                     "gross_weight1_date"=>$row['gross_weight1_date'],
                                     "tare_weight1"=>$row['tare_weight1'],
                                     "tare_weight1_date"=>$row['tare_weight1_date'],
-                                    "nett_weight1"=>$row['nett_weight1']        
+                                    "nett_weight1"=>$row['nett_weight1'],
+                                    'transporter_code' => $row['transporter_code'],
+                                    'transporter' => $row['transporter'],
+                                    'destination_code' => $row['destination_code'],
+                                    'destination' => $row['destination'],
+                                    'unit_price' => $row['unit_price'] ?? '0.00'     
                                 );
                             }
 
