@@ -1,6 +1,6 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(E_ERROR | E_PARSE);
+ini_set('display_errors', 1);
 date_default_timezone_set('Asia/Kuala_Lumpur');
 $db = mysqli_connect("srv597.hstgr.io", "u664110560_bioeneco", "@Sync5500", "u664110560_bioeneco");
 
