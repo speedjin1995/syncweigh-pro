@@ -2117,7 +2117,7 @@ $$
 DELIMITER ;
 
 -- 16/09/2025 --
-ALTER TABLE `Product` ADD `type` VARCHAR(10) NULL AFTER `basic_uom`;
+ALTER TABLE `Product` ADD `type` VARCHAR(10) NOT NULL DEFAULT 'Premix' AFTER `basic_uom`;
 
 ALTER TABLE `Product_Log` ADD `type` VARCHAR(10) NULL AFTER `basic_uom`;
 
