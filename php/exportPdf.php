@@ -190,9 +190,9 @@ if(isset($_POST["file"])){
         if ($_POST['reportType'] == 'SUMMARY') {
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
+                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
             }else{
-                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight,COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
+                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
             }
 
             if ($select_stmt = $db->prepare($sql)){
@@ -209,6 +209,8 @@ if(isset($_POST["file"])){
                     $totalRecords = 0;
                     $totalProductWeight = 0;
                     $totalTransportWeight = 0;
+                    $totalUnitPrice = 0;
+                    $totalSubtotalPrice = 0;
 
                     $message = '
                         <html>
@@ -332,18 +334,22 @@ if(isset($_POST["file"])){
                                                     $transactionDate = date("d-m-Y", strtotime($row['transaction_date']));
                                                     $productWeight = number_format($row['product_weight']/1000, 2);
                                                     $transportWeight = number_format($row['transport_weight']/1000, 2);
+                                                    $unitPrice = number_format($row['total_unit_price'], 2);
+                                                    $subtotalPrice = number_format($row['subtotal_price'], 2);
 
                                                     $totalRecords += $row['total_records'];
                                                     $totalProductWeight += $row['product_weight']/1000;
                                                     $totalTransportWeight += $row['transport_weight']/1000;
+                                                    $totalUnitPrice += (float) $row['total_unit_price'];
+                                                    $totalSubtotalPrice += (float) $row['subtotal_price'];
 
                                                     $message .= '<tr>
                                                             <td>'.$transactionDate.'</td>
                                                             <td>'.$row['total_records'].'</td>
                                                             <td>'.$productWeight.'</td>
                                                             <td>'.$transportWeight.'</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
+                                                            <td>'.$unitPrice.'</td>
+                                                            <td>'.$subtotalPrice.'</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
@@ -360,8 +366,8 @@ if(isset($_POST["file"])){
                                                         <td>'.$totalRecords.'</td>
                                                         <td>'.number_format($totalProductWeight, 2).'</td>
                                                         <td>'.number_format($totalTransportWeight, 2).'</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
+                                                        <td>'.number_format($totalUnitPrice, 2).'</td>
+                                                        <td>'.number_format($totalSubtotalPrice, 2).'</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
@@ -397,10 +403,10 @@ if(isset($_POST["file"])){
         else if ($_POST['reportType'] == 'PRODUCT'){
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND id IN ($id) GROUP BY product_code 
-                UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL AND id IN (".$id.") GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
+                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND id IN ($id) GROUP BY product_code 
+                UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL AND id IN (".$id.") GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
             }else{
-                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
+                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
             }
 
             if ($select_stmt = $db->prepare($sql)){
@@ -417,6 +423,8 @@ if(isset($_POST["file"])){
                     $totalRecords = 0;
                     $totalProductWeight = 0;
                     $totalTransportWeight = 0;
+                    $totalUnitPrice = 0;
+                    $totalSubtotalPrice = 0;
 
                     $message = '
                         <html>
@@ -541,18 +549,22 @@ if(isset($_POST["file"])){
                                                     $product = $row['name'];
                                                     $productWeight = number_format($row['product_weight']/1000, 2);
                                                     $transportWeight = number_format($row['transport_weight']/1000, 2);
+                                                    $unitPrice = number_format($row['total_unit_price'], 2);
+                                                    $subtotalPrice = number_format($row['subtotal_price'], 2);
 
                                                     $totalRecords += $row['total_records'];
                                                     $totalProductWeight += $row['product_weight']/1000;
                                                     $totalTransportWeight += $row['transport_weight']/1000;
+                                                    $totalUnitPrice += (float) $row['total_unit_price'];
+                                                    $totalSubtotalPrice += (float) $row['subtotal_price'];
 
                                                     $message .= '<tr>
                                                             <td>'.$product.'</td>
                                                             <td>'.$row['total_records'].'</td>
                                                             <td>'.$productWeight.'</td>
                                                             <td>'.$transportWeight.'</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
+                                                            <td>'.$unitPrice.'</td>
+                                                            <td>'.$subtotalPrice.'</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
@@ -569,8 +581,8 @@ if(isset($_POST["file"])){
                                                         <td>'.$totalRecords.'</td>
                                                         <td>'.number_format($totalProductWeight, 2).'</td>
                                                         <td>'.number_format($totalTransportWeight, 2).'</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
+                                                        <td>'.number_format($totalUnitPrice, 2).'</td>
+                                                        <td>'.number_format($totalSubtotalPrice, 2).'</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
@@ -747,9 +759,17 @@ if(isset($_POST["file"])){
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
-                                                <th>NETT <br>(MT)</th>
-                                                <th>'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
-                                                <th>VARIANCE <br>(MT)</th>
+                                                <th>NETT <br>(MT)</th>';
+
+                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    $message .= '
+                                                        <th>UNIT PRICE <br>(RM)</th>
+                                                        <th>TOTAL PRICE <br>(RM)</th>
+                                                    ';
+                                                }
+
+                                                $message .= '
+                                                <!--th>BALANCE</th-->
                                                 <th>IN TIME</th>
                                                 <th>OUT TIME</th>
                                                 <th>USER</th>
@@ -775,7 +795,9 @@ if(isset($_POST["file"])){
                                         $grandTotalGross = 0;
                                         $grandTotalTare = 0;
                                         $grandTotalNet = 0;
-    
+                                        $grandTotalUnitPrice = 0;
+                                        $grandTotalPricing = 0;
+
                                         // Generate table grouped by product
                                         foreach ($groupedData as $product => $rows) {
                                             $message .= '<tr>
@@ -788,6 +810,8 @@ if(isset($_POST["file"])){
                                             $totalGross = 0;
                                             $totalTare = 0;
                                             $totalNet = 0;
+                                            $totalUnitPrice = 0;
+                                            $totalPricing = 0;
                                         
                                             foreach ($rows as $row) {
                                                 $grossWeightDate = new DateTime($row['gross_weight1_date']);
@@ -830,9 +854,16 @@ if(isset($_POST["file"])){
                                                     <td>' . $row['delivery_no'] . '</td>
                                                     <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
-                                                    <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
-                                                    <td>' . number_format($row['weight_different']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>';
+
+                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                        $message .= '
+                                                            <td>' . number_format($row['unit_price'], 2) . '</td>
+                                                            <td>' . number_format($row['total_price'], 2) . '</td>
+                                                        ';
+                                                    }
+
+                                                    $message .= '
                                                     <td>' . $formattedGrossWeightDate . '</td>
                                                     <td>' . $formattedTareWeightDate . '</td>
                                                     <td>' . $row['created_by'] . '</td>
@@ -842,6 +873,8 @@ if(isset($_POST["file"])){
                                                 $totalGross += (float)$row['gross_weight1'];
                                                 $totalTare += (float)$row['tare_weight1'];
                                                 $totalNet += (float)$row['nett_weight1'];
+                                                $totalUnitPrice += (float)$row['unit_price'];
+                                                $totalPricing += (float)$row['total_price'];
                                             }
                                         
                                             // Add product-wise subtotal
@@ -849,13 +882,24 @@ if(isset($_POST["file"])){
                                                 <th colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalTare/1000, 2) . '</th>
-                                                <th style="border:1px solid black;">' . number_format($totalNet/1000, 2) . '</th>
+                                                <th style="border:1px solid black;">' . number_format($totalNet/1000, 2) . '</th>';
+
+                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    $message .= '
+                                                        <th style="border:1px solid black;">' . number_format($totalUnitPrice, 2) . '</th>
+                                                        <th style="border:1px solid black;">' . number_format($totalPricing, 2) . '</th>
+                                                    ';
+                                                }
+
+                                                $message .= '
                                             </tr>';
                                         
                                             // Add to grand total
                                             $grandTotalGross += $totalGross;
                                             $grandTotalTare += $totalTare;
                                             $grandTotalNet += $totalNet;
+                                            $grandTotalUnitPrice += $totalUnitPrice;
+                                            $grandTotalPricing += $totalPricing;
                                         }
                                         
                                         $message .= '</tbody>
@@ -865,6 +909,8 @@ if(isset($_POST["file"])){
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
+                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
+                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPricing, 2).'</th>
                                                 </tr>
                                             </tfoot>';
                                         $message .= '</tbody>';
@@ -1024,9 +1070,15 @@ if(isset($_POST["file"])){
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
-                                                <th>NETT <br>(MT)</th>
-                                                <th>'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
-                                                <th>VARIANCE <br>(MT)</th>
+                                                <th>NETT <br>(MT)</th>';
+
+                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    $message .= '
+                                                        <th>UNIT PRICE <br>(RM)</th>
+                                                        <th>TOTAL PRICE <br>(RM)</th>
+                                                    ';
+                                                }
+                                                $message .= '
                                                 <th>IS CANCEL</th>
                                                 <th>CANCEL <br>REASON</th>
                                             </tr>
@@ -1037,11 +1089,15 @@ if(isset($_POST["file"])){
                                         $grandTotalGross = 0;
                                         $grandTotalTare = 0;
                                         $grandTotalNet = 0;
+                                        $grandTotalUnitPrice = 0;
+                                        $grandTotalPrice = 0;
                                         while ($row = $result->fetch_assoc()) {
                                             $noCount++;
                                             $grandTotalGross += (float)$row['gross_weight1'];
                                             $grandTotalTare += (float)$row['tare_weight1'];
                                             $grandTotalNet += (float)$row['nett_weight1'];
+                                            $grandTotalUnitPrice += (float)$row['unit_price'];
+                                            $grandTotalPrice += (float)$row['total_price'];
                                             $transactionDate =  new DateTime($row['transaction_date']);
                                             $formattedtransactionDate = $transactionDate->format('d/m/Y');
                                             $exDel = '';
@@ -1073,9 +1129,15 @@ if(isset($_POST["file"])){
                                                 <td>' . $row['delivery_no'] . '</td>
                                                 <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                 <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
-                                                <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
-                                                <td>' . number_format($row['weight_different']/1000, 2) . '</td>
+                                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>';
+
+                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    $message .= '
+                                                        <td>' . number_format($row['unit_price'], 2) . '</td>
+                                                        <td>' . number_format($row['total_price'], 2) . '</td>
+                                                    ';
+                                                }
+                                                $message .= '
                                                 <td>' . $row['is_cancel'] . '</td>
                                                 <td>' . $row['cancelled_reason'] . '</td>
                                             </tr>';
@@ -1088,7 +1150,15 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 11px;" colspan="10"">Grand Total</th>
                                                 <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                 <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
-                                                <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
+                                                <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>';
+
+                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    $message .= '
+                                                        <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice/1000, 2).'</th>
+                                                        <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPrice/1000, 2).'</th>
+                                                    ';
+                                                }
+                                                $message .= '
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -1457,9 +1527,16 @@ if(isset($_POST["file"])){
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
-                                                <th>NETT <br>(MT)</th>
-                                                <th>'.($_POST['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)').'</th>
-                                                <th>VARIANCE</th>
+                                                <th>NETT <br>(MT)</th>';
+
+                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    $message .= '
+                                                        <th>UNIT PRICE <br>(RM)</th>
+                                                        <th>TOTAL PRICE <br>(RM)</th>
+                                                    ';
+                                                }
+
+                                                $message .= '
                                                 <th>IN TIME</th>
                                                 <th>OUT TIME</th>
                                                 <th>USER</th>
@@ -1485,6 +1562,8 @@ if(isset($_POST["file"])){
                                         $grandTotalGross = 0;
                                         $grandTotalTare = 0;
                                         $grandTotalNet = 0;
+                                        $grandTotalUnitPrice = 0;
+                                        $grandTotalPricing = 0;
     
                                         // Generate table grouped by product
                                         foreach ($groupedData as $product => $rows) {
@@ -1498,6 +1577,8 @@ if(isset($_POST["file"])){
                                             $totalGross = 0;
                                             $totalTare = 0;
                                             $totalNet = 0;
+                                            $totalUnitPrice = 0;
+                                            $totalPricing = 0;
                                         
                                             foreach ($rows as $row) {
                                                 $grossWeightDate = new DateTime($row['gross_weight1_date']);
@@ -1541,9 +1622,15 @@ if(isset($_POST["file"])){
                                                     <td>' . $row['delivery_no'] . '</td>
                                                     <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
-                                                    <td>' . ($row['transaction_status'] == 'Sales' ? number_format((float)$row['order_weight'] / 1000, 2, '.', '') : number_format((float)$row['supplier_weight'] / 1000, 2, '.', '')) . '</td>
-                                                    <td>' . number_format($row['weight_different']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>';
+
+                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                        $message .= '
+                                                        <td>' . number_format($row['unit_price'], 2) . '</td>
+                                                        <td>' . number_format($row['total_price'], 2) . '</td>
+                                                        ';
+                                                    }
+                                                    $message .= '
                                                     <td>' . $formattedGrossWeightDate . '</td>
                                                     <td>' . $formattedTareWeightDate . '</td>
                                                     <td style="font-size: 10px; text-align: center;">' . $row['created_by'] . '</td>
@@ -1553,6 +1640,8 @@ if(isset($_POST["file"])){
                                                 $totalGross += (float)$row['gross_weight1'];
                                                 $totalTare += (float)$row['tare_weight1'];
                                                 $totalNet += (float)$row['nett_weight1'];
+                                                $totalUnitPrice += (float)$row['unit_price'];
+                                                $totalPricing += (float)$row['total_price'];
                                             }
                                         
                                             // Add product-wise subtotal
@@ -1560,13 +1649,22 @@ if(isset($_POST["file"])){
                                                 <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalTare/1000, 2) . '</th>
-                                                <th style="border:1px solid black;font-size: 11px;">' . number_format($totalNet/1000, 2) . '</th>
+                                                <th style="border:1px solid black;font-size: 11px;">' . number_format($totalNet/1000, 2) . '</th>';
+                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    $message .= '
+                                                        <th style="border:1px solid black;">' . number_format($totalUnitPrice, 2) . '</th>
+                                                        <th style="border:1px solid black;">' . number_format($totalPricing, 2) . '</th>
+                                                    ';
+                                                }
+                                                $message .= '
                                             </tr>';
                                         
                                             // Add to grand total
                                             $grandTotalGross += $totalGross;
                                             $grandTotalTare += $totalTare;
                                             $grandTotalNet += $totalNet;
+                                            $grandTotalUnitPrice += $totalUnitPrice;
+                                            $grandTotalPricing += $totalPricing;
                                         }
                                         
                                         $message .= '</tbody>
@@ -1575,7 +1673,14 @@ if(isset($_POST["file"])){
                                                     <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Grand Total</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
-                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
+                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>';
+                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                        $message .= '
+                                                            <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
+                                                            <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPricing, 2).'</th>
+                                                        ';
+                                                    }
+                                                    $message .= '
                                                 </tr>
                                             </tfoot>';
                                         $message .= '</tbody>';
