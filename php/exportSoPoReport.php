@@ -418,7 +418,7 @@ if(isset($_POST["type"])){
                     $grpTotalCount = 0;
                     $dateNettWeight = 0;
                     $totalNettWeight = 0;
-                    foreach ($processedData as $grp1 => $grp1Data) { 
+                    foreach ($processedData as $grp1 => $grp1Data) {
                         $rowData = '
                             <tr>
                                 <td colspan="17" style="border:0; padding-bottom: 0;">
@@ -1113,6 +1113,7 @@ if(isset($_POST["type"])){
                 $message = '
                     <html>
                         <head>
+                            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                             <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
                             <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
 
@@ -1120,6 +1121,42 @@ if(isset($_POST["type"])){
                                 @page {
                                     size: A4 landscape;
                                     margin: 5mm;
+                                }
+                                
+                                .print-button {
+                                    position: fixed;
+                                    bottom: 20px;
+                                    left: 50%;
+                                    transform: translateX(-50%);
+                                    background: #007bff;
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 20px;
+                                    border-radius: 50px;
+                                    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    z-index: 1000;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                }
+                                
+                                .print-button:hover {
+                                    background: #0056b3;
+                                    transform: translateX(-50%);
+                                    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                }
+                                
+                                .print-button:active {
+                                    transform: translateY(0);
+                                }
+                                
+                                .print-icon {
+                                    width: 16px;
+                                    height: 16px;
                                 }
 
                                 @media print {
@@ -1139,11 +1176,19 @@ if(isset($_POST["type"])){
                                     .section-break {
                                         page-break-before: always;
                                     }
+
+                                    #printButton {
+                                        display: none;
+                                    }
                                 }
                             </style>
                         </head>
 
                         <body>
+                            <button id="printButton" class="print-button" onclick="window.print()">
+                                <i class="fas fa-print"></i>
+                                Print Report
+                            </button>
                             <header>
                                 <div class="row">
                                     <div class="d-flex justify-content-center">
@@ -1212,7 +1257,6 @@ if(isset($_POST["type"])){
                                 </div>
                             </div>
                         </body>
-
                     </html>
                 ';
                 
@@ -2145,6 +2189,7 @@ if(isset($_POST["type"])){
                 $message = '
                     <html>
                         <head>
+                            <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                             <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
                             <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
 
@@ -2153,6 +2198,43 @@ if(isset($_POST["type"])){
                                     size: A4 landscape;
                                     margin: 5mm;
                                 }
+
+                                .print-button {
+                                    position: fixed;
+                                    bottom: 20px;
+                                    left: 50%;
+                                    transform: translateX(-50%);
+                                    background: #007bff;
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 20px;
+                                    border-radius: 50px;
+                                    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    z-index: 1000;
+                                    transition: all 0.3s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                }
+                                
+                                .print-button:hover {
+                                    background: #0056b3;
+                                    transform: translateX(-50%);
+                                    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                }
+                                
+                                .print-button:active {
+                                    transform: translateY(0);
+                                }
+                                
+                                .print-icon {
+                                    width: 16px;
+                                    height: 16px;
+                                }
+
 
                                 @media print {
                                     header {
@@ -2171,11 +2253,19 @@ if(isset($_POST["type"])){
                                     .section-break {
                                         page-break-before: always;
                                     }
+                                    
+                                    #printButton {
+                                        display: none;
+                                    }
                                 }
                             </style>
                         </head>
 
                         <body>
+                            <button id="printButton" class="print-button" onclick="window.print()">
+                                <i class="fas fa-print"></i>
+                                Print Report
+                            </button>
                             <header>
                                 <div class="row">
                                     <div class="d-flex justify-content-center">

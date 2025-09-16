@@ -213,6 +213,7 @@ if(isset($_POST["file"])){
                     $message = '
                         <html>
                             <head>
+                                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                                 <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
                                 <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
 
@@ -221,10 +222,56 @@ if(isset($_POST["file"])){
                                         size: A4 landscape;
                                         margin: 10mm;
                                     }
+                                        
+                                    .print-button {
+                                        position: fixed;
+                                        bottom: 20px;
+                                        left: 50%;
+                                        transform: translateX(-50%);
+                                        background: #007bff;
+                                        color: white;
+                                        border: none;
+                                        padding: 12px 20px;
+                                        border-radius: 50px;
+                                        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                        cursor: pointer;
+                                        font-size: 14px;
+                                        font-weight: 500;
+                                        z-index: 1000;
+                                        transition: all 0.3s ease;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                    }
+                                    
+                                    .print-button:hover {
+                                        background: #0056b3;
+                                        transform: translateX(-50%);
+                                        box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                    }
+                                    
+                                    .print-button:active {
+                                        transform: translateY(0);
+                                    }
+                                    
+                                    .print-icon {
+                                        width: 16px;
+                                        height: 16px;
+                                    }
+                                    
+                                    @media print {
+                                        #printButton {
+                                            display: none;
+                                        }
+                                    }
                                 </style>
                             </head>
 
                             <body>
+                                <button id="printButton" class="print-button" onclick="window.print()">
+                                    <i class="fas fa-print"></i>
+                                    Print Report
+                                </button>
                                 <div class="container-full">
                                     <div class="header">
                                         <div class="row">
@@ -374,6 +421,7 @@ if(isset($_POST["file"])){
                     $message = '
                         <html>
                             <head>
+                                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                                 <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
                                 <link rel="stylesheet" href="assets/css/custom.min.css" type="text/css" media="all" />
 
@@ -382,10 +430,56 @@ if(isset($_POST["file"])){
                                         size: A4 landscape;
                                         margin: 10mm;
                                     }
+                                    
+                                    .print-button {
+                                        position: fixed;
+                                        bottom: 20px;
+                                        left: 50%;
+                                        transform: translateX(-50%);
+                                        background: #007bff;
+                                        color: white;
+                                        border: none;
+                                        padding: 12px 20px;
+                                        border-radius: 50px;
+                                        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                        cursor: pointer;
+                                        font-size: 14px;
+                                        font-weight: 500;
+                                        z-index: 1000;
+                                        transition: all 0.3s ease;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                    }
+                                    
+                                    .print-button:hover {
+                                        background: #0056b3;
+                                        transform: translateX(-50%);
+                                        box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                    }
+                                    
+                                    .print-button:active {
+                                        transform: translateY(0);
+                                    }
+                                    
+                                    .print-icon {
+                                        width: 16px;
+                                        height: 16px;
+                                    }
+                                    
+                                    @media print {
+                                        #printButton {
+                                            display: none;
+                                        }
+                                    }
                                 </style>
                             </head>
 
                             <body>
+                                <button id="printButton" class="print-button" onclick="window.print()">
+                                    <i class="fas fa-print"></i>
+                                    Print Report
+                                </button>
                                 <div class="container-full">
                                     <div class="header">
                                         <div class="row">
@@ -530,6 +624,7 @@ if(isset($_POST["file"])){
     
                     $message = '<html>
                                 <head>
+                                    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                                     <style>
                                         @media print {
                                             @page {
@@ -538,8 +633,47 @@ if(isset($_POST["file"])){
                                                 margin-top: 0.1in;
                                                 margin-bottom: 0.1in;
                                             }
-                                            
+
+                                            #printButton {
+                                                display: none;
+                                            }
                                         } 
+                                        
+                                        .print-button {
+                                            position: fixed;
+                                            bottom: 20px;
+                                            left: 50%;
+                                            transform: translateX(-50%);
+                                            background: #007bff;
+                                            color: white;
+                                            border: none;
+                                            padding: 12px 20px;
+                                            border-radius: 50px;
+                                            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                            cursor: pointer;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            z-index: 1000;
+                                            transition: all 0.3s ease;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 8px;
+                                        }
+                                        
+                                        .print-button:hover {
+                                            background: #0056b3;
+                                            transform: translateX(-50%);
+                                            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                        }
+                                        
+                                        .print-button:active {
+                                            transform: translateY(0);
+                                        }
+                                        
+                                        .print-icon {
+                                            width: 16px;
+                                            height: 16px;
+                                        }
                                                 
                                         table {
                                             width: 100%;
@@ -582,6 +716,10 @@ if(isset($_POST["file"])){
                                     </style>
                                 </head>
                                 <body>
+                                    <button id="printButton" class="print-button" onclick="window.print()">
+                                        <i class="fas fa-print"></i>
+                                        Print Report
+                                    </button>
                                     <table style="width:100%;">
                                         <thead>
                                             <tr style="font-size: 11px; text-align: center;">
@@ -773,6 +911,7 @@ if(isset($_POST["file"])){
     
                     $message = '<html>
                                 <head>
+                                    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                                     <style>
                                         @media print {
                                             @page {
@@ -781,8 +920,42 @@ if(isset($_POST["file"])){
                                                 margin-top: 0.1in;
                                                 margin-bottom: 0.1in;
                                             }
-                                            
+
+                                            #printButton {
+                                                display: none;
+                                            }
                                         } 
+                                        
+                                        .print-button {
+                                            position: fixed;
+                                            bottom: 20px;
+                                            left: 50%;
+                                            transform: translateX(-50%);
+                                            background: #007bff;
+                                            color: white;
+                                            border: none;
+                                            padding: 12px 20px;
+                                            border-radius: 50px;
+                                            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                            cursor: pointer;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            z-index: 1000;
+                                            transition: all 0.3s ease;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 8px;
+                                        }
+                                        
+                                        .print-button:hover {
+                                            background: #0056b3;
+                                            transform: translateX(-50%);
+                                            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                        }
+                                        
+                                        .print-button:active {
+                                            transform: translateY(0);
+                                        }
                                                 
                                         table {
                                             width: 100%;
@@ -825,6 +998,10 @@ if(isset($_POST["file"])){
                                     </style>
                                 </head>
                                 <body>
+                                    <button id="printButton" class="print-button" onclick="window.print()">
+                                        <i class="fas fa-print"></i>
+                                        Print Report
+                                    </button>
                                     <table style="width:100%;">
                                         <thead>
                                             <tr style="font-size: 9px;">
@@ -943,6 +1120,7 @@ if(isset($_POST["file"])){
     
                     $message = '<html>
                                 <head>
+                                    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                                     <style>
                                         @media print {
                                             @page {
@@ -951,8 +1129,42 @@ if(isset($_POST["file"])){
                                                 margin-top: 0.1in;
                                                 margin-bottom: 0.1in;
                                             }
-                                            
+
+                                            #printButton {
+                                                display: none;
+                                            }
                                         } 
+                                        
+                                        .print-button {
+                                            position: fixed;
+                                            bottom: 20px;
+                                            left: 50%;
+                                            transform: translateX(-50%);
+                                            background: #007bff;
+                                            color: white;
+                                            border: none;
+                                            padding: 12px 20px;
+                                            border-radius: 50px;
+                                            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                            cursor: pointer;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            z-index: 1000;
+                                            transition: all 0.3s ease;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 8px;
+                                        }
+                                        
+                                        .print-button:hover {
+                                            background: #0056b3;
+                                            transform: translateX(-50%);
+                                            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                        }
+                                        
+                                        .print-button:active {
+                                            transform: translateY(0);
+                                        }
                                                 
                                         table {
                                             width: 100%;
@@ -995,6 +1207,10 @@ if(isset($_POST["file"])){
                                     </style>
                                 </head>
                                 <body>
+                                    <button id="printButton" class="print-button" onclick="window.print()">
+                                        <i class="fas fa-print"></i>
+                                        Print Report
+                                    </button>
                                     <table style="width:100%;">
                                         <thead>
                                             <tr style="font-size: 9px;">
@@ -1109,6 +1325,7 @@ if(isset($_POST["file"])){
     
                     $message = '<html>
                                 <head>
+                                    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
                                     <style>
                                         @media print {
                                             @page {
@@ -1117,8 +1334,43 @@ if(isset($_POST["file"])){
                                                 margin-top: 0.1in;
                                                 margin-bottom: 0.1in;
                                             }
+
+                                            #printButton {
+                                                display: none;
+                                            }
                                             
                                         } 
+
+                                        .print-button {
+                                            position: fixed;
+                                            bottom: 20px;
+                                            left: 50%;
+                                            transform: translateX(-50%);
+                                            background: #007bff;
+                                            color: white;
+                                            border: none;
+                                            padding: 12px 20px;
+                                            border-radius: 50px;
+                                            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+                                            cursor: pointer;
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            z-index: 1000;
+                                            transition: all 0.3s ease;
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 8px;
+                                        }
+                                        
+                                        .print-button:hover {
+                                            background: #0056b3;
+                                            transform: translateX(-50%);
+                                            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+                                        }
+                                        
+                                        .print-button:active {
+                                            transform: translateY(0);
+                                        }
                                                 
                                         table {
                                             width: 100%;
@@ -1161,6 +1413,10 @@ if(isset($_POST["file"])){
                                     </style>
                                 </head>
                                 <body>
+                                    <button id="printButton" class="print-button" onclick="window.print()">
+                                        <i class="fas fa-print"></i>
+                                        Print Report
+                                    </button>
                                     <table style="width:100%;">
                                         <thead>
                                             <tr style="font-size: 11px; text-align: center;">
