@@ -190,9 +190,9 @@ if(isset($_POST["file"])){
         if ($_POST['reportType'] == 'SUMMARY') {
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
+                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(total_price) AS total_price, COUNT(*) AS total_records FROM Weight WHERE id IN (".$id.") GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
             }else{
-                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
+                $sql = "SELECT DATE(tare_weight1_date) AS transaction_date,SUM(nett_weight1) AS product_weight,SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(total_price) AS total_price, COUNT(*) AS total_records FROM Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." GROUP BY DATE(tare_weight1_date) ORDER BY DATE(tare_weight1_date) ASC";
             }
 
             if ($select_stmt = $db->prepare($sql)){
@@ -334,22 +334,20 @@ if(isset($_POST["file"])){
                                                     $transactionDate = date("d-m-Y", strtotime($row['transaction_date']));
                                                     $productWeight = number_format($row['product_weight']/1000, 2);
                                                     $transportWeight = number_format($row['transport_weight']/1000, 2);
-                                                    $unitPrice = number_format($row['total_unit_price'], 2);
-                                                    $subtotalPrice = number_format($row['subtotal_price'], 2);
+                                                    $totalPrice = number_format($row['total_price'], 2);
 
                                                     $totalRecords += $row['total_records'];
                                                     $totalProductWeight += $row['product_weight']/1000;
                                                     $totalTransportWeight += $row['transport_weight']/1000;
-                                                    $totalUnitPrice += (float) $row['total_unit_price'];
-                                                    $totalSubtotalPrice += (float) $row['subtotal_price'];
+                                                    $grandTotalPrice += (float) $row['total_price'];
 
                                                     $message .= '<tr>
                                                             <td>'.$transactionDate.'</td>
                                                             <td>'.$row['total_records'].'</td>
                                                             <td>'.$productWeight.'</td>
                                                             <td>'.$transportWeight.'</td>
-                                                            <td>'.$unitPrice.'</td>
-                                                            <td>'.$subtotalPrice.'</td>
+                                                            <td>'.$totalPrice.'</td>
+                                                            <td>0.00</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
@@ -366,8 +364,8 @@ if(isset($_POST["file"])){
                                                         <td>'.$totalRecords.'</td>
                                                         <td>'.number_format($totalProductWeight, 2).'</td>
                                                         <td>'.number_format($totalTransportWeight, 2).'</td>
-                                                        <td>'.number_format($totalUnitPrice, 2).'</td>
-                                                        <td>'.number_format($totalSubtotalPrice, 2).'</td>
+                                                        <td>'.number_format($grandTotalPrice, 2).'</td>
+                                                        <td>0.00</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
@@ -403,10 +401,10 @@ if(isset($_POST["file"])){
         else if ($_POST['reportType'] == 'PRODUCT'){
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND id IN ($id) GROUP BY product_code 
-                UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL AND id IN (".$id.") GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
+                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(total_price) AS total_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND id IN ($id) GROUP BY product_code 
+                UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(total_price) AS total_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL AND id IN (".$id.") GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
             }else{
-                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(unit_price) AS total_unit_price, SUM(total_price) AS subtotal_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
+                $sql = "SELECT * FROM ( SELECT product_name AS name, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(total_price) AS total_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(product_code) IS NOT NULL AND  is_cancel <> 'Y'".$searchQuery." GROUP BY product_code UNION ALL SELECT raw_mat_code AS code, SUM(nett_weight1) AS product_weight, SUM(CASE WHEN ex_del = 'DEL' THEN nett_weight1 ELSE 0 END) AS transport_weight, SUM(total_price) AS total_price, COUNT(*) AS total_records FROM Weight WHERE TRIM(raw_mat_code) IS NOT NULL".$searchQuery." GROUP BY raw_mat_code ) AS combined_results ORDER BY name";
             }
 
             if ($select_stmt = $db->prepare($sql)){
@@ -423,8 +421,7 @@ if(isset($_POST["file"])){
                     $totalRecords = 0;
                     $totalProductWeight = 0;
                     $totalTransportWeight = 0;
-                    $totalUnitPrice = 0;
-                    $totalSubtotalPrice = 0;
+                    $grandTotalPrice = 0;
 
                     $message = '
                         <html>
@@ -549,22 +546,20 @@ if(isset($_POST["file"])){
                                                     $product = $row['name'];
                                                     $productWeight = number_format($row['product_weight']/1000, 2);
                                                     $transportWeight = number_format($row['transport_weight']/1000, 2);
-                                                    $unitPrice = number_format($row['total_unit_price'], 2);
-                                                    $subtotalPrice = number_format($row['subtotal_price'], 2);
+                                                    $totalPrice = number_format($row['total_price'], 2);
 
                                                     $totalRecords += $row['total_records'];
                                                     $totalProductWeight += $row['product_weight']/1000;
                                                     $totalTransportWeight += $row['transport_weight']/1000;
-                                                    $totalUnitPrice += (float) $row['total_unit_price'];
-                                                    $totalSubtotalPrice += (float) $row['subtotal_price'];
+                                                    $grandTotalPrice += (float) $row['total_price'];
 
                                                     $message .= '<tr>
                                                             <td>'.$product.'</td>
                                                             <td>'.$row['total_records'].'</td>
                                                             <td>'.$productWeight.'</td>
                                                             <td>'.$transportWeight.'</td>
-                                                            <td>'.$unitPrice.'</td>
-                                                            <td>'.$subtotalPrice.'</td>
+                                                            <td>'.number_format($grandTotalPrice, 2).'</td>
+                                                            <td>0.00</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
                                                             <td>0.00</td>
@@ -581,8 +576,8 @@ if(isset($_POST["file"])){
                                                         <td>'.$totalRecords.'</td>
                                                         <td>'.number_format($totalProductWeight, 2).'</td>
                                                         <td>'.number_format($totalTransportWeight, 2).'</td>
-                                                        <td>'.number_format($totalUnitPrice, 2).'</td>
-                                                        <td>'.number_format($totalSubtotalPrice, 2).'</td>
+                                                        <td>'.number_format($grandTotalPrice, 2).'</td>
+                                                        <td>0.00</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
