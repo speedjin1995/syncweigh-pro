@@ -365,8 +365,6 @@ if(isset($_POST["type"])){
                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                 <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
@@ -465,8 +463,6 @@ if(isset($_POST["type"])){
                                     <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                    <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                    <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                     <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
@@ -606,8 +602,6 @@ if(isset($_POST["type"])){
                                         <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                        <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                        <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                         <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
@@ -778,8 +772,6 @@ if(isset($_POST["type"])){
                                             <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                            <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                            <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                             <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
@@ -986,8 +978,6 @@ if(isset($_POST["type"])){
                                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                                <td class="text-end">'.number_format((empty($data['order_weight']) ? 0 : ($data['order_weight'] / 1000)), 2).'</td>
-                                                <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
                                                 <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
@@ -1229,7 +1219,7 @@ if(isset($_POST["type"])){
                                                     <th rowspan="2">Date</th>
                                                     <th rowspan="2">P/O No</th>
                                                     <th colspan="2" class="pb-0 pt-0" style="border-bottom: none;">Time</th>
-                                                    <th colspan="5" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
+                                                    <th colspan="3" class="pt-0 pb-0" style="border-bottom: none;">Weight (MT)</th>
                                                     <th rowspan="2">Price <br>/Ton</th>
                                                     <th rowspan="2">Trans Rate</th>
                                                     <th rowspan="2">Ex_GST <br>(RM)</th>
@@ -1245,8 +1235,6 @@ if(isset($_POST["type"])){
                                                     <th>In</th>
                                                     <th>Out</th>
                                                     <th>Net</th>
-                                                    <th>Order Weight</th>
-                                                    <th>Variance</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

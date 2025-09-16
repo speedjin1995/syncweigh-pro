@@ -209,8 +209,7 @@ if(isset($_POST["file"])){
                     $totalRecords = 0;
                     $totalProductWeight = 0;
                     $totalTransportWeight = 0;
-                    $totalUnitPrice = 0;
-                    $totalSubtotalPrice = 0;
+                    $grandTotalPrice = 0;
 
                     $message = '
                         <html>
