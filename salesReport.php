@@ -929,13 +929,9 @@ else{
                         var obj = JSON.parse(response);
 
                         if(obj.status === 'success'){
-                            var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                            printWindow.document.write(obj.message);
-                            printWindow.document.close();
-                            setTimeout(function(){
-                                printWindow.print();
-                                printWindow.close();
-                            }, 500);
+                            var previewWindow = window.open('', '_blank');
+                            previewWindow.document.write(obj.message);
+                            previewWindow.document.close();
                         }
                         else if(obj.status === 'failed'){
                             toastr["error"](obj.message, "Failed:");
@@ -1014,13 +1010,9 @@ else{
                         var obj = JSON.parse(response);
 
                         if(obj.status === 'success'){
-                            var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                            printWindow.document.write(obj.message);
-                            printWindow.document.close();
-                            setTimeout(function(){
-                                printWindow.print();
-                                printWindow.close();
-                            }, 500);
+                            var previewWindow = window.open('', '_blank');
+                            previewWindow.document.write(obj.message);
+                            previewWindow.document.close();
                         }
                         else if(obj.status === 'failed'){
                             toastr["error"](obj.message, "Failed:");

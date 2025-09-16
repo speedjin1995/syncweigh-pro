@@ -217,6 +217,17 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="type" class="col-sm-4 col-form-label">Type</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select id="type" name="type" class="form-select select2" >
+                                                                                            <option value="Premix">Premix</option>
+                                                                                            <option value="Others">Others</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                                                                                                         
                                                                         </div>
                                                                     </div>
@@ -693,11 +704,13 @@ $(function () {
         $('#addModal').find('#productName').val("");
         $('#addModal').find('#productPrice').val("");
         $('#addModal').find('#description').val("");
-        $('#addModal').find('#varianceType').val("");
+        $('#addModal').find('#varianceType').val("").trigger('change');
         $('#addModal').find('#high').val("0");
         $('#addModal').find('#low').val("0");
         $('#addModal').find('#basicUom').val("").trigger('change');
+        $('#addModal').find('#type').val("").trigger('change');
         $('#rawMaterialTable').html('');
+        $('#uomTable').html('');
         rowCount = 1;
 
         // Remove Validation Error Message
@@ -1015,6 +1028,7 @@ function edit(id){
             $('#addModal').find('#high').val(obj.message.high);
             $('#addModal').find('#low').val(obj.message.low);
             $('#addModal').find('#basicUom').val(obj.message.basic_uom).trigger('change');
+            $('#addModal').find('#type').val(obj.message.type).trigger('change');
 
             $('#rawMaterialTable').html('');
             rowCount = 1;
