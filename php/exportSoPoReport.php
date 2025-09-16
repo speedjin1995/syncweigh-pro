@@ -346,6 +346,11 @@ if(isset($_POST["type"])){
                         ';
 
                         foreach ($grpData as $data){ 
+                            // Validate that $data is an array
+                            if (!is_array($data)) {
+                                continue;
+                            }
+
                             $grpNettWeight += $data['nett_weight1']/1000; 
                             if ($data['ex_del'] == 'EX'){
                                 $exDel = 'E';
@@ -444,7 +449,11 @@ if(isset($_POST["type"])){
                             '; 
 
                             foreach ($dateData as $data){
-                                $dateNettWeight += $data['nett_weight1']/1000;
+                                if (!is_array($data)) {
+                                    continue;
+                                }
+
+                                $dateNettWeight += (float) $data['nett_weight1']/1000;
                                 if ($data['ex_del'] == 'EX'){
                                     $exDel = 'E';
                                 }else{
@@ -581,7 +590,12 @@ if(isset($_POST["type"])){
                                 '; 
 
                                 $dateNettWeight = 0;
-                                foreach ($grp3Data as $data){ 
+                                foreach ($grp3Data as $data){
+                                    // Validate that $data is an array
+                                    if (!is_array($data)) {
+                                        continue;
+                                    }
+                                    
                                     $grp1Count++;
                                     $dateNettWeight += $data['nett_weight1']/1000; 
                                     if ($data['ex_del'] == 'EX'){
@@ -752,6 +766,11 @@ if(isset($_POST["type"])){
                                     $grp4Count = 0;
                     
                                     foreach ($grp4Data as $data) {
+                                        // Validate that $data is an array
+                                        if (!is_array($data)) {
+                                            continue;
+                                        }
+
                                         $dateNettWeight += $data['nett_weight1'] / 1000;
                                         $grp4Count++;
                                         if ($data['ex_del'] == 'EX') {
@@ -958,6 +977,11 @@ if(isset($_POST["type"])){
                                         $grp5Count = 0;
                     
                                         foreach ($grp5Data as $data) {
+                                            // Validate that $data is an array
+                                            if (!is_array($data)) {
+                                                continue;
+                                            }
+
                                             $dateNettWeight += $data['nett_weight1'] / 1000;
                                             $grp5Count++;
                                             if ($data['ex_del'] == 'EX') {
@@ -1410,6 +1434,11 @@ if(isset($_POST["type"])){
                         ';
 
                         foreach ($grpData as $data){ 
+                            // Validate that $data is an array
+                            if (!is_array($data)) {
+                                continue;
+                            }
+
                             $grpNettWeight += $data['nett_weight1']/1000; 
                             if ($data['ex_del'] == 'EX'){
                                 $exDel = 'E';
@@ -1510,6 +1539,11 @@ if(isset($_POST["type"])){
                             '; 
 
                             foreach ($dateData as $data){
+                                // Validate that $data is an array
+                                if (!is_array($data)) {
+                                    continue;
+                                }
+
                                 $dateNettWeight += $data['nett_weight1']/1000;
                                 if ($data['ex_del'] == 'EX'){
                                     $exDel = 'E';
@@ -1650,6 +1684,11 @@ if(isset($_POST["type"])){
 
                                 $dateNettWeight = 0;
                                 foreach ($grp3Data as $data){ 
+                                    // Validate that $data is an array
+                                    if (!is_array($data)) {
+                                        continue;
+                                    }
+
                                     $grp1Count++;
                                     $dateNettWeight += $data['nett_weight1']/1000; 
                                     if ($data['ex_del'] == 'EX'){
@@ -1822,6 +1861,11 @@ if(isset($_POST["type"])){
                                     $grp4Count = 0;
                     
                                     foreach ($grp4Data as $data) {
+                                        // Validate that $data is an array
+                                        if (!is_array($data)) {
+                                            continue;
+                                        }
+
                                         $dateNettWeight += $data['nett_weight1'] / 1000;
                                         $grp4Count++;
                                         if ($data['ex_del'] == 'EX') {
@@ -2030,6 +2074,11 @@ if(isset($_POST["type"])){
                                         $grp5Count = 0;
                     
                                         foreach ($grp5Data as $data) {
+                                            // Validate that $data is an array
+                                            if (!is_array($data)) {
+                                                continue;
+                                            }
+                                            
                                             $dateNettWeight += $data['nett_weight1'] / 1000;
                                             $grp5Count++;
                                             if ($data['ex_del'] == 'EX') {
