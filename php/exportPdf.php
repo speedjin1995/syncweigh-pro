@@ -521,7 +521,7 @@ if(isset($_POST["file"])){
                                     </div>';
 
                                     $premixProductData = [];
-                                    $otherProductData = [];
+                                    $othersProductData = [];
 
                                     while ($row = $result->fetch_assoc()) {
                                         $productCode = '';
@@ -676,8 +676,10 @@ if(isset($_POST["file"])){
                                                 </thead>
                                                 <tbody>';
 
-                                                foreach ($othersProductData as $data) {
-                                                    $message .= $data;
+                                                if(count($othersProductData) > 0){
+                                                    foreach ($othersProductData as $data) {
+                                                        $message .= $data;
+                                                    }
                                                 }
 
                                                 $message .= '</tbody>
