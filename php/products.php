@@ -66,12 +66,18 @@ if (isset($_POST['productCode'])) {
         $basicUom = trim($_POST["basicUom"]);
     } 
 
+    if (empty($_POST["type"])) {
+        $type = null;
+    } else {
+        $type = trim($_POST["type"]);
+    } 
+
     if(! empty($productId))
     {
         $action = "2";
-        if ($update_stmt = $db->prepare("UPDATE Product SET product_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, basic_uom=?, created_by=?, modified_by=? WHERE id=?")) 
+        if ($update_stmt = $db->prepare("UPDATE Product SET product_code=?, name=?, price=?, description=?, variance=?, high=?, low=?, basic_uom=?, type=?, created_by=?, modified_by=? WHERE id=?")) 
         {
-            $update_stmt->bind_param('sssssssssss', $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $basicUom, $username, $username, $productId);
+            $update_stmt->bind_param('ssssssssssss', $productCode, $productName, $productPrice, $description, $varianceType, $high, $low, $basicUom, $type, $username, $username, $productId);
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -196,8 +202,8 @@ if (isset($_POST['productCode'])) {
     else
     {
         $action = "1";
-        if ($insert_stmt = $db->prepare("INSERT INTO Product (product_code, name, price, description, variance, high, low, basic_uom, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssss', $productCode, $productName,  $productPrice, $description, $varianceType, $high, $low, $basicUom, $username, $username);
+        if ($insert_stmt = $db->prepare("INSERT INTO Product (product_code, name, price, description, variance, high, low, basic_uom, type, created_by, modified_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssss', $productCode, $productName,  $productPrice, $description, $varianceType, $high, $low, $basicUom, $type, $username, $username);
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

@@ -30,6 +30,7 @@ if(isset($_POST['userID'])){
                 $message['high'] = $row['high'];
                 $message['low'] = $row['low'];
                 $message['basic_uom'] = $row['basic_uom'];
+                $message['type'] = $row['type'];
             }
 
             // retrieve products
