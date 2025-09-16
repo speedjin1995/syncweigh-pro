@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+$plantId = $_SESSION['plant'];
 
 $searchQuery = "";
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
@@ -125,9 +126,24 @@ if(isset($_POST['destination']) && $_POST['destination'] != null && $_POST['dest
 if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
     if($_POST["file"] == 'weight'){
         $searchQuery .= " and Weight.plant_code = '".$_POST['plant']."'";
+        $plantSelected = $_POST['plant'];
     }
     else{
         $searchQuery .= " and count.plant_code = '".$_POST['plant']."'";
+    }
+}else{
+    if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+        $username = implode("/", $_SESSION["plant"]);
+        $plantSelected = $username;
+    }
+    else{
+        $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+        $plant2 = $plant2->fetch_all(MYSQLI_ASSOC);
+        foreach($plant2 as $key => $value){
+            $plantCode[$key] = $value['plant_code'];
+        }
+        $username = implode("/", $plantCode);
+        $plantSelected = $username;
     }
 }
 
@@ -235,7 +251,7 @@ if(isset($_POST["file"])){
                                                 <br>
                                                 Start/Last Customer Type: /IN 
                                                 <br>
-                                                Start/Last Site : BEN/BEN - Weighing Only
+                                                Start/Last Site : '.$plantSelected.' - Weighing Only
                                             </p>
                                         </div>
                                     </div>
@@ -397,7 +413,7 @@ if(isset($_POST["file"])){
                                                 <br>
                                                 Start/Last Customer Type: /IN 
                                                 <br>
-                                                Start/Last Site : BEN/BEN - Weighing Only
+                                                Start/Last Site : '.$plantSelected.' - Weighing Only
                                             </p>
                                         </div>
                                     </div>
