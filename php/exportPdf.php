@@ -417,10 +417,14 @@ if(isset($_POST["file"])){
                 }else{
                     $result = $select_stmt->get_result();
 
-                    $totalRecords = 0;
-                    $totalProductWeight = 0;
-                    $totalTransportWeight = 0;
-                    $grandTotalPrice = 0;
+                    $premixTotalRecords = 0;
+                    $premixTotalProductWeight = 0;
+                    $premixTotalTransportWeight = 0;
+                    $premixGrandTotalPrice = 0;
+                    $othersTotalRecords = 0;
+                    $othersTotalProductWeight = 0;
+                    $othersTotalTransportWeight = 0;
+                    $othersGrandTotalPrice = 0;
 
                     $message = '
                         <html>
@@ -514,11 +518,89 @@ if(isset($_POST["file"])){
                                                 Start/Last Site : '.$plantSelected.' - Weighing Only
                                             </p>
                                         </div>
-                                    </div>
+                                    </div>';
+
+                                    $premixProductData = [];
+                                    $otherProductData = [];
+
+                                    while ($row = $result->fetch_assoc()) {
+                                        $productCode = '';
+                                        $productName = '';
+                                        $productType = '';
+                                        if ($product_stmt = $db->prepare("SELECT * FROM Product WHERE name = ? AND status = '0'")) {
+                                            $product_stmt->bind_param('s', $row['name']);
+                                            if ($product_stmt->execute()) {
+                                                $result_product = $product_stmt->get_result();
+                                                $productData = $result_product->fetch_assoc();
+                                                $productCode = $productData['product_code'];
+                                                $productName = $productData['name'];
+                                                $productType = $productData['type'];
+                                            }
+
+                                            $product_stmt->close();
+                                        }
+
+                                        if ($productType == 'Premix') {
+                                            $productWeight = number_format($row['product_weight']/1000, 2);
+                                            $transportWeight = number_format($row['transport_weight']/1000, 2);
+                                            $totalPrice = number_format($row['total_price'], 2);
+
+                                            $premixTotalRecords += $row['total_records'];
+                                            $premixTotalProductWeight += $row['product_weight']/1000;
+                                            $premixTotalTransportWeight += $row['transport_weight']/1000;
+                                            $premixGrandTotalPrice += (float) $row['total_price'];
+
+                                            $premixProductData[] = '
+                                                <tr>
+                                                    <td>'.$productName.'</td>
+                                                    <td>'.$row['total_records'].'</td>
+                                                    <td>'.$productWeight.'</td>
+                                                    <td>'.$transportWeight.'</td>
+                                                    <td>'.$totalPrice.'</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                </tr>
+                                            ';
+                                        }else{
+                                            $productWeight = number_format($row['product_weight']/1000, 2);
+                                            $transportWeight = number_format($row['transport_weight']/1000, 2);
+                                            $totalPrice = number_format($row['total_price'], 2);
+
+                                            $othersTotalRecords += $row['total_records'];
+                                            $othersTotalProductWeight += $row['product_weight']/1000;
+                                            $othersTotalTransportWeight += $row['transport_weight']/1000;
+                                            $othersGrandTotalPrice += (float) $row['total_price'];
+
+                                            $othersProductData[] = '
+                                                <tr>
+                                                    <td>'.$productName.'</td>
+                                                    <td>'.$row['total_records'].'</td>
+                                                    <td>'.$productWeight.'</td>
+                                                    <td>'.$transportWeight.'</td>
+                                                    <td>'.$totalPrice.'</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                    <td>0.00</td>
+                                                </tr>
+                                            ';
+                                        }
+                                    }
+
+                                    $message .= '
                                     <div class="row">
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead style="border-bottom: 1px solid black;">
+                                                    <tr><th colspan="12" class="text-center" style="border-top: 1px solid black;">Premix Product</th></tr>
                                                     <tr class="text-center" style="border-top: 1px solid black;">
                                                         <th rowspan="2" class="text-start">Product Description</th>
                                                         <th rowspan="2">Total Loads</th>
@@ -541,41 +623,71 @@ if(isset($_POST["file"])){
                                                 </thead>
                                                 <tbody>';
 
-                                                while ($row = $result->fetch_assoc()) {
-                                                    $product = $row['name'];
-                                                    $productWeight = number_format($row['product_weight']/1000, 2);
-                                                    $transportWeight = number_format($row['transport_weight']/1000, 2);
-                                                    $totalPrice = number_format($row['total_price'], 2);
-
-                                                    $totalRecords += $row['total_records'];
-                                                    $totalProductWeight += $row['product_weight']/1000;
-                                                    $totalTransportWeight += $row['transport_weight']/1000;
-                                                    $grandTotalPrice += (float) $row['total_price'];
-
-                                                    $message .= '<tr>
-                                                            <td>'.$product.'</td>
-                                                            <td>'.$row['total_records'].'</td>
-                                                            <td>'.$productWeight.'</td>
-                                                            <td>'.$transportWeight.'</td>
-                                                            <td>'.number_format($grandTotalPrice, 2).'</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                        </tr>';
+                                                foreach ($premixProductData as $data) {
+                                                    $message .= $data;
                                                 }
-                                                
+
                                                 $message .= '</tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <td class="fw-bold">Company Total:</td>
-                                                        <td>'.$totalRecords.'</td>
-                                                        <td>'.number_format($totalProductWeight, 2).'</td>
-                                                        <td>'.number_format($totalTransportWeight, 2).'</td>
-                                                        <td>'.number_format($grandTotalPrice, 2).'</td>
+                                                        <td>'.$premixTotalRecords.'</td>
+                                                        <td>'.number_format($premixTotalProductWeight, 2).'</td>
+                                                        <td>'.number_format($premixTotalTransportWeight, 2).'</td>
+                                                        <td>'.number_format($premixGrandTotalPrice, 2).'</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                        <td>0.00</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>';
+
+                                    $message .= '
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead style="border-bottom: 1px solid black;">
+                                                    <tr><th colspan="12" class="text-center" style="border-top: 1px solid black;">Other Product</th></tr>
+                                                    <tr class="text-center" style="border-top: 1px solid black;">
+                                                        <th rowspan="2" class="text-start">Product Description</th>
+                                                        <th rowspan="2">Total Loads</th>
+                                                        <th rowspan="2">Product Weight (MT)</th>
+                                                        <th rowspan="2">Transport Weight (MT)</th>
+                                                        <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
+                                                        <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
+                                                        <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
+                                                        <th rowspan="2">Average Selling Price</th>
+                                                    </tr>
+                                                    <tr class="text-center">
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                        <th>Total</th>
+                                                        <th>Product</th>
+                                                        <th>Transport</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>';
+
+                                                foreach ($othersProductData as $data) {
+                                                    $message .= $data;
+                                                }
+
+                                                $message .= '</tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td class="fw-bold">Company Total:</td>
+                                                        <td>'.$othersTotalRecords.'</td>
+                                                        <td>'.number_format($othersTotalProductWeight, 2).'</td>
+                                                        <td>'.number_format($othersTotalTransportWeight, 2).'</td>
+                                                        <td>'.number_format($othersGrandTotalPrice, 2).'</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
                                                         <td>0.00</td>
