@@ -1034,8 +1034,14 @@ if(isset($_POST["file"])){
                                         <tbody>';
                                         
                                         $noCount = 0;
+                                        $grandTotalGross = 0;
+                                        $grandTotalTare = 0;
+                                        $grandTotalNet = 0;
                                         while ($row = $result->fetch_assoc()) {
                                             $noCount++;
+                                            $grandTotalGross += (float)$row['gross_weight1'];
+                                            $grandTotalTare += (float)$row['tare_weight1'];
+                                            $grandTotalNet += (float)$row['nett_weight1'];
                                             $transactionDate =  new DateTime($row['transaction_date']);
                                             $formattedtransactionDate = $transactionDate->format('d/m/Y');
                                             $exDel = '';
@@ -1073,11 +1079,18 @@ if(isset($_POST["file"])){
                                                 <td>' . $row['is_cancel'] . '</td>
                                                 <td>' . $row['cancelled_reason'] . '</td>
                                             </tr>';
-                                            
                                         }
                                                                                 
                                     $message .= '
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th style="font-size: 11px;" colspan="10"">Grand Total</th>
+                                                <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
+                                                <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
+                                                <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </body>
                             </html>';
