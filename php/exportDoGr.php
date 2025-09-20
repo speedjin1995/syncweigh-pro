@@ -59,7 +59,7 @@ if($_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'
 }
 
 // Column names 
-$fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount'); 
+$fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
 
 // Display column names as first row 
 $excelData = implode("\t", array_values($fields)) . "\n";
@@ -122,7 +122,7 @@ if ($isMulti == 'N'){
                     }
                 }
                 
-                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $row['plant_code'], $row['plant_code'], $unitPrice, $amt);
+                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $row['plant_code'], $row['plant_code'], $unitPrice, $amt, $row['remarks']);
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {
@@ -212,7 +212,7 @@ if ($isMulti == 'N'){
                         $select_stmt->close();
                     }
 
-                    $lineData = array($poNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['destination'], $row2['transporter_code'], $exDel, '', $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+                    $lineData = array($poNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['destination'], $row2['transporter_code'], $exDel, '', $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt, $row2['remarks']);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
