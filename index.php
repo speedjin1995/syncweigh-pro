@@ -2790,7 +2790,7 @@ else{
                     var obj = JSON.parse(data);
 
                     if (obj.status == 'success'){
-                        if (obj.message.length > 0){
+                        /*if (obj.message.length > 0){
                             if (obj.message.length > 1){ 
                                 $('#addModal').find('#transporter').empty();
                                 $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
@@ -2808,10 +2808,6 @@ else{
                                     if (exDel == 'DEL'){
                                         deliveredTransporter = transporterName;
                                     }
-
-                                    /*if (customerName){
-                                        $('#addModal').find('#customerName').val(customerName).trigger('change');
-                                    }*/
 
                                     if (transporterName) {
                                         hasValidTransporter = true;
@@ -2886,9 +2882,9 @@ else{
                                     }
                                 } 
                             }
-                        }    
+                        } */   
                         
-                        if (transactionStatus == 'Purchase'){
+                        /*if (transactionStatus == 'Purchase'){
                             var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
                             if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
@@ -2901,7 +2897,7 @@ else{
                             if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                 getSoPo();
                             }
-                        }
+                        }*/
                     }
                     else if(obj.status === 'error'){
                         alert(obj.message);
@@ -3003,7 +2999,7 @@ else{
                         var obj = JSON.parse(data);
 
                         if (obj.status == 'success'){
-                            if (obj.message.length > 0){
+                            /*if (obj.message.length > 0){
                                 if (obj.message.length > 1){
                                     $('#addModal').find('#transporter').empty();
                                     $('#addModal').find('#transporter').append(`<option selected="-">-</option>`);
@@ -3021,10 +3017,6 @@ else{
                                         if (exDel == 'DEL'){
                                             deliveredTransporter = transporterName;
                                         }
-
-                                        /*if (customerName){
-                                            $('#addModal').find('#customerName').val(customerName).trigger('change');
-                                        }*/
 
                                         if (transporterName) {
                                             hasValidTransporter = true;
@@ -3099,9 +3091,9 @@ else{
                                         }
                                     } 
                                 }
-                            }    
+                            }*/   
                             
-                            if (transactionStatus == 'Purchase'){
+                            /*if (transactionStatus == 'Purchase'){
                                 var purchaseOrder = $('#addModal').find('#purchaseOrder').val();
 
                                 if(!purchaseOrder && !soPoTag && !addNewTag && $('#addModal').find('#supplierName').val()){
@@ -3114,7 +3106,7 @@ else{
                                 if(!salesOrder && !soPoTag && !addNewTag && $('#addModal').find('#customerName').val()){
                                     getSoPo();
                                 }
-                            }
+                            }*/
                         }
                         else if(obj.status === 'error'){
                             alert(obj.message);
