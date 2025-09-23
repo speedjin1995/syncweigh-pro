@@ -102,7 +102,8 @@ function rearrangeList(array $records, array $filteredGroupKeys): array {
         // Add grouping levels based on provided groupKeys
         foreach ($filteredGroupKeys as $key) {
             if (empty($record[$key])) {
-                continue; // skip empty group value
+                $record[$key] = 'UNKNOWN_' . strtoupper($key); // Assign default value instead of skipping
+                // continue; // skip empty group value
             }
 
             $keyValue = $record[$key];
