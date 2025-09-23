@@ -4350,34 +4350,41 @@ else{
 
     // Function to handle weight form submission without printing
     function submitWeightForm() {
-        if ($('#weightForm').valid()) {
-            $('#spinnerLoading').show();
-            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                var obj = JSON.parse(data); 
-                if(obj.status === 'success'){
-                    <?php
-                        if(isset($_GET['weight'])){
-                            echo "window.location = 'index.php';";
-                        }
-                    ?>
-                    table.ajax.reload();
-                    window.location = 'index.php';
-                    $('#spinnerLoading').hide();
-                    $('#addModal').modal('hide');
-                    $("#successBtn").attr('data-toast-text', obj.message);
-                    $("#successBtn").click();
-                }
-                else if(obj.status === 'failed'){
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                }
-                else{
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', 'Failed to save');
-                    $("#failBtn").click();
-                }
-            });
+        var nettWeight = $('#addModal').find('#nettWeight').val();
+
+        if (nettWeight > 0){
+            if ($('#weightForm').valid()) {
+                $('#spinnerLoading').show();
+                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        <?php
+                            if(isset($_GET['weight'])){
+                                echo "window.location = 'index.php';";
+                            }
+                        ?>
+                        table.ajax.reload();
+                        window.location = 'index.php';
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        }else{
+            alert('Nett Weight must be more than 0');
+            return;
         }
     }
 
