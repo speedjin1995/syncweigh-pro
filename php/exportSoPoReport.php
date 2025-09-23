@@ -102,7 +102,8 @@ function rearrangeList(array $records, array $filteredGroupKeys): array {
         // Add grouping levels based on provided groupKeys
         foreach ($filteredGroupKeys as $key) {
             if (empty($record[$key])) {
-                continue; // skip empty group value
+                $record[$key] = 'UNKNOWN_' . strtoupper($key); // Assign default value instead of skipping
+                // continue; // skip empty group value
             }
 
             $keyValue = $record[$key];
@@ -353,6 +354,12 @@ if(isset($_POST["type"])){
                                 $exDel = 'D';
                             }
 
+                            if ($_SESSION["roles"] == 'NORMAL') {
+                                $unitPrice = number_format(0, 2);
+                            }else{
+                                $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                            }
+
                             $rowData .= '<tr class="details">
                                 <td>'.$data['transaction_id'].'</td>
                                 <td>'.$data['transporter_code'].'</td>
@@ -365,7 +372,7 @@ if(isset($_POST["type"])){
                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                <td class="text-end">'.$unitPrice.'</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
@@ -451,6 +458,12 @@ if(isset($_POST["type"])){
                                     $exDel = 'D';
                                 }
 
+                                if ($_SESSION["roles"] == 'NORMAL') {
+                                    $unitPrice = number_format(0, 2);
+                                }else{
+                                    $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                }
+
                                 $rowData .= '<tr class="details">
                                     <td>'.$data['transaction_id'].'</td>
                                     <td>'.$data['transporter_code'].'</td>
@@ -463,7 +476,7 @@ if(isset($_POST["type"])){
                                     <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                    <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                    <td class="text-end">'.$unitPrice.'</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
@@ -589,6 +602,12 @@ if(isset($_POST["type"])){
                                     }else{
                                         $exDel = 'D';
                                     }
+
+                                    if ($_SESSION["roles"] == 'NORMAL') {
+                                        $unitPrice = number_format(0, 2);
+                                    }else{
+                                        $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                    }
     
                                     $rowData .= '<tr class="details">
                                         <td>'.$data['transaction_id'].'</td>
@@ -602,7 +621,7 @@ if(isset($_POST["type"])){
                                         <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                        <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                        <td class="text-end">'.$unitPrice.'</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
@@ -759,6 +778,12 @@ if(isset($_POST["type"])){
                                         } else {
                                             $exDel = 'D';
                                         }
+
+                                        if ($_SESSION["roles"] == 'NORMAL') {
+                                            $unitPrice = number_format(0, 2);
+                                        }else{
+                                            $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                        }
                     
                                         $rowData .= '<tr class="details">
                                             <td>'.$data['transaction_id'].'</td>
@@ -772,7 +797,7 @@ if(isset($_POST["type"])){
                                             <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                            <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                            <td class="text-end">'.$unitPrice.'</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
@@ -965,6 +990,12 @@ if(isset($_POST["type"])){
                                             } else {
                                                 $exDel = 'D';
                                             }
+
+                                            if ($_SESSION["roles"] == 'NORMAL') {
+                                                $unitPrice = number_format(0, 2);
+                                            }else{
+                                                $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                            }
                     
                                             $rowData .= '<tr class="details">
                                                 <td>'.$data['transaction_id'].'</td>
@@ -978,7 +1009,7 @@ if(isset($_POST["type"])){
                                                 <td class="text-end">'.number_format(($data['gross_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['tare_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
-                                                <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                                <td class="text-end">'.$unitPrice.'</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
@@ -1417,6 +1448,12 @@ if(isset($_POST["type"])){
                                 $exDel = 'D';
                             }
 
+                            if ($_SESSION["roles"] == 'NORMAL') {
+                                $unitPrice = number_format(0, 2);
+                            }else{
+                                $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                            }
+
                             $rowData .= '<tr class="details">
                                 <td>'.$data['transaction_id'].'</td>
                                 <td>'.$data['transporter_code'].'</td>
@@ -1431,7 +1468,7 @@ if(isset($_POST["type"])){
                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                 <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                 <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
-                                <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                <td class="text-end">'.$unitPrice.'</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
                                 <td class="text-end">0.00</td>
@@ -1517,6 +1554,12 @@ if(isset($_POST["type"])){
                                     $exDel = 'D';
                                 }
 
+                                if ($_SESSION["roles"] == 'NORMAL') {
+                                    $unitPrice = number_format(0, 2);
+                                }else{
+                                    $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                }
+
                                 $rowData .= '<tr class="details">
                                     <td>'.$data['transaction_id'].'</td>
                                     <td>'.$data['transporter_code'].'</td>
@@ -1531,7 +1574,7 @@ if(isset($_POST["type"])){
                                     <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                     <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                     <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
-                                    <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                    <td class="text-end">'.$unitPrice.'</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
                                     <td class="text-end">0.00</td>
@@ -1657,6 +1700,12 @@ if(isset($_POST["type"])){
                                     }else{
                                         $exDel = 'D';
                                     }
+
+                                    if ($_SESSION["roles"] == 'NORMAL') {
+                                        $unitPrice = number_format(0, 2);
+                                    }else{
+                                        $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                    }
     
                                     $rowData .= '<tr class="details">
                                         <td>'.$data['transaction_id'].'</td>
@@ -1672,7 +1721,7 @@ if(isset($_POST["type"])){
                                         <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                         <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                         <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
-                                        <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                        <td class="text-end">'.$unitPrice.'</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
                                         <td class="text-end">0.00</td>
@@ -1829,6 +1878,12 @@ if(isset($_POST["type"])){
                                         } else {
                                             $exDel = 'D';
                                         }
+
+                                        if ($_SESSION["roles"] == 'NORMAL') {
+                                            $unitPrice = number_format(0, 2);
+                                        }else{
+                                            $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                        }
                     
                                         $rowData .= '<tr class="details">
                                             <td>'.$data['transaction_id'].'</td>
@@ -1844,7 +1899,7 @@ if(isset($_POST["type"])){
                                             <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                             <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                             <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
-                                            <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                            <td class="text-end">'.$unitPrice.'</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
                                             <td class="text-end">0.00</td>
@@ -2037,6 +2092,12 @@ if(isset($_POST["type"])){
                                             } else {
                                                 $exDel = 'D';
                                             }
+
+                                            if ($_SESSION["roles"] == 'NORMAL') {
+                                                $unitPrice = number_format(0, 2);
+                                            }else{
+                                                $unitPrice = number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2);
+                                            }
                     
                                             $rowData .= '<tr class="details">
                                                 <td>'.$data['transaction_id'].'</td>
@@ -2052,7 +2113,7 @@ if(isset($_POST["type"])){
                                                 <td class="text-end">'.number_format(($data['nett_weight1']/1000),2).'</td>
                                                 <td class="text-end">'.number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2).'</td>
                                                 <td class="text-end">'.number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2).'</td>
-                                                <td class="text-end">'.number_format((empty($data['unit_price']) ? 0 : $data['unit_price']),2).'</td>
+                                                <td class="text-end">'.$unitPrice.'</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>
                                                 <td class="text-end">0.00</td>

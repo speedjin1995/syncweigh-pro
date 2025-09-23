@@ -203,6 +203,7 @@ else{
                                                                     }
                                                                 ?>
                                                                 <option value="WIP">WIP</option>
+                                                                <option value="Return">Return</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -332,20 +333,11 @@ else{
                             
                             <div class="row">
                                 <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Sales</p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="salesInfo">0</span>
-                                                    </h4>
+                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Sales</p>
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
                                                     <span class="avatar-title bg-soft-success rounded fs-3">
@@ -353,24 +345,33 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                            <hr>
+
+                                            <!-- Status breakdown -->
+                                            <div class="mt-4">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span class="text-muted">Pending</span>
+                                                    <span class="fw-semibold" id="salesPending">0</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span class="text-muted">Complete</span>
+                                                    <span class="fw-semibold text-success" id="salesComplete">0</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="text-muted">Cancel</span>
+                                                    <span class="fw-semibold text-danger" id="salesCancel">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Purchase</p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="purchaseInfo">0</span></h4>
+                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Purchase</p>
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
                                                     <span class="avatar-title bg-soft-info rounded fs-3">
@@ -378,25 +379,32 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                            <hr>
 
+                                            <!-- Status breakdown -->
+                                            <div class="mt-4">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span class="text-muted">Pending</span>
+                                                    <span class="fw-semibold" id="purchasePending">0</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span class="text-muted">Complete</span>
+                                                    <span class="fw-semibold text-success" id="purchaseComplete">0</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="text-muted">Cancel</span>
+                                                    <span class="fw-semibold text-danger" id="purchaseCancel">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
                                     <div class="card card-animate">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Public</p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" id="localInfo">0</span>
-                                                    </h4>
+                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">Return</p>
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
                                                     <span class="avatar-title bg-soft-warning rounded fs-3">
@@ -404,9 +412,26 @@ else{
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
+                                            <hr>
+
+                                            <!-- Status breakdown -->
+                                            <div class="mt-4">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span class="text-muted">Pending</span>
+                                                    <span class="fw-semibold" id="returnPending">0</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span class="text-muted">Complete</span>
+                                                    <span class="fw-semibold text-success" id="returnComplete">0</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="text-muted">Cancel</span>
+                                                    <span class="fw-semibold text-danger" id="returnCancel">0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-xl-3 col-md-6 add-new-weight">
                                     <!-- <button type="button" class="btn btn-lg btn-soft-success" data-bs-toggle="modal" data-bs-target="#addModal"><i
@@ -672,8 +697,9 @@ else{
                                                                                                 if($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER'){ 
                                                                                                     echo '<option value="Local">Public</option>';
                                                                                                 }
-                                                                                            ?>                                                                                            
+                                                                                            ?>                                                                                     
                                                                                             <option value="WIP">WIP</option>
+                                                                                            <option value="Return">Return</option>
                                                                                         </select>  
                                                                                     </div>
                                                                                 </div>
@@ -1853,9 +1879,15 @@ else{
                 }
             ],
             "drawCallback": function(settings) {
-                $('#salesInfo').text(settings.json.salesTotal);
-                $('#purchaseInfo').text(settings.json.purchaseTotal);
-                $('#localInfo').text(settings.json.localTotal);
+                $('#salesPending').text(settings.json.salesTotalPending);
+                $('#salesComplete').text(settings.json.salesTotalComplete);
+                $('#salesCancel').text(settings.json.salesTotalCancel);
+                $('#purchasePending').text(settings.json.purchaseTotalPending);
+                $('#purchaseComplete').text(settings.json.purchaseTotalComplete);
+                $('#purchaseCancel').text(settings.json.purchaseTotalCancel);
+                $('#returnPending').text(settings.json.returnTotalPending);
+                $('#returnComplete').text(settings.json.returnTotalComplete);
+                $('#returnCancel').text(settings.json.returnTotalCancel);
             }   
         });
 
@@ -2525,9 +2557,15 @@ else{
                 }
                 ],
                 "drawCallback": function(settings) {
-                    $('#salesInfo').text(settings.json.salesTotal);
-                    $('#purchaseInfo').text(settings.json.purchaseTotal);
-                    $('#localInfo').text(settings.json.localTotal);
+                    $('#salesPending').text(settings.json.salesTotalPending);
+                    $('#salesComplete').text(settings.json.salesTotalComplete);
+                    $('#salesCancel').text(settings.json.salesTotalCancel);
+                    $('#purchasePending').text(settings.json.purchaseTotalPending);
+                    $('#purchaseComplete').text(settings.json.purchaseTotalComplete);
+                    $('#purchaseCancel').text(settings.json.purchaseTotalCancel);
+                    $('#returnPending').text(settings.json.returnTotalPending);
+                    $('#returnComplete').text(settings.json.returnTotalComplete);
+                    $('#returnCancel').text(settings.json.returnTotalCancel);
                 }   
             });
         });
@@ -3262,7 +3300,7 @@ else{
                 prodRawId = $('#addModal').find('#rawMaterialName :selected').data('id');
                 type = 'PO';
             }
-
+            
             if (prodRawId && nettWeight){
                 $.post('php/getProdRawMatUOM.php', {userID: prodRawId, type: type}, function(data)
                 {
@@ -4304,34 +4342,41 @@ else{
 
     // Function to handle weight form submission without printing
     function submitWeightForm() {
-        if ($('#weightForm').valid()) {
-            $('#spinnerLoading').show();
-            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                var obj = JSON.parse(data); 
-                if(obj.status === 'success'){
-                    <?php
-                        if(isset($_GET['weight'])){
-                            echo "window.location = 'index.php';";
-                        }
-                    ?>
-                    table.ajax.reload();
-                    window.location = 'index.php';
-                    $('#spinnerLoading').hide();
-                    $('#addModal').modal('hide');
-                    $("#successBtn").attr('data-toast-text', obj.message);
-                    $("#successBtn").click();
-                }
-                else if(obj.status === 'failed'){
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                }
-                else{
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', 'Failed to save');
-                    $("#failBtn").click();
-                }
-            });
+        var nettWeight = $('#addModal').find('#nettWeight').val();
+
+        if (nettWeight > 0){
+            if ($('#weightForm').valid()) {
+                $('#spinnerLoading').show();
+                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        <?php
+                            if(isset($_GET['weight'])){
+                                echo "window.location = 'index.php';";
+                            }
+                        ?>
+                        table.ajax.reload();
+                        window.location = 'index.php';
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        }else{
+            alert('Nett Weight must be more than 0');
+            return;
         }
     }
 

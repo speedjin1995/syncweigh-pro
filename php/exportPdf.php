@@ -543,12 +543,21 @@ if(isset($_POST["file"])){
                                         if ($productType == 'Premix') {
                                             $productWeight = number_format($row['product_weight']/1000, 2);
                                             $transportWeight = number_format($row['transport_weight']/1000, 2);
-                                            $totalPrice = number_format($row['total_price'], 2);
+
+                                            if ($_SESSION["roles"] == 'NORMAL') {
+                                                $totalPrice = number_format(0, 2);
+                                            }else{
+                                                $totalPrice = number_format($row['total_price'], 2);
+                                            }
 
                                             $premixTotalRecords += $row['total_records'];
                                             $premixTotalProductWeight += $row['product_weight']/1000;
                                             $premixTotalTransportWeight += $row['transport_weight']/1000;
-                                            $premixGrandTotalPrice += (float) $row['total_price'];
+                                            if ($_SESSION["roles"] == 'NORMAL') {
+                                                $premixGrandTotalPrice += 0.00;
+                                            }else{
+                                                $premixGrandTotalPrice += (float) $row['total_price'];
+                                            }
 
                                             $premixProductData[] = '
                                                 <tr>
@@ -569,11 +578,22 @@ if(isset($_POST["file"])){
                                         }else{
                                             $productWeight = number_format($row['product_weight']/1000, 2);
                                             $transportWeight = number_format($row['transport_weight']/1000, 2);
-                                            $totalPrice = number_format($row['total_price'], 2);
+
+                                            if ($_SESSION["roles"] == 'NORMAL') {
+                                                $totalPrice = number_format(0, 2);
+                                            }else{
+                                                $totalPrice = number_format($row['total_price'], 2);
+                                            }
 
                                             $othersTotalRecords += $row['total_records'];
                                             $othersTotalProductWeight += $row['product_weight']/1000;
                                             $othersTotalTransportWeight += $row['transport_weight']/1000;
+                                            if ($_SESSION["roles"] == 'NORMAL') {
+                                                $othersGrandTotalPrice += 0.00;
+                                            }else{
+                                                $othersGrandTotalPrice += (float) $row['total_price'];
+                                            }
+
                                             $othersGrandTotalPrice += (float) $row['total_price'];
 
                                             $othersProductData[] = '
