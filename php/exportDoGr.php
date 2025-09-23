@@ -186,6 +186,7 @@ if ($isMulti == 'N'){
                     $tareDateTime = $tareDate->format('d/m/Y');
                     $exDel = ($row2['ex_del'] == 'EX') ? 'E' : 'D';
 
+                    $unitPrice = 0;
                     $uom = '';
                     $qty = '';
                     $amt = '';
@@ -263,6 +264,7 @@ if ($isMulti == 'N'){
                     $exDel = ($row2['ex_del'] == 'EX') ? 'E' : 'D';
                     $orderNo = $row2['purchase_order'];
 
+                    $unitPrice = 0;
                     $soNo = '';
                     $uom = '';
                     $qty = '';
@@ -336,6 +338,7 @@ if ($isMulti == 'N'){
                     $tareDateTime = $tareDate->format('d/m/Y');
                     $exDel = ($row2['ex_del'] == 'EX') ? 'E' : 'D';
 
+                    $unitPrice = 0;
                     $uom = '';
                     $qty = '';
                     $amt = '';

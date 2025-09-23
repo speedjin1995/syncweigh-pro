@@ -192,10 +192,10 @@ if ($type == "MULTI"){
                         }
             
                         // Update weight table
-                        $stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");
+                        /*$stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");
                         $stmtUpdateWeight->bind_param('s', $docref2);
                         $stmtUpdateWeight->execute();
-                        $stmtUpdateWeight->close();
+                        $stmtUpdateWeight->close();*/
                     }
                 }
                 
@@ -372,10 +372,10 @@ if ($type == "MULTI"){
                             }
                 
                             // Update weight table
-                            $stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");
+                            /*$stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");
                             $stmtUpdateWeight->bind_param('s', $docref2);
                             $stmtUpdateWeight->execute();
-                            $stmtUpdateWeight->close();
+                            $stmtUpdateWeight->close();*/
                         }
                     }
                     

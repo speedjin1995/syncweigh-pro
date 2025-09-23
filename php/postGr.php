@@ -190,12 +190,12 @@ if ($type == "MULTI"){
                                 require 'db_connect.php';
                             }
 
-                            foreach ($poGroup["items"] as $transactionId) {
+                            /*foreach ($poGroup["items"] as $transactionId) {
                                 $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE transaction_id = ?");
                                 $stmtUpdateWeight->bind_param('s', $transactionId);
                                 $stmtUpdateWeight->execute();
                                 $stmtUpdateWeight->close();
-                            }
+                            }*/
                         }
                     }
                 }
@@ -370,12 +370,12 @@ if ($type == "MULTI"){
                                 require 'db_connect.php';
                             }
 
-                            foreach ($poGroup["items"] as $transactionId) {
+                            /*foreach ($poGroup["items"] as $transactionId) {
                                 $stmtUpdateWeight = $db->prepare("UPDATE weight SET synced = 'Y' WHERE transaction_id = ?");
                                 $stmtUpdateWeight->bind_param('s', $transactionId);
                                 $stmtUpdateWeight->execute();
                                 $stmtUpdateWeight->close();
-                            }
+                            }*/
                         }
                     }
                 }
