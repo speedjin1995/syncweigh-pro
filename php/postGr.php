@@ -74,7 +74,7 @@ if ($type == "MULTI"){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                $doQuery = "select * from Weight WHERE transaction_status = 'Purchase' AND purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                 $doRecords = mysqli_query($db, $doQuery);
 
                 while($row2 = mysqli_fetch_assoc($doRecords)) {
@@ -91,9 +91,10 @@ if ($type == "MULTI"){
                         ];
                     }
                     
+                    $unitPrice = 0;
                     $uom = '';
                     $qty = '';
-                    $amt = '';
+                    $amt = 0;
                     
                     if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('ss', $poNumber, $row2['raw_mat_code']);
@@ -131,13 +132,13 @@ if ($type == "MULTI"){
                         "SHIPPER"     => $row["transporter_code"] ?? "T01",
                         "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                         "DOCNOEX"     => "-",
-                        "REMARK1"     => $row["delivery_no"],
+                        "REMARK1"     => $row["delivery_no"] ?? '',
                         "QTY"         => $qty,
                         "UOM"         => $uom,
                         "PROJECT"     => $row['plant_code'],
                         "LOCATION"    => $row['plant_code'],
-                        //"UNITPRICE"   => round($unitPrice, 2),
-                        //"AMOUNT"      => round($amt, 2),
+                        "UNITPRICE"   => round($unitPrice, 2),
+                        "AMOUNT"      => round($amt, 2),
                         "PO_NUMBER"   => $poNumber
                     ];
                 }
@@ -250,10 +251,10 @@ if ($type == "MULTI"){
         );
     }
 }else{
-    $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N'".$searchQuery." group by purchase_order";
+    $sql = "select * from Weight WHERE transaction_status = 'Purchase' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N'".$searchQuery." group by purchase_order";
     if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
         $username = implode("', '", $_SESSION["plant"]);
-        $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N' and plant_code IN ('$username')".$searchQuery." group by purchase_order";
+        $sql = "select * from Weight WHERE transaction_status = 'Purchase' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N' and plant_code IN ('$username')".$searchQuery." group by purchase_order";
     }
 
     if ($stmt2 = $db->prepare($sql)){
@@ -272,9 +273,10 @@ if ($type == "MULTI"){
                     ];
                 }
                 
+                $unitPrice = 0;
                 $uom = '';
                 $qty = '';
-                $amt = '';
+                $amt = 0;
                 
                 if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND deleted='0'")) {
                     $select_stmt->bind_param('ss', $poNumber, $row2['raw_mat_code']);
@@ -312,13 +314,13 @@ if ($type == "MULTI"){
                     "SHIPPER"     => $row["transporter_code"] ?? "T01",
                     "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                     "DOCNOEX"     => "-",
-                    "REMARK1"     => $row["delivery_no"],
+                    "REMARK1"     => $row["delivery_no"] ?? '',
                     "QTY"         => $qty,
                     "UOM"         => $uom,
                     "PROJECT"     => $row['plant_code'],
                     "LOCATION"    => $row['plant_code'],
-                    //"UNITPRICE"   => round($unitPrice, 2),
-                    //"AMOUNT"      => round($amt, 2),
+                    "UNITPRICE"   => round($unitPrice, 2),
+                    "AMOUNT"      => round($amt, 2),
                     "PO_NUMBER"   => $poNumber
                 ];
             }

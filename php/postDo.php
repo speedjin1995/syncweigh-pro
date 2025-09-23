@@ -76,7 +76,7 @@ if ($type == "MULTI"){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                $doQuery = "select * from Weight WHERE transaction_status = 'Sales' AND purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                 $doRecords = mysqli_query($db, $doQuery);
 
                 while($row2 = mysqli_fetch_assoc($doRecords)) {
@@ -247,10 +247,10 @@ if ($type == "MULTI"){
         );
     }
 }else{
-    $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N'".$searchQuery;
+    $sql = "select * from Weight WHERE transaction_status = 'Sales' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N'".$searchQuery;
     if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
         $username = implode("', '", $_SESSION["plant"]);
-        $sql = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N' and plant_code IN ('$username')".$searchQuery;
+        $sql = "select * from Weight WHERE transaction_status = 'Sales' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N' and plant_code IN ('$username')".$searchQuery;
     }
 
     if ($stmt2 = $db->prepare($sql)){
