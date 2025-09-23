@@ -132,7 +132,7 @@ if(isset($_POST['userID'])){
                             $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
                             $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' and transaction_status = 'Sales'";
                             $doRecords = mysqli_query($db, $doQuery);
                             $weighingData = array();
 
@@ -170,7 +170,7 @@ if(isset($_POST['userID'])){
                             $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
                             $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' and transaction_status = 'Purchase'";
                             $grRecords = mysqli_query($db, $grQuery);
                             $weighingData = array();
 
