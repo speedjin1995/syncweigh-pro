@@ -91,14 +91,55 @@ $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
 $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N'".$searchQuery;
+$filteredQuery2 = "select * from Weight where status = '0' and is_cancel = 'N'".$searchQuery;
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
   $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')".$searchQuery;
+  $filteredQuery2 = "select * from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')".$searchQuery;
 }
 
 $sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
+
+$salesPendingCount = 0;
+$salesCompleteCount = 0;
+$salesCancelCount = 0;
+$purchasePendingCount = 0;
+$purchaseCompleteCount = 0;
+$purchaseCancelCount = 0;
+$returnPendingCount = 0;
+$returnCompleteCount = 0;
+$returnCancelCount = 0;
+
+$countQuery = mysqli_query($db, $filteredQuery2);
+while($countRow = mysqli_fetch_assoc($countQuery)) {
+  if ($countRow['transaction_status'] == 'Sales') {
+    if ($countRow['is_complete'] == 'N' && $countRow['is_cancel'] == 'N') {
+      $salesPendingCount++;
+    } elseif ($countRow['is_complete'] == 'Y' && $countRow['is_cancel'] == 'N') {
+      $salesCompleteCount++;
+    } elseif ($countRow['is_cancel'] == 'Y') {
+      $salesCancelCount++;
+    }
+  } elseif ($countRow['transaction_status'] == 'Purchase') {
+    if ($countRow['is_complete'] == 'N' && $countRow['is_cancel'] == 'N') {
+      $purchasePendingCount++;
+    } elseif ($countRow['is_complete'] == 'Y' && $countRow['is_cancel'] == 'N') {
+      $purchaseCompleteCount++;
+    } elseif ($countRow['is_cancel'] == 'Y') {
+      $purchaseCancelCount++;
+    }
+  } elseif ($countRow['transaction_status'] == 'Return') {
+    if ($countRow['is_complete'] == 'N' && $countRow['is_cancel'] == 'N') {
+      $returnPendingCount++;
+    } elseif ($countRow['is_complete'] == 'Y' && $countRow['is_cancel'] == 'N') {
+      $returnCompleteCount++;
+    } elseif ($countRow['is_cancel'] == 'Y') {
+      $returnCancelCount++;
+    }
+  }
+}
 
 ## Fetch records
 $empQuery = "select * from Weight where status = '0' and is_cancel = 'N'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
@@ -110,21 +151,7 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
-$salesCount = 0;
-$purchaseCount = 0;
-$localCount = 0;
-
 while($row = mysqli_fetch_assoc($empRecords)) {
-  if($row['transaction_status'] == 'Sales'){
-    $salesCount++;
-  }
-  else if($row['transaction_status'] == 'Purchase'){
-    $purchaseCount++;
-  }
-  else{
-    $localCount++;
-  }
-
   $data[] = array( 
     "id"=>$row['id'],
     "transaction_id"=>$row['transaction_id'],
@@ -189,9 +216,15 @@ $response = array(
   "iTotalRecords" => $totalRecords,
   "iTotalDisplayRecords" => $totalRecordwithFilter,
   "aaData" => $data,
-  "salesTotal" => $salesCount,
-  "purchaseTotal" => $purchaseCount,
-  "localTotal" => $localCount
+  "salesTotalPending" => $salesPendingCount,
+  "salesTotalComplete" => $salesCompleteCount,
+  "salesTotalCancel" => $salesCancelCount,
+  "purchaseTotalPending" => $purchasePendingCount,
+  "purchaseTotalComplete" => $purchaseCompleteCount,
+  "purchaseTotalCancel" => $purchaseCancelCount,
+  "returnTotalPending" => $returnPendingCount,
+  "returnTotalComplete" => $returnCompleteCount,
+  "returnTotalCancel" => $returnCancelCount
 );
 
 echo json_encode($response);
