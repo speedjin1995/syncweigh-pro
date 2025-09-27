@@ -662,7 +662,7 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div> 
-                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference">
+                                                                            <div class="col-xxl-4 col-lg-4 mb-3" id="divWeightDifference" style="display:none;">
                                                                                 <div class="row">
                                                                                     <label for="weightDifference" class="col-sm-4 col-form-label">Weight Difference</label>
                                                                                     <div class="col-sm-8">
@@ -3554,7 +3554,6 @@ else{
                 $('#divOrderWeight').show();
                 $('#addModal').find('#orderWeight').val("0");
                 $('#addModal').find('#supplierWeight').val("");
-                $('#divWeightDifference').show();
                 $('#divSupplierWeight').hide();
                 $('#divSupplierName').hide();
                 $('#divCustomerName').show();
