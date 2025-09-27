@@ -2172,13 +2172,13 @@ else{
                             var obj = JSON.parse(data);
                             if (obj.status === 'success') {
                                 var price = obj.message.price;
-                                if (unitPrice < price) {
-                                    alert('Unit price doesn\'t meet the minimum value of RM ' + price);
-                                    return;
-                                }else{
+                                // if (unitPrice < price) {
+                                //     alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                //     return;
+                                // }else{
                                     // Continue with form submission after price validation
                                     submitWeightPrintForm();
-                                }
+                                // }
                             } else {
                                 alert('Error validating product price.');
                             }
