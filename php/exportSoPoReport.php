@@ -16,14 +16,14 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
-    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $formatted_date = $dateTime->format('Y-m-d H:i:00');
     $fromDate = $dateTime->format('d/m/Y');
     $searchQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
 }
 
 if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
-    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $formatted_date = $dateTime->format('Y-m-d H:i:59');
     $toDate = $dateTime->format('d/m/Y');
     $searchQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
 }

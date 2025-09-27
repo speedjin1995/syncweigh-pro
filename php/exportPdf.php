@@ -11,7 +11,7 @@ if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
 
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
-    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $formatted_date = $dateTime->format('Y-m-d H:i:00');
     $fromDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
@@ -24,7 +24,7 @@ if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate']
 
 if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
-    $formatted_date = $dateTime->format('Y-m-d H:i');
+    $formatted_date = $dateTime->format('Y-m-d H:i:59');
     $toDate = $dateTime->format('d/m/Y');
 
     if($_POST["file"] == 'weight'){
@@ -745,9 +745,9 @@ if(isset($_POST["file"])){
         else if ($_POST['reportType'] == 'S&PC'){
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date";
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY purchase_order, balance DESC, tare_weight1_date ASC";
             }else{
-                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date';
+                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY purchase_order, balance DESC, tare_weight1_date ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)){
@@ -887,7 +887,8 @@ if(isset($_POST["file"])){
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
-                                                <th>NETT <br>(MT)</th>';
+                                                <th>NETT <br>(MT)</th>
+                                                <th>BALANCE <br>(MT)</th>';
 
                                                 if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                     $message .= '
@@ -982,7 +983,8 @@ if(isset($_POST["file"])){
                                                     <td>' . $row['delivery_no'] . '</td>
                                                     <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>';
+                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['balance']/1000, 2) . '</td>';
 
                                                     if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                         $message .= '
@@ -1007,13 +1009,14 @@ if(isset($_POST["file"])){
                                         
                                             // Add product-wise subtotal
                                             $message .= '<tr style="font-size: 11px;">
-                                                <th colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Subtotal (' . $product . ')</th>
+                                                <th colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalNet/1000, 2) . '</th>';
 
                                                 if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                     $message .= '
+                                                        <th></th>
                                                         <th style="border:1px solid black;">' . number_format($totalUnitPrice, 2) . '</th>
                                                         <th style="border:1px solid black;">' . number_format($totalPricing, 2) . '</th>
                                                     ';
@@ -1033,12 +1036,19 @@ if(isset($_POST["file"])){
                                         $message .= '</tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Grand Total</th>
+                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Grand Total</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
-                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>
-                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
-                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPricing, 2).'</th>
+                                                    <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>';
+
+                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                        $message .= '
+                                                            <th></th>
+                                                            <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
+                                                            <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPricing, 2).'</th>
+                                                        ';
+                                                    }
+                                            $message .= '
                                                 </tr>
                                             </tfoot>';
                                         $message .= '</tbody>';
@@ -1066,9 +1076,9 @@ if(isset($_POST["file"])){
         else if ($_POST['reportType'] == 'DO') {
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY delivery_no ASC";
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY purchase_order, balance DESC, delivery_no ASC";
             }else{
-                $sql = "select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY delivery_no ASC';
+                $sql = "select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY purchase_order, balance DESC, delivery_no ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)) {
@@ -1198,7 +1208,8 @@ if(isset($_POST["file"])){
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
-                                                <th>NETT <br>(MT)</th>';
+                                                <th>NETT <br>(MT)</th>
+                                                <th>BALANCE <br>(MT)</th>';
 
                                                 if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                     $message .= '
@@ -1236,7 +1247,7 @@ if(isset($_POST["file"])){
                                                 $exDel = 'D';
                                             }
 
-                                            $message .= '<tr style="text-align:center; font-size: 8px;"">
+                                            $message .= '<tr style="text-align:center; font-size: 11px;"">
                                                 <td>' . $noCount . '</td>
                                                 <td>' . $row['transaction_id'] . '</td>
                                                 <td>' . $formattedtransactionDate . '</td>
@@ -1257,7 +1268,8 @@ if(isset($_POST["file"])){
                                                 <td>' . $row['delivery_no'] . '</td>
                                                 <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                 <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>';
+                                                <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                <td>' . number_format($row['balance']/1000, 2) . '</td>';
 
                                                 if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                     $message .= '
@@ -1282,8 +1294,9 @@ if(isset($_POST["file"])){
 
                                                 if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                     $message .= '
-                                                        <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice/1000, 2).'</th>
-                                                        <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPrice/1000, 2).'</th>
+                                                        <th></th>
+                                                        <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
+                                                        <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPrice, 2).'</th>
                                                     ';
                                                 }
                                                 $message .= '
@@ -1517,9 +1530,9 @@ if(isset($_POST["file"])){
         else{
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date";
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY purchase_order, balance DESC, tare_weight1_date ASC";
             }else{
-                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date';
+                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY purchase_order, balance DESC, tare_weight1_date ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)) {
@@ -1655,7 +1668,8 @@ if(isset($_POST["file"])){
                                                 <th>DO NO.</th>
                                                 <th>INCOMING <br>(MT)</th>
                                                 <th>OUTGOING <br>(MT)</th>
-                                                <th>NETT <br>(MT)</th>';
+                                                <th>NETT <br>(MT)</th>
+                                                <th>BALANCE <br>(MT)</th>';
 
                                                 if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                     $message .= '
@@ -1750,7 +1764,8 @@ if(isset($_POST["file"])){
                                                     <td>' . $row['delivery_no'] . '</td>
                                                     <td>' . number_format($row['gross_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['tare_weight1']/1000, 2) . '</td>
-                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>';
+                                                    <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
+                                                    <td>' . number_format($row['balance']/1000, 2) . '</td>';
 
                                                     if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                         $message .= '
@@ -1774,14 +1789,15 @@ if(isset($_POST["file"])){
                                         
                                             // Add product-wise subtotal
                                             $message .= '<tr>
-                                                <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Subtotal (' . $product . ')</th>
+                                                <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Subtotal (' . $product . ')</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalNet/1000, 2) . '</th>';
                                                 if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                     $message .= '
-                                                        <th style="border:1px solid black;">' . number_format($totalUnitPrice, 2) . '</th>
-                                                        <th style="border:1px solid black;">' . number_format($totalPricing, 2) . '</th>
+                                                        <th></th>
+                                                        <th style="border:1px solid black;font-size: 11px;">' . number_format($totalUnitPrice, 2) . '</th>
+                                                        <th style="border:1px solid black;font-size: 11px;">' . number_format($totalPricing, 2) . '</th>
                                                     ';
                                                 }
                                                 $message .= '
@@ -1798,12 +1814,13 @@ if(isset($_POST["file"])){
                                         $message .= '</tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '8').'">Grand Total</th>
+                                                    <th style="font-size: 11px;" colspan="'.($row['transaction_status'] == 'Sales' ? '10' : '9').'">Grand Total</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>';
                                                     if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
                                                         $message .= '
+                                                            <th></th>
                                                             <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
                                                             <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalPricing, 2).'</th>
                                                         ';
