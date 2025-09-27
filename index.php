@@ -3434,16 +3434,14 @@ else{
         });
 
         $('#currentWeight').on('change', function(){
+            var productId = $('#addModal').find('#productId').val();
             // var price = $('#productPrice').val() ? parseFloat($('#productPrice').val()).toFixed(2) : 0.00;
             var price = $('#unitPrice').val() ? parseFloat($('#unitPrice').val()).toFixed(2) : 0.00;
-            var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text())/1000 : 0;
-            var subTotalPrice = price * weight;
-            // var sstPrice = subTotalPrice * 0.08;
-            var sstPrice = subTotalPrice * 0;
-            var totalPrice = subTotalPrice + sstPrice;
-            $('#subTotalPrice').val(subTotalPrice.toFixed(2));
-            $('#sstPrice').val(sstPrice.toFixed(2));
-            $('#totalPrice').val(totalPrice.toFixed(2));
+            var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
+
+            if (productId && price && weight){
+                calculatePrice(price, weight, productId);
+            }
         });
 
         $('#transactionStatus').on('change', function(){
@@ -3554,6 +3552,13 @@ else{
                 $('#divOrderWeight').show();
                 $('#addModal').find('#orderWeight').val("0");
                 $('#addModal').find('#supplierWeight').val("");
+
+                if ($(this).val() == "Sales"){
+                    $('#divWeightDifference').hide();
+                }else{
+                    $('#divWeightDifference').show();
+                }
+
                 $('#divSupplierWeight').hide();
                 $('#divSupplierName').hide();
                 $('#divCustomerName').show();
@@ -3599,7 +3604,8 @@ else{
 
         //productName
         $('#productName').on('change', function(){
-            $('#productId').val($('#productName :selected').data('id'));
+            var productId = $('#productName :selected').data('id');
+            $('#productId').val(productId);
             $('#productCode').val($('#productName :selected').data('code'));
             $('#productDescription').val($('#productName :selected').data('description'));
             $('#productPrice').val($('#productName :selected').data('price'));
@@ -3850,16 +3856,13 @@ else{
         });
 
         $('#unitPrice').on('change', function() {
+            var productId = $('#addModal').find('#productId').val();
             var unitPrice = $(this).val() ? parseFloat($(this).val()).toFixed(2) : 0.00;
-            var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text())/1000 : 0;
-            var subTotalPrice = unitPrice * weight;
-            // var sstPrice = subTotalPrice * 0.08;
-            var sstPrice = subTotalPrice * 0;
-            var totalPrice = subTotalPrice + sstPrice;
+            var weight = $('#currentWeight').text() ? parseFloat($('#currentWeight').text()) : 0;
 
-            $('#subTotalPrice').val(subTotalPrice.toFixed(2));
-            $('#sstPrice').val(sstPrice.toFixed(2));
-            $('#totalPrice').val(totalPrice.toFixed(2));
+            if (productId && unitPrice && weight){
+                calculatePrice(unitPrice, weight, productId);
+            }
         });
 
         //supplierName
@@ -4578,6 +4581,51 @@ else{
                     }
                 });
             }
+        }
+    }
+
+    function calculatePrice(unitPrice, weight, productId){
+        var subTotalPrice = 0;
+        var sstPrice = 0;
+        var totalPrice = 0;
+
+        if (productId){
+            $.post('php/getProdRawMatUOM.php', {userID: productId, unitId: 2, type: 'SO'}, function(data)
+            {
+                var obj = JSON.parse(data);
+                if(obj.status === 'success'){
+                    var rate = parseFloat(obj.message.rate);
+                    var basicWeight = weight * rate;
+
+                    subTotalPrice = unitPrice * basicWeight;
+                    // var sstPrice = subTotalPrice * 0.08;
+                    sstPrice = subTotalPrice * 0;
+                    totalPrice = subTotalPrice + sstPrice;
+
+                    $('#subTotalPrice').val(subTotalPrice.toFixed(2));
+                    $('#sstPrice').val(sstPrice.toFixed(2));
+                    $('#totalPrice').val(totalPrice.toFixed(2));
+                }
+                else if(obj.status === 'failed'){
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    alert(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+            });
+        }else{
+            subTotalPrice = unitPrice * weight/1000;
+            // var sstPrice = subTotalPrice * 0.08;
+            sstPrice = subTotalPrice * 0;
+            totalPrice = subTotalPrice + sstPrice;
+
+            $('#subTotalPrice').val(subTotalPrice.toFixed(2));
+            $('#sstPrice').val(sstPrice.toFixed(2));
+            $('#totalPrice').val(totalPrice.toFixed(2));
         }
     }
 
