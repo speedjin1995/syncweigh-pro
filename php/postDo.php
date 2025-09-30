@@ -83,6 +83,7 @@ if ($type == "MULTI"){
                     $orderNo = $row2['purchase_order'];
                     $productCode = $row2['product_code'];
                     $plantCode = $row2['plant_code'];
+                    $customerCode = $row2['customer_code'];
         
                     $soNo = '';
                     $uom = '';
@@ -109,8 +110,8 @@ if ($type == "MULTI"){
                     if ($orderNo === '-' || empty($orderNo)) {
                         $unitPrice = $row['unit_price'];
                     } else {
-                        if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
-                            $select_stmt->bind_param('sss', $orderNo, $productCode, $plantCode);
+                        if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
+                            $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                             $select_stmt->execute();
                             $result3 = $select_stmt->get_result();
                             if ($row3 = $result3->fetch_assoc()) {
@@ -262,6 +263,7 @@ if ($type == "MULTI"){
                 $orderNo = $row['purchase_order'];
                 $productCode = $row['product_code'];
                 $plantCode = $row['plant_code'];
+                $customerCode = $row2['customer_code'];
     
                 $soNo = '';
                 $uom = '';
@@ -288,8 +290,8 @@ if ($type == "MULTI"){
                 if ($orderNo === '-' || empty($orderNo)) {
                     $unitPrice = $row['unit_price'];
                 } else {
-                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
-                        $select_stmt->bind_param('sss', $orderNo, $productCode, $plantCode);
+                    if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
+                        $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                         $select_stmt->execute();
                         $result3 = $select_stmt->get_result();
                         if ($row3 = $result3->fetch_assoc()) {
