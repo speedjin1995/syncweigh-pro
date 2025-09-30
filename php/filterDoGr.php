@@ -18,7 +18,7 @@ $searchQuery = "";
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
   $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
   $fromDateTime = $dateTime->format('Y-m-d H:i:00');
-  $searchQuery = " and tare_weight1_date >= '".$fromDateTime."'";
+  $searchQuery .= " and tare_weight1_date >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
