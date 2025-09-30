@@ -720,6 +720,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                         $updatePoSoStmt->bind_param('ssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $supCustCode);
                         $updatePoSoStmt->execute();
                         $updatePoSoStmt->close();
+
+                        // Update Balance in Weight Table
+                        $updateWeightBalStmt = $db->prepare("UPDATE Weight SET balance=? WHERE id=?");
+                        $updateWeightBalStmt->bind_param('ss', $currentBalance, $weightId);
+                        $updateWeightBalStmt->execute();
+                        $updateWeightBalStmt->close();
                     }
                 }
 
@@ -1026,6 +1032,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                 $updatePoSoStmt->bind_param('ssssss', $convertedBalance, $currentBalance, $poSoStatus, $purchaseOrder, $prodRawCode, $supCustCode);
                                 $updatePoSoStmt->execute();
                                 $updatePoSoStmt->close();
+
+                                // Update Balance in Weight Table
+                                $updateWeightBalStmt = $db->prepare("UPDATE Weight SET balance=? WHERE id=?");
+                                $updateWeightBalStmt->bind_param('ss', $currentBalance, $id);
+                                $updateWeightBalStmt->execute();
+                                $updateWeightBalStmt->close();
                             }
                         }
 
