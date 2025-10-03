@@ -3678,13 +3678,13 @@ else{
                                 $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
                             }
 
-                            if (exDel == 'E') {
-                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                            } else {
-                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                            }
-
                             if (!isEdit){
+                                if (exDel == 'E') {
+                                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                                } else {
+                                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                                }
+
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
@@ -3794,14 +3794,12 @@ else{
                                 $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
                             }
 
-                            if (exDel == 'E') {
-                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                            } else {
-                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                            }
-                            
-                            //$('#addModal').find('#transporter').val(transporterName).trigger('change');
                             if (!isEdit){
+                                if (exDel == 'E') {
+                                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                                } else {
+                                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                                }
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
                             $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
@@ -4980,7 +4978,7 @@ else{
                     //$('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
                 });
                 
-                isEdit = false;
+                // isEdit = false; // comment out as already reset to false when add new button clicked
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');
