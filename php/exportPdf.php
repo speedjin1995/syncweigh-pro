@@ -745,9 +745,9 @@ if(isset($_POST["file"])){
         else if ($_POST['reportType'] == 'S&PC'){
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY purchase_order, balance DESC, tare_weight1_date ASC";
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date ASC";
             }else{
-                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY purchase_order, balance DESC, tare_weight1_date ASC';
+                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)){
@@ -1076,9 +1076,9 @@ if(isset($_POST["file"])){
         else if ($_POST['reportType'] == 'DO') {
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY purchase_order, balance DESC, delivery_no ASC";
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY delivery_no ASC";
             }else{
-                $sql = "select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY purchase_order, balance DESC, delivery_no ASC';
+                $sql = "select * from Weight WHERE is_complete = 'Y'".$searchQuery.' ORDER BY delivery_no ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)) {
@@ -1530,9 +1530,9 @@ if(isset($_POST["file"])){
         else{
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
-                $sql = "select * from Weight WHERE id IN ($id) ORDER BY purchase_order, balance DESC, tare_weight1_date ASC";
+                $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date ASC";
             }else{
-                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY purchase_order, balance DESC, tare_weight1_date ASC';
+                $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date ASC';
             }
 
             if ($select_stmt = $db->prepare($sql)) {
