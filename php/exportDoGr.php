@@ -95,12 +95,15 @@ if ($isMulti == 'N'){
 
                 $productId = searchProductIdByCode($row['product_code'], $db);
                 $uom = searchProductBasicUomByCode($row['product_code'], $db);
+
                 if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
                     $update_stmt->bind_param('s', $productId);
                     $update_stmt->execute();
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
                         $qty = $row['nett_weight1'] * $row4['rate'];
+                    }else{
+                        $qty = $row['nett_weight1']/1000;
                     }
                     $update_stmt->close();
                 }
@@ -205,8 +208,11 @@ if ($isMulti == 'N'){
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
                                     $qty = $row2['nett_weight1'] * $row4['rate'];
-                                    $amt = $qty * $unitPrice;
+                                }else{
+                                    $qty = $row['nett_weight1']/1000;
                                 }
+
+                                $amt = $qty * $unitPrice;
                                 $update_stmt->close();
                             }
                         }
@@ -257,7 +263,7 @@ if ($isMulti == 'N'){
                 $doRecords = mysqli_query($db, $doQuery);
                 $weighingData = array();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = mysqli_fetch_assoc($doRecords)) { 
                     $lineData = []; // Ensure it starts as an empty array each iteration
                     $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
                     $tareDateTime = $tareDate->format('d/m/Y');
@@ -267,8 +273,8 @@ if ($isMulti == 'N'){
                     $unitPrice = 0;
                     $soNo = '';
                     $uom = '';
-                    $qty = '';
-                    $amt = '';
+                    $qty = 0;
+                    $amt = 0; 
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND plant_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $row2['product_code'], $row2['plant_code']);
                         $select_stmt->execute();
@@ -276,7 +282,7 @@ if ($isMulti == 'N'){
                         if ($row3 = $result->fetch_assoc()) {
                             $uom = searchUnitById($row3['converted_unit'], $db);
                             $productId = searchProductIdByCode($row3['product_code'], $db);
-                            $unitPrice = $row3['unit_price'];
+                            $unitPrice = $row3['unit_price'] ?? 0;
                             $soNo = $row3['so_no'];
 
                             if ($update_stmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id=? AND unit_id='2' AND status='0'")) {
@@ -285,8 +291,11 @@ if ($isMulti == 'N'){
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
                                     $qty = $row2['nett_weight1'] * $row4['rate'];
-                                    $amt = $qty * $unitPrice;
+                                }else{
+                                    $qty = $row['nett_weight1']/1000;
                                 }
+
+                                $amt = $qty * $unitPrice;
                                 $update_stmt->close();
                             }
                         }
@@ -340,8 +349,8 @@ if ($isMulti == 'N'){
 
                     $unitPrice = 0;
                     $uom = '';
-                    $qty = '';
-                    $amt = '';
+                    $qty = 0;
+                    $amt = 0;
                     if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $poNo, $row2['raw_mat_code'], $row2['plant_code']);
                         $select_stmt->execute();
@@ -349,7 +358,7 @@ if ($isMulti == 'N'){
                         if ($row3 = $result->fetch_assoc()) { 
                             $uom = searchUnitById($row3['converted_unit'], $db);
                             $rawMatId = searchRawMatIdByCode($row3['raw_mat_code'], $db);
-                            $unitPrice = $row3['unit_price'];
+                            $unitPrice = $row3['unit_price'] ?? 0;
 
                             if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
                                 $update_stmt->bind_param('s', $rawMatId);
@@ -357,8 +366,10 @@ if ($isMulti == 'N'){
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
                                     $qty = $row2['nett_weight1'] * $row4['rate'];
-                                    $amt = $qty * $unitPrice;
+                                }else{
+                                    $qty = $row['nett_weight1']/1000;
                                 }
+                                $amt = $qty * $unitPrice;
                                 $update_stmt->close();
                             }
                         }
