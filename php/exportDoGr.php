@@ -89,8 +89,8 @@ if ($isMulti == 'N'){
 
                 $soNo = '';
                 $uom = '';
-                $qty = '';
-                $amt = '';
+                $qty = 0;
+                $amt = 0;
                 $unitPrice = 0;
 
                 $productId = searchProductIdByCode($row['product_code'], $db);
@@ -106,7 +106,7 @@ if ($isMulti == 'N'){
                 }
                 
                 if ($orderNo == '-' || $orderNo == '' || $orderNo == null) {
-                    $unitPrice = $row['unit_price'];
+                    $unitPrice = $row['unit_price'] ?? 0;
                     $amt = $qty * $unitPrice;
                 }else{
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
@@ -188,8 +188,8 @@ if ($isMulti == 'N'){
 
                     $unitPrice = 0;
                     $uom = '';
-                    $qty = '';
-                    $amt = '';
+                    $qty = 0;
+                    $amt = 0;
                     if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $poNo, $row2['raw_mat_code'], $row2['plant_code']);
                         $select_stmt->execute();
@@ -197,7 +197,7 @@ if ($isMulti == 'N'){
                         if ($row3 = $result->fetch_assoc()) { 
                             $uom = searchUnitById($row3['converted_unit'], $db);
                             $rawMatId = searchRawMatIdByCode($row3['raw_mat_code'], $db);
-                            $unitPrice = $row3['unit_price'];
+                            $unitPrice = $row3['unit_price'] ?? 0;
 
                             if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
                                 $update_stmt->bind_param('s', $rawMatId);
