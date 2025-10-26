@@ -86,11 +86,11 @@ else{
 
 <?php include 'layouts/body.php'; ?>
 
-<!-- <div class="loading" id="spinnerLoading" style="display:none">
+<div class="loading" id="spinnerLoading" style="display:none">
   <div class='mdi mdi-loading' style='transform:scale(0.79);'>
     <div></div>
   </div>
-</div> -->
+</div>
 
 <!-- Begin page -->
 <div id="layout-wrapper">
@@ -1541,7 +1541,7 @@ else{
                     });
                 }
 
-                $('#spinnerLoading').hide();
+                //$('#spinnerLoading').hide();
             } 
             else {
                 if (confirm('Are you sure you want to post to SQL?')) {
@@ -1573,7 +1573,7 @@ else{
                     });
                 }
 
-                $('#spinnerLoading').hide();
+                //$('#spinnerLoading').hide();
             }     
         });
 

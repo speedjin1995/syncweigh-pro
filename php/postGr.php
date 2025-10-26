@@ -69,12 +69,15 @@ if ($type == "MULTI"){
 
             while ($row = $result->fetch_assoc()) {
                 $soNo = $row['purchase_order'];
+                $prdCode = $row['raw_mat_code'];
+                $pltCode = $row['plant_code'];
+                $custCode = $row['supplier_code'];
                 $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
                 $fromDateTime = $fromDate->format('Y-m-d H:i:00');
                 $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:59');
 
-                $doQuery = "select * from Weight WHERE transaction_status = 'Purchase' AND purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
+                $doQuery = "select * from Weight WHERE transaction_status = 'Purchase' AND purchase_order = '$soNo' AND raw_mat_code = '$prdCode' AND supplier_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
                 $doRecords = mysqli_query($db, $doQuery);
 
                 while($row2 = mysqli_fetch_assoc($doRecords)) {
@@ -121,22 +124,22 @@ if ($type == "MULTI"){
                 
                     // Add item to this PO_NUMBER's items
                     $groupedData[$poNumber]["items"][] = [
-                        "DOCREF2"     => $row["transaction_id"],
-                        "DOCDATE"     => substr($row["tare_weight1_date"], 0, 10),
-                        "DESCRIPTION2"=> $row["lorry_plate_no1"],
-                        "CODE"        => $row["supplier_code"] ?? "300-C0001", // hardcoded or dynamic if needed
-                        "COMPANYNAME" => $row["supplier_name"],
-                        "ITEMCODE"    => $row["raw_mat_code"],
-                        "DESCRIPTION" => $row["raw_mat_name"],
-                        "REMARK2"     => $row["destination"],
-                        "SHIPPER"     => $row["transporter_code"] ?? "T01",
-                        "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
-                        "DOCNOEX"     => "-",
-                        "REMARK1"     => $row["delivery_no"] ?? '',
+                        "DOCREF2"     => $row2["transaction_id"],
+                        "DOCDATE"     => substr($row2["tare_weight1_date"], 0, 10),
+                        "DESCRIPTION2"=> $row2["lorry_plate_no1"],
+                        "CODE"        => $row2["supplier_code"] ?? "300-C0001", // hardcoded or dynamic if needed
+                        "COMPANYNAME" => $row2["supplier_name"],
+                        "ITEMCODE"    => $row2["raw_mat_code"],
+                        "DESCRIPTION" => $row2["raw_mat_name"],
+                        "REMARK2"     => $row2["destination"],
+                        "SHIPPER"     => $row2["transporter_code"] ?? "T01",
+                        "DOCREF1"     => ($row2["ex_del"] == 'EX' ? 'E' : 'D'),
+                        "DOCNOEX"     => $orderNo,
+                        "REMARK1"     => $row2["delivery_no"] ?? '',
                         "QTY"         => $qty,
                         "UOM"         => $uom,
-                        "PROJECT"     => $row['plant_code'],
-                        "LOCATION"    => $row['plant_code'],
+                        "PROJECT"     => $row2['plant_code'],
+                        "LOCATION"    => $row2['plant_code'],
                         "UNITPRICE"   => round($unitPrice, 2),
                         "AMOUNT"      => round($amt, 2),
                         "PO_NUMBER"   => $poNumber
@@ -251,10 +254,10 @@ if ($type == "MULTI"){
         );
     }
 }else{
-    $sql = "select * from Weight WHERE transaction_status = 'Purchase' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N'".$searchQuery." group by purchase_order";
+    $sql = "select * from Weight WHERE transaction_status = 'Purchase' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N'".$searchQuery;
     if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
         $username = implode("', '", $_SESSION["plant"]);
-        $sql = "select * from Weight WHERE transaction_status = 'Purchase' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N' and plant_code IN ('$username')".$searchQuery." group by purchase_order";
+        $sql = "select * from Weight WHERE transaction_status = 'Purchase' AND is_complete = 'Y' AND  is_cancel <> 'Y' AND synced='N' and plant_code IN ('$username')".$searchQuery;
     }
 
     if ($stmt2 = $db->prepare($sql)){
@@ -264,6 +267,9 @@ if ($type == "MULTI"){
 
             while ($row = $result->fetch_assoc()) {
                 $poNumber = $row["purchase_order"]; // your DB column for PO_NUMBER
+                $orderNo = $row['purchase_order'];
+                $raw_mat_code = $row['raw_mat_code'];
+                $plantCode = $row['plant_code'];
             
                 // If this PO_NUMBER is not yet in the grouped array, create it
                 if (!isset($groupedData[$poNumber])) {
@@ -279,7 +285,7 @@ if ($type == "MULTI"){
                 $amt = 0;
                 
                 if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND deleted='0'")) {
-                    $select_stmt->bind_param('ss', $poNumber, $row2['raw_mat_code']);
+                    $select_stmt->bind_param('ss', $poNumber, $row['raw_mat_code']);
                     $select_stmt->execute();
                     $result = $select_stmt->get_result();
                     if ($row3 = $result->fetch_assoc()) { 
@@ -313,7 +319,7 @@ if ($type == "MULTI"){
                     "REMARK2"     => $row["destination"],
                     "SHIPPER"     => $row["transporter_code"] ?? "T01",
                     "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
-                    "DOCNOEX"     => "-",
+                    "DOCNOEX"     => $orderNo,
                     "REMARK1"     => $row["delivery_no"] ?? '',
                     "QTY"         => $qty,
                     "UOM"         => $uom,
