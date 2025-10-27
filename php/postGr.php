@@ -63,6 +63,8 @@ if ($type == "MULTI"){
         $ids = $_POST['userID'];
     }
 
+    $groupedData = [];
+
     if ($stmt2 = $db->prepare("SELECT * FROM Weight WHERE id IN ($ids) AND synced='N'")) {
         if($stmt2->execute()){
             $result = $stmt2->get_result();
@@ -82,7 +84,7 @@ if ($type == "MULTI"){
 
                 while($row2 = mysqli_fetch_assoc($doRecords)) {
                     $poNumber = $row2["purchase_order"]; // your DB column for PO_NUMBER
-                    $orderNo = $row2['purchase_order'];
+                    //$orderNo = $row2['purchase_order'];
                     $raw_mat_code = $row2['raw_mat_code'];
                     $plantCode = $row2['plant_code'];
             
@@ -102,8 +104,9 @@ if ($type == "MULTI"){
                     if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('ss', $poNumber, $row2['raw_mat_code']);
                         $select_stmt->execute();
-                        $result = $select_stmt->get_result();
-                        if ($row3 = $result->fetch_assoc()) { 
+                        $result2 = $select_stmt->get_result();
+                        
+                        if ($row3 = $result2->fetch_assoc()) { 
                             $uom = searchUnitById($row3['converted_unit'], $db);
                             $rawMatId = searchRawMatIdByCode($row3['raw_mat_code'], $db);
                             $unitPrice = $row3['unit_price'];
@@ -111,8 +114,9 @@ if ($type == "MULTI"){
                             if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
                                 $update_stmt->bind_param('s', $rawMatId);
                                 $update_stmt->execute();
-                                $result2 = $update_stmt->get_result();
-                                if ($row4 = $result2->fetch_assoc()) {
+                                $result3 = $update_stmt->get_result();
+                                
+                                if ($row4 = $result3->fetch_assoc()) {
                                     $qty = $row2['nett_weight1'] * $row4['rate'];
                                     $amt = $qty * $unitPrice;
                                 }
@@ -134,7 +138,7 @@ if ($type == "MULTI"){
                         "REMARK2"     => $row2["destination"],
                         "SHIPPER"     => $row2["transporter_code"] ?? "T01",
                         "DOCREF1"     => ($row2["ex_del"] == 'EX' ? 'E' : 'D'),
-                        "DOCNOEX"     => $orderNo,
+                        "DOCNOEX"     => $poNumber,
                         "REMARK1"     => $row2["delivery_no"] ?? '',
                         "QTY"         => $qty,
                         "UOM"         => $uom,
@@ -287,8 +291,9 @@ if ($type == "MULTI"){
                 if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND deleted='0'")) {
                     $select_stmt->bind_param('ss', $poNumber, $row['raw_mat_code']);
                     $select_stmt->execute();
-                    $result = $select_stmt->get_result();
-                    if ($row3 = $result->fetch_assoc()) { 
+                    $result2 = $select_stmt->get_result();
+                    
+                    if ($row3 = $result2->fetch_assoc()) { 
                         $uom = searchUnitById($row3['converted_unit'], $db);
                         $rawMatId = searchRawMatIdByCode($row3['raw_mat_code'], $db);
                         $unitPrice = $row3['unit_price'];
@@ -296,9 +301,10 @@ if ($type == "MULTI"){
                         if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
                             $update_stmt->bind_param('s', $rawMatId);
                             $update_stmt->execute();
-                            $result2 = $update_stmt->get_result();
-                            if ($row4 = $result2->fetch_assoc()) {
-                                $qty = $row2['nett_weight1'] * $row4['rate'];
+                            $result3 = $update_stmt->get_result();
+                            
+                            if ($row4 = $result3->fetch_assoc()) {
+                                $qty = $row['nett_weight1'] * $row4['rate'];
                                 $amt = $qty * $unitPrice;
                             }
                             $update_stmt->close();
