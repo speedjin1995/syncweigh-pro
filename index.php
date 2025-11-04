@@ -1540,7 +1540,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
 
-                        $.post('php/print.php', {userID: obj.id, file: 'weight'}, function(data){
+                        $.post('php/print.php', {userID: obj.id, file: 'weight', type: obj.weightType}, function(data){
                             var obj = JSON.parse(data);
 
                             if(obj.status === 'success'){
