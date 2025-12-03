@@ -137,6 +137,7 @@ if (!empty($data['data'])) {
         $UnitPrice = (isset($rows['UNITPRICE']) && !empty($rows['UNITPRICE']) && $rows['UNITPRICE'] !== '' && $rows['UNITPRICE'] !== null) ? (float) trim($rows['UNITPRICE']) : '';
         $status = 'Open';
         $actionId = 1;
+        $conversionRate = 1;
 
         # Customer Checking & Processing
         if($CustomerCode != null && $CustomerCode != ''){
@@ -342,6 +343,7 @@ if (!empty($data['data'])) {
                 continue;
             }else{                
                 $OrderQuantity = $ConvertedOrderQuantity / $productUomRow['rate'];
+                $conversionRate = (float)$productUomRow['rate'];
             }
         }
 
@@ -405,8 +407,51 @@ if (!empty($data['data'])) {
                 }
             }
             else{
-                $errMsg = "Sales order for Customer P/O No: ".$OrderNumber." + Product: ".$ProductName." already exist.";
-                $errorSoProductArray[] = $errMsg;
+                //$errMsg = "Sales order for Customer P/O No: ".$OrderNumber." + Product: ".$ProductName." already exist.";
+                //$errorSoProductArray[] = $errMsg;
+                $currentBalance = $OrderQuantity;
+
+                if($weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND status='0' AND is_complete='Y' AND is_cancel='N'")){
+                    $weighing_stmt->bind_param('ss', $OrderNumber, $ProductCode);
+                    $weighing_stmt->execute();
+                    $result = $weighing_stmt->get_result(); 
+                    $weighing_stmt->close();
+
+                    if ($result->num_rows > 0) {
+                        $orderSuppWeights = 0;
+
+                        while ($weightRow = $result->fetch_assoc()) {
+                            if ($weightRow['transaction_status'] == 'Purchase'){
+                                $orderSuppWeights += $weightRow['supplier_weight'];
+                            }else{
+                                $orderSuppWeights += $weightRow['nett_weight1'];
+                            }
+                        }
+
+                        $currentBalance = $OrderQuantity - $orderSuppWeights;
+                    }
+                }
+
+                $convertedBalance  = $currentBalance * $conversionRate;
+
+                if($updatePoSoStmt = $db->prepare("
+                    UPDATE Sales_Order 
+                    SET 
+                        converted_order_qty=?, 
+                        order_quantity=?, 
+                        converted_balance=?, 
+                        balance=?, 
+                        destination_code=?, 
+                        destination_name=?, 
+                        transporter_code=?, 
+                        transporter_name=?, 
+                        modified_by='SYSTEM' 
+                    WHERE order_no=? AND product_code=? AND customer_code=?
+                ")){
+                    $updatePoSo->bind_param("sssssssssss", $ConvertedOrderQuantity, $OrderQuantity, $convertedBalance, $currentBalance, 
+                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $OrderNumber, $ProductCode, $CustomerCode);
+                    $updatePoSo->execute();
+                }
             }
         }
     }

@@ -135,6 +135,7 @@ if (!empty($data['data'])) {
         $UnitPrice = (isset($rows['UNITPRICE']) && !empty($rows['UNITPRICE']) && $rows['UNITPRICE'] !== '' && $rows['UNITPRICE'] !== null) ? (float) trim($rows['UNITPRICE']) : '';
         $status = 'Open';
         $actionId = 1;
+        $conversionRate = 1;
 
         # Supplier Checking & Processing
         if($SupplierCode != null && $SupplierCode != ''){
@@ -342,6 +343,7 @@ if (!empty($data['data'])) {
             }
             else{                
                 $SupplierQuantity = $ConvertedSupplierQuantity / $rawMatUomRow['rate'];
+                $conversionRate = (float)$rawMatUomRow['rate'];
             }
         }
 
@@ -391,8 +393,51 @@ if (!empty($data['data'])) {
                     }
                 }
             }else{
-                $errMsg = "Purchase order for P/O No: ".$PONumber." + Raw Material: ".$RawMaterialName." already exist.";
-                $errorSoProductArray[] = $errMsg;
+                //$errMsg = "Purchase order for P/O No: ".$PONumber." + Raw Material: ".$RawMaterialName." already exist.";
+                //$errorSoProductArray[] = $errMsg;
+                $currentBalance = $SupplierQuantity;
+
+                if($weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND status='0' AND is_complete='Y' AND is_cancel='N'")){
+                    $weighing_stmt->bind_param('ss', $PONumber, $RawMaterialCode);
+                    $weighing_stmt->execute();
+                    $result = $weighing_stmt->get_result(); 
+                    $weighing_stmt->close();
+
+                    if ($result->num_rows > 0) {
+                        $orderSuppWeights = 0;
+
+                        while ($weightRow = $result->fetch_assoc()) {
+                            if ($weightRow['transaction_status'] == 'Purchase'){
+                                $orderSuppWeights += $weightRow['supplier_weight'];
+                            }else{
+                                $orderSuppWeights += $weightRow['nett_weight1'];
+                            }
+                        }
+
+                        $currentBalance = $SupplierQuantity - $orderSuppWeights;
+                    }
+                }
+
+                $convertedBalance  = $currentBalance * $conversionRate;
+
+                if($updatePoSoStmt = $db->prepare("
+                    UPDATE Purchase_Order 
+                    SET 
+                        converted_order_qty=?, 
+                        order_quantity=?, 
+                        converted_balance=?, 
+                        balance=?, 
+                        destination_code=?, 
+                        destination_name=?, 
+                        transporter_code=?, 
+                        transporter_name=?, 
+                        modified_by='SYSTEM' 
+                    WHERE order_no=? AND raw_mat_code=? AND supplier_code=?
+                ")){
+                    $updatePoSo->bind_param("sssssssssss", $ConvertedSupplierQuantity, $SupplierQuantity, $convertedBalance, $currentBalance, 
+                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $PONumber, $RawMaterialCode, $SupplierCode);
+                    $updatePoSo->execute();
+                }
             }
         }
     }

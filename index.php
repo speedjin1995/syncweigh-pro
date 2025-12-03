@@ -4351,8 +4351,25 @@ else{
     // Function to handle weight form submission without printing
     function submitWeightForm() {
         var nettWeight = $('#addModal').find('#nettWeight').val();
+        var transactionStatus = $('#addModal').find('#transactionStatus').val();
+        var purchaseOrder = (transactionStatus == 'Sales' ? $('#addModal').find('#salesOrder').val() : $('#addModal').find('#purchaseOrder').val());
+        var customerSupplier = (transactionStatus == 'Sales' ? $('#addModal').find('#customerName').val() : $('#addModal').find('#supplierName').val());
+        var product = (transactionStatus == 'Sales' ? $('#addModal').find('#productName').val() : $('#addModal').find('#rawMaterialName').val());
+        var transporter = $('#addModal').find('#transporterCode').val();
+        var destination = $('#addModal').find('#destinationCode').val();
+        var product = (transactionStatus == 'Sales' ? $('#addModal').find('#orderWeight').val() : $('#addModal').find('#supplierWeight').val());
+
+        var msg = 
+        "Purchase Order: " + purchaseOrder + "\n" +
+        "Customer/Supplier: " + customerSupplier + "\n" +
+        "Product/Raw Mat: " + product + "\n" +
+        "Transporter: " + transporter + "\n" +
+        "Destination: " + destination + "\n" + 
+        "Supplier/Order Weight: " + nettWeight + "\n\n" +
+        "Confirm submit?";
 
         if (nettWeight > 0){
+            if (confirm(msg)){
             //if ($('#weightForm').valid()) {
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -4382,6 +4399,7 @@ else{
                     }
                 });
             //}
+            }
         }else{
             alert('Nett Weight must be more than 0');
             return;
@@ -4390,83 +4408,108 @@ else{
 
     // Function to handle weight form submission with printing
     function submitWeightPrintForm() {
+        var nettWeight = $('#addModal').find('#nettWeight').val();
+        var transactionStatus = $('#addModal').find('#transactionStatus').val();
+        var purchaseOrder = (transactionStatus == 'Sales' ? $('#addModal').find('#salesOrder').val() : $('#addModal').find('#purchaseOrder').val());
+        var customerSupplier = (transactionStatus == 'Sales' ? $('#addModal').find('#customerName').val() : $('#addModal').find('#supplierName').val());
+        var product = (transactionStatus == 'Sales' ? $('#addModal').find('#productName').val() : $('#addModal').find('#rawMaterialName').val());
+        var transporter = $('#addModal').find('#transporterCode').val();
+        var destination = $('#addModal').find('#destinationCode').val();
+        var product = (transactionStatus == 'Sales' ? $('#addModal').find('#orderWeight').val() : $('#addModal').find('#supplierWeight').val());
+
+        var msg = 
+        "Purchase Order: " + purchaseOrder + "\n" +
+        "Customer/Supplier: " + customerSupplier + "\n" +
+        "Product/Raw Mat: " + product + "\n" +
+        "Transporter: " + transporter + "\n" +
+        "Destination: " + destination + "\n" + 
+        "Supplier/Order Weight: " + nettWeight + "\n\n" +
+        "Confirm submit?";
+
+        if (nettWeight > 0){
+            if (confirm(msg)){
         //if ($('#weightForm').valid()) {
-            $('#spinnerLoading').show();
-            $.post('php/weight.php', $('#weightForm').serialize(), function(data){
-                var obj = JSON.parse(data); 
-                if(obj.status === 'success'){
-                    $('#spinnerLoading').hide();
-                    $('#addModal').modal('hide');
-                    $("#successBtn").attr('data-toast-text', obj.message);
-                    $("#successBtn").click();
+                $('#spinnerLoading').show();
+                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
 
-                    $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
-                        var obj2 = JSON.parse(data);
+                        $.post('php/print.php', {userID: obj.id, file: 'weight', prePrint: 'Y'}, function(data){
+                            var obj2 = JSON.parse(data);
 
-                        if(obj2.status === 'success'){
-                            var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                            printWindow.document.write(obj2.message);
-                            printWindow.document.close();
-                            setTimeout(function(){
-                                printWindow.print();
-                                printWindow.close();
-                                table.ajax.reload();
-                                
-                                setTimeout(function () {
-                                    if (confirm("Do you need to reprint?")) {
-                                        $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
-                                            var obj = JSON.parse(data);
-                                            if (obj.status === 'success') {
-                                                var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
-                                                reprintWindow.document.write(obj.message);
-                                                reprintWindow.document.close();
-                                                setTimeout(function () {
-                                                    reprintWindow.print();
-                                                    reprintWindow.close();
-                                                    <?php
-                                                        if(isset($_GET['weight'])){
-                                                            echo "window.location = 'index.php';";
-                                                        }
-                                                    ?>
-                                                }, 500);
-                                            } 
-                                            else {
-                                                window.location = 'index.php';
-                                            }
-                                        });
-                                    }
-                                    else{
-                                        <?php
-                                            if(isset($_GET['weight'])){
-                                                echo "window.location = 'index.php';";
-                                            }
-                                        ?>
-                                    }
+                            if(obj2.status === 'success'){
+                                var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                printWindow.document.write(obj2.message);
+                                printWindow.document.close();
+                                setTimeout(function(){
+                                    printWindow.print();
+                                    printWindow.close();
+                                    table.ajax.reload();
+                                    
+                                    setTimeout(function () {
+                                        if (confirm("Do you need to reprint?")) {
+                                            $.post('php/print.php', { userID: obj.id, file: 'weight', prePrint: 'Y'}, function (data) {
+                                                var obj = JSON.parse(data);
+                                                if (obj.status === 'success') {
+                                                    var reprintWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
+                                                    reprintWindow.document.write(obj.message);
+                                                    reprintWindow.document.close();
+                                                    setTimeout(function () {
+                                                        reprintWindow.print();
+                                                        reprintWindow.close();
+                                                        <?php
+                                                            if(isset($_GET['weight'])){
+                                                                echo "window.location = 'index.php';";
+                                                            }
+                                                        ?>
+                                                    }, 500);
+                                                } 
+                                                else {
+                                                    window.location = 'index.php';
+                                                }
+                                            });
+                                        }
+                                        else{
+                                            <?php
+                                                if(isset($_GET['weight'])){
+                                                    echo "window.location = 'index.php';";
+                                                }
+                                            ?>
+                                        }
+                                    }, 500);
                                 }, 500);
-                            }, 500);
-                        }
-                        else if(obj.status === 'failed'){
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            $("#failBtn").attr('data-toast-text', "Something wrong when print");
-                            $("#failBtn").click();
-                        }
-                    });
-                }
-                else if(obj.status === 'failed'){
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', obj.message );
-                    $("#failBtn").click();
-                }
-                else{
-                    $('#spinnerLoading').hide();
-                    $("#failBtn").attr('data-toast-text', 'Failed to save');
-                    $("#failBtn").click();
-                }
-            });
-        //}
+                            }
+                            else if(obj.status === 'failed'){
+                                $("#failBtn").attr('data-toast-text', obj.message );
+                                $("#failBtn").click();
+                            }
+                            else{
+                                $("#failBtn").attr('data-toast-text', "Something wrong when print");
+                                $("#failBtn").click();
+                            }
+                        });
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        }
+        else{
+            alert('Nett Weight must be more than 0');
+            return;
+        }
     }
 
     function getSoPo(){

@@ -594,17 +594,17 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     $orderSuppWeight = $supplierWeight;
                     $prodRawCode = $rawMaterialCode;
                     $prodRawName = $rawMaterialName;
-                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
+                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND raw_mat_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                 }elseif($transactionStatus == 'Sales'){
                     $soPoQuantity = $orderWeight;
                     $orderSuppWeight = $nettWeight;
                     $prodRawCode = $productCode;
                     $prodRawName = $productName;
-                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND product_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
+                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND product_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                 }
 
                 # Weighing Details
-                $weighing_stmt->bind_param('ssssss', $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant, $weightId);
+                $weighing_stmt->bind_param('ssss', $purchaseOrder, $prodRawCode, $prodRawName, $weightId);
                 $weighing_stmt->execute();
                 $result = $weighing_stmt->get_result(); 
                 $weighing_stmt->close();
@@ -627,7 +627,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     $currentBalance = $soPoQuantity - $orderSuppWeight;
                 }
             
-                $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
+                if($transactionStatus == 'Purchase'){
+                    $poSoStatus = ($currentBalance <= 10000) ? 'Close' : 'Open';
+                }
+                else{
+                    $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
+                }
 
                 # Inventory Logic
                 $previousNettWeight = 0;
@@ -965,17 +970,17 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                     $orderSuppWeight = $supplierWeight;
                                     $prodRawCode = $rawMaterialCode;
                                     $prodRawName = $rawMaterialName;
-                                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND raw_mat_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
+                                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND raw_mat_code=? AND raw_mat_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                                 }elseif($transactionStatus == 'Sales'){
                                     $soPoQuantity = $orderWeight;
                                     $orderSuppWeight = $nettWeight;
                                     $prodRawCode = $productCode;
                                     $prodRawName = $productName;
-                                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND product_name=? AND plant_code=? AND plant_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
+                                    $weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND product_name=? AND status='0' AND is_complete='Y' AND is_cancel='N' AND id !=?");
                                 }
                 
                                 # Weighing Details
-                                $weighing_stmt->bind_param('ssssss', $purchaseOrder, $prodRawCode, $prodRawName, $plantCode, $plant, $id);
+                                $weighing_stmt->bind_param('ssss', $purchaseOrder, $prodRawCode, $prodRawName, $id);
                                 $weighing_stmt->execute();
                                 $result = $weighing_stmt->get_result();
                 
@@ -997,7 +1002,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                                     $currentBalance = $soPoQuantity - $orderSuppWeight;
                                 }
                             
-                                $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
+                                if($transactionStatus == 'Purchase'){
+                                    $poSoStatus = ($currentBalance <= 10000) ? 'Close' : 'Open';
+                                }
+                                else{
+                                    $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
+                                }
 
                                 if ($transactionStatus == 'Purchase'){
                                     $sql =  "SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?";
