@@ -4369,7 +4369,7 @@ else{
         "Confirm submit?";
 
         if (nettWeight > 0){
-            if (confirm(msg)){
+            if (confirm(msg) && $('#weightForm').valid()){
             //if ($('#weightForm').valid()) {
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -4427,7 +4427,7 @@ else{
         "Confirm submit?";
 
         if (nettWeight > 0){
-            if (confirm(msg)){
+            if (confirm(msg) && $('#weightForm').valid()){
         //if ($('#weightForm').valid()) {
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
