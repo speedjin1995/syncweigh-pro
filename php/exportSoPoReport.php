@@ -1424,7 +1424,11 @@ if(isset($_POST["type"])){
                 $compiledRowData = '';
                 if($groupCount == 1){ 
                     $grpNettWeight = 0;
+                    $grpSupplierWeight = 0;
+                    $grpVariance = 0;
                     $totalNettWeight = 0;
+                    $totalSupplierWeight = 0;
+                    $totalVariance = 0;
                     $grpTotalCount = 0;
 
                     foreach ($processedData as $date => $grpData) { 
@@ -1442,6 +1446,9 @@ if(isset($_POST["type"])){
 
                         foreach ($grpData as $data){ 
                             $grpNettWeight += $data['nett_weight1']/1000; 
+                            $grpSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2);
+                            $grpVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2);
+                            
                             if ($data['ex_del'] == 'EX'){
                                 $exDel = 'E';
                             }else{
@@ -1484,8 +1491,8 @@ if(isset($_POST["type"])){
                                 <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grpData).'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpNettWeight.'</td>
-                                <td></td>
-                                <td></td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpSupplierWeight.'</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpVariance.'</td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                 <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1499,6 +1506,8 @@ if(isset($_POST["type"])){
 
                         $grpTotalCount += count($grpData);
                         $totalNettWeight += $grpNettWeight;
+                        $totalSupplierWeight += $grpSupplierWeight;
+                        $totalVariance += $grpVariance;
                     }
 
                     $compiledRowData .= '
@@ -1506,8 +1515,8 @@ if(isset($_POST["type"])){
                             <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalSupplierWeight.'</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalVariance.'</td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1516,9 +1525,14 @@ if(isset($_POST["type"])){
                         <tr style="height: 18.5px;"></tr>         
                     ';
                 }elseif ($groupCount == 2) { 
-                    $grpTotalCount = 0;
-                    $dateNettWeight = 0;
+                    $grpNettWeight = 0;
+                    $grpSupplierWeight = 0;
+                    $grpVariance = 0;
                     $totalNettWeight = 0;
+                    $totalSupplierWeight = 0;
+                    $totalVariance = 0;
+                    $grpTotalCount = 0;
+                    
                     foreach ($processedData as $grp1 => $grp1Data) { 
                         $rowData = '
                             <tr>
@@ -1533,6 +1547,9 @@ if(isset($_POST["type"])){
                         '; 
                         $grp1Records = 0;
                         $grp1NettWeight = 0;
+                        $grp1SupplierWeight = 0;
+                        $grp1Variance = 0;
+                        
                         foreach ($grp1Data as $date => $dateData){
                             $rowData .= '
                                 <tr>
@@ -1545,9 +1562,16 @@ if(isset($_POST["type"])){
                                     </td>
                                 </tr>
                             '; 
+                            
+                            $dateNettWeight = 0;
+                            $dateSupplierWeight = 0; 
+                            $dateVariance = 0; 
 
                             foreach ($dateData as $data){
                                 $dateNettWeight += $data['nett_weight1']/1000;
+                                $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
+                                
                                 if ($data['ex_del'] == 'EX'){
                                     $exDel = 'E';
                                 }else{
@@ -1590,8 +1614,8 @@ if(isset($_POST["type"])){
                                     <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$date.'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($dateData).'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateSupplierWeight.'</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateVariance.'</td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1602,6 +1626,8 @@ if(isset($_POST["type"])){
 
                             $grp1Records += count($dateData);
                             $grp1NettWeight += $dateNettWeight;
+                            $grp1SupplierWeight += $dateSupplierWeight;
+                            $grp1Variance += $dateVariance;
                         }
 
                         $rowData .= '
@@ -1609,8 +1635,8 @@ if(isset($_POST["type"])){
                                 <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Records.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
-                                <td></td>
-                                <td></td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1SupplierWeight.'</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Variance.'</td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                 <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1624,6 +1650,8 @@ if(isset($_POST["type"])){
 
                         $grpTotalCount += $grp1Records;
                         $totalNettWeight += $grp1NettWeight;
+                        $totalSupplierWeight += $grp1SupplierWeight;
+                        $totalVariance += $grp1Variance;
                     }
 
                     $compiledRowData .= '
@@ -1631,8 +1659,8 @@ if(isset($_POST["type"])){
                             <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grpTotalCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalNettWeight.'</td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalSupplierWeight.'</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$totalVariance.'</td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1642,6 +1670,8 @@ if(isset($_POST["type"])){
                 }elseif ($groupCount == 3) {
                     $companyCount = 0;
                     $companyNettWeight = 0;
+                    $companySupplierWeight = 0;
+                    $companyVariance = 0;
                     $grp2Count = [];
                     $grp2NettWeight = [];
                     
@@ -1660,6 +1690,8 @@ if(isset($_POST["type"])){
 
                         $grp1Count = 0;
                         $grp1NettWeight = 0;
+                        $grp1SupplierWeight = 0;
+                        $grp1Variance = 0;
                         foreach ($grp1Data as $grp2 => $grp2Data){
                             $rowData .= '
                                 <tr>
@@ -1675,6 +1707,8 @@ if(isset($_POST["type"])){
 
                             $grp2Count[$grp2] = 0;
                             $grp2NettWeight[$grp2] = 0;
+                            $grp2SupplierWeight[$grp2] = 0;
+                            $grp2Variance[$grp2] = 0;
 
                             foreach ($grp2Data as $grp3 => $grp3Data){ 
                                 $grp2Count[$grp2] += count($grp3Data);
@@ -1692,9 +1726,15 @@ if(isset($_POST["type"])){
                                 '; 
 
                                 $dateNettWeight = 0;
+                                $dateSupplierWeight = 0;
+                                $dateVariance = 0;
+                                
                                 foreach ($grp3Data as $data){ 
                                     $grp1Count++;
                                     $dateNettWeight += $data['nett_weight1']/1000; 
+                                    $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                    $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
+                                    
                                     if ($data['ex_del'] == 'EX'){
                                         $exDel = 'E';
                                     }else{
@@ -1737,8 +1777,8 @@ if(isset($_POST["type"])){
                                         <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp3.'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.count($grp3Data).'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateSupplierWeight.'</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateVariance.'</td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                         <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1748,8 +1788,11 @@ if(isset($_POST["type"])){
                                 ';
 
                                 $grp2NettWeight[$grp2] += $dateNettWeight;
+                                $grp2SupplierWeight[$grp2] = $dateSupplierWeight;
+                                $grp2Variance[$grp2] = $dateVariance;
                                 $grp1NettWeight += $dateNettWeight;
-
+                                $grp1SupplierWeight += $dateSupplierWeight;
+                                $grp1Variance += $dateVariance;
                             }
 
                             $rowData .= '
@@ -1757,8 +1800,8 @@ if(isset($_POST["type"])){
                                     <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count[$grp2].'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2NettWeight[$grp2].'</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2SupplierWeight[$grp2].'</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Variance[$grp2].'</td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1773,8 +1816,8 @@ if(isset($_POST["type"])){
                                 <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1NettWeight.'</td>
-                                <td></td>
-                                <td></td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1SupplierWeight.'</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Variance.'</td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                 <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1785,7 +1828,8 @@ if(isset($_POST["type"])){
 
                         $companyCount += $grp1Count;
                         $companyNettWeight += $grp1NettWeight;
-
+                        $companySupplierWeight += $grp1SupplierWeight;
+                        $companyVariance += $grp1Variance;
                         $compiledRowData .= $rowData;
                     }
 
@@ -1794,8 +1838,8 @@ if(isset($_POST["type"])){
                             <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companySupplierWeight.'</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyVariance.'</td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1805,6 +1849,8 @@ if(isset($_POST["type"])){
                 }elseif($groupCount == 4){
                     $companyCount = 0;
                     $companyNettWeight = 0;
+                    $companySupplierWeight = 0;
+                    $companyVariance = 0;
 
                     foreach ($processedData as $grp1 => $grp1Data) {
                         $rowData = '
@@ -1821,6 +1867,8 @@ if(isset($_POST["type"])){
                     
                         $grp1Count = 0;
                         $grp1TotalNettWeight = 0;
+                        $grp1TotalSupplierWeight = 0;
+                        $grp1TotalVariance = 0;
                     
                         foreach ($grp1Data as $grp2 => $grp2Data) {
                             $rowData .= '
@@ -1837,6 +1885,8 @@ if(isset($_POST["type"])){
                     
                             $grp2Count = 0;
                             $grp2TotalNettWeight = 0;
+                            $grp2TotalSupplierWeight = 0;
+                            $grp2TotalVariance = 0;
                     
                             foreach ($grp2Data as $grp3 => $grp3Data) { 
                                 $rowData .= '
@@ -1853,6 +1903,8 @@ if(isset($_POST["type"])){
                     
                                 $grp3Count = 0;
                                 $grp3TotalNettWeight = 0;
+                                $grp3TotalSupplierWeight = 0;
+                                $grp3TotalVariance = 0;
                     
                                 foreach ($grp3Data as $grp4 => $grp4Data) {
                                     $rowData .= '
@@ -1868,11 +1920,16 @@ if(isset($_POST["type"])){
                                     ';
                     
                                     $dateNettWeight = 0;
+                                    $dateSupplierWeight = 0; 
+                                    $dateVariance = 0; 
                                     $grp4Count = 0;
                     
                                     foreach ($grp4Data as $data) {
                                         $dateNettWeight += $data['nett_weight1'] / 1000;
+                                        $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                        $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
                                         $grp4Count++;
+                                        
                                         if ($data['ex_del'] == 'EX') {
                                             $exDel = 'E';
                                         } else {
@@ -1915,8 +1972,8 @@ if(isset($_POST["type"])){
                                             <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp4.'</td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4Count.'</td>
                                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateSupplierWeight.'</td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateVariance.'</td>
                                             <td></td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1926,6 +1983,8 @@ if(isset($_POST["type"])){
                                     ';
                     
                                     $grp3TotalNettWeight += $dateNettWeight;
+                                    $grp3TotalSupplierWeight += $dateSupplierWeight;
+                                    $grp3TotalVariance += $dateVariance;
                                     $grp3Count += $grp4Count;
                                 }
                     
@@ -1934,8 +1993,8 @@ if(isset($_POST["type"])){
                                         <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.callLookup($groupOrder[2], $grp3, $db).'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3Count.'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalNettWeight.'</td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalSupplierWeight.'</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalVariance.'</td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                         <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1945,6 +2004,8 @@ if(isset($_POST["type"])){
                                 ';
                     
                                 $grp2TotalNettWeight += $grp3TotalNettWeight;
+                                $grp2TotalSupplierWeight += $grp3TotalSupplierWeight;
+                                $grp2TotalVariance += $grp3TotalVariance;
                                 $grp2Count += $grp3Count;
                             }
                     
@@ -1953,8 +2014,8 @@ if(isset($_POST["type"])){
                                     <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.callLookup($groupOrder[1], $grp2, $db).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count.'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalNettWeight.'</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalSupplierWeight.'</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalVariance.'</td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1964,6 +2025,8 @@ if(isset($_POST["type"])){
                             ';
                     
                             $grp1TotalNettWeight += $grp2TotalNettWeight;
+                            $grp1TotalSupplierWeight += $grp2TotalSupplierWeight;
+                            $grp1TotalVariance += $grp2TotalVariance;
                             $grp1Count += $grp2Count;
                         }
                     
@@ -1972,8 +2035,8 @@ if(isset($_POST["type"])){
                                 <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.callLookup($groupOrder[0], $grp1, $db).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalNettWeight.'</td>
-                                <td></td>
-                                <td></td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalSupplierWeight.'</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalVariance.'</td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                 <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1983,6 +2046,8 @@ if(isset($_POST["type"])){
                         ';
                         
                         $companyNettWeight += $grp1TotalNettWeight;
+                        $companySupplierWeight += $grp1TotalSupplierWeight;
+                        $companyVariance += $grp1TotalVariance;
                         $companyCount += $grp1Count;
                         $compiledRowData .= $rowData;
                     }
@@ -1992,8 +2057,8 @@ if(isset($_POST["type"])){
                             <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companySupplierWeight.'</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyVariance.'</td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2003,6 +2068,8 @@ if(isset($_POST["type"])){
                 }elseif($groupCount == 5){
                     $companyCount = 0;
                     $companyNettWeight = 0;
+                    $companySupplierWeight = 0;
+                    $companyVariance = 0;
 
                     foreach ($processedData as $grp1 => $grp1Data) {
                         $rowData = '
@@ -2019,6 +2086,8 @@ if(isset($_POST["type"])){
                     
                         $grp1Count = 0;
                         $grp1TotalNettWeight = 0;
+                        $grp1TotalSupplierWeight = 0;
+                        $grp1TotalVariance = 0;
                     
                         foreach ($grp1Data as $grp2 => $grp2Data) {
                             $rowData .= '
@@ -2035,6 +2104,8 @@ if(isset($_POST["type"])){
                     
                             $grp2Count = 0;
                             $grp2TotalNettWeight = 0;
+                            $grp2TotalSupplierWeight = 0;
+                            $grp2TotalVariance = 0;
                     
                             foreach ($grp2Data as $grp3 => $grp3Data) { 
                                 $rowData .= '
@@ -2051,6 +2122,8 @@ if(isset($_POST["type"])){
                     
                                 $grp3Count = 0;
                                 $grp3TotalNettWeight = 0;
+                                $grp3TotalSupplierWeight = 0;
+                                $grp3TotalVariance = 0;
                     
                                 foreach ($grp3Data as $grp4 => $grp4Data) {
                                     $rowData .= '
@@ -2067,6 +2140,8 @@ if(isset($_POST["type"])){
                     
                                     $grp4Count = 0;
                                     $grp4TotalNettWeight = 0;
+                                    $grp4TotalSupplierWeight = 0;
+                                    $grp4TotalVariance = 0;
                     
                                     foreach ($grp4Data as $grp5 => $grp5Data) {
                                         $rowData .= '
@@ -2082,10 +2157,15 @@ if(isset($_POST["type"])){
                                         ';
                     
                                         $dateNettWeight = 0;
+                                        $dateSupplierWeight = 0; 
+                                        $dateVariance = 0; 
                                         $grp5Count = 0;
                     
                                         foreach ($grp5Data as $data) {
                                             $dateNettWeight += $data['nett_weight1'] / 1000;
+                                            $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                            $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
+                                            
                                             $grp5Count++;
                                             if ($data['ex_del'] == 'EX') {
                                                 $exDel = 'E';
@@ -2129,8 +2209,8 @@ if(isset($_POST["type"])){
                                                 <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Date Total : '.$grp5.'</td>
                                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp5Count.'</td>
                                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateNettWeight.'</td>
-                                                <td></td>
-                                                <td></td>
+                                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateSupplierWeight.'</td>
+                                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$dateVariance.'</td>
                                                 <td></td>
                                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                                 <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2140,6 +2220,8 @@ if(isset($_POST["type"])){
                                         ';
                     
                                         $grp4TotalNettWeight += $dateNettWeight;
+                                        $grp4TotalSupplierWeight += $dateSupplierWeight;
+                                        $grp4TotalVariance += $dateVariance;
                                         $grp4Count += $grp5Count;
                                     }
                     
@@ -2148,8 +2230,8 @@ if(isset($_POST["type"])){
                                             <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[3].' Total : '.($groupOrder[3] == 'Batch Or Drum' || $groupOrder[3] == 'Vehicle' ? $grp4 : callLookup($groupOrder[3], $grp4, $db)).'</td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4Count.'</td>
                                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4TotalNettWeight.'</td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4TotalSupplierWeight.'</td>
+                                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp4TotalVariance.'</td>
                                             <td></td>
                                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2159,6 +2241,8 @@ if(isset($_POST["type"])){
                                     ';
                     
                                     $grp3TotalNettWeight += $grp4TotalNettWeight;
+                                    $grp3TotalSupplierWeight += $grp4TotalSupplierWeight;
+                                    $grp3TotalVariance += $grp4TotalVariance;
                                     $grp3Count += $grp4Count;
                                 }
                     
@@ -2167,8 +2251,8 @@ if(isset($_POST["type"])){
                                         <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[2].' Total : '.($groupOrder[2] == 'Batch Or Drum' || $groupOrder[2] == 'Vehicle' ? $grp3 : callLookup($groupOrder[2], $grp3, $db)).'</td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3Count.'</td>
                                         <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalNettWeight.'</td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalSupplierWeight.'</td>
+                                        <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp3TotalVariance.'</td>
                                         <td></td>
                                         <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                         <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2178,6 +2262,8 @@ if(isset($_POST["type"])){
                                 ';
                     
                                 $grp2TotalNettWeight += $grp3TotalNettWeight;
+                                $grp2TotalSupplierWeight += $grp3TotalSupplierWeight;
+                                $grp2TotalVariance += $grp3TotalVariance;
                                 $grp2Count += $grp3Count;
                             }
                     
@@ -2186,8 +2272,8 @@ if(isset($_POST["type"])){
                                     <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[1].' Total : '.($groupOrder[1] == 'Batch Or Drum' || $groupOrder[1] == 'Vehicle' ? $grp2 : callLookup($groupOrder[1], $grp2, $db)).'</td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2Count.'</td>
                                     <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalNettWeight.'</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalSupplierWeight.'</td>
+                                    <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp2TotalVariance.'</td>
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2197,6 +2283,8 @@ if(isset($_POST["type"])){
                             ';
                     
                             $grp1TotalNettWeight += $grp2TotalNettWeight;
+                            $grp1TotalSupplierWeight += $grp2TotalSupplierWeight;
+                            $grp1TotalVariance += $grp2TotalVariance;
                             $grp1Count += $grp2Count;
                         }
                     
@@ -2205,8 +2293,8 @@ if(isset($_POST["type"])){
                                 <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$groupOrder[0].' Total : '.($groupOrder[0] == 'Batch Or Drum' || $groupOrder[0] == 'Vehicle' ? $grp1 : callLookup($groupOrder[0], $grp1, $db)).'</td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1Count.'</td>
                                 <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalNettWeight.'</td>
-                                <td></td>
-                                <td></td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalSupplierWeight.'</td>
+                                <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$grp1TotalVariance.'</td>
                                 <td></td>
                                 <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                 <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2216,6 +2304,8 @@ if(isset($_POST["type"])){
                         ';
                         
                         $companyNettWeight += $grp1TotalNettWeight;
+                        $companySupplierWeight += $grp1TotalSupplierWeight;
+                        $companyVariance += $grp1TotalVariance;
                         $companyCount += $grp1Count;
                         $compiledRowData .= $rowData;
                     }
@@ -2225,8 +2315,8 @@ if(isset($_POST["type"])){
                             <td colspan="6" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">Company Total : </td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyCount.'</td>
                             <td colspan="3" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyNettWeight.'</td>
-                            <td></td>
-                            <td></td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companySupplierWeight.'</td>
+                            <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">'.$companyVariance.'</td>
                             <td></td>
                             <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                             <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>

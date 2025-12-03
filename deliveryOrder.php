@@ -243,7 +243,7 @@ else{
                                                                     <th>Customer PO</th>
                                                                     <th>Delivery Date</th>
                                                                     <th>Total Delivery <br> Amount (KG)</th>
-                                                                    <!-- <th>Action</th> -->
+                                                                    <th>Action</th>
                                                                 </tr>
                                                             </thead>
                                                         </table>
@@ -272,7 +272,7 @@ else{
                                             <div class="col-lg-6">
                                                 <div class="hstack gap-2 justify-content-center">
                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                        <div class="card bg-primary">
+                                                        <div class="card bg-danger">
                                                             <div class="card-body">
                                                                 <div class="d-flex justify-content-between">
                                                                     <div>
@@ -298,7 +298,7 @@ else{
                                             <div class="col-lg-6">
                                                 <div class="hstack gap-2 justify-content-center">
                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                        <div class="card bg-primary">
+                                                        <div class="card bg-danger">
                                                             <div class="card-body">
                                                                 <div class="d-flex justify-content-between">
                                                                     <div>
@@ -1003,6 +1003,23 @@ else{
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal-dialog -->
                     </div><!-- /.modal -->
+
+                    <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableDO" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable custom-xxl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalScrollableDO"></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form role="form" id="doForm" class="needs-validation" novalidate autocomplete="off">
+                                        
+                                    </form>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
                 </div>
                 <!-- container-fluid -->
             </div>
@@ -1135,15 +1152,15 @@ else{
 
         //Date picker
         $('#fromDateSearch').flatpickr({
-            dateFormat: "d-m-Y H:i",
+            dateFormat: "d-m-Y H:i:S",
             enableTime: true,
             time_24hr: true,
             defaultDate: yesterday
         });
 
         $('#toDateSearch').flatpickr({
-            dateFormat: "d-m-Y",
-            dateFormat: "d-m-Y H:i",
+            //dateFormat: "d-m-Y",
+            dateFormat: "d-m-Y H:i:S",
             enableTime: true,
             time_24hr: true,
             defaultDate: today
@@ -1227,16 +1244,15 @@ else{
                 { data: 'purchase_order' },
                 { data: 'tare_weight1_date' },
                 { data: 'order_weight' },
-                // { 
-                //     data: 'id',
-                //     class: 'action-button',
-                //     render: function ( data, type, row ) {
-                //         // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                //         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                //         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                //         '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
-                //     }
-                // }
+                { 
+                     data: 'id',
+                     class: 'action-button',
+                     render: function ( data, type, row ) {
+                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                         '<li><a class="dropdown-item post-item-btn" id="post'+data+'" onclick="post('+data+')"><i class="mdi-post align-bottom me-2 text-muted"></i> Post</a></li></ul></div>';
+                     }
+                }
             ],
             "drawCallback": function(settings) {
                 $('#salesInfo').text(settings.json.salesTotal);
@@ -1297,17 +1313,15 @@ else{
                     { data: 'purchase_order' },
                     { data: 'tare_weight1_date' },
                     { data: 'order_weight' },
-                    // { 
-                    //     data: 'id',
-                    //     class: 'action-button',
-                    //     render: function ( data, type, row ) {
-                    //         // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                    //         return '<div clas
-                    // s="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                    //         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                    //         '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
-                    //     }
-                    // }
+                    { 
+                        data: 'id',
+                        class: 'action-button',
+                        render: function ( data, type, row ) {
+                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                            '<li><a class="dropdown-item post-item-btn" id="post'+data+'" onclick="post('+data+')"><i class="mdi-post align-bottom me-2 text-muted"></i> Post</a></li></ul></div>';
+                        }
+                    }
                 ],
                 "drawCallback": function(settings) {
                     $('#salesInfo').text(settings.json.salesTotal);
@@ -1691,7 +1705,8 @@ else{
                     alert('Unit price must be more than 0.');
                     return;
                 } else {
-                    var productId = $('#addModal').find('#productId').val();
+                    debugger;
+                    var productId = $('#addModal').find('#productName').attr('data-id');
                     $.post('php/getProduct.php', { userID: productId }, function (data) {
                         try {
                             var obj = JSON.parse(data);
@@ -2035,6 +2050,7 @@ else{
 
     // Function to handle weight form submission without printing
     function submitWeightForm() {
+        debugger;
         if ($('#weightForm').valid()) {
             $('#spinnerLoading').show();
             $.post('php/weight.php', $('#weightForm').serialize(), function(data){
@@ -2674,6 +2690,116 @@ else{
                     option.prop('disabled', false);
                 }
             });
+        });
+    }
+
+    function post(id){
+        var fromDateI = $('#fromDateSearch').val();
+        var toDateI = $('#toDateSearch').val();
+
+        // Exclude specific td elements by checking the event target
+        $.post('php/getWeight.php', { userID: id, fromDate: fromDateI, toDate: toDateI, format: 'EXPANDABLE', acctType: 'DO' }, function (data) {
+            var obj = JSON.parse(data);
+            if (obj.status === 'success') {
+                var weights = obj.message.weights;
+                $('#exampleModalScrollableDO').text(obj.message.purchase_order);
+
+                var tableHtml = `
+                    <div class="table-responsive">
+                        <table class="table table-bordered nowrap table-striped align-middle" style="width:100%" id="doModalTable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Transaction ID</th>
+                                    <th>DO No.</th>
+                                    <th>Vehicle</th>
+                                    <th>Transporter</th>
+                                    <th>Destination</th>
+                                    <th>Gross Incoming</th>
+                                    <th>Incoming Date</th>
+                                    <th>Tare Outgoing</th>
+                                    <th>Outgoing Date</th>
+                                    <th>Nett Weight</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                for (var i = 0; i < weights.length; i++) {
+                    var w = weights[i];
+                    tableHtml += `
+                        <tr>
+                            <td><input type="checkbox" class="do-checkbox" value="${w.id}"></td>
+                            <td>${w.transaction_id}</td>
+                            <td>${w.delivery_no}</td>
+                            <td>${w.lorry_plate_no1}</td>
+                            <td>${w.transporter}</td>
+                            <td>${w.destination}</td>
+                            <td>${(parseFloat(w.gross_weight1) / 1000).toFixed(2)} MT</td>
+                            <td>${w.gross_weight1_date}</td>
+                            <td>${(parseFloat(w.tare_weight1) / 1000).toFixed(2)} MT</td>
+                            <td>${w.tare_weight1_date}</td>
+                            <td>${(parseFloat(w.nett_weight1) / 1000).toFixed(2)} MT</td>
+                        </tr>
+                    `;
+                }
+
+                tableHtml += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                $('#doForm').html(tableHtml + '<div class="col-lg-12"><div class="hstack gap-2 justify-content-end"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-primary" id="submitDO">Submit</button></div></div>');
+
+                // Select all handler
+                $('#selectAll').on('change', function () {
+                    $('.do-checkbox').prop('checked', this.checked);
+                });
+
+                $('#submitDO').off('click').on('click', function () {
+                    var selectedDOs = [];
+
+                    $("#doModalTable tbody input[type='checkbox']").each(function () {
+                        if (this.checked) {
+                            selectedDOs.push($(this).val());
+                        }
+                    });
+
+                    if (selectedDOs.length > 0) {
+                        if (confirm('Are you sure you want to post to SQL these items?')) {
+                            $('#spinnerLoading').show();
+                            $.post('php/postDo.php', {
+                                userID: selectedDOs, 
+                                type: 'MULTIDO'
+                            }, function(data){
+                                var obj = JSON.parse(data);
+                                
+                                if(obj.status === 'success'){
+                                    $('#weightTable').DataTable().ajax.reload(null, false);
+                                    $('#spinnerLoading').hide();
+                                    $('#viewModal').modal('hide');
+                                    toastr["success"](obj.message, "Success:");
+                                }
+                                else if(obj.status === 'failed'){
+                                    $('#spinnerLoading').hide();
+                                    toastr["error"](obj.message, "Failed:");
+                                }
+                                else{
+                                    $('#spinnerLoading').hide();
+                                    toastr["error"]("Something wrong when activate", "Failed:");
+                                }
+                            });
+                        }
+                    } 
+                    else {
+                        alert('Please select at least one DO to post');
+                    }   
+                });
+
+                // Show modal
+                $('#viewModal').modal('show');
+            }
         });
     }
     </script>

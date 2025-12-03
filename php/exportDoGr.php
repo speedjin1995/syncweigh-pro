@@ -14,14 +14,14 @@ function filterData(&$str){
 ## Search 
 $searchQuery = "";
 if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
-    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
-    $fromDateTime = $dateTime->format('Y-m-d H:i:00');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['fromDate']);
+    $fromDateTime = $dateTime->format('Y-m-d H:i:s');
     $searchQuery = " and tare_weight1_date >= '".$fromDateTime."'";
 }
 
 if($_GET['toDate'] != null && $_GET['toDate'] != ''){
-    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
-    $toDateTime = $dateTime->format('Y-m-d H:i:59');
+    $dateTime = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
+    $toDateTime = $dateTime->format('Y-m-d H:i:s');
     $searchQuery .= " and tare_weight1_date <= '".$toDateTime."'";
 }
 
@@ -59,7 +59,12 @@ if($_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'
 }
 
 // Column names 
-$fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
+if($_GET["type"] == 'do'){
+    $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
+}
+else{
+    $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'NETT', 'QTY', 'VAR', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
+}
 
 // Display column names as first row 
 $excelData = implode("\t", array_values($fields)) . "\n";
@@ -174,10 +179,10 @@ if ($isMulti == 'N'){
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
                 $poNo = $row['purchase_order']; 
-                $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
-                $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-                $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
-                $toDateTime = $toDate->format('Y-m-d H:i:59');
+                $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['fromDate']);
+                $fromDateTime = $fromDate->format('Y-m-d H:i:s');
+                $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
+                $toDateTime = $toDate->format('Y-m-d H:i:s');
 
                 $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                 $doRecords = mysqli_query($db, $doQuery);
@@ -192,7 +197,10 @@ if ($isMulti == 'N'){
                     $unitPrice = 0;
                     $uom = '';
                     $qty = 0;
+                    $nett = 0;
+                    $var = 0;
                     $amt = 0;
+                    
                     if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND plant_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $poNo, $row2['raw_mat_code'], $row2['plant_code']);
                         $select_stmt->execute();
@@ -207,9 +215,13 @@ if ($isMulti == 'N'){
                                 $update_stmt->execute();
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
-                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $nett = $row2['nett_weight1'] * $row4['rate'];
+                                    $qty = $row2['supplier_weight'] * $row4['rate'];
+                                    $var = $row2['weight_different'] * $row4['rate'];
                                 }else{
-                                    $qty = $row['nett_weight1']/1000;
+                                    $nett = $row['nett_weight1']/1000;
+                                    $qty = $row['supplier_weight']/1000;
+                                    $var = $row2['weight_different']/1000;
                                 }
 
                                 $amt = $qty * $unitPrice;
@@ -219,7 +231,7 @@ if ($isMulti == 'N'){
                         $select_stmt->close();
                     }
 
-                    $lineData = array($poNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['destination'], $row2['transporter_code'], $exDel, '', $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt, $row2['remarks']);
+                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt, $row2['remarks']);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -254,12 +266,15 @@ if ($isMulti == 'N'){
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
                 $soNo = $row['purchase_order']; 
-                $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
-                $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-                $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
-                $toDateTime = $toDate->format('Y-m-d H:i:59');
+                $prdCode = $row['product_code'];
+                $pltCode = $row['plant_code'];
+                $custCode = $row['customer_code'];
+                $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['fromDate']);
+                $fromDateTime = $fromDate->format('Y-m-d H:i:s');
+                $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
+                $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' AND unit_price > 0";
+                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND product_code = '$prdCode' AND customer_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' AND unit_price > 0";
                 $doRecords = mysqli_query($db, $doQuery);
                 $weighingData = array();
 
@@ -332,10 +347,10 @@ if ($isMulti == 'N'){
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
                 $poNo = $row['purchase_order']; 
-                $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
-                $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-                $toDate = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
-                $toDateTime = $toDate->format('Y-m-d H:i:59');
+                $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['fromDate']);
+                $fromDateTime = $fromDate->format('Y-m-d H:i:s');
+                $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
+                $toDateTime = $toDate->format('Y-m-d H:i:s');
 
                 $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
                 $doRecords = mysqli_query($db, $doQuery);
@@ -376,7 +391,7 @@ if ($isMulti == 'N'){
                         $select_stmt->close();
                     }
 
-                    $lineData = array($poNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['destination'], $row2['transporter_code'], $exDel, '', $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {

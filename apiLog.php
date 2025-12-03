@@ -90,8 +90,8 @@
                                                             <option value="PullTransporter">Pull Transporter</option>
                                                             <option value="PullSO">Pull Sales Order</option>
                                                             <option value="PullPO">Pull Purchase Order</option>
-                                                            <option value="PostSO">Post Sales Order</option>
-                                                            <option value="PostPO">Post Purchase Order</option>
+                                                            <option value="PostDeliveryOrder">Post Delivery Order</option>
+                                                            <option value="PostGoodReceived">Post Goods Receive</option>
                                                         </select>
                                                     </div>
                                                 </div>

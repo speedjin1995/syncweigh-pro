@@ -13,6 +13,7 @@ function filterData(&$str){
 
 if(isset($_POST['userID'], $_POST["file"])){
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
+    $cid = '1';
 
     if (empty($_POST["prePrint"])) {
         $prePrintStatus = 'N';
@@ -24,12 +25,26 @@ if(isset($_POST['userID'], $_POST["file"])){
         $select_stmt->bind_param('s', $id);
 
         $compname = 'BLACKTOP LANCHANG SDN BHD';
+        $compregno = '1373003-H';
         $compaddress = '37, Jalan Perusahaan Amari,';
         $compaddress2 = 'Amari Business Park,';
         $compaddress3 = '68100 Batu Caves, Selangor Darul Ehsan';
         $compphone = '+603-6096 0383';
         $compiemail = 'lowct@eastrock.com.my';
         $compiwebsite = 'www.eastrock.com.my';
+        
+        $queryCompanyAddr = "SELECT * FROM Company WHERE id ='$cid'";
+                
+        if ($company_stmt_addr = $db->prepare($queryCompanyAddr)) {
+            // Execute the prepared query.
+            $company_stmt_addr->execute();
+            $resultComp = $company_stmt_addr->get_result();
+               
+            if ($rowComp = $resultComp->fetch_assoc()) {
+                $compname = $rowComp['name'];
+                $compregno = $rowComp['company_reg_no'];
+            }
+        }
 
 
         // Execute the prepared query.
@@ -211,9 +226,9 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <body>
                                 <div class="container-full">
                                     <div class="header row">
-                                        <h2 style="color: black; font-weight: bold;">BLACKTOP LANCHANG SDN BHD</h2>
+                                        <h2 style="color: black; font-weight: bold;">'.$compname.'</h2>
                                         <div class="col-7" style="text-align: left;">
-                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
+                                            <p style="font-size: 11px; margin-bottom: 3px;">('.$compregno.') <br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
                                         </div>
                                         <div class="col-5 align-self-end">
                                             <h3 style="font-weight: bold; margin-bottom: 0px;">LOADING CHIT</h3>
@@ -284,7 +299,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                         <div class="row col-12">
                                                             <div class="col-10">
                                                                 <div class="col-12" style="font-size: 17px; font-weight: bold;margin-left:10px">
-                                                                    BLACKTOP LANCHANG SDN BHD<span style="font-size: 12px; margin-left: 5px">198501006021 (138463-T)</span>
+                                                                    '.$compname.'<span style="font-size: 12px; margin-left: 5px">'.$compregno.'</span>
                                                                 </div>
                                                                 <div class="col-12" style="font-size: 12px">
                                                                     <span style="margin-left:10px">Office</span><span style="margin-left:25px">:&nbsp;37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
@@ -480,7 +495,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                         <div class="row col-12">
                                                             <div class="col-10">
                                                                 <div class="col-12" style="font-size: 17px; font-weight: bold;margin-left:10px">
-                                                                    BLACKTOP LANCHANG SDN BHD<span style="font-size: 12px; margin-left: 5px">198501006021 (138463-T)</span>
+                                                                    '.$compname.'<span style="font-size: 12px; margin-left: 5px">'.$compregno.'</span>
                                                                 </div>
                                                                 <div class="col-12" style="font-size: 12px">
                                                                     <span style="margin-left:10px">Office</span><span style="margin-left:25px">:&nbsp;37, Jalan Perusahaan Amari, Amari Business Park, 68100 Batu Caves, Selangor Darul Ehsan</span>
@@ -697,7 +712,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                     <div class="container-full">
                                         <div class="header">
                                             <div style="text-align: center;">
-                                                <h3 class="mb-0 fw-bold text-dark">BLACKTOP LANCHANG SDN BHD</h3>
+                                                <h3 class="mb-0 fw-bold text-dark">'.$compname.'</h3>
                                                 <p style="font-size: 10px; margin-bottom: 3px;">(1373003-H) <br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
                                                 <h4 class="pb-2 fw-bold text-dark"><span style="border-bottom: 1px solid black">PURCHASE WEIGHING TICKET</span></h4>
                                             </div>
@@ -819,8 +834,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <div class="container-full">
                                     <div class="header">
                                         <div style="text-align: center;">
-                                            <h2 style="color: black; font-weight: bold;">BLACKTOP LANCHANG SDN BHD</h2>
-                                            <p style="font-size: 11px; margin-bottom: 3px;">(1373003-H) <br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
+                                            <h2 style="color: black; font-weight: bold;">'.$compname.'</h2>
+                                            <p style="font-size: 11px; margin-bottom: 3px;">'.$compregno.')<br> '.$compaddress.' <br>'.$compaddress2.'<br>'.$compaddress3.'<br>TEL: '.$compphone.'</p>
                                             <h3 class="pb-2" style="color: black; font-weight: bold;"><span style="border-bottom: 1px solid black">PUBLIC WEIGHING</span></h3>
                                         </div>
                                     </div>

@@ -272,7 +272,7 @@ else{
                                             <div class="col-lg-6">
                                                 <div class="hstack gap-2 justify-content-center">
                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                        <div class="card bg-primary">
+                                                        <div class="card bg-danger">
                                                             <div class="card-body">
                                                                 <div class="d-flex justify-content-between">
                                                                     <div>
@@ -298,7 +298,7 @@ else{
                                             <div class="col-lg-6">
                                                 <div class="hstack gap-2 justify-content-center">
                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                        <div class="card bg-primary">
+                                                        <div class="card bg-danger">
                                                             <div class="card-body">
                                                                 <div class="d-flex justify-content-between">
                                                                     <div>
@@ -1134,7 +1134,7 @@ else{
 
         //Date picker
         $('#fromDateSearch').flatpickr({
-            dateFormat: "d-m-Y H:i",
+            dateFormat: "d-m-Y H:i:S",
             enableTime: true,
             time_24hr: true,
             defaultDate: yesterday
@@ -1142,7 +1142,7 @@ else{
 
         $('#toDateSearch').flatpickr({
             dateFormat: "d-m-Y",
-            dateFormat: "d-m-Y H:i",
+            dateFormat: "d-m-Y H:i:S",
             enableTime: true,
             time_24hr: true,
             defaultDate: today

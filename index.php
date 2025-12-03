@@ -157,7 +157,7 @@ else{
                                                 today.</p-->
                                         </div>
                                         <div class="mt-3 mt-lg-0">
-                                            <form action="javascript:void(0);">
+                                            <form autocomplete="off" action="javascript:void(0);">
                                                 <div class="row g-3 mb-0 align-items-center">
 
                                             </form>
@@ -453,7 +453,7 @@ else{
                                                             <div class="col-lg-6">
                                                                 <div class="hstack gap-2 justify-content-center">
                                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                                        <div class="card bg-primary">
+                                                                        <div class="card bg-danger">
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
@@ -479,7 +479,7 @@ else{
                                                             <div class="col-lg-6">
                                                                 <div class="hstack gap-2 justify-content-center">
                                                                     <div class="col-xl-12 col-md-12 col-md-12">
-                                                                        <div class="card bg-primary">
+                                                                        <div class="card bg-danger">
                                                                             <div class="card-body">
                                                                                 <div class="d-flex justify-content-between">
                                                                                     <div>
@@ -3678,13 +3678,13 @@ else{
                                 $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
                             }
 
-                            if (!isEdit){
-                                if (exDel == 'E') {
-                                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                                } else {
-                                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                                }
+                            if (exDel == 'E') {
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                            } else {
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                            }
 
+                            if (!isEdit){
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
                             $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
@@ -3794,12 +3794,14 @@ else{
                                 $('#addModal').find('#vehiclePlateNo1').val(vehNo).select2('destroy').select2();
                             }
 
+                            if (exDel == 'E') {
+                                $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
+                            } else {
+                                $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
+                            }
+                            
+                            //$('#addModal').find('#transporter').val(transporterName).trigger('change');
                             if (!isEdit){
-                                if (exDel == 'E') {
-                                    $('#addModal').find("input[name='exDel'][value='true']").prop("checked", true).trigger('change');
-                                } else {
-                                    $('#addModal').find("input[name='exDel'][value='false']").prop("checked", true).trigger('change');
-                                }
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
                             $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
@@ -4097,7 +4099,7 @@ else{
             var purchaseOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val();
 
-            if (purchaseOrder){
+            if (purchaseOrder && !isEdit){
                 // if (isEdit){
                 //     $('#addModal').find('#purchaseOrder').empty();
                 //     $('#addModal').find('#purchaseOrder').append(purchaseOption);
@@ -4169,7 +4171,7 @@ else{
             var salesOrder = $(this).val();
             var type = $('#addModal').find('#transactionStatus').val(); 
 
-            if (salesOrder){
+            if (salesOrder && !isEdit){
                 // if (isEdit){
                 //     $('#addModal').find('#salesOrder').empty();
                 //     $('#addModal').find('#salesOrder').append(salesOption);
@@ -4351,7 +4353,7 @@ else{
         var nettWeight = $('#addModal').find('#nettWeight').val();
 
         if (nettWeight > 0){
-            if ($('#weightForm').valid()) {
+            //if ($('#weightForm').valid()) {
                 $('#spinnerLoading').show();
                 $.post('php/weight.php', $('#weightForm').serialize(), function(data){
                     var obj = JSON.parse(data); 
@@ -4379,7 +4381,7 @@ else{
                         $("#failBtn").click();
                     }
                 });
-            }
+            //}
         }else{
             alert('Nett Weight must be more than 0');
             return;
@@ -4388,7 +4390,7 @@ else{
 
     // Function to handle weight form submission with printing
     function submitWeightPrintForm() {
-        if ($('#weightForm').valid()) {
+        //if ($('#weightForm').valid()) {
             $('#spinnerLoading').show();
             $.post('php/weight.php', $('#weightForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
@@ -4464,7 +4466,7 @@ else{
                     $("#failBtn").click();
                 }
             });
-        }
+        //}
     }
 
     function getSoPo(){
@@ -4903,7 +4905,13 @@ else{
                         );
                     }
 
-                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).select2('destroy').select2();
+                    //$('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).select2('destroy').select2();
+                    $('#addModal').find('#purchaseOrder').val(obj.message.purchase_order).trigger('change');
+                    /*setTimeout(function() {
+                      const purchaseOrder = $('#addModal').find('#purchaseOrder');
+                      purchaseOrder.select2('destroy').select2();
+                      purchaseOrder.val(obj.message.purchase_order).trigger('change');
+                    }, 100);*/
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }else{
                     //$('#addModal').find('#salesOrder').next('.select2-container').hide();
@@ -4921,7 +4929,13 @@ else{
                         );
                     }
 
-                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).select2('destroy').select2();
+                    //$('#addModal').find('#salesOrder').val(obj.message.purchase_order).select2('destroy').select2();
+                    $('#addModal').find('#salesOrder').val(obj.message.purchase_order).trigger('change');
+                    /*setTimeout(function() {
+                      const $salesOrder = $('#addModal').find('#salesOrder');
+                      $salesOrder.select2('destroy').select2();
+                      $salesOrder.val(obj.message.purchase_order).trigger('change');
+                    }, 100);*/
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }
 
@@ -4978,7 +4992,7 @@ else{
                     //$('#addModal').find('#transporter').val(obj.message.transporter).trigger('change');
                 });
                 
-                // isEdit = false; // comment out as already reset to false when add new button clicked
+                isEdit = false;
 
                 // Remove Validation Error Message
                 $('#addModal .is-invalid').removeClass('is-invalid');

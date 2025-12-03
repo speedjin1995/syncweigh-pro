@@ -127,48 +127,71 @@ if(isset($_POST['userID'])){
 
                         if ($acctType == 'DO'){
                             $soNo = $row['purchase_order'];
-                            $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
-                            $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-                            $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
-                            $toDateTime = $toDate->format('Y-m-d H:i:59');
-
-                            $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' and transaction_status = 'Sales'";
-                            $doRecords = mysqli_query($db, $doQuery);
+                            $prod = $row['product_code'];
+                            $cust = $row['customer_code'];
+                            $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['fromDate']);
+                            $fromDateTime = $fromDate->format('Y-m-d H:i:s');
+                            $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
+                            $toDateTime = $toDate->format('Y-m-d H:i:s');
                             $weighingData = array();
-
                             $totalDeliverAmt = 0;
-                            while($row = mysqli_fetch_assoc($doRecords)) {
-                                $weighingData[] = array( 
-                                    "id"=>$row['id'],
-                                    "transaction_id"=>$row['transaction_id'],
-                                    "transaction_status"=>$row['transaction_status'],
-                                    "customer_name"=>$row['customer_name'],
-                                    "lorry_plate_no1"=>$row['lorry_plate_no1'],
-                                    "product_name"=>$row['product_name'],
-                                    "delivery_no"=>$row['delivery_no'] ?? '',
-                                    "gross_weight1"=>$row['gross_weight1'],
-                                    "gross_weight1_date"=>$row['gross_weight1_date'],
-                                    "tare_weight1"=>$row['tare_weight1'],
-                                    "tare_weight1_date"=>$row['tare_weight1_date'],
-                                    "nett_weight1"=>$row['nett_weight1'],
-                                    'transporter_code' => $row['transporter_code'],
-                                    'transporter' => $row['transporter'],
-                                    'destination_code' => $row['destination_code'],
-                                    'destination' => $row['destination'],
-                                    'unit_price' => $row['unit_price'] ?? '0.00'
-                                );
 
-                                $totalDeliverAmt += $row['nett_weight1'];
-                            }
+                            if ($stmt = $db->prepare("
+                                SELECT * 
+                                FROM Weight 
+                                WHERE purchase_order = ? 
+                                  AND product_code = ?
+                                  AND customer_code = ?
+                                  AND tare_weight1_date >= ? 
+                                  AND tare_weight1_date <= ? 
+                                  AND is_complete = 'Y' 
+                                  AND is_cancel <> 'Y' 
+                                  AND status = '0' 
+                                  AND transaction_status = 'Sales'
+                            ")) {
+                                // Bind parameters: all strings here ("sss")
+                                $stmt->bind_param("sssss", $soNo, $prod, $cust, $fromDateTime, $toDateTime);
+                            
+                                // Execute safely
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                            
+                                while ($row = $result->fetch_assoc()) {
+                                    $weighingData[] = array(
+                                        "id"               => $row['id'],
+                                        "transaction_id"   => $row['transaction_id'],
+                                        "transaction_status"=> $row['transaction_status'],
+                                        "customer_name"    => $row['customer_name'],
+                                        "lorry_plate_no1"  => $row['lorry_plate_no1'],
+                                        "product_name"     => $row['product_name'],
+                                        "delivery_no"      => $row['delivery_no'] ?? '',
+                                        "gross_weight1"    => $row['gross_weight1'],
+                                        "gross_weight1_date"=> $row['gross_weight1_date'],
+                                        "tare_weight1"     => $row['tare_weight1'],
+                                        "tare_weight1_date"=> $row['tare_weight1_date'],
+                                        "nett_weight1"     => $row['nett_weight1'],
+                                        'transporter_code' => $row['transporter_code'],
+                                        'transporter'      => $row['transporter'],
+                                        'destination_code' => $row['destination_code'],
+                                        'destination'      => $row['destination'],
+                                        'unit_price'       => $row['unit_price'] ?? '0.00'
+                                    );
+                            
+                                    $totalDeliverAmt += $row['nett_weight1'];
+                                }
+                            
+                                $stmt->close();
+}
+                            
                             $message['totalDeliverAmt'] = $totalDeliverAmt;
                             $message['weights'] = $weighingData;
 
                         }elseif ($acctType == 'GR') {
                             $poNo = $row['purchase_order'];
-                            $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
-                            $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-                            $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
-                            $toDateTime = $toDate->format('Y-m-d H:i:59');
+                            $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['fromDate']);
+                            $fromDateTime = $fromDate->format('Y-m-d H:i:s');
+                            $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
+                            $toDateTime = $toDate->format('Y-m-d H:i:s');
 
                             $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' and transaction_status = 'Purchase'";
                             $grRecords = mysqli_query($db, $grQuery);

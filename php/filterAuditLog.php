@@ -151,40 +151,45 @@ if($_POST['selectedValue'] == "Customer")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['customer_code'])){
             $customerId = $row['customer_id'];
             $customerData = searchCustomerAuditById($customerId, $db); 
     
             if (!empty($customerData)){
                 $data[] = array( 
-                "id"=>$row['id'],
-                "Customer Code"=>$customerData['customer_code'],
-                "Company Reg No"=>$customerData['company_reg_no'],
-                "Company Name"=>$customerData['name'],
-                "Address line 1"=>$customerData['address_line_1'],
-                "Address line 2"=>$customerData['address_line_2'],
-                "Address line 3"=>$customerData['address_line_3'],
-                "Phone No"=>$customerData['phone_no'],
-                "Fax No"=>$customerData['fax_no'],
-                "Action"=> searchActionNameById($row['action_id'], $db),
-                "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                    "id"=>$row['id'],
+                    "Customer Code"=>$customerData['customer_code'],
+                    "Company Reg No"=>$customerData['company_reg_no'],
+                    "Company Name"=>$customerData['name'],
+                    "Address line 1"=>$customerData['address_line_1'],
+                    "Address line 2"=>$customerData['address_line_2'],
+                    "Address line 3"=>$customerData['address_line_3'],
+                    "Phone No"=>$customerData['phone_no'],
+                    "Fax No"=>$customerData['fax_no'],
+                    "Action"=> searchActionNameById($row['action_id'], $db),
+                    "Action By"=>$row['action_by'],
+                    "Event Date"=>$eventDateKL,
                 );
             }
         }else{
             $data[] = array( 
-            "id"=>$row['id'],
-            "Customer Code"=>$row['customer_code'],
-            "Company Reg No"=>$row['company_reg_no'],
-            "Company Name"=>$row['name'],
-            "Address line 1"=>$row['address_line_1'],
-            "Address line 2"=>$row['address_line_2'],
-            "Address line 3"=>$row['address_line_3'],
-            "Phone No"=>$row['phone_no'],
-            "Fax No"=>$row['fax_no'],
-            "Action"=> searchActionNameById($row['action_id'], $db),
-            "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+                "id"=>$row['id'],
+                "Customer Code"=>$row['customer_code'],
+                "Company Reg No"=>$row['company_reg_no'],
+                "Company Name"=>$row['name'],
+                "Address line 1"=>$row['address_line_1'],
+                "Address line 2"=>$row['address_line_2'],
+                "Address line 3"=>$row['address_line_3'],
+                "Phone No"=>$row['phone_no'],
+                "Fax No"=>$row['fax_no'],
+                "Action"=> searchActionNameById($row['action_id'], $db),
+                "Action By"=>$row['action_by'],
+                "Event Date"=>$eventDateKL,
             );
         }
     }
@@ -200,6 +205,11 @@ if($_POST['selectedValue'] == "Destination")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['destination_code'])){
             $destinationId = $row['destination_id'];
             $destinationData = searchDestinationAuditById($destinationId, $db);
@@ -212,7 +222,7 @@ if($_POST['selectedValue'] == "Destination")
                 "Description"=>$destinationData['description'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -223,7 +233,7 @@ if($_POST['selectedValue'] == "Destination")
             "Description"=>$supplierData['description'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
     }
@@ -239,6 +249,11 @@ if($_POST['selectedValue'] == "Product")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['product_code'])){
             $productId = $row['product_id'];
             $productData = searchProductAuditById($productId, $db);
@@ -255,7 +270,7 @@ if($_POST['selectedValue'] == "Product")
                 "Low"=>$productData['low'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -270,7 +285,7 @@ if($_POST['selectedValue'] == "Product")
             "Low"=>$row['low'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
         
@@ -287,6 +302,11 @@ if($_POST['selectedValue'] == "Raw Materials")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if(empty($row['raw_mat_code'])){
             $rawMatId = $row['raw_mat_id'];
             $rawMatData = searchRawMatAuditById($rawMatId, $db);
@@ -304,7 +324,7 @@ if($_POST['selectedValue'] == "Raw Materials")
                 "Type"=>$rawMatData['type'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -320,7 +340,7 @@ if($_POST['selectedValue'] == "Raw Materials")
             "Type"=>$row['type'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
         
@@ -337,6 +357,11 @@ if($_POST['selectedValue'] == "Supplier")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['supplier_code'])){
             $supplierId = $row['supplier_id'];
             $supplierData = searchSupplierAuditById($supplierId, $db);
@@ -354,7 +379,7 @@ if($_POST['selectedValue'] == "Supplier")
                 "Fax No"=>$supplierData['fax_no'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date']
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -370,7 +395,7 @@ if($_POST['selectedValue'] == "Supplier")
             "Fax No"=>$row['fax_no'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date']
+            "Event Date"=>$eventDateKL
             );
         }
 
@@ -388,6 +413,11 @@ if($_POST['selectedValue'] == "Vehicle")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['veh_number'])){
             $vehicleId = $row['vehicle_id'];
             $vehicleData = searchVehicleAuditById($vehicleId, $db);
@@ -404,7 +434,7 @@ if($_POST['selectedValue'] == "Vehicle")
                 "Customer Name"=>$vehicleData['customer_name'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -419,7 +449,7 @@ if($_POST['selectedValue'] == "Vehicle")
             "Customer Name"=>$row['customer_name'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
         
@@ -436,6 +466,11 @@ if($_POST['selectedValue'] == "Agent")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['agent_code'])){
             $agentId = $row['agent_id'];
             $agentData = searchAgentAuditById($agentId, $db);
@@ -448,7 +483,7 @@ if($_POST['selectedValue'] == "Agent")
                 "Description"=>$agentData['description'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -459,7 +494,7 @@ if($_POST['selectedValue'] == "Agent")
             "Description"=>$row['description'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL
             );
         }  
     }
@@ -475,6 +510,11 @@ if($_POST['selectedValue'] == "Transporter")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['transporter_code'])){
             $transporterId = $row['transporter_id'];
             $transporterData = searchTransporterAuditById($transporterId, $db);
@@ -492,7 +532,7 @@ if($_POST['selectedValue'] == "Transporter")
                 "Fax No"=>$transporterData['fax_no'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -508,7 +548,7 @@ if($_POST['selectedValue'] == "Transporter")
             "Fax No"=>$row['fax_no'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL
             );
         }
         
@@ -525,6 +565,11 @@ if($_POST['selectedValue'] == "Unit")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['unit'])){
             $unitId = $row['unit_id'];
             $unitData = searchUnitAuditById($unitId, $db);
@@ -535,7 +580,7 @@ if($_POST['selectedValue'] == "Unit")
                 "Unit"=>$unitData['unit'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -544,7 +589,7 @@ if($_POST['selectedValue'] == "Unit")
             "Unit"=>$row['unit'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL
             );
         }
     }
@@ -560,6 +605,11 @@ if($_POST['selectedValue'] == "User")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['employee_code'])){
             $userId = $row['user_id'];
             $userData = searchUserAuditById($userId, $db);
@@ -574,7 +624,7 @@ if($_POST['selectedValue'] == "User")
                 "Role"=>$userData['role'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -587,7 +637,7 @@ if($_POST['selectedValue'] == "User")
             "Role"=>$row['user_department'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL
             );
         }
     }
@@ -604,6 +654,11 @@ if($_POST['selectedValue'] == "Plant")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['plant_code'])){
             $plantId = $row['plant_id'];
             $plantData = searchPlantAuditById($plantId, $db);
@@ -620,7 +675,7 @@ if($_POST['selectedValue'] == "Plant")
                 "Fax No"=>$plantData['fax_no'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -635,7 +690,7 @@ if($_POST['selectedValue'] == "Plant")
             "Fax No"=>$row['fax_no'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL
             );
         }
         
@@ -652,6 +707,11 @@ if($_POST['selectedValue'] == "Site")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if (empty($row['site_code'])){
             $siteId = $row['site_id'];
             $siteData = searchSiteAuditById($siteId, $db);
@@ -668,7 +728,7 @@ if($_POST['selectedValue'] == "Site")
                 "Fax No"=>$siteData['fax_no'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -683,7 +743,7 @@ if($_POST['selectedValue'] == "Site")
             "Fax No"=>$row['fax_no'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL
             );
         }
     }
@@ -699,6 +759,11 @@ if($_POST['selectedValue'] == "Weight")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         $data[] = array( 
             "id"=>$row['id'],
             "Transaction Id"=>$row['transaction_id'],
@@ -715,7 +780,7 @@ if($_POST['selectedValue'] == "Weight")
             "Nett Weight"=>$row['nett_weight1'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL
         );
     }
 
@@ -730,6 +795,11 @@ if($_POST['selectedValue'] == "SO")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         $data[] = array( 
         "id"=>$row['id'],
         "Company Code"=>$row['company_code'],
@@ -759,7 +829,7 @@ if($_POST['selectedValue'] == "SO")
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
+        "Event Date"=>$eventDateKL
         );
     }
 
@@ -774,6 +844,11 @@ if($_POST['selectedValue'] == "PO")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         $data[] = array( 
         "id"=>$row['id'],
         "Company Code"=>$row['company_code'],
@@ -802,7 +877,7 @@ if($_POST['selectedValue'] == "PO")
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
+        "Event Date"=>$eventDateKL
         );
     }
 

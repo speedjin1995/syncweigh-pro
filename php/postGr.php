@@ -17,14 +17,14 @@ if($_POST['type'] != null && $_POST['type'] != ''){
 $searchQuery = "";
 
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
-  $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
-  $fromDateTime = $dateTime->format('Y-m-d H:i:00');
+  $dateTime = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['fromDate']);
+  $fromDateTime = $dateTime->format('Y-m-d H:i:s');
   $searchQuery = " and tare_weight1_date >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
-  $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
-  $toDateTime = $dateTime->format('Y-m-d H:i:59');
+  $dateTime = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
+  $toDateTime = $dateTime->format('Y-m-d H:i:s');
 	$searchQuery .= " and tare_weight1_date <= '".$toDateTime."'";
 }
 
@@ -74,10 +74,10 @@ if ($type == "MULTI"){
                 $prdCode = $row['raw_mat_code'];
                 $pltCode = $row['plant_code'];
                 $custCode = $row['supplier_code'];
-                $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
-                $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-                $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
-                $toDateTime = $toDate->format('Y-m-d H:i:59');
+                $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['fromDate']);
+                $fromDateTime = $fromDate->format('Y-m-d H:i:s');
+                $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
+                $toDateTime = $toDate->format('Y-m-d H:i:s');
 
                 $doQuery = "select * from Weight WHERE transaction_status = 'Purchase' AND purchase_order = '$soNo' AND raw_mat_code = '$prdCode' AND supplier_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
                 $doRecords = mysqli_query($db, $doQuery);
@@ -117,7 +117,7 @@ if ($type == "MULTI"){
                                 $result3 = $update_stmt->get_result();
                                 
                                 if ($row4 = $result3->fetch_assoc()) {
-                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $qty = $row2['supplier_weight'] * $row4['rate'];
                                     $amt = $qty * $unitPrice;
                                 }
                                 $update_stmt->close();
@@ -304,7 +304,7 @@ if ($type == "MULTI"){
                             $result3 = $update_stmt->get_result();
                             
                             if ($row4 = $result3->fetch_assoc()) {
-                                $qty = $row['nett_weight1'] * $row4['rate'];
+                                $qty = $row['supplier_weight'] * $row4['rate'];
                                 $amt = $qty * $unitPrice;
                             }
                             $update_stmt->close();

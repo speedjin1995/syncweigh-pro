@@ -119,6 +119,7 @@ if (!empty($data['data'])) {
         $Remarks = !empty($rows['DOCREF4']) ? trim($rows['DOCREF4']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
         $DestinationCode = '';
+        $insertDestination = false;
         if(!empty($DestinationName)){
             $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
         }
@@ -277,6 +278,8 @@ if (!empty($data['data'])) {
                         $insert_destination_log->execute();
                         $insert_destination_log->close();
                     }    
+                    
+                    $insertDestination = true;
                 }
 
                 // $errMsg = "Destination: ".$DestinationCode." doesn't exist in master data.";
@@ -362,6 +365,30 @@ if (!empty($data['data'])) {
                     $insert_stmt->bind_param('sssssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $SupplierCode, $SupplierName, $OrderDate, $PONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $RawMaterialCode, $RawMaterialName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrDel, $ConvertedSupplierQuantity, $ConvertedBalance, $ConvertedUnitId, $SupplierQuantity, $SupplierQuantity, $UnitPrice, $TotalPrice, $Remarks, $status, $system, $system);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
+                    
+                    if ($insertDestination && !empty($misValue)){
+                        if ($update_miscellaneous = $db->prepare("UPDATE miscellaneous SET value=? WHERE code=? AND name=?")) {
+                            $update_miscellaneous->bind_param('sss', $misValue, $code, $firstChar);
+        
+                            if (! $update_miscellaneous->execute()) {
+                                echo json_encode(
+                                    array(
+                                        "status"=> "failed", 
+                                        "message"=> $update_miscellaneous->error
+                                    )
+                                );
+                            }else{
+                                echo json_encode(
+                                    array(
+                                        "status"=> "success", 
+                                        "message"=> "Added Successfully!!" 
+                                    )
+                                );
+                            }     
+                            
+                            $update_miscellaneous->close();
+                        }
+                    }
                 }
             }else{
                 $errMsg = "Purchase order for P/O No: ".$PONumber." + Raw Material: ".$RawMaterialName." already exist.";

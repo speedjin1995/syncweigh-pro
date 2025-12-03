@@ -119,6 +119,7 @@ if (!empty($data['data'])) {
         $Remarks = !empty($rows['DOCREF4']) ? trim($rows['DOCREF4']) : '';
         $DestinationName =  (isset($rows['REMARK2']) && !empty($rows['REMARK2']) && $rows['REMARK2'] !== '' && $rows['REMARK2'] !== null) ? trim($rows['REMARK2']) : '';
         $DestinationCode = '';
+        $insertDestination = false;
         if(!empty($DestinationName)){
             $DestinationCode = searchDestinationCodeByName($DestinationName, $db);
         }
@@ -273,6 +274,7 @@ if (!empty($data['data'])) {
                     $insert_destination->execute();
                     $destinationId = $insert_destination->insert_id; // Get the inserted destination ID
                     $insert_destination->close();
+                    $insertDestination = true;
                     
                     if ($insert_destination_log = $db->prepare("INSERT INTO Destination_Log (destination_id, destination_code, name, action_id, action_by) VALUES (?, ?, ?, ?, ?)")) {
                         $insert_destination_log->bind_param('sssss', $destinationId, $DestinationCode, $DestinationName, $actionId, $uid);
@@ -345,10 +347,23 @@ if (!empty($data['data'])) {
 
         # Checking for existing Order No.
         if($OrderNumber != null && $OrderNumber != ''){
-            $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$OrderNumber' AND product_code = '$ProductCode' AND customer_code = '$CustomerCode' AND deleted = '0'";
-            $soDetail = mysqli_query($db, $soQuery);
-            $soRow = mysqli_fetch_assoc($soDetail);
-            $soCount = (int) $soRow['count'];
+            if ($stmtOrder = $db->prepare("SELECT COUNT(*) AS count 
+                                      FROM Sales_Order 
+                                      WHERE order_no = ? 
+                                        AND product_code = ? 
+                                        AND customer_code = ? 
+                                        AND deleted = '0'")) {
+                $stmtOrder->bind_param("sss", $OrderNumber, $ProductCode, $CustomerCode);
+                $stmtOrder->execute();
+                $resultOrder = $stmtOrder->get_result();
+                $soRow = $resultOrder->fetch_assoc();
+                $soCount = (int)$soRow['count'];
+                $stmtOrder->close();
+            }
+            else{
+                $errMsg = "Prepare failed: " . $db->error;
+                $errorSoProductArray[] = $errMsg;
+            }
             
             if($soCount < 1){
                 $TotalPrice = 0;
@@ -363,6 +378,30 @@ if (!empty($data['data'])) {
                     $insert_stmt->bind_param('ssssssssssssssssssssssssssssssss', $CompanyCode, $CompanyName, $CustomerCode, $CustomerName, $OrderDate, $OrderNumber, $SONumber, $AgentCode, $AgentName, $DestinationCode, $DestinationName, $ProductCode, $ProductName, $PlantCode, $PlantName, $TransporterCode, $TransporterName, $VehNumber, $ExOrQuarry, $ConvertedOrderQuantity, $ConvertedBalance, $ConvertedUnitId, $OrderQuantity, $OrderQuantity, $UnitPrice, $TotalPrice, $TransportPrice, $SupplierCost, $Remarks, $status, $system, $system);
                     $insert_stmt->execute();
                     $insert_stmt->close(); 
+                    
+                    if ($insertDestination && !empty($misValue)){
+                        if ($update_miscellaneous = $db->prepare("UPDATE miscellaneous SET value=? WHERE code=? AND name=?")) {
+                            $update_miscellaneous->bind_param('sss', $misValue, $code, $firstChar);
+        
+                            if (! $update_miscellaneous->execute()) {
+                                echo json_encode(
+                                    array(
+                                        "status"=> "failed", 
+                                        "message"=> $update_miscellaneous->error
+                                    )
+                                );
+                            }else{
+                                echo json_encode(
+                                    array(
+                                        "status"=> "success", 
+                                        "message"=> "Added Successfully!!" 
+                                    )
+                                );
+                            }     
+                            
+                            $update_miscellaneous->close();
+                        }
+                    }
                 }
             }
             else{
@@ -403,7 +442,7 @@ if (!empty($data['data'])) {
 } 
 else {
     require_once 'db_connect.php';
-    $services = 'PullPO';
+    $services = 'PullSO';
     $requests = json_encode($data);
 
     $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
