@@ -10,13 +10,13 @@ if(isset($_POST['userID'], $_POST['type'])){
 	$status = "Open";
 
 	if ($type == 'Sales'){
-		$sql = "UPDATE Sales_Order SET status=? WHERE id=?";
+		$sql = "UPDATE Sales_Order SET status=?, modified_by=? WHERE id=?";
 	}else{
-		$sql = "UPDATE Purchase_Order SET status=? WHERE id=?";
+		$sql = "UPDATE Purchase_Order SET status=?, modified_by=? WHERE id=?";
 	}
 
 	if ($stmt2 = $db->prepare($sql)) {
-		$stmt2->bind_param('ss', $status, $id);
+		$stmt2->bind_param('sss', $status, $username, $id);
 		
 		if($stmt2->execute()){
 			$stmt2->close();

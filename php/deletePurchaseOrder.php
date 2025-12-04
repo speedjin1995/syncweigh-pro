@@ -8,8 +8,8 @@ if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 	$del = "1";
 
-	if ($stmt2 = $db->prepare("UPDATE Purchase_Order SET deleted=? WHERE id=?")) {
-		$stmt2->bind_param('ss', $del, $id);
+	if ($stmt2 = $db->prepare("UPDATE Purchase_Order SET deleted=?, modified_by=? WHERE id=?")) {
+		$stmt2->bind_param('sss', $del, $username, $id);
 		
 		if($stmt2->execute()){
 			$stmt2->close();
