@@ -3962,8 +3962,10 @@ else{
             $('#addModal').find('#siteName').val(data.site_name).trigger('change');
             $('#addModal').find('#agent').val(data.agent_name).trigger('change');
             $('#addModal').find('#agentCode').val(data.agent_code);
-            $('#addModal').find('#supplierWeight').val(data.supplier_weight);
-            $('#addModal').find('#orderWeight').val(data.order_weight);
+            setTimeout(() => {
+                $('#addModal').find('#supplierWeightBasicUom').val(data.supplier_weight_uom).trigger('change');
+                $('#addModal').find('#orderWeightBasicUom').val(data.order_weight_uom).trigger('change');
+            }, 500);
             $('#addModal').find('#destinationCode').val(data.destination_code);
             $('#addModal').find('#destination').val(data.destination).trigger('change');
             $('#addModal').find('#plant').val(data.plant_name).trigger('change');
@@ -3973,7 +3975,6 @@ else{
             $('#addModal').find('#transporter').val(data.transporter).trigger('change');
             $('#addModal').find('#transporterCode').val(data.transporter_code);
             
-        
             // Optional: Show read-only fields instead of dropdown if needed
             // if (data.transaction_status === 'Purchase') {
             //     $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
@@ -4254,7 +4255,6 @@ else{
             convertWeight(value, productId, transactionStatus, function (result) {
                 $('#orderWeight').val(parseFloat(result.convertedValue).toFixed(0));
                 $('#orderWeightUnit').val(result.basicUomLabel);
-                console.log(result);
             });
         });
 
