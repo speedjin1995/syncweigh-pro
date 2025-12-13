@@ -801,8 +801,8 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 { data: 'so_no' },
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
-                { data: 'order_quantity' },
-                { data: 'balance' },
+                { data: 'converted_order_qty' },
+                { data: 'converted_balance' },
                 { data: 'status' },
                 { data: 'modified_date' },
                 {
@@ -903,8 +903,8 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                     { data: 'so_no' },
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
-                    { data: 'order_quantity' },
-                    { data: 'balance' },
+                    { data: 'converted_order_qty' },
+                    { data: 'converted_balance' },
                     { data: 'status' },
                     { data: 'modified_date' },
                     {
