@@ -5011,7 +5011,6 @@ else{
                 }
                 
                 $('#addModal').find('#noOfDrum').val(obj.message.no_of_drum);                
-                $('#addModal').find('#batchDrum').val(obj.message.batch_drum).trigger('change');
 
                 if (obj.message.transaction_status == 'Purchase'){
                     //$('#addModal').find('#purchaseOrder').next('.select2-container').hide();
@@ -5061,6 +5060,10 @@ else{
                     }, 100);*/
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }
+
+                setTimeout(() => {
+                    $('#addModal').find('#batchDrum').val(obj.message.batch_drum).trigger('change');
+                }, 500);
 
                 // Initialize all Select2 elements in the modal
                 $('#addModal .select2').select2({
