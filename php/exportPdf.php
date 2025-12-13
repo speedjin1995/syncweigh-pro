@@ -161,6 +161,11 @@ if(isset($_POST['isMulti']) && $_POST['isMulti'] != null && $_POST['isMulti'] !=
     $isMulti = $_POST['isMulti'];
 }
 
+$isDashboard = '';
+if (isset($_POST['isDashboard']) && $_POST['isDashboard'] != null && $_POST['isDashboard'] != '' && $_POST['isDashboard'] != '-'){
+    $isDashboard = $_POST['isDashboard'];
+}
+
 if(isset($_POST["file"])){
     if($_POST["file"] == 'weight'){
         //i remove this because both(billboard and weight) also call this print page.
@@ -746,7 +751,17 @@ if(isset($_POST["file"])){
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
                 $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date ASC";
-            }else{
+            } else if ($isDashboard == 'Y'){
+                $currentStatus = $_POST['currentStatus'];
+                if($currentStatus == 'Complete'){
+                    $searchQuery .= " AND is_complete = 'Y' AND is_cancel = 'N' ";
+                } elseif($currentStatus == 'Pending'){
+                    $searchQuery .= " AND is_complete = 'N' AND is_cancel = 'N' ";
+                } elseif($currentStatus == 'Cancel'){
+                    $searchQuery .= " AND is_cancel = 'Y' ";
+                }
+                $sql = "select * from Weight WHERE status = '0'".$searchQuery.' ORDER BY tare_weight1_date ASC';
+            } else{
                 $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date ASC';
             }
 
@@ -1531,7 +1546,17 @@ if(isset($_POST["file"])){
             if ($isMulti == 'Y'){
                 $id = $_POST['id'];
                 $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date ASC";
-            }else{
+            } else if ($isDashboard == 'Y'){
+                $currentStatus = $_POST['currentStatus'];
+                if($currentStatus == 'Complete'){
+                    $searchQuery .= " AND is_complete = 'Y' AND is_cancel = 'N' ";
+                } elseif($currentStatus == 'Pending'){
+                    $searchQuery .= " AND is_complete = 'N' AND is_cancel = 'N' ";
+                } elseif($currentStatus == 'Cancel'){
+                    $searchQuery .= " AND is_cancel = 'Y' ";
+                }
+                $sql = "select * from Weight WHERE status = '0'".$searchQuery.' ORDER BY tare_weight1_date ASC';
+            } else{
                 $sql = "select * from Weight WHERE is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery.' ORDER BY tare_weight1_date ASC';
             }
 

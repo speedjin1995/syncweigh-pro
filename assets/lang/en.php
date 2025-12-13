@@ -47,6 +47,7 @@
 
     $lang["t-crm"]="CRM";
     $lang["t-billboard"]="Billboard";
+    $lang["t-dashboard"]="Dashboard";
     $lang["t-weighing"]="Weighing";
     $lang["t-crypto"]="Crypto";
     $lang["t-projects"]="Projects";
