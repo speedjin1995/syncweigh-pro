@@ -1468,8 +1468,8 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 <p><strong>S/O ORDER:</strong> ${row.so_no}</p>
                 <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter_name}</p>
                 <p><strong>VEHICLE NO:</strong> ${row.veh_number}</p>
-                <p><strong>ORDER QUANTITY:</strong> ${row.order_quantity} KG</p>
-                <p><strong>BALANCE:</strong> ${row.balance} KG</p>
+                <p><strong>ORDER QUANTITY:</strong> ${row.converted_order_qty} ${row.converted_unit_label}</p>
+                <p><strong>BALANCE:</strong> ${row.converted_balance} ${row.converted_unit_label}</p>
                 <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
                 <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
             </div>
