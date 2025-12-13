@@ -543,8 +543,10 @@ else{
                                                                                     <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderWeight" name="orderWeight"  placeholder="Order Weight">
+                                                                                            <input type="number" class="form-control" id="orderWeightBasicUom" name="orderWeightBasicUom" placeholder="0">
                                                                                             <div class="input-group-text" id="orderWeightUnit">KG</div>
+                                                                                            <input type="number" class="form-control input-readonly" id="orderWeight" name="orderWeight" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -554,8 +556,10 @@ else{
                                                                                     <label for="supplierWeight" class="col-sm-4 col-form-label">Supplier Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="supplierWeight" name="supplierWeight"  placeholder="Supplier Weight">
+                                                                                            <input type="number" class="form-control" id="supplierWeightBasicUom" name="supplierWeightBasicUom" placeholder="0">
                                                                                             <div class="input-group-text" id="supplierWeightUnit">KG</div>
+                                                                                            <input type="number" class="form-control input-readonly" id="supplierWeight" name="supplierWeight" placeholder="0" readonly>
+                                                                                            <div class="input-group-text">KG</div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -3648,6 +3652,7 @@ else{
                             var vehNo = obj.message.veh_number;
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
+                            var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
                             var balance = obj.message.balance; 
                             var remarks = obj.message.remarks; 
                             var unitPrice = obj.message.unit_price; 
@@ -3687,7 +3692,7 @@ else{
                             if (!isEdit){
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
-                            $('#addModal').find('#orderWeight').val(orderSupplierWeight).trigger('change');
+                            $('#addModal').find('#orderWeightBasicUom').val(convertedOrderSupplierWeight).trigger('change');
                             $('#addModal').find('#balance').val(balance);
 
                             if (!$('#addModal').find('#otherRemarks').val()) {
@@ -3765,6 +3770,7 @@ else{
                             var vehNo = obj.message.veh_number;
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
+                            var orderSupplierWeight = obj.message.order_supplier_weight;
                             var balance = obj.message.balance;
                             var remarks = obj.message.remarks;
                             // var finalWeight = obj.message.final_weight;
@@ -3804,6 +3810,7 @@ else{
                             if (!isEdit){
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
+                            $('#addModal').find('#supplierWeightBasicUom').val(0).trigger('change');
                             $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                             $('#addModal').find('#balance').val(balance);
 
@@ -4240,6 +4247,27 @@ else{
             }
         });
 
+        $('#orderWeightBasicUom').on('change', function(){
+            var value = $(this).val();
+            var productId = $('#addModal').find('#productId').val();
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+            convertWeight(value, productId, transactionStatus, function (result) {
+                $('#orderWeight').val(parseFloat(result.convertedValue).toFixed(0));
+                $('#orderWeightUnit').val(result.basicUomLabel);
+                console.log(result);
+            });
+        });
+
+        $('#supplierWeightBasicUom').on('change', function(){
+            var value = $(this).val();
+            var rawMatId = $('#addModal').find('#rawMaterialId').val();
+            var transactionStatus = $('#addModal').find('#transactionStatus').val();
+            convertWeight(value, rawMatId, transactionStatus, function (result) {
+                $('#supplierWeight').val(parseFloat(result.convertedValue).toFixed(0));
+                $('#supplierWeightUnit').val(result.basicUomLabel);
+            });
+        });
+
         //basicUOM
         // $('#basicUOM').on('change', function(){
         //     var value = $(this).val();
@@ -4347,6 +4375,58 @@ else{
             }
         ?>
     });
+
+    // Function to convert basic uom to kg
+    function convertWeight(value, productRawMatId, transactionStatus, callback) {
+        if (productRawMatId && transactionStatus) {
+            $('#spinnerLoading').show();
+
+            var url = transactionStatus === 'Purchase'
+                ? 'php/getRawMaterial.php'
+                : 'php/getProduct.php';
+
+            $.post(url, { userID: productRawMatId }, function (data) {
+                var obj = JSON.parse(data);
+                var conversionData;
+
+                if (obj.status === 'success') {
+                    var basicUomLabel = obj.message.basic_uom_unit;
+                    var rate = 1;
+
+                    var targetUom = (
+                        transactionStatus === 'Purchase'
+                            ? obj.message.rawMatUom
+                            : obj.message.prodUom
+                    ).find(uom => uom.unit_id == '2');
+
+                    if (targetUom) {
+                        rate = parseFloat(targetUom.rate);
+                    }
+
+                    conversionData = {
+                        basicUomLabel,
+                        rate,
+                        convertedValue: parseFloat(value) / rate
+                    };
+                } else {
+                    conversionData = {
+                        basicUomLabel: '',
+                        rate: 1,
+                        convertedValue: parseFloat(value)
+                    };
+                }
+
+                $('#spinnerLoading').hide();
+                callback(conversionData); // ✅ return result via callback
+            });
+        } else {
+            callback({
+                basicUomLabel: 'KG',
+                rate: 1,
+                convertedValue: parseFloat(value)
+            });
+        }
+    }
 
     // Function to handle weight form submission without printing
     function submitWeightForm() {
