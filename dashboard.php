@@ -1,6 +1,17 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    require_once "php/db_connect.php";
+
+    if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+        $username = implode("', '", $_SESSION["plant"]);
+        $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+    }
+    else{
+        $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    }
+?>
 <head>
 
     <title>Weighing | Synctronix - Weighing System</title>
@@ -95,75 +106,55 @@
                                         <i class="mdi mdi-chevron-down pull-right"></i>
                                         Search Records
                                     </div>
-                                    <div id="collapseOne" class="collapse" aria-labelledby="collapseOne">                                    
+                                    <div id="collapseOne" aria-labelledby="collapseOne">                                    
                                         <div class="card-body">
                                             <form action="javascript:void(0);">
                                                 <div class="row">
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="fromDateSearch" class="form-label">First Name</label>
+                                                            <label for="fromDateSearch" class="form-label">From Date</label>
                                                             <input type="date" class="form-control" data-provider="flatpickr" id="fromDateSearch">
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="toDateSearch" class="form-label">Last Name</label>
+                                                            <label for="toDateSearch" class="form-label">To Date</label>
                                                             <input type="date" class="form-control" data-provider="flatpickr" id="toDateSearch">
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="statusSearch" class="form-label">Status</label>
-                                                            <select id="statusSearch" class="form-select" data-choices data-choices-sorting="true" >
-                                                                <option selected>Sales</option>
-                                                                <option>Purchase</option>
-                                                                <option>Local</option>
+                                                            <label for="transactionStatusSearch" class="form-label">Transaction Status</label>
+                                                            <select id="transactionStatusSearch" class="form-select select2" data-choices data-choices-sorting="true" >
+                                                                <option value="Sales" selected>Sales</option>
+                                                                <option value="Purchase">Purchase</option>
+                                                                <?php 
+                                                                    if($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER'){ 
+                                                                        echo '<option value="Local">Public</option>';
+                                                                    }
+                                                                ?>                                                                                     
+                                                                <option value="WIP">WIP</option>
+                                                                <option value="Return">Return</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-3">
                                                         <div class="mb-3">
-                                                            <label for="customerNoSearch" class="form-label">Customer No</label>
-                                                            <select id="customerNoSearch" class="form-select" data-choices data-choices-sorting="true" >
-                                                                <option selected>...</option>
-                                                                <!-- <option>Purchase</option>
-                                                                <option>Local</option> -->
-                                                            </select>
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="vehicleNo" class="form-label">Vehicle No</label>
-                                                            <input type="text" class="form-control" placeholder="Vehicle No" id="vehicleNo">
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="invoiceNoSearch" class="form-label">Invoice No</label>
-                                                            <input type="text" class="form-control" placeholder="Invoice No" id="invoiceNoSearch">
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="batchNoSearch" class="form-label">Batch No</label>
-                                                            <input type="text" class="form-control" placeholder="Batch No" id="batchNoSearch">
-                                                        </div>
-                                                    </div><!--end col-->                                                
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Product</label>
-                                                            <select id="transactionStatus" class="form-select" data-choices data-choices-sorting="true" >
-                                                                <option selected>...</option>
-                                                                <!-- <option>Purchase</option>
-                                                                <option>Local</option> -->
+                                                            <label for="plantSearch" class="form-label">Plant</label>
+                                                            <select id="plantSearch" class="form-select select2" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
+                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                <?php } ?>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger">
+                                                            <button type="submit" class="btn btn-danger" id="searchFilter">
                                                                 <i class="bx bx-search-alt"></i>
-                                                                Search</button>
+                                                                Search
+                                                            </button>
                                                         </div>
                                                     </div><!--end col-->
                                                 </div><!--end row-->
@@ -173,98 +164,6 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
-                                    <div class="card card-animate">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Sales</p>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4">$<span
-                                                            class="counter-value" data-target="559.25">0</span>k
-                                                    </h4>
-                                                </div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-success rounded fs-3">
-                                                        <i class="bx bx-dollar-circle text-success"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-
-                                <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
-                                    <div class="card card-animate">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                        Purchase</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <h5 class="text-danger fs-14 mb-0">
-                                                        <i class="ri-arrow-right-down-line fs-13 align-middle"></i>
-                                                        -3.57 %
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" data-target="36894">0</span></h4>
-                                                </div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-info rounded fs-3">
-                                                        <i class="bx bx-shopping-bag text-info"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-
-                                <div class="col-xl-4 col-md-6">
-                                    <!-- card -->
-                                    <div class="card card-animate">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                    Miscellaneous</p>
-                                                </div>
-                                                <div class="flex-shrink-0">
-                                                    <h5 class="text-success fs-14 mb-0">
-                                                        <i class="ri-arrow-right-up-line fs-13 align-middle"></i>
-                                                        +29.08 %
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-end justify-content-between mt-4">
-                                                <div>
-                                                    <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                            class="counter-value" data-target="183.35">0</span>M
-                                                    </h4>
-                                                </div>
-                                                <div class="avatar-sm flex-shrink-0">
-                                                    <span class="avatar-title bg-soft-warning rounded fs-3">
-                                                        <i class="bx bx-user-circle text-warning"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div><!-- end card body -->
-                                    </div><!-- end card -->
-                                </div><!-- end col -->
-                            </div> <!-- end row-->
-
-
                             <!--datatable--> 
                             <div class="row">
                                 <div class="col-lg-12">
@@ -272,434 +171,69 @@
                                         <div class="card-header">
                                             <div class="d-flex justify-content-between">
                                                 <div>
-                                                    <h5 class="card-title mb-0">Previous Records</h5>
+                                                    <h5 class="card-title mb-0">Dashboard Summary</h5>
                                                 </div>
-                                                <div class="flex-shrink-0">
+                                                <!-- <div class="flex-shrink-0">
                                                     <button type="button" class="btn btn-danger waves-effect waves-light" id="excelSearch">
                                                     <i class="mdi mdi-file-excel-outline"></i>
                                                     Export Excel
                                                     </button>
-                                                </div> 
+                                                </div>  -->
                                             </div>                                            
                                         </div>                                      
                                         <div class="card-body">                                              
-                                            <table id="model-datatables" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                            <table id="dashboard-summary" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>SR No.</th>
-                                                        <th>ID</th>
-                                                        <th>Purchase ID</th>
-                                                        <th>Title</th>
-                                                        <th>User</th>
-                                                        <th>Assigned To</th>
-                                                        <th>Created By</th>
-                                                        <th>Create Date</th>
-                                                        <th>Status</th>
-                                                        <th>Priority</th>
-                                                        <th>Action</th>
+                                                        <th rowspan="2" class="text-center">Status</th>
+                                                        <th colspan="2" class="text-center">Batch</th>
+                                                        <th colspan="2" class="text-center">Drum</th>
+                                                        <th colspan="2" class="text-center">Total</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center">No.</th>
+                                                        <th class="text-center">MT</th>
+                                                        <th class="text-center">No.</th>
+                                                        <th class="text-center">MT</th>
+                                                        <th class="text-center">No.</th>
+                                                        <th class="text-center">MT</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>01</td>
-                                                        <td>VLZ-452</td>
-                                                        <td>VLZ1400087402</td>
-                                                        <td><a href="#!">Post launch reminder/ post list</a></td>
-                                                        <td>Joseph Parker</td>
-                                                        <td>Alexis Clarke</td>
-                                                        <td>Joseph Parker</td>
-                                                        <td>03 Oct, 2021</td>
-                                                        <td><span class="badge badge-soft-info">Re-open</span></td>
-                                                        <td><span class="badge bg-danger">High</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>02</td>
-                                                        <td>VLZ-453</td>
-                                                        <td>VLZ1400087425</td>
-                                                        <td><a href="#!">Additional Calendar</a></td>
-                                                        <td>Diana Kohler</td>
-                                                        <td>Admin</td>
-                                                        <td>Mary Rucker</td>
-                                                        <td>05 Oct, 2021</td>
-                                                        <td><span class="badge badge-soft-secondary">On-Hold</span></td>
-                                                        <td><span class="badge bg-info">Medium</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>03</td>
-                                                        <td>VLZ-454</td>
-                                                        <td>VLZ1400087438</td>
-                                                        <td><a href="#!">Make a creating an account profile</a></td>
-                                                        <td>Tonya Noble</td>
-                                                        <td>Admin</td>
-                                                        <td>Tonya Noble</td>
-                                                        <td>27 April, 2022</td>
-                                                        <td><span class="badge badge-soft-danger">Closed</span></td>
-                                                        <td><span class="badge bg-success">Low</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>04</td>
-                                                        <td>VLZ-455</td>
-                                                        <td>VLZ1400087748</td>
-                                                        <td><a href="#!">Apologize for shopping Error!</a></td>
-                                                        <td>Joseph Parker</td>
-                                                        <td>Alexis Clarke</td>
-                                                        <td>Joseph Parker</td>
-                                                        <td>14 June, 2021</td>
-                                                        <td><span class="badge badge-soft-warning">Inprogress</span></td>
-                                                        <td><span class="badge bg-info">Medium</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>05</td>
-                                                        <td>VLZ-456</td>
-                                                        <td>VLZ1400087547</td>
-                                                        <td><a href="#!">Support for theme</a></td>
-                                                        <td>Donald Palmer</td>
-                                                        <td>Admin</td>
-                                                        <td>Donald Palmer</td>
-                                                        <td>25 June, 2021</td>
-                                                        <td><span class="badge badge-soft-danger">Closed</span></td>
-                                                        <td><span class="badge bg-success">Low</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>06</td>
-                                                        <td>VLZ-457</td>
-                                                        <td>VLZ1400087245</td>
-                                                        <td><a href="#!">Benner design for FB & Twitter</a></td>
-                                                        <td>Mary Rucker</td>
-                                                        <td>Jennifer Carter</td>
-                                                        <td>Mary Rucker</td>
-                                                        <td>14 Aug, 2021</td>
-                                                        <td><span class="badge badge-soft-warning">Inprogress</span></td>
-                                                        <td><span class="badge bg-info">Medium</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>07</td>
-                                                        <td>VLZ-458</td>
-                                                        <td>VLZ1400087785</td>
-                                                        <td><a href="#!">Change email option process</a></td>
-                                                        <td>James Morris</td>
-                                                        <td>Admin</td>
-                                                        <td>James Morris</td>
-                                                        <td>12 March, 2022</td>
-                                                        <td><span class="badge badge-soft-primary">Open</span></td>
-                                                        <td><span class="badge bg-danger">High</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>08</td>
-                                                        <td>VLZ-460</td>
-                                                        <td>VLZ1400087745</td>
-                                                        <td><a href="#!">Support for theme</a></td>
-                                                        <td>Nathan Cole</td>
-                                                        <td>Nancy Martino</td>
-                                                        <td>Nathan Cole</td>
-                                                        <td>28 Feb, 2022</td>
-                                                        <td><span class="badge badge-soft-secondary">On-Hold</span></td>
-                                                        <td><span class="badge bg-success">Low</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>09</td>
-                                                        <td>VLZ-461</td>
-                                                        <td>VLZ1400087179</td>
-                                                        <td><a href="#!">Form submit issue</a></td>
-                                                        <td>Grace Coles</td>
-                                                        <td>Admin</td>
-                                                        <td>Grace Coles</td>
-                                                        <td>07 Jan, 2022</td>
-                                                        <td><span class="badge badge-soft-success">New</span></td>
-                                                        <td><span class="badge bg-danger">High</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>10</td>
-                                                        <td>VLZ-462</td>
-                                                        <td>VLZ140008856</td>
-                                                        <td><a href="#!">Edit customer testimonial</a></td>
-                                                        <td>Freda</td>
-                                                        <td>Alexis Clarke</td>
-                                                        <td>Freda</td>
-                                                        <td>16 Aug, 2021</td>
-                                                        <td><span class="badge badge-soft-danger">Closed</span></td>
-                                                        <td><span class="badge bg-info">Medium</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>11</td>
-                                                        <td>VLZ-463</td>
-                                                        <td>VLZ1400078031</td>
-                                                        <td><a href="#!">Ca i have an e-copy invoice</a></td>
-                                                        <td>Williams</td>
-                                                        <td>Admin</td>
-                                                        <td>Williams</td>
-                                                        <td>24 Feb, 2022</td>
-                                                        <td><span class="badge badge-soft-primary">Open</span></td>
-                                                        <td><span class="badge bg-success">Low</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>12</td>
-                                                        <td>VLZ-464</td>
-                                                        <td>VLZ1400087416</td>
-                                                        <td><a href="#!">Brand logo design</a></td>
-                                                        <td>Richard V.</td>
-                                                        <td>Admin</td>
-                                                        <td>Richard V.</td>
-                                                        <td>16 March, 2021</td>
-                                                        <td><span class="badge badge-soft-warning">Inprogress</span></td>
-                                                        <td><span class="badge bg-danger">High</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>13</td>
-                                                        <td>VLZ-466</td>
-                                                        <td>VLZ1400089015</td>
-                                                        <td><a href="#!">Issue with finding information about order ?</a></td>
-                                                        <td>Olive Gunther</td>
-                                                        <td>Alexis Clarke</td>
-                                                        <td>Schaefer</td>
-                                                        <td>32 March, 2022</td>
-                                                        <td><span class="badge badge-soft-success">New</span></td>
-                                                        <td><span class="badge bg-danger">High</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>14</td>
-                                                        <td>VLZ-467</td>
-                                                        <td>VLZ1400090324</td>
-                                                        <td><a href="#!">Make a creating an account profile</a></td>
-                                                        <td>Edwin</td>
-                                                        <td>Admin</td>
-                                                        <td>Edwin</td>
-                                                        <td>05 April, 2022</td>
-                                                        <td><span class="badge badge-soft-warning">Inprogress</span></td>
-                                                        <td><span class="badge bg-success">Low</span></td>
-                                                        <td>
-                                                            <div class="dropdown d-inline-block">
-                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="ri-more-fill align-middle"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
-                                                                    <li><a class="dropdown-item edit-item-btn"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
-                                                                    <li>
-                                                                        <a class="dropdown-item remove-item-btn">
-                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                <tbody id="dashboard-tbody">
+                                                    
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                             </div><!--end row-->
-                    
 
+                            <!-- Doughnut Chart -->
+                            <div class="row" id="doughnutChartRow" style="display: none;">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Distribution Charts</h5>
+                                        </div>                             
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <h6 class="text-center mb-3">Product Distribution (MT)</h6>
+                                                    <div id="productDoughnutChart" style="height: 400px; display: flex; justify-content: center; align-items: center;">
+                                                        <canvas id="productCanvas"></canvas>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <h6 class="text-center mb-3">Customer Distribution (MT)</h6>
+                                                    <div id="customerDoughnutChart" style="height: 400px; display: flex; justify-content: center; align-items: center;">
+                                                        <canvas id="customerCanvas"></canvas>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row-->
                         </div> <!-- end .h-100-->
 
                     </div> <!-- end col -->
@@ -714,9 +248,6 @@
 
     </div>
     <!-- END layout-wrapper -->
-
-
-
 
     <?php include 'layouts/customizer.php'; ?>
 
@@ -750,12 +281,341 @@
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
     <script src="assets/js/pages/datatables.init.js"></script>
-
+    <!-- Chart.js -->
+    <script src="plugins/chart.js/Chart.min.js"></script>
+    <!-- Additional js -->
+    <script src="assets/js/additional.js"></script>
 
     <script type="text/javascript">
-    $(function () {
+        var dashboardTable = null;
+        $(function () {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            const yesterday = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            yesterday.setDate(yesterday.getDate() - 1);
 
-    });
+            // Initialize all Select2 elements in the modal
+            $('.select2').select2({
+                allowClear: true,
+                placeholder: "Please Select",
+            });
+
+            // Apply custom styling to Select2 elements in addModal
+            $('.select2-container .select2-selection--single').css({
+                'padding-top': '4px',
+                'padding-bottom': '4px',
+                'height': 'auto'
+            });
+
+            $('.select2-container .select2-selection__arrow').css({
+                'padding-top': '33px',
+                'height': 'auto'
+            });
+
+            $("#fromDateSearch").flatpickr({
+                dateFormat: "d-m-Y H:i",
+                defaultDate: today
+            });
+
+            $('#toDateSearch').flatpickr({
+                dateFormat: "d-m-Y H:i",
+                defaultDate: today
+            });
+
+            // Initialize DataTable
+            var fromDate = $('#fromDateSearch').val();
+            var toDate = $('#toDateSearch').val();
+            var transactionStatus = $('#transactionStatusSearch').val();
+            var plant = $('#plantSearch').val();
+
+            fetchData(fromDate, toDate, transactionStatus, plant);
+            
+            $('#searchFilter').on('click', function() {
+                var fromDate = $('#fromDateSearch').val();
+                var toDate = $('#toDateSearch').val();
+                var transactionStatus = $('#transactionStatusSearch').val();
+                var plant = $('#plantSearch').val();
+
+                // Validate date range
+                if (parseDate(fromDate) > parseDate(toDate)) {
+                    alert('From Date cannot be later than To Date.');
+                    return;
+                }
+
+                // Call function to fetch and display data based on filters
+                fetchData(fromDate, toDate, transactionStatus, plant);
+            });
+
+            // Add click event for table cells
+            $('#dashboard-summary tbody').on('click', 'td', function() {
+                var columnIndex = $(this).index();
+                var rowData = dashboardTable.row($(this).parent()).data();
+                var status = rowData.status;
+                
+                if (columnIndex == 1 || columnIndex == 2) { // Batch columns
+                    showPieChart(status, 'Batch');
+                } else if (columnIndex == 3 || columnIndex == 4) { // Drum columns
+                    showPieChart(status, 'Drum');
+                }
+            });
+        });
+
+        // Convert d-m-Y format to Date objects
+        function parseDate(dateStr) {
+            var parts = dateStr.split('-');
+            return new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+
+        function fetchData(fromDate, toDate, transactionStatus, plant) {
+            // Destroy existing DataTable if it exists
+            if (dashboardTable) {
+                dashboardTable.destroy();
+            }
+            
+            dashboardTable = $("#dashboard-summary").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                'processing': true,
+                'serverSide': true,
+                'searching': false,
+                'paging': false,
+                'info': false,
+                'lengthChange': false,
+                'ordering': false,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url':'php/filterDashboard.php',
+                    'data': {
+                        fromDate: fromDate,
+                        toDate: toDate,
+                        transactionStatus: transactionStatus,
+                        plant: plant
+                    } 
+                },
+                'columns': [
+                    { data: 'status' },
+                    { data: 'batch_no' },
+                    { data: 'batch_mt' },
+                    { data: 'drum_no' },
+                    { data: 'drum_mt' },
+                    { data: 'total_no' },
+                    { data: 'total_mt' }
+                ],
+                'columnDefs': [
+                    { className: 'text-center clickable-cell', targets: '_all' }
+                ]
+            });
+        }
+                
+        function showPieChart(status, type) {
+            var fromDate = $('#fromDateSearch').val();
+            var toDate = $('#toDateSearch').val();
+            var transactionStatus = $('#transactionStatusSearch').val();
+            var plant = $('#plantSearch').val();
+
+            $.post('php/getChartData.php', {
+                fromDate: fromDate,
+                toDate: toDate,
+                transactionStatus: transactionStatus,
+                plant: plant,
+                status: status,
+                type: type
+            }, function(data) {
+                var obj = JSON.parse(data);
+                if(obj.status === 'success') {
+                    renderDoughnutCharts(obj.productData, obj.customerData);
+                }
+            });
+
+        }
+                
+        function renderDoughnutCharts(productData, customerData) {
+            // Product Doughnut Chart
+            var backgroundColors = generateColors(productData.values.length);
+
+            var productChart = new Chart($('#productCanvas'), {
+                type: 'doughnut',
+                data: {
+                    labels: productData.labels,
+                    datasets: [{
+                        data: productData.values,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { 
+                        display: false 
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index] || '';
+                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                var total = data.datasets[tooltipItem.datasetIndex].data.reduce((a, b) => a + b, 0);
+                                var percentage = ((value / total) * 100).toFixed(1);
+                                return label + ': ' + value.toLocaleString() + ' MT (' + percentage + '%)';
+                            }
+                        }
+                    },
+                    onClick: function (evt, elements) {
+                        if (elements.length > 0) {
+                            var element = elements[0];
+
+                            var datasetIndex = element._datasetIndex;
+                            var index = element._index;
+
+                            var productName = this.data.labels[index];
+                            var productCode = productData.codes[index];
+                            var fromDate = $('#fromDateSearch').val();
+                            var toDate = $('#toDateSearch').val();
+                            var transactionStatus = $('#transactionStatusSearch').val();
+                            var plant = $('#plantSearch').val(); 
+                            var status = productData.status;
+                            var type = productData.type;
+
+                            var postData = {
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                status: transactionStatus,
+                                plant: plant,
+                                file: 'weight',
+                                reportType: 'S&P',
+                                currentStatus: status,
+                                batchDrum: type,
+                                isDashboard: 'Y'
+                            };
+                            
+                            if (transactionStatus == 'Purchase') {
+                                postData.rawMat = productCode;
+                            } else {
+                                postData.product = productCode;
+                            }
+                            
+                            $.post('php/exportPdf.php', postData, function(response){
+                                var obj = JSON.parse(response);
+
+                                if(obj.status === 'success'){
+                                    var previewWindow = window.open('', '_blank');
+                                    previewWindow.document.write(obj.message);
+                                    previewWindow.document.close();
+                                }
+                                else if(obj.status === 'failed'){
+                                    toastr["error"](obj.message, "Failed:");
+                                }
+                                else{
+                                    toastr["error"]("Something wrong when activate", "Failed:");
+                                }
+                            }).fail(function(error){
+                                console.error("Error exporting PDF:", error);
+                                alert("An error occurred while generating the PDF.");
+                            });
+                        }
+                    }
+                }
+            });
+            
+            // Customer Doughnut Chart
+            var backgroundColors = generateColors(customerData.values.length);
+
+            var customerChart = new Chart($('#customerCanvas'), {
+                type: 'doughnut',
+                data: {
+                    labels: customerData.labels,
+                    datasets: [{
+                        data: customerData.values,
+                        backgroundColor: backgroundColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index] || '';
+                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                var total = data.datasets[tooltipItem.datasetIndex].data.reduce((a, b) => a + b, 0);
+                                var percentage = ((value / total) * 100).toFixed(1);
+                                return label + ': ' + value.toLocaleString() + ' MT (' + percentage + '%)';
+                            }
+                        }
+                    },
+                    onClick: function (evt, elements) {
+                        if (elements.length > 0) {
+                            var element = elements[0];
+
+                            var datasetIndex = element._datasetIndex;
+                            var index = element._index;
+
+                            var customerName = this.data.labels[index];
+                            var customerCode = customerData.codes[index];
+                            var fromDate = $('#fromDateSearch').val();
+                            var toDate = $('#toDateSearch').val();
+                            var transactionStatus = $('#transactionStatusSearch').val();
+                            var plant = $('#plantSearch').val(); 
+                            var status = customerData.status;
+                            var type = customerData.type;
+
+                            var postData = {
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                status: transactionStatus,
+                                plant: plant,
+                                file: 'weight',
+                                reportType: 'S&PC',
+                                currentStatus: status,
+                                batchDrum: type,
+                                isDashboard: 'Y'
+                            };
+                            
+                            if (transactionStatus == 'Purchase') {
+                                postData.supplier = customerCode;
+                            } else {
+                                postData.customer = customerCode;
+                            }
+                            
+                            $.post('php/exportPdf.php', postData, function(response){
+                                var obj = JSON.parse(response);
+
+                                if(obj.status === 'success'){
+                                    var previewWindow = window.open('', '_blank');
+                                    previewWindow.document.write(obj.message);
+                                    previewWindow.document.close();
+                                }
+                                else if(obj.status === 'failed'){
+                                    toastr["error"](obj.message, "Failed:");
+                                }
+                                else{
+                                    toastr["error"]("Something wrong when activate", "Failed:");
+                                }
+                            }).fail(function(error){
+                                console.error("Error exporting PDF:", error);
+                                alert("An error occurred while generating the PDF.");
+                            });
+                        }
+                    }
+                },
+            });
+
+            $('#doughnutChartRow').show();
+        }
+
+        function generateColors(count) {
+            const colors = [];
+            for (var i = 0; i < count; i++) {
+                const hue = Math.floor((360 / count) * i);
+                colors.push(`hsl(${hue}, 70%, 60%)`);
+            }
+            return colors;
+        }
     </script>
     </body>
 

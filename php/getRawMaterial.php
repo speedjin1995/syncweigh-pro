@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "db_connect.php";
+require_once "requires/lookup.php";
 
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
@@ -31,6 +32,7 @@ if(isset($_POST['userID'])){
                 $message['low'] = $row['low'];
                 $message['type'] = $row['type'];
                 $message['basic_uom'] = $row['basic_uom'];
+                $message['basic_uom_unit'] = searchUnitById($row['basic_uom'], $db);
             }
 
             // retrieve uom

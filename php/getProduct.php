@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "db_connect.php";
+require_once "requires/lookup.php";
 
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
@@ -30,8 +31,9 @@ if(isset($_POST['userID'])){
                 $message['high'] = $row['high'];
                 $message['low'] = $row['low'];
                 $message['basic_uom'] = $row['basic_uom'];
+                $message['basic_uom_unit'] = searchUnitById($row['basic_uom'], $db);
                 $message['type'] = $row['type'];
-            }
+            } 
 
             // retrieve products
             $empQuery = "SELECT * FROM Product_RawMat WHERE product_id = $id AND status = '0' ORDER BY id ASC";
@@ -76,7 +78,6 @@ if(isset($_POST['userID'])){
 
             $message['prodUom'] = $prodUom;
 
-            
             echo json_encode(
                 array(
                     "status" => "success",

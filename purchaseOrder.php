@@ -800,8 +800,8 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 { data: 'po_no' },
                 { data: 'order_date' },
                 { data: 'exquarry_or_delivered' },
-                { data: 'order_quantity' },
-                { data: 'balance' },
+                { data: 'converted_order_qty' },
+                { data: 'converted_balance' },
                 { data: 'status' },
                 { data: 'modified_date' },
                 {
@@ -902,8 +902,8 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     { data: 'po_no' },
                     { data: 'order_date' },
                     { data: 'exquarry_or_delivered' },
-                    { data: 'order_quantity' },
-                    { data: 'balance' },
+                    { data: 'converted_order_qty' },
+                    { data: 'converted_balance' },
                     { data: 'status' },
                     { data: 'modified_date' },
                     {
@@ -1469,8 +1469,8 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                 <p><strong>TRANSPORTER:</strong> ${row.transporter_code} - ${row.transporter_name}</p>
                 <p><strong>VEHICLE NO:</strong> ${row.veh_number}</p>
                 <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
-                <p><strong>SUPPLIER QUANTITY:</strong> ${row.order_quantity} KG</p>
-                <p><strong>BALANCE:</strong> ${row.balance} KG</p>
+                <p><strong>SUPPLIER QUANTITY:</strong> ${row.converted_order_qty} ${row.converted_unit_label}</p>
+                <p><strong>BALANCE:</strong> ${row.converted_balance} ${row.converted_unit_label}</p>
             </div>
         </div>`;
 

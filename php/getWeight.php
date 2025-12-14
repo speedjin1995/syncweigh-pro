@@ -181,7 +181,7 @@ if(isset($_POST['userID'])){
                                 }
                             
                                 $stmt->close();
-}
+                            }
                             
                             $message['totalDeliverAmt'] = $totalDeliverAmt;
                             $message['weights'] = $weighingData;
@@ -230,9 +230,10 @@ if(isset($_POST['userID'])){
                         $message['transaction_date'] = $row['transaction_date'];
                         $message['lorry_plate_no1'] = $row['lorry_plate_no1'];
                         $message['lorry_plate_no2'] = $row['lorry_plate_no2'];
-                        $message['supplier_weight'] = $row['supplier_weight'];
+                        $message['supplier_weight_uom'] = $row['supplier_weight_uom'];
                         $message['po_supply_weight'] = $row['po_supply_weight'];
                         $message['order_weight'] = $row['order_weight'];
+                        $message['order_weight_uom'] = $row['order_weight_uom'];
                         $message['tin_no'] = $row['tin_no'];
                         $message['id_no'] = $row['id_no'];
                         $message['id_type'] = $row['id_type'];
