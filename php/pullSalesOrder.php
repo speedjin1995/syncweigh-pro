@@ -354,6 +354,7 @@ if (!empty($data['data'])) {
                                       WHERE order_no = ? 
                                         AND product_code = ? 
                                         AND customer_code = ? 
+                                        AND status = 'Open' 
                                         AND deleted = '0'")) {
                 $stmtOrder->bind_param("sss", $OrderNumber, $ProductCode, $CustomerCode);
                 $stmtOrder->execute();
@@ -448,9 +449,9 @@ if (!empty($data['data'])) {
                         modified_by='SYSTEM' 
                     WHERE order_no=? AND product_code=? AND customer_code=?
                 ")){
-                    $updatePoSo->bind_param("sssssssssss", $ConvertedOrderQuantity, $OrderQuantity, $convertedBalance, $currentBalance, 
+                    $updatePoSoStmt->bind_param("sssssssssss", $ConvertedOrderQuantity, $OrderQuantity, $convertedBalance, $currentBalance, 
                     $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $OrderNumber, $ProductCode, $CustomerCode);
-                    $updatePoSo->execute();
+                    $updatePoSoStmt->execute();
                 }
             }
         }

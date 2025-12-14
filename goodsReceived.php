@@ -186,6 +186,7 @@ else{
                                                             <label for="poSearch" class="form-label">PO No</label>
                                                             <select id="poSearch" class="form-select select2" >
                                                                 <option selected>-</option>
+                                                                <option value="Pending PO verification">Pending PO verification</option>
                                                                 <?php while($rowPo = mysqli_fetch_assoc($purchaseOrder)){ ?>
                                                                     <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>

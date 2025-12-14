@@ -349,7 +349,7 @@ if (!empty($data['data'])) {
 
         # Checking for existing PO No.
         if($PONumber != null && $PONumber != ''){
-            $poQuery = "SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = '$PONumber' AND raw_mat_code = '$RawMaterialCode' AND deleted = '0'";
+            $poQuery = "SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = '$PONumber' AND raw_mat_code = '$RawMaterialCode' AND status = 'Open' AND deleted = '0'";
             $poDetail = mysqli_query($db, $poQuery);
             $poRow = mysqli_fetch_assoc($poDetail);
             $poCount = (int) $poRow['count'];
@@ -434,9 +434,9 @@ if (!empty($data['data'])) {
                         modified_by='SYSTEM' 
                     WHERE order_no=? AND raw_mat_code=? AND supplier_code=?
                 ")){
-                    $updatePoSo->bind_param("sssssssssss", $ConvertedSupplierQuantity, $SupplierQuantity, $convertedBalance, $currentBalance, 
+                    $updatePoSoStmt->bind_param("sssssssssss", $ConvertedSupplierQuantity, $SupplierQuantity, $convertedBalance, $currentBalance, 
                     $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $PONumber, $RawMaterialCode, $SupplierCode);
-                    $updatePoSo->execute();
+                    $updatePoSoStmt->execute();
                 }
             }
         }

@@ -302,7 +302,8 @@ else{
                                                         <div class="mb-3">
                                                             <label for="poSearch" class="form-label">PO No</label>
                                                             <select id="poSearch" class="form-select select2" >
-                                                                <option selected>-</option>
+                                                                <option selected></option>
+                                                                <option value="Pending PO verification">Pending PO verification</option>
                                                                 <?php while($rowPo=mysqli_fetch_assoc($purchaseOrder2)){ ?>
                                                                     <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>
@@ -586,7 +587,7 @@ else{
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8" id="poSelect">
                                                                                         <select class="form-select js-choice select2" id="purchaseOrder" name="purchaseOrder" required>
-                                                                                            <option selected="-">-</option>
+                                                                                            <option value="Pending PO verification" selected="-">Pending PO verification</option>
                                                                                             <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
                                                                                                 <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
                                                                                             <?php } ?>
