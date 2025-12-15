@@ -3741,6 +3741,8 @@ else{
                 // if (!soPoTag && !addNewTag){
                 //     getSoPo();
                 // }
+                var orderWeight = $('#addModal').find('#orderWeightBasicUom').val() || 0;
+                $('#orderWeightBasicUom').val(orderWeight).trigger('change');
             }
         });
 
@@ -3860,6 +3862,8 @@ else{
                 // if (!soPoTag && !addNewTag){
                 //     getSoPo();
                 // }
+                var supplierWeight = $('#addModal').find('#supplierWeightBasicUom').val() || 0;
+                $('#supplierWeightBasicUom').val(supplierWeight).trigger('change');
             }
         });
 
@@ -4255,7 +4259,7 @@ else{
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
             convertWeight(value, productId, transactionStatus, function (result) {
                 $('#orderWeight').val(parseFloat(result.convertedValue).toFixed(0));
-                $('#orderWeightUnit').val(result.basicUomLabel);
+                $('#orderWeightUnit').text(result.basicUomLabel);
             });
         });
 
@@ -4265,7 +4269,7 @@ else{
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
             convertWeight(value, rawMatId, transactionStatus, function (result) {
                 $('#supplierWeight').val(parseFloat(result.convertedValue).toFixed(0));
-                $('#supplierWeightUnit').val(result.basicUomLabel);
+                $('#supplierWeightUnit').text(result.basicUomLabel);
             });
         });
 
@@ -4418,7 +4422,7 @@ else{
                 }
 
                 $('#spinnerLoading').hide();
-                callback(conversionData); // ✅ return result via callback
+                callback(conversionData); 
             });
         } else {
             callback({
