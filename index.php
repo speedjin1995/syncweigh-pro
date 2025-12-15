@@ -4258,7 +4258,7 @@ else{
             var productId = $('#addModal').find('#productId').val();
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
             convertWeight(value, productId, transactionStatus, function (result) {
-                $('#orderWeight').val(parseFloat(result.convertedValue).toFixed(0));
+                $('#orderWeight').val(parseFloat(result.convertedValue).toFixed(0)).trigger('change');
                 $('#orderWeightUnit').text(result.basicUomLabel);
             });
         });
@@ -4268,7 +4268,7 @@ else{
             var rawMatId = $('#addModal').find('#rawMaterialId').val();
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
             convertWeight(value, rawMatId, transactionStatus, function (result) {
-                $('#supplierWeight').val(parseFloat(result.convertedValue).toFixed(0));
+                $('#supplierWeight').val(parseFloat(result.convertedValue).toFixed(0)).trigger('change');
                 $('#supplierWeightUnit').text(result.basicUomLabel);
             });
         });
