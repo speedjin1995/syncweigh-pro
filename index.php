@@ -1574,6 +1574,10 @@ else{
     let salesOption = $('#salesOrder option').clone();
     let purchaseOption = $('#purchaseOrder option').clone();
     let transporterOption = $('#transporter option').clone();
+    var rawMaterialOption = $('#rawMaterialName option').clone();
+    var supplierOption = $('#supplierName option').clone();
+    var customerOption = $('#customerName option').clone();
+    var productOption = $('#productName option').clone();
     var grossIncomingDatePicker;
     var tareOutgoingDatePicker; 
     var grossIncomingDatePicker2;
@@ -3741,6 +3745,8 @@ else{
                 // if (!soPoTag && !addNewTag){
                 //     getSoPo();
                 // }
+                var orderWeight = $('#addModal').find('#orderWeightBasicUom').val() || 0;
+                $('#orderWeightBasicUom').val(orderWeight).trigger('change');
             }
         });
 
@@ -3860,6 +3866,8 @@ else{
                 // if (!soPoTag && !addNewTag){
                 //     getSoPo();
                 // }
+                var supplierWeight = $('#addModal').find('#supplierWeightBasicUom').val() || 0;
+                $('#supplierWeightBasicUom').val(supplierWeight).trigger('change');
             }
         });
 
@@ -3966,6 +3974,8 @@ else{
             setTimeout(() => {
                 $('#addModal').find('#supplierWeightBasicUom').val(data.supplier_weight_uom).trigger('change');
                 $('#addModal').find('#orderWeightBasicUom').val(data.order_weight_uom).trigger('change');
+                $('#addModal').find('#transporter').val(data.transporter).trigger('change');
+                $('#addModal').find('#transporterCode').val(data.transporter_code);
             }, 500);
             $('#addModal').find('#destinationCode').val(data.destination_code);
             $('#addModal').find('#destination').val(data.destination).trigger('change');
@@ -3973,8 +3983,6 @@ else{
             $('#addModal').find('#plantCode').val(data.plant_code);
             $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
             $('#addModal').find('#rawMaterialName').val(data.raw_mat_name).trigger('change');
-            $('#addModal').find('#transporter').val(data.transporter).trigger('change');
-            $('#addModal').find('#transporterCode').val(data.transporter_code);
             
             // Optional: Show read-only fields instead of dropdown if needed
             // if (data.transaction_status === 'Purchase') {
@@ -4133,7 +4141,6 @@ else{
                                     }                   
                                 }
 
-
                                 // Supplier Logic
                                 var supplierName = $('#addModal').find('#supplierName').val();
 
@@ -4157,6 +4164,13 @@ else{
                                 }else{
                                     $('#addModal').find('#supplierName').val(supplierName).trigger('change');
                                 }
+                            }else{
+                                $('#addModal').find('#rawMaterialName').empty();
+                                $('#addModal').find('#rawMaterialName').append(rawMaterialOption);
+                                $('#addModal').find('#rawMaterialName').val('').trigger('change');
+                                $('#addModal').find('#supplierName').empty();
+                                $('#addModal').find('#supplierName').append(supplierOption);
+                                $('#addModal').find('#supplierName').val('').trigger('change');
                             }
 
                             //$('#addModal').trigger('orderLoaded');
@@ -4230,6 +4244,13 @@ else{
                                 }else{
                                     $('#addModal').find('#customerName').val(customerName).trigger('change');
                                 }
+                            }else{
+                                $('#addModal').find('#productName').empty();
+                                $('#addModal').find('#productName').append(productOption);
+                                $('#addModal').find('#productName').val('').trigger('change');
+                                $('#addModal').find('#customerName').empty();
+                                $('#addModal').find('#customerName').append(customerOption);
+                                $('#addModal').find('#customerName').val('').trigger('change');
                             }
 
                             //$('#addModal').trigger('orderLoaded');
@@ -4254,8 +4275,8 @@ else{
             var productId = $('#addModal').find('#productId').val();
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
             convertWeight(value, productId, transactionStatus, function (result) {
-                $('#orderWeight').val(parseFloat(result.convertedValue).toFixed(0));
-                $('#orderWeightUnit').val(result.basicUomLabel);
+                $('#orderWeight').val(parseFloat(result.convertedValue).toFixed(0)).trigger('change');
+                $('#orderWeightUnit').text(result.basicUomLabel);
             });
         });
 
@@ -4264,8 +4285,8 @@ else{
             var rawMatId = $('#addModal').find('#rawMaterialId').val();
             var transactionStatus = $('#addModal').find('#transactionStatus').val();
             convertWeight(value, rawMatId, transactionStatus, function (result) {
-                $('#supplierWeight').val(parseFloat(result.convertedValue).toFixed(0));
-                $('#supplierWeightUnit').val(result.basicUomLabel);
+                $('#supplierWeight').val(parseFloat(result.convertedValue).toFixed(0)).trigger('change');
+                $('#supplierWeightUnit').text(result.basicUomLabel);
             });
         });
 
@@ -4418,7 +4439,7 @@ else{
                 }
 
                 $('#spinnerLoading').hide();
-                callback(conversionData); // ✅ return result via callback
+                callback(conversionData); 
             });
         } else {
             callback({

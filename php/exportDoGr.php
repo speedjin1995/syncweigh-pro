@@ -216,11 +216,20 @@ if ($isMulti == 'N'){
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
                                     $nett = $row2['nett_weight1'] * $row4['rate'];
-                                    $qty = $row2['supplier_weight'] * $row4['rate'];
+                                    if (isset($row2['supplier_weight_uom']) && !empty($row2['supplier_weight_uom'])) {
+                                        $qty = $row2['supplier_weight_uom'];
+                                    } else {
+                                        $qty = $row2['supplier_weight'] * $row4['rate'];
+                                    }
+
                                     $var = $row2['weight_different'] * $row4['rate'];
                                 }else{
                                     $nett = $row['nett_weight1']/1000;
-                                    $qty = $row['supplier_weight']/1000;
+                                    if (isset($row2['supplier_weight_uom']) && !empty($row2['supplier_weight_uom'])) {
+                                        $qty = $row2['supplier_weight_uom'];
+                                    }else {
+                                        $qty = $row['supplier_weight']/1000;
+                                    }
                                     $var = $row2['weight_different']/1000;
                                 }
 
