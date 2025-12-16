@@ -217,19 +217,13 @@
                                         </div>                             
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-lg-4">
-                                                    <h6 class="text-center mb-3" id="statusChartTitle">Status Count</h6>
-                                                    <div style="height: 400px; display: flex; justify-content: center; align-items: center;">
-                                                        <canvas id="statusCanvas"></canvas>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-6">
                                                     <h6 class="text-center mb-3">Product Distribution (MT)</h6>
                                                     <div id="productDoughnutChart" style="height: 400px; display: flex; justify-content: center; align-items: center;">
                                                         <canvas id="productCanvas"></canvas>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-6">
                                                     <h6 class="text-center mb-3">Customer Distribution (MT)</h6>
                                                     <div id="customerDoughnutChart" style="height: 400px; display: flex; justify-content: center; align-items: center;">
                                                         <canvas id="customerCanvas"></canvas>
@@ -410,8 +404,7 @@
                 ],
                 'columnDefs': [
                     { className: 'text-center clickable-cell', targets: '_all' }
-                ],
-
+                ]
             });
         }
                 
@@ -431,49 +424,17 @@
             }, function(data) {
                 var obj = JSON.parse(data);
                 if(obj.status === 'success') {
-                    renderDoughnutCharts(obj.productData, obj.customerData, obj.statusData, type);
+                    renderDoughnutCharts(obj.productData, obj.customerData);
                 }
             });
 
         }
                 
-        var statusChart, productChart, customerChart;
-        
-        function renderDoughnutCharts(productData, customerData, statusData, type) {
-            // Check if both datasets are empty
-            if (productData.labels.length == 0 && customerData.labels.length == 0) {
-                $('#doughnutChartRow').hide();
-                return;
-            }
-            
-            // Destroy existing charts
-            if (statusChart) statusChart.destroy();
-            if (productChart) productChart.destroy();
-            if (customerChart) customerChart.destroy();
-            
-            // Status Chart
-            $('#statusChartTitle').text(type + ' Total Count');
-            
-            statusChart = new Chart($('#statusCanvas'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'Pending', 'Cancelled'],
-                    datasets: [{
-                        data: [statusData.completed, statusData.pending, statusData.cancelled],
-                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    legend: { display: false }
-                }
-            });
-            
+        function renderDoughnutCharts(productData, customerData) {
             // Product Doughnut Chart
             var backgroundColors = generateColors(productData.values.length);
 
-            productChart = new Chart($('#productCanvas'), {
+            var productChart = new Chart($('#productCanvas'), {
                 type: 'doughnut',
                 data: {
                     labels: productData.labels,
@@ -560,7 +521,7 @@
             // Customer Doughnut Chart
             var backgroundColors = generateColors(customerData.values.length);
 
-            customerChart = new Chart($('#customerCanvas'), {
+            var customerChart = new Chart($('#customerCanvas'), {
                 type: 'doughnut',
                 data: {
                     labels: customerData.labels,
