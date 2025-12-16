@@ -1540,7 +1540,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
         $.post('php/getPurchaseOrder.php', {userID: id}, function(data)
         {
             var obj = JSON.parse(data);
-            if(obj.status === 'success'){console.log(obj.message);
+            if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#company').val(obj.message.company_code).trigger('change');
                 $('#addModal').find('#supplier').val(obj.message.supplier_code).trigger('change');
