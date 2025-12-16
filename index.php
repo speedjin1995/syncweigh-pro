@@ -3655,6 +3655,7 @@ else{
                             var plantName = obj.message.plant_name;
                             var transporterName = obj.message.transporter_name;
                             var vehNo = obj.message.veh_number;
+                            var batchDrum = obj.message.batch_drum;
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
                             var convertedOrderSupplierWeight = obj.message.converted_order_supplier_weight;
@@ -3697,6 +3698,8 @@ else{
                             if (!isEdit){
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
+
+                            $('#addModal').find('#batchDrum').val(batchDrum).trigger('change');
                             $('#addModal').find('#orderWeightBasicUom').val(convertedOrderSupplierWeight).trigger('change');
                             $('#addModal').find('#balance').val(balance);
 
@@ -3775,6 +3778,7 @@ else{
                             var plantName = obj.message.plant_name;
                             var transporterName = obj.message.transporter_name;
                             var vehNo = obj.message.veh_number;
+                            var batchDrum = obj.message.batch_drum;
                             var exDel = obj.message.ex_del;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
                             var orderSupplierWeight = obj.message.order_supplier_weight;
@@ -3817,6 +3821,7 @@ else{
                             if (!isEdit){
                                 $('#addModal').find('#transporter').val(transporterName).trigger('change');
                             }
+                            $('#addModal').find('#batchDrum').val(batchDrum).trigger('change');
                             $('#addModal').find('#supplierWeightBasicUom').val(0).trigger('change');
                             $('#addModal').find('#poSupplyWeight').val(orderSupplierWeight);
                             $('#addModal').find('#balance').val(balance);
@@ -3971,19 +3976,20 @@ else{
             $('#addModal').find('#siteName').val(data.site_name).trigger('change');
             $('#addModal').find('#agent').val(data.agent_name).trigger('change');
             $('#addModal').find('#agentCode').val(data.agent_code);
+            $('#addModal').find('#plant').val(data.plant_name).trigger('change');
+            $('#addModal').find('#plantCode').val(data.plant_code);
+            $('#addModal').find('#destinationCode').val(data.destination_code);
+            $('#addModal').find('#destination').val(data.destination).trigger('change');
+            $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
+            $('#addModal').find('#rawMaterialName').val(data.raw_mat_name).trigger('change');
             setTimeout(() => {
                 $('#addModal').find('#supplierWeightBasicUom').val(data.supplier_weight_uom).trigger('change');
                 $('#addModal').find('#orderWeightBasicUom').val(data.order_weight_uom).trigger('change');
                 $('#addModal').find('#transporter').val(data.transporter).trigger('change');
                 $('#addModal').find('#transporterCode').val(data.transporter_code);
+                $('#addModal').find('#batchDrum').val(data.batch_drum).trigger('change');
             }, 500);
-            $('#addModal').find('#destinationCode').val(data.destination_code);
-            $('#addModal').find('#destination').val(data.destination).trigger('change');
-            $('#addModal').find('#plant').val(data.plant_name).trigger('change');
-            $('#addModal').find('#plantCode').val(data.plant_code);
-            $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
-            $('#addModal').find('#rawMaterialName').val(data.raw_mat_name).trigger('change');
-            
+
             // Optional: Show read-only fields instead of dropdown if needed
             // if (data.transaction_status === 'Purchase') {
             //     $('#addModal').find('#purchaseOrder').next('.select2-container').hide();
@@ -5082,10 +5088,6 @@ else{
                     }, 100);*/
                     $('#addModal').trigger('orderLoaded', [obj.message]);
                 }
-
-                setTimeout(() => {
-                    $('#addModal').find('#batchDrum').val(obj.message.batch_drum).trigger('change');
-                }, 500);
 
                 // Initialize all Select2 elements in the modal
                 $('#addModal .select2').select2({

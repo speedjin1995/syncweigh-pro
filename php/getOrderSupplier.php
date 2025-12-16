@@ -260,6 +260,7 @@ if(isset($_POST['type'])){
                         $plantName = $row['plant_name'];
                         $transporterName = $row['transporter_name'];
                         $vehNo = $row['veh_number'];
+                        $batchDrum = $row['batch_drum'];
                         $exDel = $row['exquarry_or_delivered'];
                         $order_supplier_weight = $row['order_quantity'];
                         $balance = $row['balance'];
@@ -291,6 +292,7 @@ if(isset($_POST['type'])){
                     $message['plant_name'] = $plantName;
                     $message['transporter_name'] = $transporterName;
                     $message['veh_number'] = $vehNo;
+                    $message['batch_drum'] = $batchDrum;
                     $message['ex_del'] = $exDel;
                     $message['order_supplier_weight'] = $order_supplier_weight;
                     $message['balance'] = $balance;
@@ -337,6 +339,7 @@ if(isset($_POST['type'])){
                         $plantName = $row['plant_name'];
                         $transporterName = $row['transporter_name'];
                         $vehNo = $row['veh_number'];
+                        $batchDrum = $row['batch_drum'];
                         $exDel = $row['exquarry_or_delivered'];
                         $order_supplier_weight = $row['order_quantity'];
                         $balance = $row['balance'];
@@ -368,6 +371,7 @@ if(isset($_POST['type'])){
                     $message['plant_name'] = $plantName;
                     $message['transporter_name'] = $transporterName;
                     $message['veh_number'] = $vehNo;
+                    $message['batch_drum'] = $batchDrum;
                     $message['ex_del'] = $exDel;
                     $message['order_supplier_weight'] = $order_supplier_weight;
                     $message['balance'] = $balance;
