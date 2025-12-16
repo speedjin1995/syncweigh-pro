@@ -118,7 +118,7 @@ if($_GET["type"] == 'Sales'){
         $fileName = "SO-data_" . date('Y-m-d') . ".xls";
 
         // Column names 
-        $fields = array('COMPANY CODE', 'COMPANY NAME', 'CUSTOMER CODE', 'CUSTOMER NAME', 'PLANT CODE', 'PLANT NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'CUSTOMER P/O NO', 'S/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BALANCE', 'BALANCE (KG)'); 
+        $fields = array('COMPANY CODE', 'COMPANY NAME', 'CUSTOMER CODE', 'CUSTOMER NAME', 'PLANT CODE', 'PLANT NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'CUSTOMER P/O NO', 'S/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BATCH/DRUM', 'BALANCE', 'BALANCE (KG)'); 
 
         // Display column names as first row 
         $excelData = implode("\t", array_values($fields)) . "\n";
@@ -130,7 +130,7 @@ if($_GET["type"] == 'Sales'){
             // Output each row of the data 
             while($row = $query->fetch_assoc()){ 
                 $lineData = []; // Ensure it starts as an empty array each iteration
-                $lineData = array($row['company_code'], $row['company_name'], $row['customer_code'], $row['customer_name'], $row['plant_code'], $row['plant_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['converted_balance'], $row['balance']);
+                $lineData = array($row['company_code'], $row['company_name'], $row['customer_code'], $row['customer_name'], $row['plant_code'], $row['plant_name'], $row['product_code'], $row['product_name'], $row['order_no'], $row['so_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['batch_drum'], $row['converted_balance'], $row['balance']);
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {
@@ -194,7 +194,7 @@ if($_GET["type"] == 'Sales'){
         $fileName = "PO-data_" . date('Y-m-d') . ".xls";
 
         // Column names 
-        $fields = array('COMPANY CODE', 'COMPANY NAME', 'SUPPLIER CODE', 'SUPPLIER NAME', 'PLANT CODE', 'PLANT NAME', 'RAW MATERIAL CODE', 'RAW MATERIAL NAME', 'P/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BALANCE', 'BALANCE (KG)'); 
+        $fields = array('COMPANY CODE', 'COMPANY NAME', 'SUPPLIER CODE', 'SUPPLIER NAME', 'PLANT CODE', 'PLANT NAME', 'RAW MATERIAL CODE', 'RAW MATERIAL NAME', 'P/O NO', 'ORDER DATE', 'EX-QUARRY/DELIVERED', 'BATCH/DRUM', 'BALANCE', 'BALANCE (KG)'); 
 
         // Display column names as first row 
         $excelData = implode("\t", array_values($fields)) . "\n";
@@ -206,7 +206,7 @@ if($_GET["type"] == 'Sales'){
             // Output each row of the data 
             while($row = $query->fetch_assoc()){ 
                 $lineData = []; // Ensure it starts as an empty array each iteration
-                $lineData = array($row['company_code'], $row['company_name'], $row['supplier_code'], $row['supplier_name'], $row['plant_code'], $row['plant_name'], $row['raw_mat_code'], $row['raw_mat_name'], $row['po_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['converted_balance'], $row['balance']);
+                $lineData = array($row['company_code'], $row['company_name'], $row['supplier_code'], $row['supplier_name'], $row['plant_code'], $row['plant_name'], $row['raw_mat_code'], $row['raw_mat_name'], $row['po_no'], $row['order_date'], $row['exquarry_or_delivered'], $row['batch_drum'], $row['converted_balance'], $row['balance']);
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {

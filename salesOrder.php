@@ -373,6 +373,17 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                                                                             </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3">
                                                                                 <div class="row">
+                                                                                    <label for="batchDrum" class="col-sm-4 col-form-label">By-Batch/By-Drum</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select class="form-control select2" style="width: 100%;" id="batchDrum" name="batchDrum" required>
+                                                                                            <option value="Batch">Batch</option>
+                                                                                            <option value="Drum">Drum</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
                                                                                     <label for="exDel" class="col-sm-4 col-form-label">EX-Quarry / Delivered</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control select2" style="width: 100%;" id="exDel" name="exDel" required>
@@ -1105,6 +1116,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#transporter').val("").trigger('change');
             $('#addModal').find('#vehicle').val("").trigger('change');
+            $('#addModal').find('#batchDrum').val("").trigger('change');
             $('#addModal').find('#exDel').val("E").trigger('change');
             $('#addModal').find('#convertedOrderQty').val("");
             $('#addModal').find('#convertedQtyUnit').text("KG");
@@ -1458,6 +1470,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 <p><strong>AGENT:</strong> ${row.agent_code} - ${row.agent_name}</p>
                 <p><strong>DESTINATION:</strong> ${row.destination_code} - ${row.destination_name}</p>
                 <p><strong>PRODUCT:</strong> ${row.product_code} - ${row.product_name}</p>
+                <p><strong>BY-BATCH/BY-DRUM:</strong> ${row.batch_drum}</p>
                 <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
                 <p><strong>EX-QUARRY / DELIVERED:</strong> ${row.exquarry_or_delivered}</p>
                 <p><strong>REMARKS:</strong> ${row.remarks}</p>
@@ -1541,6 +1554,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 $('#addModal').find('#productName').val(obj.message.product_name);
                 $('#addModal').find('#plant').val(obj.message.plant_code).trigger('change');
                 $('#addModal').find('#vehicle').val(obj.message.veh_number).trigger('change');
+                $('#addModal').find('#batchDrum').val(obj.message.batch_drum).trigger('change');
                 $('#addModal').find('#exDel').val(obj.message.exquarry_or_delivered).trigger('change');
                 $('#addModal').find('#transporter').val(obj.message.transporter_code).trigger('change');
                 $('#addModal').find('#convertedQtyUnit').text(obj.message.converted_unit_text);
