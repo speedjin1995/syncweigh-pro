@@ -173,12 +173,16 @@
                                                 <div>
                                                     <h5 class="card-title mb-0">Dashboard Summary</h5>
                                                 </div>
-                                                <!-- <div class="flex-shrink-0">
-                                                    <button type="button" class="btn btn-danger waves-effect waves-light" id="excelSearch">
+                                                <div class="flex-shrink-0">
+                                                    <!-- <button type="button" class="btn btn-danger waves-effect waves-light" id="excelSearch">
                                                     <i class="mdi mdi-file-excel-outline"></i>
                                                     Export Excel
+                                                    </button> -->
+                                                    <button type="button" class="btn btn-warning waves-effect waves-light" id="exportDashboard">
+                                                    <i class="mdi mdi-content-copy"></i>
+                                                    Copy
                                                     </button>
-                                                </div>  -->
+                                                </div> 
                                             </div>                                            
                                         </div>                                      
                                         <div class="card-body">                                              
@@ -358,6 +362,28 @@
                 } else if (columnIndex == 3 || columnIndex == 4) { // Drum columns
                     showPieChart(status, 'Drum');
                 }
+            });
+            
+            // Export dashboard report
+            $('#exportDashboard').on('click', function() {
+                var fromDate = $('#fromDateSearch').val();
+                var toDate = $('#toDateSearch').val();
+                var transactionStatus = $('#transactionStatusSearch').val();
+                var plant = $('#plantSearch').val();
+                
+                $.post('php/exportDashboardReport.php', {
+                    fromDate: fromDate,
+                    toDate: toDate,
+                    transactionStatus: transactionStatus,
+                    plant: plant
+                }, function(response) {
+                    var obj = JSON.parse(response);
+                    if(obj.status === 'success') {
+                        navigator.clipboard.writeText(obj.message).then(function() {
+                            alert('Report copied to clipboard!');
+                        });
+                    }
+                });
             });
         });
 
