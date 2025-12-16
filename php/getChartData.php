@@ -9,21 +9,25 @@ $searchQuery = " ";
 if($_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $fromDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
     $fromDateTime = $fromDate->format('Y-m-d H:i:00');
-    $searchQuery = " AND tare_weight1_date >= '".$fromDateTime."'";
+    $searchQuery = " AND transaction_date >= '".$fromDateTime."'";
+    $searchStatusQuery = " AND transaction_date >= '".$fromDateTime."'";
 }
 
 if($_POST['toDate'] != null && $_POST['toDate'] != ''){
     $toDate = DateTime::createFromFormat('d-m-Y H:i', $_POST['toDate']);
     $toDateTime = $toDate->format('Y-m-d H:i:59');
-    $searchQuery .= " AND tare_weight1_date <= '".$toDateTime."'";
+    $searchQuery .= " AND transaction_date <= '".$toDateTime."'";
+    $searchStatusQuery .= " AND transaction_date <= '".$toDateTime."'";
 }
 
 if ($_POST['transactionStatus'] != null && $_POST['transactionStatus'] != '' && $_POST['transactionStatus'] != '-'){
     $searchQuery .= " AND transaction_status = '".$_POST['transactionStatus']."'";
+    $searchStatusQuery .= " AND transaction_status = '".$_POST['transactionStatus']."'";
 }
 
 if ($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
     $searchQuery .= " AND plant_code = '".$_POST['plant']."'";
+    $searchStatusQuery .= " AND plant_code = '".$_POST['plant']."'";
 }
 
 if ($_POST['status'] != null && $_POST['status'] != ''){
@@ -38,6 +42,7 @@ if ($_POST['status'] != null && $_POST['status'] != ''){
 
 if ($_POST['type'] != null && $_POST['type'] != ''){
     $searchQuery .= " AND batch_drum = '".$_POST['type']."' ";
+    $searchStatusQuery .= " AND batch_drum = '".$_POST['type']."' ";
 }
 
 // Product Chart Data
@@ -100,12 +105,24 @@ if($_POST['transactionStatus'] == 'Purchase') {
 $customerRecords = mysqli_query($db, $customerQuery);
 $customerLabels = array();
 $customerValues = array();
+$customerCodes = array();
 
 while($row = mysqli_fetch_assoc($customerRecords)) {
     $customerLabels[] = $row['name'];
     $customerValues[] = floatval($row['total_weight']);
     $customerCodes[] = $row['code'];
-} 
+}
+
+// Status Count Data
+$statusQuery = "SELECT 
+    SUM(CASE WHEN is_complete = 'Y' AND is_cancel = 'N' THEN 1 ELSE 0 END) as completed,
+    SUM(CASE WHEN is_complete = 'N' AND is_cancel = 'N' THEN 1 ELSE 0 END) as pending,
+    SUM(CASE WHEN is_cancel = 'Y' THEN 1 ELSE 0 END) as cancelled
+    FROM Weight 
+    WHERE status = '0'".$searchStatusQuery;
+    
+$statusRecords = mysqli_query($db, $statusQuery);
+$statusData = mysqli_fetch_assoc($statusRecords);
 
 ## Response
 $response = [
@@ -123,6 +140,11 @@ $response = [
         "codes" => $customerCodes,
         "status" => $_POST['status'],
         "type" => $_POST['type']
+    ],
+    "statusData" => [
+        "completed" => intval($statusData['completed']),
+        "pending" => intval($statusData['pending']),
+        "cancelled" => intval($statusData['cancelled'])
     ]
 ];
 
