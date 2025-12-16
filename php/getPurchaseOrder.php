@@ -49,6 +49,7 @@ if(isset($_POST['userID'])){
                     $message['transporter_code'] = $row['transporter_code'] ?? '';
                     $message['transporter_name'] = $row['transporter_name'] ?? '';
                     $message['veh_number'] = $row['veh_number'];
+                    $message['batch_drum'] = $row['batch_drum'];
                     if ($row['exquarry_or_delivered'] == 'E'){
                         $message['exquarry_or_delivered'] = 'EX-QUARRY';
                     }else{
@@ -129,6 +130,7 @@ if(isset($_POST['userID'])){
                     $message['plant_code'] = $row['plant_code'];
                     $message['transporter_code'] = $row['transporter_code'];
                     $message['veh_number'] = $row['veh_number'];
+                    $message['batch_drum'] = $row['batch_drum'];
                     $message['exquarry_or_delivered'] = $row['exquarry_or_delivered'];
                     $message['converted_order_qty'] = $row['converted_order_qty'];
                     $message['converted_balance'] = $row['converted_balance'];
