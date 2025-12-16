@@ -126,6 +126,26 @@ if ($type == "MULTI"){
                     }
         
                     $amt = $qty * $unitPrice;
+                    
+                    $finalPlantCode = $row2['plant_code'];
+
+                    // Check plant default_type
+                    if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                        $plant_stmt->bind_param('s', $row2['plant_code']);
+                        $plant_stmt->execute();
+                        $plant_stmt->bind_result($defaultType);
+                        $plant_stmt->fetch();
+                        $plant_stmt->close();
+                    
+                        // Only append suffix if default_type is NULL
+                        if ($defaultType === null) {
+                            if ($row2['batch_drum'] === 'Batch') {
+                                $finalPlantCode .= '-B';
+                            } elseif ($row2['batch_drum'] === 'Drum') {
+                                $finalPlantCode .= '-D';
+                            }
+                        }
+                    }   
         
                     $records[] = [
                         "DOCREF2"     => $row2["transaction_id"],
@@ -142,8 +162,8 @@ if ($type == "MULTI"){
                         "REMARK1"     => $row2["delivery_no"],
                         "QTY"         => round($qty, 3),
                         "UOM"         => $uom,
-                        "PROJECT"     => $row2['plant_code'],
-                        "LOCATION"    => $row2['plant_code'],
+                        "PROJECT"     => $finalPlantCode,
+                        "LOCATION"    => $finalPlantCode,
                         "UNITPRICE"   => round($unitPrice, 2),
                         "AMOUNT"      => round($amt, 2),
                         "SO_NUMBER"   => $soNo
@@ -305,6 +325,26 @@ if ($type == "MULTI"){
                 }
     
                 $amt = $qty * $unitPrice;
+                
+                $finalPlantCode = $row['plant_code'];
+
+                // Check plant default_type
+                if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                    $plant_stmt->bind_param('s', $row['plant_code']);
+                    $plant_stmt->execute();
+                    $plant_stmt->bind_result($defaultType);
+                    $plant_stmt->fetch();
+                    $plant_stmt->close();
+                
+                    // Only append suffix if default_type is NULL
+                    if ($defaultType === null) {
+                        if ($row['batch_drum'] === 'Batch') {
+                            $finalPlantCode .= '-B';
+                        } elseif ($row['batch_drum'] === 'Drum') {
+                            $finalPlantCode .= '-D';
+                        }
+                    }
+                } 
     
                 $records[] = [
                     "DOCREF2"     => $row["transaction_id"],
@@ -321,8 +361,8 @@ if ($type == "MULTI"){
                     "REMARK1"     => $row["delivery_no"],
                     "QTY"         => round($qty, 3),
                     "UOM"         => $uom,
-                    "PROJECT"     => $row['plant_code'],
-                    "LOCATION"    => $row['plant_code'],
+                    "PROJECT"     => $finalPlantCode,
+                    "LOCATION"    => $finalPlantCode,
                     "UNITPRICE"   => round($unitPrice, 2),
                     "AMOUNT"      => round($amt, 2),
                     "SO_NUMBER"   => $soNo
@@ -484,6 +524,26 @@ if ($type == "MULTI"){
                 }
     
                 $amt = $qty * $unitPrice;
+                
+                $finalPlantCode = $row['plant_code'];
+
+                // Check plant default_type
+                if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                    $plant_stmt->bind_param('s', $row['plant_code']);
+                    $plant_stmt->execute();
+                    $plant_stmt->bind_result($defaultType);
+                    $plant_stmt->fetch();
+                    $plant_stmt->close();
+                
+                    // Only append suffix if default_type is NULL
+                    if ($defaultType === null) {
+                        if ($row['batch_drum'] === 'Batch') {
+                            $finalPlantCode .= '-B';
+                        } elseif ($row['batch_drum'] === 'Drum') {
+                            $finalPlantCode .= '-D';
+                        }
+                    }
+                } 
     
                 $records[] = [
                     "DOCREF2"     => $row["transaction_id"],
@@ -500,8 +560,8 @@ if ($type == "MULTI"){
                     "REMARK1"     => $row["delivery_no"],
                     "QTY"         => round($qty, 3),
                     "UOM"         => $uom,
-                    "PROJECT"     => $row['plant_code'],
-                    "LOCATION"    => $row['plant_code'],
+                    "PROJECT"     => $finalPlantCode,
+                    "LOCATION"    => $finalPlantCode,
                     "UNITPRICE"   => round($unitPrice, 2),
                     "AMOUNT"      => round($amt, 2),
                     "SO_NUMBER"   => $soNo
