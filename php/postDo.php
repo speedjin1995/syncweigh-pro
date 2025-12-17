@@ -310,7 +310,7 @@ if ($type == "MULTI"){
     
                 // Get unit price and SO if available
                 if ($orderNo === '-' || empty($orderNo)) {
-                    $unitPrice = $row['unit_price'];
+                    $unitPrice = (float) $row['unit_price'];
                 } else {
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
