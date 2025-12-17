@@ -109,7 +109,7 @@ if ($type == "MULTI"){
                         if ($row3 = $result2->fetch_assoc()) { 
                             $uom = searchUnitById($row3['converted_unit'], $db);
                             $rawMatId = searchRawMatIdByCode($row3['raw_mat_code'], $db);
-                            $unitPrice = $row3['unit_price'];
+                            $unitPrice = (float) $row3['unit_price'];
 
                             if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
                                 $update_stmt->bind_param('s', $rawMatId);
@@ -117,7 +117,7 @@ if ($type == "MULTI"){
                                 $result3 = $update_stmt->get_result();
                                 
                                 if ($row4 = $result3->fetch_assoc()) {
-                                    $qty = $row2['supplier_weight'] * $row4['rate'];
+                                    $qty = (float) $row2['supplier_weight'] * (float) $row4['rate'];
                                     $amt = $qty * $unitPrice;
                                 }
                                 $update_stmt->close();
