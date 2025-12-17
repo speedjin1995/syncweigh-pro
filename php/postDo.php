@@ -176,83 +176,83 @@ if ($type == "MULTI"){
             $services = 'PostDeliveryOrder';
             $requests = json_encode($records);
             
-            // // Insert request into Api_Log
-            // $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
-            // $stmtL->bind_param('ss', $services, $requests);
-            // $stmtL->execute();
-            // $logId = $stmtL->insert_id;
+            // Insert request into Api_Log
+            $stmtL = $db->prepare("INSERT INTO Api_Log (services, request) VALUES (?, ?)");
+            $stmtL->bind_param('ss', $services, $requests);
+            $stmtL->execute();
+            $logId = $stmtL->insert_id;
             
-            // // Send to API
-            // $url = rtrim($config[$companyKey], '/') . "/delivery_order";
-            // $ch = curl_init($url);
-            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($records));
-            // curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            //     'Content-Type: application/json'
-            // ]);
-            // curl_setopt($ch, CURLOPT_POST, true);
+            // Send to API
+            $url = rtrim($config[$companyKey], '/') . "/delivery_order";
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($records));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_POST, true);
             
-            // $response = curl_exec($ch);
-            // $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            // $err = curl_error($ch);
-            // curl_close($ch);
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $err = curl_error($ch);
+            curl_close($ch);
             
-            // // Decode API response (JSON string to array)
-            // $responseData = json_decode($response, true);
+            // Decode API response (JSON string to array)
+            $responseData = json_decode($response, true);
             
-            // // Prepare loggable response JSON
-            // if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
-            //     foreach ($responseData["results"] as $item) {
-            //         if (isset($item["status"]) && $item["status"] === "success") {
-            //             $docref2 = $item["docref2"];
+            // Prepare loggable response JSON
+            if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
+                foreach ($responseData["results"] as $item) {
+                    if (isset($item["status"]) && $item["status"] === "success") {
+                        $docref2 = $item["docref2"];
                         
-            //             $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
-            //             $alive = ($db && @$db->ping());
-            //             mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+                        $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
+                        $alive = ($db && @$db->ping());
+                        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
                         
-            //             if (!$alive) {
-            //                 if ($db) { @$db->close(); }
-            //                 require 'db_connect.php';
-            //             }
+                        if (!$alive) {
+                            if ($db) { @$db->close(); }
+                            require 'db_connect.php';
+                        }
             
-            //             // Update weight table
-            //             /*$stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");
-            //             $stmtUpdateWeight->bind_param('s', $docref2);
-            //             $stmtUpdateWeight->execute();
-            //             $stmtUpdateWeight->close();*/
-            //         }
-            //     }
+                        // Update weight table
+                        /*$stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");
+                        $stmtUpdateWeight->bind_param('s', $docref2);
+                        $stmtUpdateWeight->execute();
+                        $stmtUpdateWeight->close();*/
+                    }
+                }
                 
-            //     $responseToLog = json_encode([
-            //         "status" => "success", 
-            //         "message" => "Post Successfully",
-            //         "posted" => $responseData["results"]
-            //     ]);
-            // } else {
-            //     $responseToLog = json_encode([
-            //         "status" => "failed",
-            //         "message" => $responseData["message"],
-            //     ]);
-            // }
+                $responseToLog = json_encode([
+                    "status" => "success", 
+                    "message" => "Post Successfully",
+                    "posted" => $responseData["results"]
+                ]);
+            } else {
+                $responseToLog = json_encode([
+                    "status" => "failed",
+                    "message" => $responseData["message"],
+                ]);
+            }
             
-            // $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
-            // $alive = ($db && @$db->ping());
-            // mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+            $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
+            $alive = ($db && @$db->ping());
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
             
-            // if (!$alive) {
-            //     if ($db) { @$db->close(); }
-            //     require 'db_connect.php';
-            // }
+            if (!$alive) {
+                if ($db) { @$db->close(); }
+                require 'db_connect.php';
+            }
             
-            // // Update the same Api_Log record with the response
-            // $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
-            // $stmtU->bind_param('ss', $responseToLog, $logId);
-            // $stmtU->execute();
-            // $stmtU->close();
+            // Update the same Api_Log record with the response
+            $stmtU = $db->prepare("UPDATE Api_Log SET response = ? WHERE id = ?");
+            $stmtU->bind_param('ss', $responseToLog, $logId);
+            $stmtU->execute();
+            $stmtU->close();
             
             // Output final response to client
             $db->close();
-            // echo $responseToLog;
+            echo $responseToLog;
         } else{
             echo json_encode(
                 array(
@@ -303,21 +303,21 @@ if ($type == "MULTI"){
                     $update_stmt->execute();
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
+                        $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
                     }
                     $update_stmt->close();
                 }
     
                 // Get unit price and SO if available
                 if ($orderNo === '-' || empty($orderNo)) {
-                    $unitPrice = $row['unit_price'];
+                    $unitPrice = (float) $row['unit_price'];
                 } else {
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                         $select_stmt->execute();
                         $result3 = $select_stmt->get_result();
                         if ($row3 = $result3->fetch_assoc()) {
-                            $unitPrice = $row3['unit_price'] ?? 0;
+                            $unitPrice = (float) $row3['unit_price'] ?? 0;
                             $soNo = $row3['so_no'];
                         }
                         $select_stmt->close();
@@ -502,21 +502,21 @@ if ($type == "MULTI"){
                     $update_stmt->execute();
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
+                        $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
                     }
                     $update_stmt->close();
                 }
     
                 // Get unit price and SO if available
                 if ($orderNo === '-' || empty($orderNo)) {
-                    $unitPrice = $row['unit_price'];
+                    $unitPrice = (float) $row['unit_price'];
                 } else {
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                         $select_stmt->execute();
                         $result3 = $select_stmt->get_result();
                         if ($row3 = $result3->fetch_assoc()) {
-                            $unitPrice = $row3['unit_price'] ?? 0;
+                            $unitPrice = (float) $row3['unit_price'] ?? 0;
                             $soNo = $row3['so_no'];
                         }
                         $select_stmt->close();
