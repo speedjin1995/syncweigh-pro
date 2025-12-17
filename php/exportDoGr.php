@@ -106,16 +106,16 @@ if ($isMulti == 'N'){
                     $update_stmt->execute();
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
+                        $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
                     }else{
-                        $qty = $row['nett_weight1']/1000;
+                        $qty = (float) $row['nett_weight1']/1000;
                     }
                     $update_stmt->close();
                 }
                 
                 if ($orderNo == '-' || $orderNo == '' || $orderNo == null) {
                     $unitPrice = $row['unit_price'] ?? 0;
-                    $amt = $qty * $unitPrice;
+                    $amt = (float) $qty * (float) $unitPrice;
                 }else{
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $row['product_code'], $row['customer_code']);
@@ -124,13 +124,33 @@ if ($isMulti == 'N'){
                         if ($row3 = $result->fetch_assoc()) {
                             $unitPrice = $row3['unit_price'] ?? 0;
                             $soNo = $row3['so_no'];
-                            $amt = $qty * $unitPrice;                            
+                            $amt = (float) $qty * (float) $unitPrice;                            
                         }
                         $select_stmt->close();
                     }
                 }
                 
-                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $row['plant_code'], $row['plant_code'], $unitPrice, $amt, $row['remarks']);
+                $finalPlantCode = $row['plant_code'];
+
+                // Check plant default_type
+                if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                    $plant_stmt->bind_param('s', $row['plant_code']);
+                    $plant_stmt->execute();
+                    $plant_stmt->bind_result($defaultType);
+                    $plant_stmt->fetch();
+                    $plant_stmt->close();
+                
+                    // Only append suffix if default_type is NULL
+                    if ($defaultType === null) {
+                        if ($row['batch_drum'] === 'Batch') {
+                            $finalPlantCode .= '-B';
+                        } elseif ($row['batch_drum'] === 'Drum') {
+                            $finalPlantCode .= '-D';
+                        }
+                    }
+                }
+                
+                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row['remarks']);
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {
@@ -215,32 +235,52 @@ if ($isMulti == 'N'){
                                 $update_stmt->execute();
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
-                                    $nett = $row2['nett_weight1'] * $row4['rate'];
+                                    $nett = (float) $row2['nett_weight1'] * (float) $row4['rate'];
                                     if (isset($row2['supplier_weight_uom']) && !empty($row2['supplier_weight_uom'])) {
-                                        $qty = $row2['supplier_weight_uom'];
+                                        $qty = (float) $row2['supplier_weight_uom'];
                                     } else {
-                                        $qty = $row2['supplier_weight'] * $row4['rate'];
+                                        $qty = (float) $row2['supplier_weight'] * (float) $row4['rate'];
                                     }
 
-                                    $var = $row2['weight_different'] * $row4['rate'];
+                                    $var = (float)$row2['weight_different'] * (float) $row4['rate'];
                                 }else{
-                                    $nett = $row['nett_weight1']/1000;
+                                    $nett = (float) $row['nett_weight1']/1000;
                                     if (isset($row2['supplier_weight_uom']) && !empty($row2['supplier_weight_uom'])) {
-                                        $qty = $row2['supplier_weight_uom'];
+                                        $qty = (float) $row2['supplier_weight_uom'];
                                     }else {
-                                        $qty = $row['supplier_weight']/1000;
+                                        $qty = (float) $row['supplier_weight']/1000;
                                     }
-                                    $var = $row2['weight_different']/1000;
+                                    $var = (float) $row2['weight_different']/1000;
                                 }
 
-                                $amt = $qty * $unitPrice;
+                                $amt = (float) $qty * (float) $unitPrice;
                                 $update_stmt->close();
                             }
                         }
                         $select_stmt->close();
                     }
+                    
+                    $finalPlantCode = $row2['plant_code'];
 
-                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt, $row2['remarks']);
+                    // Check plant default_type
+                    if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                        $plant_stmt->bind_param('s', $row2['plant_code']);
+                        $plant_stmt->execute();
+                        $plant_stmt->bind_result($defaultType);
+                        $plant_stmt->fetch();
+                        $plant_stmt->close();
+                    
+                        // Only append suffix if default_type is NULL
+                        if ($defaultType === null) {
+                            if ($row2['batch_drum'] === 'Batch') {
+                                $finalPlantCode .= '-B';
+                            } elseif ($row2['batch_drum'] === 'Drum') {
+                                $finalPlantCode .= '-D';
+                            }
+                        }
+                    }
+
+                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row2['remarks']);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -314,18 +354,39 @@ if ($isMulti == 'N'){
                                 $update_stmt->execute();
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
-                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $qty = (float) $row2['nett_weight1'] * (float) $row4['rate'];
                                 }else{
-                                    $qty = $row['nett_weight1']/1000;
+                                    $qty = (float) $row['nett_weight1']/1000;
                                 }
 
-                                $amt = $qty * $unitPrice;
+                                $amt = (float) $qty * (float) $unitPrice;
                                 $update_stmt->close();
                             }
                         }
                         $select_stmt->close();
                     }
-                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+                    
+                    $finalPlantCode = $row2['plant_code'];
+
+                    // Check plant default_type
+                    if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                        $plant_stmt->bind_param('s', $row2['plant_code']);
+                        $plant_stmt->execute();
+                        $plant_stmt->bind_result($defaultType);
+                        $plant_stmt->fetch();
+                        $plant_stmt->close();
+                    
+                        // Only append suffix if default_type is NULL
+                        if ($defaultType === null) {
+                            if ($row2['batch_drum'] === 'Batch') {
+                                $finalPlantCode .= '-B';
+                            } elseif ($row2['batch_drum'] === 'Drum') {
+                                $finalPlantCode .= '-D';
+                            }
+                        }
+                    }
+                    
+                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -389,18 +450,38 @@ if ($isMulti == 'N'){
                                 $update_stmt->execute();
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
-                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $qty = (float) $row2['nett_weight1'] * (float) $row4['rate'];
                                 }else{
-                                    $qty = $row['nett_weight1']/1000;
+                                    $qty = (float) $row['nett_weight1']/1000;
                                 }
-                                $amt = $qty * $unitPrice;
+                                $amt = (float) $qty * (float) $unitPrice;
                                 $update_stmt->close();
                             }
                         }
                         $select_stmt->close();
                     }
+                    
+                    $finalPlantCode = $row2['plant_code'];
 
-                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+                    // Check plant default_type
+                    if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                        $plant_stmt->bind_param('s', $row2['plant_code']);
+                        $plant_stmt->execute();
+                        $plant_stmt->bind_result($defaultType);
+                        $plant_stmt->fetch();
+                        $plant_stmt->close();
+                    
+                        // Only append suffix if default_type is NULL
+                        if ($defaultType === null) {
+                            if ($row2['batch_drum'] === 'Batch') {
+                                $finalPlantCode .= '-B';
+                            } elseif ($row2['batch_drum'] === 'Drum') {
+                                $finalPlantCode .= '-D';
+                            }
+                        }
+                    }
+
+                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
