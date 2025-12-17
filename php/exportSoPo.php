@@ -91,7 +91,7 @@ if($_GET["type"] == 'Sales'){
                     $productCode = $row['product_code'];
                     $customerCode = $row['customer_code'];
                     $plantCode = $row['plant_code'];
-                    $weightQuery = "SELECT SUM(nett_weight1) AS total_weight FROM Weight WHERE purchase_order = '$customerPONo' AND product_code = '$productCode' AND customer_code = '$customerCode' AND status = '0' AND transaction_status = 'Sales' ORDER BY id ASC";
+                    $weightQuery = "SELECT SUM(nett_weight1) AS total_weight FROM Weight WHERE purchase_order = '$customerPONo' AND product_code = '$productCode' AND customer_code = '$customerCode' AND status = '0' AND transaction_status = 'Sales' AND is_cancel <> 'Y' ORDER BY id ASC";
                     $weightRecords = mysqli_query($db, $weightQuery);
 
                     while($weightRow = mysqli_fetch_assoc($weightRecords)) {
@@ -167,7 +167,7 @@ if($_GET["type"] == 'Sales'){
                     $rawMatCode = $row['raw_mat_code'];
                     $plantCode = $row['plant_code'];
                     $supplierCode = $row['supplier_code'];
-                    $weightQuery = "SELECT SUM(supplier_weight) AS total_weight FROM Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$rawMatCode' AND supplier_code = '$supplierCode' AND status = '0' AND transaction_status = 'Purchase' ORDER BY id ASC";
+                    $weightQuery = "SELECT SUM(supplier_weight) AS total_weight FROM Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$rawMatCode' AND supplier_code = '$supplierCode' AND status = '0' AND transaction_status = 'Purchase' AND is_cancel <> 'Y' ORDER BY id ASC";
                     $weightRecords = mysqli_query($db, $weightQuery);
 
                     while($weightRow = mysqli_fetch_assoc($weightRecords)) {
