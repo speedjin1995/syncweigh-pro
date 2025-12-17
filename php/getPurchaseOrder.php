@@ -72,7 +72,7 @@ if(isset($_POST['userID'])){
                         $poNo = $row['po_no'];
                         $rawMatCode = $row['raw_mat_code'];
                         $plantCode = $row['plant_code'];
-                        $weightQuery = "SELECT * FROM Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$rawMatCode' AND status = '0' AND transaction_status = 'Purchase' ORDER BY id ASC";
+                        $weightQuery = "SELECT * FROM Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$rawMatCode' AND status = '0' AND transaction_status = 'Purchase' AND is_cancel <> 'Y' ORDER BY id ASC";
                         $weightRecords = mysqli_query($db, $weightQuery);
 
                         while($weightRow = mysqli_fetch_assoc($weightRecords)) {
