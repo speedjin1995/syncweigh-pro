@@ -188,10 +188,10 @@ if ($isMulti == 'N'){
         $fileName = "GR-data_" . date('Y-m-d') . ".xls";
 
         // Fetch records from database
-        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by id asc";
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." order by purchase_order asc, plant_code asc";
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by id asc";
+            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by purchase_order asc, plant_code asc";
         }
 
         $do_stmt = $db->query($query);
