@@ -52,7 +52,7 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 }
 
 if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
+  $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['purchaseOrder'])."'";
 }
 
 if($searchValue != ''){
@@ -107,9 +107,9 @@ if($_POST['status'] == 'Purchase'){
 
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
-  $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order, product_code, customer_code order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+  $empQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order, product_code, customer_code order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
   if($_POST['status'] == 'Purchase'){
-	$empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order, raw_mat_code, supplier_code order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+	$empQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order, raw_mat_code, supplier_code order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
   }
 }
 

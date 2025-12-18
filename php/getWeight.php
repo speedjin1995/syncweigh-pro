@@ -188,16 +188,32 @@ if(isset($_POST['userID'])){
 
                         }elseif ($acctType == 'GR') {
                             $poNo = $row['purchase_order'];
+                            $rawMatCode = $row['raw_mat_code'];
+                            $supplierCode = $row['supplier_code'];
                             $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['fromDate']);
                             $fromDateTime = $fromDate->format('Y-m-d H:i:s');
                             $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
                             $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                            $grQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0' and transaction_status = 'Purchase' AND raw_mat_code = '".$row['raw_mat_code']."' AND supplier_code = '".$row['supplier_code']."'";
-                            $grRecords = mysqli_query($db, $grQuery);
+                            $gr_stmt = $db->prepare("
+                                SELECT * 
+                                FROM Weight 
+                                WHERE purchase_order = ? 
+                                  AND tare_weight1_date >= ? 
+                                  AND tare_weight1_date <= ? 
+                                  AND is_complete = 'Y' 
+                                  AND is_cancel <> 'Y' 
+                                  AND status = '0' 
+                                  AND transaction_status = 'Purchase' 
+                                  AND raw_mat_code = ? 
+                                  AND supplier_code = ?
+                            ");
+                            $gr_stmt->bind_param('sssss', $poNo, $fromDateTime, $toDateTime, $rawMatCode, $supplierCode);
+                            $gr_stmt->execute();
+                            $grRecords = $gr_stmt->get_result();
                             $weighingData = array();
 
-                            while($row = mysqli_fetch_assoc($grRecords)) {
+                            while($row = $grRecords->fetch_assoc()) {
                                 $weighingData[] = array( 
                                     "id"=>$row['id'],
                                     "transaction_id"=>$row['transaction_id'],
@@ -218,6 +234,7 @@ if(isset($_POST['userID'])){
                                     'unit_price' => $row['unit_price'] ?? '0.00'     
                                 );
                             }
+                            $gr_stmt->close();
 
                             $message['weights'] = $weighingData;
                         }
