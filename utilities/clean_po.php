@@ -12,7 +12,7 @@ try {
 
     // 1️⃣ Load all Purchase Orders
     $poStmt = $db->prepare("
-        SELECT po_no, product_code, supplier_code, order_quantity
+        SELECT po_no, raw_mat_code, supplier_code, order_quantity
         FROM Purchase_Order
     ");
     $poStmt->execute();
