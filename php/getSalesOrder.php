@@ -72,10 +72,12 @@ if(isset($_POST['userID'])){
                         $customerPONo = $row['order_no'];
                         $productCode = $row['product_code'];
                         $plantCode = $row['plant_code'];
-                        $weightQuery = "SELECT * FROM Weight WHERE purchase_order = '$customerPONo' AND product_code = '$productCode' AND status = '0' AND transaction_status = 'Sales' AND is_cancel <> 'Y' ORDER BY id ASC";
-                        $weightRecords = mysqli_query($db, $weightQuery);
+                        $weight_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order = ? AND product_code = ? AND status = '0' AND transaction_status = 'Sales' AND is_cancel <> 'Y' ORDER BY id ASC");
+                        $weight_stmt->bind_param('ss', $customerPONo, $productCode);
+                        $weight_stmt->execute();
+                        $weightRecords = $weight_stmt->get_result();
 
-                        while($weightRow = mysqli_fetch_assoc($weightRecords)) {
+                        while($weightRow = $weightRecords->fetch_assoc()) {
                             $weightData[] = array(
                                 "id" => $weightRow['id'],
                                 "transaction_id" => $weightRow['transaction_id'],
@@ -86,7 +88,8 @@ if(isset($_POST['userID'])){
                                 "nett_weight1" => $weightRow['nett_weight1'],
                                 "created_by" => searchNamebyId($weightRow['created_by'], $db)
                             );
-                        }   
+                        }
+                        $weight_stmt->close();
                     }
 
                     $message['weights'] = $weightData;

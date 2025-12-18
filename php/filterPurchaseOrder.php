@@ -52,7 +52,7 @@ if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMa
 }
 
 if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
-	$searchQuery .= " and po_no = '".$_POST['poNo']."'";
+  $searchQuery .= " and po_no = '".mysqli_real_escape_string($db, $_POST['poNo'])."'";
 }
 
 if($searchValue != ''){

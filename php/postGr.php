@@ -45,7 +45,7 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 }
 
 if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
+    $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['purchaseOrder'])."'";
 }
 
 if (!$companyKey || !isset($config[$companyKey])) {
@@ -79,10 +79,24 @@ if ($type == "MULTI"){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE transaction_status = 'Purchase' AND purchase_order = '$soNo' AND raw_mat_code = '$prdCode' AND supplier_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
-                $doRecords = mysqli_query($db, $doQuery);
+                $gr_stmt = $db->prepare("
+                    SELECT * 
+                    FROM Weight 
+                    WHERE transaction_status = 'Purchase' 
+                      AND purchase_order = ? 
+                      AND raw_mat_code = ? 
+                      AND supplier_code = ? 
+                      AND tare_weight1_date >= ? 
+                      AND tare_weight1_date <= ? 
+                      AND is_complete = 'Y' 
+                      AND is_cancel <> 'Y' 
+                      AND status = '0'
+                ");
+                $gr_stmt->bind_param('sssss', $soNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $gr_stmt->execute();
+                $doRecords = $gr_stmt->get_result();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = $doRecords->fetch_assoc()) {
                     $poNumber = $row2["purchase_order"]; // your DB column for PO_NUMBER
                     //$orderNo = $row2['purchase_order'];
                     $raw_mat_code = $row2['raw_mat_code'];
@@ -168,6 +182,9 @@ if ($type == "MULTI"){
                         "AMOUNT"      => round($amt, 2),
                         "PO_NUMBER"   => $poNumber
                     ];
+                }
+                if(isset($gr_stmt)) {
+                    $gr_stmt->close();
                 }
             }
             

@@ -52,7 +52,7 @@ if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != 
 }
 
 if($_POST['soNo'] != null && $_POST['soNo'] != '' && $_POST['soNo'] != '-'){
-	$searchQuery .= " and order_no = '".$_POST['soNo']."'";
+	$searchQuery .= " and order_no = '".mysqli_real_escape_string($db, $_POST['soNo'])."'";
 }
 
 if($searchValue != ''){

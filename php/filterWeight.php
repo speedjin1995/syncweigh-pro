@@ -60,11 +60,11 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 }
 
 if($_POST['soNo'] != null && $_POST['soNo'] != '' && $_POST['soNo'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_POST['soNo']."'";
+  $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['soNo'])."'";
 }
 
 if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_POST['poNo']."'";
+  $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['poNo'])."'";
 }
 
 if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){

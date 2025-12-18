@@ -385,10 +385,13 @@ if (!empty($data)) {
 
         # Checking for existing Order No.
         if($OrderNumber != null && $OrderNumber != ''){
-            $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$OrderNumber' AND product_code = '$ProductCode' AND deleted = '0'";
-            $soDetail = mysqli_query($db, $soQuery);
-            $soRow = mysqli_fetch_assoc($soDetail);
+            $so_stmt = $db->prepare("SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = ? AND product_code = ? AND deleted = '0'");
+            $so_stmt->bind_param('ss', $OrderNumber, $ProductCode);
+            $so_stmt->execute();
+            $soDetail = $so_stmt->get_result();
+            $soRow = $soDetail->fetch_assoc();
             $soCount = (int) $soRow['count'];
+            $so_stmt->close();
             
             if($soCount < 1){
                 # Old Code

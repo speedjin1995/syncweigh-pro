@@ -45,7 +45,7 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
 }
 
 if(isset($_POST['purchaseOrder']) && $_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
+    $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['purchaseOrder'])."'";
 }
 
 require_once 'requires/lookup.php';
@@ -79,10 +79,24 @@ if ($type == "MULTI"){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE transaction_status = 'Sales' AND purchase_order = '$soNo' AND product_code = '$prdCode' AND customer_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
-                $doRecords = mysqli_query($db, $doQuery);
+                $do_stmt = $db->prepare("
+                    SELECT * 
+                    FROM Weight 
+                    WHERE transaction_status = 'Sales' 
+                      AND purchase_order = ? 
+                      AND product_code = ? 
+                      AND customer_code = ? 
+                      AND tare_weight1_date >= ? 
+                      AND tare_weight1_date <= ? 
+                      AND is_complete = 'Y' 
+                      AND is_cancel <> 'Y' 
+                      AND status = '0'
+                ");
+                $do_stmt->bind_param('sssss', $soNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $do_stmt->execute();
+                $doRecords = $do_stmt->get_result();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = $doRecords->fetch_assoc()) {
                     $orderNo = $row2['purchase_order'];
                     $productCode = $row2['product_code'];
                     $plantCode = $row2['plant_code'];
@@ -168,6 +182,9 @@ if ($type == "MULTI"){
                         "AMOUNT"      => round($amt, 2),
                         "SO_NUMBER"   => $soNo
                     ];
+                }
+                if(isset($do_stmt)) {
+                    $do_stmt->close();
                 }
             }
 

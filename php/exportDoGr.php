@@ -50,7 +50,7 @@ if($_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
 }
 
 if($_GET['purchaseOrder'] != null && $_GET['purchaseOrder'] != '' && $_GET['purchaseOrder'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_GET['purchaseOrder']."'";
+    $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_GET['purchaseOrder'])."'";
 }
 
 $isMulti = 'N';
@@ -75,11 +75,11 @@ if ($isMulti == 'N'){
         $fileName = "DO-data_" . date('Y-m-d') . ".xls";
 
         ## Fetch records
-        $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." order by plant_code asc, purchase_order asc";
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." order by plant_code asc, purchase_order asc";
 
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by plant_code asc, purchase_order asc";
+            $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by plant_code asc, purchase_order asc";
         }
         
         $do_stmt = $db->query($query);
@@ -207,11 +207,13 @@ if ($isMulti == 'N'){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$prdCode' AND supplier_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
-                $doRecords = mysqli_query($db, $doQuery);
+                $stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order = ? AND raw_mat_code = ? AND supplier_code = ? AND tare_weight1_date >= ? AND tare_weight1_date <= ? AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'");
+                $stmt->bind_param('sssss', $poNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $stmt->execute();
+                $doRecords = $stmt->get_result();
                 $weighingData = array();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = $doRecords->fetch_assoc()) {
                     $lineData = []; // Ensure it starts as an empty array each iteration
                     $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
                     $tareDateTime = $tareDate->format('d/m/Y');
@@ -298,6 +300,8 @@ if ($isMulti == 'N'){
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
+
+                $stmt->close();
             }
         }else{ 
             $excelData .= 'No records found...'. "\n"; 
@@ -326,11 +330,13 @@ if ($isMulti == 'N'){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND product_code = '$prdCode' AND customer_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0' AND unit_price > 0";
-                $doRecords = mysqli_query($db, $doQuery);
+                $stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order = ? AND product_code = ? AND customer_code = ? AND tare_weight1_date >= ? AND tare_weight1_date <= ? AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0' AND unit_price > 0");
+                $stmt->bind_param('sssss', $soNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $stmt->execute();
+                $doRecords = $stmt->get_result();
                 $weighingData = array();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) { 
+                while($row2 = $doRecords->fetch_assoc()) { 
                     $lineData = []; // Ensure it starts as an empty array each iteration
                     $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
                     $tareDateTime = $tareDate->format('d/m/Y');
@@ -404,6 +410,7 @@ if ($isMulti == 'N'){
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
+                $stmt->close();
             } 
         }else{ 
             $excelData .= 'No records found...'. "\n"; 
@@ -428,11 +435,13 @@ if ($isMulti == 'N'){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$prdCode' AND supplier_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
-                $doRecords = mysqli_query($db, $doQuery);
+                $stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order = ? AND raw_mat_code = ? AND supplier_code = ? AND tare_weight1_date >= ? AND tare_weight1_date <= ? AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'");
+                $stmt->bind_param('sssss', $poNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $stmt->execute();
+                $doRecords = $stmt->get_result();
                 $weighingData = array();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = $doRecords->fetch_assoc()) {
                     $lineData = []; // Ensure it starts as an empty array each iteration
                     $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
                     $tareDateTime = $tareDate->format('d/m/Y');
@@ -502,6 +511,7 @@ if ($isMulti == 'N'){
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
+                $stmt->close();
             }
         }else{ 
             $excelData .= 'No records found...'. "\n"; 

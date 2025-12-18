@@ -363,10 +363,13 @@ if (!empty($data['data'])) {
 
         # Checking for existing PO No.
         if($PONumber != null && $PONumber != ''){
-            $poQuery = "SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = '$PONumber' AND raw_mat_code = '$RawMaterialCode' AND status = 'Open' AND deleted = '0'";
-            $poDetail = mysqli_query($db, $poQuery);
-            $poRow = mysqli_fetch_assoc($poDetail);
+            $po_stmt = $db->prepare("SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = ? AND raw_mat_code = ? AND status = 'Open' AND deleted = '0'");
+            $po_stmt->bind_param('ss', $PONumber, $RawMaterialCode);
+            $po_stmt->execute();
+            $poDetail = $po_stmt->get_result();
+            $poRow = $poDetail->fetch_assoc();
             $poCount = (int) $poRow['count'];
+            $po_stmt->close();
             
             if($poCount < 1){
                 $TotalPrice = 0;
