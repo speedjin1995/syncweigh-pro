@@ -188,17 +188,17 @@ if ($isMulti == 'N'){
         $fileName = "GR-data_" . date('Y-m-d') . ".xls";
 
         // Fetch records from database
-        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." order by purchase_order asc, plant_code asc";
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by id asc";
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by purchase_order asc, plant_code asc";
+            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by id asc";
         }
 
         $do_stmt = $db->query($query);
         if($do_stmt->num_rows > 0){  
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
-                $poNo = $row['purchase_order'];
+                $poNo = $row['purchase_order']; 
                 $prdCode = $row['raw_mat_code'];
                 $pltCode = $row['plant_code'];
                 $custCode = $row['supplier_code'];
