@@ -14,7 +14,6 @@ try {
     $soStmt = $db->prepare("
         SELECT order_no, product_code, customer_code, order_quantity
         FROM Sales_Order
-        WHERE status = '0'
     ");
     $soStmt->execute();
     $soResult = $soStmt->get_result();
@@ -58,11 +57,12 @@ try {
     ");
 
     while ($so = $soResult->fetch_assoc()) {
-
         $orderNo      = $so['order_no'];
         $productCode  = $so['product_code'];
         $customerCode = $so['customer_code'];
         $orderQty     = (float) $so['order_quantity'];
+        
+        echo $orderNo.' - '.$productCode.' - '.$customerCode.PHP_EOL;
 
         // 3️⃣ Sum nett weight
         $weightStmt->bind_param('sss', $orderNo, $productCode, $customerCode);
@@ -70,7 +70,9 @@ try {
         $usedKg = (float) $weightStmt->get_result()->fetch_assoc()['total_weight'];
 
         // 4️⃣ Balance (KG)
-        $currentBalance = max(0, $orderQty - $usedKg);
+        $currentBalance = $orderQty - $usedKg;
+        
+        echo $orderQty.' - '.$usedKg.' - '.$currentBalance.PHP_EOL;
 
         // 5️⃣ Get product_id
         $productStmt->bind_param('s', $productCode);
@@ -100,6 +102,7 @@ try {
 
         // 8️⃣ Auto close SO if < 26 KG
         $soStatus = ($currentBalance < 26) ? 'Close' : 'Open';
+        echo $currentBalance.' - '.$rate.' - '.$convertedBalance.' - '.$soStatus.PHP_EOL;
 
         // 9️⃣ Update Sales Order
         $updateSoStmt->bind_param(
