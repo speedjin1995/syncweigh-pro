@@ -10,82 +10,82 @@ if(mysqli_connect_errno()){
 
 try {
 
-    // 1️⃣ Load open Sales Orders
-    $soStmt = $db->prepare("
-        SELECT order_no, product_code, customer_code, order_quantity
-        FROM Sales_Order
+    // 1️⃣ Load all Purchase Orders
+    $poStmt = $db->prepare("
+        SELECT po_no, product_code, supplier_code, order_quantity
+        FROM Purchase_Order
     ");
-    $soStmt->execute();
-    $soResult = $soStmt->get_result();
+    $poStmt->execute();
+    $poResult = $poStmt->get_result();
 
     // 2️⃣ Prepare reusable statements
     $weightStmt = $db->prepare("
-        SELECT COALESCE(SUM(nett_weight1), 0) AS total_weight
+        SELECT COALESCE(SUM(supplier_weight), 0) AS total_weight
         FROM Weight
         WHERE purchase_order = ?
-          AND product_code = ?
-          AND customer_code = ?
+          AND raw_mat_code = ?
+          AND supplier_code = ?
           AND is_complete = 'Y'
           AND is_cancel <> 'Y'
-          AND transaction_status = 'Sales' 
+          AND transaction_status = 'Purchase' 
           AND status = '0'
     ");
 
     $productStmt = $db->prepare("
         SELECT id
-        FROM Product
-        WHERE product_code = ?
+        FROM Raw_Mat
+        WHERE raw_mat_code = ?
         LIMIT 1
     ");
 
     $uomStmt = $db->prepare("
         SELECT rate
-        FROM Product_UOM
-        WHERE product_id = ?
+        FROM Raw_Mat_UOM
+        WHERE raw_mat_id = ?
           AND unit_id = ?
           AND status = ?
         LIMIT 1
     ");
 
-    $updateSoStmt = $db->prepare("
-        UPDATE Sales_Order
+    $updatePoStmt = $db->prepare("
+        UPDATE Purchase_Order
         SET balance = ?,
             converted_balance = ?,
             status = ?
-        WHERE order_no = ?
-          AND product_code = ?
-          AND customer_code = ?
+        WHERE po_no = ?
+          AND raw_mat_code = ?
+          AND supplier_code = ?
     ");
 
-    while ($so = $soResult->fetch_assoc()) {
-        $orderNo      = $so['order_no'];
-        $productCode  = $so['product_code'];
-        $customerCode = $so['customer_code'];
-        $orderQty     = (float) $so['order_quantity'];
-        
-        echo $orderNo.' - '.$productCode.' - '.$customerCode.PHP_EOL;
+    while ($po = $poResult->fetch_assoc()) {
+
+        $poNo         = $po['po_no'];
+        $productCode  = $po['raw_mat_code'];
+        $supplierCode = $po['supplier_code'];
+        $orderQty     = (float) $po['order_quantity'];
+
+        echo "PO: $poNo | $productCode | $supplierCode" . PHP_EOL;
 
         // 3️⃣ Sum nett weight
-        $weightStmt->bind_param('sss', $orderNo, $productCode, $customerCode);
+        $weightStmt->bind_param('sss', $poNo, $productCode, $supplierCode);
         $weightStmt->execute();
         $usedKg = (float) $weightStmt->get_result()->fetch_assoc()['total_weight'];
 
-        // 4️⃣ Balance (KG)
+        // 4️⃣ Balance (never negative)
         $currentBalance = $orderQty - $usedKg;
-        
-        echo $orderQty.' - '.$usedKg.' - '.$currentBalance.PHP_EOL;
 
-        // 5️⃣ Get product_id
+        echo "Qty: $orderQty | Used: $usedKg | Balance: $currentBalance" . PHP_EOL;
+
+        // 5️⃣ Product → UOM conversion
+        $rate = 1;
+
         $productStmt->bind_param('s', $productCode);
         $productStmt->execute();
         $productResult = $productStmt->get_result();
 
-        $rate = 1; // fallback
-
         if ($productResult->num_rows > 0) {
             $productId = $productResult->fetch_assoc()['id'];
 
-            // 6️⃣ Get conversion rate
             $unitId = '2';
             $status = '0';
 
@@ -98,28 +98,29 @@ try {
             }
         }
 
-        // 7️⃣ Converted balance
+        // 6️⃣ Converted balance
         $convertedBalance = $currentBalance * $rate;
 
-        // 8️⃣ Auto close SO if < 26 KG
-        $soStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
-        echo $currentBalance.' - '.$rate.' - '.$convertedBalance.' - '.$soStatus.PHP_EOL;
+        // 7️⃣ Auto-close rule
+        $poStatus = ($currentBalance <= 10000) ? 'Close' : 'Open';
 
-        // 9️⃣ Update Sales Order
-        $updateSoStmt->bind_param(
+        echo "Rate: $rate | ConvBal: $convertedBalance | Status: $poStatus" . PHP_EOL . PHP_EOL;
+
+        // 8️⃣ Update Purchase Order
+        $updatePoStmt->bind_param(
             'ddssss',
             $currentBalance,
             $convertedBalance,
-            $soStatus,
-            $orderNo,
+            $poStatus,
+            $poNo,
             $productCode,
-            $customerCode
+            $supplierCode
         );
-        $updateSoStmt->execute();
+        $updatePoStmt->execute();
     }
 
     $db->commit();
-    echo "✅ Sales Order cleansing & auto-close completed";
+    echo "✅ Purchase Order cleansing completed";
 
 } catch (Exception $e) {
     $db->rollback();
