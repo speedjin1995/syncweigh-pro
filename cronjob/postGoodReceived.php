@@ -47,7 +47,7 @@ if ($stmt2 = $db->prepare($sql)){
                 if ($row3 = $result2->fetch_assoc()) { 
                     $uom = searchUnitById($row3['converted_unit'], $db);
                     $rawMatId = searchRawMatIdByCode($row3['raw_mat_code'], $db);
-                    $unitPrice = $row3['unit_price'];
+                    $unitPrice = (float)$row3['unit_price'] ?? 0;
 
                     if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
                         $update_stmt->bind_param('s', $rawMatId);
@@ -55,13 +55,33 @@ if ($stmt2 = $db->prepare($sql)){
                         $result3 = $update_stmt->get_result();
                         
                         if ($row4 = $result3->fetch_assoc()) {
-                            $qty = $row['supplier_weight'] * $row4['rate'];
+                            $qty = (float)$row['supplier_weight'] * (float)$row4['rate'];
                             $amt = $qty * $unitPrice;
                         }
                         $update_stmt->close();
                     }
                 }
                 $select_stmt->close();
+            }
+
+            $finalPlantCode = $row['plant_code'];
+
+            // Check plant default_type
+            if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                $plant_stmt->bind_param('s', $row['plant_code']);
+                $plant_stmt->execute();
+                $plant_stmt->bind_result($defaultType);
+                $plant_stmt->fetch();
+                $plant_stmt->close();
+            
+                // Only append suffix if default_type is NULL
+                if ($defaultType === null) {
+                    if ($row['batch_drum'] === 'Batch') {
+                        $finalPlantCode .= '-B';
+                    } elseif ($row['batch_drum'] === 'Drum') {
+                        $finalPlantCode .= '-D';
+                    }
+                }
             }
         
             // Add item to this PO_NUMBER's items
@@ -78,10 +98,10 @@ if ($stmt2 = $db->prepare($sql)){
                 "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                 "DOCNOEX"     => $orderNo,
                 "REMARK1"     => $row["delivery_no"] ?? '',
-                "QTY"         => $qty,
+                "QTY"         => round($qty, 2),
                 "UOM"         => $uom,
-                "PROJECT"     => $row['plant_code'],
-                "LOCATION"    => $row['plant_code'],
+                "PROJECT"     => $finalPlantCode,
+                "LOCATION"    => $finalPlantCode,
                 "UNITPRICE"   => round($unitPrice, 2),
                 "AMOUNT"      => round($amt, 2),
                 "PO_NUMBER"   => $poNumber

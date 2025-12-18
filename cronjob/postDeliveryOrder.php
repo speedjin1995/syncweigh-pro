@@ -43,21 +43,21 @@ if ($stmt2 = $db->prepare($sql)){
                 $update_stmt->execute();
                 $result2 = $update_stmt->get_result();
                 if ($row4 = $result2->fetch_assoc()) {
-                    $qty = $row['nett_weight1'] * $row4['rate'];
+                    $qty = (float)$row['nett_weight1'] * (float)$row4['rate'];
                 }
                 $update_stmt->close();
             }
 
             // Get unit price and SO if available
             if ($orderNo === '-' || empty($orderNo)) {
-                $unitPrice = $row['unit_price'];
+                $unitPrice = (float)$row['unit_price'];
             } else {
                 if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                     $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                     $select_stmt->execute();
                     $result3 = $select_stmt->get_result();
                     if ($row3 = $result3->fetch_assoc()) {
-                        $unitPrice = $row3['unit_price'] ?? 0;
+                        $unitPrice = (float)$row3['unit_price'] ?? 0;
                         $soNo = $row3['so_no'];
                     }
                     $select_stmt->close();
@@ -65,6 +65,26 @@ if ($stmt2 = $db->prepare($sql)){
             }
 
             $amt = $qty * $unitPrice;
+
+            $finalPlantCode = $row['plant_code'];
+
+            // Check plant default_type
+            if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                $plant_stmt->bind_param('s', $row['plant_code']);
+                $plant_stmt->execute();
+                $plant_stmt->bind_result($defaultType);
+                $plant_stmt->fetch();
+                $plant_stmt->close();
+            
+                // Only append suffix if default_type is NULL
+                if ($defaultType === null) {
+                    if ($row['batch_drum'] === 'Batch') {
+                        $finalPlantCode .= '-B';
+                    } elseif ($row['batch_drum'] === 'Drum') {
+                        $finalPlantCode .= '-D';
+                    }
+                }
+            } 
 
             $records[] = [
                 "DOCREF2"     => $row["transaction_id"],
@@ -79,10 +99,10 @@ if ($stmt2 = $db->prepare($sql)){
                 "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                 "DOCNOEX"     => $orderNo,
                 "REMARK1"     => $row["delivery_no"],
-                "QTY"         => round($qty, 3),
+                "QTY"         => round($qty, 2),
                 "UOM"         => $uom,
-                "PROJECT"     => $row['plant_code'],
-                "LOCATION"    => $row['plant_code'],
+                "PROJECT"     => $finalPlantCode,
+                "LOCATION"    => $finalPlantCode,
                 "UNITPRICE"   => round($unitPrice, 2),
                 "AMOUNT"      => round($amt, 2),
                 "SO_NUMBER"   => $soNo
