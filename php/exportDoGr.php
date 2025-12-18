@@ -188,23 +188,26 @@ if ($isMulti == 'N'){
         $fileName = "GR-data_" . date('Y-m-d') . ".xls";
 
         // Fetch records from database
-        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by id asc";
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." order by purchase_order asc, plant_code asc";
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by id asc";
+            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by purchase_order asc, plant_code asc";
         }
 
         $do_stmt = $db->query($query);
         if($do_stmt->num_rows > 0){  
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
-                $poNo = $row['purchase_order']; 
+                $poNo = $row['purchase_order'];
+                $prdCode = $row['raw_mat_code'];
+                $pltCode = $row['plant_code'];
+                $custCode = $row['supplier_code'];
                 $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['fromDate']);
                 $fromDateTime = $fromDate->format('Y-m-d H:i:s');
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
+                $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$prdCode' AND supplier_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
                 $doRecords = mysqli_query($db, $doQuery);
                 $weighingData = array();
 
