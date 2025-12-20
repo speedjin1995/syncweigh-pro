@@ -25,29 +25,60 @@ if ($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
     $searchQuery .= " AND plant_code = '".$_POST['plant']."'";
 }
 
-// Get consolidated status counts by batch_drum
-$query = "SELECT 
-    batch_drum,
-    SUM(CASE WHEN is_complete = 'Y' AND is_cancel = 'N' THEN 1 ELSE 0 END) as completed,
-    SUM(CASE WHEN is_complete = 'N' AND is_cancel = 'N' THEN 1 ELSE 0 END) as pending,
-    SUM(CASE WHEN is_cancel = 'Y' THEN 1 ELSE 0 END) as cancelled
-    FROM Weight 
-    WHERE status = '0'".$searchQuery."
-    GROUP BY batch_drum
-    ORDER BY batch_drum";
+// Split query based on transaction status
+if($_POST['transactionStatus'] == 'Purchase') {
+    $query = "SELECT 
+        batch_drum,
+        raw_mat_name as product_name,
+        SUM(CASE WHEN is_complete = 'Y' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as completed_weight,
+        SUM(CASE WHEN is_complete = 'N' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as pending_weight,
+        SUM(CASE WHEN is_cancel = 'Y' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as cancelled_weight
+        FROM Weight 
+        WHERE status = '0' AND raw_mat_name IS NOT NULL".$searchQuery."
+        GROUP BY batch_drum, raw_mat_name
+        ORDER BY batch_drum, raw_mat_name";
+} else {
+    $query = "SELECT 
+        batch_drum,
+        product_name,
+        SUM(CASE WHEN is_complete = 'Y' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as completed_weight,
+        SUM(CASE WHEN is_complete = 'N' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as pending_weight,
+        SUM(CASE WHEN is_cancel = 'Y' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as cancelled_weight
+        FROM Weight 
+        WHERE status = '0' AND product_name IS NOT NULL".$searchQuery."
+        GROUP BY batch_drum, product_name
+        ORDER BY batch_drum, product_name";
+}
 
 $records = mysqli_query($db, $query);
 
-// Generate text report
-$text = "Product Status Report\n";
-$text .= "Transaction: ".$_POST['transactionStatus']."\n";
-$text .= "Plant: ".$_POST['plant']."\n";
+// Generate text report in MT format
+$reportTitle = strtoupper($_POST['transactionStatus'])." REPORT";
+$text = $reportTitle."\n";
+$dateRange = '';
+if($_POST['fromDate'] != null && $_POST['fromDate'] != '' && $_POST['toDate'] != null && $_POST['toDate'] != '') {
+    $dateRange = $_POST['fromDate'].' -> '.$_POST['toDate'];
+} else {
+    $dateRange = date('d/m/Y');
+}
+$text .= $dateRange."\n\n";
 
+$currentBatchDrum = '';
 while($row = mysqli_fetch_assoc($records)) {
-    $text .= $row['batch_drum']."\n";
-    $text .= "Completed: ".$row['completed']."\n";
-    $text .= "Pending: ".$row['pending']."\n";
-    $text .= "Cancelled: ".$row['cancelled']."\n\n";
+    if($currentBatchDrum != $row['batch_drum']) {
+        if($currentBatchDrum != '') $text .= "\n";
+        $text .= $row['batch_drum'].":\n";
+        $currentBatchDrum = $row['batch_drum'];
+    }
+    
+    $completed = number_format($row['completed_weight']/1000, 2);
+    $pending = number_format($row['pending_weight']/1000, 2);
+    $cancelled = number_format($row['cancelled_weight']/1000, 2);
+    
+    $text .= $row['product_name']."\n";
+    $text .= "Completed: ".$completed." MT\n";
+    $text .= "Pending: ".$pending." MT\n";
+    $text .= "Cancelled: ".$cancelled." MT\n\n";
 }
 
 echo json_encode([
