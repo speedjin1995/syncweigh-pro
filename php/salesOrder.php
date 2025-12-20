@@ -263,10 +263,13 @@ if (isset($_POST['orderNo'])) {
         $status = 'Open';
 
         # Check if SO with customer p/o no and product exists
-        $soQuery = "SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = '$orderNo' AND product_code = '$productCode' AND deleted = '0'";
-        $soDetail = mysqli_query($db, $soQuery);
-        $soRow = mysqli_fetch_assoc($soDetail);
+        $so_stmt = $db->prepare("SELECT COUNT(*) AS count FROM Sales_Order WHERE order_no = ? AND product_code = ? AND deleted = '0'");
+        $so_stmt->bind_param('ss', $orderNo, $productCode);
+        $so_stmt->execute();
+        $soDetail = $so_stmt->get_result();
+        $soRow = $soDetail->fetch_assoc();
         $soCount = (int) $soRow['count'];
+        $so_stmt->close();
 
         if ($soCount > 0){
             echo json_encode(

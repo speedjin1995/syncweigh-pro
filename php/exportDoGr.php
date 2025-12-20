@@ -50,7 +50,7 @@ if($_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
 }
 
 if($_GET['purchaseOrder'] != null && $_GET['purchaseOrder'] != '' && $_GET['purchaseOrder'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_GET['purchaseOrder']."'";
+    $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_GET['purchaseOrder'])."'";
 }
 
 $isMulti = 'N';
@@ -75,11 +75,11 @@ if ($isMulti == 'N'){
         $fileName = "DO-data_" . date('Y-m-d') . ".xls";
 
         ## Fetch records
-        $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery." order by plant_code asc, purchase_order asc";
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." order by plant_code asc, purchase_order asc";
 
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by plant_code asc, purchase_order asc";
+            $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by plant_code asc, purchase_order asc";
         }
         
         $do_stmt = $db->query($query);
@@ -106,16 +106,16 @@ if ($isMulti == 'N'){
                     $update_stmt->execute();
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
+                        $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
                     }else{
-                        $qty = $row['nett_weight1']/1000;
+                        $qty = (float) $row['nett_weight1']/1000;
                     }
                     $update_stmt->close();
                 }
                 
                 if ($orderNo == '-' || $orderNo == '' || $orderNo == null) {
                     $unitPrice = $row['unit_price'] ?? 0;
-                    $amt = $qty * $unitPrice;
+                    $amt = (float) $qty * (float) $unitPrice;
                 }else{
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $row['product_code'], $row['customer_code']);
@@ -124,13 +124,33 @@ if ($isMulti == 'N'){
                         if ($row3 = $result->fetch_assoc()) {
                             $unitPrice = $row3['unit_price'] ?? 0;
                             $soNo = $row3['so_no'];
-                            $amt = $qty * $unitPrice;                            
+                            $amt = (float) $qty * (float) $unitPrice;                            
                         }
                         $select_stmt->close();
                     }
                 }
                 
-                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $row['plant_code'], $row['plant_code'], $unitPrice, $amt, $row['remarks']);
+                $finalPlantCode = $row['plant_code'];
+
+                // Check plant default_type
+                if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                    $plant_stmt->bind_param('s', $row['plant_code']);
+                    $plant_stmt->execute();
+                    $plant_stmt->bind_result($defaultType);
+                    $plant_stmt->fetch();
+                    $plant_stmt->close();
+                
+                    // Only append suffix if default_type is NULL
+                    if ($defaultType === null) {
+                        if ($row['batch_drum'] === 'Batch') {
+                            $finalPlantCode .= '-B';
+                        } elseif ($row['batch_drum'] === 'Drum') {
+                            $finalPlantCode .= '-D';
+                        }
+                    }
+                }
+                
+                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row['remarks']);
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {
@@ -168,10 +188,10 @@ if ($isMulti == 'N'){
         $fileName = "GR-data_" . date('Y-m-d') . ".xls";
 
         // Fetch records from database
-        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' AND purchase_order != '-'".$searchQuery." group by purchase_order order by id asc";
+        $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order order by id asc";
         if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
             $username = implode("', '", $_SESSION["plant"]);
-            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username') AND purchase_order != '-'".$searchQuery." group by purchase_order order by id asc";
+            $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order order by id asc";
         }
 
         $do_stmt = $db->query($query);
@@ -179,16 +199,21 @@ if ($isMulti == 'N'){
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
                 $poNo = $row['purchase_order']; 
+                $prdCode = $row['raw_mat_code'];
+                $pltCode = $row['plant_code'];
+                $custCode = $row['supplier_code'];
                 $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['fromDate']);
                 $fromDateTime = $fromDate->format('Y-m-d H:i:s');
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
-                $doRecords = mysqli_query($db, $doQuery);
+                $stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order = ? AND raw_mat_code = ? AND supplier_code = ? AND tare_weight1_date >= ? AND tare_weight1_date <= ? AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'");
+                $stmt->bind_param('sssss', $poNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $stmt->execute();
+                $doRecords = $stmt->get_result();
                 $weighingData = array();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = $doRecords->fetch_assoc()) {
                     $lineData = []; // Ensure it starts as an empty array each iteration
                     $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
                     $tareDateTime = $tareDate->format('d/m/Y');
@@ -215,32 +240,52 @@ if ($isMulti == 'N'){
                                 $update_stmt->execute();
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
-                                    $nett = $row2['nett_weight1'] * $row4['rate'];
+                                    $nett = (float) $row2['nett_weight1'] * (float) $row4['rate'];
                                     if (isset($row2['supplier_weight_uom']) && !empty($row2['supplier_weight_uom'])) {
-                                        $qty = $row2['supplier_weight_uom'];
+                                        $qty = (float) $row2['supplier_weight_uom'];
                                     } else {
-                                        $qty = $row2['supplier_weight'] * $row4['rate'];
+                                        $qty = (float) $row2['supplier_weight'] * (float) $row4['rate'];
                                     }
 
-                                    $var = $row2['weight_different'] * $row4['rate'];
+                                    $var = (float)$row2['weight_different'] * (float) $row4['rate'];
                                 }else{
-                                    $nett = $row['nett_weight1']/1000;
+                                    $nett = (float) $row['nett_weight1']/1000;
                                     if (isset($row2['supplier_weight_uom']) && !empty($row2['supplier_weight_uom'])) {
-                                        $qty = $row2['supplier_weight_uom'];
+                                        $qty = (float) $row2['supplier_weight_uom'];
                                     }else {
-                                        $qty = $row['supplier_weight']/1000;
+                                        $qty = (float) $row['supplier_weight']/1000;
                                     }
-                                    $var = $row2['weight_different']/1000;
+                                    $var = (float) $row2['weight_different']/1000;
                                 }
 
-                                $amt = $qty * $unitPrice;
+                                $amt = (float) $qty * (float) $unitPrice;
                                 $update_stmt->close();
                             }
                         }
                         $select_stmt->close();
                     }
+                    
+                    $finalPlantCode = $row2['plant_code'];
 
-                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt, $row2['remarks']);
+                    // Check plant default_type
+                    if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                        $plant_stmt->bind_param('s', $row2['plant_code']);
+                        $plant_stmt->execute();
+                        $plant_stmt->bind_result($defaultType);
+                        $plant_stmt->fetch();
+                        $plant_stmt->close();
+                    
+                        // Only append suffix if default_type is NULL
+                        if ($defaultType === null) {
+                            if ($row2['batch_drum'] === 'Batch') {
+                                $finalPlantCode .= '-B';
+                            } elseif ($row2['batch_drum'] === 'Drum') {
+                                $finalPlantCode .= '-D';
+                            }
+                        }
+                    }
+
+                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row2['remarks']);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -255,6 +300,8 @@ if ($isMulti == 'N'){
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
+
+                $stmt->close();
             }
         }else{ 
             $excelData .= 'No records found...'. "\n"; 
@@ -283,11 +330,13 @@ if ($isMulti == 'N'){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$soNo' AND product_code = '$prdCode' AND customer_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0' AND unit_price > 0";
-                $doRecords = mysqli_query($db, $doQuery);
+                $stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order = ? AND product_code = ? AND customer_code = ? AND tare_weight1_date >= ? AND tare_weight1_date <= ? AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0' AND unit_price > 0");
+                $stmt->bind_param('sssss', $soNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $stmt->execute();
+                $doRecords = $stmt->get_result();
                 $weighingData = array();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) { 
+                while($row2 = $doRecords->fetch_assoc()) { 
                     $lineData = []; // Ensure it starts as an empty array each iteration
                     $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
                     $tareDateTime = $tareDate->format('d/m/Y');
@@ -314,18 +363,39 @@ if ($isMulti == 'N'){
                                 $update_stmt->execute();
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
-                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $qty = (float) $row2['nett_weight1'] * (float) $row4['rate'];
                                 }else{
-                                    $qty = $row['nett_weight1']/1000;
+                                    $qty = (float) $row['nett_weight1']/1000;
                                 }
 
-                                $amt = $qty * $unitPrice;
+                                $amt = (float) $qty * (float) $unitPrice;
                                 $update_stmt->close();
                             }
                         }
                         $select_stmt->close();
                     }
-                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+                    
+                    $finalPlantCode = $row2['plant_code'];
+
+                    // Check plant default_type
+                    if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                        $plant_stmt->bind_param('s', $row2['plant_code']);
+                        $plant_stmt->execute();
+                        $plant_stmt->bind_result($defaultType);
+                        $plant_stmt->fetch();
+                        $plant_stmt->close();
+                    
+                        // Only append suffix if default_type is NULL
+                        if ($defaultType === null) {
+                            if ($row2['batch_drum'] === 'Batch') {
+                                $finalPlantCode .= '-B';
+                            } elseif ($row2['batch_drum'] === 'Drum') {
+                                $finalPlantCode .= '-D';
+                            }
+                        }
+                    }
+                    
+                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -340,6 +410,7 @@ if ($isMulti == 'N'){
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
+                $stmt->close();
             } 
         }else{ 
             $excelData .= 'No records found...'. "\n"; 
@@ -356,16 +427,21 @@ if ($isMulti == 'N'){
             // Output each row of the data 
             while($row = $do_stmt->fetch_assoc()){
                 $poNo = $row['purchase_order']; 
+                $prdCode = $row['raw_mat_code'];
+                $pltCode = $row['plant_code'];
+                $custCode = $row['supplier_code'];
                 $fromDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['fromDate']);
                 $fromDateTime = $fromDate->format('Y-m-d H:i:s');
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_GET['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE purchase_order = '$poNo' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND status = '0'";
-                $doRecords = mysqli_query($db, $doQuery);
+                $stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order = ? AND raw_mat_code = ? AND supplier_code = ? AND tare_weight1_date >= ? AND tare_weight1_date <= ? AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'");
+                $stmt->bind_param('sssss', $poNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $stmt->execute();
+                $doRecords = $stmt->get_result();
                 $weighingData = array();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = $doRecords->fetch_assoc()) {
                     $lineData = []; // Ensure it starts as an empty array each iteration
                     $tareDate = DateTime::createFromFormat('Y-m-d H:i:s', $row2['tare_weight1_date']);
                     $tareDateTime = $tareDate->format('d/m/Y');
@@ -389,18 +465,38 @@ if ($isMulti == 'N'){
                                 $update_stmt->execute();
                                 $result2 = $update_stmt->get_result();
                                 if ($row4 = $result2->fetch_assoc()) {
-                                    $qty = $row2['nett_weight1'] * $row4['rate'];
+                                    $qty = (float) $row2['nett_weight1'] * (float) $row4['rate'];
                                 }else{
-                                    $qty = $row['nett_weight1']/1000;
+                                    $qty = (float) $row['nett_weight1']/1000;
                                 }
-                                $amt = $qty * $unitPrice;
+                                $amt = (float) $qty * (float) $unitPrice;
                                 $update_stmt->close();
                             }
                         }
                         $select_stmt->close();
                     }
+                    
+                    $finalPlantCode = $row2['plant_code'];
 
-                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $row2['plant_code'], $row2['plant_code'], $unitPrice, $amt);
+                    // Check plant default_type
+                    if ($plant_stmt = $db->prepare("SELECT default_type FROM Plant WHERE plant_code=? AND status='0'")) {
+                        $plant_stmt->bind_param('s', $row2['plant_code']);
+                        $plant_stmt->execute();
+                        $plant_stmt->bind_result($defaultType);
+                        $plant_stmt->fetch();
+                        $plant_stmt->close();
+                    
+                        // Only append suffix if default_type is NULL
+                        if ($defaultType === null) {
+                            if ($row2['batch_drum'] === 'Batch') {
+                                $finalPlantCode .= '-B';
+                            } elseif ($row2['batch_drum'] === 'Drum') {
+                                $finalPlantCode .= '-D';
+                            }
+                        }
+                    }
+
+                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -415,6 +511,7 @@ if ($isMulti == 'N'){
                         $excelData .= implode("\t", array_values($lineData)) . "\n"; 
                     }
                 }
+                $stmt->close();
             }
         }else{ 
             $excelData .= 'No records found...'. "\n"; 

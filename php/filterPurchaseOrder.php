@@ -52,7 +52,7 @@ if($_POST['rawMaterial'] != null && $_POST['rawMaterial'] != '' && $_POST['rawMa
 }
 
 if($_POST['poNo'] != null && $_POST['poNo'] != '' && $_POST['poNo'] != '-'){
-	$searchQuery .= " and po_no = '".$_POST['poNo']."'";
+  $searchQuery .= " and po_no = '".mysqli_real_escape_string($db, $_POST['poNo'])."'";
 }
 
 if($searchValue != ''){
@@ -108,7 +108,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "order_quantity"=>$row['order_quantity'],
     "converted_order_qty"=>$row['converted_order_qty'],
     "balance"=>$row['balance'],
-    "converted_balance"=>$row['converted_balance'],
+    "converted_balance"=>round($row['converted_balance'], 2),
     "status"=>$row['status'],
     "modified_date" => !empty($row["modified_date"]) ? DateTime::createFromFormat('Y-m-d H:i:s', $row["modified_date"])->format('d-m-Y') : ''
   );

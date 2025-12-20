@@ -1381,7 +1381,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#unitPrice').on('change', function(){
             var unitPrice = parseFloat($(this).val());
-            var orderWeight = parseFloat($('#orderQty').val());
+            var orderWeight = parseFloat($('#convertedOrderQty').val());
             var totalPrice = (unitPrice * orderWeight).toFixed(2);
 
             $('#totalPrice').val(totalPrice);

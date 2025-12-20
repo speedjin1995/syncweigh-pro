@@ -45,7 +45,7 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
 }
 
 if(isset($_POST['purchaseOrder']) && $_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
+    $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['purchaseOrder'])."'";
 }
 
 require_once 'requires/lookup.php';
@@ -79,10 +79,24 @@ if ($type == "MULTI"){
                 $toDate = DateTime::createFromFormat('d-m-Y H:i:s', $_POST['toDate']);
                 $toDateTime = $toDate->format('Y-m-d H:i:s');
 
-                $doQuery = "select * from Weight WHERE transaction_status = 'Sales' AND purchase_order = '$soNo' AND product_code = '$prdCode' AND customer_code = '$custCode' AND tare_weight1_date >= '$fromDateTime' AND tare_weight1_date <= '$toDateTime' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'";
-                $doRecords = mysqli_query($db, $doQuery);
+                $do_stmt = $db->prepare("
+                    SELECT * 
+                    FROM Weight 
+                    WHERE transaction_status = 'Sales' 
+                      AND purchase_order = ? 
+                      AND product_code = ? 
+                      AND customer_code = ? 
+                      AND tare_weight1_date >= ? 
+                      AND tare_weight1_date <= ? 
+                      AND is_complete = 'Y' 
+                      AND is_cancel <> 'Y' 
+                      AND status = '0'
+                ");
+                $do_stmt->bind_param('sssss', $soNo, $prdCode, $custCode, $fromDateTime, $toDateTime);
+                $do_stmt->execute();
+                $doRecords = $do_stmt->get_result();
 
-                while($row2 = mysqli_fetch_assoc($doRecords)) {
+                while($row2 = $doRecords->fetch_assoc()) {
                     $orderNo = $row2['purchase_order'];
                     $productCode = $row2['product_code'];
                     $plantCode = $row2['plant_code'];
@@ -104,21 +118,21 @@ if ($type == "MULTI"){
                         $update_stmt->execute();
                         $result2 = $update_stmt->get_result();
                         if ($row4 = $result2->fetch_assoc()) {
-                            $qty = $row2['nett_weight1'] * $row4['rate'];
+                            $qty = (float) $row2['nett_weight1'] * (float) $row4['rate'];
                         }
                         $update_stmt->close();
                     }
         
                     // Get unit price and SO if available
                     if ($orderNo === '-' || empty($orderNo)) {
-                        $unitPrice = $row['unit_price'];
+                        $unitPrice = (float) $row['unit_price'];
                     } else {
                         if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                             $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                             $select_stmt->execute();
                             $result3 = $select_stmt->get_result();
                             if ($row3 = $result3->fetch_assoc()) {
-                                $unitPrice = $row3['unit_price'] ?? 0;
+                                $unitPrice = (float) $row3['unit_price'] ?? 0;
                                 $soNo = $row3['so_no'];
                             }
                             $select_stmt->close();
@@ -160,7 +174,7 @@ if ($type == "MULTI"){
                         "DOCREF1"     => ($row2["ex_del"] == 'EX' ? 'E' : 'D'),
                         "DOCNOEX"     => $orderNo,
                         "REMARK1"     => $row2["delivery_no"],
-                        "QTY"         => round($qty, 3),
+                        "QTY"         => round($qty, 2),
                         "UOM"         => $uom,
                         "PROJECT"     => $finalPlantCode,
                         "LOCATION"    => $finalPlantCode,
@@ -168,6 +182,9 @@ if ($type == "MULTI"){
                         "AMOUNT"      => round($amt, 2),
                         "SO_NUMBER"   => $soNo
                     ];
+                }
+                if(isset($do_stmt)) {
+                    $do_stmt->close();
                 }
             }
 
@@ -303,21 +320,21 @@ if ($type == "MULTI"){
                     $update_stmt->execute();
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
+                        $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
                     }
                     $update_stmt->close();
                 }
     
                 // Get unit price and SO if available
                 if ($orderNo === '-' || empty($orderNo)) {
-                    $unitPrice = $row['unit_price'];
+                    $unitPrice = (float) $row['unit_price'];
                 } else {
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                         $select_stmt->execute();
                         $result3 = $select_stmt->get_result();
                         if ($row3 = $result3->fetch_assoc()) {
-                            $unitPrice = $row3['unit_price'] ?? 0;
+                            $unitPrice = (float) $row3['unit_price'] ?? 0;
                             $soNo = $row3['so_no'];
                         }
                         $select_stmt->close();
@@ -359,7 +376,7 @@ if ($type == "MULTI"){
                     "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                     "DOCNOEX"     => $orderNo,
                     "REMARK1"     => $row["delivery_no"],
-                    "QTY"         => round($qty, 3),
+                    "QTY"         => round($qty, 2),
                     "UOM"         => $uom,
                     "PROJECT"     => $finalPlantCode,
                     "LOCATION"    => $finalPlantCode,
@@ -502,21 +519,21 @@ if ($type == "MULTI"){
                     $update_stmt->execute();
                     $result2 = $update_stmt->get_result();
                     if ($row4 = $result2->fetch_assoc()) {
-                        $qty = $row['nett_weight1'] * $row4['rate'];
+                        $qty = (float) $row['nett_weight1'] * (float) $row4['rate'];
                     }
                     $update_stmt->close();
                 }
     
                 // Get unit price and SO if available
                 if ($orderNo === '-' || empty($orderNo)) {
-                    $unitPrice = $row['unit_price'];
+                    $unitPrice = (float) $row['unit_price'];
                 } else {
                     if ($select_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND product_code=? AND customer_code=? AND deleted='0'")) {
                         $select_stmt->bind_param('sss', $orderNo, $productCode, $customerCode);
                         $select_stmt->execute();
                         $result3 = $select_stmt->get_result();
                         if ($row3 = $result3->fetch_assoc()) {
-                            $unitPrice = $row3['unit_price'] ?? 0;
+                            $unitPrice = (float) $row3['unit_price'] ?? 0;
                             $soNo = $row3['so_no'];
                         }
                         $select_stmt->close();
@@ -558,7 +575,7 @@ if ($type == "MULTI"){
                     "DOCREF1"     => ($row["ex_del"] == 'EX' ? 'E' : 'D'),
                     "DOCNOEX"     => $orderNo,
                     "REMARK1"     => $row["delivery_no"],
-                    "QTY"         => round($qty, 3),
+                    "QTY"         => round($qty, 2),
                     "UOM"         => $uom,
                     "PROJECT"     => $finalPlantCode,
                     "LOCATION"    => $finalPlantCode,

@@ -292,6 +292,8 @@
 
     <script type="text/javascript">
         var dashboardTable = null;
+        var productChart = null;
+        var customerChart = null;
         $(function () {
             const today = new Date();
             const tomorrow = new Date(today);
@@ -457,10 +459,18 @@
         }
                 
         function renderDoughnutCharts(productData, customerData) {
+            // Destroy existing charts if they exist
+            if (productChart) {
+                productChart.destroy();
+            }
+            if (customerChart) {
+                customerChart.destroy();
+            }
+            
             // Product Doughnut Chart
             var backgroundColors = generateColors(productData.values.length);
 
-            var productChart = new Chart($('#productCanvas'), {
+            productChart = new Chart($('#productCanvas'), {
                 type: 'doughnut',
                 data: {
                     labels: productData.labels,
@@ -473,9 +483,6 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    legend: { 
-                        display: false 
-                    },
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
@@ -547,7 +554,7 @@
             // Customer Doughnut Chart
             var backgroundColors = generateColors(customerData.values.length);
 
-            var customerChart = new Chart($('#customerCanvas'), {
+            customerChart = new Chart($('#customerCanvas'), {
                 type: 'doughnut',
                 data: {
                     labels: customerData.labels,
@@ -560,9 +567,6 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    legend: {
-                        display: false
-                    },
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {

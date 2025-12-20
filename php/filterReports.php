@@ -84,7 +84,7 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 }
 
 if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['purchaseOrder'] != '-'){
-	$searchQuery .= " and purchase_order = '".$_POST['purchaseOrder']."'";
+  $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['purchaseOrder'])."'";
 }
 
 if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){

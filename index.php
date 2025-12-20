@@ -2588,7 +2588,8 @@ else{
             $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
             $('#addModal').find('#transactionId').val("");
-            $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
+            $('#addModal').find('#transactionStatus').val("Sales").trigger('change').prop('disabled', false); // Enable changing transaction status on add new
+            $('#addModal').find('input[name="transactionStatus"]').remove(); // remove hidden input if exists
             $('#addModal').find('#weightType').val("Normal").trigger('change');
             $('#addModal').find('#customerType').val("Normal").trigger('change');
             $('#addModal').find('#unitPrice').removeAttr('required');
@@ -4931,7 +4932,8 @@ else{
                 $('#addModal').find('#idNo').val(obj.message.id_no);
                 $('#addModal').find('#idType').val(obj.message.id_type);
                 $('#addModal').find('#transactionId').val(obj.message.transaction_id);
-                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change');
+                $('#addModal').find('#transactionStatus').val(obj.message.transaction_status).trigger('change').prop('disabled', true); // Disable changing transaction status on edit
+                $('#addModal').find('form').append('<input type="hidden" name="transactionStatus" value="' + obj.message.transaction_status + '">'); // Add hidden input to preserve transaction status to pass to backend
                 $('#addModal').find('#weightType').val(obj.message.weight_type).trigger('change');
                 $('#addModal').find('#customerType').val(obj.message.customer_type).trigger('change');
                 $('#addModal').find('#transactionDate').val(formatDate2(new Date(obj.message.transaction_date)));

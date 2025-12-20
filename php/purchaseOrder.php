@@ -249,10 +249,13 @@ if (isset($_POST['poNo'])) {
         $status = 'Open';
 
         # Check if PO with p/o no and raw mat exists
-        $poQuery = "SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = '$poNo' AND raw_mat_code = '$rawMatCode' AND deleted = '0'";
-        $poDetail = mysqli_query($db, $poQuery);
-        $poRow = mysqli_fetch_assoc($poDetail);
+        $po_stmt = $db->prepare("SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = ? AND raw_mat_code = ? AND deleted = '0'");
+        $po_stmt->bind_param('ss', $poNo, $rawMatCode);
+        $po_stmt->execute();
+        $poDetail = $po_stmt->get_result();
+        $poRow = $poDetail->fetch_assoc();
         $poCount = (int) $poRow['count'];
+        $po_stmt->close();
 
         if ($poCount > 0){
             echo json_encode(

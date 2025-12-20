@@ -228,22 +228,30 @@ if($query->num_rows > 0){
 
                 if($row['purchase_order'] != null && $row['purchase_order'] != '' && $row['purchase_order'] != '-'){
                     if($row['transaction_status'] == 'Sales'){
-                        $query2 = $db->query("select * from Sales_Order WHERE order_no = '".$row['purchase_order']."' AND product_code = '".$row['product_code']."' AND plant_code = '".$row['plant_code']."'");
-                    
+                        $stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no = ? AND product_code = ? AND plant_code = ?");
+                        $stmt->bind_param('sss', $row['purchase_order'], $row['product_code'], $row['plant_code']);
+                        $stmt->execute();
+                        $query2 = $stmt->get_result();
+
                         if($row2 = $query2->fetch_assoc()){ 
                             $unitPrice = $row2['unit_price'];
                             $totalPrice = (float)$unitPrice * ((float)$row['nett_weight1'] / 1000);
                             $totalPrice = number_format($totalPrice, 2, '.', '');
                         }
+                        $stmt->close();
                     }
                     else{
-                        $query2 = $db->query("select * from Purchase_Order WHERE po_no = '".$row['purchase_order']."' AND raw_mat_code = '".$row['raw_mat_code']."' AND plant_code = '".$row['plant_code']."'");
-                    
+                        $stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no = ? AND raw_mat_code = ? AND plant_code = ?");
+                        $stmt->bind_param('sss', $row['purchase_order'], $row['raw_mat_code'], $row['plant_code']);
+                        $stmt->execute();
+                        $query2 = $stmt->get_result();
+
                         if($row2 = $query2->fetch_assoc()){ 
                             $unitPrice = $row2['unit_price'];
                             $totalPrice = (float)$unitPrice * ((float)$row['nett_weight1'] / 1000);
                             $totalPrice = number_format($totalPrice, 2, '.', '');
                         }
+                        $stmt->close();
                     }
                 }
 
@@ -262,7 +270,6 @@ if($query->num_rows > 0){
                     $row['manual_weight'], $row['is_cancel'], $row['plant_code'], $row['plant_name'], $unitPrice, $totalPrice, $row['created_by'], $row['remarks'])
                 );
             }
-                
         }
         else{
             $lineData = array($row['serialNo'], $row['product_name'], $row['units'], $row['unitWeight'], $row['tare'], $row['currentWeight'], $row['actualWeight'],
@@ -276,9 +283,11 @@ if($query->num_rows > 0){
             $excelData .= implode("\t", array_values($lineData)) . "\n"; 
         }
     } 
+
+    $db->close();
 }else{ 
     $excelData .= 'No records found...'. "\n"; 
-} 
+}
  
 // Headers for download 
 header("Content-Type: application/vnd.ms-excel"); 

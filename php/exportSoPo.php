@@ -91,14 +91,17 @@ if($_GET["type"] == 'Sales'){
                     $productCode = $row['product_code'];
                     $customerCode = $row['customer_code'];
                     $plantCode = $row['plant_code'];
-                    $weightQuery = "SELECT SUM(nett_weight1) AS total_weight FROM Weight WHERE purchase_order = '$customerPONo' AND product_code = '$productCode' AND customer_code = '$customerCode' AND status = '0' AND transaction_status = 'Sales' ORDER BY id ASC";
-                    $weightRecords = mysqli_query($db, $weightQuery);
+                    $weight_stmt = $db->prepare("SELECT SUM(nett_weight1) AS total_weight FROM Weight WHERE purchase_order = ? AND product_code = ? AND customer_code = ? AND status = '0' AND transaction_status = 'Sales' AND is_cancel <> 'Y' ORDER BY id ASC");
+                    $weight_stmt->bind_param('sss', $customerPONo, $productCode, $customerCode);
+                    $weight_stmt->execute();
+                    $weightRecords = $weight_stmt->get_result();
 
-                    while($weightRow = mysqli_fetch_assoc($weightRecords)) {
+                    while($weightRow = $weightRecords->fetch_assoc()) {
                         if (!empty($weightRow['total_weight'])){
                             $totalWeight = $weightRow['total_weight'];
                         }
-                    }   
+                    }
+                    $weight_stmt->close();   
                 }
 
                 $balance = (float) $row['order_quantity'] - (float) $totalWeight;
@@ -167,14 +170,17 @@ if($_GET["type"] == 'Sales'){
                     $rawMatCode = $row['raw_mat_code'];
                     $plantCode = $row['plant_code'];
                     $supplierCode = $row['supplier_code'];
-                    $weightQuery = "SELECT SUM(supplier_weight) AS total_weight FROM Weight WHERE purchase_order = '$poNo' AND raw_mat_code = '$rawMatCode' AND supplier_code = '$supplierCode' AND status = '0' AND transaction_status = 'Purchase' ORDER BY id ASC";
-                    $weightRecords = mysqli_query($db, $weightQuery);
+                    $weight_stmt = $db->prepare("SELECT SUM(supplier_weight) AS total_weight FROM Weight WHERE purchase_order = ? AND raw_mat_code = ? AND supplier_code = ? AND status = '0' AND transaction_status = 'Purchase' AND is_cancel <> 'Y' ORDER BY id ASC");
+                    $weight_stmt->bind_param('sss', $poNo, $rawMatCode, $supplierCode);
+                    $weight_stmt->execute();
+                    $weightRecords = $weight_stmt->get_result();
 
-                    while($weightRow = mysqli_fetch_assoc($weightRecords)) {
+                    while($weightRow = $weightRecords->fetch_assoc()) {
                         if (!empty($weightRow['total_weight'])){
                             $totalWeight = $weightRow['total_weight'];
                         }
-                    }   
+                    }
+                    $weight_stmt->close();   
                 }
 
                 $balance = (float) $row['order_quantity'] - (float) $totalWeight;
