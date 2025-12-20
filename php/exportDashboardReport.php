@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/lookup.php';
 
 ## Search 
 $searchQuery = " ";
@@ -53,7 +54,14 @@ if($_POST['transactionStatus'] == 'Purchase') {
 $records = mysqli_query($db, $query);
 
 // Generate text report in MT format
-$reportTitle = strtoupper($_POST['transactionStatus'])." REPORT";
+$plantName = searchPlantNameByCode($_POST['plant'], $db);
+if (!empty($plantName)) {
+    $plantName = strtoupper($plantName);
+} else {
+    $plantName = "ALL PLANTS";
+}
+
+$reportTitle = $plantName . ' ' . strtoupper($_POST['transactionStatus'])." REPORT";
 $text = $reportTitle."\n";
 $dateRange = '';
 if($_POST['fromDate'] != null && $_POST['fromDate'] != '' && $_POST['toDate'] != null && $_POST['toDate'] != '') {
