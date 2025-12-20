@@ -90,6 +90,9 @@
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
+                                        <a href="assetManagement.php" class="nav-link"><i class="mdi mdi-tools"></i>'.$lang['t-assetManagement'].'</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
                                     </li>
                                     <li class="nav-item">
@@ -97,7 +100,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</a>
-                                    </li>              
+                                    </li>
                                 </ul>
                             </div>
                         </li> 
@@ -160,6 +163,9 @@
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
+                                        <a href="assetManagement.php" class="nav-link"><i class="mdi mdi-tools"></i>'.$lang['t-assetManagement'].'</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
                                     </li>
                                     <li class="nav-item">
@@ -167,7 +173,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</a>
-                                    </li>              
+                                    </li>       
                                 </ul>
                             </div>
                         </li> 

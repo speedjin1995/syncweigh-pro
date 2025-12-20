@@ -2343,3 +2343,70 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_PO` BEFORE UPDATE ON `Purchase_Order`
 END
 $$
 DELIMITER ;
+
+-- 20/12/2025 --
+CREATE TABLE `Assets` (
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `plant_id` int(11) NOT NULL,
+  `batch_drum` varchar(10) NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT 0,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `modified_by` varchar(50) DEFAULT NULL,
+  `modified_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+ALTER TABLE `Assets` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Assets` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Assets_Log` (
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `plant_id` int(11) NOT NULL,
+  `batch_drum` varchar(10) NOT NULL,
+  `action_id` int(11) NOT NULL,
+  `action_by` varchar(50) DEFAULT '*SYSTEM',
+  `event_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+ALTER TABLE `Assets_Log` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Assets_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_ASSET` AFTER INSERT ON `Assets`
+ FOR EACH ROW INSERT INTO Assets_Log (
+    type, name, plant_id, batch_drum, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.type, NEW.name, NEW.plant_id, NEW.batch_drum, 1, NEW.created_by, NEW.created_at
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_ASSET` BEFORE UPDATE ON `Assets`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Assets_Log table
+    INSERT INTO Assets_Log (
+        type, name, plant_id, batch_drum, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.type, NEW.name, NEW.plant_id, NEW.batch_drum, action_value, NEW.modified_by, NEW.modified_at
+    );
+END
+$$
+DELIMITER ;
