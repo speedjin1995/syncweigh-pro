@@ -996,7 +996,7 @@ else{
     function deactivate(id){
         if (confirm('Are you sure you want to delete this item?')) {
             $('#spinnerLoading').show();
-            $.post('php/deleteAsset.php', {userID: id}, function(data){
+            $.post('php/deleteCalculation.php', {userID: id}, function(data){
                 var obj = JSON.parse(data);
                 
                 if(obj.status === 'success'){
