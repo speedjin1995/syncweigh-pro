@@ -115,27 +115,36 @@ foreach($productData as $data) {
     
     // Completed
     $completedTotal = array_sum(array_column($data['completed'], 'weight'));
-    $text .= "Completed: ".number_format($completedTotal, 2)." MT\n";
+    $text .= "Completed: ".number_format($completedTotal, 2)." MT";
     $counter = 1;
     foreach($data['completed'] as $vehicle) {
+        if ($counter == 1) {
+            $text .= "\n";
+        }
         $text .= $counter.". ".$vehicle['vehicle'].' '.number_format($vehicle['weight'], 2).' MT '.$vehicle['time']."\n";
         $counter++;
     }
     
     // Pending
     $pendingTotal = array_sum(array_column($data['pending'], 'weight'));
-    $text .= "\nPending: ".number_format($pendingTotal, 2)." MT\n";
+    $text .= "\nPending: ".number_format($pendingTotal, 2)." MT";
     $counter = 1;
     foreach($data['pending'] as $vehicle) {
+        if ($counter == 1) {
+            $text .= "\n";
+        }
         $text .= $counter.". ".$vehicle['vehicle'].' '.number_format($vehicle['weight'], 2).' MT '.$vehicle['time']."\n";
         $counter++;
     }
     
     // Cancelled
     $cancelledTotal = array_sum(array_column($data['cancelled'], 'weight'));
-    $text .= "\nCancelled: ".number_format($cancelledTotal, 2)." MT\n";
+    $text .= "\nCancelled: ".number_format($cancelledTotal, 2)." MT";
     $counter = 1;
     foreach($data['cancelled'] as $vehicle) {
+        if ($counter == 1) {
+            $text .= "\n";
+        }
         $text .= $counter.". ".$vehicle['vehicle'].' '.number_format($vehicle['weight'], 2).' MT '.$vehicle['time']."\n";
         $counter++;
     }
