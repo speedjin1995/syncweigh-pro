@@ -104,6 +104,17 @@ else{
                                                 <div class="row">
                                                     <div class="col-3">
                                                         <div class="mb-3">
+                                                            <label for="typeSearch" class="form-label">Type</label>
+                                                            <select id="typeSearch" class="form-select select2">
+                                                                <option selected>-</option>
+                                                                <option value="Bitumen">Bitumen</option>
+                                                                <option value="LFO">LFO</option>
+                                                                <option value="Diesel">Diesel</option>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
                                                             <label for="batchDrumSearch" class="form-label">Batch/Drum</label>
                                                             <select id="batchDrumSearch" class="form-select select2">
                                                                 <option selected>-</option>
@@ -393,6 +404,7 @@ else{
 
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var batchDrumI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+        var typeI = $('#typeSearch').val() ? $('#typeSearch').val() : '';
 
         table = $("#assetTable").DataTable({
             "responsive": true,
@@ -405,7 +417,8 @@ else{
                 'url':'php/filterAsset.php',
                 'data': {
                     plant: plantI,
-                    batchDrum: batchDrumI
+                    batchDrum: batchDrumI,
+                    type: typeI
                 } 
             },
             'columns': [
@@ -449,6 +462,7 @@ else{
         $('#filterSearch').on('click', function(){
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var batchDrumI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+            var typeI = $('#typeSearch').val() ? $('#typeSearch').val() : '';
 
             //Destroy the old Datatable
             $("#assetTable").DataTable().clear().destroy();
@@ -465,7 +479,8 @@ else{
                     'url':'php/filterAsset.php',
                     'data': {
                         plant: plantI,
-                        batchDrum: batchDrumI
+                        batchDrum: batchDrumI,
+                        type: typeI
                     } 
                 },
                 'columns': [

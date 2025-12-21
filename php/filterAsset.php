@@ -23,6 +23,10 @@ if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum
 	$searchQuery .= " and batch_drum = '".$_POST['batchDrum']."'";
 }
 
+if($_POST['type'] != null && $_POST['type'] != '' && $_POST['type'] != '-'){
+	$searchQuery .= " and type = '".$_POST['type']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (
     Assets.type like '%".$searchValue."%' or 
