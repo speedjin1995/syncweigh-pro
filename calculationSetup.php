@@ -287,13 +287,27 @@ else{
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <input type="file" id="fileInput">
-                                                        <button type="button" id="previewButton">Preview Data</button>
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <select id="uploadType" name="uploadType" class="form-select mb-3">
+                                                                    <option value="LEVEL">Bitumen Level</option>
+                                                                    <option value="SG">Bitumen SG</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <input type="file" id="fileInput" class="form-control mb-3">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <button type="button" id="previewButton" class="btn btn-primary mb-3">Preview Data</button>
+                                                            </div>
+                                                        </div>
                                                         <div id="previewTable" style="overflow: auto;"></div>
                                                     </div>
                                                     <div class="modal-footer justify-content-between bg-gray-dark color-palette">
                                                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-danger" id="uploadSo">Save changes</button>
+                                                        <button type="button" class="btn btn-danger" id="uploadButton">Save changes</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -316,6 +330,50 @@ else{
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="modal fade" id="downloadTemplateModal" style="display:none">
+                                        <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-gray-dark color-palette">
+                                                    <h4 class="modal-title">Download Template</h4>
+
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="downloadTemplateForm" class="needs-validation" novalidate autocomplete="off">
+                                                        <div class="row col-12">
+                                                            <div class="col-12">
+                                                                <div class="card bg-light">
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <input type="hidden" class="form-control" id="id" name="id"> 
+                                                                            <div class="col-12">
+                                                                                <div class="row">
+                                                                                    <label for="templateType" class="col-sm-4 col-form-label">Template Type *</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <select id="templateType" name="templateType" class="form-select" required>
+                                                                                            <option value="LEVEL">Bitumen Level</option>
+                                                                                            <option value="SG">Bitumen SG</option>
+                                                                                        </select>   
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-lg-12">
+                                                            <div class="hstack gap-2 justify-content-end">
+                                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-danger" id="submitDownload">Submit</button>
+                                                            </div>
+                                                        </div><!--end col-->                                                               
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div> <!-- end row-->
 
@@ -332,17 +390,15 @@ else{
                                                                 <h5 class="card-title mb-0">Calculation Setup</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <!-- <a href="template/So_Template.xlsx" download>
-                                                                    <button type="button" class="btn btn-info waves-effect waves-light">
-                                                                        <i class="mdi mdi-file-import-outline align-middle me-1"></i>
-                                                                        Download Template 
-                                                                    </button>
-                                                                </a>
+                                                                <button type="button" id="downloadTemplateBtn" class="btn btn-info waves-effect waves-light">
+                                                                    <i class="mdi mdi-file-import-outline align-middle me-1"></i>
+                                                                    Download Template 
+                                                                </button>
                                                                 <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
-                                                                    Import Asset
+                                                                    Import
                                                                 </button>
-                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
+                                                                <!-- <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button> -->
@@ -701,8 +757,51 @@ else{
             }
         });
 
-        $('#uploadSo').on('click', function(){
+        $('#downloadTemplateBtn').on('click', function(){
+            $('#templateType').val("").trigger('change');
+            $('#downloadTemplateModal').modal('show');
+
+            $('#downloadTemplateForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+
+        $.validator.setDefaults({
+            submitHandler: function () {
+                if($('#downloadTemplateModal').hasClass('show')){   
+                    var templateType = $('#downloadTemplateModal').find('#templateType').val();
+                    
+                    // Create hidden download link and click it
+                    var $link = $('<a>');
+                    if(templateType == 'LEVEL') {
+                        $link.attr('href', 'template/Bitumen_Level_Template.xlsx');
+                        $link.attr('download', 'Bitumen_Level_Template.xlsx');
+                    } else if(templateType == 'SG') {
+                        $link.attr('href', 'template/Bitumen_SG_Template.xlsx');
+                        $link.attr('download', 'Bitumen_SG_Template.xlsx');
+                    }
+                    
+                    $('body').append($link);
+                    $link[0].click();
+                    $link.remove();
+                    $('#downloadTemplateModal').modal('hide');
+                }
+            }
+        });
+
+        $('#uploadButton').on('click', function(){
             $('#spinnerLoading').show();
+            var uploadType = $('#uploadType').val();
             var formData = $('#uploadForm').serializeArray();
             var data = [];
             var rowIndex = -1;
@@ -721,10 +820,10 @@ else{
 
             // Send the JSON array to the server
             $.ajax({
-                url: 'php/uploadSo.php',
+                url: 'php/uploadCalculation.php',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(data),
+                data: JSON.stringify({uploadType: uploadType, data: data}),
                 success: function(response) {
                     var obj = JSON.parse(response);
                     if (obj.status === 'success') {
@@ -780,7 +879,7 @@ else{
                     $(element).removeClass('is-invalid');
                 }
             });
-        });      
+        });
         
         $('#uploadModal').find('#previewButton').on('click', function(){
             var fileInput = document.getElementById('fileInput');
@@ -1035,13 +1134,13 @@ else{
         // Get the headers
         var headers = jsonData[0];
 
-        // Ensure we handle cases where there may be less than 22 columns
-        while (headers.length < 22) {
-            headers.push(''); // Adding empty headers to reach 22 columns
+        // Ensure we handle cases where there may be less than 4 columns
+        while (headers.length < 4) {
+            headers.push(''); // Adding empty headers to reach 4 columns
         }
 
         // Create HTML table headers
-        var htmlTable = '<table style="width:100%;"><thead><tr>';
+        var htmlTable = '<table style="width:50%;"><thead><tr>';
         headers.forEach(function(header) {
             htmlTable += '<th>' + header + '</th>';
         });
@@ -1052,12 +1151,12 @@ else{
             htmlTable += '<tr>';
             var rowData = jsonData[i];
 
-            // Ensure we handle cases where there may be less than 22 cells in a row
-            while (rowData.length < 22) {
-                rowData.push(''); // Adding empty cells to reach 22 columns
+            // Ensure we handle cases where there may be less than 4 cells in a row
+            while (rowData.length < 4) {
+                rowData.push(''); // Adding empty cells to reach 4 columns
             }
 
-            for (var j = 0; j < 22; j++) {
+            for (var j = 0; j < 4; j++) {
                 var cellData = rowData[j];
                 var formattedData = cellData;
 
