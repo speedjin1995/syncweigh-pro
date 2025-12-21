@@ -101,6 +101,9 @@
                                     <li class="nav-item">
                                         <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="calculationSetup.php" class="nav-link"><i class="mdi mdi-calculator"></i>'.$lang['t-calculationSetup'].'</a>
+                                    </li>
                                 </ul>
                             </div>
                         </li> 

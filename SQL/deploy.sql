@@ -2410,3 +2410,33 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_ASSET` BEFORE UPDATE ON `Assets`
 END
 $$
 DELIMITER ;
+
+CREATE TABLE `Calculations` (
+  `id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `plant_id` int(11) NOT NULL,
+  `batch_drum` varchar(10) NOT NULL,
+  `deleted` int(1) NOT NULL DEFAULT 0,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `modified_by` varchar(50) DEFAULT NULL,
+  `modified_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+ALTER TABLE `Calculations` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Calculations` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `Calculation_Value` (
+  `id` int(11) NOT NULL,
+  `calculation_id` int(11) NOT NULL,
+  `level` varchar(30) DEFAULT NULL,
+  `volume` varchar(30) DEFAULT NULL,
+  `temperature` varchar(30) DEFAULT NULL,
+  `sg` varchar(30) DEFAULT NULL,
+  `deleted` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+ALTER TABLE `Calculation_Value` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `Calculation_Value` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
