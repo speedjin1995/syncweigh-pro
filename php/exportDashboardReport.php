@@ -31,24 +31,26 @@ if($_POST['transactionStatus'] == 'Purchase') {
     $query = "SELECT 
         batch_drum,
         raw_mat_name as product_name,
-        SUM(CASE WHEN is_complete = 'Y' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as completed_weight,
-        SUM(CASE WHEN is_complete = 'N' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as pending_weight,
-        SUM(CASE WHEN is_cancel = 'Y' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as cancelled_weight
+        lorry_plate_no1 as vehicle_no,
+        nett_weight1,
+        tare_weight1_date,
+        is_complete,
+        is_cancel
         FROM Weight 
         WHERE status = '0' AND raw_mat_name IS NOT NULL".$searchQuery."
-        GROUP BY batch_drum, raw_mat_name
-        ORDER BY batch_drum, raw_mat_name";
+        ORDER BY batch_drum, raw_mat_name, tare_weight1_date";
 } else {
     $query = "SELECT 
         batch_drum,
         product_name,
-        SUM(CASE WHEN is_complete = 'Y' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as completed_weight,
-        SUM(CASE WHEN is_complete = 'N' AND is_cancel = 'N' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as pending_weight,
-        SUM(CASE WHEN is_cancel = 'Y' THEN COALESCE(nett_weight1, 0) ELSE 0 END) as cancelled_weight
+        lorry_plate_no1 as vehicle_no,
+        nett_weight1,
+        tare_weight1_date,
+        is_complete,
+        is_cancel
         FROM Weight 
         WHERE status = '0' AND product_name IS NOT NULL".$searchQuery."
-        GROUP BY batch_drum, product_name
-        ORDER BY batch_drum, product_name";
+        ORDER BY batch_drum, product_name, tare_weight1_date";
 }
 
 $records = mysqli_query($db, $query);
@@ -72,21 +74,73 @@ if($_POST['fromDate'] != null && $_POST['fromDate'] != '' && $_POST['toDate'] !=
 $text .= $dateRange."\n\n";
 
 $currentBatchDrum = '';
+$currentProduct = '';
+$productData = [];
+$vehicleCounter = 1;
+
 while($row = mysqli_fetch_assoc($records)) {
-    if($currentBatchDrum != $row['batch_drum']) {
-        if($currentBatchDrum != '') $text .= "\n";
-        $text .= $row['batch_drum'].":\n";
-        $currentBatchDrum = $row['batch_drum'];
+    $key = $row['batch_drum'].'_'.$row['product_name'];
+    
+    if (!isset($productData[$key])) {
+        $productData[$key] = [
+            'batch_drum' => $row['batch_drum'],
+            'product_name' => $row['product_name'],
+            'completed' => [],
+            'pending' => [],
+            'cancelled' => []
+        ];
     }
     
-    $completed = number_format($row['completed_weight']/1000, 2);
-    $pending = number_format($row['pending_weight']/1000, 2);
-    $cancelled = number_format($row['cancelled_weight']/1000, 2);
+    $weight = floatval($row['nett_weight1']/1000);
+    $time = date('Hi A', strtotime($row['tare_weight1_date']));
+    $vehicleInfo = ['vehicle' => $row['vehicle_no'], 'weight' => $weight, 'time' => $time];
     
-    $text .= $row['product_name']."\n";
-    $text .= "Completed: ".$completed." MT\n";
-    $text .= "Pending: ".$pending." MT\n";
-    $text .= "Cancelled: ".$cancelled." MT\n\n";
+    if ($row['is_complete'] == 'Y' && $row['is_cancel'] == 'N') {
+        $productData[$key]['completed'][] = $vehicleInfo;
+    } elseif ($row['is_complete'] == 'N' && $row['is_cancel'] == 'N') {
+        $productData[$key]['pending'][] = $vehicleInfo;
+    } elseif ($row['is_cancel'] == 'Y') {
+        $productData[$key]['cancelled'][] = $vehicleInfo;
+    }
+}
+
+foreach($productData as $data) {
+    if($currentBatchDrum != $data['batch_drum']) {
+        if($currentBatchDrum != '') $text .= "\n";
+        $text .= $data['batch_drum'].":\n";
+        $currentBatchDrum = $data['batch_drum'];
+    }
+    
+    $text .= $data['product_name']."\n";
+    
+    // Completed
+    $completedTotal = array_sum(array_column($data['completed'], 'weight'));
+    $text .= "Completed: ".number_format($completedTotal, 2)." MT\n";
+    $counter = 1;
+    foreach($data['completed'] as $vehicle) {
+        $text .= $counter.". ".$vehicle['vehicle'].' '.number_format($vehicle['weight'], 2).' MT '.$vehicle['time']."\n";
+        $counter++;
+    }
+    
+    // Pending
+    $pendingTotal = array_sum(array_column($data['pending'], 'weight'));
+    $text .= "\nPending: ".number_format($pendingTotal, 2)." MT\n";
+    $counter = 1;
+    foreach($data['pending'] as $vehicle) {
+        $text .= $counter.". ".$vehicle['vehicle'].' '.number_format($vehicle['weight'], 2).' MT '.$vehicle['time']."\n";
+        $counter++;
+    }
+    
+    // Cancelled
+    $cancelledTotal = array_sum(array_column($data['cancelled'], 'weight'));
+    $text .= "\nCancelled: ".number_format($cancelledTotal, 2)." MT\n";
+    $counter = 1;
+    foreach($data['cancelled'] as $vehicle) {
+        $text .= $counter.". ".$vehicle['vehicle'].' '.number_format($vehicle['weight'], 2).' MT '.$vehicle['time']."\n";
+        $counter++;
+    }
+    
+    $text .= "\n";
 }
 
 echo json_encode([
