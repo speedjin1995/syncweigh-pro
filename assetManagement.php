@@ -161,7 +161,7 @@ else{
                                                                                             <option value="Bitumen">Bitumen</option>
                                                                                             <option value="LFO">LFO</option>
                                                                                             <option value="Diesel">Diesel</option>
-                                                                                            <option value="PG 76">Bitumen PG 76</option>
+                                                                                            <!-- <option value="PG 76">Bitumen PG 76</option> -->
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
