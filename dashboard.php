@@ -14,7 +14,7 @@
 ?>
 <head>
 
-    <title>Weighing | Synctronix - Weighing System</title>
+    <title>Dashboard | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -213,23 +213,35 @@
                             </div><!--end row-->
 
                             <!-- Doughnut Chart -->
-                            <div class="row" id="doughnutChartRow" style="display: none;">
-                                <div class="col-lg-12">
-                                    <div class="card">
+                            <div class="row mb-3">
+                                <div class="col-lg-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Status Summary</h5>
+                                        </div>
+                                        <div class="card-body d-flex align-items-center justify-content-center">
+                                            <div id="statusDoughnutChart" style="height: 300px; width: 300px;">
+                                                <canvas id="statusCanvas"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8" id="doughnutChartRow" style="display: none;">
+                                    <div class="card h-100">
                                         <div class="card-header">
                                             <h5 class="card-title mb-0">Distribution Charts</h5>
                                         </div>                             
                                         <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-lg-6">
+                                            <div class="row h-100">
+                                                <div class="col-lg-6 d-flex flex-column">
                                                     <h6 class="text-center mb-3">Product Distribution (MT)</h6>
-                                                    <div id="productDoughnutChart" style="height: 400px; display: flex; justify-content: center; align-items: center;">
+                                                    <div id="productDoughnutChart" class="flex-grow-1 d-flex align-items-center justify-content-center" style="height: 300px;">
                                                         <canvas id="productCanvas"></canvas>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-6 d-flex flex-column">
                                                     <h6 class="text-center mb-3">Customer Distribution (MT)</h6>
-                                                    <div id="customerDoughnutChart" style="height: 400px; display: flex; justify-content: center; align-items: center;">
+                                                    <div id="customerDoughnutChart" class="flex-grow-1 d-flex align-items-center justify-content-center" style="height: 300px;">
                                                         <canvas id="customerCanvas"></canvas>
                                                     </div>
                                                 </div>
@@ -294,6 +306,7 @@
         var dashboardTable = null;
         var productChart = null;
         var customerChart = null;
+        var statusChart = null;
         $(function () {
             const today = new Date();
             const tomorrow = new Date(today);
@@ -321,11 +334,15 @@
 
             $("#fromDateSearch").flatpickr({
                 dateFormat: "d-m-Y H:i",
+                enableTime: true,
+                time_24hr: true,
                 defaultDate: today
             });
 
             $('#toDateSearch').flatpickr({
                 dateFormat: "d-m-Y H:i",
+                enableTime: true,
+                time_24hr: true,
                 defaultDate: today
             });
 
@@ -419,7 +436,13 @@
                         toDate: toDate,
                         transactionStatus: transactionStatus,
                         plant: plant
-                    } 
+                    },
+                    'dataSrc': function(json) {
+                        if (json && json.summary) {
+                            updateStatusChart(json.summary.completed, json.summary.pending, json.summary.cancelled);
+                        }
+                        return json.data;
+                    }
                 },
                 'columns': [
                     { data: 'status' },
@@ -645,6 +668,44 @@
                 colors.push(`hsl(${hue}, 70%, 60%)`);
             }
             return colors;
+        }
+        
+        function updateStatusChart(completed, pending, cancelled) {
+            console.log('Updating status chart with values:', completed, pending, cancelled);
+            if (statusChart) {
+                statusChart.destroy();
+            }
+            
+            var data = [completed, pending, cancelled];
+            var labels = ['Completed', 'Pending', 'Cancelled'];
+            var colors = ['#28a745', '#ffc107', '#dc3545'];
+            
+            statusChart = new Chart($('#statusCanvas'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index] || '';
+                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                var total = data.datasets[tooltipItem.datasetIndex].data.reduce((a, b) => a + b, 0);
+                                var percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            });
         }
     </script>
     </body>
