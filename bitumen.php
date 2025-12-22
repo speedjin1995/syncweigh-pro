@@ -203,7 +203,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         <!-- end main content-->
         <!-- /.modal-dialog -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-xl">
+            <div class="modal-dialog modal-dialog-scrollable custom-xxl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalScrollableTitle">Add Stock Take</h5>
@@ -274,15 +274,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     <thead>
                                                         <tr>
                                                             <th width="10%">No</th>
-                                                            <th>60/70</th>
+                                                            <th>Name</th>
                                                             <th>Temperature (&deg;C)</th>
                                                             <th>Level (cm)</th>
+                                                            <th>60/70</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="bitumenTable"></tbody>
                                                     <tfoot>
                                                         <th>Total</th>
+                                                        <th></th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalLevel" name="totalLevel" style="background-color:white;text-align: center;" value="0" readonly></th>
@@ -311,7 +313,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     <thead>
                                                         <tr>
                                                             <th width="10%">No</th>
-                                                            <th>LFO</th>
+                                                            <th>Name</th>
+                                                            <th>Volume</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -624,6 +627,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 <input type="text" class="form-control" id="no" name="no" readonly>
             </td>
             <td>
+                <input type="text" class="form-control" id="name" name="name">
+            </td>
+            <td>
                 <input type="number" class="form-control" id="sixtyseventy" name="sixtyseventy" style="background-color:white;" value="0.00" required>
             </td>
             <td>
@@ -644,6 +650,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         <tr class="details">
             <td>
                 <input type="text" class="form-control" id="lfoNo" name="lfoNo" readonly>
+            </td>
+            <td>
+                <input type="text" class="form-control" id="lfoName" name="lfoName">
             </td>
             <td>
                 <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" style="background-color:white;" value="0.00" required>
@@ -1131,6 +1140,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             }
         });
 
+        $('#batchDrum').on('change', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $(this).val();
+
+            if (plantId && batchDrum){
+                loadAssets(plantId, batchDrum);
+            }
+        });
+
+
+        /* Bitumen Table Start */
         // Find and remove selected table rows for bitumenTable
         $("#bitumenTable").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
@@ -1181,7 +1201,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#totalLevel').val(totalSum.toFixed(2));
         });
 
-        $(".add-bitumen").click(function(){
+        $(".add-bitumen").click(function(event, asset){
             var $addContents = $("#bitumenDetail").clone();
             $("#bitumenTable").append($addContents.html());
 
@@ -1190,6 +1210,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#bitumenTable").find('#remove:last').attr("id", "remove" + bitumenCount);
 
             $("#bitumenTable").find('#no:last').attr('name', 'no['+bitumenCount+']').attr("id", "no" + bitumenCount).css("text-align", "center").val(bitumenCount + 1);
+            $("#bitumenTable").find('#name:last').attr('name', 'name['+bitumenCount+']').attr("id", "name" + bitumenCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#bitumenTable").find('#sixtyseventy:last').attr('name', 'sixtyseventy['+bitumenCount+']').attr("id", "sixtyseventy" + bitumenCount).css("text-align", "center");
             $("#bitumenTable").find('#temp:last').attr('name', 'temp['+bitumenCount+']').attr("id", "temp" + bitumenCount).css("text-align", "center");
             $("#bitumenTable").find('#level:last').attr('name', 'level['+bitumenCount+']').attr("id", "level" + bitumenCount).css("text-align", "center");
@@ -1197,6 +1218,10 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             bitumenCount++;
         });
 
+        /* Bitumen Table End */
+
+
+        /* LFO Table Start */
         // Find and remove selected table rows for lfoTable
         $("#lfoTable").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
@@ -1223,7 +1248,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         //     $('#totalLfo').val(totalSum.toFixed(2));
         // });
 
-        $(".add-lfo").click(function(){
+        $(".add-lfo").click(function(event, asset){
             var $addContents = $("#lfoDetail").clone();
             $("#lfoTable").append($addContents.html());
 
@@ -1232,12 +1257,16 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#lfoTable").find('#remove:last').attr("id", "remove" + lfoCount);
 
             $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
+            $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#lfoTable").find('#lfoWeight:last').attr('name', 'lfoWeight['+lfoCount+']').attr("id", "lfoWeight" + lfoCount).css("text-align", "center");
 
             lfoCount++;
         });
 
-        // Find and remove selected table rows for lfoTable
+        /* LFO Table End */
+
+        /* Diesel Table Start */
+        // Find and remove selected table rows for dieselTable  
         $("#dieselTable").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
 
@@ -1275,7 +1304,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#totalDiesel').val(totalSum.toFixed(2));
         });
 
-        $(".add-diesel").click(function(){
+        $(".add-diesel").click(function(event, asset){
             var $addContents = $("#dieselDetail").clone();
             $("#dieselTable").append($addContents.html());
 
@@ -1309,6 +1338,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
             dieselCount++;
         });
+
+        /* Diesel Table End */
+
 
         // Find and remove selected table rows for hotoilTable
         $("#hotoilTable").on('click', 'button[id^="remove"]', function () {
@@ -1499,6 +1531,43 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $(this).val(qty.toFixed(2));
         });
     });
+
+    function loadAssets(plant, batchDrum){
+        $('#spinnerLoading').show();
+        $.post('php/getPlantAssets.php', {plantId: plant, batchDrum: batchDrum}, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                if (obj.message.length > 0){
+                    // Reset Bitumen Table
+                    $('#bitumenTable').html('');
+                    bitumenCount = 0;
+                    
+                    // Reset LFO Table
+                    obj.message.forEach(function(asset) {
+                        if(asset.type == 'Bitumen') {
+                            $('.add-bitumen').trigger('click', [asset]);
+                        }else if(asset.type == 'LFO') {
+                            $('.add-lfo').trigger('click', [asset]);
+                        }
+                        
+                    });
+                }
+                
+                $('#spinnerLoading').hide();
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+            }
+        });
+    }
 
     function edit(id){
         $('#spinnerLoading').show();
