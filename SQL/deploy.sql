@@ -2353,9 +2353,9 @@ CREATE TABLE `Assets` (
   `batch_drum` varchar(10) NOT NULL,
   `deleted` int(1) NOT NULL DEFAULT 0,
   `created_by` varchar(50) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
   `modified_by` varchar(50) DEFAULT NULL,
-  `modified_at` datetime DEFAULT NULL
+  `modified_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 ALTER TABLE `Assets` ADD PRIMARY KEY (`id`);
