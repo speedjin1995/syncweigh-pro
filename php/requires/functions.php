@@ -101,3 +101,33 @@ function getTonnes($volume, $sg)
 {
     return $volume * $sg;
 }
+
+/* ===========================
+   LFO Caluculation
+   =========================== */
+function calculateLFOVolumeLitres(
+    float $diameter,
+    float $length,
+    float $liquidHeight,
+    float $constant = 1000 // Litres per m³
+) {
+    $PI = 3.14;               // Excel π
+    $R  = $diameter / 2;
+
+    if ($liquidHeight <= 0) {
+        return 0;
+    }
+
+    if ($liquidHeight >= $diameter) {
+        $area = $PI * $R * $R;
+    } else {
+        $area =
+            ($R * $R * acos(($R - $liquidHeight) / $R)) -
+            (($R - $liquidHeight) * sqrt((2 * $R * $liquidHeight) - ($liquidHeight * $liquidHeight)));
+    }
+
+    $volume_m3 = $area * $length;
+
+    // ⚠️ IMPORTANT: multiply by 1100, not 1000
+    return round($volume_m3 * $constant, 0);
+}
