@@ -334,7 +334,7 @@ else{
                             
                             <div class="row">
                                 <div class="col-xl-4 col-md-6">
-                                    <div class="card card-animate">
+                                    <div class="card card-animate" id="dispatchCard">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
@@ -342,7 +342,7 @@ else{
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
                                                     <span class="avatar-title bg-soft-success rounded fs-3">
-                                                        <i class="bx bx-dollar-circle text-success"></i>
+                                                        <i class="bx bx-export text-success"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -350,15 +350,15 @@ else{
 
                                             <!-- Status breakdown -->
                                             <div class="mt-4">
-                                                <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex justify-content-between mb-2 status-item" data-status="N" data-transaction="Sales" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Pending</span>
                                                     <span class="fw-semibold" id="salesPending">0</span>
                                                 </div>
-                                                <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex justify-content-between mb-2 status-item" data-status="Y" data-transaction="Sales" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Complete</span>
                                                     <span class="fw-semibold text-success" id="salesComplete">0</span>
                                                 </div>
-                                                <div class="d-flex justify-content-between">
+                                                <div class="d-flex justify-content-between status-item" data-status="C" data-transaction="Sales" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Cancel</span>
                                                     <span class="fw-semibold text-danger" id="salesCancel">0</span>
                                                 </div>
@@ -368,7 +368,7 @@ else{
                                 </div>
 
                                 <div class="col-xl-4 col-md-6">
-                                    <div class="card card-animate">
+                                    <div class="card card-animate" id="receivingCard">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
@@ -376,7 +376,7 @@ else{
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
                                                     <span class="avatar-title bg-soft-info rounded fs-3">
-                                                        <i class="bx bx-shopping-bag text-info"></i>
+                                                        <i class="bx bx-import text-info"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -384,15 +384,15 @@ else{
 
                                             <!-- Status breakdown -->
                                             <div class="mt-4">
-                                                <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex justify-content-between mb-2 status-item" data-status="N" data-transaction="Purchase" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Pending</span>
                                                     <span class="fw-semibold" id="purchasePending">0</span>
                                                 </div>
-                                                <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex justify-content-between mb-2 status-item" data-status="Y" data-transaction="Purchase" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Complete</span>
                                                     <span class="fw-semibold text-success" id="purchaseComplete">0</span>
                                                 </div>
-                                                <div class="d-flex justify-content-between">
+                                                <div class="d-flex justify-content-between status-item" data-status="C" data-transaction="Purchase" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Cancel</span>
                                                     <span class="fw-semibold text-danger" id="purchaseCancel">0</span>
                                                 </div>
@@ -400,8 +400,9 @@ else{
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-xl-4 col-md-6">
-                                    <div class="card card-animate">
+                                    <div class="card card-animate"  id="intTransCard">
                                         <div class="card-body">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-grow-1 overflow-hidden">
@@ -409,7 +410,7 @@ else{
                                                 </div>
                                                 <div class="avatar-sm flex-shrink-0">
                                                     <span class="avatar-title bg-soft-warning rounded fs-3">
-                                                        <i class="bx bx-user-circle text-warning"></i>
+                                                        <i class="bx bx-transfer text-warning"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -417,17 +418,17 @@ else{
 
                                             <!-- Status breakdown -->
                                             <div class="mt-4">
-                                                <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex justify-content-between mb-2 status-item" data-status="N" data-transaction="Local" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Pending</span>
-                                                    <span class="fw-semibold" id="returnPending">0</span>
+                                                    <span class="fw-semibold" id="localPending">0</span>
                                                 </div>
-                                                <div class="d-flex justify-content-between mb-2">
+                                                <div class="d-flex justify-content-between mb-2 status-item" data-status="Y" data-transaction="Local" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Complete</span>
-                                                    <span class="fw-semibold text-success" id="returnComplete">0</span>
+                                                    <span class="fw-semibold text-success" id="localComplete">0</span>
                                                 </div>
-                                                <div class="d-flex justify-content-between">
+                                                <div class="d-flex justify-content-between status-item" data-status="C" data-transaction="Local" style="cursor: pointer; padding: 4px; border-radius: 4px;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">
                                                     <span class="text-muted">Cancel</span>
-                                                    <span class="fw-semibold text-danger" id="returnCancel">0</span>
+                                                    <span class="fw-semibold text-danger" id="localCancel">0</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1750,7 +1751,18 @@ else{
             }
         });
 
-        //$('#statusSearch').val('Sales').trigger('change');
+        // Handle status item clicks
+        $('.status-item').on('click', function() {
+            var status = $(this).data('status');
+            var transaction = $(this).data('transaction');
+            
+            // Update the search form fields
+            $('#statusSearch').val(transaction).trigger('change');
+            $('#batchNoSearch').val(status).trigger('change');
+            
+            // Trigger the search
+            $('#filterSearch').click();
+        });
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -1894,10 +1906,13 @@ else{
                 $('#purchasePending').text(settings.json.purchaseTotalPending);
                 $('#purchaseComplete').text(settings.json.purchaseTotalComplete);
                 $('#purchaseCancel').text(settings.json.purchaseTotalCancel);
-                $('#returnPending').text(settings.json.returnTotalPending);
-                $('#returnComplete').text(settings.json.returnTotalComplete);
-                $('#returnCancel').text(settings.json.returnTotalCancel);
-            }   
+                $('#localPending').text(settings.json.localTotalPending);
+                $('#localComplete').text(settings.json.localTotalComplete);
+                $('#localCancel').text(settings.json.localTotalCancel);
+                $('#miscPending').text(settings.json.miscTotalPending);
+                $('#miscComplete').text(settings.json.miscTotalComplete);
+                $('#miscCancel').text(settings.json.miscTotalCancel);
+            }    
         });
 
         // Add event listener for opening and closing details on row click
@@ -2585,10 +2600,13 @@ else{
                     $('#purchasePending').text(settings.json.purchaseTotalPending);
                     $('#purchaseComplete').text(settings.json.purchaseTotalComplete);
                     $('#purchaseCancel').text(settings.json.purchaseTotalCancel);
-                    $('#returnPending').text(settings.json.returnTotalPending);
-                    $('#returnComplete').text(settings.json.returnTotalComplete);
-                    $('#returnCancel').text(settings.json.returnTotalCancel);
-                }   
+                    $('#localPending').text(settings.json.localTotalPending);
+                    $('#localComplete').text(settings.json.localTotalComplete);
+                    $('#localCancel').text(settings.json.localTotalCancel);
+                    $('#miscPending').text(settings.json.miscTotalPending);
+                    $('#miscComplete').text(settings.json.miscTotalComplete);
+                    $('#miscCancel').text(settings.json.miscTotalCancel);
+                }    
             });
         });
 
