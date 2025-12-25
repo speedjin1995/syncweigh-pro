@@ -212,7 +212,7 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="diameter" class="col-sm-4 col-form-label">Diameter (m)</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="diameter" name="diameter" placeholder="Diameter" step="0.01">
+                                                                                        <input type="number" class="form-control" id="diameter" name="diameter" placeholder="Diameter" step="0.001">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -220,7 +220,7 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="height" class="col-sm-4 col-form-label">Height (m)</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="height" name="height" placeholder="Height" step="0.01">
+                                                                                        <input type="number" class="form-control" id="height" name="height" placeholder="Height" step="0.001">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -228,7 +228,7 @@ else{
                                                                                 <div class="row">
                                                                                     <label for="length" class="col-sm-4 col-form-label">Length (m)</label>
                                                                                     <div class="col-sm-8">
-                                                                                        <input type="number" class="form-control" id="length" name="length" placeholder="Length" step="0.01">
+                                                                                        <input type="number" class="form-control" id="length" name="length" placeholder="Length" step="0.001">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
