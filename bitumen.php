@@ -659,7 +659,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 <input type="number" class="form-control" id="actualLevel" name="actualLevel" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="sixtyseventy" name="sixtyseventy" style="background-color:white;" value="0.00" required readonly>
+                <input type="number" class="form-control" id="sixtyseventy" name="sixtyseventy" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -694,10 +694,10 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 <input type="number" class="form-control" id="lfoActualLevel" name="lfoActualLevel" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="lfoVolume" name="lfoVolume" style="background-color:white;" value="0.00" required readonly>
+                <input type="number" class="form-control" id="lfoVolume" name="lfoVolume" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" style="background-color:white;" value="0.00" required readonly>
+                <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -732,10 +732,10 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 <input type="number" class="form-control" id="dieselActualLevel" name="dieselActualLevel" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td>
-                <input type="number" class="form-control" id="dieselVolume" name="dieselVolume" style="background-color:white;" value="0.00" required readonly>
+                <input type="number" class="form-control" id="dieselVolume" name="dieselVolume" style="background-color:white;" value="0.00" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="dieselWeight" name="dieselWeight" style="background-color:white;" value="0.00" required readonly>
+                <input type="number" class="form-control" id="dieselWeight" name="dieselWeight" style="background-color:white;" value="0.00" required>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
