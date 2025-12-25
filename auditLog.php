@@ -497,12 +497,12 @@ $(function () {
 
     $(".flatpickrStart").flatpickr({
         defaultDate: new Date(startDate), 
-        dateFormat: "y-m-d"
+        dateFormat: "d-m-Y"
     });
 
     $(".flatpickrEnd").flatpickr({
         defaultDate: new Date(), 
-        dateFormat: "y-m-d"
+        dateFormat: "d-m-Y"
     });
 
     // Handle change event of the dropdown list
