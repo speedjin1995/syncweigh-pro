@@ -97,7 +97,13 @@
                                     </li>
                                     <li class="nav-item">
                                         <a href="inventory.php" class="nav-link"><b><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</b></a>
-                                    </li>              
+                                    </li> 
+                                    <li class="nav-item">
+                                        <a href="assetManagement.php" class="nav-link"><b><i class="mdi mdi-tools"></i>'.$lang['t-assetManagement'].'</b></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="calculationSetup.php" class="nav-link"><b><i class="mdi mdi-calculator"></i>'.$lang['t-calculationSetup'].'</b></a>
+                                    </li>             
                                 </ul>
                             </div>
                         </li> 
