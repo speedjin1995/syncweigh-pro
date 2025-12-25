@@ -19,7 +19,7 @@ if(isset($_POST['rawMatCode'], $_POST['diameter'], $_POST['length'], $_POST['hei
     }
     
     // Query to get raw material details
-    $sql = "SELECT * FROM Raw_Mat rm LEFT JOIN raw_mat_uom rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rm.status = 0 AND rmu.unit_id = 2";
+    $sql = "SELECT * FROM Raw_Mat rm LEFT JOIN Raw_Mat_UOM rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rm.status = 0 AND rmu.unit_id = 2";
     $stmt = $db->prepare($sql);
     $stmt->bind_param("s", $rawMatCode);
     $stmt->execute();
