@@ -47,22 +47,30 @@ if (empty($_POST["datetime"])) {
 if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
     $sixtySeventyData = [];
     $no = $_POST["no"];
-    $sixtyseventy = $_POST["sixtyseventy"];
+    $assetId = $_POST["assetId"];
+    $name = $_POST["name"];
+    $bitumenStatus = $_POST["bitumenStatus"];
     $temp = $_POST["temp"];
     $level = $_POST["level"];
+    $actualLevel = $_POST["actualLevel"];
+    $sixtyseventy = $_POST["sixtyseventy"];
 
     foreach ($no as $key => $value) {
         $sixtySeventyData[] = array(
             "no" => $no[$key],
-            "sixtyseventy" => $sixtyseventy[$key],
+            "assetId" => $assetId[$key],
+            "name" => $name[$key],
+            "bitumenStatus" => $bitumenStatus[$key],
             "temperature" => $temp[$key],
             "level" => $level[$key],
+            "actualLevel" => $actualLevel[$key],
+            "sixtyseventy" => $sixtyseventy[$key],
         );
     }
 
-    $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
+    // $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
     // $sixtySeventyData['totalTemperature'] = $_POST["totalTemp"];
-    $sixtySeventyData['totalLevel'] = $_POST["totalLevel"];
+    // $sixtySeventyData['totalLevel'] = $_POST["totalLevel"];
     $sixtySeventyData = json_encode($sixtySeventyData, JSON_PRETTY_PRINT);
 } else {
     $sixtySeventyData = NULL;
@@ -72,11 +80,23 @@ if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
 if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     $lfoData = [];
     $lfoNo = $_POST["lfoNo"];
+    $lfoAssetId = $_POST["lfoAssetId"];
+    $lfoName = $_POST["lfoName"];
+    $lfoStatus = $_POST["lfoStatus"];
+    $lfoLevel = $_POST["lfoLevel"];
+    $lfoActualLevel = $_POST["lfoActualLevel"];
+    $lfoVolume = $_POST["lfoVolume"];
     $lfoWeight = $_POST["lfoWeight"];
 
     foreach ($lfoNo as $key => $no) {
         $lfoData[] = array(
             "no" => $no,
+            "lfoAssetId" => $lfoAssetId[$key],
+            "lfoName" => $lfoName[$key],
+            "lfoStatus" => $lfoStatus[$key],
+            "lfoLevel" => $lfoLevel[$key],
+            "lfoActualLevel" => $lfoActualLevel[$key],
+            "lfoVolume" => $lfoVolume[$key],
             "lfoWeight" => $lfoWeight[$key]
         );
     }
@@ -88,121 +108,133 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
 }
 
 # Processing for diesel data
-if (empty($_POST["dieselSupplierTransport"])) {
-    $dieselSupplierTransport = null;
-} else {
-    $dieselSupplierTransport = trim($_POST["dieselSupplierTransport"]);
-}
+// if (empty($_POST["dieselSupplierTransport"])) {
+//     $dieselSupplierTransport = null;
+// } else {
+//     $dieselSupplierTransport = trim($_POST["dieselSupplierTransport"]);
+// }
 
-if (empty($_POST["dieselUsageTransport"])) {
-    $dieselUsageTransport = null;
-} else {
-    $dieselUsageTransport = trim($_POST["dieselUsageTransport"]);
-}
+// if (empty($_POST["dieselUsageTransport"])) {
+//     $dieselUsageTransport = null;
+// } else {
+//     $dieselUsageTransport = trim($_POST["dieselUsageTransport"]);
+// }
 
-if (empty($_POST["dieselWeightTransport"])) {
-    $dieselWeightTransport = null;
-} else {
-    $dieselWeightTransport = trim($_POST["dieselWeightTransport"]);
-}
+// if (empty($_POST["dieselWeightTransport"])) {
+//     $dieselWeightTransport = null;
+// } else {
+//     $dieselWeightTransport = trim($_POST["dieselWeightTransport"]);
+// }
 
-if (empty($_POST["dieselSupplierHotoil"])) {
-    $dieselSupplierHotoil = null;
-} else {
-    $dieselSupplierHotoil = trim($_POST["dieselSupplierHotoil"]);
-}
+// if (empty($_POST["dieselSupplierHotoil"])) {
+//     $dieselSupplierHotoil = null;
+// } else {
+//     $dieselSupplierHotoil = trim($_POST["dieselSupplierHotoil"]);
+// }
 
-if (empty($_POST["dieselUsageHotoil"])) {
-    $dieselUsageHotoil = null;
-} else {
-    $dieselUsageHotoil = trim($_POST["dieselUsageHotoil"]);
-}
+// if (empty($_POST["dieselUsageHotoil"])) {
+//     $dieselUsageHotoil = null;
+// } else {
+//     $dieselUsageHotoil = trim($_POST["dieselUsageHotoil"]);
+// }
 
-if (empty($_POST["dieselWeightHotoil"])) {
-    $dieselWeightHotoil = null;
-} else {
-    $dieselWeightHotoil = trim($_POST["dieselWeightHotoil"]);
-}
+// if (empty($_POST["dieselWeightHotoil"])) {
+//     $dieselWeightHotoil = null;
+// } else {
+//     $dieselWeightHotoil = trim($_POST["dieselWeightHotoil"]);
+// }
 
-if (empty($_POST["dieselSupplierBurner"])) {
-    $dieselSupplierBurner = null;
-} else {
-    $dieselSupplierBurner = trim($_POST["dieselSupplierBurner"]);
-}
+// if (empty($_POST["dieselSupplierBurner"])) {
+//     $dieselSupplierBurner = null;
+// } else {
+//     $dieselSupplierBurner = trim($_POST["dieselSupplierBurner"]);
+// }
 
-if (empty($_POST["dieselUsageBurner"])) {
-    $dieselUsageBurner = null;
-} else {
-    $dieselUsageBurner = trim($_POST["dieselUsageBurner"]);
-}
+// if (empty($_POST["dieselUsageBurner"])) {
+//     $dieselUsageBurner = null;
+// } else {
+//     $dieselUsageBurner = trim($_POST["dieselUsageBurner"]);
+// }
 
-if (empty($_POST["dieselWeightBurner"])) {
-    $dieselWeightBurner = null;
-} else {
-    $dieselWeightBurner = trim($_POST["dieselWeightBurner"]);
-}
+// if (empty($_POST["dieselWeightBurner"])) {
+//     $dieselWeightBurner = null;
+// } else {
+//     $dieselWeightBurner = trim($_POST["dieselWeightBurner"]);
+// }
 
-if (empty($_POST["dieselLastMeterReading"])) {
-    $dieselLastMeterReading = null;
-} else {
-    $dieselLastMeterReading = trim($_POST["dieselLastMeterReading"]);
-}
+// if (empty($_POST["dieselLastMeterReading"])) {
+//     $dieselLastMeterReading = null;
+// } else {
+//     $dieselLastMeterReading = trim($_POST["dieselLastMeterReading"]);
+// }
 
 if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData = [];
-    $dieselData[] = array(
-        "dieselSupplierTransport" => $dieselSupplierTransport,
-        "dieselUsageTransport" => $dieselUsageTransport,
-        "dieselWeightTransport" => $dieselWeightTransport,
-    );
-    $dieselData[] = array(
-        "dieselSupplierHotoil" => $dieselSupplierHotoil,
-        "dieselUsageHotoil" => $dieselUsageHotoil,
-        "dieselWeightHotoil" => $dieselWeightHotoil,
-    );
-    $dieselData[] = array(
-        "dieselSupplierBurner" => $dieselSupplierBurner,
-        "dieselUsageBurner" => $dieselUsageBurner,
-        "dieselWeightBurner" => $dieselWeightBurner,
-    );
+    // $dieselData[] = array(
+    //     "dieselSupplierTransport" => $dieselSupplierTransport,
+    //     "dieselUsageTransport" => $dieselUsageTransport,
+    //     "dieselWeightTransport" => $dieselWeightTransport,
+    // );
+    // $dieselData[] = array(
+    //     "dieselSupplierHotoil" => $dieselSupplierHotoil,
+    //     "dieselUsageHotoil" => $dieselUsageHotoil,
+    //     "dieselWeightHotoil" => $dieselWeightHotoil,
+    // );
+    // $dieselData[] = array(
+    //     "dieselSupplierBurner" => $dieselSupplierBurner,
+    //     "dieselUsageBurner" => $dieselUsageBurner,
+    //     "dieselWeightBurner" => $dieselWeightBurner,
+    // );
 
+    // $dieselSupplier = $_POST["dieselSupplier"];
+    // $dieselUsage = $_POST["dieselUsage"];
     $dieselNo = $_POST["dieselNo"];
-    $dieselSupplier = $_POST["dieselSupplier"];
-    $dieselUsage = $_POST["dieselUsage"];
+    $dieselAssetId = $_POST["dieselAssetId"];
+    $dieselName = $_POST["dieselName"];
+    $dieselStatus = $_POST["dieselStatus"];
+    $dieselLevel = $_POST["dieselLevel"];
+    $dieselActualLevel = $_POST["dieselActualLevel"];
+    $dieselVolume = $_POST["dieselVolume"];
     $dieselWeight = $_POST["dieselWeight"];
 
     foreach ($dieselNo as $key => $no) {
         $dieselData[] = array(
             "no" => $no,
-            "dieselSupplier" => $dieselSupplier[$key],
-            "dieselUsage" => $dieselUsage[$key],
+            "dieselAssetId" => $dieselAssetId[$key],
+            "dieselName" => $dieselName[$key],
+            "dieselStatus" => $dieselStatus[$key],
+            "dieselLevel" => $dieselLevel[$key],
+            "dieselActualLevel" => $dieselActualLevel[$key],
+            "dieselVolume" => $dieselVolume[$key],
+            // "dieselSupplier" => $dieselSupplier[$key],
+            // "dieselUsage" => $dieselUsage[$key],
             "dieselWeight" => $dieselWeight[$key]
         );
     }
 
-    $dieselData['totalDiesel'] = $_POST["totalDiesel"];
-    $dieselData['lastMeterReading'] = $dieselLastMeterReading;
+    // $dieselData['totalDiesel'] = $_POST["totalDiesel"];
+    // $dieselData['lastMeterReading'] = $dieselLastMeterReading;
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 } else {
     $dieselData = [];
-    $dieselData[] = array(
-        "dieselSupplierTransport" => $dieselSupplierTransport,
-        "dieselUsageTransport" => $dieselUsageTransport,
-        "dieselWeightTransport" => $dieselWeightTransport,
-    );
-    $dieselData[] = array(
-        "dieselSupplierHotoil" => $dieselSupplierHotoil,
-        "dieselUsageHotoil" => $dieselUsageHotoil,
-        "dieselWeightHotoil" => $dieselWeightHotoil,
-    );
-    $dieselData[] = array(
-        "dieselSupplierBurner" => $dieselSupplierBurner,
-        "dieselUsageBurner" => $dieselUsageBurner,
-        "dieselWeightBurner" => $dieselWeightBurner,
-    );
+    // $dieselData[] = array(
+    //     "dieselSupplierTransport" => $dieselSupplierTransport,
+    //     "dieselUsageTransport" => $dieselUsageTransport,
+    //     "dieselWeightTransport" => $dieselWeightTransport,
+    // );
+    // $dieselData[] = array(
+    //     "dieselSupplierHotoil" => $dieselSupplierHotoil,
+    //     "dieselUsageHotoil" => $dieselUsageHotoil,
+    //     "dieselWeightHotoil" => $dieselWeightHotoil,
+    // );
+    // $dieselData[] = array(
+    //     "dieselSupplierBurner" => $dieselSupplierBurner,
+    //     "dieselUsageBurner" => $dieselUsageBurner,
+    //     "dieselWeightBurner" => $dieselWeightBurner,
+    // );
 
-    $dieselData['totalDiesel'] = $_POST["totalDiesel"];
-    $dieselData['lastMeterReading'] = $dieselLastMeterReading;
+    // $dieselData['totalDiesel'] = $_POST["totalDiesel"];
+    // $dieselData['lastMeterReading'] = $dieselLastMeterReading;
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 }
 

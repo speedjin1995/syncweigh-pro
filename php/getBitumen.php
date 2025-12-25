@@ -29,7 +29,24 @@ if(isset($_POST['userID'])){
                 if (!empty($sixtySeventyTemp)) {
                     foreach ($sixtySeventyTemp as $sixtySeventyKey => $sixtySeventyRow) {
                         if (is_numeric($sixtySeventyKey)) {
-                            $sixtySeventyRows[] = $sixtySeventyRow;
+                            $duplicateRow = $sixtySeventyRow;
+
+                            // Query to get asset detail based on $sixtySeventyRow['assetId']
+                            if ($asset_stmt = $db->prepare("SELECT * FROM Assets WHERE id=?")) {
+                                $asset_stmt->bind_param('s', $sixtySeventyRow['assetId']);
+                                
+                                // Execute the prepared query.
+                                if ($asset_stmt->execute()) {
+                                    $asset_result = $asset_stmt->get_result();
+                                    if ($asset_row = $asset_result->fetch_assoc()) {
+                                        $duplicateRow['assetLength'] = $asset_row['length'];
+                                        $duplicateRow['assetHeight'] = $asset_row['height'];
+                                        $duplicateRow['assetDiameter'] = $asset_row['diameter'];
+                                    }
+                                }
+                            }
+
+                            $sixtySeventyRows[] = $duplicateRow;
                         }
                     }
                 }
@@ -45,7 +62,24 @@ if(isset($_POST['userID'])){
                 if (!empty($lfoTemp)) {
                     foreach ($lfoTemp as $lfoKey => $lfoRow) {
                         if (is_numeric($lfoKey)) {
-                            $lfoRows[] = $lfoRow;
+                            $duplicateRow = $lfoRow;
+
+                            // Query to get asset detail based on $lfoRow['lfoAssetId']
+                            if ($asset_stmt = $db->prepare("SELECT * FROM Assets WHERE id=?")) {
+                                $asset_stmt->bind_param('s', $lfoRow['lfoAssetId']);
+                                
+                                // Execute the prepared query.
+                                if ($asset_stmt->execute()) {
+                                    $asset_result = $asset_stmt->get_result();
+                                    if ($asset_row = $asset_result->fetch_assoc()) {
+                                        $duplicateRow['lfoLength'] = $asset_row['length'];
+                                        $duplicateRow['lfoHeight'] = $asset_row['height'];
+                                        $duplicateRow['lfoDiameter'] = $asset_row['diameter'];
+                                    }
+                                }
+                            }
+
+                            $lfoRows[] = $duplicateRow;
                         }
                     }
                 }
@@ -55,20 +89,37 @@ if(isset($_POST['userID'])){
 
                 ## diesel Processing ##
                 $dieselTemp = json_decode($row['diesel'], true);
-                $message['dieselSupplierTransport'] = $dieselTemp[0]['dieselSupplierTransport'];
-                $message['dieselSupplierHotoil'] = $dieselTemp[1]['dieselSupplierHotoil'];
-                $message['dieselSupplierBurner'] = $dieselTemp[2]['dieselSupplierBurner'];
-                $message['dieselWeightTransport'] = $dieselTemp[0]['dieselWeightTransport'] ?? 0.00;
-                $message['dieselWeightHotoil'] = $dieselTemp[1]['dieselWeightHotoil'] ?? 0.00;
-                $message['dieselWeightBurner'] = $dieselTemp[2]['dieselWeightBurner'] ?? 0.00;
-                unset($dieselTemp[0]);
-                unset($dieselTemp[1]);
-                unset($dieselTemp[2]);
+                // $message['dieselSupplierTransport'] = $dieselTemp[0]['dieselSupplierTransport'];
+                // $message['dieselSupplierHotoil'] = $dieselTemp[1]['dieselSupplierHotoil'];
+                // $message['dieselSupplierBurner'] = $dieselTemp[2]['dieselSupplierBurner'];
+                // $message['dieselWeightTransport'] = $dieselTemp[0]['dieselWeightTransport'] ?? 0.00;
+                // $message['dieselWeightHotoil'] = $dieselTemp[1]['dieselWeightHotoil'] ?? 0.00;
+                // $message['dieselWeightBurner'] = $dieselTemp[2]['dieselWeightBurner'] ?? 0.00;
+                // unset($dieselTemp[0]);
+                // unset($dieselTemp[1]);
+                // unset($dieselTemp[2]);
                 $dieselRows = [];
                 if (!empty($dieselTemp)) {
                     foreach ($dieselTemp as $dieselKey => $dieselRow) {
                         if (is_numeric($dieselKey)) {
-                            $dieselRows[] = $dieselRow;
+                            $duplicateRow = $dieselRow;
+
+                            // Query to get asset detail based on $dieselRow['dieselAssetId']
+                            if ($asset_stmt = $db->prepare("SELECT * FROM Assets WHERE id=?")) {
+                                $asset_stmt->bind_param('s', $dieselRow['dieselAssetId']);
+                                
+                                // Execute the prepared query.
+                                if ($asset_stmt->execute()) {
+                                    $asset_result = $asset_stmt->get_result();
+                                    if ($asset_row = $asset_result->fetch_assoc()) {
+                                        $duplicateRow['dieselLength'] = $asset_row['length'];
+                                        $duplicateRow['dieselHeight'] = $asset_row['height'];
+                                        $duplicateRow['dieselDiameter'] = $asset_row['diameter'];
+                                    }
+                                }
+                            }
+
+                            $dieselRows[] = $duplicateRow;
                         }
                     }
                 }
