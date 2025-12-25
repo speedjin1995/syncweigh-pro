@@ -47,22 +47,30 @@ if (empty($_POST["datetime"])) {
 if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
     $sixtySeventyData = [];
     $no = $_POST["no"];
-    $sixtyseventy = $_POST["sixtyseventy"];
+    $assetId = $_POST["assetId"];
+    $name = $_POST["name"];
+    $bitumenStatus = $_POST["bitumenStatus"];
     $temp = $_POST["temp"];
     $level = $_POST["level"];
+    $actualLevel = $_POST["actualLevel"];
+    $sixtyseventy = $_POST["sixtyseventy"];
 
     foreach ($no as $key => $value) {
         $sixtySeventyData[] = array(
             "no" => $no[$key],
-            "sixtyseventy" => $sixtyseventy[$key],
+            "assetId" => $assetId[$key],
+            "name" => $name[$key],
+            "bitumenStatus" => $bitumenStatus[$key],
             "temperature" => $temp[$key],
             "level" => $level[$key],
+            "actualLevel" => $actualLevel[$key],
+            "sixtyseventy" => $sixtyseventy[$key],
         );
     }
 
-    $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
+    // $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
     // $sixtySeventyData['totalTemperature'] = $_POST["totalTemp"];
-    $sixtySeventyData['totalLevel'] = $_POST["totalLevel"];
+    // $sixtySeventyData['totalLevel'] = $_POST["totalLevel"];
     $sixtySeventyData = json_encode($sixtySeventyData, JSON_PRETTY_PRINT);
 } else {
     $sixtySeventyData = NULL;
@@ -72,11 +80,23 @@ if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
 if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     $lfoData = [];
     $lfoNo = $_POST["lfoNo"];
+    $lfoAssetId = $_POST["lfoAssetId"];
+    $lfoName = $_POST["lfoName"];
+    $lfoStatus = $_POST["lfoStatus"];
+    $lfoLevel = $_POST["lfoLevel"];
+    $lfoActualLevel = $_POST["lfoActualLevel"];
+    $lfoVolume = $_POST["lfoVolume"];
     $lfoWeight = $_POST["lfoWeight"];
 
     foreach ($lfoNo as $key => $no) {
         $lfoData[] = array(
             "no" => $no,
+            "lfoAssetId" => $lfoAssetId[$key],
+            "lfoName" => $lfoName[$key],
+            "lfoStatus" => $lfoStatus[$key],
+            "lfoLevel" => $lfoLevel[$key],
+            "lfoActualLevel" => $lfoActualLevel[$key],
+            "lfoVolume" => $lfoVolume[$key],
             "lfoWeight" => $lfoWeight[$key]
         );
     }

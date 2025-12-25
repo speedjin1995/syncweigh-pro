@@ -25,8 +25,12 @@ if(isset($_POST['plantId'], $_POST['batchDrum'])){
             
             while ($row = $result->fetch_assoc()) {
                 $message[] = [
+                    'id' => $row['id'],
                     'type' => $row['type'],
-                    'name' => $row['name']
+                    'name' => $row['name'],
+                    'length' => $row['length'],
+                    'height' => $row['height'],
+                    'diameter' => $row['diameter'],
                 ];
             }
             

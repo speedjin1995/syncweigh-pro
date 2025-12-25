@@ -275,21 +275,23 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         <tr>
                                                             <th width="10%">No</th>
                                                             <th>Name</th>
+                                                            <th>Status</th>
                                                             <th>Temperature (&deg;C)</th>
-                                                            <th>Level (cm)</th>
-                                                            <th>60/70</th>
+                                                            <th>Level (mm)</th>
+                                                            <th>Actual Level (mm)</th>
+                                                            <th>MT</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="bitumenTable"></tbody>
-                                                    <tfoot>
+                                                    <!-- <tfoot>
                                                         <th>Total</th>
                                                         <th></th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
                                                         <th><input type="number" class="form-control" id="totalLevel" name="totalLevel" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
-                                                    </tfoot>
+                                                    </tfoot> -->
                                                 </table>
                                             </div>
                                         </div>
@@ -314,7 +316,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         <tr>
                                                             <th width="10%">No</th>
                                                             <th>Name</th>
-                                                            <th>Volume</th>
+                                                            <th>Status</th>
+                                                            <th>Level (m)</th>
+                                                            <th>Actual Level (m)</th>
+                                                            <th>Volume (ℓ)</th>
+                                                            <th>MT</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -353,7 +359,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         </tr>
                                                     </thead>
                                                     <!-- Transport -->
-                                                    <tr>
+                                                    <!-- <tr>
                                                         <td>
                                                             <select class="form-select select2" id="dieselSupplierTransport" name="dieselSupplierTransport">
                                                                 <?php while($rowSupplier=mysqli_fetch_assoc($supplier)){ ?>
@@ -366,9 +372,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         </td>
                                                         <td><input type="number" class="form-control text-center" id="dieselWeightTransport" name="dieselWeightTransport" value="0.00"></td>
                                                         <td></td>
-                                                    </tr>
+                                                    </tr> -->
                                                     <!-- Hotoil -->
-                                                    <tr>
+                                                    <!-- <tr>
                                                         <td>
                                                             <select class="form-select select2" id="dieselSupplierHotoil" name="dieselSupplierHotoil">
                                                                 <?php while($rowSupplier=mysqli_fetch_assoc($supplier2)){ ?>
@@ -381,9 +387,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         </td>
                                                         <td><input type="number" class="form-control text-center" id="dieselWeightHotoil" name="dieselWeightHotoil" value="0.00"></td>
                                                         <td></td>
-                                                    </tr>
+                                                    </tr> -->
                                                     <!-- Burner -->
-                                                    <tr>
+                                                    <!-- <tr>
                                                         <td>
                                                             <select class="form-select select2" id="dieselSupplierBurner" name="dieselSupplierBurner">
                                                                 <?php while($rowSupplier=mysqli_fetch_assoc($supplier3)){ ?>
@@ -396,7 +402,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         </td>
                                                         <td><input type="number" class="form-control text-center" id="dieselWeightBurner" name="dieselWeightBurner" value="0.00"></td>
                                                         <td></td>
-                                                    </tr>
+                                                    </tr> -->
                                                     <tbody id="dieselTable"></tbody>
                                                     <tfoot>
                                                         <th>Last Meter Reading</th>
@@ -625,18 +631,31 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         <tr class="details">
             <td>
                 <input type="text" class="form-control" id="no" name="no" readonly>
+                <input type="hidden" id="bitumenLength" name="bitumenLength">
+                <input type="hidden" id="bitumenHeight" name="bitumenHeight">
+                <input type="hidden" id="bitumenDiameter" name="bitumenDiameter">
+                <input type="hidden" id="assetId" name="assetId">
             </td>
             <td>
                 <input type="text" class="form-control" id="name" name="name">
             </td>
             <td>
-                <input type="number" class="form-control" id="sixtyseventy" name="sixtyseventy" style="background-color:white;" value="0.00" required>
+                <select class="form-select" id="bitumenStatus" name="bitumenStatus">
+                    <option value="Filled">Filled</option>
+                    <option value="Empty">Empty</option>
+                </select>
             </td>
             <td>
                 <input type="number" class="form-control" id="temp" name="temp" style="background-color:white;" value="0.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="level" name="level" style="background-color:white;" value="0.00" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="actualLevel" name="actualLevel" style="background-color:white;" value="0.00" required readonly>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="sixtyseventy" name="sixtyseventy" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -650,12 +669,31 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         <tr class="details">
             <td>
                 <input type="text" class="form-control" id="lfoNo" name="lfoNo" readonly>
+                <input type="hidden" id="lfoLength" name="lfoLength">
+                <input type="hidden" id="lfoHeight" name="lfoHeight">
+                <input type="hidden" id="lfoDiameter" name="lfoDiameter">
+                <input type="hidden" id="lfoAssetId" name="lfoAssetId">
             </td>
             <td>
                 <input type="text" class="form-control" id="lfoName" name="lfoName">
             </td>
             <td>
-                <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" style="background-color:white;" value="0.00" required>
+                <select class="form-select" id="lfoStatus" name="lfoStatus">
+                    <option value="Filled">Filled</option>
+                    <option value="Empty">Empty</option>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="lfoLevel" name="lfoLevel" style="background-color:white;" value="0.00" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="lfoActualLevel" name="lfoActualLevel" style="background-color:white;" value="0.00" required readonly>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="lfoVolume" name="lfoVolume" style="background-color:white;" value="0.00" required readonly>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="lfoWeight" name="lfoWeight" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -927,6 +965,14 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         });
 
         $('#addWeight').on('click', function(){
+            // Reset counts to 0
+            bitumenCount = 0;
+            lfoCount = 0;
+            dieselCount = 0;
+            hotoilCount = 0;
+            pg79Count = 0;
+            fibreCount = 0;
+
             $('#addModal').find('#id').val("");
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#batchDrum').val("").trigger('change');
@@ -1162,43 +1208,88 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             bitumenCount--;
         });
 
-        // Event delegation for order weight to calculate total sixtyseventy
-        $("#bitumenTable").on('change', 'input[id^="sixtyseventy"]', function(){
-            var totalSum = 0;
+        // Event delegation for status
+        $("#bitumenTable").on('change', 'select[id^="bitumenStatus"]', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
+            var row = $(this).closest('tr');
+            var status = $(this).val();
+            var temp = row.find('input[id^="temp"]').val();
+            var level = row.find('input[id^="level"]').val();
+            var height = (parseFloat(row.find('input[id^="bitumenHeight"]').val()) || 0) * 1000;
+            var actualLevel = 0;
 
-            // Loop through each sixtyseventy input and sum up the values
-            $('input[id^="sixtyseventy"]').each(function(){
-                totalSum += parseFloat($(this).val()) || 0;
-            });
+            // Calculate actual level based on status, level, and height
+            if (status && level){
+                actualLevel = calculateActualLevel(status, level, height);
+            }
 
-            // Set the total sum into the totalsixtyseventy input field
-            $('#totalSixtySeventy').val(totalSum.toFixed(2));
+            row.find('input[id^="actualLevel"]').val(actualLevel.toFixed(2));  
+            
+            // Calculate Weight MT
+            if (plantId && batchDrum && actualLevel && temp){
+                calculateBitumenWeight(plantId, batchDrum, actualLevel, temp, function(weight){
+                    row.find('input[id^="sixtyseventy"]').val(weight.toFixed(2));
+                });
+            } else {
+                row.find('input[id^="sixtyseventy"]').val('0.00');
+            }
         });
 
-        // Event delegation for order weight to calculate total temp
-        // $("#bitumenTable").on('change', 'input[id^="temp"]', function(){
-        //     var totalSum = 0;
+        // Event delegation for temp
+        $("#bitumenTable").on('change', 'input[id^="temp"]', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
+            var row = $(this).closest('tr');
+            var status =row.find('select[id^="bitumenStatus"]').val();
+            var temp = $(this).val();
+            var level = row.find('input[id^="level"]').val();
+            var height = (parseFloat(row.find('input[id^="bitumenHeight"]').val()) || 0) * 1000;
+            var actualLevel = 0;
 
-        //     // Loop through each temp input and sum up the values
-        //     $('input[id^="temp"]').each(function(){
-        //         totalSum += parseFloat($(this).val()) || 0;
-        //     });
+            // Calculate actual level based on status, level, and height
+            if (status && level){
+                actualLevel = calculateActualLevel(status, level, height);
+            }
 
-        //     // Set the total sum into the totalTemp input field
-        //     $('#totalTemp').val(totalSum.toFixed(2));
-        // });
+            row.find('input[id^="actualLevel"]').val(actualLevel.toFixed(2));
 
-        // Event delegation for order weight to calculate total level
+            // Calculate Weight MT
+            if (plantId && batchDrum && actualLevel && temp){
+                calculateBitumenWeight(plantId, batchDrum, actualLevel, temp, function(weight){
+                    row.find('input[id^="sixtyseventy"]').val(weight.toFixed(2));
+                });
+            } else {
+                row.find('input[id^="sixtyseventy"]').val('0.00');
+            }
+        });
+
+        // Event delegation for level
         $("#bitumenTable").on('change', 'input[id^="level"]', function(){
-            var totalSum = 0;
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
+            var row = $(this).closest('tr');
+            var status = row.find('select[id^="bitumenStatus"]').val();
+            var temp = row.find('input[id^="temp"]').val();
+            var level = $(this).val();
+            var height = (parseFloat(row.find('input[id^="bitumenHeight"]').val()) || 0) * 1000;
+            var actualLevel = 0;
 
-            // Loop through each level input and sum up the values
-            $('input[id^="level"]').each(function(){
-                totalSum += parseFloat($(this).val()) || 0;
-            });
+            // Calculate actual level based on status, level, and height
+            if (status && level){
+                actualLevel = calculateActualLevel(status, level, height);
+            }
 
-            // Set the total sum into the totalLevel input field
-            $('#totalLevel').val(totalSum.toFixed(2));
+            row.find('input[id^="actualLevel"]').val(actualLevel.toFixed(2));
+
+            // Calculate Weight MT
+            if (plantId && batchDrum && actualLevel && temp){
+                calculateBitumenWeight(plantId, batchDrum, actualLevel, temp, function(weight){
+                    row.find('input[id^="sixtyseventy"]').val(weight.toFixed(2));
+                });
+            } else {
+                row.find('input[id^="sixtyseventy"]').val('0.00');
+            }
         });
 
         $(".add-bitumen").click(function(event, asset){
@@ -1211,10 +1302,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
             $("#bitumenTable").find('#no:last').attr('name', 'no['+bitumenCount+']').attr("id", "no" + bitumenCount).css("text-align", "center").val(bitumenCount + 1);
             $("#bitumenTable").find('#name:last').attr('name', 'name['+bitumenCount+']').attr("id", "name" + bitumenCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
-            $("#bitumenTable").find('#sixtyseventy:last').attr('name', 'sixtyseventy['+bitumenCount+']').attr("id", "sixtyseventy" + bitumenCount).css("text-align", "center");
+            $("#bitumenTable").find('#bitumenStatus:last').attr('name', 'bitumenStatus['+bitumenCount+']').attr("id", "bitumenStatus" + bitumenCount);
             $("#bitumenTable").find('#temp:last').attr('name', 'temp['+bitumenCount+']').attr("id", "temp" + bitumenCount).css("text-align", "center");
             $("#bitumenTable").find('#level:last').attr('name', 'level['+bitumenCount+']').attr("id", "level" + bitumenCount).css("text-align", "center");
+            $("#bitumenTable").find('#actualLevel:last').attr('name', 'actualLevel['+bitumenCount+']').attr("id", "actualLevel" + bitumenCount).css("text-align", "center");
+            $("#bitumenTable").find('#sixtyseventy:last').attr('name', 'sixtyseventy['+bitumenCount+']').attr("id", "sixtyseventy" + bitumenCount).css("text-align", "center");
 
+            // Hidden fields
+            $("#bitumenTable").find('#bitumenLength:last').attr('name', 'bitumenLength['+bitumenCount+']').attr("id", "bitumenLength" + bitumenCount).val(asset ? asset.length || '' : '');
+            $("#bitumenTable").find('#bitumenHeight:last').attr('name', 'bitumenHeight['+bitumenCount+']').attr("id", "bitumenHeight" + bitumenCount).val(asset ? asset.height || '' : '');
+            $("#bitumenTable").find('#bitumenDiameter:last').attr('name', 'bitumenDiameter['+bitumenCount+']').attr("id", "bitumenDiameter" + bitumenCount).val(asset ? asset.diameter || '' : '');
+            $("#bitumenTable").find('#assetId:last').attr('name', 'assetId['+bitumenCount+']').attr("id", "assetId" + bitumenCount).val(asset ? asset.id || '' : '');
             bitumenCount++;
         });
 
@@ -1233,6 +1331,66 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('input[id^="lfoWeight"]').trigger('change');
 
             lfoCount--;
+        });
+
+        // Event delegation for lfoStatus
+        $("#lfoTable").on('change', 'select[id^="lfoStatus"]', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
+            var row = $(this).closest('tr');
+            var status = $(this).val();
+            var level = row.find('input[id^="lfoLevel"]').val();
+            var height = parseFloat(row.find('input[id^="lfoHeight"]').val()) || 0;
+            var diameter = parseFloat(row.find('input[id^="lfoDiameter"]').val()) || 0;
+            var length = parseFloat(row.find('input[id^="lfoLength"]').val()) || 0;
+            var actualLevel = 0;
+
+            // Calculate actual level based on status, level, and height
+            if (status && level){
+                actualLevel = calculateActualLevel(status, level, height);
+            }
+
+            row.find('input[id^="lfoActualLevel"]').val(actualLevel.toFixed(2));  
+            
+            // Calculate Weight MT
+            if (actualLevel){
+                calculateLiquid('LFFO001', diameter, length, actualLevel, function(calculationData){
+                    row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
+                    row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
+                });
+            } else {
+                row.find('input[id^="lfoVolume"]').val('0.00');
+                row.find('input[id^="lfoWeight"]').val('0.00');
+            }
+        });
+
+        // Event delegation for level
+        $("#lfoTable").on('change', 'input[id^="lfoLevel"]', function(){
+            var row = $(this).closest('tr');
+            var status = row.find('select[id^="lfoStatus"]').val();
+            var level = $(this).val();
+            var height = parseFloat(row.find('input[id^="lfoHeight"]').val()) || 0;
+            var diameter = parseFloat(row.find('input[id^="lfoDiameter"]').val()) || 0;
+            var length = parseFloat(row.find('input[id^="lfoLength"]').val()) || 0;
+            var actualLevel = 0;
+
+            // Calculate actual level based on status, level, and height
+            if (status && level){
+                actualLevel = calculateActualLevel(status, level, height);
+            }
+
+            row.find('input[id^="lfoActualLevel"]').val(actualLevel.toFixed(2));  
+
+            // Calculate Weight MT
+            if (actualLevel){
+                calculateLiquid('LFFO001', diameter, length, actualLevel, function(calculationData){
+                    row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
+                    row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
+                });
+            } else {
+                row.find('input[id^="lfoVolume"]').val('0.00');
+                row.find('input[id^="lfoWeight"]').val('0.00');
+            }
         });
 
         // Event delegation for order weight to calculate lfo total
@@ -1258,7 +1416,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
             $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
             $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
+            $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount);
+            $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount);
+            $("#lfoTable").find('#lfoActualLevel:last').attr('name', 'lfoActualLevel['+lfoCount+']').attr("id", "lfoActualLevel" + lfoCount);
+            $("#lfoTable").find('#lfoVolume:last').attr('name', 'lfoVolume['+lfoCount+']').attr("id", "lfoVolume" + lfoCount);
             $("#lfoTable").find('#lfoWeight:last').attr('name', 'lfoWeight['+lfoCount+']').attr("id", "lfoWeight" + lfoCount).css("text-align", "center");
+
+            // Hidden fields
+            $("#lfoTable").find('#lfoLength:last').attr('name', 'lfoLength['+lfoCount+']').attr("id", "lfoLength" + lfoCount).val(asset ? asset.length || '' : '');
+            $("#lfoTable").find('#lfoHeight:last').attr('name', 'lfoHeight['+lfoCount+']').attr("id", "lfoHeight" + lfoCount).val(asset ? asset.height || '' : '');
+            $("#lfoTable").find('#lfoDiameter:last').attr('name', 'lfoDiameter['+lfoCount+']').attr("id", "lfoDiameter" + lfoCount).val(asset ? asset.diameter || '' : '');
+            $("#lfoTable").find('#lfoAssetId:last').attr('name', 'lfoAssetId['+lfoCount+']').attr("id", "lfoAssetId" + lfoCount).val(asset ? asset.id || '' : '');
 
             lfoCount++;
         });
@@ -1532,6 +1700,72 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         });
     });
 
+    function calculateActualLevel(status, level, height) {
+        var actualLevel = 0;
+        if (status == 'Empty') {
+            actualLevel = parseFloat(height) - parseFloat(level);
+        }else{
+            actualLevel = parseFloat(level);
+        }
+
+        return actualLevel;
+    }
+
+    function calculateBitumenWeight(plantId, batchDrum, level, temp, callback){
+        $.post('php/calculateBitumen.php', {
+            plantId: plantId,
+            batchDrum: batchDrum,
+            level: level,
+            temp: temp
+        }, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                callback(parseFloat(obj.message.observedMT));
+            }
+            else if(obj.status === 'failed'){
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+                callback(0);
+            }
+            else{
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+                callback(0);
+            }
+        });
+    }
+
+    function calculateLiquid(rawMatCode, diameter, length, height, callback){
+        $.post('php/calculateLiquid.php', {
+            rawMatCode: rawMatCode,
+            diameter: diameter,
+            length: length,
+            height: height
+        }, function(data)
+        {
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                var calculationData = {
+                    'volume': parseFloat(obj.message.volumeLitres),
+                    'volumeKg': parseFloat(obj.message.volumeKg),
+                    'volumeMt': parseFloat(obj.message.volumeMt)
+                }
+                callback(calculationData);
+            }
+            else if(obj.status === 'failed'){
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+                callback(0);
+            }
+            else{
+                $("#failBtn").attr('data-toast-text', obj.message );
+                $("#failBtn").click();
+                callback(0);
+            }
+        });
+    }
+
     function loadAssets(plant, batchDrum){
         $('#spinnerLoading').show();
         $.post('php/getPlantAssets.php', {plantId: plant, batchDrum: batchDrum}, function(data)
@@ -1542,6 +1776,10 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     // Reset Bitumen Table
                     $('#bitumenTable').html('');
                     bitumenCount = 0;
+
+                    // Reset LFO Table
+                    $('#lfoTable').html('');
+                    lfoCount = 0;
                     
                     // Reset LFO Table
                     obj.message.forEach(function(asset) {
@@ -1550,8 +1788,15 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         }else if(asset.type == 'LFO') {
                             $('.add-lfo').trigger('click', [asset]);
                         }
-                        
                     });
+                }else{
+                    // Reset Bitumen Table
+                    $('#bitumenTable').html('');
+                    bitumenCount = 0;
+
+                    // Reset LFO Table
+                    $('#lfoTable').html('');
+                    lfoCount = 0;
                 }
                 
                 $('#spinnerLoading').hide();
@@ -1595,16 +1840,25 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         $("#bitumenTable").find('#remove:last').attr("id", "remove" + bitumenCount);
 
                         $("#bitumenTable").find('#no:last').attr('name', 'no['+bitumenCount+']').attr("id", "no" + bitumenCount).css("text-align", "center").val(bitumenCount + 1);
-                        $("#bitumenTable").find('#sixtyseventy:last').attr('name', 'sixtyseventy['+bitumenCount+']').attr("id", "sixtyseventy" + bitumenCount).css("text-align", "center").val(item.sixtyseventy);
+                        $("#bitumenTable").find('#name:last').attr('name', 'name['+bitumenCount+']').attr("id", "name" + bitumenCount).css("text-align", "center").val(item.name || '');
+                        $("#bitumenTable").find('#bitumenStatus:last').attr('name', 'bitumenStatus['+bitumenCount+']').attr("id", "bitumenStatus" + bitumenCount).val(item.bitumenStatus || '');
                         $("#bitumenTable").find('#temp:last').attr('name', 'temp['+bitumenCount+']').attr("id", "temp" + bitumenCount).css("text-align", "center").val(item.temperature);
                         $("#bitumenTable").find('#level:last').attr('name', 'level['+bitumenCount+']').attr("id", "level" + bitumenCount).css("text-align", "center").val(item.level);
+                        $("#bitumenTable").find('#actualLevel:last').attr('name', 'actualLevel['+bitumenCount+']').attr("id", "actualLevel" + bitumenCount).css("text-align", "center").val(item.actualLevel || '0.00');
+                        $("#bitumenTable").find('#sixtyseventy:last').attr('name', 'sixtyseventy['+bitumenCount+']').attr("id", "sixtyseventy" + bitumenCount).css("text-align", "center").val(item.sixtyseventy);
+
+                        // Hidden fields
+                        $("#bitumenTable").find('#assetId:last').attr('name', 'assetId['+bitumenCount+']').attr("id", "assetId" + bitumenCount).val(item.assetId || '');
+                        $("#bitumenTable").find('#bitumenLength:last').attr('name', 'bitumenLength['+bitumenCount+']').attr("id", "bitumenLength" + bitumenCount).val(item.assetLength || '');
+                        $("#bitumenTable").find('#bitumenHeight:last').attr('name', 'bitumenHeight['+bitumenCount+']').attr("id", "bitumenHeight" + bitumenCount).val(item.assetHeight || '');
+                        $("#bitumenTable").find('#bitumenDiameter:last').attr('name', 'bitumenDiameter['+bitumenCount+']').attr("id", "bitumenDiameter" + bitumenCount).val(item.assetDiameter || '');
 
                         bitumenCount++;
                     }
                 }
-                $('#addModal').find('#totalSixtySeventy').val(obj.message.totalSixtySeventy);
+                // $('#addModal').find('#totalSixtySeventy').val(obj.message.totalSixtySeventy);
                 // $('#addModal').find('#totalTemp').val(obj.message.totalTemp);
-                $('#addModal').find('#totalLevel').val(obj.message.totalLevel);
+                // $('#addModal').find('#totalLevel').val(obj.message.totalLevel);
 
                 // LFO Table Processing
                 $('#lfoTable').html('');
@@ -1620,7 +1874,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         $("#lfoTable").find('#remove:last').attr("id", "remove" + lfoCount);
 
                         $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
+                        $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(item.lfoName);
+                        $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount).val(item.lfoStatus);
+                        $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount).css("text-align", "center").val(item.lfoLevel);
+                        $("#lfoTable").find('#lfoActualLevel:last').attr('name', 'lfoActualLevel['+lfoCount+']').attr("id", "lfoActualLevel" + lfoCount).css("text-align", "center").val(item.lfoActualLevel);
+                        $("#lfoTable").find('#lfoVolume:last').attr('name', 'lfoVolume['+lfoCount+']').attr("id", "lfoVolume" + lfoCount).css("text-align", "center").val(item.lfoVolume);
                         $("#lfoTable").find('#lfoWeight:last').attr('name', 'lfoWeight['+lfoCount+']').attr("id", "lfoWeight" + lfoCount).css("text-align", "center").val(item.lfoWeight);
+
+                        $("#lfoTable").find('#lfoAssetId:last').attr('name', 'lfoAssetId['+lfoCount+']').attr("id", "lfoAssetId" + lfoCount).val(item.lfoAssetId || '');
+                        $("#lfoTable").find('#lfoLength:last').attr('name', 'lfoLength['+lfoCount+']').attr("id", "lfoLength" + lfoCount).val(item.lfoLength || '');
+                        $("#lfoTable").find('#lfoHeight:last').attr('name', 'lfoHeight['+lfoCount+']').attr("id", "lfoHeight" + lfoCount).val(item.lfoHeight || '');
+                        $("#lfoTable").find('#lfoDiameter:last').attr('name', 'lfoDiameter['+lfoCount+']').attr("id", "lfoDiameter" + lfoCount).val(item.lfoDiameter || '');
 
                         lfoCount++;
                     }
