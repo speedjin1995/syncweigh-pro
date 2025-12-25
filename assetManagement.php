@@ -208,6 +208,30 @@ else{
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="diameter" class="col-sm-4 col-form-label">Diameter</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="diameter" name="diameter" placeholder="Diameter" step="0.01">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="height" class="col-sm-4 col-form-label">Height</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="height" name="height" placeholder="Height" step="0.01">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                <div class="row">
+                                                                                    <label for="length" class="col-sm-4 col-form-label">Length</label>
+                                                                                    <div class="col-sm-8">
+                                                                                        <input type="number" class="form-control" id="length" name="length" placeholder="Length" step="0.01">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
 
                                                                             <input type="hidden" class="form-control" id="id" name="id">                                                                 
                                                                         </div>
@@ -311,6 +335,9 @@ else{
                                                                     <th>Name</th>
                                                                     <th>Plant</th>
                                                                     <th>Batch/Drum</th>
+                                                                    <th>Length</th>
+                                                                    <th>Height</th>
+                                                                    <th>Diameter</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -435,6 +462,9 @@ else{
                 { data: 'name' },
                 { data: 'plant' },
                 { data: 'batch_drum' },
+                { data: 'length' },
+                { data: 'height' },
+                { data: 'diameter' },
                 {
                     data: 'id',
                     class: 'action-button',
@@ -497,6 +527,9 @@ else{
                     { data: 'name' },
                     { data: 'plant' },
                     { data: 'batch_drum' },
+                    { data: 'length' },
+                    { data: 'height' },
+                    { data: 'diameter' },
                     {
                         data: 'id',
                         class: 'action-button',
@@ -644,6 +677,9 @@ else{
             $('#addModal').find('#assetName').val("");
             $('#addModal').find('#plant').val("").trigger('change');
             $('#addModal').find('#batchDrum').val("").trigger('change');
+            $('#addModal').find('#length').val("");
+            $('#addModal').find('#diameter').val("");
+            $('#addModal').find('#height').val("");
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -743,6 +779,9 @@ else{
                 $('#addModal').find('#assetName').val(obj.message.name).trigger('change');
                 $('#addModal').find('#plant').val(obj.message.plant_id).trigger('change');
                 $('#addModal').find('#batchDrum').val(obj.message.batch_drum).trigger('change');
+                $('#addModal').find('#length').val(obj.message.length || '');
+                $('#addModal').find('#diameter').val(obj.message.diameter || '');
+                $('#addModal').find('#height').val(obj.message.height || '');
 
                 // Initialize all Select2 elements in the modal
                 $('#addModal .select2').select2({

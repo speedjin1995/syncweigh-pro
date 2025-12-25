@@ -59,7 +59,10 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "type"=>$row['type'],
     "name"=>$row['name'],
     "plant"=>$row['plant'],
-    "batch_drum"=>$row['batch_drum']
+    "batch_drum"=>$row['batch_drum'],
+    'length'=>$row['length'],
+    'height'=>$row['height'],
+    'diameter'=>$row['diameter'],
   );
 }
 

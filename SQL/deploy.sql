@@ -2440,3 +2440,42 @@ CREATE TABLE `Calculation_Value` (
 ALTER TABLE `Calculation_Value` ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `Calculation_Value` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+-- 25/12/2025 --
+ALTER TABLE `Assets` ADD `length` VARCHAR(50) NULL AFTER `batch_drum`, ADD `height` VARCHAR(50) NULL AFTER `length`, ADD `diameter` VARCHAR(50) NULL AFTER `height`;
+
+ALTER TABLE `Assets_Log` ADD `length` VARCHAR(50) NULL AFTER `batch_drum`, ADD `height` VARCHAR(50) NULL AFTER `length`, ADD `diameter` VARCHAR(50) NULL AFTER `height`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_ASSET` AFTER INSERT ON `Assets`
+ FOR EACH ROW INSERT INTO Assets_Log (
+    type, name, plant_id, batch_drum, length, height, diameter, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.type, NEW.name, NEW.plant_id, NEW.batch_drum, NEW.length, NEW.height, NEW.diameter, 1, NEW.created_by, NEW.created_at
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_ASSET` BEFORE UPDATE ON `Assets`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Assets_Log table
+    INSERT INTO Assets_Log (
+        type, name, plant_id, batch_drum, length, height, diameter, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.type, NEW.name, NEW.plant_id, NEW.batch_drum, NEW.length, NEW.height, NEW.diameter, action_value, NEW.modified_by, NEW.modified_at
+    );
+END
+$$
+DELIMITER ;

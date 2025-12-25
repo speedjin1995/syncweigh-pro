@@ -26,6 +26,9 @@ if(isset($_POST['userID'])){
                 $message['name'] = $row['name'];
                 $message['plant_id'] = $row['plant_id'];
                 $message['batch_drum'] = $row['batch_drum'];
+                $message['length'] = $row['length'];
+                $message['height'] = $row['height'];
+                $message['diameter'] = $row['diameter'];
             }
             
             echo json_encode(
