@@ -169,13 +169,13 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                                     <th>Plant</th>
                                                                     <th>Batch/ <br> Drum</th>
                                                                     <th>Declaration <br> Date</th>
-                                                                    <th>Total (60/70) <br> Weight</th>
+                                                                    <!-- <th>Total (60/70) <br> Weight</th> -->
                                                                     <!-- <th>Total (60/70) <br> Temperature</th> -->
-                                                                    <th>Total (60/70) <br> Level</th>
+                                                                    <!-- <th>Total (60/70) <br> Level</th> -->
                                                                     <!-- <th>Total <br> LFO</th> -->
-                                                                    <th>Total <br> Diesel</th>
+                                                                    <!-- <th>Total <br> Diesel</th> -->
                                                                     <!-- <th>Total <br> Hotoil</th> -->
-                                                                    <th>Total <br> PG76</th>
+                                                                    <!-- <th>Total <br> PG76</th> -->
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -917,10 +917,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             'order': [[ 1, 'asc' ]],
             'columnDefs': [ 
                 { orderable: false, targets: [0] },
-                { orderable: false, targets: [4] },
-                { orderable: false, targets: [5] },
-                { orderable: false, targets: [6] },
-                { orderable: false, targets: [7] },            ],
+                // { orderable: false, targets: [4] },
+                // { orderable: false, targets: [5] },
+                // { orderable: false, targets: [6] },
+                // { orderable: false, targets: [7] },            
+            ],
             'ajax': {
                 'url':'php/filterBitumen.php',
                 'data': {
@@ -934,13 +935,13 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 { data: 'plant' },
                 { data: 'batch_drum' },
                 { data: 'declaration_datetime' },
-                { data: 'totalSixtySeventy' },
+                // { data: 'totalSixtySeventy' },
                 // { data: 'totalTemperature' },
-                { data: 'totalLevel' },
+                // { data: 'totalLevel' },
                 //{ data: 'totalLfo' },
-                { data: 'totalDiesel' },
+                // { data: 'totalDiesel' },
                 // { data: 'totalHotoil' },
-                { data: 'totalPgSevenNine' },
+                // { data: 'totalPgSevenNine' },
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
@@ -969,10 +970,10 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 'order': [[ 1, 'asc' ]],
                 'columnDefs': [ 
                     { orderable: false, targets: [0] },
-                    { orderable: false, targets: [4] },
-                    { orderable: false, targets: [5] },
-                    { orderable: false, targets: [6] },
-                    { orderable: false, targets: [7] },
+                    // { orderable: false, targets: [4] },
+                    // { orderable: false, targets: [5] },
+                    // { orderable: false, targets: [6] },
+                    // { orderable: false, targets: [7] },
                 ],
                 'ajax': {
                     'url':'php/filterBitumen.php',
@@ -987,13 +988,13 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     { data: 'plant' },
                     { data: 'batch_drum' },
                     { data: 'declaration_datetime' },
-                    { data: 'totalSixtySeventy' },
+                    // { data: 'totalSixtySeventy' },
                     // { data: 'totalTemperature' },
-                    { data: 'totalLevel' },
+                    // { data: 'totalLevel' },
                     // { data: 'totalLfo' },
-                    { data: 'totalDiesel' },
+                    // { data: 'totalDiesel' },
                     // { data: 'totalHotoil' },
-                    { data: 'totalPgSevenNine' },
+                    // { data: 'totalPgSevenNine' },
                     { 
                         data: 'id',
                         render: function ( data, type, row ) {
