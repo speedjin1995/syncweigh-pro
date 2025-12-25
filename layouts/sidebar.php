@@ -3,27 +3,27 @@
     <!-- LOGO -->
     <div class="navbar-brand-box">
         <!-- Dark Logo-->
-        <!--a href="index.php" class="logo logo-dark">
+        <a href="index.php" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="assets/images/logo-sm.jpg" alt="assets/images/logo-sm-bk.png" height="70">
+                <img src="assets/images/logo/favicon.png" alt="" height="40">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="assets/images/logo-lg-bk.png" height="60">
+                <img src="assets/images/logo/logo1.png" alt="" height="110">
             </span>
-        </a-->
+        </a>
         <!-- Light Logo-->
-        <!--a href="index.php" class="logo logo-light">
+        <a href="index.php" class="logo logo-light">
             <span class="logo-sm">
-                <img src="assets/images/logo-sm.jpg" alt="assets/images/logo-sm-bk.png" height="70">
+                <img src="assets/images/logo/favicon.png" alt="" height="40">
             </span>
             <span class="logo-lg">
-                <img src="assets/images/logo-lg.png" alt="assets/images/logo-lg-bk.png" height="60">
+                <img src="assets/images/logo/logo1.png" alt="" height="110">
             </span>
-        </a-->
-        <!--button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+        </a>
+        <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
             id="vertical-hover">
             <i class="ri-record-circle-line"></i>
-        </button-->
+        </button>
     </div>
 
     <div id="scrollbar">
@@ -34,10 +34,10 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span><?=$lang['t-menu']?></span></li>
                 <li class="nav-item">
-                    <a href="dashboard.php" class="nav-link"><i class="mdi mdi-view-dashboard"></i><?=$lang['t-dashboard']?></a>
+                    <a href="dashboard.php" class="nav-link"><b><i class="mdi mdi-view-dashboard"></i><?=$lang['t-dashboard']?></b></a>
                 </li>
                 <li class="nav-item">
-                    <a href="index.php" class="nav-link"><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></a>
+                    <a href="index.php" class="nav-link"><b><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></b></a>
                 </li>                
                 
                 <!-- <li class="nav-item">
@@ -56,24 +56,24 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAccounting" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAccounting">
-                        <i class="ri-pages-line"></i> <span><?=$lang['t-accounting']?></span>
+                        <b><i class="ri-pages-line"></i> <span><?=$lang['t-accounting']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarAccounting">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="salesOrder.php" class="nav-link"><?=$lang['t-so']?></a>
+                                <a href="salesOrder.php" class="nav-link"><b><?=$lang['t-so']?></b></a>
                             </li>
                             <li class="nav-item">
-                                <a href="deliveryOrder.php" class="nav-link"><?=$lang['t-do']?></a>
+                                <a href="deliveryOrder.php" class="nav-link"><b><?=$lang['t-do']?></b></a>
                             </li>   
                             <li class="nav-item">
-                                <a href="purchaseOrder.php" class="nav-link"><?=$lang['t-po']?></a>
+                                <a href="purchaseOrder.php" class="nav-link"><b><?=$lang['t-po']?></b></a>
                             </li>  
                             <li class="nav-item">
-                                <a href="goodsReceived.php" class="nav-link"><?=$lang['t-gr']?></a>
+                                <a href="goodsReceived.php" class="nav-link"><b><?=$lang['t-gr']?></b></a>
                             </li>
                             <li class="nav-item">
-                                <a href="stockUsed.php" class="nav-link"><?=$lang['t-stockUsed']?></a>
+                                <a href="stockUsed.php" class="nav-link"><b><?=$lang['t-stockUsed']?></b></a>
                             </li>      
                         </ul>
                     </div>
@@ -85,73 +85,67 @@
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarStock" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarStock">
-                                <i class="ri-pages-line"></i> <span>'.$lang['t-stock'].'</span>
+                                <b><i class="ri-pages-line"></i> <span>'.$lang['t-stock'].'</span></b>
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="assetManagement.php" class="nav-link"><i class="mdi mdi-tools"></i>'.$lang['t-assetManagement'].'</a>
+                                        <a href="bitumen.php" class="nav-link"><b><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
+                                        <a href="stockTakeLog.php" class="nav-link"><b><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="stockTakeLog.php" class="nav-link"><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="calculationSetup.php" class="nav-link"><i class="mdi mdi-calculator"></i>'.$lang['t-calculationSetup'].'</a>
-                                    </li>
+                                        <a href="inventory.php" class="nav-link"><b><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</b></a>
+                                    </li>              
                                 </ul>
                             </div>
                         </li> 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarMasterdata">
-                                <i class="ri-pages-line"></i> <span>'.$lang['t-masterdata'].'</span>
+                                <b><i class="ri-pages-line"></i> <span>'.$lang['t-masterdata'].'</span></b>
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarMasterdata">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="customer.php" class="nav-link">'.$lang['t-customer'].'</a>
+                                        <a href="customer.php" class="nav-link"><b>'.$lang['t-customer'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="destination.php" class="nav-link">'.$lang['t-destination'].'</a>
+                                        <a href="destination.php" class="nav-link"><b>'.$lang['t-destination'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="product.php" class="nav-link">'.$lang['t-product'].'</a>
+                                        <a href="product.php" class="nav-link"><b>'.$lang['t-product'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="rawMaterial.php" class="nav-link">'.$lang['t-raw-mat'].'</a>
+                                        <a href="rawMaterial.php" class="nav-link"><b>'.$lang['t-raw-mat'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="supplier.php" class="nav-link">'.$lang['t-supplier'].'</a>
+                                        <a href="supplier.php" class="nav-link"><b>'.$lang['t-supplier'].'</b></a>
                                     </li>       
                                     <li class="nav-item">
-                                        <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
+                                        <a href="vehicle.php" class="nav-link"><b>'.$lang['t-vehicle'].'</b></a>
                                     </li>   
                                     <li class="nav-item">
-                                        <a href="agent.php" class="nav-link">'.$lang['t-agent'].'</a>
+                                        <a href="agent.php" class="nav-link"><b>'.$lang['t-agent'].'</b></a>
                                     </li>                   
                                     <li class="nav-item">
-                                        <a href="transporter.php" class="nav-link">'.$lang['t-transporter'].'</a>
+                                        <a href="transporter.php" class="nav-link"><b>'.$lang['t-transporter'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="unit.php" class="nav-link">'.$lang['t-unit'].'</a>
-                                    </li>                           
+                                        <a href="plant.php" class="nav-link"><b>'.$lang['t-plant'].'</b></a>
+                                    </li>                        
                                     <li class="nav-item">
-                                        <a href="user.php" class="nav-link">'.$lang['t-user'].'</a>
+                                        <a href="user.php" class="nav-link"><b>'.$lang['t-user'].'</b></a>
                                     </li>
+                                    <!--li class="nav-item">
+                                        <a href="unit.php" class="nav-link"><b>'.$lang['t-unit'].'</b></a>
+                                    </li>                                   
                                     <li class="nav-item">
-                                        <a href="plant.php" class="nav-link">'.$lang['t-plant'].'</a>
-                                    </li>                                    
+                                        <a href="site.php" class="nav-link"><b>'.$lang['t-site'].'</b></a>
+                                    </li-->                   
                                     <li class="nav-item">
-                                        <a href="site.php" class="nav-link">'.$lang['t-site'].'</a>
-                                    </li>                   
-                                    <li class="nav-item">
-                                        <a href="reason.php" class="nav-link">'.$lang['t-reason'].'</a>
+                                        <a href="reason.php" class="nav-link"><b>'.$lang['t-reason'].'</b></a>
                                     </li>                   
                                 </ul>
                             </div>
@@ -161,37 +155,34 @@
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarStock" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarStock">
-                                <i class="ri-pages-line"></i> <span>'.$lang['t-stock'].'</span>
+                                <b><i class="ri-pages-line"></i> <span>'.$lang['t-stock'].'</span></b>
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="assetManagement.php" class="nav-link"><i class="mdi mdi-tools"></i>'.$lang['t-assetManagement'].'</a>
+                                        <a href="bitumen.php" class="nav-link"><b><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="bitumen.php" class="nav-link"><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</a>
+                                        <a href="stockTakeLog.php" class="nav-link"><b><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="stockTakeLog.php" class="nav-link"><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="inventory.php" class="nav-link"><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</a>
-                                    </li>       
+                                        <a href="inventory.php" class="nav-link"><b><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</b></a>
+                                    </li>              
                                 </ul>
                             </div>
                         </li> 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarMasterdata">
-                                <i class="ri-pages-line"></i> <span>'.$lang['t-masterdata'].'</span>
+                                <b><i class="ri-pages-line"></i> <span>'.$lang['t-masterdata'].'</span></b>
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarMasterdata">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="destination.php" class="nav-link">'.$lang['t-destination'].'</a>
+                                        <a href="destination.php" class="nav-link"><b>'.$lang['t-destination'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="vehicle.php" class="nav-link">'.$lang['t-vehicle'].'</a>
+                                        <a href="vehicle.php" class="nav-link"><b>'.$lang['t-vehicle'].'</b></a>
                                     </li>       
                                 </ul>
                             </div>
@@ -202,7 +193,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarReport" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarReport">
-                        <i class="ri-account-circle-line"></i> <span><?=$lang['t-report']?></span>
+                        <b><i class="ri-account-circle-line"></i> <span><?=$lang['t-report']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarReport">
                         <ul class="nav nav-sm flex-column">
@@ -211,22 +202,22 @@
                                     <a href="weighingReport.php" class="nav-link"><?=$lang['t-weighingReport']?></a>
                                 </li> -->
                                 <li class="nav-item">
-                                    <a href="salesReport.php" class="nav-link"><?=$lang['t-soReport']?></a>
+                                    <a href="salesReport.php" class="nav-link"><b><?=$lang['t-soReport']?></b></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="purchaseReport.php" class="nav-link"><?=$lang['t-poReport']?></a>
+                                    <a href="purchaseReport.php" class="nav-link"><b><?=$lang['t-poReport']?></b></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="publicReport.php" class="nav-link"><?=$lang['t-publicReport']?></a>
+                                    <a href="publicReport.php" class="nav-link"><b><?=$lang['t-publicReport']?></b></a>
                                 </li>
                                 <?php
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                                         echo '
                                             <li class="nav-item">
-                                                <a href="auditLog.php" class="nav-link">'.$lang['t-auditLog'].'</a>
+                                                <a href="auditLog.php" class="nav-link"><b>'.$lang['t-auditLog'].'</b></a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="apiLog.php" class="nav-link">'.$lang['t-apiLog'].'</a>
+                                                <a href="apiLog.php" class="nav-link"><b>'.$lang['t-apiLog'].'</b></a>
                                             </li>
                                         ';
                                     }
@@ -239,7 +230,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAuth">
-                        <i class="ri-account-circle-line"></i> <span><?=$lang['t-setting']?></span>
+                        <b><i class="ri-account-circle-line"></i> <span><?=$lang['t-setting']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarAuth">
                         <ul class="nav nav-sm flex-column">
@@ -247,25 +238,25 @@
                                 <?php
                                     if($_SESSION["roles"] == 'SADMIN'){
                                         echo '<li class="nav-item">
-                                            <a href="cronjobSetup.php" class="nav-link">'.$lang['t-cronjobSetup'].'</a>
+                                            <a href="cronjobSetup.php" class="nav-link"><b>'.$lang['t-cronjobSetup'].'</b></a>
                                         </li> ';
                                     }
 
                                     if($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN'){
                                         echo '<li class="nav-item">
-                                            <a href="companyProfile.php" class="nav-link">'.$lang['t-companyProfile'].'</a>
+                                            <a href="companyProfile.php" class="nav-link"><b>'.$lang['t-companyProfile'].'</b></a>
                                         </li> ';
                                     }
                                 ?>
                                 
                                 <li class="nav-item">
-                                    <a href="portSetup.php" class="nav-link"><?=$lang['t-portSetup']?></a>
+                                    <a href="portSetup.php" class="nav-link"><b><?=$lang['t-portSetup']?></b></a>
                                 </li> 
                                 <li class="nav-item">
-                                    <a href="myProfile.php" class="nav-link"><?=$lang['t-myProfile']?></a>
+                                    <a href="myProfile.php" class="nav-link"><b><?=$lang['t-myProfile']?></b></a>
                                 </li> 
                                 <li class="nav-item">
-                                    <a href="ChangePassword.php" class="nav-link"><?=$lang['t-changePassword']?></a>
+                                    <a href="ChangePassword.php" class="nav-link"><b><?=$lang['t-changePassword']?></b></a>
                                 </li>                                 
                             </li>
                         </ul>
@@ -273,7 +264,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="php/logout.php" class="nav-link"><i class="mdi mdi-logout-variant"></i> <span><?=$lang['t-logout']?></span></a>
+                    <a href="php/logout.php" class="nav-link"><b><i class="mdi mdi-logout-variant"></i> <span><?=$lang['t-logout']?></span></b></a>
                 </li>                 
             </ul>
         </div>

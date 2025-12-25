@@ -19,7 +19,7 @@ else{
 
 <head>
 
-    <title>Calculation Setup | Synctronix - Weighing System</title>
+    <title>Calculation Setup | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

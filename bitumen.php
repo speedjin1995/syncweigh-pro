@@ -24,7 +24,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
 <head>
 
-    <title>Stock Take | Synctronix - Weighing System</title>
+    <title>Stock Take | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

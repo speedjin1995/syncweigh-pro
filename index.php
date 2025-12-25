@@ -95,7 +95,7 @@ else{
 
 <head>
 
-    <title>Weighing | Synctronix - Weighing System</title>
+    <title>Weighing | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
@@ -2033,10 +2033,23 @@ else{
                     return; // Exit here to prevent immediate form submission
                 }
             }
+            else if($('#customerType').val() == 'Normal' && pass == true){
+                var salesOrder = $('#addModal').find('#salesOrder').val();
+                
+                if (salesOrder == '-' && $('#transactionStatus').val() == "Sales") {
+                    alert('Sales Order must be filled');
+                    return;
+                } else {
+                    submitWeightForm();
+                }
+            }
+            else{
+                alert('Error when submit');
+            }
 
             // If not cash or validation passed, submit form
             //if(pass && $('#weightForm').valid()){
-            submitWeightForm();
+            
             //}
             /*else{
                 let userChoice = confirm('The final value is out of the acceptable range. Do you want to send for approval (OK) or bypass (Cancel)?');

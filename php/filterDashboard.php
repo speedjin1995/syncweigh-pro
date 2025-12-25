@@ -116,12 +116,7 @@ $response = [
     "draw" => intval($_POST['draw']),
     "recordsTotal" => 4,
     "recordsFiltered" => 4,
-    "data" => $data,
-    "summary" => [
-        "completed" => isset($statusData['Complete']) ? $statusData['Complete']['total_no'] : 0,
-        "pending" => isset($statusData['Pending']) ? $statusData['Pending']['total_no'] : 0,
-        "cancelled" => isset($statusData['Cancel']) ? $statusData['Cancel']['total_no'] : 0
-    ]
+    "data" => $data
 ];
 
 echo json_encode($response);

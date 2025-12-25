@@ -8,7 +8,7 @@
 ?>
 
 <head>
-    <title>Weighing | Synctronix - Weighing System</title>
+    <title>Raw Materials | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

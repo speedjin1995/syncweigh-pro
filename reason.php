@@ -2,7 +2,7 @@
 <?php include 'layouts/head-main.php'; ?>
 
 <head>
-    <title>Weighing | Synctronix - Weighing System</title>
+    <title>Reasons | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

@@ -95,24 +95,6 @@ function searchPlantNameByCode($value, $db) {
     return $id;
 }
 
-function searchPlantIdByName($value, $db) {
-    $id = '';
-
-    if(isset($value)){
-        if ($select_stmt = $db->prepare("SELECT * FROM Plant WHERE name=? AND status = '0'")) {
-            $select_stmt->bind_param('s', $value);
-            $select_stmt->execute();
-            $result = $select_stmt->get_result();
-            if ($row = $result->fetch_assoc()) {
-                $id = $row['id'];
-            }
-            $select_stmt->close();
-        }
-    }
-
-    return $id;
-}
-
 function searchProjectByCode($value, $db) {
     $id = '';
 

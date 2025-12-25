@@ -53,7 +53,7 @@ else{
 
 <head>
 
-    <title>Delivery Order | Synctronix - Weighing System</title>
+    <title>Delivery Order | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
