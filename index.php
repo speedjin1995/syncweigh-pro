@@ -3535,6 +3535,13 @@ else{
                         $('#idTypeDisplay').hide();
                     }
                 }
+
+                // Set non-purchase related fields to empty
+                $('#addModal').find('#salesOrder').val("").trigger('change');
+                $('#addModal').find('#customerName').val("").trigger('change');
+                $('#addModal').find('#productName').val("").trigger('change');
+                $('#addModal').find('#orderWeightBasicUom').val("").trigger('change');
+                $('#addModal').find('#balance').val(0);
             }
             else if($(this).val() == "Local"){
                 $('#divOrderWeight').show();
@@ -3570,6 +3577,14 @@ else{
                 $('#tinNoDisplay').hide();
                 $('#idNoDisplay').hide();
                 $('#idTypeDisplay').hide();
+
+                // Set non-local related fields to empty
+                $('#addModal').find('#purchaseOrder').val("").trigger('change');
+                $('#addModal').find('#supplierName').val("").trigger('change');
+                $('#addModal').find('#rawMaterialName').val("").trigger('change');
+                $('#addModal').find('#supplierWeightBasicUom').val("").trigger('change');
+                $('#addModal').find('#poSupplyWeight').val("");
+                $('#addModal').find('#balance').val(0);
             }
             else{
                 $('#divOrderWeight').show();
@@ -3577,6 +3592,7 @@ else{
                 $('#addModal').find('#supplierWeight').val("");
 
                 if ($(this).val() == "Sales"){
+                    $('#weightDifference').val(0);
                     $('#divWeightDifference').hide();
                 }else{
                     $('#divWeightDifference').show();
@@ -3622,6 +3638,14 @@ else{
                     $('#idNoDisplay').hide();
                     $('#idTypeDisplay').hide();
                 }
+
+                // Set non-related fields to empty
+                $('#addModal').find('#purchaseOrder').val("").trigger('change');
+                $('#addModal').find('#supplierName').val("").trigger('change');
+                $('#addModal').find('#rawMaterialName').val("").trigger('change');
+                $('#addModal').find('#supplierWeightBasicUom').val("").trigger('change');
+                $('#addModal').find('#poSupplyWeight').val("");
+                $('#addModal').find('#balance').val(0);
             }
         });
 
