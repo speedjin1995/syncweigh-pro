@@ -85,6 +85,7 @@ if(isset($_POST['userID'])){
                 }
                 $message['lfo'] = $lfoRows;
                 $message['totalLfo'] = $lfoTemp["totalLfo"] ?? 0;
+                $message['lfoLastMeterReading'] = $lfoTemp["lfoLastMeterReading"] ?? 0;
                 ########################################################################################
 
                 ## diesel Processing ##
@@ -125,7 +126,7 @@ if(isset($_POST['userID'])){
                 }
                 $message['diesel'] = $dieselRows;
                 $message['totalDiesel'] = $dieselTemp["totalDiesel"] ?? 0;
-                $message['lastMeterReading'] = $dieselTemp["lastMeterReading"] ?? 0;
+                $message['dieselLastMeterReading'] = $dieselTemp["dieselLastMeterReading"] ?? 0;
                 ########################################################################################
 
                 ## hotoil Processing ##
@@ -148,12 +149,29 @@ if(isset($_POST['userID'])){
                 if (!empty($pg76Temp)) {
                     foreach ($pg76Temp as $pg76Key => $pg76Row) {
                         if (is_numeric($pg76Key)) {
-                            $pg76Rows[] = $pg76Row;
+                            $duplicateRow = $pg76Row;
+
+                            // Query to get asset detail based on $pg76Row['pg76AssetId']
+                            if ($asset_stmt = $db->prepare("SELECT * FROM Assets WHERE id=?")) {
+                                $asset_stmt->bind_param('s', $pg76Row['pg76AssetId']);
+                                
+                                // Execute the prepared query.
+                                if ($asset_stmt->execute()) {
+                                    $asset_result = $asset_stmt->get_result();
+                                    if ($asset_row = $asset_result->fetch_assoc()) {
+                                        $duplicateRow['pg76Length'] = $asset_row['length'];
+                                        $duplicateRow['pg76Height'] = $asset_row['height'];
+                                        $duplicateRow['pg76Diameter'] = $asset_row['diameter'];
+                                    }
+                                }
+                            }
+
+                            $pg76Rows[] = $duplicateRow;
                         }
                     }
                 } 
-                $message['pgSeventyNine'] = $pg76Rows;
-                $message['totalPgSevenNine'] = $pg76Temp["totalPgSevenNine"] ?? 0;
+                $message['pg76'] = $pg76Rows;
+                $message['totalPg76'] = $pg76Temp["totalPg76"] ?? 0;
                 ########################################################################################
 
                 ## fibre Processing ##

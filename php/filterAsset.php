@@ -56,7 +56,7 @@ $data = array();
 while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array(
     "id"=>$row['id'],
-    "type"=>$row['type'],
+    "type"=>($row['type'] === 'PG 76' ? 'Bitumen PG 76' : $row['type']),
     "name"=>$row['name'],
     "plant"=>$row['plant'],
     "batch_drum"=>$row['batch_drum'],
