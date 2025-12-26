@@ -112,7 +112,7 @@ if ($type == "MULTI"){
                     
                     $unitPrice = 0;
                     $uom = '';
-                    $qty = '';
+                    $qty = 0;
                     $amt = 0;
                     
                     if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND deleted='0'")) {
@@ -322,7 +322,7 @@ if ($type == "MULTI"){
                 
                 $unitPrice = 0;
                 $uom = '';
-                $qty = '';
+                $qty = 0;
                 $amt = 0;
                 
                 if ($select_stmt = $db->prepare("SELECT * FROM Purchase_Order WHERE po_no=? AND raw_mat_code=? AND deleted='0'")) {
