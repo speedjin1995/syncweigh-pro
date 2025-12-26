@@ -325,11 +325,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         </tr>
                                                     </thead>
                                                     <tbody id="lfoTable"></tbody>
-                                                    <!-- <tfoot>
+                                                    <tfoot>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalLfo" name="totalLfo" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
-                                                    </tfoot> -->
+                                                    </tfoot>
                                                 </table>
                                             </div>
                                         </div>
@@ -408,12 +408,12 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         <td></td>
                                                     </tr> -->
                                                     <tbody id="dieselTable"></tbody>
-                                                    <!-- <tfoot>
+                                                    <tfoot>
                                                         <th>Last Meter Reading</th>
                                                         <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalDiesel" name="totalDiesel" style="background-color:white;text-align: center;" value="0" readonly></th>
-                                                    </tfoot> -->
+                                                    </tfoot>
                                                 </table>
                                             </div>
                                         </div>
