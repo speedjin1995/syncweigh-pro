@@ -41,7 +41,7 @@ if (empty($_POST["datetime"])) {
     $declarationDatetime = null;
 } else {
     $declarationDatetime = DateTime::createFromFormat('d-m-Y H:i', $_POST["datetime"])->format('Y-m-d H:i:s');
-}   
+}
 
 # Processing for 60/70 data
 if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
@@ -68,7 +68,7 @@ if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
         );
     }
 
-    // $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
+    $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
     // $sixtySeventyData['totalTemperature'] = $_POST["totalTemp"];
     // $sixtySeventyData['totalLevel'] = $_POST["totalLevel"];
     $sixtySeventyData = json_encode($sixtySeventyData, JSON_PRETTY_PRINT);
@@ -101,10 +101,16 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
         );
     }
 
-    // $lfoData['totalLfo'] = $_POST["totalLfo"];
+    $lfoData['lfoLastMeterReading'] = $_POST["lfoLastMeterReading"];
+    $lfoData['totalLfo'] = $_POST["totalLfo"];
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 } else {
+    $lfoData = [];
     $lfoData = NULL;
+
+    $lfoData['lfoLastMeterReading'] = $_POST["lfoLastMeterReading"];
+    $lfoData['totalLfo'] = $_POST["totalLfo"];
+    $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 }
 
 # Processing for diesel data
@@ -212,8 +218,8 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
         );
     }
 
-    // $dieselData['totalDiesel'] = $_POST["totalDiesel"];
-    // $dieselData['lastMeterReading'] = $dieselLastMeterReading;
+    $dieselData['dieselLastMeterReading'] = $_POST["dieselLastMeterReading"];
+    $dieselData['totalDiesel'] = $_POST["totalDiesel"];
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 } else {
     $dieselData = [];
@@ -233,8 +239,8 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     //     "dieselWeightBurner" => $dieselWeightBurner,
     // );
 
-    // $dieselData['totalDiesel'] = $_POST["totalDiesel"];
-    // $dieselData['lastMeterReading'] = $dieselLastMeterReading;
+    $dieselData['totalDiesel'] = $_POST["totalDiesel"];
+    $dieselData['dieselLastMeterReading'] = $_POST["dieselLastMeterReading"];
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 }
 
@@ -257,24 +263,37 @@ if (!empty($_POST["hotoilNo"]) && count($_POST["hotoilNo"]) > 0) {
     $hotoilData = NULL;
 }
 
-# Processing for pg79No data
-if (!empty($_POST["pg79No"]) && count($_POST["pg79No"]) > 0) {
-    $pg79Data = [];
-    $pg79No = $_POST["pg79No"];
-    $pg79 = $_POST["pgSevenNine"];
+# Processing for pg76No data
+if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
+    $pg76Data = [];
+    $pg76No = $_POST["pg76No"];
+    $pg76AssetId = $_POST["pg76AssetId"];
+    $pg76Name = $_POST["pg76Name"];
+    $pg76Status = $_POST["pg76Status"];
+    $pg76Temp = $_POST["pg76Temp"];
+    $pg76Level = $_POST["pg76Level"];
+    $pg76ActualLevel = $_POST["pg76ActualLevel"];
+    $pgSeventySix = $_POST["pgSeventySix"];
 
-    foreach ($pg79No as $key => $no) {
-        $pg79Data[] = array(
+    foreach ($pg76No as $key => $no) {
+        $pg76Data[] = array(
             "no" => $no,
-            "pgSevenNine" => $pg79[$key]
+            "pg76AssetId" => $pg76AssetId[$key],
+            "pg76Name" => $pg76Name[$key],
+            "pg76Status" => $pg76Status[$key],
+            "pg76Temp" => $pg76Temp[$key],
+            "pg76Level" => $pg76Level[$key],
+            "pg76ActualLevel" => $pg76ActualLevel[$key],
+            "pgSeventySix" => $pgSeventySix[$key]
         );
     }
 
-    $pg79Data['totalPgSevenNine'] = $_POST["totalPgSevenNine"];
-    $pg79Data = json_encode($pg79Data, JSON_PRETTY_PRINT);
+    $pg76Data['totalPg76'] = $_POST["totalPg76"];
+    $pg76Data = json_encode($pg76Data, JSON_PRETTY_PRINT);
 } else {
-    $pg79Data = NULL;
+    $pg76Data = NULL;
 }
+
 
 if (empty($_POST["40mm"])) {
     $fortymm = null;
@@ -582,7 +601,7 @@ $data = json_encode($data, JSON_PRETTY_PRINT);
 
 if(!empty($bitumenId)){
     if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `hotoil`=?, `fibre`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, `batch_drum`=?, modified_by=? WHERE id=?")) {
-        $update_stmt->bind_param('sssssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username, $bitumenId);
+        $update_stmt->bind_param('sssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username, $bitumenId);
 
         // Execute the prepared query.
         if (! $update_stmt->execute()) {
@@ -609,7 +628,7 @@ if(!empty($bitumenId)){
 else
 { 
     if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `batch_drum`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-        $insert_stmt->bind_param('ssssssssssss', $sixtySeventyData, $pg79Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username);
+        $insert_stmt->bind_param('ssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username);
 
         // Execute the prepared query.
         if (! $insert_stmt->execute()) {
