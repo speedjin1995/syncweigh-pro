@@ -99,7 +99,8 @@ function getTCF($db, $calculationId, $temperature)
 
 function getTonnes($volume, $sg)
 {
-    return $volume * $sg;
+    return $volume;
+    //return $volume * $sg;
 }
 
 /* ===========================
