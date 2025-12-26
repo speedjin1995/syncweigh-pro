@@ -251,7 +251,28 @@
                                 </div>
                             </div><!--end row-->
                         </div> <!-- end .h-100-->
-
+                        <div class="modal fade" id="copyModal">
+                            <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                                <div class="modal-content">
+                                    <form role="form" id="uploadForm">
+                                        <div class="modal-header bg-gray-dark color-palette">
+                                            <h4 class="modal-title">Export Data</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <select id="copyOption" class="form-select mb-3">
+                                                <option value="with-vehicle">Copy with Vehicle</option>
+                                                <option value="without-vehicle">Copy without Vehicle</option>
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-danger" id="copyButton">Copy</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div> <!-- end col -->
                 </div>
                 <!-- container-fluid -->
@@ -385,21 +406,29 @@
             
             // Export dashboard report
             $('#exportDashboard').on('click', function() {
+                $('#copyModal').modal('show');
+            });
+
+            $('#copyButton').on('click', function() {
+                console.log('Copy button clicked');
                 var fromDate = $('#fromDateSearch').val();
                 var toDate = $('#toDateSearch').val();
                 var transactionStatus = $('#transactionStatusSearch').val();
                 var plant = $('#plantSearch').val();
-                
+                var copyOption = $('#copyOption').val();
+
                 $.post('php/exportDashboardReport.php', {
                     fromDate: fromDate,
                     toDate: toDate,
                     transactionStatus: transactionStatus,
-                    plant: plant
+                    plant: plant,
+                    copyOption: copyOption
                 }, function(response) {
                     var obj = JSON.parse(response);
                     if(obj.status === 'success') {
                         navigator.clipboard.writeText(obj.message).then(function() {
                             alert('Report copied to clipboard!');
+                            $('#copyModal').modal('hide');
                         });
                     }
                 });
