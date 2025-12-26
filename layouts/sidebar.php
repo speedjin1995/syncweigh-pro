@@ -90,19 +90,19 @@
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="bitumen.php" class="nav-link"><b><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</b></a>
+                                        <a href="bitumen.php" class="nav-link"><b>'.$lang['t-bitumen'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="stockTakeLog.php" class="nav-link"><b><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</b></a>
+                                        <a href="stockTakeLog.php" class="nav-link"><b>'.$lang['t-stockTakeLog'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="inventory.php" class="nav-link"><b><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</b></a>
+                                        <a href="inventory.php" class="nav-link"><b>'.$lang['t-inventory'].'</b></a>
                                     </li> 
                                     <li class="nav-item">
-                                        <a href="assetManagement.php" class="nav-link"><b><i class="mdi mdi-tools"></i>'.$lang['t-assetManagement'].'</b></a>
+                                        <a href="assetManagement.php" class="nav-link"><b>'.$lang['t-assetManagement'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="calculationSetup.php" class="nav-link"><b><i class="mdi mdi-calculator"></i>'.$lang['t-calculationSetup'].'</b></a>
+                                        <a href="calculationSetup.php" class="nav-link"><b>'.$lang['t-calculationSetup'].'</b></a>
                                     </li>             
                                 </ul>
                             </div>
@@ -166,13 +166,13 @@
                             <div class="collapse menu-dropdown" id="sidebarStock">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="bitumen.php" class="nav-link"><b><i class="mdi mdi-domain"></i>'.$lang['t-bitumen'].'</b></a>
+                                        <a href="bitumen.php" class="nav-link"><b>'.$lang['t-bitumen'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="stockTakeLog.php" class="nav-link"><b><i class="mdi mdi-warehouse"></i>'.$lang['t-stockTakeLog'].'</b></a>
+                                        <a href="stockTakeLog.php" class="nav-link"><b>'.$lang['t-stockTakeLog'].'</b></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="inventory.php" class="nav-link"><b><i class="mdi mdi-shipping-pallet"></i>'.$lang['t-inventory'].'</b></a>
+                                        <a href="inventory.php" class="nav-link"><b>'.$lang['t-inventory'].'</b></a>
                                     </li>              
                                 </ul>
                             </div>
