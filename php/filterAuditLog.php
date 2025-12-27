@@ -228,9 +228,9 @@ if($_POST['selectedValue'] == "Destination")
         }else{
             $data[] = array( 
             "id"=>$row['id'],
-            "Destination Code"=>$supplierData['destination_code'],
-            "Destination Name"=>$supplierData['name'],
-            "Description"=>$supplierData['description'],
+            "Destination Code"=>$row['destination_code'],
+            "Destination Name"=>$row['name'],
+            "Description"=>$row['description'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
             "Event Date"=>$eventDateKL,
@@ -265,9 +265,11 @@ if($_POST['selectedValue'] == "Product")
                 "Product Name"=>$productData['name'],
                 "Product Price"=>$productData['price'],
                 "Description"=>$productData['description'],
-                "Variance Type"=>$productData['variance'],
+                "Variance Type"=>($productData['variance'] == 'W') ? "kg" : (($productData['variance'] == 'P') ? "%" : null),
                 "High"=>$productData['high'],
                 "Low"=>$productData['low'],
+                "Basic UOM"=>searchUnitById($productData['basic_uom'], $db),
+                "Type"=>$productData['type'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
                 "Event Date"=>$eventDateKL,
@@ -280,9 +282,11 @@ if($_POST['selectedValue'] == "Product")
             "Product Name"=>$row['name'],
             "Product Price"=>$row['price'],
             "Description"=>$row['description'],
-            "Variance Type"=>$row['variance'],
+            "Variance Type"=>($row['variance'] == 'W') ? "kg" : (($row['variance'] == 'P') ? "%" : null),
             "High"=>$row['high'],
             "Low"=>$row['low'],
+            "Basic UOM"=>searchUnitById($row['basic_uom'], $db),
+            "Type"=>$row['type'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
             "Event Date"=>$eventDateKL,
@@ -291,7 +295,7 @@ if($_POST['selectedValue'] == "Product")
         
     }
 
-    $columnNames = ["Product Code", "Product Name", "Product Price", "Description", "Variance Type", "High", "Low", "Action", "Action By", "Event Date"];
+    $columnNames = ["Product Code", "Product Name", "Product Price", "Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "Raw Materials")
@@ -321,6 +325,7 @@ if($_POST['selectedValue'] == "Raw Materials")
                 "Variance Type"=>$rawMatData['variance'],
                 "High"=>$rawMatData['high'],
                 "Low"=>$rawMatData['low'],
+                "Basic UOM"=>searchUnitById($rawMatData['basic_uom'], $db),
                 "Type"=>$rawMatData['type'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
@@ -337,6 +342,7 @@ if($_POST['selectedValue'] == "Raw Materials")
             "Variance Type"=>$row['variance'],
             "High"=>$row['high'],
             "Low"=>$row['low'],
+            "Basic UOM"=>searchUnitById($row['basic_uom'], $db),
             "Type"=>$row['type'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
@@ -346,7 +352,7 @@ if($_POST['selectedValue'] == "Raw Materials")
         
     }
 
-    $columnNames = ["Raw Material Code", "Raw Material Name", "Raw Material Price", "Description", "Variance Type", "High", "Low", "Type", "Action", "Action By", "Event Date"];
+    $columnNames = ["Raw Material Code", "Raw Material Name", "Raw Material Price", "Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "Supplier")
@@ -645,7 +651,6 @@ if($_POST['selectedValue'] == "User")
     $columnNames = ["Employee Code", "Username", "Name", "Email", "Role", "Action", "Action By", "Event Date"];
 }
 
-
 if($_POST['selectedValue'] == "Plant")
 {
     ## Fetch records
@@ -673,6 +678,11 @@ if($_POST['selectedValue'] == "Plant")
                 "Address line 3"=>$plantData['address_line_3'],
                 "Phone No"=>$plantData['phone_no'],
                 "Fax No"=>$plantData['fax_no'],
+                "Sales"=>$plantData['sales'],
+                "Purchase"=>$plantData['purchase'],
+                "Public"=>$plantData['locals'],
+                "DO No"=>$plantData['do_no'],
+                "Default Type"=>$plantData['default_type'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
                 "Event Date"=>$eventDateKL
@@ -688,6 +698,11 @@ if($_POST['selectedValue'] == "Plant")
             "Address line 3"=>$row['address_line_3'],
             "Phone No"=>$row['phone_no'],
             "Fax No"=>$row['fax_no'],
+            "Sales"=>$row['sales'],
+            "Purchase"=>$row['purchase'],
+            "Public"=>$row['locals'],
+            "DO No"=>$row['do_no'],
+            "Default Type"=>$row['default_type'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
             "Event Date"=>$eventDateKL
@@ -696,7 +711,7 @@ if($_POST['selectedValue'] == "Plant")
         
     }
 
-    $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
+    $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Sales", "Purchase", "Public", "DO No", "Default Type", "Action", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "Site")
@@ -795,7 +810,7 @@ if($_POST['selectedValue'] == "SO")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
-        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $eventDate = $row['event_date']; // "2023-07-16 13:20:27"
         $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
         $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
         $eventDateKL = $dt->format('Y-m-d H:i:s');
@@ -806,25 +821,33 @@ if($_POST['selectedValue'] == "SO")
         "Company Name"=>$row['company_name'],
         "Customer Code"=>$row['customer_code'],
         "Customer Name"=>$row['customer_name'],
-        "Site Code"=>$row['site_code'],
-        "Site Name"=>$row['site_name'],
-        "Sales Representative Code"=>$row['agent_code'],
-        "Sales Representative Name"=>$row['agent_name'],
-        "Destination Code"=>$row['destination_code'],
-        "Destination Name"=>$row['destination_name'],
+        "Order Date"=>$row['order_date'],
+        "Customer P/O No"=>$row['order_no'],
+        "S/O No"=>$row['so_no'],
         "Product Code"=>$row['product_code'],
         "Product Name"=>$row['product_name'],
         "Plant Code"=>$row['plant_code'],
         "Plant Name"=>$row['plant_name'],
+        "Destination Code"=>$row['destination_code'],
+        "Destination Name"=>$row['destination_name'],
         "Transporter Code"=>$row['transporter_code'],
         "Transporter Name"=>$row['transporter_name'],
         "Vehicle No"=>$row['veh_number'],
+        "Site Code"=>$row['site_code'],
+        "Site Name"=>$row['site_name'],
+        "Sales Representative Code"=>$row['agent_code'],
+        "Sales Representative Name"=>$row['agent_name'],
         "EXQ/Del"=>$row['exquarry_or_delivered'],
-        "Customer P/O No"=>$row['order_no'],
-        "S/O No"=>$row['so_no'],
-        "Order Date"=>$row['order_date'],
-        "Order Quantity"=>$row['order_quantity'],
-        "Balance"=>$row['balance'],
+        "Batch/Drum"=>$row['batch_drum'],
+        "Basic Unit"=>searchUnitById($row['converted_unit'], $db),
+        "Basic Order Quantity"=>$row['converted_order_qty'],
+        "Order Quantity (KG)"=>$row['order_quantity'],
+        "Basic Balance"=>$row['converted_balance'],
+        "Balance (KG)"=>$row['balance'],
+        "Unit Price"=>$row['unit_price'],
+        "Total Price"=>$row['total_price'],
+        "Transport Price"=>$row['transport_price'],
+        "Supplier Cost"=>$row['supplier_cost'],
         "Remarks"=>$row['remarks'],
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
@@ -833,7 +856,7 @@ if($_POST['selectedValue'] == "SO")
         );
     }
 
-    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Product Code", "Product Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "Customer P/O No", "S/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Order Date", "Customer P/O No", "S/O No", "Product Code", "Product Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name",  "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)", "Unit Price", "Total Price", "Transport Price", "Supplier Cost", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
 if($_POST['selectedValue'] == "PO")
@@ -855,24 +878,30 @@ if($_POST['selectedValue'] == "PO")
         "Company Name"=>$row['company_name'],
         "Supplier Code"=>$row['supplier_code'],
         "Supplier Name"=>$row['supplier_name'],
-        "Site Code"=>$row['site_code'],
-        "Site Name"=>$row['site_name'],
-        "Sales Representative Code"=>$row['agent_code'],
-        "Sales Representative Name"=>$row['agent_name'],
-        "Destination Code"=>$row['destination_code'],
-        "Destination Name"=>$row['destination_name'],
+        "Order Date"=>$row['order_date'],
+        "P/O No"=>$row['po_no'],
         "Raw Material Code"=>$row['raw_mat_code'],
         "Raw Material Name"=>$row['raw_mat_name'],
         "Plant Code"=>$row['plant_code'],
         "Plant Name"=>$row['plant_name'],
+        "Destination Code"=>$row['destination_code'],
+        "Destination Name"=>$row['destination_name'],
         "Transporter Code"=>$row['transporter_code'],
         "Transporter Name"=>$row['transporter_name'],
         "Vehicle No"=>$row['veh_number'],
+        "Site Code"=>$row['site_code'],
+        "Site Name"=>$row['site_name'],
+        "Sales Representative Code"=>$row['agent_code'],
+        "Sales Representative Name"=>$row['agent_name'],
         "EXQ/Del"=>$row['exquarry_or_delivered'],
-        "P/O No"=>$row['po_no'],
-        "Order Date"=>$row['order_date'],
-        "Order Quantity"=>$row['order_quantity'],
-        "Balance"=>$row['balance'],
+        "Batch/Drum"=>$row['batch_drum'],
+        "Basic Unit"=>searchUnitById($row['converted_unit'], $db),
+        "Basic Order Quantity"=>$row['converted_order_qty'],
+        "Order Quantity (KG)"=>$row['order_quantity'],
+        "Basic Balance"=>$row['converted_balance'],
+        "Balance (KG)"=>$row['balance'],
+        "Unit Price"=>$row['unit_price'],
+        "Total Price"=>$row['total_price'],
         "Remarks"=>$row['remarks'],
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
@@ -881,7 +910,7 @@ if($_POST['selectedValue'] == "PO")
         );
     }
 
-    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "P/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Order Date", "P/O No", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)", "Unit Price", "Total Price", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
 ## Response

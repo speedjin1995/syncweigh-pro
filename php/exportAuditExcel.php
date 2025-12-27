@@ -138,11 +138,16 @@ if($_GET['selectedValue'] == "PO")
 if($_GET['selectedValue'] == "Customer")
 {
     ## Fetch records
-    $empQuery = "select * from Customer_Log".$searchQuery;
+    $empQuery = "select * from Customer_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['customer_code'])){
             $customerId = $row['customer_id'];
             $customerData = searchCustomerAuditById($customerId, $db); 
@@ -160,7 +165,7 @@ if($_GET['selectedValue'] == "Customer")
                 "Fax No"=>$customerData['fax_no'],
                 "Action"=> searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -176,7 +181,7 @@ if($_GET['selectedValue'] == "Customer")
             "Fax No"=>$row['fax_no'],
             "Action"=> searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
     }
@@ -187,11 +192,16 @@ if($_GET['selectedValue'] == "Customer")
 if($_GET['selectedValue'] == "Destination")
 {
     ## Fetch records
-    $empQuery = "select * from Destination_Log".$searchQuery;
+    $empQuery = "select * from Destination_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['destination_code'])){
             $destinationId = $row['destination_id'];
             $destinationData = searchDestinationAuditById($destinationId, $db);
@@ -204,7 +214,7 @@ if($_GET['selectedValue'] == "Destination")
                 "Description"=>$destinationData['description'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -215,7 +225,7 @@ if($_GET['selectedValue'] == "Destination")
             "Description"=>$row['description'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
     }
@@ -231,6 +241,11 @@ if($_GET['selectedValue'] == "Product")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['product_code'])){
             $productId = $row['product_id'];
             $productData = searchProductAuditById($productId, $db);
@@ -242,12 +257,14 @@ if($_GET['selectedValue'] == "Product")
                 "Product Name"=>$productData['name'],
                 "Product Price"=>$productData['price'],
                 "Description"=>$productData['description'],
-                "Variance Type"=>$productData['variance'],
+                "Variance Type"=>($productData['variance'] == 'W') ? "kg" : (($productData['variance'] == 'P') ? "%" : null),
                 "High"=>$productData['high'],
                 "Low"=>$productData['low'],
+                "Basic UOM"=>searchUnitById($productData['basic_uom'], $db),
+                "Type"=>$productData['type'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -257,28 +274,34 @@ if($_GET['selectedValue'] == "Product")
             "Product Name"=>$row['name'],
             "Product Price"=>$row['price'],
             "Description"=>$row['description'],
-            "Variance Type"=>$row['variance'],
+            "Variance Type"=>($row['variance'] == 'W') ? "kg" : (($row['variance'] == 'P') ? "%" : null),
             "High"=>$row['high'],
             "Low"=>$row['low'],
+            "Basic UOM"=>searchUnitById($row['basic_uom'], $db),
+            "Type"=>$row['type'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
-        
     }
 
-    $columnNames = ["Product Code", "Product Name", "Product Price", "Description", "Variance Type", "High", "Low", "Action", "Action By", "Event Date"];
+    $columnNames = ["Product Code", "Product Name", "Product Price", "Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"];
 }
 
 if($_GET['selectedValue'] == "Raw Materials")
 {
     ## Fetch records
-    $empQuery = "select * from Raw_Mat_Log".$searchQuery;
+    $empQuery = "select * from Raw_Mat_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+        
         if(empty($row['raw_mat_code'])){
             $rawMatId = $row['raw_mat_id'];
             $rawMatData = searchRawMatAuditById($rawMatId, $db);
@@ -294,9 +317,10 @@ if($_GET['selectedValue'] == "Raw Materials")
                 "High"=>$rawMatData['high'],
                 "Low"=>$rawMatData['low'],
                 "Type"=>$rawMatData['type'],
+                "Basic UOM"=>searchUnitById($rawMatData['basic_uom'], $db),
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -310,25 +334,31 @@ if($_GET['selectedValue'] == "Raw Materials")
             "High"=>$row['high'],
             "Low"=>$row['low'],
             "Type"=>$row['type'],
+            "Basic UOM"=>searchUnitById($row['basic_uom'], $db),
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
         
     }
 
-    $columnNames = ["Raw Material Code", "Raw Material Name", "Raw Material Price", "Description", "Variance Type", "High", "Low", "Type", "Action", "Action By", "Event Date"];
+    $columnNames = ["Raw Material Code", "Raw Material Name", "Raw Material Price", "Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"];
 }
 
 if($_GET['selectedValue'] == "Supplier")
 {
     ## Fetch records
-    $empQuery = "select * from Supplier_Log".$searchQuery;
+    $empQuery = "select * from Supplier_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['supplier_code'])){
             $supplierId = $row['supplier_id'];
             $supplierData = searchSupplierAuditById($supplierId, $db);
@@ -346,7 +376,7 @@ if($_GET['selectedValue'] == "Supplier")
                 "Fax No"=>$supplierData['fax_no'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date']
+                "Event Date"=>$eventDateKL
                 );
             }
         }else{
@@ -362,11 +392,9 @@ if($_GET['selectedValue'] == "Supplier")
             "Fax No"=>$row['fax_no'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date']
+            "Event Date"=>$eventDateKL
             );
         }
-
-        
     }
 
     $columnNames = ["Supplier Code", "Company Reg No", "Supplier Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
@@ -380,6 +408,11 @@ if($_GET['selectedValue'] == "Vehicle")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['veh_number'])){
             $vehicleId = $row['vehicle_id'];
             $vehicleData = searchVehicleAuditById($vehicleId, $db);
@@ -396,7 +429,7 @@ if($_GET['selectedValue'] == "Vehicle")
                 "Customer Name"=>$vehicleData['customer_name'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -411,7 +444,7 @@ if($_GET['selectedValue'] == "Vehicle")
             "Customer Name"=>$row['customer_name'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
         
@@ -428,6 +461,11 @@ if($_GET['selectedValue'] == "Agent")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date']; // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['agent_code'])){
             $agentId = $row['agent_id'];
             $agentData = searchAgentAuditById($agentId, $db);
@@ -440,7 +478,7 @@ if($_GET['selectedValue'] == "Agent")
                 "Description"=>$agentData['description'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -451,7 +489,7 @@ if($_GET['selectedValue'] == "Agent")
             "Description"=>$row['description'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }  
     }
@@ -467,6 +505,11 @@ if($_GET['selectedValue'] == "Transporter")
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['transporter_code'])){
             $transporterId = $row['transporter_id'];
             $transporterData = searchTransporterAuditById($transporterId, $db);
@@ -484,7 +527,7 @@ if($_GET['selectedValue'] == "Transporter")
                 "Fax No"=>$transporterData['fax_no'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -500,10 +543,9 @@ if($_GET['selectedValue'] == "Transporter")
             "Fax No"=>$row['fax_no'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
-        }
-        
+        } 
     }
 
     $columnNames = ["Transporter Code", "Company Reg No", "Transporter Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
@@ -512,11 +554,16 @@ if($_GET['selectedValue'] == "Transporter")
 if($_GET['selectedValue'] == "Unit")
 {
     ## Fetch records
-    $empQuery = "select * from Unit_Log".$searchQuery;
+    $empQuery = "select * from Unit_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['unit'])){
             $unitId = $row['unit_id'];
             $unitData = searchUnitAuditById($unitId, $db);
@@ -527,7 +574,7 @@ if($_GET['selectedValue'] == "Unit")
                 "Unit"=>$unitData['unit'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -536,7 +583,7 @@ if($_GET['selectedValue'] == "Unit")
             "Unit"=>$row['unit'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
     }
@@ -547,11 +594,15 @@ if($_GET['selectedValue'] == "Unit")
 if($_GET['selectedValue'] == "User")
 {
     ## Fetch records
-    $empQuery = "select * from Users_Log".$searchQuery;
+    $empQuery = "select * from Users_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
         if (empty($row['employee_code'])){
             $userId = $row['user_id'];
             $userData = searchUserAuditById($userId, $db);
@@ -587,15 +638,19 @@ if($_GET['selectedValue'] == "User")
     $columnNames = ["Employee Code", "Username", "Name", "Email", "Role", "Action", "Action By", "Event Date"];
 }
 
-
 if($_GET['selectedValue'] == "Plant")
 {
     ## Fetch records
-    $empQuery = "select * from Plant_Log".$searchQuery;
+    $empQuery = "select * from Plant_Log".$searchQuery." ORDER BY event_date ASC"; 
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['plant_code'])){
             $plantId = $row['plant_id'];
             $plantData = searchPlantAuditById($plantId, $db);
@@ -610,9 +665,14 @@ if($_GET['selectedValue'] == "Plant")
                 "Address line 3"=>$plantData['address_line_3'],
                 "Phone No"=>$plantData['phone_no'],
                 "Fax No"=>$plantData['fax_no'],
+                "Sales"=>$plantData['sales'],
+                "Purchase"=>$plantData['purchase'],
+                "Public"=>$plantData['locals'],
+                "DO No"=>$plantData['do_no'],
+                "Default Type"=>$plantData['default_type'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -625,25 +685,35 @@ if($_GET['selectedValue'] == "Plant")
             "Address line 3"=>$row['address_line_3'],
             "Phone No"=>$row['phone_no'],
             "Fax No"=>$row['fax_no'],
+            "Sales"=>$row['sales'],
+            "Purchase"=>$row['purchase'],
+            "Public"=>$row['locals'],
+            "DO No"=>$row['do_no'],
+            "Default Type"=>$row['default_type'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
         
     }
 
-    $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Action", "Action By", "Event Date"];
+    $columnNames = ["Plant Code", "Plant Name", "Address line 1", "Address line 2", "Address line 3", "Phone No", "Fax No", "Sales", "Purchase", "Public", "DO No", "Default Type", "Action", "Action By", "Event Date"];
 }
 
 if($_GET['selectedValue'] == "Site")
 {
     ## Fetch records
-    $empQuery = "select * from Site_Log".$searchQuery;
+    $empQuery = "select * from Site_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         if (empty($row['site_code'])){
             $siteId = $row['site_id'];
             $siteData = searchSiteAuditById($siteId, $db);
@@ -660,7 +730,7 @@ if($_GET['selectedValue'] == "Site")
                 "Fax No"=>$siteData['fax_no'],
                 "Action"=>searchActionNameById($row['action_id'], $db),
                 "Action By"=>$row['action_by'],
-                "Event Date"=>$row['event_date'],
+                "Event Date"=>$eventDateKL,
                 );
             }
         }else{
@@ -675,7 +745,7 @@ if($_GET['selectedValue'] == "Site")
             "Fax No"=>$row['fax_no'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
-            "Event Date"=>$row['event_date'],
+            "Event Date"=>$eventDateKL,
             );
         }
     }
@@ -694,111 +764,156 @@ if($_GET['selectedValue'] == "Weight")
         $data[] = array( 
             "id"=>$row['id'],
             "Transaction Id"=>$row['transaction_id'],
-            "Weight Status"=>$row['weight_type'],
-            "Customer/Supplier"=>($row['transaction_status'] == 'Sales' ? $row['customer_name'] : $row['supplier_name']),
-            "Vehicle"=>$row['lorry_plate_no1'],
-            "Product/Raw Material"=>($row['transaction_status'] == 'Sales' ? $row['product_name'] : $row['raw_mat_name']),
+            "Weight Type"=>$row['weight_type'],
+            "Weight Status"=>$row['transaction_status'],
+            "Transaction Date"=>$row['transaction_date'],
             "SO/PO"=>$row['purchase_order'],
             "DO"=>$row['delivery_no'],
+            "Customer/Supplier"=>($row['transaction_status'] == 'Purchase' ? $row['supplier_name'] : $row['customer_name']),
+            "Product/Raw Material"=>($row['transaction_status'] == 'Purchase' ? $row['raw_mat_name'] : $row['product_name']),
+            "Plant"=>$row['plant_code'].' - '.$row['plant_name'],
+            "Agent"=>$row['agent_code'].' - '.$row['agent_name'],
+            "Transporter"=>$row['transporter_code'].' - '.$row['transporter'],
+            "Destination"=>$row['destination_code'].' - '.$row['destination'],
+            "Ex-Quarry/Delivered"=>($row['ex_del'] == 'EX' ? 'Ex-Quarry' : 'Delivered'),
+            "Vehicle"=>$row['lorry_plate_no1'],
+            "Batch/Drum"=>$row['batch_drum'],
+            "Basic Order/Supplier Weight"=>($row['transaction_status'] == 'Purchase' ? $row['supplier_weight_uom']: $row['supplier_weight']),
+            "Order/Supplier Weight (KG)"=>($row['transaction_status'] == 'Purchase' ? $row['order_weight_uom'] : $row['order_weight']),
+            "PO Supply Weight (KG)"=>$row['po_supply_weight'],
             "Gross Incoming"=>$row['gross_weight1'],
             "Incoming Date"=>$row['gross_weight1_date'],
             "Tare Outgoing"=>$row['tare_weight1'],
             "Outgoing Date"=>$row['tare_weight1_date'],
             "Nett Weight"=>$row['nett_weight1'],
+            "Weight Difference"=>$row['weight_different'],
+            "Unit Price"=>$row['unit_price'],
+            "Sub Total"=>$row['sub_total'],
+            "SST"=>$row['sst'],
+            "Total Price"=>$row['total_price'],
+            "Is Complete"=>$row['is_complete'],
+            "Is Cancelled"=>$row['is_cancel'],
+            "Cancel Reason"=>searchCancelReasonById($row['cancel_id'], $db),
+            "Cancel Remarks"=>$row['cancelled_reason'],
+            "Remarks"=>$row['remarks'],
             "Action"=>searchActionNameById($row['action_id'], $db),
             "Action By"=>$row['action_by'],
             "Event Date"=>$row['event_date'],
         );
     }
 
-    $columnNames = ["Transaction Id", "Weight Status", "Customer/Supplier", "Vehicle", "Product/Raw Material", "SO/PO", "DO", "Gross Incoming", "Incoming Date", "Tare Outgoing", "Outgoing Date", "Nett Weight", "Action", "Action By", "Event Date"];
+    $columnNames = ["Transaction Id", "Weight Type", "Weight Status", "Transaction Date", "SO/PO", "DO", "Customer/Supplier", "Product/Raw Material", "Plant", "Agent", "Transporter", "Destination", "Ex-Quarry/Delivered", "Vehicle", "Batch/Drum", "Basic Order/Supplier Weight", "Order/Supplier Weight (KG)", "PO Supply Weight (KG)", "Gross Incoming", "Incoming Date", "Tare Outgoing", "Outgoing Date", "Nett Weight", "Weight Difference", "Unit Price", "Sub Total", "SST", "Total Price", "Is Complete", "Is Cancelled", "Cancel Reason", "Cancel Remarks", "Remarks", "Action", "Action By", "Event Date"];
 }
 
 if($_GET['selectedValue'] == "SO")
 {
     ## Fetch records
-    $empQuery = "select * from Sales_Order_Log".$searchQuery;
+    $empQuery = "select * from Sales_Order_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date']; // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         $data[] = array( 
         "id"=>$row['id'],
         "Company Code"=>$row['company_code'],
         "Company Name"=>$row['company_name'],
         "Customer Code"=>$row['customer_code'],
         "Customer Name"=>$row['customer_name'],
-        "Site Code"=>$row['site_code'],
-        "Site Name"=>$row['site_name'],
-        "Sales Representative Code"=>$row['agent_code'],
-        "Sales Representative Name"=>$row['agent_name'],
-        "Destination Code"=>$row['destination_code'],
-        "Destination Name"=>$row['destination_name'],
+        "Order Date"=>$row['order_date'],
+        "Customer P/O No"=>$row['order_no'],
+        "S/O No"=>$row['so_no'],
         "Product Code"=>$row['product_code'],
         "Product Name"=>$row['product_name'],
         "Plant Code"=>$row['plant_code'],
         "Plant Name"=>$row['plant_name'],
+        "Destination Code"=>$row['destination_code'],
+        "Destination Name"=>$row['destination_name'],
         "Transporter Code"=>$row['transporter_code'],
         "Transporter Name"=>$row['transporter_name'],
         "Vehicle No"=>$row['veh_number'],
+        "Site Code"=>$row['site_code'],
+        "Site Name"=>$row['site_name'],
+        "Sales Representative Code"=>$row['agent_code'],
+        "Sales Representative Name"=>$row['agent_name'],
         "EXQ/Del"=>$row['exquarry_or_delivered'],
-        "Customer P/O No"=>$row['order_no'],
-        "S/O No"=>$row['so_no'],
-        "Order Date"=>$row['order_date'],
-        "Order Quantity"=>$row['order_quantity'],
-        "Balance"=>$row['balance'],
+        "Batch/Drum"=>$row['batch_drum'],
+        "Basic Unit"=>searchUnitById($row['converted_unit'], $db),
+        "Basic Order Quantity"=>$row['converted_order_qty'],
+        "Order Quantity (KG)"=>$row['order_quantity'],
+        "Basic Balance"=>$row['converted_balance'],
+        "Balance (KG)"=>$row['balance'],
+        "Unit Price"=>$row['unit_price'],
+        "Total Price"=>$row['total_price'],
+        "Transport Price"=>$row['transport_price'],
+        "Supplier Cost"=>$row['supplier_cost'],
         "Remarks"=>$row['remarks'],
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
+        "Event Date"=>$eventDateKL
         );
     }
 
-    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Product Code", "Product Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "Customer P/O No", "S/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Order Date", "Customer P/O No", "S/O No", "Product Code", "Product Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name",  "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)", "Unit Price", "Total Price", "Transport Price", "Supplier Cost", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
 if($_GET['selectedValue'] == "PO")
 {
     ## Fetch records
-    $empQuery = "select * from Purchase_Order_Log".$searchQuery;
+    $empQuery = "select * from Purchase_Order_Log".$searchQuery." ORDER BY event_date ASC";
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
 
     while($row = mysqli_fetch_assoc($empRecords)) {
+        $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
+        $dt = new DateTime($eventDate, new DateTimeZone('GMT'));
+        $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
+        $eventDateKL = $dt->format('Y-m-d H:i:s');
+
         $data[] = array( 
         "id"=>$row['id'],
         "Company Code"=>$row['company_code'],
         "Company Name"=>$row['company_name'],
         "Supplier Code"=>$row['supplier_code'],
         "Supplier Name"=>$row['supplier_name'],
-        "Site Code"=>$row['site_code'],
-        "Site Name"=>$row['site_name'],
-        "Sales Representative Code"=>$row['agent_code'],
-        "Sales Representative Name"=>$row['agent_name'],
-        "Destination Code"=>$row['destination_code'],
-        "Destination Name"=>$row['destination_name'],
+        "Order Date"=>$row['order_date'],
+        "P/O No"=>$row['po_no'],
         "Raw Material Code"=>$row['raw_mat_code'],
         "Raw Material Name"=>$row['raw_mat_name'],
         "Plant Code"=>$row['plant_code'],
         "Plant Name"=>$row['plant_name'],
+        "Destination Code"=>$row['destination_code'],
+        "Destination Name"=>$row['destination_name'],
         "Transporter Code"=>$row['transporter_code'],
         "Transporter Name"=>$row['transporter_name'],
         "Vehicle No"=>$row['veh_number'],
+        "Site Code"=>$row['site_code'],
+        "Site Name"=>$row['site_name'],
+        "Sales Representative Code"=>$row['agent_code'],
+        "Sales Representative Name"=>$row['agent_name'],
         "EXQ/Del"=>$row['exquarry_or_delivered'],
-        "P/O No"=>$row['po_no'],
-        "Order Date"=>$row['order_date'],
-        "Order Quantity"=>$row['order_quantity'],
-        "Balance"=>$row['balance'],
+        "Batch/Drum"=>$row['batch_drum'],
+        "Basic Unit"=>searchUnitById($row['converted_unit'], $db),
+        "Basic Order Quantity"=>$row['converted_order_qty'],
+        "Order Quantity (KG)"=>$row['order_quantity'],
+        "Basic Balance"=>$row['converted_balance'],
+        "Balance (KG)"=>$row['balance'],
+        "Unit Price"=>$row['unit_price'],
+        "Total Price"=>$row['total_price'],
         "Remarks"=>$row['remarks'],
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
-        "Event Date"=>$row['event_date'],
+        "Event Date"=>$eventDateKL
         );
     }
 
-    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "Destination Code", "Destination Name", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Transporter Code", "Transporter Name", "Vehicle No", "EXQ/Del", "P/O No", "Order Date", "Order Quantity", "Balance", "Remarks", "Status", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Order Date", "P/O No", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)", "Unit Price", "Total Price", "Remarks", "Status", "Action", "Action By", "Event Date"];
 }
 
 // Display column names as first row 

@@ -619,7 +619,8 @@ $(function () {
                     responsive: true,
                     autoWidth: false,
                     processing: true,
-                    searching: true
+                    searching: true,
+                    order: response.columnNames.indexOf('event_date') !== -1 ? [[response.columnNames.indexOf('event_date'), 'asc']] : []
                 });
 
                 // Enable expandable row for "Weight"
@@ -656,29 +657,29 @@ $(function () {
     }
 
     $('#exportExcel').on('click', function(){
-        var selectedValue = $('#reportType').val();
-        var fromDateSearch = $('#fromDateSearch').val();
-        var toDateSearch = $('#toDateSearch').val();
-        var customerCode = $('#customerCode').val();
-        var destinationCode = $('#destinationCode').val();
-        var productCode = $('#productCode').val();
-        var rawMatCode = $('#rawMatCode').val();
-        var supplierCode = $('#supplierCode').val();
-        var vehicleNo = $('#vehicleNo').val();
-        var agentCode = $('#agentCode').val();
-        var transporterCode = $('#transporterCode').val();
-        var unit = $('#unit').val();
-        var userCode = $('#userCode').val();
-        var plantCode = $('#plantCode').val();
-        var siteCode = $('#siteCode').val();
-        var weight = $('#weight').val();
-        var custPoNo = $('#custPoNo').val();
-        var poNo = $('#poNo').val();
+        var selectedValue = $('#reportType').val() || '';
+        var fromDateSearch = $('#fromDateSearch').val() || '';
+        var toDateSearch = $('#toDateSearch').val() || '';
+        var customerCode = $('#customerCode').val() || '';
+        var destinationCode = $('#destinationCode').val() || '';
+        var productCode = $('#productCode').val() || '';
+        var rawMatCode = $('#rawMatCode').val() || '';
+        var supplierCode = $('#supplierCode').val() || '';
+        var vehicleNo = $('#vehicleNo').val() || '';
+        var agentCode = $('#agentCode').val() || '';
+        var transporterCode = $('#transporterCode').val() || '';
+        var unit = $('#unit').val() || '';
+        var userCode = $('#userCode').val() || '';
+        var plantCode = $('#plantCode').val() || '';
+        var siteCode = $('#siteCode').val() || '';
+        var weight = $('#weight').val() || '';
+        var custPoNo = $('#custPoNo').val() || '';
+        var poNo = $('#poNo').val() || '';
 
         window.open("php/exportAuditExcel.php?selectedValue="+selectedValue+"&fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+
         "&customerCode="+customerCode+"&destinationCode="+destinationCode+"&productCode="+productCode+"&rawMatCode="+rawMatCode+"&supplierCode="+supplierCode+
         "&vehicleNo="+vehicleNo+"&agentCode="+agentCode+"&transporterCode="+transporterCode+"&unit="+unit+"&userCode="+userCode+"&plantCode="+plantCode+
-        +"&siteCode="+siteCode+"&weight="+weight+"&custPoNo="+custPoNo+"&poNo="+poNo);
+        "&siteCode="+siteCode+"&weight="+weight+"&custPoNo="+custPoNo+"&poNo="+poNo);
     });
 
     // $('#exportExcel').click(function() {
