@@ -158,6 +158,19 @@
                                 </div> <!-- end col -->
                             </div><!-- container-fluid -->
 
+                            <div class="modal fade" id="dataModal" style="display:none">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-gray-dark color-palette">
+                                            <h4 class="modal-title" id="modalTitle"></h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <pre id="modalContent" style="white-space: pre-wrap;"></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div> <!-- end .h-100-->
                     </div> <!-- end col -->
                 </div>
@@ -322,6 +335,12 @@ $(function () {
         +"&siteCode="+siteCode+"&weight="+weight+"&custPoNo="+custPoNo+"&poNo="+poNo);
     });
 });
+
+function showModal(title, content) {
+    $('#modalTitle').text(title);
+    $('#modalContent').text(content);
+    $('#dataModal').modal('show');
+}
 
 function format (row) {
     var custSupplier = '';
