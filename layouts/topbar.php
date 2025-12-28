@@ -770,6 +770,17 @@ $count2 = count($salesList2) + count($purchaseList2) + count($localList2);
                     </div>
                 </div-->
 
+                <div id="indicatorStatus" style="display: none;">
+                    <div id="indicatorInactive" class="d-flex align-items-center">
+                        <div class="status-dot me-2" style="width: 8px; height: 8px; background-color: #ffc107; border-radius: 50%;"></div>
+                        <span class="text-muted">Indicator inactive</span>
+                    </div>
+                    <div id="indicatorActive" class="d-none align-items-center">
+                        <div class="status-dot me-2" style="width: 8px; height: 8px; background-color: green; border-radius: 50%;"></div>
+                        <span class="text-muted">Indicator Active</span>
+                    </div>
+                </div>
+
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">

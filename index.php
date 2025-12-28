@@ -1593,6 +1593,8 @@ else{
         tomorrow.setDate(tomorrow.getDate() + 1);
         yesterday.setDate(yesterday.getDate() - 1);
 
+        $('#indicatorStatus').show();
+
         grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
             enableTime: true,
             enableSeconds: true,
@@ -2408,11 +2410,15 @@ else{
                 $('#indicatorConnected').addClass('bg-primary');
                 $('#checkingConnection').removeClass('bg-danger');
                 //$('#captureWeight').removeAttr('disabled');
+                $('#indicatorActive').removeClass('d-none').addClass('d-flex');
+                $('#indicatorInactive').addClass('d-none');
             }
             else{
                 $('#indicatorConnected').removeClass('bg-primary');
                 $('#checkingConnection').addClass('bg-danger');
                 //$('#captureWeight').attr('disabled', true);
+                $('#indicatorInactive').removeClass('d-none').addClass('d-flex');
+                $('#indicatorActive').addClass('d-none');
             }
         });
 
@@ -2428,6 +2434,8 @@ else{
                         $('#indicatorWeight').html(text2);
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
+                        $('#indicatorActive').removeClass('d-none').addClass('d-flex');
+                        $('#indicatorInactive').addClass('d-none');
                     }
                     else if(ind == 'BX23'){
                         var text = data.split(" ");
@@ -2436,6 +2444,8 @@ else{
                         $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
+                        $('#indicatorActive').removeClass('d-none').addClass('d-flex');
+                        $('#indicatorInactive').addClass('d-none');
                     }
                     else if(ind == '205'){
                         var text = data.split(" ");
@@ -2444,13 +2454,17 @@ else{
                         $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
+                        $('#indicatorActive').removeClass('d-none').addClass('d-flex');
+                        $('#indicatorInactive').addClass('d-none');
                     }
                 }
                 else{
                     $('#indicatorWeight').html('0');
                     $('#indicatorConnected').removeClass('bg-primary');
                     $('#checkingConnection').addClass('bg-danger');
-            }
+                    $('#indicatorInactive').removeClass('d-none').addClass('d-flex');
+                    $('#indicatorActive').addClass('d-none');
+                }
             });
         }, 500);
 
