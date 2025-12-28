@@ -54,9 +54,9 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     
     $data[] = array( 
         "No" => $row['id'],
-        "Request" => '<pre style="white-space: pre-wrap;">' . htmlspecialchars($prettyRequest) . '</pre>',
-        "Response" => '<pre style="white-space: pre-wrap;">' . htmlspecialchars($prettyResponse) . '</pre>',
-        "Error Message" => '<pre style="white-space: pre-wrap;">' . htmlspecialchars($prettyError) . '</pre>',
+        "Request" => $prettyRequest ? '<button class="btn btn-info btn-sm" onclick="showModal(\'Request\', ' . htmlspecialchars(json_encode($prettyRequest), ENT_QUOTES) . ')">View Request</button>' : '',
+        "Response" => $prettyResponse ? '<button class="btn btn-success btn-sm" onclick="showModal(\'Response\', ' . htmlspecialchars(json_encode($prettyResponse), ENT_QUOTES) . ')">View Response</button>' : '',
+        "Error Message" => $prettyError ? '<button class="btn btn-danger btn-sm" onclick="showModal(\'Error\', ' . htmlspecialchars(json_encode($prettyError), ENT_QUOTES) . ')">View Error</button>' : '',
         "Service" => htmlspecialchars($row['services']),
         "Created Date" => $row['created_datetime'],
     );
