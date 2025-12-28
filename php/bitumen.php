@@ -244,28 +244,6 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 }
 
-# Processing for Other Diesel Table data
-if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
-    $otherDieselData = [];
-    $no = $_POST["otherDieselNo"];
-    $otherDieselType = $_POST["otherDieselType"];
-    $otherDieselVehicleNo = $_POST["otherDieselVehicleNo"];
-    $otherDieselUsage = $_POST["otherDieselUsage"];
-
-    foreach ($no as $key => $value) {
-        $otherDieselData[] = array(
-            "no" => $no[$key],
-            "otherDieselType" => $otherDieselType[$key],
-            "otherDieselVehicleNo" => $otherDieselVehicleNo[$key],
-            "otherDieselUsage" => $otherDieselUsage[$key]
-        );
-    }
-
-    $otherDieselData = json_encode($otherDieselData, JSON_PRETTY_PRINT);
-} else {
-    $otherDieselData = NULL;
-}
-
 # Processing for hotoil data
 if (!empty($_POST["hotoilNo"]) && count($_POST["hotoilNo"]) > 0) {
     $hotoilData = [];
@@ -622,8 +600,8 @@ $data = array(
 $data = json_encode($data, JSON_PRETTY_PRINT);
 
 if(!empty($bitumenId)){
-    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `other_diesel`=?, `hotoil`=?, `fibre`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, `batch_drum`=?, modified_by=? WHERE id=?")) {
-        $update_stmt->bind_param('ssssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $otherDieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username, $bitumenId);
+    if ($update_stmt = $db->prepare("UPDATE Bitumen SET `60/70`=?, `pg76`=?, `lfo`=?, `diesel`=?, `hotoil`=?, `fibre`=?, `data`=?, `declaration_datetime`=?, `plant_id`=?, `plant_code`=?, `batch_drum`=?, modified_by=? WHERE id=?")) {
+        $update_stmt->bind_param('sssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username, $bitumenId);
 
         // Execute the prepared query.
         if (! $update_stmt->execute()) {
@@ -649,8 +627,8 @@ if(!empty($bitumenId)){
 }
 else
 { 
-    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `other_diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `batch_drum`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-        $insert_stmt->bind_param('sssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $otherDieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username);
+    if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `batch_drum`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+        $insert_stmt->bind_param('ssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username);
 
         // Execute the prepared query.
         if (! $insert_stmt->execute()) {

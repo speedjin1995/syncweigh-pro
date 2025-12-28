@@ -129,19 +129,6 @@ if(isset($_POST['userID'])){
                 $message['dieselLastMeterReading'] = $dieselTemp["dieselLastMeterReading"] ?? 0;
                 ########################################################################################
 
-                ## other diesel Processing ##
-                $otherDieselTemp = json_decode($row['other_diesel'], true);
-                $otherDieselRows = [];
-                if (!empty($otherDieselTemp)) {
-                    foreach ($otherDieselTemp as $otherDieselKey => $otherDieselRow) {
-                        if (is_numeric($otherDieselKey)) {
-                            $otherDieselRows[] = $otherDieselRow;
-                        }
-                    }
-                }
-                $message['other_diesel'] = $otherDieselRows;
-                ########################################################################################
-
                 ## hotoil Processing ##
                 $hotoilTemp = json_decode($row['hotoil'], true);
                 $hotoilRows = [];
