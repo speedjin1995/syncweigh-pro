@@ -361,12 +361,6 @@ if (empty($_POST["totalPg76"])) {
     $totalPg76 = trim($_POST["totalPg76"]);
 }
 
-if (empty($_POST["pg76Incoming"])) {
-    $pg76Incoming = null;
-} else {
-    $pg76Incoming = trim($_POST["pg76Incoming"]);
-}
-
 if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
     $pg76Data = [];
     $pg76No = $_POST["pg76No"];
@@ -391,13 +385,11 @@ if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
         );
     }
 
-    $pg76Data['pg76Incoming'] = $pg76Incoming;
     $pg76Data['totalPg76'] = $totalPg76;
     $pg76Data = json_encode($pg76Data, JSON_PRETTY_PRINT);
 } else {
     $pg76Data = [];
-    
-    $pg76Data['pg76Incoming'] = $pg76Incoming;
+
     $pg76Data['totalPg76'] = $totalPg76;
     $pg76Data = json_encode($pg76Data, JSON_PRETTY_PRINT);
 

@@ -189,7 +189,6 @@ if(isset($_POST['userID'])){
                     }
                 } 
                 $message['pg76'] = $pg76Rows;
-                $message['pg76Incoming'] = $pg76Temp["pg76Incoming"] ?? 0;
                 $message['totalPg76'] = $pg76Temp["totalPg76"] ?? 0;
                 ########################################################################################
 

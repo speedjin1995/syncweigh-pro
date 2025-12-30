@@ -521,8 +521,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </thead>
                                                     <tbody id="pg76Table"></tbody>
                                                     <tfoot>
-                                                        <th colspan="2">Incoming (MT)</th>
-                                                        <th colspan="2"><input type="number" class="form-control" id="pg76Incoming" name="pg76Incoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                        <th colspan="4"></th>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalPg76" name="totalPg76" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <!-- <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
@@ -2551,7 +2550,6 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     }
                 }
                 $('#addModal').find('#totalPg76').val(obj.message.totalPg76);
-                $('#addModal').find('#pg76Incoming').val(obj.message.pg76Incoming);
 
                 // Fibre Table Processing
                 $('#addModal').find('#fibreNameMr6').val(obj.message.fibreNameMr6);
