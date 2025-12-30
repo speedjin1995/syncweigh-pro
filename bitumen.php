@@ -1126,11 +1126,13 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#addModal').find('#datetime').val(formatDate4(today));
             $('#bitumenTable').html('');
             $('#addModal').find('#totalSixtySeventy').val(0);
+            $('#addModal').find('#bitumenIncoming').val(0);
             // $('#addModal').find('#totalTemp').val(0);
             $('#addModal').find('#totalLevel').val(0);
             $('#lfoTable').html('');
             $('#addModal').find('#lfoLastMeterReading').val(0);
             $('#addModal').find('#totalLfo').val(0);
+            $('#addModal').find('#lfoIncoming').val(0);
             $('#dieselTable').html('');
             $('#addModal').find('#previousDieselReading').val(0.00);
             $('#addModal').find('#dieselSupplierTransport').val('').trigger('change');
@@ -1140,6 +1142,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#addModal').find('#dieselWeightHotoil').val(0.00).trigger('change');
             $('#addModal').find('#dieselWeightBurner').val(0.00).trigger('change');
             $('#addModal').find('#totalDiesel').val(0);
+            $('#addModal').find('#dieselIncoming').val(0);
             $('#addModal').find('#dieselLastMeterReading').val(0);
             $('#addModal').find('#otherDieselTable').html('');
             $('#addModal').find('#otherDieselTotalTransportUsage').val(0);
@@ -1340,17 +1343,23 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         $('#datetime').on('change', function(){
             var declarationDate = $(this).val();
             var plantId = $('#plant').val();
+            var plantCode = $('#plantCode').val();
             var batchDrum = $('#batchDrum').val();
 
             if (plantId && batchDrum){
                 // Get Previous Stock Take
                 getPrevStockTake(plantId, batchDrum, declarationDate);
+
+                if (plantCode){
+                    getPo(plantCode, batchDrum, declarationDate);
+                }
             }
         });
 
         $('#batchDrum').on('change', function(){
             var declarationDate = $('#datetime').val();
             var plantId = $('#plant').val();
+            var plantCode = $('#plantCode').val();
             var batchDrum = $(this).val();
 
             if (plantId && batchDrum){
@@ -1359,6 +1368,10 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
                 // Get Previous Stock Take
                 getPrevStockTake(plantId, batchDrum, declarationDate);
+
+                if (plantCode){
+                    getPo(plantCode, batchDrum, declarationDate);
+                }
             }
         });
 
@@ -2245,6 +2258,33 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 var obj = JSON.parse(data);
                 if(obj.status === 'success'){
                     $('#addModal').find('#previousDieselReading').val(obj.message.previous_diesel || '0.00');
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                $('#spinnerLoading').hide();
+            });
+        }
+    }
+
+    function getPo(plantCode, batchDrum, declarationDate){
+        if (declarationDate && plantCode && batchDrum){
+            // load previous diesel reading
+            $('#spinnerLoading').show();
+            $.post('php/getPurchaseOrder.php', {type: 'StockTake', declarationDate: declarationDate, userID: plantCode, batchDrum: batchDrum}, function(data)
+            {
+                var obj = JSON.parse(data);
+                if(obj.status === 'success'){
+                    $('#addModal').find('#bitumenIncoming').val(obj.message.bitumenIncoming || 0);
+                    $('#addModal').find('#dieselIncoming').val(obj.message.dieselIncoming || 0);
+                    $('#addModal').find('#lfoIncoming').val(obj.message.lfoIncoming || 0);
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
