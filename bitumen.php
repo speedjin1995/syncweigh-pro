@@ -1137,6 +1137,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#addModal').find('#totalDiesel').val(0);
             $('#addModal').find('#dieselLastMeterReading').val(0);
             $('#addModal').find('#otherDieselTable').html('');
+            $('#addModal').find('#otherDieselTotalTransportUsage').val(0);
             $('#hotoilTable').html('');
             $('#addModal').find('#totalHotoil').val(0);
             $('#pg76Table').html('');
