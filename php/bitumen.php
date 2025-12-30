@@ -258,11 +258,19 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
 }
 
 # Processing for Other Diesel Table data
+if (empty($_POST["otherDieselTotalTransportUsage"])) {
+    $otherDieselTotalTransportUsage = null;
+} else {
+    $otherDieselTotalTransportUsage = trim($_POST["otherDieselTotalTransportUsage"]);
+}
+
 if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
     $otherDieselData = [];
     $no = $_POST["otherDieselNo"];
     $otherDieselType = $_POST["otherDieselType"];
     $otherDieselVehicleNo = $_POST["otherDieselVehicleNo"];
+    $otherDieselFirstReading = $_POST["otherDieselFirstReading"];
+    $otherDieselSecondReading = $_POST["otherDieselSecondReading"];
     $otherDieselUsage = $_POST["otherDieselUsage"];
 
     foreach ($no as $key => $value) {
@@ -270,10 +278,13 @@ if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
             "no" => $no[$key],
             "otherDieselType" => $otherDieselType[$key],
             "otherDieselVehicleNo" => $otherDieselVehicleNo[$key],
+            "otherDieselFirstReading" => $otherDieselFirstReading[$key],
+            "otherDieselSecondReading" => $otherDieselSecondReading[$key],
             "otherDieselUsage" => $otherDieselUsage[$key]
         );
     }
 
+    $otherDieselData['otherDieselTotalTransportUsage'] = $otherDieselTotalTransportUsage;
     $otherDieselData = json_encode($otherDieselData, JSON_PRETTY_PRINT);
 } else {
     $otherDieselData = NULL;

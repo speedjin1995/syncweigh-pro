@@ -425,7 +425,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Hotoil/Burner/Transport</h5>
+                                                    <h5 class="card-title mb-0">Transport</h5>
                                                     <button type="button" class="btn btn-danger add-other-diesel" id="addOtherDiesel">Add</button>
                                                 </div>
                                             </div>
@@ -436,11 +436,19 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                             <th width="10%">No</th>
                                                             <th>Type</th>
                                                             <th>Vehicle No</th>
+                                                            <th>1st Reading</th>
+                                                            <th>2nd Reading</th>
                                                             <th>Usage</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="otherDieselTable"></tbody>
+                                                    <tfoot>
+                                                        <th colspan="4"></th>
+                                                        <th>Total Transport Usage</th>
+                                                        <th><input type="number" class="form-control" id="otherDieselTotalTransportUsage" name="otherDieselTotalTransportUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                        <th></th>
+                                                    </tfoot>
                                                 </table>
                                             </div>
                                         </div>
@@ -788,15 +796,21 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             <td>
                 <select class="form-select" id="otherDieselType" name="otherDieselType">
                     <option value="Transport">Transport</option>
-                    <option value="Hotoil">Hotoil</option>
-                    <option value="Burner">Burner</option>
+                    <!-- <option value="Hotoil">Hotoil</option>
+                    <option value="Burner">Burner</option> -->
                 </select>
             </td>
             <td>
                 <input type="text" class="form-control" id="otherDieselVehicleNo" name="otherDieselVehicleNo" style="background-color:white;" required>
             </td>
             <td>
-                <input type="number" class="form-control" id="otherDieselUsage" name="otherDieselUsage" style="background-color:white;" value="0.00" required>
+                <input type="number" class="form-control" id="otherDieselFirstReading" name="otherDieselFirstReading" style="background-color:white;" value="0.00" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="otherDieselSecondReading" name="otherDieselSecondReading" style="background-color:white;" value="0.00" required>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="otherDieselUsage" name="otherDieselUsage" style="background-color:white;" value="0.00" required readonly>
             </td>
             <td class="d-flex justify-content-center">
                 <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
@@ -1685,14 +1699,14 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         });
 
         // Event delegation for level
-        $("#dieselTable").on('change', 'input[id^="dieselWeight"]', function(){
+        $("#dieselTable").on('change', 'input[id^="dieselVolume"]', function(){
             $('#addModal').find("#totalDiesel").trigger('change');
         });
 
         // Calculate Total MT on totalDiesel change
         $("#addModal").find('#totalDiesel').on('change', function(){
             var totalWeight = 0.00;
-            $('#dieselTable').find('input[id^="dieselWeight"]').each(function(){
+            $('#dieselTable').find('input[id^="dieselVolume"]').each(function(){
                 var weight = parseFloat($(this).val()) || 0;
                 totalWeight += weight;
             });
@@ -1758,7 +1772,15 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             // dieselCount++;
         });
 
+        $('#addModal').find('#previousDieselReading').on('change', function(){
+            $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
+        });
+
+        $('#addModal').find('#totalDiesel').on('change', function(){
+            $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
+        });
         /* Diesel Table End */
+
 
         /* Other Diesel Table Start */
 
@@ -1773,7 +1795,6 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             otherDieselCount--;
         });
 
-        
         // Event delegation for otherDieselType
         $("#otherDieselTable").on('change', 'select[id^="otherDieselType"]', function(){
             var row = $(this).closest('tr');
@@ -1784,6 +1805,29 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             }else{
                 row.find('input[id^="otherDieselVehicleNo"]').prop('readonly', true).prop('required', false);
             }
+        });
+
+        // Event delegation for otherDieselFirstReading
+        $("#otherDieselTable").on('change', 'input[id^="otherDieselFirstReading"]', function(){
+            var row = $(this).closest('tr');
+            row.find('input[id^="otherDieselUsage"]').trigger('change');
+        });
+
+        // Event delegation for otherDieselSecondReading
+        $("#otherDieselTable").on('change', 'input[id^="otherDieselSecondReading"]', function(){
+            var row = $(this).closest('tr');
+            row.find('input[id^="otherDieselUsage"]').trigger('change');
+        });
+
+        // Event delegation for otherDieselUsage
+        $("#otherDieselTable").on('change', 'input[id^="otherDieselUsage"]', function(){
+            var row = $(this).closest('tr');
+            var firstReading = parseFloat(row.find('input[id^="otherDieselFirstReading"]').val()) || 0;
+            var secondReading = parseFloat(row.find('input[id^="otherDieselSecondReading"]').val()) || 0;
+            var usage = firstReading - secondReading;
+
+            $(this).val(usage.toFixed(2));
+            $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
         });
 
         $('#addOtherDiesel').click(function(){
@@ -1797,9 +1841,27 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#otherDieselTable").find('#otherDieselNo:last').attr('name', 'otherDieselNo['+otherDieselCount+']').attr("id", "otherDieselNo" + otherDieselCount).css("text-align", "center").val(otherDieselCount + 1);
             $("#otherDieselTable").find('#otherDieselType:last').attr('name', 'otherDieselType['+otherDieselCount+']').attr("id", "otherDieselType" + otherDieselCount);
             $("#otherDieselTable").find('#otherDieselVehicleNo:last').attr('name', 'otherDieselVehicleNo['+otherDieselCount+']').attr("id", "otherDieselVehicleNo" + otherDieselCount).css("text-align", "center");
+            $("#otherDieselTable").find('#otherDieselFirstReading:last').attr('name', 'otherDieselFirstReading['+otherDieselCount+']').attr("id", "otherDieselFirstReading" + otherDieselCount).css("text-align", "center");
+            $("#otherDieselTable").find('#otherDieselSecondReading:last').attr('name', 'otherDieselSecondReading['+otherDieselCount+']').attr("id", "otherDieselSecondReading" + otherDieselCount).css("text-align", "center");
             $("#otherDieselTable").find('#otherDieselUsage:last').attr('name', 'otherDieselUsage['+otherDieselCount+']').attr("id", "otherDieselUsage" + otherDieselCount).css("text-align", "center");
 
             otherDieselCount++;
+        });
+
+        $('#addModal').find('#otherDieselTotalTransportUsage').on('change', function(){
+            var previousReading = parseFloat($('#addModal').find('#previousDieselReading').val()) || 0;
+            var totalDiesel = parseFloat($('#addModal').find('#totalDiesel').val()) || 0;
+            var totalUsage = 0.00;
+            var totalTransportUsage = 0.00;
+
+            // Sum up all transport usage from otherDieselTable
+            $('#otherDieselTable').find('input[id^="otherDieselUsage"]').each(function(){
+                var usage = parseFloat($(this).val()) || 0;
+                totalUsage += usage;
+            });
+
+            var totalTransportUsage = totalDiesel - previousReading - totalUsage;
+            $(this).val(totalTransportUsage.toFixed(2));
         });
 
         /* Other Diesel Table End */
@@ -2417,11 +2479,15 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         $("#otherDieselTable").find('#otherDieselNo:last').attr('name', 'otherDieselNo['+otherDieselCount+']').attr("id", "otherDieselNo" + otherDieselCount).css("text-align", "center").val(otherDieselCount + 1);
                         $("#otherDieselTable").find('#otherDieselType:last').attr('name', 'otherDieselType['+otherDieselCount+']').attr("id", "otherDieselType" + otherDieselCount).val(item.otherDieselType);
                         $("#otherDieselTable").find('#otherDieselVehicleNo:last').attr('name', 'otherDieselVehicleNo['+otherDieselCount+']').attr("id", "otherDieselVehicleNo" + otherDieselCount).css("text-align", "center").val(item.otherDieselVehicleNo);
+                        $("#otherDieselTable").find('#otherDieselFirstReading:last').attr('name', 'otherDieselFirstReading['+otherDieselCount+']').attr("id", "otherDieselFirstReading" + otherDieselCount).css("text-align", "center").val(item.otherDieselFirstReading);
+                        $("#otherDieselTable").find('#otherDieselSecondReading:last').attr('name', 'otherDieselSecondReading['+otherDieselCount+']').attr("id", "otherDieselSecondReading" + otherDieselCount).css("text-align", "center").val(item.otherDieselSecondReading);
                         $("#otherDieselTable").find('#otherDieselUsage:last').attr('name', 'otherDieselUsage['+otherDieselCount+']').attr("id", "otherDieselUsage" + otherDieselCount).css("text-align", "center").val(item.otherDieselUsage);
 
                         otherDieselCount++;
                     }
                 }
+
+                $('#addModal').find('#otherDieselTotalTransportUsage').val(obj.message.otherDieselTotalTransportUsage);
 
                 // Hotoil Table Processing
                 $('#hotoilTable').html('');
