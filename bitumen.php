@@ -285,7 +285,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </thead>
                                                     <tbody id="bitumenTable"></tbody>
                                                     <tfoot>
-                                                        <th colspan="4"></th>
+                                                        <th colspan="2">Incoming (MT)</th>
+                                                        <th colspan="2"><input type="number" class="form-control" id="bitumenIncoming" name="bitumenIncoming" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <!-- <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
@@ -326,9 +327,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </thead>
                                                     <tbody id="lfoTable"></tbody>
                                                     <tfoot>
-                                                        <th colspan="2">Last Meter Reading</th>
+                                                        <th>Incoming (MT)</th>
+                                                        <th><input type="number" class="form-control" id="lfoIncoming" name="lfoIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                        <th>Last Meter Reading</th>
                                                         <th><input type="number" class="form-control" id="lfoLastMeterReading" name="lfoLastMeterReading" style="background-color:white;text-align: center;" value="0"></th>
-                                                        <th colspan="2">Total</th>
+                                                        <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalLfo" name="totalLfo" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
                                                     </tfoot>
@@ -415,9 +418,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </tr> -->
                                                     <tbody id="dieselTable"></tbody>
                                                     <tfoot>
-                                                        <th colspan="2">Last Meter Reading</th>
+                                                        <th>Incoming (MT)</th>
+                                                        <th><input type="number" class="form-control" id="dieselIncoming" name="dieselIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                        <th>Last Meter Reading</th>
                                                         <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th>
-                                                        <th colspan="2">Total</th>
+                                                        <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalDiesel" name="totalDiesel" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <th></th>
                                                     </tfoot>
@@ -516,7 +521,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </thead>
                                                     <tbody id="pg76Table"></tbody>
                                                     <tfoot>
-                                                        <th colspan="4"></th>
+                                                        <th colspan="2">Incoming (MT)</th>
+                                                        <th colspan="2"><input type="number" class="form-control" id="pg76Incoming" name="pg76Incoming" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalPg76" name="totalPg76" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <!-- <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
@@ -2365,6 +2371,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         bitumenCount++;
                     }
                 }
+                $('#addModal').find('#bitumenIncoming').val(obj.message.bitumenIncoming);
                 $('#addModal').find('#totalSixtySeventy').val(obj.message.totalSixtySeventy);
                 // $('#addModal').find('#totalTemp').val(obj.message.totalTemp);
                 // $('#addModal').find('#totalLevel').val(obj.message.totalLevel);
@@ -2398,6 +2405,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         lfoCount++;
                     }
                 }
+                $('#addModal').find('#lfoIncoming').val(obj.message.lfoIncoming);
                 $('#addModal').find('#totalLfo').val(obj.message.totalLfo);
                 $('#addModal').find('#lfoLastMeterReading').val(obj.message.lfoLastMeterReading);
 
@@ -2460,6 +2468,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         dieselCount++;
                     }
                 }
+                $('#addModal').find('#dieselIncoming').val(obj.message.dieselIncoming);
                 $('#addModal').find('#previousDieselReading').val(obj.message.previousDieselReading);
                 $('#addModal').find('#dieselLastMeterReading').val(obj.message.dieselLastMeterReading);
                 $('#addModal').find('#totalDiesel').val(obj.message.totalDiesel);
@@ -2542,6 +2551,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     }
                 }
                 $('#addModal').find('#totalPg76').val(obj.message.totalPg76);
+                $('#addModal').find('#pg76Incoming').val(obj.message.pg76Incoming);
 
                 // Fibre Table Processing
                 $('#addModal').find('#fibreNameMr6').val(obj.message.fibreNameMr6);

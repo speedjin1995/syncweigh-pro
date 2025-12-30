@@ -51,6 +51,7 @@ if(isset($_POST['userID'])){
                     }
                 }
                 $message['sixtysevn'] = $sixtySeventyRows;
+                $message['bitumenIncoming'] = $sixtySeventyTemp["bitumenIncoming"] ?? 0;
                 $message['totalSixtySeventy'] = $sixtySeventyTemp["totalSixtySeventy"] ?? 0;
                 $message['totalTemp'] = $sixtySeventyTemp["totalTemperature"] ?? 0;
                 $message['totalLevel'] = $sixtySeventyTemp["totalLevel"] ?? 0;
@@ -84,6 +85,7 @@ if(isset($_POST['userID'])){
                     }
                 }
                 $message['lfo'] = $lfoRows;
+                $message['lfoIncoming'] = $lfoTemp["lfoIncoming"] ?? 0;
                 $message['totalLfo'] = $lfoTemp["totalLfo"] ?? 0;
                 $message['lfoLastMeterReading'] = $lfoTemp["lfoLastMeterReading"] ?? 0;
                 ########################################################################################
@@ -125,6 +127,7 @@ if(isset($_POST['userID'])){
                     }
                 }
                 $message['diesel'] = $dieselRows;
+                $message['dieselIncoming'] = $dieselTemp["dieselIncoming"] ?? 0;
                 $message['previousDieselReading'] = $dieselTemp["previousDieselReading"] ?? 0;
                 $message['totalDiesel'] = $dieselTemp["totalDiesel"] ?? 0;
                 $message['dieselLastMeterReading'] = $dieselTemp["dieselLastMeterReading"] ?? 0;
@@ -186,6 +189,7 @@ if(isset($_POST['userID'])){
                     }
                 } 
                 $message['pg76'] = $pg76Rows;
+                $message['pg76Incoming'] = $pg76Temp["pg76Incoming"] ?? 0;
                 $message['totalPg76'] = $pg76Temp["totalPg76"] ?? 0;
                 ########################################################################################
 

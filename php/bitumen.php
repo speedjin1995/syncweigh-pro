@@ -44,6 +44,18 @@ if (empty($_POST["datetime"])) {
 }
 
 # Processing for 60/70 data
+if (empty($_POST["totalSixtySeventy"])) {
+    $totalSixtySeventy = null;
+} else {
+    $totalSixtySeventy = trim($_POST["totalSixtySeventy"]);
+}
+
+if (empty($_POST["bitumenIncoming"])) {
+    $bitumenIncoming = null;
+} else {
+    $bitumenIncoming = trim($_POST["bitumenIncoming"]);
+}
+
 if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
     $sixtySeventyData = [];
     $no = $_POST["no"];
@@ -68,15 +80,38 @@ if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
         );
     }
 
-    $sixtySeventyData['totalSixtySeventy'] = $_POST["totalSixtySeventy"];
+    $sixtySeventyData['bitumenIncoming'] = $bitumenIncoming;
+    $sixtySeventyData['totalSixtySeventy'] = $totalSixtySeventy;
     // $sixtySeventyData['totalTemperature'] = $_POST["totalTemp"];
     // $sixtySeventyData['totalLevel'] = $_POST["totalLevel"];
     $sixtySeventyData = json_encode($sixtySeventyData, JSON_PRETTY_PRINT);
 } else {
-    $sixtySeventyData = NULL;
+    $sixtySeventyData = [];
+
+    $sixtySeventyData['bitumenIncoming'] = $bitumenIncoming;
+    $sixtySeventyData['totalSixtySeventy'] = $totalSixtySeventy;
+    $sixtySeventyData = json_encode($sixtySeventyData, JSON_PRETTY_PRINT);
 }
 
 # Processing for lfo data
+if (empty($_POST["lfoIncoming"])) {
+    $lfoIncoming = null;
+} else {
+    $lfoIncoming = trim($_POST["lfoIncoming"]);
+}
+
+if (empty($_POST["lfoLastMeterReading"])) {
+    $lfoLastMeterReading = null;
+} else {
+    $lfoLastMeterReading = trim($_POST["lfoLastMeterReading"]);
+}
+
+if (empty($_POST["totalLfo"])) {
+    $totalLfo = null;
+} else {
+    $totalLfo = trim($_POST["totalLfo"]);
+}
+
 if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     $lfoData = [];
     $lfoNo = $_POST["lfoNo"];
@@ -101,15 +136,16 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
         );
     }
 
-    $lfoData['lfoLastMeterReading'] = $_POST["lfoLastMeterReading"];
-    $lfoData['totalLfo'] = $_POST["totalLfo"];
+    $lfoData['lfoIncoming'] = $lfoIncoming;
+    $lfoData['lfoLastMeterReading'] = $lfoLastMeterReading;
+    $lfoData['totalLfo'] = $totalLfo;
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 } else {
     $lfoData = [];
-    $lfoData = NULL;
 
-    $lfoData['lfoLastMeterReading'] = $_POST["lfoLastMeterReading"];
-    $lfoData['totalLfo'] = $_POST["totalLfo"];
+    $lfoData['lfoIncoming'] = $lfoIncoming;
+    $lfoData['lfoLastMeterReading'] = $lfoLastMeterReading;
+    $lfoData['totalLfo'] = $totalLfo;
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 }
 
@@ -167,6 +203,12 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
 // } else {
 //     $dieselWeightBurner = trim($_POST["dieselWeightBurner"]);
 // }
+
+if (empty($_POST["dieselIncoming"])) {
+    $dieselIncoming = null;
+} else {
+    $dieselIncoming = trim($_POST["dieselIncoming"]);
+}
 
 if (empty($_POST["previousDieselReading"])) {
     $previousDieselReading = null;
@@ -230,6 +272,7 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
         );
     }
 
+    $dieselData['dieselIncoming'] = $dieselIncoming;
     $dieselData['previousDieselReading'] = $previousDieselReading;
     $dieselData['dieselLastMeterReading'] = $dieselLastMeterReading;
     $dieselData['totalDiesel'] = $totalDiesel;
@@ -252,8 +295,10 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     //     "dieselWeightBurner" => $dieselWeightBurner,
     // );
 
-    $dieselData['totalDiesel'] = $_POST["totalDiesel"];
-    $dieselData['dieselLastMeterReading'] = $_POST["dieselLastMeterReading"];
+    $dieselData['dieselIncoming'] = $dieselIncoming;
+    $dieselData['previousDieselReading'] = $previousDieselReading;
+    $dieselData['dieselLastMeterReading'] = $dieselLastMeterReading;
+    $dieselData['totalDiesel'] = $totalDiesel;
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 }
 
@@ -310,6 +355,18 @@ if (!empty($_POST["hotoilNo"]) && count($_POST["hotoilNo"]) > 0) {
 }
 
 # Processing for pg76No data
+if (empty($_POST["totalPg76"])) {
+    $totalPg76 = null;
+} else {
+    $totalPg76 = trim($_POST["totalPg76"]);
+}
+
+if (empty($_POST["pg76Incoming"])) {
+    $pg76Incoming = null;
+} else {
+    $pg76Incoming = trim($_POST["pg76Incoming"]);
+}
+
 if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
     $pg76Data = [];
     $pg76No = $_POST["pg76No"];
@@ -334,10 +391,16 @@ if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
         );
     }
 
-    $pg76Data['totalPg76'] = $_POST["totalPg76"];
+    $pg76Data['pg76Incoming'] = $pg76Incoming;
+    $pg76Data['totalPg76'] = $totalPg76;
     $pg76Data = json_encode($pg76Data, JSON_PRETTY_PRINT);
 } else {
-    $pg76Data = NULL;
+    $pg76Data = [];
+    
+    $pg76Data['pg76Incoming'] = $pg76Incoming;
+    $pg76Data['totalPg76'] = $totalPg76;
+    $pg76Data = json_encode($pg76Data, JSON_PRETTY_PRINT);
+
 }
 
 
