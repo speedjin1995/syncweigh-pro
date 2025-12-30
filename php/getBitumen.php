@@ -125,6 +125,7 @@ if(isset($_POST['userID'])){
                     }
                 }
                 $message['diesel'] = $dieselRows;
+                $message['previousDieselReading'] = $dieselTemp["previousDieselReading"] ?? 0;
                 $message['totalDiesel'] = $dieselTemp["totalDiesel"] ?? 0;
                 $message['dieselLastMeterReading'] = $dieselTemp["dieselLastMeterReading"] ?? 0;
                 ########################################################################################
