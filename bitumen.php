@@ -327,7 +327,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </thead>
                                                     <tbody id="lfoTable"></tbody>
                                                     <tfoot>
-                                                        <th>Incoming (MT)</th>
+                                                        <th>Incoming (&#76;)</th>
                                                         <th><input type="number" class="form-control" id="lfoIncoming" name="lfoIncoming" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Last Meter Reading</th>
                                                         <th><input type="number" class="form-control" id="lfoLastMeterReading" name="lfoLastMeterReading" style="background-color:white;text-align: center;" value="0"></th>
@@ -418,7 +418,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </tr> -->
                                                     <tbody id="dieselTable"></tbody>
                                                     <tfoot>
-                                                        <th>Incoming (MT)</th>
+                                                        <th>Incoming (&#76;)</th>
                                                         <th><input type="number" class="form-control" id="dieselIncoming" name="dieselIncoming" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Last Meter Reading</th>
                                                         <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th>
