@@ -728,6 +728,20 @@ if(!empty($bitumenId)){
 }
 else
 { 
+    // Check if existing decalaration for the same date, plant, and batch/drum exists
+    $check_stmt = $db->prepare("SELECT id FROM Bitumen WHERE DATE(declaration_datetime) = DATE(?) AND plant_id = ? AND batch_drum = ?");
+    $check_stmt->bind_param('sss', $declarationDatetime, $plant, $batchDrum);
+    $check_stmt->execute();
+    $check_stmt->store_result();
+    
+    if ($check_stmt->num_rows > 0) {
+        $check_stmt->close();
+        $db->close();
+        echo json_encode(array("status" => "failed", "message" => "Declaration already exists for this date, plant, and batch/drum"));
+        exit;
+    }
+    $check_stmt->close();
+
     if ($insert_stmt = $db->prepare("INSERT INTO Bitumen (`60/70`, `pg76`, `lfo`, `diesel`, `other_diesel`, `hotoil`, `fibre`, `data`, `declaration_datetime`, `plant_id`, `plant_code`, `batch_drum`, `created_by`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
         $insert_stmt->bind_param('sssssssssssss', $sixtySeventyData, $pg76Data, $lfoData, $dieselData, $otherDieselData, $hotoilData, $fibreData, $data, $declarationDatetime, $plant, $plantCode, $batchDrum, $username);
 

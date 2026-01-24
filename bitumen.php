@@ -1247,6 +1247,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     }
                     else if(obj.status === 'failed'){
                         $('#spinnerLoading').hide();
+                        alert(obj.message);
                         $("#failBtn").attr('data-toast-text', obj.message );
                         $("#failBtn").click();
                     }
