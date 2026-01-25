@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <head>
         
-        <title>Sign In | PWS - Weighing System</title>
+        <title>Sign In | Synctronix - Weighing System</title>
         <?php include 'layouts/title-meta.php'; ?>
 
         <?php include 'layouts/head-css.php'; ?>

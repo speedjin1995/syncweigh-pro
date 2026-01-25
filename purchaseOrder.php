@@ -26,7 +26,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
 <head>
 
-    <title>Purchase Order | PWS - Weighing System</title>
+    <title>Purchase Order | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

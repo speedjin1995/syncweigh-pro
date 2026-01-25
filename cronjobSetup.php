@@ -16,7 +16,7 @@ else{
 
 <head>
 
-    <title>Cronjob | PWS - Weighing System</title>
+    <title>Cronjob | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

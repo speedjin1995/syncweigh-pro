@@ -16,7 +16,7 @@ else{
 
 <head>
 
-    <title>Inventory | PWS - Weighing System</title>
+    <title>Inventory | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

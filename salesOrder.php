@@ -27,7 +27,7 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
 
 <head>
 
-    <title>Sales Order | PWS - Weighing System</title>
+    <title>Sales Order | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

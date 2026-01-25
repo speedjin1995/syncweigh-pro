@@ -44,7 +44,7 @@ else{
 
 <head>
 
-    <title>Public Reports | PWS - Weighing System</title>
+    <title>Public Reports | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

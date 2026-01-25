@@ -9,7 +9,7 @@
 ?>
 
 <head>
-    <title>Vehicles | PWS - Weighing System</title>
+    <title>Vehicles | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

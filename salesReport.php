@@ -43,7 +43,7 @@ else{
 
 <head>
 
-    <title>Sales Reports | PWS - Weighing System</title>
+    <title>Sales Reports | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

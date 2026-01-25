@@ -29,7 +29,7 @@ else{
 ?>
 
 <head>
-    <title>Stock Take Log | PWS - Weighing System</title>
+    <title>Stock Take Log | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->

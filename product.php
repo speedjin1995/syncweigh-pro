@@ -10,7 +10,7 @@
 ?>
 
 <head>
-    <title>Products | PWS - Weighing System</title>
+    <title>Products | Synctronix - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
 
     <!-- jsvectormap css -->
