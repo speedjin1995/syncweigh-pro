@@ -1050,7 +1050,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     render: function ( data, type, row ) {
                         return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                         '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pen align-bottom me-2 text-muted"></i> Edit</a></li></ul></div>';
+                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                        '<li><a class="dropdown-item" onclick="printDeclaration('+data+')"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
                     }
                 }
             ] 
@@ -1103,7 +1104,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         render: function ( data, type, row ) {
                             return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                             '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pen align-bottom me-2 text-muted"></i> Edit</a></li></ul></div>';
+                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit</a></li>' +
+                            '<li><a class="dropdown-item" onclick="printDeclaration('+data+')"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
                         }
                     }
                 ] 
@@ -2725,26 +2727,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         });
     }
 
-    function print(id) {
-        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
-            var obj = JSON.parse(data);
-
-            if(obj.status === 'success'){
-                var printWindow = window.open('', '', 'height=400,width=800');
-                printWindow.document.write(obj.message);
-                printWindow.document.close();
-                setTimeout(function(){
-                    printWindow.print();
-                    printWindow.close();
-                }, 500);
-            }
-            else if(obj.status === 'failed'){
-                toastr["error"](obj.message, "Failed:");
-            }
-            else{
-                toastr["error"]("Something wrong when activate", "Failed:");
-            }
-        });
+    function printDeclaration(id) {
+        window.open('php/printStockDeclaration.php?id=' + id, '_blank');
     }
     </script>
 </body>
