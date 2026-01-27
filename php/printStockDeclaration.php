@@ -20,6 +20,8 @@ if(isset($_GET['id'])){
             $stmt->execute();
             $result = $stmt->get_result();
             if($row = $result->fetch_assoc()){
+                $rawMats = $db->query("SELECT * FROM Product_RawMat JOIN Raw_Mat ON Product_RawMat.raw_mat_id = Raw_Mat.id WHERE product_id = 27 AND Product_RawMat.plant_id = " . $row['plant_id'] . " AND Product_RawMat.batch_drum = '" . $row['batch_drum'] . "' AND Product_RawMat.status = 0 ORDER BY Product_RawMat.id ASC");
+
                 $html = '
                     <html>
                         <head>
@@ -41,12 +43,13 @@ if(isset($_GET['id'])){
                                 .subheader { font-weight: bold; font-size: 14px; }
                                 .left { text-align: left; }
                                 .right { text-align: right; }
+                                td.border-up-down { border-top: 1px solid black !important; border-bottom: 1px solid black !important; border-left: none; border-right: none; }
                             </style>
                         </head>
                         <body>
                             <table>
                                 <tr>
-                                    <td rowspan="2" style="width: 15%; text-align: center; font-weight: bold;">Logo</td>
+                                    <td rowspan="2" style="width: 15%; text-align: center; font-weight: bold;"><img src="path/to/logo.png" alt="Logo" style="max-width: 100%; height: auto;"></td>
                                     <td colspan="6" style="width: 45%; text-align: center; font-weight: bold;">
                                         <div class="title">EAST ROCK MARKETING SDN BHD</div>
                                         <div style="font-weight: normal;">(130037-H)</div>
@@ -89,31 +92,42 @@ if(isset($_GET['id'])){
                                     <th>(litre)</th>
                                     <th></th>
                                     <th></th>
-                                </tr>
-                                <tr><td>10 mm</td><td></td><td>5.10%</td><td>-</td><td></td><td></td><td></td><td></td><td>-</td><td>-</td><td></td><td></td></tr>
-                                <tr><td>20 mm</td><td></td><td>4.30%</td><td>-</td><td></td><td></td><td></td><td></td><td>-</td><td>-</td><td></td><td></td></tr>
-                                <tr><td>3/8 WC</td><td></td><td>5.20%</td><td>-</td><td></td><td></td><td></td><td></td><td>-</td><td>-</td><td></td><td></td></tr>
-                                <tr><td>AC 10</td><td></td><td>5.10%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>AC 14</td><td></td><td>4.90%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>AC 28</td><td></td><td>4.10%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>SMA20</td><td></td><td>5.30%</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACB 20</td><td></td><td>4.00%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACB 28</td><td></td><td>4.00%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACW 14</td><td></td><td>5.10%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACW 20</td><td></td><td>4.90%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>Dust Mix</td><td></td><td>6.50%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td><b>Subtotal</b></td><td></td><td></td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td><b>Incoming</b></td><td></td><td></td><td></td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr class="no-border"><td class="left"><b>Ordered Bitumen</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td></tr>
-                                <tr class="no-border"><td class="left"><b>Opening Stock</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td></tr>
-                                <tr class="no-border"><td class="left"><b>Targeted Usage</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td></tr>
-                                <tr class="no-border"><td></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td></tr>
+                                </tr>';
+
+                                $rowNum = 10;
+                                foreach ($rawMats as $rawMat){
+                                    $html .= '
+                                        <tr>
+                                            <td>'.htmlspecialchars($rawMat['name']).'</td>
+                                            <td></td>
+                                            <td>'.number_format($rawMat['raw_mat_basic_uom']*100, 2).'%</td>
+                                            <td>=B'.$rowNum.'*C'.$rowNum.'</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    ';
+                                    $rowNum++;
+                                }
+
+                                $html .= '
+                                <tr><td><b>Subtotal</b></td><td>=SUM(B10:B'.($rowNum-1).')</td><td></td><td>=SUM(D10:D'.($rowNum-1).')</td><td>=SUM(E10:E'.($rowNum-1).')</td><td>=SUM(F10:F'.($rowNum-1).')</td><td>=SUM(G10:G'.($rowNum-1).')</td><td>=SUM(H10:H'.($rowNum-1).')</td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td><b>Incoming</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="no-border"><td class="left"><b>Ordered Bitumen</b></td><td></td><td></td><td>=D'.($rowNum+1).'</td><td>=E'.($rowNum+1).'</td><td>=F'.($rowNum+1).'</td><td>=G'.($rowNum+1).'</td><td>=H'.($rowNum+1).'</td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="no-border"><td class="left"><b>Opening Stock</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="no-border"><td class="left"><b>Targeted Usage</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr class="no-border"><td></td><td></td><td></td><td class="border-up-down">=SUM(D'.($rowNum+2).'+D'.($rowNum+3).'-D'.($rowNum+4).')</td><td class="border-up-down">=SUM(E'.($rowNum+2).'+E'.($rowNum+3).'-E'.($rowNum+4).')</td><td class="border-up-down">=SUM(F'.($rowNum+2).'+F'.($rowNum+3).'-F'.($rowNum+4).')</td><td class="border-up-down">=SUM(G'.($rowNum+2).'+G'.($rowNum+3).'-G'.($rowNum+4).')</td><td class="border-up-down">=SUM(H'.($rowNum+2).'+H'.($rowNum+3).'-H'.($rowNum+4).')</td><td></td><td></td><td></td><td></td></tr>
                                 <tr>
                                 </tr>
                                 <tr class="no-border">
-                                    <td colspan="8"></td>
+                                    <td colspan="9"></td>
                                     <td class="right"><b>Date :</b></td>
-                                    <td colspan="3"></td>
+                                    <td colspan="2"></td>
                                 </tr>
                                 <tr>
                                     <th>Actual</th>
@@ -136,19 +150,30 @@ if(isset($_GET['id'])){
                                     <th>(litre)</th>
                                     <th></th>
                                     <th></th>
-                                </tr>
-                                <tr><td>10 mm</td><td></td><td>5.10%</td><td>-</td><td></td><td></td><td></td><td></td><td>-</td><td>-</td><td></td><td></td></tr>
-                                <tr><td>20 mm</td><td></td><td>4.30%</td><td>-</td><td></td><td></td><td></td><td></td><td>-</td><td>-</td><td></td><td></td></tr>
-                                <tr><td>3/8 WC</td><td></td><td>5.20%</td><td>-</td><td></td><td></td><td></td><td></td><td>-</td><td>-</td><td></td><td></td></tr>
-                                <tr><td>AC 10</td><td></td><td>5.10%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>AC 14</td><td></td><td>4.90%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>AC 28</td><td></td><td>4.10%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>SMA20</td><td></td><td>5.30%</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACB 20</td><td></td><td>4.00%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACB 28</td><td></td><td>4.00%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACW 14</td><td></td><td>5.10%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>ACW 20</td><td></td><td>4.90%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td>Dust Mix</td><td></td><td>6.50%</td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                </tr>';
+
+                                $rowNum = $rowNum+10;
+                                foreach ($rawMats as $rawMat){
+                                    $html .= '
+                                        <tr>
+                                            <td>'.htmlspecialchars($rawMat['name']).'</td>
+                                            <td></td>
+                                            <td>'.number_format($rawMat['raw_mat_basic_uom']*100, 2).'%</td>
+                                            <td>=B'.$rowNum.'*C'.$rowNum.'</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    ';
+                                    $rowNum++;
+                                }
+
+                                $html .= '
                                 <tr><td><b>Subtotal</b></td><td></td><td></td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr><td><b>Incoming</b></td><td></td><td></td><td></td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr><td class="left"><b>Opening Stock</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td></tr>
