@@ -153,6 +153,7 @@ if(isset($_GET['id'])){
                                 </tr>';
 
                                 $rowNum = $rowNum+10;
+                                $subtotalRowStart = $rowNum;
                                 foreach ($rawMats as $rawMat){
                                     $html .= '
                                         <tr>
@@ -174,14 +175,14 @@ if(isset($_GET['id'])){
                                 }
 
                                 $html .= '
-                                <tr><td><b>Subtotal</b></td><td></td><td></td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td><b>Incoming</b></td><td></td><td></td><td></td><td>-</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Opening Stock</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Supplied Bitumen</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td class="left"><b>LFO Usage</b></td><td>#DIV/0!</td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Targeted Bitumen Usage</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td class="left"><b>Diesel Usage</b></td><td>0.00</td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Targeted Closing Stock</b></td><td></td><td></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td><b>Subtotal</b></td><td>=SUM(B'.$subtotalRowStart.':B'.($rowNum-1).')</td><td></td><td>=SUM(D'.$subtotalRowStart.':D'.($rowNum-1).')</td><td>=SUM(E'.$subtotalRowStart.':E'.($rowNum-1).')</td><td>=SUM(F'.$subtotalRowStart.':F'.($rowNum-1).')</td><td>=SUM(G'.$subtotalRowStart.':G'.($rowNum-1).')</td><td>=SUM(H'.$subtotalRowStart.':H'.($rowNum-1).')</td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td><b>Incoming</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td class="left"><b>Opening Stock</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td class="left"><b>Supplied Bitumen</b></td><td></td><td></td><td>=D'.($rowNum+1).'</td><td>=E'.($rowNum+1).'</td><td>=F'.($rowNum+1).'</td><td>=G'.($rowNum+1).'</td><td>=H'.($rowNum+1).'</td><td class="left"><b>LFO Usage</b></td><td>=B'.$rowNum.'/I'.$rowNum.'</td><td>Litre / ton</td><td></td></tr>
+                                <tr><td class="left"><b>Targeted Bitumen Usage</b></td><td></td><td></td><td>=D'.($rowNum).'</td><td>=E'.($rowNum).'</td><td>=F'.($rowNum).'</td><td>=G'.($rowNum).'</td><td>=H'.($rowNum).'</td><td class="left"><b>Diesel Usage</b></td><td>=J'.$rowNum.'</td><td>Litre /day</td><td></td></tr>
+                                <tr><td class="left"><b>Targeted Closing Stock</b></td><td></td><td></td><td>=SUM(D'.($rowNum+2).'+D'.($rowNum+3).'-D'.($rowNum+4).')</td><td>=SUM(E'.($rowNum+2).'+E'.($rowNum+3).'-E'.($rowNum+4).')</td><td>=SUM(F'.($rowNum+2).'+F'.($rowNum+3).'-F'.($rowNum+4).')</td><td>=SUM(G'.($rowNum+2).'+G'.($rowNum+3).'-G'.($rowNum+4).')</td><td>=SUM(H'.($rowNum+2).'+H'.($rowNum+3).'-H'.($rowNum+4).')</td><td></td><td></td><td></td><td></td></tr>
                                 <tr><td class="left"><b>Actual Stock (after production)</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Variant :</b></td><td></td><td></td><td>0.00</td><td>0.00</td><td>0.00</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td class="left"><b>Variant :</b></td><td></td><td></td><td>=D'.($rowNum+6).'-D'.($rowNum+5).'</td><td>=E'.($rowNum+6).'-E'.($rowNum+5).'</td><td>=F'.($rowNum+6).'-F'.($rowNum+5).'</td><td>=G'.($rowNum+6).'-G'.($rowNum+5).'</td><td>=H'.($rowNum+6).'-H'.($rowNum+5).'</td><td></td><td></td><td></td><td></td></tr>
                             </table>
 
                             <br>
@@ -198,7 +199,7 @@ if(isset($_GET['id'])){
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="left"><b>Difference of Production :</b></td>
-                                    <td></td>
+                                    <td>=((C'.($rowNum+9).'-C'.($rowNum+10).')/C'.($rowNum+9).')*100</td>
                                     <td b>%</td>
                                 </tr>
                             </table>
