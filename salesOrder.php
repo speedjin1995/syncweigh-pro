@@ -23,6 +23,17 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
+$role = 'NORMAL';
+if ($user != null && $user != ''){
+    $stmt3 = $db->prepare("SELECT * from Users WHERE id = ?");
+    $stmt3->bind_param('s', $user);
+    $stmt3->execute();
+    $result3 = $stmt3->get_result();
+        
+    if(($row3 = $result3->fetch_assoc()) !== null){
+        $role = $row3['role'];
+    }
+}
 ?>
 
 <head>
@@ -694,7 +705,8 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
 
     var table = null;
     let wasErrorModalShown = false;
-
+    var userRole = '<?=$role ?>';
+    
     $(function () {
         const today = new Date();
         const tomorrow = new Date(today);
@@ -1483,8 +1495,16 @@ $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE delete
                 <p><strong>VEHICLE NO:</strong> ${row.veh_number}</p>
                 <p><strong>ORDER QUANTITY:</strong> ${row.converted_order_qty} ${row.converted_unit_label}</p>
                 <p><strong>BALANCE:</strong> ${row.converted_balance} ${row.converted_unit_label}</p>
-                <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
-                <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
+            `;
+
+            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                returnString += `
+                    <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
+                    <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
+                `;
+            }
+
+            returnString += `
             </div>
         </div>`;
 
