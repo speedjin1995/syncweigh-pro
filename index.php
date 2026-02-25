@@ -2425,7 +2425,7 @@ else{
         setInterval(function () {
             $.post('http://127.0.0.1:5002/handshaking', function(data){
                 if(data != "Error"){
-                    console.log("Data Received:" + data);
+                    //console.log("Data Received:" + data);
                     
                     if(ind == 'X2S' || ind == 'X722'){
                         var text = data.split(" ");
@@ -2439,8 +2439,8 @@ else{
                     }
                     else if(ind == 'BX23'){
                         var text = data.split(" ");
-                        let newArray = text.slice(1, -1);
-                        let newtext = newArray.join();
+                        var newArray = text.slice(1, -1);
+                        var newtext = newArray.join();
                         $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
@@ -2449,13 +2449,32 @@ else{
                     }
                     else if(ind == '205'){
                         var text = data.split(" ");
-                        let newArray = text.slice(1, -1);
-                        let newtext = newArray.join();
+                        var newArray = text.slice(1, -1);
+                        var newtext = newArray.join();
                         $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                         $('#indicatorActive').removeClass('d-none').addClass('d-flex');
                         $('#indicatorInactive').addClass('d-none');
+                    }
+                    else if(ind == 'IND246'){
+                        var text = data.replace(/[\x00-\x1F\x7F]/g, '');
+                        var newtext = text.replace(/\s+/g, ' ').trim();
+                    
+                        console.log('CLEAN:', newtext);
+                    
+                        const match = newtext.match(/^\S+\s+(\d+)\s+\d+$/);
+                        console.log("MATCH", match);
+                    
+                        if (match) {
+                            const weight = match[1];
+                    
+                            $('#indicatorWeight').html(weight);
+                            $('#indicatorConnected').addClass('bg-primary');
+                            $('#checkingConnection').removeClass('bg-danger');
+                            $('#indicatorActive').removeClass('d-none').addClass('d-flex');
+                            $('#indicatorInactive').addClass('d-none');
+                        }
                     }
                 }
                 else{

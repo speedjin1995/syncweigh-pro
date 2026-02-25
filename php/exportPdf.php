@@ -536,10 +536,17 @@ if(isset($_POST["file"])){
                                             $product_stmt->bind_param('s', $row['name']);
                                             if ($product_stmt->execute()) {
                                                 $result_product = $product_stmt->get_result();
-                                                $productData = $result_product->fetch_assoc();
-                                                $productCode = $productData['product_code'];
-                                                $productName = $productData['name'];
-                                                $productType = $productData['type'];
+                                                
+                                                if ($productData = $result_product->fetch_assoc()) {
+                                                    $productCode = $productData['product_code'];
+                                                    $productName = $productData['name'];
+                                                    $productType = $productData['type'];
+                                                }
+                                                else{
+                                                    $productCode = '';
+                                                    $productName = '';
+                                                    $productType = '';
+                                                }
                                             }
 
                                             $product_stmt->close();

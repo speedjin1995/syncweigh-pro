@@ -36,7 +36,7 @@ if ($_POST['status'] != null && $_POST['status'] != ''){
     }
 }
 
-if ($_POST['type'] != null && $_POST['type'] != ''){
+if ($_POST['type'] != null && $_POST['type'] != '' && $_POST['type'] != 'Total'){
     $searchQuery .= " AND batch_drum = '".$_POST['type']."' ";
 }
 

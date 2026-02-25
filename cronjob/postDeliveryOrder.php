@@ -138,42 +138,43 @@ if ($stmt2 = $db->prepare($sql)){
             
             // Decode API response (JSON string to array)
             $responseData = json_decode($response, true);
+
+            // Base log (always logged)
+            $responseToLog = [
+                "http_code" => $httpCode,
+                "raw_response" => $response,
+                "decoded_response" => $responseData,
+                "logged_at" => date('Y-m-d H:i:s')
+            ];
             
-            // Prepare loggable response JSON
             if ($httpCode === 200 && isset($responseData["status"]) && $responseData["status"] === "success") {
-                // Loop through each result item
                 foreach ($responseData["results"] as $item) {
                     if (isset($item["status"]) && $item["status"] === "success") {
                         $docref2 = $item["docref2"];
-                        
+            
                         $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
                         $alive = ($db && @$db->ping());
                         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-                        
+            
                         if (!$alive) {
                             if ($db) { @$db->close(); }
                             require 'db_connect.php';
                         }
             
-                        // Update weight table
-                        /*$stmtUpdateWeight = $db->prepare("UPDATE Weight SET synced = 'Y' WHERE transaction_id = ?");
-                        $stmtUpdateWeight->bind_param('s', $docref2);
-                        $stmtUpdateWeight->execute();
-                        $stmtUpdateWeight->close();*/
+                        // Optional DB update here
                     }
                 }
-                
-                $responseToLog = json_encode([
-                    "status" => "success", 
-                    "message" => "Post Successfully",
-                    "posted" => $responseData["results"]
-                ]);
+            
+                // Enrich log for success
+                $responseToLog["status"] = "success";
+                $responseToLog["message"] = "Post Successfully";
+                $responseToLog["posted"] = $responseData["results"];
             } 
             else {
-                $responseToLog = json_encode([
-                    "status" => "failed",
-                    "message" => $responseData["message"] ?? 'Failed to insert',
-                ]);
+            
+                // Enrich log for failure
+                $responseToLog["status"] = "failed";
+                $responseToLog["message"] = $responseData["results"] ?? "Failed to insert";
             }
             
             $oldReportMode = mysqli_report(MYSQLI_REPORT_OFF);
