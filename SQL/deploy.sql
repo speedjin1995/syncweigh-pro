@@ -2518,3 +2518,293 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_BITUMEN` BEFORE UPDATE ON `Bitumen`
 END
 $$
 DELIMITER ;
+
+-- 26/01/2026 --
+-- BITUMEN (60/70) / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 27, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 4.90 AS percentage UNION ALL
+    SELECT 2, 'AC28', 4.00 UNION ALL
+    SELECT 3, 'ACW20', 5.00 UNION ALL
+    SELECT 4, 'ACW14', 5.20 UNION ALL
+    SELECT 5, '3/8WC', 5.20 UNION ALL
+    SELECT 6, 'AC10', 5.10 UNION ALL
+    SELECT 7, 'ACB28', 3.90 UNION ALL
+    SELECT 8, 'ACB20', 3.90 UNION ALL
+    SELECT 9, 'SFM14', 4.90 UNION ALL
+    SELECT 10, 'BMR28', 3.50 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 4.30 UNION ALL
+    SELECT 12, 'QUARRY DUST', 6.50 UNION ALL
+    SELECT 13, 'BMB20', 4.14 UNION ALL
+    SELECT 14, 'BMW14', 5.00 UNION ALL
+    SELECT 15, 'DBM40', 3.50 UNION ALL
+    SELECT 16, 'SMA20', 0 UNION ALL
+    SELECT 17, 'CRMA', 6.00 UNION ALL
+    SELECT 18, 'FMA14', 5.60 UNION ALL
+    SELECT 19, 'PMA14', 0 UNION ALL
+    SELECT 20, 'PMA28', 0 UNION ALL
+    SELECT 21, 'FMA20', 5.50 UNION ALL
+    SELECT 22, 'POROUS', 0 UNION ALL
+    SELECT 23, 'ACBC28', 4.00 UNION ALL
+    SELECT 24, 'ACWC20', 4.90 UNION ALL
+    SELECT 25, 'CMA14', 4.90 UNION ALL
+    SELECT 26, 'AC14RPF', 4.90 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 5.60 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 4.80
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
+-- BITUMEN (PG76) / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 28, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 0 AS percentage UNION ALL
+    SELECT 2, 'AC28', 0 UNION ALL
+    SELECT 3, 'ACW20', 0 UNION ALL
+    SELECT 4, 'ACW14', 0 UNION ALL
+    SELECT 5, '3/8WC', 0 UNION ALL
+    SELECT 6, 'AC10', 0 UNION ALL
+    SELECT 7, 'ACB28', 0 UNION ALL
+    SELECT 8, 'ACB20', 0 UNION ALL
+    SELECT 9, 'SFM14', 0 UNION ALL
+    SELECT 10, 'BMR28', 0 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 0 UNION ALL
+    SELECT 12, 'QUARRY DUST', 0 UNION ALL
+    SELECT 13, 'BMB20', 0 UNION ALL
+    SELECT 14, 'BMW14', 0 UNION ALL
+    SELECT 15, 'DBM40', 0 UNION ALL
+    SELECT 16, 'SMA20', 5.70 UNION ALL
+    SELECT 17, 'CRMA', 0 UNION ALL
+    SELECT 18, 'FMA14', 0 UNION ALL
+    SELECT 19, 'PMA14', 4.90 UNION ALL
+    SELECT 20, 'PMA28', 4.00 UNION ALL
+    SELECT 21, 'FMA20', 0 UNION ALL
+    SELECT 22, 'POROUS', 0 UNION ALL
+    SELECT 23, 'ACBC28', 0 UNION ALL
+    SELECT 24, 'ACWC20', 0 UNION ALL
+    SELECT 25, 'CMA14', 0 UNION ALL
+    SELECT 26, 'AC14RPF', 0 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 0 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 0
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
+-- 28MM / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 22, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 0 AS percentage UNION ALL
+    SELECT 2, 'AC28', 19.10 UNION ALL
+    SELECT 3, 'ACW20', 0 UNION ALL
+    SELECT 4, 'ACW14', 0 UNION ALL
+    SELECT 5, '3/8WC', 0 UNION ALL
+    SELECT 6, 'AC10', 0 UNION ALL
+    SELECT 7, 'ACB28', 16.00 UNION ALL
+    SELECT 8, 'ACB20', 0 UNION ALL
+    SELECT 9, 'SFM14', 0 UNION ALL
+    SELECT 10, 'BMR28', 19.20 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 0 UNION ALL
+    SELECT 12, 'QUARRY DUST', 0 UNION ALL
+    SELECT 13, 'BMB20', 0 UNION ALL
+    SELECT 14, 'BMW14', 0 UNION ALL
+    SELECT 15, 'DBM40', 0 UNION ALL
+    SELECT 16, 'SMA20', 0 UNION ALL
+    SELECT 17, 'CRMA', 0 UNION ALL
+    SELECT 18, 'FMA14', 0 UNION ALL
+    SELECT 19, 'PMA14', 0 UNION ALL
+    SELECT 20, 'PMA28', 22.90 UNION ALL
+    SELECT 21, 'FMA20', 0 UNION ALL
+    SELECT 22, 'POROUS', 9.00 UNION ALL
+    SELECT 23, 'ACBC28', 21.00 UNION ALL
+    SELECT 24, 'ACWC20', 0 UNION ALL
+    SELECT 25, 'CMA14', 0 UNION ALL
+    SELECT 26, 'AC14RPF', 0 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 0 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 24.20
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
+-- 20MM / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 21, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 0 AS percentage UNION ALL
+    SELECT 2, 'AC28', 0 UNION ALL
+    SELECT 3, 'ACW20', 0 UNION ALL
+    SELECT 4, 'ACW14', 0 UNION ALL
+    SELECT 5, '3/8WC', 0 UNION ALL
+    SELECT 6, 'AC10', 0 UNION ALL
+    SELECT 7, 'ACB28', 0 UNION ALL
+    SELECT 8, 'ACB20', 18.00 UNION ALL
+    SELECT 9, 'SFM14', 0 UNION ALL
+    SELECT 10, 'BMR28', 0 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 32.00 UNION ALL
+    SELECT 12, 'QUARRY DUST', 0 UNION ALL
+    SELECT 13, 'BMB20', 21.00 UNION ALL
+    SELECT 14, 'BMW14', 0 UNION ALL
+    SELECT 15, 'DBM40', 0 UNION ALL
+    SELECT 16, 'SMA20', 0 UNION ALL
+    SELECT 17, 'CRMA', 0 UNION ALL
+    SELECT 18, 'FMA14', 0 UNION ALL
+    SELECT 19, 'PMA14', 0 UNION ALL
+    SELECT 20, 'PMA28', 0 UNION ALL
+    SELECT 21, 'FMA20', 0 UNION ALL
+    SELECT 22, 'POROUS', 0 UNION ALL
+    SELECT 23, 'ACBC28', 0 UNION ALL
+    SELECT 24, 'ACWC20', 17.20 UNION ALL
+    SELECT 25, 'CMA14', 0 UNION ALL
+    SELECT 26, 'AC14RPF', 0 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 15.00 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 0
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
+-- 14MM / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 20, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 19.00 AS percentage UNION ALL
+    SELECT 2, 'AC28', 0 UNION ALL
+    SELECT 3, 'ACW20', 0 UNION ALL
+    SELECT 4, 'ACW14', 10.00 UNION ALL
+    SELECT 5, '3/8WC', 0 UNION ALL
+    SELECT 6, 'AC10', 0 UNION ALL
+    SELECT 7, 'ACB28', 0 UNION ALL
+    SELECT 8, 'ACB20', 0 UNION ALL
+    SELECT 9, 'SFM14', 12.00 UNION ALL
+    SELECT 10, 'BMR28', 0 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 0 UNION ALL
+    SELECT 12, 'QUARRY DUST', 0 UNION ALL
+    SELECT 13, 'BMB20', 0 UNION ALL
+    SELECT 14, 'BMW14', 12.50 UNION ALL
+    SELECT 15, 'DBM40', 0 UNION ALL
+    SELECT 16, 'SMA20', 0 UNION ALL
+    SELECT 17, 'CRMA', 0 UNION ALL
+    SELECT 18, 'FMA14', 0 UNION ALL
+    SELECT 19, 'PMA14', 20.00 UNION ALL
+    SELECT 20, 'PMA28', 0 UNION ALL
+    SELECT 21, 'FMA20', 0 UNION ALL
+    SELECT 22, 'POROUS', 0 UNION ALL
+    SELECT 23, 'ACBC28', 0 UNION ALL
+    SELECT 24, 'ACWC20', 0 UNION ALL
+    SELECT 25, 'CMA14', 0 UNION ALL
+    SELECT 26, 'AC14RPF', 0 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 0 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 0
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
+-- 10MM / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 19, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 0 AS percentage UNION ALL
+    SELECT 2, 'AC28', 13.40 UNION ALL
+    SELECT 3, 'ACW20', 31.80 UNION ALL
+    SELECT 4, 'ACW14', 0 UNION ALL
+    SELECT 5, '3/8WC', 27.00 UNION ALL
+    SELECT 6, 'AC10', 45.70 UNION ALL
+    SELECT 7, 'ACB28', 17.00 UNION ALL
+    SELECT 8, 'ACB20', 21.00 UNION ALL
+    SELECT 9, 'SFM14', 30.00 UNION ALL
+    SELECT 10, 'BMR28', 7.70 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 0 UNION ALL
+    SELECT 12, 'QUARRY DUST', 0 UNION ALL
+    SELECT 13, 'BMB20', 23.00 UNION ALL
+    SELECT 14, 'BMW14', 0 UNION ALL
+    SELECT 15, 'DBM40', 6.70 UNION ALL
+    SELECT 16, 'SMA20', 49.60 UNION ALL
+    SELECT 17, 'CRMA', 48.30 UNION ALL
+    SELECT 18, 'FMA14', 0 UNION ALL
+    SELECT 19, 'PMA14', 29.00 UNION ALL
+    SELECT 20, 'PMA28', 48.30 UNION ALL
+    SELECT 21, 'FMA20', 0 UNION ALL
+    SELECT 22, 'POROUS', 0 UNION ALL
+    SELECT 23, 'ACBC28', 17.00 UNION ALL
+    SELECT 24, 'ACWC20', 31.80 UNION ALL
+    SELECT 25, 'CMA14', 0 UNION ALL
+    SELECT 26, 'AC14RPF', 0 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 7.60 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 31.80
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
+-- Q.DUST / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 25, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 50.50 AS percentage UNION ALL
+    SELECT 2, 'AC28', 41.50 UNION ALL
+    SELECT 3, 'ACW20', 46.30 UNION ALL
+    SELECT 4, 'ACW14', 55.90 UNION ALL
+    SELECT 5, '3/8WC', 54.00 UNION ALL
+    SELECT 6, 'AC10', 49.20 UNION ALL
+    SELECT 7, 'ACB28', 45.10 UNION ALL
+    SELECT 8, 'ACB20', 41.20 UNION ALL
+    SELECT 9, 'SFM14', 51.20 UNION ALL
+    SELECT 10, 'BMR28', 48.50 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 43.30 UNION ALL
+    SELECT 12, 'QUARRY DUST', 93.50 UNION ALL
+    SELECT 13, 'BMB20', 45.26 UNION ALL
+    SELECT 14, 'BMW14', 47.50 UNION ALL
+    SELECT 15, 'DBM40', 39.70 UNION ALL
+    SELECT 16, 'SMA20', 14.70 UNION ALL
+    SELECT 17, 'CRMA', 14.80 UNION ALL
+    SELECT 18, 'FMA14', 18.10 UNION ALL
+    SELECT 19, 'PMA14', 52.50 UNION ALL
+    SELECT 20, 'PMA28', 38.60 UNION ALL
+    SELECT 21, 'FMA20', 16.40 UNION ALL
+    SELECT 22, 'POROUS', 0 UNION ALL
+    SELECT 23, 'ACBC28', 0 UNION ALL
+    SELECT 24, 'ACWC20', 48.12 UNION ALL
+    SELECT 25, 'CMA14', 46.40 UNION ALL
+    SELECT 26, 'AC14RPF', 47.10 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 47.70 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 13.10
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
+-- OPC / Batch --
+INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum, status)
+SELECT 35, rm.id, rm.raw_mat_code, FORMAT(v.percentage / 100, 3), 6, FORMAT((v.percentage / 100) * 1000, 0), 26, 'Batch', 0
+FROM (
+    SELECT 1 AS ord, 'AC14' AS name, 1.90 AS percentage UNION ALL
+    SELECT 2, 'AC28', 1.90 UNION ALL
+    SELECT 3, 'ACW20', 1.90 UNION ALL
+    SELECT 4, 'ACW14', 1.90 UNION ALL
+    SELECT 5, '3/8WC', 0 UNION ALL
+    SELECT 6, 'AC10', 0 UNION ALL
+    SELECT 7, 'ACB28', 0 UNION ALL
+    SELECT 8, 'ACB20', 0 UNION ALL
+    SELECT 9, 'SFM14', 1.90 UNION ALL
+    SELECT 10, 'BMR28', 1.90 UNION ALL
+    SELECT 11, '20MM AGGREGATE', 0 UNION ALL
+    SELECT 12, 'QUARRY DUST', 0 UNION ALL
+    SELECT 13, 'BMB20', 0 UNION ALL
+    SELECT 14, 'BMW14', 0 UNION ALL
+    SELECT 15, 'DBM40', 0 UNION ALL
+    SELECT 16, 'SMA20', 10.00 UNION ALL
+    SELECT 17, 'CRMA', 1.90 UNION ALL
+    SELECT 18, 'FMA14', 1.90 UNION ALL
+    SELECT 19, 'PMA14', 1.90 UNION ALL
+    SELECT 20, 'PMA28', 1.90 UNION ALL
+    SELECT 21, 'FMA20', 1.90 UNION ALL
+    SELECT 22, 'POROUS', 0 UNION ALL
+    SELECT 23, 'ACBC28', 0 UNION ALL
+    SELECT 24, 'ACWC20', 0 UNION ALL
+    SELECT 25, 'CMA14', 1.90 UNION ALL
+    SELECT 26, 'AC14RPF', 1.90 UNION ALL
+    SELECT 27, 'SMA20 PLUS', 1.90 UNION ALL
+    SELECT 28, 'ACWC20 PLUS', 1.90
+) v
+JOIN Raw_Mat rm ON rm.name = v.name
+ORDER BY v.ord;
+
