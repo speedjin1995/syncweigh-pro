@@ -401,6 +401,8 @@
                     showPieChart(status, 'Batch');
                 } else if (columnIndex == 3 || columnIndex == 4) { // Drum columns
                     showPieChart(status, 'Drum');
+                } else if (columnIndex == 5 || columnIndex == 6) { // Drum columns
+                    showPieChart(status, 'Total');
                 }
             });
             

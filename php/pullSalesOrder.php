@@ -243,9 +243,12 @@ if (!empty($data['data'])) {
 
         # Destination Checking & Processing
         if($DestinationName != null && $DestinationName != ''){
-            $destinationQuery = "SELECT * FROM Destination WHERE name = '$DestinationName' AND status = '0'";
-            $destinationDetail = mysqli_query($db, $destinationQuery);
-            $destinationRow = mysqli_fetch_assoc($destinationDetail);
+            $destinationQuery = "SELECT * FROM Destination WHERE name = ? AND status = '0'";
+            $destinationstmt = $db->prepare($destinationQuery);
+            $destinationstmt->bind_param("s", $DestinationName); 
+            $destinationstmt->execute();
+            $destinationresult = $destinationstmt->get_result();
+            $destinationRow = $destinationresult->fetch_assoc();
             
             if(empty($destinationRow)){
                 $code = 'destination';
