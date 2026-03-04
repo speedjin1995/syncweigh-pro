@@ -260,7 +260,7 @@ else{
                                                             <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['product_code']. ' - ' .$rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -271,7 +271,7 @@ else{
                                                             <select id="rawMatSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
-                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['raw_mat_code']. ' - ' .$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -650,7 +650,7 @@ else{
                                                                                                     data-low="<?=$rowProduct['low'] ?>" 
                                                                                                     data-variance="<?=$rowProduct['variance'] ?>" 
                                                                                                     data-description="<?=$rowProduct['description'] ?>">
-                                                                                                    <?=$rowProduct['name'] ?>
+                                                                                                    <?=$rowProduct['product_code']. ' - ' .$rowProduct['name'] ?>
                                                                                                 </option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
@@ -662,7 +662,7 @@ else{
                                                                                         <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>"><?=$rowRawMat['name'] ?></option>
+                                                                                                <option value="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>"><?=$rowRawMat['raw_mat_code']. ' - ' .$rowRawMat['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>           
                                                                                     </div>
@@ -1813,7 +1813,7 @@ else{
                 { data: 'transaction_status' },
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_name' },
+                { data: 'product' },
                 { data: 'purchase_order' },
                 { data: 'delivery_no' },
                 { data: 'gross_weight1' },
@@ -2539,7 +2539,7 @@ else{
                     { data: 'transaction_status' },
                     { data: 'customer' },
                     { data: 'lorry_plate_no1' },
-                    { data: 'product_name' },
+                    { data: 'product' },
                     { data: 'purchase_order' },
                     { data: 'delivery_no' },
                     { data: 'gross_weight1' },
@@ -4231,7 +4231,7 @@ else{
                                     var existingOption = $('#addModal').find('#rawMaterialName option[value="' + purchaseOrders[i].prodMatName + '"]');
                                     if (existingOption.length === 0) {
                                         $('#addModal').find('#rawMaterialName').append(
-                                            `<option value="${purchaseOrders[i].prodMatName}" data-id="${purchaseOrders[i].prodMatId}" data-code="${purchaseOrders[i].prodMatCode}">${purchaseOrders[i].prodMatName}</option>`
+                                            `<option value="${purchaseOrders[i].prodMatName}" data-id="${purchaseOrders[i].prodMatId}" data-code="${purchaseOrders[i].prodMatCode}">${purchaseOrders[i].prodMatCode} - ${purchaseOrders[i].prodMatName}</option>`
                                         );
                                     }                   
                                 }
@@ -4311,7 +4311,7 @@ else{
                                     var existingOption = $('#addModal').find('#productName option[value="' + salesOrders[i].prodMatName + '"]');
                                     if (existingOption.length === 0) {
                                         $('#addModal').find('#productName').append(
-                                            `<option value="${salesOrders[i].prodMatName}" data-id="${salesOrders[i].prodMatId}" data-code="${salesOrders[i].prodMatCode}">${salesOrders[i].prodMatName}</option>`
+                                            `<option value="${salesOrders[i].prodMatName}" data-id="${salesOrders[i].prodMatId}" data-code="${salesOrders[i].prodMatCode}">${salesOrders[i].prodMatCode} - ${salesOrders[i].prodMatName}</option>`
                                         );
                                     }                   
                                 }
