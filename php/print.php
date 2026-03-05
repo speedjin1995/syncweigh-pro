@@ -239,8 +239,15 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         <div class="col-8 body_1 mt-2">
                                             <p>WEIGHING DATE<span style="margin-left: 25px;">:</span>'.$transDateOnly.'</p>
                                             <p>CUSTOMER<span style="margin-left: 55px;">:</span>'.$customerCode. ' ' . $customerName .'</p>
-                                            <p>VEHICLE NO.<span style="margin-left: 48px;">:</span>'.$lorryNo.'</p>
-                                            <p>PRODUCT<span style="margin-left: 62px;">:</span>'.$productCode. ' ' . $productName .'</p>
+                                            <p>VEHICLE NO.<span style="margin-left: 48px;">:</span>'.$lorryNo.'</p>';
+
+                                            if ($type == 'Sales'){
+                                                $message .= '<p>PRODUCT<span style="margin-left: 62px;">:</span>'.$productName .'</p>';
+                                            }else{
+                                                $message .= '<p>PRODUCT<span style="margin-left: 62px;">:</span>'.$productCode. ' ' . $productName .'</p>';
+                                            }
+                                            
+                                        $message .= '
                                             <p>PLANT NO.<span style="margin-left: 59px;">:</span></p>
                                             <p>WEIGHT IN<span style="margin-left: 57px;">:</span>'.($weightType == 'Normal' ? $grossWeight : ((float)$grossWeight + (float)$grossWeight2)).' KG</p>
                                         </div>
@@ -335,7 +342,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                             <div class="row" style="margin-left: 1px">
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
-                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">' . $productName .'</div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
                                                                                 <div class="col-12" style="height: 15px;"></div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
@@ -533,7 +540,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $customerCode . ' ' . $customerName .'</div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'.$projectCode. ' ' . $projectName .'</div>
                                                                                 <div class="col-12" style="height: 5px;"></div>
-                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $productCode . ' ' . $productName .'</div>
+                                                                                <div class="col-12 p-0" style="height: 25px;font-size: 14px;">' . $productName .'</div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $destinationCode . ' ' . $destinationName .'</div>
                                                                                 <div class="col-12" style="height: 10px;"></div>
                                                                                 <div class="col-12 p-0" style="height: 25px;font-size: 14px;">'. $transportCode . ' ' . $transportName .'</div>
