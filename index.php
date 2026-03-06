@@ -260,7 +260,7 @@ else{
                                                             <select id="productSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowProductF=mysqli_fetch_assoc($product2)){ ?>
-                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['name'] ?></option>
+                                                                    <option value="<?=$rowProductF['product_code'] ?>"><?=$rowProductF['product_code']. ' - ' .$rowProductF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -271,7 +271,7 @@ else{
                                                             <select id="rawMatSearch" class="form-select select2" >
                                                                 <option selected>-</option>
                                                                 <?php while($rowRawMatF=mysqli_fetch_assoc($rawMaterial2)){ ?>
-                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['name'] ?></option>
+                                                                    <option value="<?=$rowRawMatF['raw_mat_code'] ?>"><?=$rowRawMatF['raw_mat_code']. ' - ' .$rowRawMatF['name'] ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -650,7 +650,7 @@ else{
                                                                                                     data-low="<?=$rowProduct['low'] ?>" 
                                                                                                     data-variance="<?=$rowProduct['variance'] ?>" 
                                                                                                     data-description="<?=$rowProduct['description'] ?>">
-                                                                                                    <?=$rowProduct['name'] ?>
+                                                                                                    <?=$rowProduct['product_code']. ' - ' .$rowProduct['name'] ?>
                                                                                                 </option>
                                                                                             <?php } ?>
                                                                                         </select>                                                                                        
@@ -662,7 +662,7 @@ else{
                                                                                         <select class="form-select select2" id="rawMaterialName" name="rawMaterialName" required>
                                                                                             <option selected="-">-</option>
                                                                                             <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
-                                                                                                <option value="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>"><?=$rowRawMat['name'] ?></option>
+                                                                                                <option value="<?=$rowRawMat['name'] ?>" data-id="<?=$rowRawMat['id'] ?>" data-code="<?=$rowRawMat['raw_mat_code'] ?>"><?=$rowRawMat['raw_mat_code']. ' - ' .$rowRawMat['name'] ?></option>
                                                                                             <?php } ?>
                                                                                         </select>           
                                                                                     </div>
@@ -1156,6 +1156,7 @@ else{
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
                                                                 <button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button>
+                                                                <button type="button" class="btn btn-warning" id="submitWeightCancel">Submit & Cancel</button>
                                                                 <button type="button" class="btn btn-primary" id="submitWeight">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
@@ -1813,7 +1814,7 @@ else{
                 { data: 'transaction_status' },
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },
-                { data: 'product_name' },
+                { data: 'product' },
                 { data: 'purchase_order' },
                 { data: 'delivery_no' },
                 { data: 'gross_weight1' },
@@ -2233,6 +2234,136 @@ else{
             submitWeightPrintForm();
         });
 
+        $('#submitWeightCancel').on('click', function(){
+            var nettWeight = $('#addModal').find('#nettWeight').val() ? parseFloat($('#addModal').find('#nettWeight').val()) : 0;
+
+            if (nettWeight < -100 || nettWeight > 100) {
+                alert('Nett weight must be between -100 and 100.');
+                return;
+            }
+
+            // Check weight
+            var trueWeight = 0;
+            var variance = $('#productVariance').val() || '';
+            var high = $('#productHigh').val() || '';
+            var low = $('#productLow').val() || '';
+            var final = $('#finalWeight').val() || '0';
+            var completed = 'N';
+            var pass = true;
+
+            if($('#transactionStatus').val() == "Purchase"){
+                trueWeight = parseFloat($('#addModal').find('#supplierWeight').val());
+            }
+            else{
+                trueWeight = parseFloat($('#addModal').find('#orderWeight').val());
+            }
+
+            if($('#weightType').val() == 'Normal' && ($('#grossIncoming').val() && $('#tareOutgoing').val())){
+                isComplete = 'Y';
+            }
+            else if($('#weightType').val() == 'Container' && ($('#grossIncoming').val() && $('#tareOutgoing').val() && $('#grossIncoming2').val() && $('#tareOutgoing2').val())){
+                isComplete = 'Y';
+            }
+            else{
+                isComplete = 'N';
+            }
+
+            if (isComplete == 'Y' && variance != '') {
+                final = parseFloat(final);
+                low = low != '' ? parseFloat(low) : null;
+                high = high != '' ? parseFloat(high) : null;
+                
+                if (variance == 'W') {
+                    if (low !== null && (final < trueWeight - low)) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight + high)) {
+                        pass = false;
+                    }
+                } 
+                else if (variance == 'P') {
+                    if (low !== null && (final < trueWeight * (1 - low / 100))) {
+                        pass = false;
+                    } 
+                    else if (high !== null && (final > trueWeight * (1 + high / 100))) {
+                        pass = false;
+                    }
+                }
+            }
+
+            pass = true;
+
+            // custom validation for select2
+            $('#addModal .select2[required]').each(function () {
+                var select2Field = $(this);
+                var select2Container = select2Field.next('.select2-container'); // Get Select2 UI
+                var errorMsg = "<span class='select2-error text-danger' style='font-size: 11.375px;'>Please fill in the field.</span>";
+
+                // Check if the value is empty
+                if (select2Field.val() === "" || select2Field.val() === null) {
+                    select2Container.find('.select2-selection').css('border', '1px solid red'); // Add red border
+
+                    // Add error message if not already present
+                    if (select2Container.next('.select2-error').length === 0) {
+                        select2Container.after(errorMsg);
+                    }
+
+                    pass = false;
+                } else {
+                    select2Container.find('.select2-selection').css('border', ''); // Remove red border
+                    select2Container.next('.select2-error').remove(); // Remove error message
+
+                    pass = true;
+                }
+            });
+
+            if ($('#customerType').val() == 'Cash' && pass == true) {
+                var unitPrice = parseFloat($('#addModal').find('#unitPrice').val());
+
+                if (!unitPrice || unitPrice <= 0) {
+                    alert('Unit price must be more than 0.');
+                    return;
+                } else {
+                    var productId = $('#addModal').find('#productId').val();
+                    $.post('php/getProduct.php', { userID: productId }, function (data) {
+                        try {
+                            var obj = JSON.parse(data);
+                            if (obj.status === 'success') {
+                                var price = obj.message.price;
+                                //if (unitPrice < price) {
+                                    //alert('Unit price doesn\'t meet the minimum value of RM ' + price);
+                                    //return;
+                                //} else {
+                                    // Price validation passed, submit the form
+                                    submitWeightCancelForm();
+                                //}
+                            } else {
+                                alert('Error validating product price');
+                            }
+                        } catch (e) {
+                            alert('Error processing product validation response');
+                        }
+                    }).fail(function() {
+                        alert('Error connecting to server for price validation');
+                    });
+                    return; // Exit here to prevent immediate form submission
+                }
+            }
+            else if($('#customerType').val() == 'Normal' && pass == true){
+                var salesOrder = $('#addModal').find('#salesOrder').val();
+                
+                if (salesOrder == '-' && $('#transactionStatus').val() == "Sales") {
+                    alert('Sales Order must be filled');
+                    return;
+                } else {
+                    submitWeightCancelForm();
+                }
+            }
+            else{
+                alert('Error when submit');
+            }            
+        });
+
         $('#submitBypass').on('click', function(){
             if($('#bypassForm').valid()){
                 $('#addModal').find('#bypassReason').val($('#bypassModal').find('#reason').val());
@@ -2539,7 +2670,7 @@ else{
                     { data: 'transaction_status' },
                     { data: 'customer' },
                     { data: 'lorry_plate_no1' },
-                    { data: 'product_name' },
+                    { data: 'product' },
                     { data: 'purchase_order' },
                     { data: 'delivery_no' },
                     { data: 'gross_weight1' },
@@ -4231,7 +4362,7 @@ else{
                                     var existingOption = $('#addModal').find('#rawMaterialName option[value="' + purchaseOrders[i].prodMatName + '"]');
                                     if (existingOption.length === 0) {
                                         $('#addModal').find('#rawMaterialName').append(
-                                            `<option value="${purchaseOrders[i].prodMatName}" data-id="${purchaseOrders[i].prodMatId}" data-code="${purchaseOrders[i].prodMatCode}">${purchaseOrders[i].prodMatName}</option>`
+                                            `<option value="${purchaseOrders[i].prodMatName}" data-id="${purchaseOrders[i].prodMatId}" data-code="${purchaseOrders[i].prodMatCode}">${purchaseOrders[i].prodMatCode} - ${purchaseOrders[i].prodMatName}</option>`
                                         );
                                     }                   
                                 }
@@ -4311,7 +4442,7 @@ else{
                                     var existingOption = $('#addModal').find('#productName option[value="' + salesOrders[i].prodMatName + '"]');
                                     if (existingOption.length === 0) {
                                         $('#addModal').find('#productName').append(
-                                            `<option value="${salesOrders[i].prodMatName}" data-id="${salesOrders[i].prodMatId}" data-code="${salesOrders[i].prodMatCode}">${salesOrders[i].prodMatName}</option>`
+                                            `<option value="${salesOrders[i].prodMatName}" data-id="${salesOrders[i].prodMatId}" data-code="${salesOrders[i].prodMatCode}">${salesOrders[i].prodMatCode} - ${salesOrders[i].prodMatName}</option>`
                                         );
                                     }                   
                                 }
@@ -4687,6 +4818,75 @@ else{
                             else{
                                 $("#failBtn").attr('data-toast-text', "Something wrong when print");
                                 $("#failBtn").click();
+                            }
+                        });
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', 'Failed to save');
+                        $("#failBtn").click();
+                    }
+                });
+            }
+        }
+        else{
+            alert('Nett Weight must be more than 0');
+            return;
+        }
+    }
+
+    // Function to handle weight form submission with cancel
+    function submitWeightCancelForm() {
+        var nettWeight = $('#addModal').find('#nettWeight').val();
+        var transactionStatus = $('#addModal').find('#transactionStatus').val();
+        var purchaseOrder = (transactionStatus == 'Sales' ? $('#addModal').find('#salesOrder').val() : $('#addModal').find('#purchaseOrder').val());
+        var customerSupplier = (transactionStatus == 'Sales' ? $('#addModal').find('#customerName').val() : $('#addModal').find('#supplierName').val());
+        var product = (transactionStatus == 'Sales' ? $('#addModal').find('#productName').val() : $('#addModal').find('#rawMaterialName').val());
+        var transporter = $('#addModal').find('#transporterCode').val();
+        var destination = $('#addModal').find('#destinationCode').val();
+        var product = (transactionStatus == 'Sales' ? $('#addModal').find('#orderWeight').val() : $('#addModal').find('#supplierWeight').val());
+
+        var msg = 
+        "Purchase Order: " + purchaseOrder + "\n" +
+        "Customer/Supplier: " + customerSupplier + "\n" +
+        "Product/Raw Mat: " + product + "\n" +
+        "Transporter: " + transporter + "\n" +
+        "Destination: " + destination + "\n" + 
+        "Supplier/Order Weight: " + nettWeight + "\n\n" +
+        "Confirm submit?";
+
+        if (nettWeight > 0){
+            if (confirm(msg) && $('#weightForm').valid()){
+        //if ($('#weightForm').valid()) {
+                $('#spinnerLoading').show();
+                $.post('php/weight.php', $('#weightForm').serialize(), function(data){
+                    var obj = JSON.parse(data); 
+                    if(obj.status === 'success'){
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+
+                        // Open Cancel Modal
+                        $('#cancelModal').find('#id').val(obj.id);
+                        $('#cancelModal').modal('show');
+
+                        $('#cancelForm').validate({
+                            errorElement: 'span',
+                            errorPlacement: function (error, element) {
+                                error.addClass('invalid-feedback');
+                                element.closest('.form-group').append(error);
+                            },
+                            highlight: function (element, errorClass, validClass) {
+                                $(element).addClass('is-invalid');
+                            },
+                            unhighlight: function (element, errorClass, validClass) {
+                                $(element).removeClass('is-invalid');
                             }
                         });
                     }

@@ -186,6 +186,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "supplier_code"=>$row['supplier_code'],
     "supplier_name"=>$row['supplier_name'],
     "customer"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' || $row['transaction_status'] == 'WIP' ? $row['customer_name'] : $row['supplier_name']),
+    "product"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' || $row['transaction_status'] == 'WIP' ? $row['product_code']. ' - ' .$row['product_name'] : $row['raw_mat_code']. ' - ' .$row['raw_mat_name']),
     "product_code"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' || $row['transaction_status'] == 'WIP' ? $row['product_code'] : $row['raw_mat_code']),
     "product_name"=>($row['transaction_status'] == 'Sales' || $row['transaction_status'] == 'Local' || $row['transaction_status'] == 'WIP' ? $row['product_name'] : $row['raw_mat_name']),
     "container_no"=>$row['container_no'],
