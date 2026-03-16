@@ -112,7 +112,7 @@ function calculateLFOVolumeLitres(
     float $liquidHeight,
     float $constant = 1000 // Litres per m³
 ) {
-    $PI = 3.14;               // Excel π
+    $PI = 22/7;               // Excel π
     $R  = $diameter / 2;
 
     if ($liquidHeight <= 0) {
