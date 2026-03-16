@@ -3849,10 +3849,12 @@ else{
             var sstPrice = subTotalPrice * 0;
             var totalPrice = subTotalPrice + sstPrice;
 
-            // $('#unitPrice').val(price);
-            $('#subTotalPrice').val(subTotalPrice.toFixed(2));
-            $('#sstPrice').val(sstPrice.toFixed(2));
-            $('#totalPrice').val(totalPrice.toFixed(2));
+            if($('#customerType').val() != 'Cash'){
+                // $('#unitPrice').val(price);
+                $('#subTotalPrice').val(subTotalPrice.toFixed(2));
+                $('#sstPrice').val(sstPrice.toFixed(2));
+                $('#totalPrice').val(totalPrice.toFixed(2));
+            }
 
             var salesOrder = $('#addModal').find('#salesOrder').val();
             var type = $('#addModal').find('#transactionStatus').val();
