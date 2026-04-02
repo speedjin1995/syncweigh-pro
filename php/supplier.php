@@ -75,8 +75,17 @@ if (isset($_POST['supplierCode'])) {
     
     if(! empty($supplierId))
     {
-        // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
+        // 1. Get old supplier_code
+        $oldCode = null;
+        if ($stmt = $db->prepare("SELECT supplier_code FROM Supplier WHERE id = ?")) {
+            $stmt->bind_param("s", $supplierId);
+            $stmt->execute();
+            $stmt->bind_result($oldCode);
+            $stmt->fetch();
+            $stmt->close();
+        }
+        
         if ($update_stmt = $db->prepare("UPDATE Supplier SET supplier_code=?, company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, address_line_4=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE id=?")) 
         {
             $update_stmt->bind_param('ssssssssssss', $supplierCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $addressLine4, $phoneNo, $faxNo, $username, $username, $supplierId);
@@ -97,6 +106,17 @@ if (isset($_POST['supplierCode'])) {
                         "message"=> "Updated Successfully!!" 
                     )
                 );
+            }
+            
+            // 2. If changed → update Weight table
+            if ($oldCode !== null && $oldCode !== $supplierCode) {
+                if ($weight_stmt = $db->prepare("UPDATE Weight SET supplier_code=? WHERE supplier_code=?")) {
+                    $weight_stmt->bind_param("ss", $supplierCode, $oldCode);
+                    if (!$weight_stmt->execute()) {
+                        throw new Exception($weight_stmt->error);
+                    }
+                    $weight_stmt->close();
+                }
             }
 
             $update_stmt->close();

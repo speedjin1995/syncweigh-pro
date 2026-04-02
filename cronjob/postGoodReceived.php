@@ -48,8 +48,10 @@ if ($stmt2 = $db->prepare($sql)){
                     $uom = searchUnitById($row3['converted_unit'], $db);
                     $rawMatId = searchRawMatIdByCode($row3['raw_mat_code'], $db);
                     $unitPrice = (float)$row3['unit_price'] ?? 0;
+                    $qty = (float)$row['supplier_weight_uom'];
+                    $amt = $qty * $unitPrice;
 
-                    if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
+                    /*if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id='2' AND status='0'")) {
                         $update_stmt->bind_param('s', $rawMatId);
                         $update_stmt->execute();
                         $result3 = $update_stmt->get_result();
@@ -59,7 +61,7 @@ if ($stmt2 = $db->prepare($sql)){
                             $amt = $qty * $unitPrice;
                         }
                         $update_stmt->close();
-                    }
+                    }*/
                 }
                 $select_stmt->close();
             }

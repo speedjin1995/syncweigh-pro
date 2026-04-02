@@ -185,6 +185,12 @@
                             <div class="collapse menu-dropdown" id="sidebarMasterdata">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
+                                        <a href="customer.php" class="nav-link"><b>'.$lang['t-customer'].'</b></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="supplier.php" class="nav-link"><b>'.$lang['t-supplier'].'</b></a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="destination.php" class="nav-link"><b>'.$lang['t-destination'].'</b></a>
                                     </li>
                                     <li class="nav-item">

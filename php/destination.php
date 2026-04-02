@@ -75,8 +75,17 @@ if (isset($_POST['destinationName'])) {
     
     if(! empty($destinationId))
     {
-        // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
+        // 1. Get old destination_code
+        $oldCode = null;
+        if ($stmt = $db->prepare("SELECT destination_code FROM Destination WHERE id = ?")) {
+            $stmt->bind_param("s", $destinationId);
+            $stmt->execute();
+            $stmt->bind_result($oldCode);
+            $stmt->fetch();
+            $stmt->close();
+        }
+        
         if ($update_stmt = $db->prepare("UPDATE Destination SET destination_code=?, name=?, description=? , created_by=?, modified_by=? WHERE id=?")) 
         {
             $update_stmt->bind_param('ssssss', $destinationCode, $destinationName, $description, $username, $username, $destinationId);
@@ -97,6 +106,17 @@ if (isset($_POST['destinationName'])) {
                         "message"=> "Updated Successfully!!" 
                     )
                 );
+            }
+            
+            // 2. If code changed → update related table (example: Weight)
+            if ($oldCode !== null && $oldCode !== $destinationCode) {
+                if ($weight_stmt = $db->prepare("UPDATE Weight SET destination_code=? WHERE destination_code=?")) {
+                    $weight_stmt->bind_param("ss", $destinationCode, $oldCode);
+                    if (!$weight_stmt->execute()) {
+                        throw new Exception($weight_stmt->error);
+                    }
+                    $weight_stmt->close();
+                }
             }
 
             $update_stmt->close();

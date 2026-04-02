@@ -75,8 +75,18 @@ if (isset($_POST['customerCode'])) {
     
     if(! empty($customerId))
     {
-        // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
+        
+        // 1. Get current (old) customer_code
+        $oldCode = null;
+        if ($stmt = $db->prepare("SELECT customer_code FROM Customer WHERE id = ?")) {
+            $stmt->bind_param("s", $customerId);
+            $stmt->execute();
+            $stmt->bind_result($oldCode);
+            $stmt->fetch();
+            $stmt->close();
+        }
+        
         if ($update_stmt = $db->prepare("UPDATE Customer SET customer_code=?, company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, address_line_4=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE id=?")) 
         {
             $update_stmt->bind_param('ssssssssssss', $customerCode, $companyRegNo, $companyName, $addressLine1, $addressLine2, $addressLine3, $addressLine4, $phoneNo, $faxNo, $username, $username, $customerId);
@@ -97,6 +107,15 @@ if (isset($_POST['customerCode'])) {
                         "message"=> "Updated Successfully!!" 
                     )
                 );
+            }
+            
+            // 2. Update Weight table if code changed
+            if ($oldCode !== null && $oldCode !== $customerCode) {
+                if ($weight_stmt = $db->prepare("UPDATE Weight SET customer_code=? WHERE customer_code=?")) {
+                    $weight_stmt->bind_param("ss", $customerCode, $oldCode);
+                    $weight_stmt->execute();
+                    $weight_stmt->close();
+                }
             }
 
             $update_stmt->close();
