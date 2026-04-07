@@ -1319,7 +1319,9 @@ if ($user != null && $user != ''){
 
         $('#convertedOrderQty').on('change', function(){
             var convertedOrderWeight = parseFloat($(this).val());
-            var productCode = $('#product :selected').data('id');
+            var plant = $('#plant').val();
+            var productId = $('#product :selected').data('id'); 
+            var productCode = $('#product').val(); console.log(productCode);
             var unitId = $('#convertedOrderQtyUnit').val(); 
             var orderNo = $('#orderNo').val();
 
@@ -1327,7 +1329,7 @@ if ($user != null && $user != ''){
             var convertedBalance = 0;
             // Query to SO log to see previous record order weight
             if (orderNo){
-                $.post('php/getSoPoLog.php', {userID: orderNo, type: 'SO'}, function(data)
+                $.post('php/getSoPoLog.php', {userID: orderNo, plant: plant, prodRawMatCode: productCode, type: 'SO'}, function(data)
                 {
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
@@ -1348,8 +1350,8 @@ if ($user != null && $user != ''){
                             $('#convertedBal').val(currentOrderWeight);
                         }else{
                             // Call to backend to get conversion rate
-                            if (productCode && convertedOrderWeight && currentOrderWeight){
-                                $.post('php/getProdRawMatUOM.php', {userID: productCode, type: 'SO'}, function(data)
+                            if (productId && convertedOrderWeight && currentOrderWeight){
+                                $.post('php/getProdRawMatUOM.php', {userID: productId, type: 'SO'}, function(data)
                                 {
                                     var obj = JSON.parse(data);
                                     if(obj.status === 'success'){
