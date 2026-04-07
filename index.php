@@ -303,7 +303,7 @@ else{
                                                             <label for="poSearch" class="form-label">PO No</label>
                                                             <select id="poSearch" class="form-select select2" >
                                                                 <option selected></option>
-                                                                <option value="Pending PO verification">Pending PO verification</option>
+                                                                <option value="Pending PO verification">Pending PO verification</option>
                                                                 <?php while($rowPo=mysqli_fetch_assoc($purchaseOrder2)){ ?>
                                                                     <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>
@@ -592,7 +592,7 @@ else{
                                                                                     <label for="purchaseOrder" class="col-sm-4 col-form-label">Purchase Order</label>
                                                                                     <div class="col-sm-8" id="poSelect">
                                                                                         <select class="form-select js-choice select2" id="purchaseOrder" name="purchaseOrder" required>
-                                                                                            <option value="Pending PO verification" selected="-">Pending PO verification</option>
+                                                                                            <option value="Pending PO verification">Pending PO verification</option>
                                                                                             <?php while($rowPO=mysqli_fetch_assoc($purchaseOrder)){ ?>
                                                                                                 <option value="<?=$rowPO['po_no'] ?>"><?=$rowPO['po_no'] ?></option>
                                                                                             <?php } ?>
@@ -601,7 +601,7 @@ else{
                                                                                     </div>
                                                                                     <div class="col-sm-8" id="soSelect">
                                                                                         <select class="form-select js-choice select2" id="salesOrder" name="salesOrder" required>
-                                                                                            <option selected="-">-</option>
+                                                                                            <option selected="Pending SO verification">Pending SO verification</option>
                                                                                             <?php while($rowSO=mysqli_fetch_assoc($salesOrder)){ ?>
                                                                                                 <option value="<?=$rowSO['order_no'] ?>"><?=$rowSO['order_no'] ?></option>
                                                                                             <?php } ?>
@@ -1933,13 +1933,16 @@ else{
                 row.child.hide();
                 tr.removeClass('shown');
             } else {
-                $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
-                    var obj = JSON.parse(data);
-                    if (obj.status === 'success') {
-                        row.child(format(obj.message)).show();
-                        tr.addClass("shown");
-                    }
-                });
+                if(row && row.data()){
+                    $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE' }, function (data) {
+                        var obj = JSON.parse(data);
+                        if (obj.status === 'success') {
+                            row.child(format(obj.message)).show();
+                            tr.addClass("shown");
+                        }
+                    });
+                }
+                
             }
         });
 
@@ -2556,7 +2559,7 @@ else{
         setInterval(function () {
             $.post('http://127.0.0.1:5002/handshaking', function(data){
                 if(data != "Error"){
-                    //console.log("Data Received:" + data);
+                    console.log("Data Received:" + data);
                     
                     if(ind == 'X2S' || ind == 'X722'){
                         var text = data.split(" ");
@@ -4939,7 +4942,7 @@ else{
                         if (obj.message.length > 0){
                             var soPo = obj.message;
                             $('#addModal').find('#purchaseOrder').empty();
-                            $('#addModal').find('#purchaseOrder').append(`<option selected="-">-</option>`);
+                            $('#addModal').find('#purchaseOrder').append(`<option selected="Pending PO verification">Pending PO verification</option>`);
                             for (var i = 0; i < soPo.length; i++) {
                                 // Check if option with this value already exists
                                 var existingOption = $('#addModal').find('#purchaseOrder option[value="' + soPo[i] + '"]');
