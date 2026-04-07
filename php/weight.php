@@ -280,20 +280,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     //}
 
-    if ($transactionStatus == 'Purchase'){
-        if (empty($_POST["purchaseOrder"])) {
-            $purchaseOrder = "-";
-        } else {
-            $purchaseOrder = trim($_POST["purchaseOrder"]);
-        }
-    }else{
-        if (empty($_POST["salesOrder"])) {
-            $purchaseOrder = "-";
-        } else {
-            $purchaseOrder = trim($_POST["salesOrder"]);
-        }
-    }
-
     if (empty($_POST["containerNo"])) {
         $containerNo = null;
     } else {
@@ -580,6 +566,30 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     else{
         $idType = null;
+    }
+
+    if ($transactionStatus == 'Purchase'){
+        if (empty($_POST["purchaseOrder"])) {
+            $purchaseOrder = "-";
+        } else {
+            $purchaseOrder = trim($_POST["purchaseOrder"]);
+        }
+    }else{
+        if (empty($_POST["salesOrder"])) {
+            $purchaseOrder = "-";
+        } else {
+            $purchaseOrder = trim($_POST["salesOrder"]);
+        }
+
+        // Call to SO table to get order weight
+        $so_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND plant_code=? AND product_code=? AND deleted='0'");
+        $so_stmt->bind_param('sss', $purchaseOrder, $plantCode, $productCode);
+        $so_stmt->execute();
+        $so_result = $so_stmt->get_result();
+        if ($so_result->num_rows > 0) {
+            $so_row = $so_result->fetch_assoc();
+            $orderWeight = $so_row['order_quantity'];
+        }
     }
 
     /*if($_POST['grossIncomingDate'] != null && $_POST['grossIncomingDate'] != ''){

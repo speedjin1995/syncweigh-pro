@@ -1306,7 +1306,9 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
 
         $('#convertedOrderQty').on('change', function(){
             var convertedOrderWeight = parseFloat($(this).val());
+            var plant = $('#plant').val();
             var rawMatId = $('#rawMat :selected').data('id');
+            var rawMatCode = $('#rawMat').val();
             var unitId = $('#convertedOrderQtyUnit').val(); 
             var poNo = $('#poNo').val();
 
@@ -1314,7 +1316,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
             var convertedBalance = 0;
             // Query to PO log to see previous record supplier weight
             if (poNo){
-                $.post('php/getSoPoLog.php', {userID: poNo, type: 'PO'}, function(data)
+                $.post('php/getSoPoLog.php', {userID: poNo, plant: plant, prodRawMatCode: rawMatCode, type: 'PO'}, function(data)
                 {
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
@@ -1327,7 +1329,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                         }
 
                         var weightDifference = parseFloat(previousWeight) - convertedOrderWeight;
-                        var currentOrderWeight = parseFloat(convertedBalance) - weightDifference; console.log(weightDifference); console.log(currentOrderWeight);
+                        var currentOrderWeight = parseFloat(convertedBalance) - weightDifference;
  
                         $('#balance').val(currentOrderWeight); // update balance value
                         if (unitId == 2){

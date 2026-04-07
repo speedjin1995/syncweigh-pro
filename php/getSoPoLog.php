@@ -2,13 +2,15 @@
 session_start();
 require_once "db_connect.php";
 
-if(isset($_POST['userID'], $_POST['type'])){
+if(isset($_POST['userID'], $_POST['type'], $_POST['plant'], $_POST['prodRawMatCode'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 	$type = filter_input(INPUT_POST, 'type', FILTER_SANITIZE_STRING);
+	$plant = filter_input(INPUT_POST, 'plant', FILTER_SANITIZE_STRING);
+	$prodRawMatCode = filter_input(INPUT_POST, 'prodRawMatCode', FILTER_SANITIZE_STRING);
 
     if ($type == 'SO'){
-        if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order_Log WHERE order_no=? ORDER BY id DESC LIMIT 1")) {
-            $update_stmt->bind_param('s', $id);
+        if ($update_stmt = $db->prepare("SELECT * FROM Sales_Order_Log WHERE order_no=? AND plant_code=? AND product_code=? ORDER BY id DESC LIMIT 1")) {
+            $update_stmt->bind_param('sss', $id, $plant, $prodRawMatCode);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -39,8 +41,8 @@ if(isset($_POST['userID'], $_POST['type'])){
             }
         }
     }else{
-        if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order_Log WHERE po_no=? ORDER BY id DESC LIMIT 1")) {
-            $update_stmt->bind_param('s', $id);
+        if ($update_stmt = $db->prepare("SELECT * FROM Purchase_Order_Log WHERE po_no=? AND plant_code=? AND raw_mat_code=?  ORDER BY id DESC LIMIT 1")) {
+            $update_stmt->bind_param('sss', $id, $plant, $prodRawMatCode);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
