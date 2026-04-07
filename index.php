@@ -545,7 +545,7 @@ else{
                                                                                     <label for="orderWeight" class="col-sm-4 col-form-label">Order Weight</label>
                                                                                     <div class="col-sm-8">
                                                                                         <div class="input-group">
-                                                                                            <input type="number" class="form-control" id="orderWeightBasicUom" name="orderWeightBasicUom" placeholder="0">
+                                                                                            <input type="number" class="form-control input-readonly" id="orderWeightBasicUom" name="orderWeightBasicUom" placeholder="0" readonly>
                                                                                             <div class="input-group-text" id="orderWeightUnit">KG</div>
                                                                                             <input type="number" class="form-control input-readonly" id="orderWeight" name="orderWeight" placeholder="0" readonly>
                                                                                             <div class="input-group-text">KG</div>
