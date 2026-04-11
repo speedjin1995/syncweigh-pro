@@ -323,6 +323,7 @@ $(function () {
         $.post('php/rolePermission.php', $('#permForm').serialize(), function(data){
             var obj = JSON.parse(data);
             if(obj.status === 'success'){
+                window.location.reload();
                 $('#spinnerLoading').hide();
                 $('#permModal').modal('hide');
                 $("#successBtn").attr('data-toast-text', obj.message);
