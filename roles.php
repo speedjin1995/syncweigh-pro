@@ -148,7 +148,7 @@ $permissions = $db->query("SELECT * FROM permissions ORDER BY id ASC");
 
 <!-- Permissions Modal -->
 <div class="modal fade" id="permModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Manage Permissions - <span id="permRoleName"></span></h5>
@@ -180,7 +180,7 @@ $permissions = $db->query("SELECT * FROM permissions ORDER BY id ASC");
                                         <div class="card-body py-2">
                                             <div class="row">
                                                 <?php $permissions->data_seek(0); while($perm = $permissions->fetch_assoc()): ?>
-                                                <div class="col-md-4 mb-1">
+                                                <div class="col-md-3 mb-1">
                                                     <div class="form-check">
                                                         <input class="form-check-input perm-check" type="checkbox" name="permissions[<?=$mod['id']?>][]" value="<?=$perm['id']?>" id="perm_<?=$mod['id']?>_<?=$perm['id']?>">
                                                         <label class="form-check-label text-dark" for="perm_<?=$mod['id']?>_<?=$perm['id']?>"><?=ucwords(str_replace('_',' ',$perm['name']))?></label>
