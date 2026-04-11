@@ -1,0 +1,493 @@
+<?php include 'layouts/session.php'; ?>
+<?php include 'layouts/head-main.php'; ?>
+<?php
+require_once "layouts/config.php";
+require_once "php/db_connect.php";
+
+$id = $_SESSION['id'];
+$name = $_SESSION["username"];
+
+$modules = $db->query("SELECT * FROM modules ORDER BY category ASC, name ASC");
+$categories = $db->query("SELECT DISTINCT category FROM modules ORDER BY category ASC");
+$permissions = $db->query("SELECT * FROM permissions ORDER BY id ASC");
+
+?>
+
+<head>
+    <title>Role & Permissions | PWS - Weighing System</title>
+    <?php include 'layouts/title-meta.php'; ?>
+
+    <link href="assets/libs/jsvectormap/css/jsvectormap.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+    <?php include 'layouts/head-css.php'; ?>
+</head>
+
+<?php include 'layouts/body.php'; ?>
+
+<div class="loading" id="spinnerLoading" style="display:none">
+    <div class='mdi mdi-loading' style='transform:scale(0.79);'>
+        <div></div>
+    </div>
+</div>
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+    <?php include 'layouts/menu.php'; ?>
+
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <div class="h-100">
+
+                            <button type="button" hidden id="successBtn" data-toast data-toast-text="" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+                            <button type="button" hidden id="failBtn" data-toast data-toast-text="" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+
+                            <!-- Roles DataTable -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h5 class="card-title mb-0">Role Records</h5>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
+                                                        <i class="fa-solid fa-ban align-middle me-1"></i>
+                                                        Delete Role
+                                                    </button>
+                                                    <button type="button" id="addRole" class="btn btn-danger waves-effect waves-light">
+                                                        <i class="ri-add-circle-line align-middle me-1"></i>
+                                                        Add New Role
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <table id="rolesTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th><input type="checkbox" id="selectAllCheckbox" class="selectAllCheckbox"></th>
+                                                        <th>Role Code</th>
+                                                        <th>Role Name</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--end row-->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php include 'layouts/footer.php'; ?>
+    </div>
+</div>
+
+<!-- Add/Edit Role Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="roleForm" class="needs-validation" novalidate autocomplete="off">
+                    <input type="hidden" id="roleId" name="roleId">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <div class="row">
+                                        <label for="roleCode" class="col-sm-4 col-form-label">Role Code *</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="roleCode" name="roleCode" placeholder="Role Code" maxlength="10" required>
+                                            <div class="invalid-feedback">Please fill in the field.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <div class="row">
+                                        <label for="roleName" class="col-sm-4 col-form-label">Role Name *</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Role Name" maxlength="15" required>
+                                            <div class="invalid-feedback">Please fill in the field.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="hstack gap-2 justify-content-end">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" id="submitRole">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Permissions Modal -->
+<div class="modal fade" id="permModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Permissions - <span id="permRoleName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="permForm">
+                    <input type="hidden" id="permRoleId" name="permRoleId">
+                    <?php if($categories->num_rows == 0){ ?>
+                        <p class="text-muted">No modules found.</p>
+                    <?php } else { ?>
+                    <div class="accordion" id="permAccordion">
+                        <?php $catIdx = 0; while($cat = $categories->fetch_assoc()): $catIdx++; ?>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cat_<?=$catIdx?>">
+                                    <?=htmlspecialchars($cat['category'])?>
+                                </button>
+                            </h2>
+                            <div id="cat_<?=$catIdx?>" class="accordion-collapse collapse" data-bs-parent="#permAccordion">
+                                <div class="accordion-body p-2">
+                                    <?php $modules->data_seek(0); while($mod = $modules->fetch_assoc()): ?>
+                                    <?php if($mod['category'] !== $cat['category']) continue; ?>
+                                    <div class="card mb-2">
+                                        <div class="card-header py-2 text-dark d-flex justify-content-between align-items-center">
+                                            <strong><?=htmlspecialchars($mod['name'])?></strong>
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-soft-danger select-all-module" data-module="<?=$mod['id']?>">Select All</a>
+                                        </div>
+                                        <div class="card-body py-2">
+                                            <div class="row">
+                                                <?php $permissions->data_seek(0); while($perm = $permissions->fetch_assoc()): ?>
+                                                <div class="col-md-4 mb-1">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input perm-check" type="checkbox" name="permissions[<?=$mod['id']?>][]" value="<?=$perm['id']?>" id="perm_<?=$mod['id']?>_<?=$perm['id']?>">
+                                                        <label class="form-check-label text-dark" for="perm_<?=$mod['id']?>_<?=$perm['id']?>"><?=ucwords(str_replace('_',' ',$perm['name']))?></label>
+                                                    </div>
+                                                </div>
+                                                <?php endwhile; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endwhile; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endwhile; ?>
+                    </div>
+                    <?php } ?>
+                    <div class="col-lg-12 mt-3">
+                        <div class="hstack gap-2 justify-content-end">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" id="submitPermissions">Save Permissions</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include 'layouts/customizer.php'; ?>
+<?php include 'layouts/vendor-scripts.php'; ?>
+
+<script src="assets/libs/swiper/swiper-bundle.min.js"></script>
+<script src="assets/js/pages/dashboard-ecommerce.init.js"></script>
+<script src="assets/js/pages/form-validation.init.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pages/notifications.init.js"></script>
+
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="assets/js/pages/datatables.init.js"></script>
+
+<script>
+var table;
+
+$(function () {
+    $('#selectAllCheckbox').on('change', function() {
+        var checkboxes = $('#rolesTable tbody input[type="checkbox"]');
+        checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
+    });
+
+    table = $("#rolesTable").DataTable({
+        "responsive": true,
+        "autoWidth": false,
+        'processing': true,
+        'serverSide': true,
+        'serverMethod': 'post',
+        'ajax': { 'url':'php/loadRoles.php' },
+        'columns': [
+            {
+                data: 'id',
+                className: 'select-checkbox',
+                orderable: false,
+                render: function (data) {
+                    return '<input type="checkbox" class="select-checkbox" value="'+data+'"/>';
+                }
+            },
+            { data: 'role_code' },
+            { data: 'role_name' },
+            { data: 'status' },
+            {
+                data: 'id',
+                render: function (data, type, row) {
+                    if (row.status == 'Inactive') {
+                        return '<div class="dropdown d-inline-block">' +
+                            '<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                '<i class="ri-more-fill align-middle"></i>' +
+                            '</button>' +
+                            '<ul class="dropdown-menu dropdown-menu-end">' +
+                                '<li>' +
+                                    '<a class="dropdown-item" onclick="reactivate(' + data + ')">Reactivate</a>' +
+                                '</li>' +
+                            '</ul>' +
+                        '</div>';
+                    }
+                    return '<div class="dropdown d-inline-block">' +
+                        '<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                            '<i class="ri-more-fill align-middle"></i>' +
+                        '</button>' +
+                        '<ul class="dropdown-menu dropdown-menu-end">' +
+                            '<li>' +
+                                '<a class="dropdown-item edit-item-btn" onclick="edit(' + data + ')">' +
+                                    '<i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit' +
+                                '</a>' +
+                            '</li>' +
+                            '<li>' +
+                                '<a class="dropdown-item" onclick="managePermissions(' + data + ',\'' + row.role_name + '\')">' +
+                                    '<i class="ri-shield-keyhole-fill align-bottom me-2 text-muted"></i> Permissions' +
+                                '</a>' +
+                            '</li>' +
+                            '<li>' +
+                                '<a class="dropdown-item remove-item-btn" onclick="deactivate(' + data + ')">' +
+                                    '<i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete' +
+                                '</a>' +
+                            '</li>' +
+                        '</ul>' +
+                    '</div>';
+                }
+            }
+        ]
+    });
+
+    // Submit Role
+    $('#submitRole').on('click', function(){
+        if($('#roleForm').valid()){
+            $('#spinnerLoading').show();
+            $.post('php/role.php', $('#roleForm').serialize(), function(data){
+                var obj = JSON.parse(data);
+                if(obj.status === 'success'){
+                    table.ajax.reload();
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                } else {
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message);
+                    $("#failBtn").click();
+                }
+            });
+        }
+    });
+
+    // Submit Permissions
+    $('#submitPermissions').on('click', function(){
+        $('#spinnerLoading').show();
+        $.post('php/rolePermission.php', $('#permForm').serialize(), function(data){
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                $('#spinnerLoading').hide();
+                $('#permModal').modal('hide');
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            } else {
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message);
+                $("#failBtn").click();
+            }
+        });
+    });
+
+    // Add Role button
+    $('#addRole').on('click', function(){
+        $('#addModal').find('#roleId').val("");
+        $('#addModal').find('#roleCode').val("");
+        $('#addModal').find('#roleName').val("");
+        $('#addModal .is-invalid').removeClass('is-invalid');
+        $('#addModal .modal-title').text('Add New Role');
+        $('#addModal').modal('show');
+
+        $('#roleForm').validate({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element) { $(element).addClass('is-invalid'); },
+            unhighlight: function (element) { $(element).removeClass('is-invalid'); }
+        });
+    });
+
+    $('#multiDeactivate').on('click', function () {
+        $('#spinnerLoading').show();
+        var selectedIds = []; // An array to store the selected 'id' values
+
+        $("#rolesTable tbody input[type='checkbox']").each(function () {
+            if (this.checked) {
+                selectedIds.push($(this).val());
+            }
+        });
+
+        if (selectedIds.length > 0) {
+            if (confirm('Are you sure you want to delete these roles?')) {
+                $.post('php/deleteRole.php', {roleID: selectedIds, type: 'MULTI'}, function(data){
+                    var obj = JSON.parse(data);
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        toastr["success"](obj.message, "Success:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else if(obj.status === 'failed'){
+                        toastr["error"](obj.message, "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                    else{
+                        toastr["error"]("Something wrong when activate", "Failed:");
+                        $('#spinnerLoading').hide();
+                    }
+                });
+            }
+
+            $('#spinnerLoading').hide();
+        } 
+        else {
+            // Optionally, you can display a message or take another action if no IDs are selected
+            alert("Please select at least one role to delete.");
+            $('#spinnerLoading').hide();
+        }     
+    });
+});
+
+function edit(id){
+    $('#spinnerLoading').show();
+    $.post('php/getRole.php', {id: id}, function(data)
+    {
+        var obj = JSON.parse(data);
+        if(obj.status === 'success'){
+            $('#addModal').find('#roleId').val(obj.message.id);
+            $('#addModal').find('#roleCode').val(obj.message.role_code);
+            $('#addModal').find('#roleName').val(obj.message.role_name);
+
+            // Remove Validation Error Message
+            $('#addModal .is-invalid').removeClass('is-invalid');
+
+            $('#addModal').modal('show');
+        }
+        else if(obj.status === 'failed'){
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        else{
+            $('#spinnerLoading').hide();
+            $("#failBtn").attr('data-toast-text', obj.message );
+            $("#failBtn").click();
+        }
+        $('#spinnerLoading').hide();
+    });
+}
+
+$(document).on('click', '.select-all-module', function() {
+    var moduleId = $(this).data('module');
+    var checkboxes = $('input[name="permissions[' + moduleId + '][]"]');
+    var allChecked = checkboxes.length === checkboxes.filter(':checked').length;
+    checkboxes.prop('checked', !allChecked);
+    $(this).text(allChecked ? 'Select All' : 'Deselect All');
+});
+
+function managePermissions(id, roleName) {
+    $('#permModal .modal-title').text('Permissions - ' + roleName);
+    $('#permForm').find('#permRoleId').val(id);
+    // Uncheck all first
+    $('#permForm .perm-check').prop('checked', false);
+
+    $('#spinnerLoading').show();
+    $.post('php/getRolePermissions.php', { id: id }, function(data) {
+        var obj = JSON.parse(data);
+        if (obj.status === 'success') {
+            obj.message.forEach(function(p) {
+                $('#perm_' + p.module_id + '_' + p.permission_id).prop('checked', true);
+            });
+        }
+        $('#spinnerLoading').hide();
+        $('#permModal').modal('show');
+    });
+}
+
+function deactivate(id){
+    if (confirm('Are you sure you want to delete this role?')) {
+        $('#spinnerLoading').show();
+        $.post('php/deleteRole.php', {roleID: id}, function(data){
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                table.ajax.reload();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            } else {
+                $("#failBtn").attr('data-toast-text', obj.message);
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
+    }
+}
+
+function reactivate(id) {
+    if (confirm('Do you want to reactivate this role?')) {
+        $('#spinnerLoading').show();
+        $.post('php/reactivateMasterData.php', {userID: id, type: "Role"}, function(data){
+            var obj = JSON.parse(data);
+            if(obj.status === 'success'){
+                table.ajax.reload();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            } else {
+                $("#failBtn").attr('data-toast-text', obj.message);
+                $("#failBtn").click();
+            }
+            $('#spinnerLoading').hide();
+        });
+    }
+}
+</script>
+
+</body>
+</html>

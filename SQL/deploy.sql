@@ -2808,3 +2808,77 @@ FROM (
 JOIN Raw_Mat rm ON rm.name = v.name
 ORDER BY v.ord;
 
+-- 11/04/2026 --
+CREATE TABLE `modules` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `category` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+ALTER TABLE `modules` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `modules` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `permissions` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+ALTER TABLE `permissions` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `permissions` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE `role_permissions` (
+  `role_id` int(11) NOT NULL,
+  `module_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+INSERT INTO `modules` (`id`, `name`, `category`) VALUES 
+(NULL, 'Sales', 'Weighing'),
+(NULL, 'Purchase', 'Weighing'),
+(NULL, 'Public', 'Weighing'),
+(NULL, 'WIP', 'Weighing'),
+(NULL, 'Return', 'Weighing'),
+(NULL, 'Sales Order (SO)', 'Accounting'),
+(NULL, 'Delivery Order (DO)', 'Accounting'),
+(NULL, 'Purchase Order (PO)', 'Accounting'),
+(NULL, 'Goods Received (GR)', 'Accounting'),
+(NULL, 'Stock Take', 'Stock Management'),
+(NULL, 'Stock Take Log', 'Stock Management'),
+(NULL, 'Inventory', 'Stock Management'),
+(NULL, 'Asset Management', 'Stock Management'),
+(NULL, 'Calculation Setup', 'Stock Management'),
+(NULL, 'Customer', 'Master Data'),
+(NULL, 'Destination', 'Master Data'),
+(NULL, 'Product', 'Master Data'),
+(NULL, 'Raw Material', 'Master Data'),
+(NULL, 'Supplier', 'Master Data'),
+(NULL, 'Vehicle', 'Master Data'),
+(NULL, 'Sales Representative', 'Master Data'),
+(NULL, 'Transporter', 'Master Data'),
+(NULL, 'Plant', 'Master Data'),
+(NULL, 'User', 'Master Data'),
+(NULL, 'Reason', 'Master Data'),
+(NULL, 'Sales', 'Report'),
+(NULL, 'Purchase', 'Report'),
+(NULL, 'Public', 'Report'),
+(NULL, 'Audit Log', 'Report'),
+(NULL, 'Api Log', 'Report'),
+(NULL, 'Cronjob Setup', 'Setting'),
+(NULL, 'Company Profile', 'Setting'),
+(NULL, 'Port Setup', 'Setting'),
+(NULL, 'Role Management', 'Setting')
+;
+
+INSERT INTO `permissions` (`id`, `name`) VALUES 
+(NULL, 'view'),
+(NULL, 'create'),
+(NULL, 'edit'),
+(NULL, 'delete'),
+(NULL, 'manual_weighing'),
+(NULL, 'upload_excel'),
+(NULL, 'post_to_sql'),
+(NULL, 'pull_from_sql'),
+(NULL, 'export')
+;

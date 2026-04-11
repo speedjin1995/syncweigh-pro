@@ -265,6 +265,9 @@
                                     <a href="portSetup.php" class="nav-link"><b><?=$lang['t-portSetup']?></b></a>
                                 </li> 
                                 <li class="nav-item">
+                                    <a href="roles.php" class="nav-link"><b><?=$lang['t-roleManagement']?></b></a>
+                                </li> 
+                                <li class="nav-item">
                                     <a href="myProfile.php" class="nav-link"><b><?=$lang['t-myProfile']?></b></a>
                                 </li> 
                                 <li class="nav-item">
