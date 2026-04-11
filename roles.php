@@ -160,6 +160,9 @@ $permissions = $db->query("SELECT * FROM permissions ORDER BY id ASC");
                     <?php if($categories->num_rows == 0){ ?>
                         <p class="text-muted">No modules found.</p>
                     <?php } else { ?>
+                    <div class="mb-2 text-end">
+                        <a href="javascript:void(0)" class="btn btn-sm btn-soft-danger" id="selectAllPermissions">Select All</a>
+                    </div>
                     <div class="accordion" id="permAccordion">
                         <?php $catIdx = 0; while($cat = $categories->fetch_assoc()): $catIdx++; ?>
                         <div class="accordion-item">
@@ -432,6 +435,14 @@ $(document).on('click', '.select-all-module', function() {
     var allChecked = checkboxes.length === checkboxes.filter(':checked').length;
     checkboxes.prop('checked', !allChecked);
     $(this).text(allChecked ? 'Select All' : 'Deselect All');
+});
+
+$('#selectAllPermissions').on('click', function() {
+    var checkboxes = $('#permForm .perm-check');
+    var allChecked = checkboxes.length === checkboxes.filter(':checked').length;
+    checkboxes.prop('checked', !allChecked);
+    $(this).text(allChecked ? 'Select All' : 'Deselect All');
+    $('.select-all-module').text(allChecked ? 'Select All' : 'Deselect All');
 });
 
 function managePermissions(id, roleName) {
