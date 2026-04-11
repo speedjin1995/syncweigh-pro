@@ -2844,6 +2844,7 @@ INSERT INTO `modules` (`id`, `name`, `category`) VALUES
 (NULL, 'Delivery Order (DO)', 'Accounting'),
 (NULL, 'Purchase Order (PO)', 'Accounting'),
 (NULL, 'Goods Received (GR)', 'Accounting'),
+(NULL, 'Stock Take', 'Accounting'),
 (NULL, 'Stock Take', 'Stock Management'),
 (NULL, 'Stock Take Log', 'Stock Management'),
 (NULL, 'Inventory', 'Stock Management'),
