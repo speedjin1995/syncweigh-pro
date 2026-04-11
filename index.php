@@ -4,6 +4,11 @@
 <?php
 require_once "php/db_connect.php";
 
+if (!hasPermission('Weighing', 'view')){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
