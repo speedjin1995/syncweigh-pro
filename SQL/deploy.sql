@@ -2883,10 +2883,11 @@ INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
 (NULL, 'manual_weighing', '["Weighing"]'),
 (NULL, 'manual_date_change', '["Weighing"]'),
 (NULL, 'view_all_plants', '["Weighing", "Accounting", "Report", "Stock Management"]'),
-(NULL, 'print_slip', '["Weighing", "Report"]'),
+(NULL, 'print_slip', '["Weighing", "Report", "Accounting"]'),
 (NULL, 'upload_excel', '["Accounting", "Stock Management", "Master Data"]'),
 (NULL, 'post_to_sql', '["Accounting"]'),
 (NULL, 'pull_from_sql', '["Accounting", "Master Data"]'),
 (NULL, 'complete', '["Accounting"]'),
 (NULL, 'reactivate', '["Accounting"]'),
+(NULL, 'include_price', '["Accounting"]'),
 (NULL, 'export', '["Accounting", "Stock Management", "Report", "Master Data"]');
