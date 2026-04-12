@@ -2888,6 +2888,6 @@ INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
 (NULL, 'post_to_sql', '["Accounting"]'),
 (NULL, 'pull_from_sql', '["Accounting", "Master Data"]'),
 (NULL, 'complete', '["Accounting"]'),
-(NULL, 'reactivate', '["Accounting"]'),
+(NULL, 'reactivate', '["Accounting", "Master Data"]'),
 (NULL, 'include_price', '["Accounting"]'),
 (NULL, 'export', '["Accounting", "Stock Management", "Report", "Master Data"]');
