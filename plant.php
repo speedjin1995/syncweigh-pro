@@ -1,6 +1,11 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
-
+<?php
+    if (!hasModulePermission('Master Data', 'Plant', ['view', 'create', 'edit'])){
+        header('Location: no-permission.php');
+        exit;
+    }
+?>
 <head>
     <title>Plants | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -243,6 +248,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if(hasModulePermission('Master Data', 'Plant', ['upload_excel'])): ?>
                                                                 <a href="template/Plant_Template.xlsx" download>
                                                                     <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
                                                                         <i class="ri-file-pdf-line align-middle me-1"></i>
@@ -253,22 +259,33 @@
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Master Data', 'Plant', ['export'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
                                                                 <!--button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
                                                                 </button-->
+
+                                                                <?php if(hasModulePermission('Master Data', 'Plant', ['delete'])): ?>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Plant
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Master Data', 'Plant', ['create'])): ?>
                                                                 <button type="button" id="addPlant" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Plant
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -347,6 +364,7 @@
 <script type="text/javascript">
 
 var table;
+var permissions = <?= json_encode($_SESSION['permissions']) ?>;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -385,18 +403,60 @@ $(function () {
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    if(row.status == 'Inactive'){
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
+                    var buttons = '';
+                    if (row.status == 'Inactive') {
+                        if (permissions['Master Data'] && permissions['Master Data']['Plant'] && permissions['Master Data']['Plant'].includes('reactivate')){
+                            buttons += `
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item remove-item-btn" id="reactivate${data}" onclick="reactivate(${data})">
+                                                Reactivate
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        if (permissions['Master Data'] && permissions['Master Data']['Plant'] && ['edit', 'delete'].some(p => permissions['Master Data']['Plant'].includes(p))) {
+                            buttons += `
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">`;
+
+                                    if (permissions['Master Data'] && permissions['Master Data']['Plant'] && permissions['Master Data']['Plant'].includes('edit')){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+
+                                    if (permissions['Master Data'] && permissions['Master Data']['Plant'] && permissions['Master Data']['Plant'].includes('delete')){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">
+                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+                            buttons += `
+                                    </ul>
+                                </div>
+                            `;
+                        }
                     }
-                    else{
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
-                    }
+
+                    return buttons;
                 }
             }
         ]       
