@@ -9,7 +9,12 @@ $name = $_SESSION["username"];
 
 $modules = $db->query("SELECT * FROM modules ORDER BY category ASC, name ASC");
 $categories = $db->query("SELECT DISTINCT category FROM modules ORDER BY category ASC");
-$permissions = $db->query("SELECT * FROM permissions ORDER BY id ASC");
+$permissionsResult = $db->query("SELECT * FROM permissions ORDER BY id ASC");
+$permissions = array();
+while($p = $permissionsResult->fetch_assoc()){
+    $p['modules_arr'] = json_decode($p['modules'], true) ?: ['All'];
+    $permissions[] = $p;
+}
 
 ?>
 
@@ -182,14 +187,16 @@ $permissions = $db->query("SELECT * FROM permissions ORDER BY id ASC");
                                         </div>
                                         <div class="card-body py-2">
                                             <div class="row">
-                                                <?php $permissions->data_seek(0); while($perm = $permissions->fetch_assoc()): ?>
+                                                <?php foreach($permissions as $perm): ?>
+                                                <?php if(in_array('All', $perm['modules_arr']) || in_array($mod['category'], $perm['modules_arr'])): ?>
                                                 <div class="col-md-3 mb-1">
                                                     <div class="form-check">
                                                         <input class="form-check-input perm-check" type="checkbox" name="permissions[<?=$mod['id']?>][]" value="<?=$perm['id']?>" id="perm_<?=$mod['id']?>_<?=$perm['id']?>">
                                                         <label class="form-check-label text-dark" for="perm_<?=$mod['id']?>_<?=$perm['id']?>"><?=ucwords(str_replace('_',' ',$perm['name']))?></label>
                                                     </div>
                                                 </div>
-                                                <?php endwhile; ?>
+                                                <?php endif; ?>
+                                                <?php endforeach; ?>
                                             </div>
                                         </div>
                                     </div>

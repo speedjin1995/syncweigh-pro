@@ -2821,7 +2821,8 @@ ALTER TABLE `modules` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 CREATE TABLE `permissions` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL
+  `name` varchar(100) NOT NULL,
+  `modules` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 ALTER TABLE `permissions` ADD PRIMARY KEY (`id`);
@@ -2872,14 +2873,16 @@ INSERT INTO `modules` (`id`, `name`, `category`) VALUES
 (NULL, 'Role Management', 'Setting')
 ;
 
-INSERT INTO `permissions` (`id`, `name`) VALUES 
-(NULL, 'view'),
-(NULL, 'create'),
-(NULL, 'edit'),
-(NULL, 'delete'),
-(NULL, 'manual_weighing'),
-(NULL, 'upload_excel'),
-(NULL, 'post_to_sql'),
-(NULL, 'pull_from_sql'),
-(NULL, 'export')
-;
+INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES 
+(NULL, 'view', '["All"]'),
+(NULL, 'create','["All"]'),
+(NULL, 'edit','["All"]'),
+(NULL, 'delete','["All"]'),
+(NULL, 'manual_weighing', '["Weighing"]'),
+(NULL, 'print_slip', '["Weighing", "Report"]'),
+(NULL, 'upload_excel', '["Accounting", "Stock Management", "Master Data"]'),
+(NULL, 'post_to_sql', '["Accounting"]'),
+(NULL, 'pull_from_sql', '["Accounting", "Master Data"]'),
+(NULL, 'complete', '["Accounting"]'),
+(NULL, 'reactivate', '["Accounting"]'),
+(NULL, 'export', '["Accounting", "Stock Management", "Report", "Master Data"]');
