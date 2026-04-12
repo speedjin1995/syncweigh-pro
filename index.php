@@ -4,7 +4,7 @@
 <?php
 require_once "php/db_connect.php";
 
-if (!hasPermission('Weighing', 'view')){
+if (!hasPermission('Weighing', ['view', 'create', 'edit'])){
     header('Location: no-permission.php');
     exit;
 }
