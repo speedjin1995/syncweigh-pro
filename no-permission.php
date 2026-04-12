@@ -18,7 +18,7 @@
                                 <i class="mdi mdi-lock-outline text-danger" style="font-size: 80px;"></i>
                                 <h3 class="mt-3">Access Denied</h3>
                                 <p class="text-muted">You do not have permission to access this page.</p>
-                                <a href="dashboard.php" class="btn btn-danger mt-3"><i class="mdi mdi-home"></i> Back to Dashboard</a>
+                                <a href="index.php" class="btn btn-danger mt-3"><i class="mdi mdi-home"></i> Back to Weighing</a>
                             </div>
                         </div>
                     </div>
