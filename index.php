@@ -1583,6 +1583,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
     var grossIncomingDatePicker2;
     var tareOutgoingDatePicker2; 
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -1828,7 +1829,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                         var transactionKey = (row.transaction_status == 'Local') ? 'Public' : row.transaction_status;
                         var buttons = `<div class="row g-1 d-flex">`;
 
-                        if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('edit')) {
+                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('edit'))) {
                             //if (row.is_complete != 'Y' ){
                                 buttons += `
                                 <div class="col-auto">
@@ -1839,7 +1840,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             //}
                         } else {
                             if (row.is_complete != 'Y' ){
-                                if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('weight_out')) {
+                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('weight_out'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
@@ -1851,7 +1852,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                         }
 
                         if (row.is_approved == 'Y') {
-                            if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip')) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
@@ -1870,7 +1871,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             </div>`;
                         }
 
-                        if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete')) {
+                        if (isSADMIN || (ermissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -2692,7 +2693,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             var transactionKey = (row.transaction_status == 'Local') ? 'Public' : row.transaction_status;
                             var buttons = `<div class="row g-1 d-flex">`;
 
-                            if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('edit')) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('edit'))) {
                                 //if (row.is_complete != 'Y' ){
                                     buttons += `
                                     <div class="col-auto">
@@ -2703,7 +2704,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                                 //}
                             }else {
                                 if (row.is_complete != 'Y' ){
-                                    if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('weight_out')) {
+                                    if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('weight_out'))) {
                                         buttons += `
                                         <div class="col-auto">
                                             <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
@@ -2715,7 +2716,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             }
 
                             if (row.is_approved == 'Y') {
-                                if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip')) {
+                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
@@ -2734,7 +2735,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                                 </div>`;
                             }
 
-                            if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete')) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -3678,7 +3679,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                 $('#productNameDisplay').hide();
                 $('#addModal').find('#divPoSupplyWeight').show();
 
-                if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do')) {
+                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do'))) {
                     $('#doDisplay').show();
                 }
                 
@@ -3753,7 +3754,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do')) {
+                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do'))) {
                     $('#doDisplay').show();
                 }
                 
@@ -3799,7 +3800,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                if (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do')) {
+                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do'))) {
                     $('#doDisplay').hide();
                 }
 
@@ -4636,7 +4637,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
         transactionStatusOption.each(function() {
             var val = $(this).val();
             var permKey = (val === 'Local') ? 'Public' : val;
-            if ((weighing[permKey] && weighing[permKey].includes(action)) || val === currentVal) {
+            if (isSADMIN || (weighing[permKey] && weighing[permKey].includes(action)) || val === currentVal) {
                 $select.append($(this).clone());
             }
         });

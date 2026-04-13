@@ -724,6 +724,7 @@ if ($user != null && $user != ''){
     let wasErrorModalShown = false;
     var userRole = '<?=$role ?>';
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         const today = new Date();
@@ -852,7 +853,7 @@ if ($user != null && $user != ''){
                     render: function (data, type, row) {
                         var buttons = `<div class="row g-1 d-flex">`;
 
-                        if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit')){
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit'))){
                             buttons += `
                             <div class="col-auto">
                                 <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
@@ -863,7 +864,7 @@ if ($user != null && $user != ''){
                         
 
                         if (row.status == 'Open'){
-                            if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('complete')) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('complete'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
@@ -872,7 +873,7 @@ if ($user != null && $user != ''){
                                 </div>`;
                             }
                         } else {
-                            if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate')) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -882,7 +883,7 @@ if ($user != null && $user != ''){
                             }
                         }
                         
-                        if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete')) {
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -966,7 +967,7 @@ if ($user != null && $user != ''){
                         render: function (data, type, row) {
                             var buttons = `<div class="row g-1 d-flex">`;
 
-                            if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit')){
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit'))){
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
@@ -977,7 +978,7 @@ if ($user != null && $user != ''){
                             
 
                             if (row.status == 'Open'){
-                                if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('complete')) {
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('complete'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
@@ -986,7 +987,7 @@ if ($user != null && $user != ''){
                                     </div>`;
                                 }
                             } else {
-                                if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate')) {
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -996,7 +997,7 @@ if ($user != null && $user != ''){
                                 }
                             }
                             
-                            if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete')) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -1541,7 +1542,7 @@ if ($user != null && $user != ''){
                 <p><strong>BALANCE:</strong> ${row.converted_balance} ${row.converted_unit_label}</p>
             `;
 
-            if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('include_price')){
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('include_price'))){
                 returnString += `
                     <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
                     <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
@@ -1583,7 +1584,7 @@ if ($user != null && $user != ''){
                             <td>${weights[i].created_by}</td>
                             <td>`;
 
-                            if (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('print_slip')){
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('print_slip'))){
                                 returnString += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${weights[i].id}" onclick="print('${weights[i].id}')" class="btn btn-info btn-sm">

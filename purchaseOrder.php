@@ -710,6 +710,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
     var table = null;
     let wasErrorModalShown = false;
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         const today = new Date();
@@ -838,7 +839,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                     render: function (data, type, row) {
                         var buttons = `<div class="row g-1 d-flex">`;
 
-                        if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('edit')){
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('edit'))){
                             buttons += `
                             <div class="col-auto">
                                 <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
@@ -849,7 +850,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                         
 
                         if (row.status == 'Open'){
-                            if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('complete')) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('complete'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
@@ -858,7 +859,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                 </div>`;
                             }
                         } else {
-                            if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('reactivate')) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('reactivate'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -868,7 +869,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                             }
                         }
                         
-                        if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('delete')) {
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('delete'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -952,7 +953,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                         render: function (data, type, row) {
                             var buttons = `<div class="row g-1 d-flex">`;
 
-                            if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('edit')){
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('edit'))){
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
@@ -962,7 +963,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                             }
 
                             if (row.status == 'Open'){
-                                if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('complete')) {
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('complete'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
@@ -971,7 +972,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                     </div>`;
                                 }
                             } else {
-                                if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('reactivate')) {
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('reactivate'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -981,7 +982,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                 }
                             }
                             
-                            if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('delete')) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('delete'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -1560,7 +1561,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                             <td>${weights[i].created_by}</td>
                             <td>`;
 
-                            if (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('print_slip')){
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('print_slip'))){
                                 returnString += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${weights[i].id}" onclick="print('${weights[i].id}')" class="btn btn-info btn-sm">

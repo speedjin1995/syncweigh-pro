@@ -248,6 +248,7 @@ while($p = $permissionsResult->fetch_assoc()){
 <script>
 var table;
 var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -294,8 +295,8 @@ $(function () {
                     //     return '';
                     // }
 
-                    var perms = (permissions['User Management'] && permissions['User Management']['Role']) || [];
-                    if (['edit', 'delete'].some(p => perms.includes(p))) {
+                    var perms = (permissions['User Management'] && permissions['User Management']['Role']) || [];                    
+                    if (isSADMIN || ['edit', 'delete'].some(p => perms.includes(p))) {
                         var buttons = `
                             <div class="dropdown d-inline-block">
                                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -303,7 +304,7 @@ $(function () {
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">`;
 
-                        if (perms.includes('edit')) {
+                        if (isSADMIN || perms.includes('edit')) {
                             buttons += `
                                     <li>
                                         <a class="dropdown-item edit-item-btn" onclick="edit(${data})">
@@ -317,7 +318,7 @@ $(function () {
                                     </li>`;
                         }
 
-                        if (perms.includes('delete')) {
+                        if (isSADMIN || perms.includes('delete')) {
                             buttons += `
                                     <li>
                                         <a class="dropdown-item remove-item-btn" onclick="deactivate(${data})">

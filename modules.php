@@ -187,6 +187,7 @@ $categories = $db->query("SELECT DISTINCT category FROM modules ORDER BY categor
 <script type="text/javascript">
 var table;
 var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -234,7 +235,7 @@ $(function () {
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
                             `;
-                            if (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('edit')){
+                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('edit'))){
                                 buttons += `
                                 <li>
                                     <a class="dropdown-item edit-item-btn" onclick="edit(${data})">
@@ -243,7 +244,7 @@ $(function () {
                                 </li>`;
                             }
 
-                            if (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('delete')){
+                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('delete'))){
                                 buttons += `
                                 <li>
                                     <a class="dropdown-item remove-item-btn" onclick="deactivate(${data})">

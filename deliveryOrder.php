@@ -1087,6 +1087,7 @@ else{
     var grossIncomingDatePicker2;
     var tareOutgoingDatePicker2; 
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         const today = new Date();
@@ -1261,7 +1262,7 @@ else{
                     data: 'id',
                     class: 'action-button',
                     render: function ( data, type, row ) {
-                        if (permissions['Accounting'] && permissions['Accounting']['Delivery Order (DO)'] && permissions['Accounting']['Delivery Order (DO)'].includes('post_to_sql')) {
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Delivery Order (DO)'] && permissions['Accounting']['Delivery Order (DO)'].includes('post_to_sql'))) {
                             return `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1345,7 +1346,7 @@ else{
                         data: 'id',
                         class: 'action-button',
                         render: function (data, type, row) {
-                            if (permissions['Accounting'] && permissions['Accounting']['Delivery Order (DO)'] && permissions['Accounting']['Delivery Order (DO)'].includes('post_to_sql')) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Delivery Order (DO)'] && permissions['Accounting']['Delivery Order (DO)'].includes('post_to_sql'))) {
                                 return `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -2353,7 +2354,7 @@ else{
                         <th>Tare Outgoing</th>
                         <th>Outgoing Date</th>
                         <th>Nett Weight</th>`;
-                        if (permissions['Weighing'] && permissions['Weighing']['Sales'] && permissions['Weighing']['Sales'].includes('edit')) {
+                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing']['Sales'] && permissions['Weighing']['Sales'].includes('edit'))) {
                             returnString += `<th>Action</th>`;
                         }
 
@@ -2376,7 +2377,7 @@ else{
                             <td>${parseFloat(weights[i].tare_weight1)/1000} MT</td>
                             <td>${weights[i].tare_weight1_date}</td>
                             <td>${parseFloat(weights[i].nett_weight1)/1000} MT</td>`
-                            if (permissions['Weighing'] && permissions['Weighing']['Sales'] && permissions['Weighing']['Sales'].includes('edit')) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing']['Sales'] && permissions['Weighing']['Sales'].includes('edit'))) {
                                 returnString += `
                                 <td>
                                     <button title="Edit" type="button" id="edit${weights[i].id}" onclick="edit(${weights[i].id})" class="btn btn-warning btn-sm">

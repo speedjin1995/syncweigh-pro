@@ -1068,6 +1068,7 @@ else{
     var grossIncomingDatePicker2;
     var tareOutgoingDatePicker2; 
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         const today = new Date();
@@ -2308,7 +2309,7 @@ else{
                         <th>Tare Outgoing</th>
                         <th>Outgoing Date</th>
                         <th>Nett Weight</th>`;
-                        if (permissions['Weighing'] && permissions['Weighing']['Purchase'] && permissions['Weighing']['Purchase'].includes('edit')) {
+                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing']['Purchase'] && permissions['Weighing']['Purchase'].includes('edit'))) {
                             returnString += `<th>Action</th>`;
                         }
 
@@ -2331,7 +2332,7 @@ else{
                             <td>${parseFloat(weights[i].tare_weight1)/1000} MT</td>
                             <td>${weights[i].tare_weight1_date}</td>
                             <td>${parseFloat(weights[i].nett_weight1)/1000} MT</td>`
-                            if (permissions['Weighing'] && permissions['Weighing']['Purchase'] && permissions['Weighing']['Purchase'].includes('edit')) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing']['Purchase'] && permissions['Weighing']['Purchase'].includes('edit'))) {
                                 returnString += `
                                 <td>
                                     <button title="Edit" type="button" id="edit${weights[i].id}" onclick="edit(${weights[i].id})" class="btn btn-warning btn-sm">
