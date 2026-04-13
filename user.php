@@ -7,7 +7,7 @@
 require_once "layouts/config.php";
 require_once "php/db_connect.php";
 
-if (!hasModulePermission('Master Data', 'User', ['view', 'create', 'edit'])){
+if (!hasModulePermission('User Management', 'User Setup', ['view', 'create', 'edit'])){
     header('Location: no-permission.php');
     exit;
 }
@@ -28,7 +28,7 @@ mysqli_stmt_store_result($stmt2);
 mysqli_stmt_bind_result($stmt2, $code, $name);
 
 // Pull plants
-if (hasModulePermission('Master Data', 'User', ['view_all_plants'])){
+if (hasModulePermission('User Management', 'User Setup', ['view_all_plants'])){
     $query4 = "SELECT id, name FROM Plant WHERE status = '0'";
 }
 else{
@@ -93,7 +93,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     <h5 class="card-title mb-0">User Records</h5>
                                                 </div>
                                                 <div class="flex-shrink-0">
-                                                    <?php if(hasModulePermission('Master Data', 'User', ['upload_excel'])): ?>
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['upload_excel'])): ?>
                                                     <a href="template/User_Template.xlsx" download>
                                                         <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
                                                             <i class="ri-file-pdf-line align-middle me-1"></i>
@@ -106,21 +106,21 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     </button>
                                                     <?php endif; ?>
 
-                                                    <?php if(hasModulePermission('Master Data', 'User', ['export'])): ?>
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['export'])): ?>
                                                     <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                         <i class="ri-file-excel-line align-middle me-1"></i>
                                                         Export Excel
                                                     </button>
                                                     <?php endif; ?>
 
-                                                    <?php if(hasModulePermission('Master Data', 'User', ['delete'])): ?>
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['delete'])): ?>
                                                     <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                         <i class="fa-solid fa-ban align-middle me-1"></i>
                                                         Delete User
                                                     </button>
                                                     <?php endif; ?>
 
-                                                    <?php if(hasModulePermission('Master Data', 'User', ['create'])): ?>
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['create'])): ?>
                                                     <button type="button" id="addMembers" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                         <i class="ri-add-circle-line align-middle me-1"></i>
                                                         Add New User
@@ -398,7 +398,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                     render: function ( data, type, row ) {
                         var buttons = '';
                         if (row.status == 'Inactive') {
-                            if (permissions['Master Data'] && permissions['Master Data']['User'] && permissions['Master Data']['User'].includes('reactivate')){
+                            if (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('reactivate')){
                                 buttons += `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -415,7 +415,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                 `;
                             }
                         } else {
-                            if (permissions['Master Data'] && permissions['Master Data']['User'] && ['edit', 'delete'].some(p => permissions['Master Data']['User'].includes(p))) {
+                            if (permissions['User Management'] && permissions['User Management']['User Setup'] && ['edit', 'delete'].some(p => permissions['User Management']['User Setup'].includes(p))) {
                                 buttons += `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -423,7 +423,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">`;
 
-                                        if (permissions['Master Data'] && permissions['Master Data']['User'] && permissions['Master Data']['User'].includes('edit')){
+                                        if (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('edit')){
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
@@ -433,7 +433,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             `;
                                         }
 
-                                        if (permissions['Master Data'] && permissions['Master Data']['User'] && permissions['Master Data']['User'].includes('delete')){
+                                        if (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('delete')){
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">
