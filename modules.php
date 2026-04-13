@@ -2,6 +2,10 @@
 <?php include 'layouts/head-main.php'; ?>
 <?php
 require_once "php/db_connect.php";
+if (!hasModulePermission('User Management', 'Module', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
 
 $categories = $db->query("SELECT DISTINCT category FROM modules ORDER BY category ASC");
 ?>

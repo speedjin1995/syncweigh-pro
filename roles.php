@@ -3,6 +3,10 @@
 <?php
 require_once "layouts/config.php";
 require_once "php/db_connect.php";
+if (!hasModulePermission('User Management', 'Role', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
 
 $id = $_SESSION['id'];
 $name = $_SESSION["username"];
@@ -66,14 +70,19 @@ while($p = $permissionsResult->fetch_assoc()){
                                                     <h5 class="card-title mb-0">Role Records</h5>
                                                 </div>
                                                 <div class="flex-shrink-0">
+                                                    <?php if(hasModulePermission('User Management', 'Role', ['delete'])): ?>
                                                     <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                         <i class="fa-solid fa-ban align-middle me-1"></i>
                                                         Delete Role
                                                     </button>
+                                                    <?php endif; ?>
+
+                                                    <?php if(hasModulePermission('User Management', 'Role', ['create'])): ?>
                                                     <button type="button" id="addRole" class="btn btn-danger waves-effect waves-light">
                                                         <i class="ri-add-circle-line align-middle me-1"></i>
                                                         Add New Role
                                                     </button>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -238,6 +247,7 @@ while($p = $permissionsResult->fetch_assoc()){
 
 <script>
 var table;
+var permissions = <?= json_encode($_SESSION['permissions']) ?>;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -267,40 +277,61 @@ $(function () {
             {
                 data: 'id',
                 render: function (data, type, row) {
-                    if (row.status == 'Inactive') {
-                        return '<div class="dropdown d-inline-block">' +
-                            '<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                '<i class="ri-more-fill align-middle"></i>' +
-                            '</button>' +
-                            '<ul class="dropdown-menu dropdown-menu-end">' +
-                                '<li>' +
-                                    '<a class="dropdown-item" onclick="reactivate(' + data + ')">Reactivate</a>' +
-                                '</li>' +
-                            '</ul>' +
-                        '</div>';
+                    // if (row.status == 'Inactive') {
+                    //     if (permissions['User Management'] && permissions['User Management']['Role'] && permissions['User Management']['Role'].includes('reactivate')) {
+                    //         return `
+                    //             <div class="dropdown d-inline-block">
+                    //                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    //                     <i class="ri-more-fill align-middle"></i>
+                    //                 </button>
+                    //                 <ul class="dropdown-menu dropdown-menu-end">
+                    //                     <li>
+                    //                         <a class="dropdown-item" onclick="reactivate(${data})">Reactivate</a>
+                    //                     </li>
+                    //                 </ul>
+                    //             </div>`;
+                    //     }
+                    //     return '';
+                    // }
+
+                    var perms = (permissions['User Management'] && permissions['User Management']['Role']) || [];
+                    if (['edit', 'delete'].some(p => perms.includes(p))) {
+                        var buttons = `
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ri-more-fill align-middle"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">`;
+
+                        if (perms.includes('edit')) {
+                            buttons += `
+                                    <li>
+                                        <a class="dropdown-item edit-item-btn" onclick="edit(${data})">
+                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" onclick="managePermissions(${data},'${row.role_name}')">
+                                            <i class="ri-shield-keyhole-fill align-bottom me-2 text-muted"></i> Permissions
+                                        </a>
+                                    </li>`;
+                        }
+
+                        if (perms.includes('delete')) {
+                            buttons += `
+                                    <li>
+                                        <a class="dropdown-item remove-item-btn" onclick="deactivate(${data})">
+                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                        </a>
+                                    </li>`;
+                        }
+
+                        buttons += `
+                                </ul>
+                            </div>`;
+                        return buttons;
                     }
-                    return '<div class="dropdown d-inline-block">' +
-                        '<button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i>' +
-                        '</button>' +
-                        '<ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li>' +
-                                '<a class="dropdown-item edit-item-btn" onclick="edit(' + data + ')">' +
-                                    '<i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit' +
-                                '</a>' +
-                            '</li>' +
-                            '<li>' +
-                                '<a class="dropdown-item" onclick="managePermissions(' + data + ',\'' + row.role_name + '\')">' +
-                                    '<i class="ri-shield-keyhole-fill align-bottom me-2 text-muted"></i> Permissions' +
-                                '</a>' +
-                            '</li>' +
-                            '<li>' +
-                                '<a class="dropdown-item remove-item-btn" onclick="deactivate(' + data + ')">' +
-                                    '<i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete' +
-                                '</a>' +
-                            '</li>' +
-                        '</ul>' +
-                    '</div>';
+                    return '';
                 }
             }
         ]
