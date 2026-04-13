@@ -8,6 +8,7 @@
     $lang["t-portSetup"]="Port Setup";
     $lang["t-myProfile"]="My Profile";
     $lang["t-changePassword"]="Change Password";
+    $lang["t-roleManagement"]="Role Management";
 
     $lang["t-accounting"]="Accounting";
     $lang["t-so"]="Sales Order";

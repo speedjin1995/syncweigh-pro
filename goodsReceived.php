@@ -3,6 +3,11 @@
 
 <?php
 require_once "php/db_connect.php";
+if (!hasModulePermission('Accounting', 'Goods Received (GR)', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $plantId = $_SESSION['plant'];
 
 $vehicles = $db->query("SELECT DISTINCT veh_number FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
@@ -40,14 +45,14 @@ if($plantId != null && count($plantId) > 0){
     }
 }
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if(hasModulePermission('Accounting', 'Goods Received (GR)', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}
+else{
     $username = implode("', '", $_SESSION["plant"]);
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-}
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
 ?>
 
@@ -222,14 +227,19 @@ else{
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Pdf
                                                                 </button> -->
+                                                                <?php if(hasModulePermission('Accounting', 'Goods Received (GR)', ['export'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Goods Received (GR)', ['post_to_sql'])): ?>
                                                                 <button type="button" id="postSQL" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Post to SQL
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -1057,6 +1067,7 @@ else{
     var tareOutgoingDatePicker; 
     var grossIncomingDatePicker2;
     var tareOutgoingDatePicker2; 
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
 
     $(function () {
         const today = new Date();
@@ -1073,9 +1084,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1090,9 +1101,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1107,9 +1118,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1124,9 +1135,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -2297,7 +2308,7 @@ else{
                         <th>Tare Outgoing</th>
                         <th>Outgoing Date</th>
                         <th>Nett Weight</th>`;
-                        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                        if (permissions['Weighing'] && permissions['Weighing']['Purchase'] && permissions['Weighing']['Purchase'].includes('edit')) {
                             returnString += `<th>Action</th>`;
                         }
 
@@ -2320,7 +2331,7 @@ else{
                             <td>${parseFloat(weights[i].tare_weight1)/1000} MT</td>
                             <td>${weights[i].tare_weight1_date}</td>
                             <td>${parseFloat(weights[i].nett_weight1)/1000} MT</td>`
-                            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            if (permissions['Weighing'] && permissions['Weighing']['Purchase'] && permissions['Weighing']['Purchase'].includes('edit')) {
                                 returnString += `
                                 <td>
                                     <button title="Edit" type="button" id="edit${weights[i].id}" onclick="edit(${weights[i].id})" class="btn btn-warning btn-sm">

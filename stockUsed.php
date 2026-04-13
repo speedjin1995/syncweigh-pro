@@ -3,6 +3,11 @@
 
 <?php
 require_once "php/db_connect.php";
+if (!hasModulePermission('Accounting', 'Stock Take', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $plantId = $_SESSION['plant'];
 $plantName = '-';
 
@@ -17,12 +22,12 @@ if($plantId != null && count($plantId) > 0){
     }
 }
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+if(hasModulePermission('Accounting', 'Stock Take', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
 else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
 }
 ?>
 
@@ -158,10 +163,12 @@ else{
                                                                 <h5 class="card-title mb-0">Stock Used Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if(hasModulePermission('Accounting', 'Stock Take', ['export'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
