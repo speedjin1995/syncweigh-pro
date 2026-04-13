@@ -2873,8 +2873,7 @@ INSERT INTO `modules` (`id`, `name`, `category`) VALUES
 (NULL, 'Port Setup', 'Setting'),
 (NULL, 'User Setup', 'User Management'),
 (NULL, 'Role', 'User Management'),
-(NULL, 'Module', 'User Management'),
-(NULL, 'Role and Permission', 'User Management')
+(NULL, 'Module', 'User Management')
 ;
 
 TRUNCATE TABLE `permissions`;

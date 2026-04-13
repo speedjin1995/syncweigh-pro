@@ -4,6 +4,7 @@
     $hasStockView = hasPermission('Stock Management', ['view', 'create', 'edit']);
     $hasMasterDataView = hasPermission('Master Data', ['view', 'create', 'edit']);
     $hasReportView = hasPermission('Report', ['view', 'create', 'edit']);
+    $hasUserManagementView = hasPermission('User Management', ['view', 'create', 'edit']);
 ?>
 
 <!-- ========== App Menu ========== -->
@@ -211,12 +212,6 @@
                             </li>
                             <?php endif; ?>
                             
-                            <?php if(hasModulePermission('Master Data', 'User', ['view', 'create', 'edit'])): ?>
-                            <li class="nav-item">
-                                <a href="user.php" class="nav-link"><b><?=$lang['t-user']?></b></a>
-                            </li>
-                            <?php endif; ?>
-                            
                             <!--li class="nav-item">
                                 <a href="unit.php" class="nav-link"><b><?=$lang['t-unit']?></b></a>
                             </li>                                   
@@ -279,6 +274,38 @@
                     </div>
                 </li>
                 <?php endif; ?>
+
+                <?php if($hasUserManagementView): ?>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarUserManagement" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarUserManagement">
+                        <b><i class="ri-account-circle-line"></i> <span><?=$lang['t-userManagement']?></span></b>
+                    </a>
+                    <div class="collapse menu-dropdown" id="sidebarUserManagement">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <?php if(hasModulePermission('User Management', 'User Setup', ['view', 'create', 'edit'])): ?>
+                                <li class="nav-item">
+                                    <a href="user.php" class="nav-link"><b><?=$lang['t-userSetup']?></b></a>
+                                </li>
+                                <?php endif; ?>
+
+                                <?php if(hasModulePermission('User Management', 'Role', ['view', 'create', 'edit'])): ?>
+                                <li class="nav-item">
+                                    <a href="roles.php" class="nav-link"><b><?=$lang['t-roles']?></b></a>
+                                </li> 
+                                <?php endif; ?>
+
+                                <?php if(hasModulePermission('User Management', 'Module', ['view', 'create', 'edit'])): ?>
+                                <li class="nav-item">
+                                    <a href="modules.php" class="nav-link"><b><?=$lang['t-modules']?></b></a>
+                                </li>
+                                <?php endif; ?>              
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <?php endif; ?>
                 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse" role="button"
@@ -303,12 +330,6 @@
                                 <?php if(hasModulePermission('Setting', 'Port Setup', ['view', 'create', 'edit'])): ?>
                                 <li class="nav-item">
                                     <a href="portSetup.php" class="nav-link"><b><?=$lang['t-portSetup']?></b></a>
-                                </li> 
-                                <?php endif; ?>
-
-                                <?php if(hasModulePermission('Setting', 'Role Management', ['view', 'create', 'edit'])): ?>
-                                <li class="nav-item">
-                                    <a href="roles.php" class="nav-link"><b><?=$lang['t-roleManagement']?></b></a>
                                 </li> 
                                 <?php endif; ?>
 

@@ -119,14 +119,19 @@ $categories = $db->query("SELECT DISTINCT category FROM modules ORDER BY categor
                                                                 <h5 class="card-title mb-0">Module Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if(hasModulePermission('User Management', 'Module', ['delete'])): ?>
                                                                 <button type="button" id="multiDelete" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Module
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('User Management', 'Module', ['create'])): ?>
                                                                 <button type="button" id="addModule" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Module
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -177,6 +182,7 @@ $categories = $db->query("SELECT DISTINCT category FROM modules ORDER BY categor
 
 <script type="text/javascript">
 var table;
+var permissions = <?= json_encode($_SESSION['permissions']) ?>;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -217,24 +223,36 @@ $(function () {
             {
                 data: 'id',
                 render: function (data, type, row) {
-                    return `
+                    var buttons = `
                         <div class="dropdown d-inline-block">
                             <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="ri-more-fill align-middle"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
+                            `;
+                            if (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('edit')){
+                                buttons += `
                                 <li>
                                     <a class="dropdown-item edit-item-btn" onclick="edit(${data})">
                                         <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
                                     </a>
-                                </li>
+                                </li>`;
+                            }
+
+                            if (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('delete')){
+                                buttons += `
                                 <li>
                                     <a class="dropdown-item remove-item-btn" onclick="deactivate(${data})">
                                         <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
                                     </a>
-                                </li>
+                                </li>`;
+                            }
+
+                        buttons += `                                                
                             </ul>
                         </div>`;
+
+                    return buttons;
                 }
             }
         ]
