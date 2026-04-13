@@ -548,6 +548,7 @@ var rowNoCount = 1;
 var uomRowCount = $("#uomTable").find(".details").length;
 var uomNoCount = 1;
 var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -604,7 +605,7 @@ $(function () {
                 render: function ( data, type, row ) {
                     var buttons = '';
                     if (row.status == 'Inactive') {
-                        if (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('reactivate')){
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('reactivate'))){
                             buttons += `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -621,7 +622,7 @@ $(function () {
                             `;
                         }
                     } else {
-                        if (permissions['Master Data'] && permissions['Master Data']['Product'] && ['edit', 'delete'].some(p => permissions['Master Data']['Product'].includes(p))) {
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && ['edit', 'delete'].some(p => permissions['Master Data']['Product'].includes(p)))) {
                             buttons += `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -629,7 +630,7 @@ $(function () {
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">`;
 
-                                    if (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('edit')){
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('edit'))){
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
@@ -639,7 +640,7 @@ $(function () {
                                         `;
                                     }
 
-                                    if (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('delete')){
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('delete'))){
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">

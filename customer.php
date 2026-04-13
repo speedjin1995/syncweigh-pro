@@ -369,6 +369,7 @@
 
 var table;
 var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
 $(function () {
     // Initialize all Select2 elements in the modal
@@ -423,7 +424,7 @@ $(function () {
                 render: function ( data, type, row ) {
                     var buttons = '';
                     if (row.status == 'Inactive') {
-                        if (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('reactivate')){
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('reactivate'))){
                             buttons += `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -440,7 +441,7 @@ $(function () {
                             `;
                         }
                     } else {
-                        if (permissions['Master Data'] && permissions['Master Data']['Customer'] && ['edit', 'delete'].some(p => permissions['Master Data']['Customer'].includes(p))) {
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && ['edit', 'delete'].some(p => permissions['Master Data']['Customer'].includes(p)))) {
                             buttons += `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -448,7 +449,7 @@ $(function () {
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">`;
 
-                                    if (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('edit')){
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('edit'))){
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
@@ -458,7 +459,7 @@ $(function () {
                                         `;
                                     }
 
-                                    if (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('delete')){
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('delete'))){
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">

@@ -322,6 +322,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
     <script>
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         $('#selectAllCheckbox').on('change', function() {
@@ -398,7 +399,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                     render: function ( data, type, row ) {
                         var buttons = '';
                         if (row.status == 'Inactive') {
-                            if (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('reactivate')){
+                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('reactivate'))){
                                 buttons += `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -415,7 +416,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                 `;
                             }
                         } else {
-                            if (permissions['User Management'] && permissions['User Management']['User Setup'] && ['edit', 'delete'].some(p => permissions['User Management']['User Setup'].includes(p))) {
+                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && ['edit', 'delete'].some(p => permissions['User Management']['User Setup'].includes(p)))) {
                                 buttons += `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -423,7 +424,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">`;
 
-                                        if (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('edit')){
+                                        if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('edit'))){
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
@@ -433,7 +434,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             `;
                                         }
 
-                                        if (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('delete')){
+                                        if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('delete'))){
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">
