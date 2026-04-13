@@ -8,7 +8,6 @@
     $lang["t-portSetup"]="Port Setup";
     $lang["t-myProfile"]="My Profile";
     $lang["t-changePassword"]="Change Password";
-    $lang["t-roleManagement"]="Role Management";
 
     $lang["t-accounting"]="Accounting";
     $lang["t-so"]="Sales Order";
@@ -23,6 +22,12 @@
     $lang["t-inventory"]="Inventory";
     $lang["t-assetManagement"]="Asset Management";
     $lang["t-calculationSetup"]="Calculation Setup";
+
+    $lang["t-userManagement"]="User Management";
+    $lang["t-userSetup"]="User Setup";
+    $lang["t-roles"]="Roles";
+    $lang["t-modules"]="Modules";
+    $lang["t-rolePermission"]="Role & Permissions";
 
     $lang["t-masterdata"]="Master Data";
     $lang["t-customer"]="Customer";

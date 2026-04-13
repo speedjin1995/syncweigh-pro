@@ -2835,6 +2835,7 @@ CREATE TABLE `role_permissions` (
   `permission_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+TRUNCATE TABLE `modules`;
 INSERT INTO `modules` (`id`, `name`, `category`) VALUES 
 (NULL, 'Sales', 'Weighing'),
 (NULL, 'Purchase', 'Weighing'),
@@ -2870,9 +2871,13 @@ INSERT INTO `modules` (`id`, `name`, `category`) VALUES
 (NULL, 'Cronjob Setup', 'Setting'),
 (NULL, 'Company Profile', 'Setting'),
 (NULL, 'Port Setup', 'Setting'),
-(NULL, 'Role Management', 'Setting')
+(NULL, 'User Setup', 'User Management'),
+(NULL, 'Role', 'User Management'),
+(NULL, 'Module', 'User Management'),
+(NULL, 'Role and Permission', 'User Management')
 ;
 
+TRUNCATE TABLE `permissions`;
 INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES 
 (NULL, 'view', '["All"]'),
 (NULL, 'create','["All"]'),
@@ -2884,13 +2889,13 @@ INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
 (NULL, 'manual_date_change', '["Weighing"]'),
 (NULL, 'view_all_plants', '["Weighing", "Accounting", "Report", "Stock Management", "Master Data"]'),
 (NULL, 'print_slip', '["Weighing", "Report", "Accounting"]'),
-(NULL, 'upload_excel', '["Accounting", "Stock Management", "Master Data"]'),
+(NULL, 'upload_excel', '["Accounting", "Stock Management", "Master Data", "User Management"]'),
 (NULL, 'post_to_sql', '["Accounting"]'),
 (NULL, 'pull_from_sql', '["Accounting", "Master Data"]'),
 (NULL, 'complete', '["Accounting"]'),
 (NULL, 'reactivate', '["Accounting", "Master Data"]'),
 (NULL, 'include_price', '["Accounting"]'),
-(NULL, 'export', '["Accounting", "Stock Management", "Report", "Master Data"]');
+(NULL, 'export', '["Accounting", "Stock Management", "Report", "Master Data", "User Management"]');
 
 INSERT INTO `role_permissions` (`role_id`, `module_id`, `permission_id`) VALUES
 (13, 7, 1),
