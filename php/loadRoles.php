@@ -12,7 +12,11 @@ $searchValue = mysqli_real_escape_string($db, $_POST['search']['value']);
 
 $searchQuery = " ";
 if($searchValue != ''){
-    $searchQuery = " AND (role_code LIKE '%".$searchValue."%' OR role_name LIKE '%".$searchValue."%') ";
+    $searchQuery .= " AND (role_code LIKE '%".$searchValue."%' OR role_name LIKE '%".$searchValue."%') ";
+}
+
+if($_SESSION['roles'] != 'SADMIN'){
+    $searchQuery .= " AND role_code <> 'SADMIN'";
 }
 
 $sel = mysqli_query($db, "SELECT COUNT(*) as allcount FROM roles WHERE deleted IN (0,1)");
