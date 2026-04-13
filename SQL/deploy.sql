@@ -2861,7 +2861,6 @@ INSERT INTO `modules` (`id`, `name`, `category`) VALUES
 (NULL, 'Sales Representative', 'Master Data'),
 (NULL, 'Transporter', 'Master Data'),
 (NULL, 'Plant', 'Master Data'),
-(NULL, 'User', 'Master Data'),
 (NULL, 'Reason', 'Master Data'),
 (NULL, 'Sales', 'Report'),
 (NULL, 'Purchase', 'Report'),
@@ -2886,13 +2885,13 @@ INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
 (NULL, 'display_do', '["Weighing"]'),
 (NULL, 'manual_weighing', '["Weighing"]'),
 (NULL, 'manual_date_change', '["Weighing"]'),
-(NULL, 'view_all_plants', '["Weighing", "Accounting", "Report", "Stock Management", "Master Data"]'),
+(NULL, 'view_all_plants', '["Weighing", "Accounting", "Report", "Stock Management", "Master Data", "User Management"]'),
 (NULL, 'print_slip', '["Weighing", "Report", "Accounting"]'),
 (NULL, 'upload_excel', '["Accounting", "Stock Management", "Master Data", "User Management"]'),
 (NULL, 'post_to_sql', '["Accounting"]'),
 (NULL, 'pull_from_sql', '["Accounting", "Master Data"]'),
 (NULL, 'complete', '["Accounting"]'),
-(NULL, 'reactivate', '["Accounting", "Master Data"]'),
+(NULL, 'reactivate', '["Accounting", "Master Data", "User Management"]'),
 (NULL, 'include_price', '["Accounting"]'),
 (NULL, 'export', '["Accounting", "Stock Management", "Report", "Master Data", "User Management"]');
 
