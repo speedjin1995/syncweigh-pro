@@ -92,7 +92,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAccounting" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAccounting">
-                        <b><i class="ri-pages-line"></i> <span><?=$lang['t-accounting']?></span></b>
+                        <b><i class="ri-money-dollar-circle-line"></i> <span><?=$lang['t-accounting']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarAccounting">
                         <ul class="nav nav-sm flex-column">
@@ -134,7 +134,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarStock" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarStock">
-                        <b><i class="ri-pages-line"></i> <span><?=$lang['t-stock']?></span></b>
+                        <b><i class="ri-stock-line"></i> <span><?=$lang['t-stock']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarStock">
                         <ul class="nav nav-sm flex-column">
@@ -175,7 +175,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarMasterdata" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarMasterdata">
-                        <b><i class="ri-pages-line"></i> <span><?=$lang['t-masterdata']?></span></b>
+                        <b><i class="ri-database-2-line"></i> <span><?=$lang['t-masterdata']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarMasterdata">
                         <ul class="nav nav-sm flex-column">
@@ -253,7 +253,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarReport" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarReport">
-                        <b><i class="ri-account-circle-line"></i> <span><?=$lang['t-report']?></span></b>
+                        <b><i class="ri-file-chart-line"></i> <span><?=$lang['t-report']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarReport">
                         <ul class="nav nav-sm flex-column">
@@ -300,7 +300,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarUserManagement" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarUserManagement">
-                        <b><i class="ri-account-circle-line"></i> <span><?=$lang['t-userManagement']?></span></b>
+                        <b><i class="ri-group-line"></i> <span><?=$lang['t-userManagement']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarUserManagement">
                         <ul class="nav nav-sm flex-column">
@@ -331,7 +331,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarAuth">
-                        <b><i class="ri-account-circle-line"></i> <span><?=$lang['t-setting']?></span></b>
+                        <b><i class="ri-settings-3-line"></i> <span><?=$lang['t-setting']?></span></b>
                     </a>
                     <div class="collapse menu-dropdown" id="sidebarAuth">
                         <ul class="nav nav-sm flex-column">
