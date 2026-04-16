@@ -8,11 +8,11 @@ require_once "layouts/config.php";
 
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = '1';
-$stmt2 = $link->prepare("SELECT company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no from Company where id = ?");
+$stmt2 = $link->prepare("SELECT company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links from Company where id = ?");
 mysqli_stmt_bind_param($stmt2, "s", $id);
 mysqli_stmt_execute($stmt2);
 mysqli_stmt_store_result($stmt2);
-mysqli_stmt_bind_result($stmt2, $company_reg_no, $name, $address_line_1, $address_line_2, $address_line_3, $phone_no, $fax_no);
+mysqli_stmt_bind_result($stmt2, $company_reg_no, $name, $address_line_1, $address_line_2, $address_line_3, $phone_no, $fax_no, $links);
 
 if (mysqli_stmt_fetch($stmt2)) {
     $usercompany_reg_no = $company_reg_no;
@@ -22,6 +22,12 @@ if (mysqli_stmt_fetch($stmt2)) {
     $useraddress_line_3 = $address_line_3;
     $userphone_no = $phone_no;
     $userfax_no = $fax_no;
+    $userlinks = $links;
+    
+    $linksArray = json_decode($links, true);
+    $usersop_link = $linksArray['sop_link'] ?? '';
+    $userhardware_setup_link = $linksArray['hardware_setup_link'] ?? '';
+    $userhelp_link = $linksArray['help_link'] ?? '';
 }
 ?>
 
@@ -109,6 +115,30 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                     <label for="companyFax" class="col-sm-4 col-form-label">Fax No.</label>
                                                     <div class="col-sm-8">
                                                         <input type="text" class="form-control" id="companyFax" name="companyFax" placeholder="Company Fax" value="<?=$userfax_no ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="sopLink" class="col-sm-4 col-form-label">SOP Link</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="url" class="form-control" id="sopLink" name="sopLink" placeholder="SOP Link" value="<?=$usersop_link ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="hardwareSetupLink" class="col-sm-4 col-form-label">Hardware Setup Link</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="url" class="form-control" id="hardwareSetupLink" name="hardwareSetupLink" placeholder="Hardware Setup Link" value="<?=$userhardware_setup_link ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <label for="helpLink" class="col-sm-4 col-form-label">Help Link</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="url" class="form-control" id="helpLink" name="helpLink" placeholder="Help Link" value="<?=$userhelp_link ?>">
                                                     </div>
                                                 </div>
                                             </div>

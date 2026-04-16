@@ -5,6 +5,27 @@
     $hasMasterDataView = hasPermission('Master Data', ['view', 'create', 'edit']);
     $hasReportView = hasPermission('Report', ['view', 'create', 'edit']);
     $hasUserManagementView = hasPermission('User Management', ['view', 'create', 'edit']);
+
+    // Query Company links
+    require_once "layouts/config.php";
+    $companyId = '1';
+    $stmtCompany = $link->prepare("SELECT links from Company where id = ?");
+    mysqli_stmt_bind_param($stmtCompany, "s", $companyId);
+    mysqli_stmt_execute($stmtCompany);
+    mysqli_stmt_store_result($stmtCompany);
+    mysqli_stmt_bind_result($stmtCompany, $companyLinks);
+    
+    $sopLink = null;
+    $hardwareSetupLink = null;
+    $helpLink = null;
+    
+    if (mysqli_stmt_fetch($stmtCompany)) {
+        $linksArray = json_decode($companyLinks, true);
+        $sopLink = $linksArray['sop_link'] ?? null;
+        $hardwareSetupLink = $linksArray['hardware_setup_link'] ?? null;
+        $helpLink = $linksArray['help_link'] ?? null;
+    }
+    mysqli_stmt_close($stmtCompany);
 ?>
 
 <!-- ========== App Menu ========== -->
@@ -35,7 +56,7 @@
         </button>
     </div>
 
-    <div id="scrollbar">
+    <div id="scrollbar" style="padding-bottom: 150px;">
         <div class="container-fluid">
 
             <div id="two-column-menu">
@@ -352,6 +373,30 @@
         </div>
         <!-- Sidebar -->
     </div>
+
+    <!-- Bottom Tabs -->
+    <div class="sidebar-bottom-tabs" style="position: absolute; bottom: 0; left: 0; right: 0; background: inherit; border-top: 1px solid rgba(255,255,255,0.1); padding: 10px 0;">
+        <div class="container-fluid">
+            <ul class="navbar-nav">
+                <?php if(!empty($sopLink)) {?>
+                    <li class="nav-item">
+                        <a href="<?=$sopLink?>" target="_blank" class="nav-link"><b><i class="ri-file-list-line"></i> <span>SOP</span></b></a>
+                    </li>
+                <?php } ?>
+                <?php if(!empty($hardwareSetupLink)) {?>
+                <li class="nav-item">
+                    <a href="<?=$hardwareSetupLink?>" target="_blank" class="nav-link"><b><i class="ri-tools-line"></i> <span>Hardware Setup</span></b></a>
+                </li>
+                <?php } ?>
+                <?php if(!empty($helpLink)) {?>
+                <li class="nav-item">
+                    <a href="<?=$helpLink?>" target="_blank" class="nav-link"><b><i class="ri-question-line"></i> <span>Help</span></b></a>
+                </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+
     <div class="sidebar-background"></div>
 </div>
 <!-- Left Sidebar End -->

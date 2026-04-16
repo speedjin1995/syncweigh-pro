@@ -3207,3 +3207,35 @@ INSERT INTO `role_permissions` (`role_id`, `module_id`, `permission_id`) VALUES
 (13, 4, 8),
 (13, 4, 9),
 (13, 4, 10);
+
+-- 16/04/2026 --
+ALTER TABLE `Company` ADD `links` TEXT NULL AFTER `fax_no`;
+ALTER TABLE `Company_Log` ADD `links` TEXT NULL AFTER `fax_no`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_COMPANY` AFTER INSERT ON `Company`
+ FOR EACH ROW INSERT INTO Company_Log (
+    company_id, company_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.company_code, NEW.company_reg_no, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.links, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_COMPANY` BEFORE UPDATE ON `Company`
+ FOR EACH ROW BEGIN
+
+    -- Insert into Company_Log table
+    INSERT INTO Company_Log (
+        company_id, company_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.company_code, NEW.company_reg_no, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.links, 2, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+UPDATE Company SET links = '{"sop_link":"https:\/\/www.youtube.com\/playlist?list=PLW1NFIMVHrg4FwGXpEZZDF706enhx5Qlw","hardware_setup_link":"https:\/\/www.youtube.com\/playlist?list=PLW1NFIMVHrg5Fd1WeN0SBE3m8gnifZENH","help_link":"https:\/\/drive.google.com\/drive\/folders\/1mOGhsY3RAM7GQcchDogPKx8E31Np1-4M?usp=sharing"}' WHERE id = 1;
