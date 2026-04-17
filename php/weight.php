@@ -582,8 +582,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         }
 
         // Call to SO table to get order weight
-        $so_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND plant_code=? AND product_code=? AND deleted='0'");
-        $so_stmt->bind_param('sss', $purchaseOrder, $plantCode, $productCode);
+        $so_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND customer_code=? AND product_code=? AND deleted='0'");
+        $so_stmt->bind_param('sss', $purchaseOrder, $customerCode, $productCode);
         $so_stmt->execute();
         $so_result = $so_stmt->get_result();
         if ($so_result->num_rows > 0) {
