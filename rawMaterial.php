@@ -1,6 +1,11 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
-
+<?php
+    if (!hasModulePermission('Master Data', 'Raw Material', ['view', 'create', 'edit'])){
+        header('Location: no-permission.php');
+        exit;
+    }
+?>
 <?php
     require_once "php/db_connect.php";
     $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
@@ -304,6 +309,7 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if(hasModulePermission('Master Data', 'Raw Material', ['upload_excel'])): ?>
                                                                 <a href="template/Raw_Mat_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
@@ -314,22 +320,35 @@
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Master Data', 'Raw Material', ['export'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Master Data', 'Raw Material', ['pull_from_sql'])): ?>
                                                                 <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Master Data', 'Raw Material', ['delete'])): ?>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Raw Material
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Master Data', 'Raw Material', ['create'])): ?>
                                                                 <button type="button" id="addProduct" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Raw Materials
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -430,6 +449,8 @@
 var table;
 var uomRowCount = $("#uomTable").find(".details").length;
 var uomNoCount = 1;
+var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
 $(function () {
     $('#selectAllCheckbox').on('change', function() {
@@ -485,18 +506,60 @@ $(function () {
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
-                    if(row.status == 'Inactive'){
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
+                    var buttons = '';
+                    if (row.status == 'Inactive') {
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Raw Material'] && permissions['Master Data']['Raw Material'].includes('reactivate'))){
+                            buttons += `
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item remove-item-btn" id="reactivate${data}" onclick="reactivate(${data})">
+                                                Reactivate
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Raw Material'] && ['edit', 'delete'].some(p => permissions['Master Data']['Raw Material'].includes(p)))) {
+                            buttons += `
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">`;
+
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Raw Material'] && permissions['Master Data']['Raw Material'].includes('edit'))){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Raw Material'] && permissions['Master Data']['Raw Material'].includes('delete'))){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">
+                                                    <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+                            buttons += `
+                                    </ul>
+                                </div>
+                            `;
+                        }
                     }
-                    else{
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-success btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                        '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
-                    }
+
+                    return buttons;
                 }
             }
         ]       

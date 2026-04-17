@@ -4,6 +4,11 @@
 <?php
 require_once "php/db_connect.php";
 
+if (!hasPermission('Weighing', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
@@ -76,20 +81,13 @@ $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY na
 $site = $db->query("SELECT * FROM Site WHERE status = '0' ORDER BY name ASC");
 $reasons = $db->query("SELECT * FROM Reasons WHERE status = '0' ORDER BY reason ASC");
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (hasPermission('Weighing', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+}else{
     $username = implode("', '", $_SESSION["plant"]);
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-}
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-}
-
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
     $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-}
-else{
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
 }
 ?>
 
@@ -198,7 +196,7 @@ else{
                                                                 <option value="Sales">Sales</option>
                                                                 <option value="Purchase">Purchase</option>
                                                                 <?php
-                                                                    if($role == 'ADMIN' || $role == 'SADMIN' || $role == 'MANAGER'){
+                                                                    if(hasModulePermission('Weighing', 'Public', ['view'])){
                                                                        echo '<option value="Local">Public</option>';
                                                                     }
                                                                 ?>
@@ -699,11 +697,7 @@ else{
                                                                                         <select id="transactionStatus" name="transactionStatus" class="form-select select2">
                                                                                             <option value="Sales" selected>Sales</option>
                                                                                             <option value="Purchase">Purchase</option>
-                                                                                            <?php 
-                                                                                                if($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER'){ 
-                                                                                                    echo '<option value="Local">Public</option>';
-                                                                                                }
-                                                                                            ?>                                                                                     
+                                                                                            <option value="Local">Public</option>
                                                                                             <option value="WIP">WIP</option>
                                                                                             <option value="Return">Return</option>
                                                                                         </select>  
@@ -855,7 +849,7 @@ else{
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3"  <?php 
-                                                                                if($_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'MANAGER'){
+                                                                                if(!hasPermission('Stock Management', ['manual_weighing'])){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -1406,10 +1400,13 @@ else{
                                                                     <i class="mdi mdi-file-excel align-middle me-1"></i>
                                                                     Import Orders
                                                                 </button-->
+
+                                                                <?php if(hasPermission('Weighing', 'create')): ?>
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New Weight
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -1580,10 +1577,13 @@ else{
     var supplierOption = $('#supplierName option').clone();
     var customerOption = $('#customerName option').clone();
     var productOption = $('#productName option').clone();
+    var transactionStatusOption = $('#transactionStatus option').clone();
     var grossIncomingDatePicker;
     var tareOutgoingDatePicker; 
     var grossIncomingDatePicker2;
     var tareOutgoingDatePicker2; 
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         var userRole = '<?=$role ?>';
@@ -1604,9 +1604,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1621,9 +1621,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1638,9 +1638,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1655,9 +1655,9 @@ else{
             altInput: true,
             altFormat: "d/m/Y H:i:S K",
             allowInput: true,
-            clickOpens: <?= ($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER') ? 'true' : 'false' ?>,
+            clickOpens: <?= hasPermission('Weighing', ['manual_date_change']) ? 'true' : 'false' ?>,
             onReady: function(selectedDates, dateStr, instance) {
-                <?php if (!($role == 'SADMIN' || $role == 'ADMIN' || $role == 'MANAGER')): ?>
+                <?php if (!hasPermission('Weighing', ['manual_date_change'])): ?>
                     instance._input.setAttribute('readonly', true);
                     instance.close();
                 <?php endif; ?>
@@ -1716,7 +1716,7 @@ else{
             defaultDate: today
         });
 
-        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+        if (<?= hasPermission('Weighing', ['view_all_plants']) ? 'true' : 'false' ?>) {
             $('#plantSearchDisplay').show();
         }else{
             $('#plantSearchDisplay').hide();
@@ -1826,9 +1826,10 @@ else{
                     data: 'id',
                     class: 'action-button',
                     render: function (data, type, row) {
-                        let buttons = `<div class="row g-1 d-flex">`;
+                        var transactionKey = (row.transaction_status == 'Local') ? 'Public' : row.transaction_status;
+                        var buttons = `<div class="row g-1 d-flex">`;
 
-                        if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('edit'))) {
                             //if (row.is_complete != 'Y' ){
                                 buttons += `
                                 <div class="col-auto">
@@ -1837,24 +1838,28 @@ else{
                                     </button>
                                 </div>`;
                             //}
-                        }else {
+                        } else {
                             if (row.is_complete != 'Y' ){
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                        <i class="fa-solid fa-weight-hanging"></i>
-                                    </button>
-                                </div>`;
+                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('weight_out'))) {
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fa-solid fa-weight-hanging"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
                         }
 
                         if (row.is_approved == 'Y') {
-                            buttons += `
-                            <div class="col-auto">
-                                <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
-                                    <i class="fa-solid fa-print"></i>
-                                </button>
-                            </div>`;
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>`;
+                            }
                         }
 
                         if (row.is_approved == 'N') {
@@ -1866,7 +1871,7 @@ else{
                             </div>`;
                         }
 
-                        if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                        if (isSADMIN || (ermissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -2685,9 +2690,10 @@ else{
                         data: 'id',
                         class: 'action-button',
                         render: function (data, type, row) {
-                            let buttons = `<div class="row g-1 d-flex">`;
+                            var transactionKey = (row.transaction_status == 'Local') ? 'Public' : row.transaction_status;
+                            var buttons = `<div class="row g-1 d-flex">`;
 
-                            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('edit'))) {
                                 //if (row.is_complete != 'Y' ){
                                     buttons += `
                                     <div class="col-auto">
@@ -2698,22 +2704,26 @@ else{
                                 //}
                             }else {
                                 if (row.is_complete != 'Y' ){
-                                    buttons += `
-                                    <div class="col-auto">
-                                        <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                            <i class="fa-solid fa-weight-hanging"></i>
-                                        </button>
-                                    </div>`;
+                                    if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('weight_out'))) {
+                                        buttons += `
+                                        <div class="col-auto">
+                                            <button title="Weight Out" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                                <i class="fa-solid fa-weight-hanging"></i>
+                                            </button>
+                                        </div>`;
+                                    }
                                 }
                             }
 
                             if (row.is_approved == 'Y') {
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
-                                        <i class="fa-solid fa-print"></i>
-                                    </button>
-                                </div>`;
+                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
+                                            <i class="fa-solid fa-print"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
 
                             if (row.is_approved == 'N') {
@@ -2725,7 +2735,7 @@ else{
                                 </div>`;
                             }
 
-                            if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -2786,6 +2796,7 @@ else{
             $('#addModal').find('#tareCapture').show();
             $('#addModal').find('#id').val("");
             $('#addModal').find('#transactionId').val("");
+            filterTransactionStatus('create');
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change').prop('disabled', false); // Enable changing transaction status on add new
             $('#addModal').find('input[name="transactionStatus"]').remove(); // remove hidden input if exists
             $('#addModal').find('#weightType').val("Normal").trigger('change');
@@ -3654,6 +3665,7 @@ else{
 
         $('#transactionStatus').on('change', function(){
             var customerType = $('#addModal').find('#customerType').val();
+            var transactionKey = ($(this).val() == 'Local') ? 'Public' : $(this).val();
 
             if($(this).val() == "Purchase"){
                 $('#divWeightDifference').show();
@@ -3666,14 +3678,10 @@ else{
                 $('#rawMaterialDisplay').show();
                 $('#productNameDisplay').hide();
                 $('#addModal').find('#divPoSupplyWeight').show();
-                
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
-                    echo "$('#doDisplay').show();";
+
+                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do'))) {
+                    $('#doDisplay').show();
                 }
-                else{
-                    echo "//$('#doDisplay').show();";
-                }
-                ?>
                 
                 if ($(this).val() == "Purchase"){
                     $('#divPurchaseOrder').find('label[for="purchaseOrder"]').text('Purchase Order');
@@ -3746,14 +3754,10 @@ else{
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
-                    echo "$('#doDisplay').show();";
+                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do'))) {
+                    $('#doDisplay').show();
                 }
-                else{
-                    echo "//$('#doDisplay').show();";
-                }
-                ?>
-
+                
                 $('#unitPriceDisplay').hide();
                 $('#unitPrice').removeAttr('required');
                 $('#subTotalPriceDisplay').hide();
@@ -3796,13 +3800,9 @@ else{
                 $('#divPurchaseOrder').find('#soSelect').show();
                 $('#divPurchaseOrder').find('#poSelect').hide();
 
-                <?php if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN' && $_SESSION["roles"] != 'MANAGER'){
-                    echo "$('#doDisplay').hide();";
+                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('display_do'))) {
+                    $('#doDisplay').hide();
                 }
-                else{
-                    echo "//$('#doDisplay').hide();";
-                }
-                ?>
 
                 if (customerType == 'Cash'){
                     $('#unitPriceDisplay').show();
@@ -4628,6 +4628,20 @@ else{
             }
         ?>
     });
+
+    // Function to filter transaction status 
+    function filterTransactionStatus(action, currentVal) {
+        var $select = $('#transactionStatus');
+        $select.empty();
+        var weighing = permissions['Weighing'] || {};
+        transactionStatusOption.each(function() {
+            var val = $(this).val();
+            var permKey = (val === 'Local') ? 'Public' : val;
+            if (isSADMIN || (weighing[permKey] && weighing[permKey].includes(action)) || val === currentVal) {
+                $select.append($(this).clone());
+            }
+        });
+    }
 
     // Function to convert basic uom to kg
     function convertWeight(value, productRawMatId, transactionStatus, callback) {

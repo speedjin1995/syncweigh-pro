@@ -23,6 +23,12 @@
     $lang["t-assetManagement"]="Asset Management";
     $lang["t-calculationSetup"]="Calculation Setup";
 
+    $lang["t-userManagement"]="User Management";
+    $lang["t-userSetup"]="User Setup";
+    $lang["t-roles"]="Roles";
+    $lang["t-modules"]="Modules";
+    $lang["t-rolePermission"]="Role & Permissions";
+
     $lang["t-masterdata"]="Master Data";
     $lang["t-customer"]="Customer";
     $lang["t-supplier"]="Supplier";

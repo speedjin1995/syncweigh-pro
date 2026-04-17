@@ -5,6 +5,11 @@
 require_once "php/db_connect.php";
 // $plantId = $_SESSION['plant'];
 
+if (!hasModulePermission('Accounting', 'Sales Order (SO)', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
 $customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name ASC");
 $company = $db->query("SELECT * FROM Company");
@@ -24,6 +29,7 @@ $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
 
 $role = 'NORMAL';
+$user = $_SESSION['id'];
 if ($user != null && $user != ''){
     $stmt3 = $db->prepare("SELECT * from Users WHERE id = ?");
     $stmt3->bind_param('s', $user);
@@ -448,7 +454,7 @@ if ($user != null && $user != ''){
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="<?= hasModulePermission('Accounting', 'Sales Order (SO)', ['include_price']) ? '' : 'display:none;' ?>">
                                                                                 <div class="row">
                                                                                     <label for="unitPrice" class="col-sm-4 col-form-label">Unit Price</label>
                                                                                     <div class="col-sm-8">
@@ -456,7 +462,7 @@ if ($user != null && $user != ''){
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" style="<?= hasModulePermission('Accounting', 'Sales Order (SO)', ['include_price']) ? '' : 'display:none;' ?>">
                                                                                 <div class="row">
                                                                                     <label for="totalPrice" class="col-sm-4 col-form-label">Total Price</label>
                                                                                     <div class="col-sm-8">
@@ -597,6 +603,7 @@ if ($user != null && $user != ''){
                                                                 <h5 class="card-title mb-0">Sales Orders</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['upload_excel'])): ?>
                                                                 <a href="template/So_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
@@ -607,6 +614,9 @@ if ($user != null && $user != ''){
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Import Sales Orders
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['export'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
@@ -615,14 +625,21 @@ if ($user != null && $user != ''){
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Supply Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['pull_from_sql'])): ?>
                                                                 <button type="button" id="pullSql" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-file-add-line align-middle me-1"></i>
                                                                     Pull From SQL
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['create'])): ?>
                                                                 <button type="button" id="addSalesOrder" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New S/O
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -706,7 +723,9 @@ if ($user != null && $user != ''){
     var table = null;
     let wasErrorModalShown = false;
     var userRole = '<?=$role ?>';
-    
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
+
     $(function () {
         const today = new Date();
         const tomorrow = new Date(today);
@@ -832,22 +851,29 @@ if ($user != null && $user != ''){
                     data: 'id',
                     class: 'action-button',
                     render: function (data, type, row) {
-                        let buttons = `
-                            <div class="row g-1 d-flex">
-                                <div class="col-auto">
-                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-pen"></i>
-                                    </button>
-                                </div>`;
+                        var buttons = `<div class="row g-1 d-flex">`;
 
-                            if (row.status == 'Open'){
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit'))){
+                            buttons += `
+                            <div class="col-auto">
+                                <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                            </div>`;
+                        }
+                        
+
+                        if (row.status == 'Open'){
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('complete'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
                                         <i class="fas fa-check"></i>
                                     </button>
                                 </div>`;
-                            } else {
+                            }
+                        } else {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -855,14 +881,19 @@ if ($user != null && $user != ''){
                                     </button>
                                 </div>`;
                             }
-                            
+                        }
+                        
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete'))) {
                             buttons += `
-                                <div class="col-auto">
-                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                </div>
+                            <div class="col-auto">
+                                <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-times"></i>
+                                </button>
                             </div>`;
+                        }
+
+                        buttons += `
+                        </div>`;
 
                         return buttons;
                     }
@@ -934,22 +965,29 @@ if ($user != null && $user != ''){
                         data: 'id',
                         class: 'action-button',
                         render: function (data, type, row) {
-                            let buttons = `
-                                <div class="row g-1 d-flex">
-                                    <div class="col-auto">
-                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-                                    </div>`;
+                            var buttons = `<div class="row g-1 d-flex">`;
 
-                                if (row.status == 'Open'){
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit'))){
+                                buttons += `
+                                <div class="col-auto">
+                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </div>`;
+                            }
+                            
+
+                            if (row.status == 'Open'){
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('complete'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Complete" type="button" id="complete${data}" onclick="complete(${data})" class="btn btn-success btn-sm">
                                             <i class="fas fa-check"></i>
                                         </button>
                                     </div>`;
-                                } else {
+                                }
+                            } else {
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -957,14 +995,19 @@ if ($user != null && $user != ''){
                                         </button>
                                     </div>`;
                                 }
-                                
+                            }
+                            
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete'))) {
                                 buttons += `
-                                    <div class="col-auto">
-                                        <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </div>
+                                <div class="col-auto">
+                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </button>
                                 </div>`;
+                            }
+
+                            buttons += `
+                            </div>`;
 
                             return buttons;
                         }
@@ -1499,7 +1542,7 @@ if ($user != null && $user != ''){
                 <p><strong>BALANCE:</strong> ${row.converted_balance} ${row.converted_unit_label}</p>
             `;
 
-            if (userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('include_price'))){
                 returnString += `
                     <p><strong>UNIT PRICE:</strong> RM ${row.unit_price}</p>
                     <p><strong>TOTAL PRICE:</strong> RM ${row.total_price}</p>
@@ -1539,12 +1582,19 @@ if ($user != null && $user != ''){
                             <td>${weights[i].lorry_plate_no1}</td>
                             <td>${weights[i].nett_weight1} KG</td>
                             <td>${weights[i].created_by}</td>
-                            <td>
+                            <td>`;
+
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('print_slip'))){
+                                returnString += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${weights[i].id}" onclick="print('${weights[i].id}')" class="btn btn-info btn-sm">
                                         <i class="fa-solid fa-print"></i>
                                     </button>
                                 </div>
+                                `;
+                            }
+
+                            returnString += `
                             </td>
                         </tr>
                     `;
