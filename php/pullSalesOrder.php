@@ -371,7 +371,6 @@ if (!empty($data['data'])) {
                                       WHERE order_no = ? 
                                         AND product_code = ? 
                                         AND customer_code = ? 
-                                        AND status = 'Open' 
                                         AND deleted = '0'")) {
                 $stmtOrder->bind_param("sss", $OrderNumber, $ProductCode, $CustomerCode);
                 $stmtOrder->execute();
@@ -429,8 +428,8 @@ if (!empty($data['data'])) {
                 //$errorSoProductArray[] = $errMsg;
                 $currentBalance = $OrderQuantity;
 
-                if($weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND product_code=? AND status='0' AND is_complete='Y' AND is_cancel='N'")){
-                    $weighing_stmt->bind_param('ss', $OrderNumber, $ProductCode);
+                if($weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND customer_code=? AND product_code=? AND status='0' AND is_complete='Y' AND is_cancel='N'")){
+                    $weighing_stmt->bind_param('sss', $OrderNumber, $CustomerCode, $ProductCode);
                     $weighing_stmt->execute();
                     $result = $weighing_stmt->get_result(); 
                     $weighing_stmt->close();
@@ -451,6 +450,7 @@ if (!empty($data['data'])) {
                 }
 
                 $convertedBalance  = $currentBalance * $conversionRate;
+                $poSoStatus = ($convertedBalance <= 26) ? 'Close' : 'Open';
 
                 if($updatePoSoStmt = $db->prepare("
                     UPDATE Sales_Order 
@@ -463,11 +463,12 @@ if (!empty($data['data'])) {
                         destination_name=?, 
                         transporter_code=?, 
                         transporter_name=?, 
+                        status=?, 
                         modified_by='SYSTEM' 
                     WHERE order_no=? AND product_code=? AND customer_code=?
                 ")){
-                    $updatePoSoStmt->bind_param("sssssssssss", $ConvertedOrderQuantity, $OrderQuantity, $convertedBalance, $currentBalance, 
-                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $OrderNumber, $ProductCode, $CustomerCode);
+                    $updatePoSoStmt->bind_param("ssssssssssss", $ConvertedOrderQuantity, $OrderQuantity, $convertedBalance, $currentBalance, 
+                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $poSoStatus, $OrderNumber, $ProductCode, $CustomerCode);
                     $updatePoSoStmt->execute();
                 }
             }
