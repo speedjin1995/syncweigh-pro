@@ -321,6 +321,12 @@
                                 <li class="nav-item">
                                     <a href="modules.php" class="nav-link"><b><?=$lang['t-modules']?></b></a>
                                 </li>
+                                <?php endif; ?>
+
+                                <?php if(hasModulePermission('User Management', 'Permission', ['view', 'create', 'edit'])): ?>
+                                <li class="nav-item">
+                                    <a href="permissions.php" class="nav-link"><b><?=$lang['t-permissions']?></b></a>
+                                </li>
                                 <?php endif; ?>              
                             </li>
                         </ul>
