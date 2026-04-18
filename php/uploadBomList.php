@@ -1,110 +1,142 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $uid = $_SESSION['userID'];
-
-// Data format: { "Sheet1": [{row}, {row}], "Sheet2": [{row}, {row}], ... }
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!empty($data)) {
     $errorArray = [];
-    // Get Bitumen 60/70 Raw Mat Id
-    $bitumenRawMatDetail = searchRawMatByCode('BTBI001', $db);
-    $rawMatId = $bitumenRawMatDetail['id'];
-    $rawMatCode = $bitumenRawMatDetail['raw_mat_code'];
+    try {
+        // KG Unit Id
+        $kgUnitId = searchUnitIdByCode('KG', $db);
 
-    // Process BDM - Bukit Damar (Batch)
-    if (isset($data['BUKIT - BP BOM']) && !empty($data['BUKIT - BP BOM'])){
-        $plantId = searchPlantIdByName('Bukit Damar', $db);
-        foreach ($data['BUKIT - BP BOM'] as $row){
-            $productCode = $row['Item Code'];
-            if (isset($productCode) && !empty($productCode) && $productCode != 'false'){
-                if ((float) $row['BTBI001'] <= 0) {
+        // Plant config
+        $bukitDamarPlant = searchPlantByName('Bukit Damar', $db);
+        $gambangPlant = searchPlantByName('Gambang', $db);
+        $gebengPlant = searchPlantByName('Gebeng', $db);
+
+        $sheets = [
+            'BUKIT - BP BOM' => [$bukitDamarPlant['id'], 'Batch', 'BDM - BP BOM'],
+            'BUKIT - DP BOM' => [$bukitDamarPlant['id'], 'Drum', 'BDM - DP BOM'],
+            'GAMBANG - BOM'  => [$gambangPlant['id'], $gambangPlant['default_type'], 'GAMBANG - BOM'],
+            'GEBENG - BOM'   => [$gebengPlant['id'], $gebengPlant['default_type'], 'GEBENG - BOM'],
+        ];
+
+        // Skip columns that are not raw material codes
+        $skipKeys = ['Item Code', 'Description', 'Lime', 'Rycle Filler (either Lime)'];
+
+        // Cache raw mat lookups to avoid repeated DB calls
+        $rawMatCache = [];
+
+        // Prepare statements once
+        $selectStmt = $db->prepare("SELECT id FROM Product_RawMat WHERE product_id = ? AND raw_mat_id = ? AND plant_id = ? AND batch_drum = ? AND status = 0");
+        $insertStmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $updateStmt = $db->prepare("UPDATE Product_RawMat SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
+
+        foreach ($sheets as $sheetName => [$plantId, $batchDrum, $errorLabel]) {
+            if (empty($data[$sheetName])) {
+                continue;
+            }
+
+            foreach ($data[$sheetName] as $row) {
+                $productName = $row['Description'] ?? null;
+                if (empty($productName) || $productName === 'false') {
                     continue;
                 }
 
-                $bitumenMT = (float) $row['BTBI001'];
-                $bitumenKG = (float) $row['BTBI001'] * 1000;
-                $productId = searchProductIdByCode($productCode, $db);
-
-                // Query Product_RawMat to find existing
-                $productRawMatQuery = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id = ? AND raw_mat_id = ? AND plant_id = ? AND batch_drum = 'Batch' AND status = 0");
-                $productRawMatQuery->bind_param("sss", $productId, $rawMatId, $plantId);
-                $productRawMatQuery->execute();
-                $productRawMatResult = $productRawMatQuery->get_result();
-                if ($productRawMatResult->num_rows == 0){
-                    // Insert new record
-                    $productRawMatInsert = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum) VALUES (?, ?, ?, ?, 6, ?, ?, 'Batch')");
-                    $productRawMatInsert->bind_param("ssssss", $productId, $rawMatId, $rawMatCode, $bitumenMT, $bitumenKG, $plantId);
-                    if (!$productRawMatInsert->execute()) {
-                        array_push($errorArray, "Failed to insert BDM - BP BOM data for Item Code: " . $productCode);
-                    }
-                    $productRawMatInsert->close();
-                } else {
-                    $row = $productRawMatResult->fetch_assoc();
-                    $productRawMatId = $row['id'];
-
-                    // Update existing record
-                    $productRawMatUpdate = $db->prepare("UPDATE Product_RawMat SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
-                    $productRawMatUpdate->bind_param("sss", $bitumenMT, $bitumenKG, $productRawMatId);
-                    if (!$productRawMatUpdate->execute()) {
-                        array_push($errorArray, "Failed to update BDM - BP BOM data for Item Code: " . $productCode);
-                    }
-                    $productRawMatUpdate->close();
+                $productCode = $row['Item Code'] ?? null;
+                if (empty($productCode) || $productCode === 'false' || $productCode === 'Item Code') {
+                    continue;
                 }
-            }else{
-                continue;
+
+                $product = searchProductWithBasicUomByName($productName, $db);
+                if (empty($product)) {
+                    $errorArray[] = "Product not found for Description: {$productName} in {$errorLabel}";
+                    continue;
+                }
+
+                $productId = $product['id'];
+                $productBasicUom = $product['unit'];
+                $productKgRate = 0.001; // Default to MT -> KG conversion
+
+                // Search Product KG conversion rate
+                if ($productUomStmt = $db->prepare("SELECT * FROM Product_Uom WHERE product_id = ? AND unit_id = ? AND status = 0")) {
+                    $productUomStmt->bind_param('ss', $productId, $kgUnitId);
+                    $productUomStmt->execute();
+                    $uomResult = $productUomStmt->get_result();
+                    if ($uomRow = $uomResult->fetch_assoc()) {
+                        $productKgRate = $uomRow['rate'];
+                    }
+                    $productUomStmt->close();
+                }
+
+                // Loop through all columns — each non-skip key is a raw material name
+                foreach ($row as $rawMatName => $value) {
+                    if (in_array($rawMatName, $skipKeys) || $rawMatName === '' || strpos($rawMatName, '__EMPTY') === 0) {
+                        continue;
+                    }
+
+                    if ((float) $value <= 0) {
+                        continue;
+                    }
+
+                    // Lookup raw mat details (cached)
+                    if (!isset($rawMatCache[$rawMatName])) {
+                        $rawMatDetail = searchRawMatByName($rawMatName, $db);
+                        if (empty($rawMatDetail)) {
+                            $errorArray[] = "Raw material not found: {$rawMatName}";
+                        }
+                        $rawMatCache[$rawMatName] = $rawMatDetail;
+                    }
+                    $rawMatDetail = $rawMatCache[$rawMatName];
+                    if (empty($rawMatDetail)) {
+                        continue;
+                    }
+
+                    $rawMatId = $rawMatDetail['id'];
+                    $rawMatCode = $rawMatDetail['raw_mat_code'];
+                    $valueKG = (float) $value / (float) $productKgRate;
+
+                    $selectStmt->bind_param("ssss", $productId, $rawMatId, $plantId, $batchDrum);
+                    $selectStmt->execute();
+                    $result = $selectStmt->get_result();
+
+                    if ($result->num_rows == 0) {
+                        $insertStmt->bind_param("ssssssss", $productId, $rawMatId, $rawMatCode, $value, $kgUnitId, $valueKG, $plantId, $batchDrum);
+                        if (!$insertStmt->execute()) {
+                            $errorArray[] = "Failed to insert {$errorLabel} data for Item Code: {$productCode}, Raw Mat: {$rawMatCode}";
+                        }
+                    } else {
+                        $existing = $result->fetch_assoc();
+                        $existingId = $existing['id'];
+                        $updateStmt->bind_param("sss", $value, $valueKG, $existingId);
+                        if (!$updateStmt->execute()) {
+                            $errorArray[] = "Failed to update {$errorLabel} data for Item Code: {$productCode}, Raw Mat: {$rawMatCode}";
+                        }
+                    }
+                }
             }
         }
-    }
 
-    // Process BDM - Bukit Damar (Drum)
-    // if (isset($data['BUKIT - DP BOM']) && !empty($data['BUKIT - DP BOM'])){
-    //     foreach ($data['BUKIT - DP BOM'] as $row){
-            
-    //     }
-    // }
+        $selectStmt->close();
+        $insertStmt->close();
+        $updateStmt->close();
+        $db->close();
 
-    // // Process GMB - Gambang (Default - Drum)
-    // if (isset($data['GAMBANG - BOM']) && !empty($data['GAMBANG - BOM'])){
-    //     foreach ($data['GAMBANG - BOM'] as $row){
-            
-    //     }
-    // }
-
-    // // Process GEB - Gebeng (Default - Batch)
-    // if (isset($data['GEBENG - BOM']) && !empty($data['GEBENG - BOM'])){
-    //     foreach ($data['GEBENG - BOM'] as $row){
-            
-    //     }
-    // }
-
-    $db->close();
-
-    if (!empty($errorArray)) {
-        echo json_encode(
-            array(
-                "status" => "error",
-                "message" => $errorArray
-            )
-        );
-    } else {
-        echo json_encode(
-            array(
-                "status" => "success",
-                "message" => "BOM List uploaded successfully!"
-            )
-        );
+        if (!empty($errorArray)) {
+            echo json_encode(["status" => "error", "message" => $errorArray]);
+        } else {
+            echo json_encode(["status" => "success", "message" => "BOM List uploaded successfully!"]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
     }
 } else {
-    echo json_encode(
-        array(
-            "status" => "failed",
-            "message" => "No data found in the uploaded file"
-        )
-    );
+    echo json_encode(["status" => "failed", "message" => "No data found in the uploaded file"]);
 }
 ?>

@@ -705,6 +705,23 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="errorModal" style="display:none">
+            <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                <div class="modal-content">
+                    <div class="modal-header bg-gray-dark color-palette">
+                        <h4 class="modal-title">Error Log</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <ol id="errorList" class="text-danger mt-2" style="padding-left: 20px;"></ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
     </div>
     <!-- END layout-wrapper -->
 
@@ -2275,7 +2292,20 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 url: 'php/uploadBomList.php',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(Object.fromEntries(Object.entries(allSheetsData).map(function(entry) { return [entry[0], entry[1].slice(1)]; }))),
+                data: JSON.stringify(Object.fromEntries(Object.entries(allSheetsData).map(function(entry) {
+                    var rows = entry[1];
+                    if (rows.length < 2) return [entry[0], []];
+                    var keyRow = rows[0];
+                    var origKeys = Object.keys(keyRow);
+                    var newKeys = origKeys.map(function(k) { return String(keyRow[k]); });
+                    var dataRows = rows.slice(1).map(function(row) {
+                        var obj = {};
+                        origKeys.forEach(function(k, i) { obj[newKeys[i]] = row[k]; });
+                        if (row['Item Code'] !== undefined) obj['Item Code'] = row['Item Code'];
+                        return obj;
+                    });
+                    return [entry[0], dataRows];
+                }))),
                 success: function(response) {
                     var obj = JSON.parse(response);
                     $('#spinnerLoading').hide();
@@ -2283,8 +2313,17 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         $('#uploadModal').modal('hide');
                         $("#successBtn").attr('data-toast-text', obj.message);
                         $("#successBtn").click();
-                        if (typeof table !== 'undefined') table.ajax.reload();
-                    } else {
+                    }
+                    else if (obj.status === 'error') {
+                        var errors = Array.isArray(obj.message) ? obj.message : [obj.message];
+                        var html = '';
+                        errors.forEach(function(err) { html += '<li>' + err + '</li>'; });
+                        $('#errorList').html(html);
+                        $('#uploadModal').modal('hide');
+                        $('#errorModal').modal('show');
+                    } 
+                    else {
+                        $('#uploadModal').modal('hide');
                         $("#failBtn").attr('data-toast-text', obj.message);
                         $("#failBtn").click();
                     }
