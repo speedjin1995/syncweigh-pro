@@ -367,8 +367,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $vehiclePlateNo2 = trim($_POST["vehiclePlateNo2"]);
     }
 
-    if (empty($_POST["grossIncoming2"])) {
-        $grossIncoming2 = null;
+    if (!isset($_POST["grossIncoming2"])) {
+        $grossIncoming2 = '0';
     } else {
         $grossIncoming2 = trim($_POST["grossIncoming2"]);
     }
@@ -376,7 +376,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     if (empty($_POST["grossIncomingDate2"])) {
         $grossIncomingDate2 = null;
     } else {
-        $grossIncomingDate2 = DateTime::createFromFormat('d/m/Y H:i:s A', $_POST["grossIncomingDate2"])->format('Y-m-d H:i:s');
+        $grossIncomingDate2 = trim(str_replace(["AM", "PM"], "", $_POST["grossIncomingDate2"]));
+        $grossIncomingDate2 = DateTime::createFromFormat('d/m/Y H:i:s', $grossIncomingDate2)->format('Y-m-d H:i:s');
     }
 
     if (empty($_POST["tareOutgoing2"])) {
@@ -388,7 +389,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     if (empty($_POST["tareOutgoingDate2"])) {
         $tareOutgoingDate2 = null;
     } else {
-        $tareOutgoingDate2 = DateTime::createFromFormat('d/m/Y H:i:s A', $_POST["tareOutgoingDate2"])->format('Y-m-d H:i:s');
+        $tareOutgoingDate2 = trim(str_replace(["AM", "PM"], "", $_POST["tareOutgoingDate2"]));
+        $tareOutgoingDate2 = DateTime::createFromFormat('d/m/Y H:i:s', $tareOutgoingDate2)->format('Y-m-d H:i:s');
     }
 
     if (empty($_POST["nettWeight2"])) {
@@ -582,8 +584,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         }
 
         // Call to SO table to get order weight
-        $so_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND plant_code=? AND product_code=? AND deleted='0'");
-        $so_stmt->bind_param('sss', $purchaseOrder, $plantCode, $productCode);
+        $so_stmt = $db->prepare("SELECT * FROM Sales_Order WHERE order_no=? AND plant_code=? AND product_code=? AND customer_code=? AND status='Open' AND deleted='0'");
+        $so_stmt->bind_param('ssss', $purchaseOrder, $plantCode, $productCode, $customerCode);
         $so_stmt->execute();
         $so_result = $so_stmt->get_result();
         if ($so_result->num_rows > 0) {

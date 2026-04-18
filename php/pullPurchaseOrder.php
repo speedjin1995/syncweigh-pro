@@ -363,7 +363,7 @@ if (!empty($data['data'])) {
 
         # Checking for existing PO No.
         if($PONumber != null && $PONumber != ''){
-            $po_stmt = $db->prepare("SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = ? AND raw_mat_code = ? AND status = 'Open' AND deleted = '0'");
+            $po_stmt = $db->prepare("SELECT COUNT(*) AS count FROM Purchase_Order WHERE po_no = ? AND raw_mat_code = ? AND deleted = '0'");
             $po_stmt->bind_param('ss', $PONumber, $RawMaterialCode);
             $po_stmt->execute();
             $poDetail = $po_stmt->get_result();
@@ -436,6 +436,7 @@ if (!empty($data['data'])) {
                 }
 
                 $convertedBalance  = $currentBalance * $conversionRate;
+                $poSoStatus = ($convertedBalance <= 10000) ? 'Close' : 'Open';
 
                 if($updatePoSoStmt = $db->prepare("
                     UPDATE Purchase_Order 
@@ -448,11 +449,12 @@ if (!empty($data['data'])) {
                         destination_name=?, 
                         transporter_code=?, 
                         transporter_name=?, 
+                        status=?, 
                         modified_by='SYSTEM' 
                     WHERE order_no=? AND raw_mat_code=? AND supplier_code=?
                 ")){
-                    $updatePoSoStmt->bind_param("sssssssssss", $ConvertedSupplierQuantity, $SupplierQuantity, $convertedBalance, $currentBalance, 
-                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $PONumber, $RawMaterialCode, $SupplierCode);
+                    $updatePoSoStmt->bind_param("ssssssssssss", $ConvertedSupplierQuantity, $SupplierQuantity, $convertedBalance, $currentBalance, 
+                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $poSoStatus, $PONumber, $RawMaterialCode, $SupplierCode);
                     $updatePoSoStmt->execute();
                 }
             }
