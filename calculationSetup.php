@@ -396,7 +396,7 @@ else{
                                                                 </button>
                                                                 <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
-                                                                    Import
+                                                                    Upload Excel
                                                                 </button>
                                                                 <!-- <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
