@@ -1,6 +1,13 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    if (!hasModulePermission('Report', 'Audit Log', ['view'])){
+        header('Location: no-permission.php');
+        exit;
+    }
+?>
+
 <head>
     <title>Audit Log | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>
@@ -336,10 +343,12 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if (hasModulePermission('Report', 'Audit Log', ['export_excel'])){ ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php } ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
