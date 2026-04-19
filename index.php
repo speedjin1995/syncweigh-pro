@@ -849,7 +849,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3"  <?php 
-                                                                                if(!hasPermission('Stock Management', ['manual_weighing'])){
+                                                                                if(!hasPermission('Weighing', ['manual_weighing'])){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -1852,7 +1852,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                         }
 
                         if (row.is_approved == 'Y') {
-                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
@@ -2716,7 +2716,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             }
 
                             if (row.is_approved == 'Y') {
-                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
+                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
