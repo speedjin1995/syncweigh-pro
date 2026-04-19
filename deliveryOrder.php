@@ -180,7 +180,9 @@ else{
                                                         <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2">
+                                                                <?php if (hasModulePermission('Accounting', 'Delivery Order (DO)', ['view_all_plants'])){ ?>
                                                                 <option selected>-</option>
+                                                                <?php } ?>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
@@ -228,7 +230,7 @@ else{
                                                                     Export Pdf
                                                                 </button>-->
 
-                                                                <?php if(hasModulePermission('Accounting', 'Delivery Order (DO)', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Delivery Order (DO)', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
