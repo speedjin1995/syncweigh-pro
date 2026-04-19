@@ -93,20 +93,23 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     <h5 class="card-title mb-0">User Records</h5>
                                                 </div>
                                                 <div class="flex-shrink-0">
-                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['upload_excel'])): ?>
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['download_template'])): ?>
                                                     <a href="template/User_Template.xlsx" download>
                                                         <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
                                                             <i class="ri-file-pdf-line align-middle me-1"></i>
                                                             Download Template
                                                         </button>
                                                     </a>
+                                                    <?php endif; ?>
+
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['upload_excel'])): ?>
                                                     <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                         <i class="ri-file-pdf-line align-middle me-1"></i>
                                                         Upload Excel
                                                     </button>
                                                     <?php endif; ?>
 
-                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['export'])): ?>
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['export_excel'])): ?>
                                                     <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                         <i class="ri-file-excel-line align-middle me-1"></i>
                                                         Export Excel
