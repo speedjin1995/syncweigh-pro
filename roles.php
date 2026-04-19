@@ -197,7 +197,7 @@ while($p = $permissionsResult->fetch_assoc()){
                                         <div class="card-body py-2">
                                             <div class="row">
                                                 <?php foreach($permissions as $perm): ?>
-                                                <?php if(in_array('All', $perm['modules_arr']) || in_array($mod['category'], $perm['modules_arr'])): ?>
+                                                <?php if(in_array('All', $perm['modules_arr']) || in_array((string)$mod['id'], $perm['modules_arr'])): ?>
                                                 <div class="col-md-3 mb-1">
                                                     <div class="form-check">
                                                         <input class="form-check-input perm-check" type="checkbox" name="permissions[<?=$mod['id']?>][]" value="<?=$perm['id']?>" id="perm_<?=$mod['id']?>_<?=$perm['id']?>">
