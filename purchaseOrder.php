@@ -20,13 +20,20 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC")
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
-$plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
-$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE deleted = '0' ORDER BY po_no ASC");
+
+if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+}
 ?>
 
 <head>
@@ -162,7 +169,9 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                         <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2">
+                                                                <?php if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants'])){ ?>
                                                                 <option selected>-</option>
+                                                                <?php } ?>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
@@ -341,7 +350,9 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control select2" style="width: 100%;" id="plant" name="plant" required>
-                                                                                            <option selected="-">-</option>
+                                                                                            <?php if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants'])){ ?>
+                                                                                            <option selected>-</option>
+                                                                                            <?php } ?>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>
@@ -590,24 +601,30 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                                                 <h5 class="card-title mb-0">Purchase Orders</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['upload_excel'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['download_template'])): ?>
                                                                 <a href="template/Po_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                         Download Template 
                                                                     </button>
                                                                 </a>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['import_purchase_orders'])): ?>
                                                                 <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Import Purchase Orders
                                                                 </button>
                                                                 <?php endif; ?>
 
-                                                                <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Purchase Order (PO)', ['export_received_excel'])): ?>
                                                                 <button type="button" id="exportReceivedExcel" class="btn btn-info waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Received Excel
@@ -859,7 +876,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                 </div>`;
                             }
                         } else {
-                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('reactivate'))) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('revert'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -972,7 +989,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                                     </div>`;
                                 }
                             } else {
-                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('reactivate'))) {
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('revert'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -1561,7 +1578,7 @@ $purchaseOrder = $db->query("SELECT DISTINCT po_no FROM Purchase_Order WHERE del
                             <td>${weights[i].created_by}</td>
                             <td>`;
 
-                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('print_slip'))){
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing']['Purchase'] && permissions['Weighing']['Purchase'].includes('print'))){
                                 returnString += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${weights[i].id}" onclick="print('${weights[i].id}')" class="btn btn-info btn-sm">
