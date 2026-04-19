@@ -146,9 +146,7 @@
                                                         <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2" >
-                                                                <?php if (hasPermission('Dashboard', ['view_all_plants'])){ ?>
                                                                 <option selected>-</option>
-                                                                <?php } ?>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
