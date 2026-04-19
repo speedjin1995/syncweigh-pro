@@ -179,7 +179,9 @@ else{
                                                         <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2">
+                                                                <?php if (hasModulePermission('Accounting', 'Goods Received (GR)', ['view_all_plants'])){ ?>
                                                                 <option selected>-</option>
+                                                                <?php } ?>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
@@ -191,7 +193,7 @@ else{
                                                             <label for="poSearch" class="form-label">PO No</label>
                                                             <select id="poSearch" class="form-select select2" >
                                                                 <option selected>-</option>
-                                                                <option value="Pending PO verification">Pending PO verification</option>
+                                                                <option value="Pending PO verification">Pending PO verification</option>
                                                                 <?php while($rowPo = mysqli_fetch_assoc($purchaseOrder)){ ?>
                                                                     <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>
@@ -227,7 +229,7 @@ else{
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Pdf
                                                                 </button> -->
-                                                                <?php if(hasModulePermission('Accounting', 'Goods Received (GR)', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Goods Received (GR)', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
