@@ -2,6 +2,7 @@
 ## Database configuration
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/permissions.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -96,7 +97,8 @@ if($searchValue != ''){
 }
 
 $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'";
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+// if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (($_POST['status'] == 'Sales' && !hasModulePermission('Report', 'Sales', ['view_all_plants'])) || ($_POST['status'] == 'Purchase' && !hasModulePermission('Report', 'Purchase', ['view_all_plants'])) || ($_POST['status'] == 'Local' && !hasModulePermission('Report', 'Public', ['view_all_plants']))){
   $username = implode("', '", $_SESSION["plant"]);
   $allQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')";
 }
@@ -106,9 +108,9 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-
 $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery;
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+// if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (($_POST['status'] == 'Sales' && !hasModulePermission('Report', 'Sales', ['view_all_plants'])) || ($_POST['status'] == 'Purchase' && !hasModulePermission('Report', 'Purchase', ['view_all_plants'])) || ($_POST['status'] == 'Local' && !hasModulePermission('Report', 'Public', ['view_all_plants']))){
   $username = implode("', '", $_SESSION["plant"]);
   $filteredQuery = "select count(*) as allcount from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery;
 }
@@ -119,8 +121,8 @@ $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
-
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+// if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (($_POST['status'] == 'Sales' && !hasModulePermission('Report', 'Sales', ['view_all_plants'])) || ($_POST['status'] == 'Purchase' && !hasModulePermission('Report', 'Purchase', ['view_all_plants'])) || ($_POST['status'] == 'Local' && !hasModulePermission('Report', 'Public', ['view_all_plants']))){
   $username = implode("', '", $_SESSION["plant"]);
   $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
