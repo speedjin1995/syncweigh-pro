@@ -4,14 +4,18 @@
 <?php
 require_once "php/db_connect.php";
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+if (!hasModulePermission('Stock Management', 'Stock Take', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
 }
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+if (hasModulePermission('Stock Management', 'Stock Take', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
 }
 
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
@@ -154,14 +158,18 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                                 <h5 class="card-title mb-0">Stock Take</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if (hasModulePermission('Stock Management', 'Stock Take', ['upload_bom_list'])){ ?>
                                                                 <button type="button" id="uploadBom" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Upload Bom List
                                                                 </button>
+                                                                <?php } ?>
+                                                                <?php if (hasModulePermission('Stock Management', 'Stock Take', ['create'])){ ?>
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add Stock Take
                                                                 </button>
+                                                                <?php } ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -1001,6 +1009,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
     <script type="text/javascript">
 
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
     var uploadWorkbook = null;
     var allSheetsData = {};
     var activeSheetName = '';
@@ -1098,10 +1108,42 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                        '<li><a class="dropdown-item" onclick="printDeclaration('+data+')"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                        var buttons = '';
+
+                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
+                            buttons += `
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">`;
+
+                                    if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('edit'))){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                    <i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+
+                                    if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('print'))){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item" onclick="printDeclaration(${data})">
+                                                    <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+                            buttons += `
+                                    </ul>
+                                </div>
+                            `;
+                        }
+
+                        return buttons;
                     }
                 }
             ] 
@@ -1152,10 +1194,42 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     { 
                         data: 'id',
                         render: function ( data, type, row ) {
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                            '<li><a class="dropdown-item" onclick="printDeclaration('+data+')"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                            var buttons = '';
+
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
+                                buttons += `
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ri-more-fill align-middle"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">`;
+
+                                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('edit'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                        <i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+
+                                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('print'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item" onclick="printDeclaration(${data})">
+                                                        <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+                                buttons += `
+                                        </ul>
+                                    </div>
+                                `;
+                            }
+
+                            return buttons;
                         }
                     }
                 ] 

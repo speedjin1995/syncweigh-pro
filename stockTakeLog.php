@@ -5,26 +5,25 @@
 <?php
 require_once "php/db_connect.php";
 
+if (!hasModulePermission('Stock Management', 'Stock Take Log', ['view'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
 
 $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' AND id IN ('27','31','32') ORDER BY name ASC");
 $rawMaterial2 = $db->query("SELECT * FROM Raw_Mat WHERE status = '0' ORDER BY name ASC");
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant_id"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and id IN ('$username')");
-}
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-}
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant_id"]);
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and id IN ('$username')");
-}
-else{
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+if (hasModulePermission('Stock Management', 'Stock Take Log', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
 }
 ?>
 
@@ -108,7 +107,7 @@ else{
                                                 <div class="col-3">
                                                     <div class="mb-3">
                                                         <label for="plantSearch" class="form-label">Plant</label>
-                                                        <select id="plantSearch" class="form-select select2" >
+                                                        <select id="plantSearch" class="form-select" >
                                                             <?php while($rowPlantF = mysqli_fetch_assoc($plant)){ ?>
                                                                 <option value="<?=$rowPlantF['id'] ?>"><?=$rowPlantF['name'] ?></option>
                                                             <?php } ?>
@@ -322,14 +321,19 @@ else{
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if (hasModulePermission('Stock Management', 'Stock Take Log', ['generate_stock_take'])){ ?>
                                                                 <button type="button" id="genStockTake" class="btn btn-danger waves-effect waves-light">
                                                                     <i class="ri-stock-line align-middle me-1"></i>
                                                                     Generate Stock Take
                                                                 </button>
+                                                                <?php } ?>
+
+                                                                <?php if (hasModulePermission('Stock Management', 'Stock Take Log', ['export_excel'])){ ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php } ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
