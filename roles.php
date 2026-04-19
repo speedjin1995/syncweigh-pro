@@ -311,11 +311,17 @@ $(function () {
                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
                                         </a>
                                     </li>
+                                `;
+                        }
+
+                        if (isSADMIN || perms.includes('assign_permissions')) {
+                            buttons += `
                                     <li>
                                         <a class="dropdown-item" onclick="managePermissions(${data},'${row.role_name}')">
                                             <i class="ri-shield-keyhole-fill align-bottom me-2 text-muted"></i> Permissions
                                         </a>
-                                    </li>`;
+                                    </li>
+                                `;
                         }
 
                         if (isSADMIN || perms.includes('delete')) {
