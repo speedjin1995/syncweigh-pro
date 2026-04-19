@@ -63,9 +63,11 @@
             </div>
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span><?=$lang['t-menu']?></span></li>
+                <?php if(hasModulePermission('Dashboard', 'Dashboard', ['view'])): ?>
                 <li class="nav-item">
                     <a href="dashboard.php" class="nav-link"><b><i class="mdi mdi-view-dashboard"></i><?=$lang['t-dashboard']?></b></a>
                 </li>
+                <?php endif; ?>
 
                 <?php if($hasWeighingView): ?>
                 <li class="nav-item">

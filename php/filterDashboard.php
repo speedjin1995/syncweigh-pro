@@ -27,6 +27,12 @@ if ($_POST['transactionStatus'] != null && $_POST['transactionStatus'] != '' && 
 
 if ($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
     $searchQuery .= " and plant_code = '".$_POST['plant']."'";
+} else {
+    // Restrict to own plant only if no permission
+    if (!hasPermission('Dashboard', ['view_all_plants'])){
+        $username = implode("', '", $_SESSION["plant"]);
+        $searchQuery .= " and plant_code IN ('$username')";
+    }
 }
 
 
