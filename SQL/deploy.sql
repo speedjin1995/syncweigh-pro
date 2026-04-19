@@ -3240,10 +3240,46 @@ DELIMITER ;
 
 UPDATE Company SET links = '{"sop_link":"https:\/\/www.youtube.com\/playlist?list=PLW1NFIMVHrg4FwGXpEZZDF706enhx5Qlw","hardware_setup_link":"https:\/\/www.youtube.com\/playlist?list=PLW1NFIMVHrg5Fd1WeN0SBE3m8gnifZENH","help_link":"https:\/\/drive.google.com\/drive\/folders\/1mOGhsY3RAM7GQcchDogPKx8E31Np1-4M?usp=sharing"}' WHERE id = 1;
 
+TRUNCATE TABLE `modules`;
 INSERT INTO `modules` (`id`, `name`, `category`) VALUES
-(NULL, 'Permission', 'User Management'),
-(NULL, 'Dashboard', 'Dashboard')
-;
+(1, 'Sales', 'Weighing'),
+(2, 'Purchase', 'Weighing'),
+(3, 'Public', 'Weighing'),
+(4, 'WIP', 'Weighing'),
+(5, 'Return', 'Weighing'),
+(6, 'Sales Order (SO)', 'Accounting'),
+(7, 'Delivery Order (DO)', 'Accounting'),
+(8, 'Purchase Order (PO)', 'Accounting'),
+(9, 'Goods Received (GR)', 'Accounting'),
+(10, 'Stock Take', 'Accounting'),
+(11, 'Stock Take', 'Stock Management'),
+(12, 'Stock Take Log', 'Stock Management'),
+(13, 'Inventory', 'Stock Management'),
+(14, 'Asset Management', 'Stock Management'),
+(15, 'Calculation Setup', 'Stock Management'),
+(16, 'Customer', 'Master Data'),
+(17, 'Destination', 'Master Data'),
+(18, 'Product', 'Master Data'),
+(19, 'Raw Material', 'Master Data'),
+(20, 'Supplier', 'Master Data'),
+(21, 'Vehicle', 'Master Data'),
+(22, 'Sales Representative', 'Master Data'),
+(23, 'Transporter', 'Master Data'),
+(24, 'Plant', 'Master Data'),
+(25, 'Reason', 'Master Data'),
+(26, 'Sales', 'Report'),
+(27, 'Purchase', 'Report'),
+(28, 'Public', 'Report'),
+(29, 'Audit Log', 'Report'),
+(30, 'Api Log', 'Report'),
+(31, 'Cronjob Setup', 'Setting'),
+(32, 'Company Profile', 'Setting'),
+(33, 'Port Setup', 'Setting'),
+(34, 'User Setup', 'User Management'),
+(35, 'Role', 'User Management'),
+(36, 'Module', 'User Management'),
+(37, 'Permission', 'User Management'),
+(38, 'Dashboard', 'Dashboard');
 
 TRUNCATE TABLE `permissions`;
 INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
