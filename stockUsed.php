@@ -163,7 +163,7 @@ else{
                                                                 <h5 class="card-title mb-0">Stock Used Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <?php if(hasModulePermission('Accounting', 'Stock Take', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Stock Take', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
