@@ -182,9 +182,7 @@ if ($user != null && $user != ''){
                                                         <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2">
-                                                                <?php if (hasModulePermission('Accounting', 'Sales Order (SO)', ['view_all_plants'])){ ?>
                                                                 <option selected>-</option>
-                                                                <?php } ?>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant2)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
@@ -363,9 +361,7 @@ if ($user != null && $user != ''){
                                                                                     <label for="plant" class="col-sm-4 col-form-label">Plant</label>
                                                                                     <div class="col-sm-8">
                                                                                         <select class="form-control select2" style="width: 100%;" id="plant" name="plant">
-                                                                                            <?php if (hasModulePermission('Accounting', 'Sales Order (SO)', ['view_all_plants'])){ ?>
                                                                                             <option selected="-">-</option>
-                                                                                            <?php } ?>
                                                                                             <?php while($rowPlant=mysqli_fetch_assoc($plant)){ ?>
                                                                                                 <option value="<?=$rowPlant['plant_code'] ?>" data-name="<?=$rowPlant['name'] ?>"><?=$rowPlant['name'] ?></option>
                                                                                             <?php } ?>

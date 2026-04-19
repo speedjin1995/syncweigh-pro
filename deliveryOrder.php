@@ -180,9 +180,7 @@ else{
                                                         <div class="mb-3">
                                                             <label for="plantSearch" class="form-label">Plant</label>
                                                             <select id="plantSearch" class="form-select select2">
-                                                                <?php if (hasModulePermission('Accounting', 'Delivery Order (DO)', ['view_all_plants'])){ ?>
                                                                 <option selected>-</option>
-                                                                <?php } ?>
                                                                 <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
                                                                     <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
                                                                 <?php } ?>
@@ -1241,7 +1239,8 @@ else{
                     product: productI,
                     rawMaterial: rawMatI,
                     plant: plantI,
-                    purchaseOrder: soI
+                    purchaseOrder: soI,
+                    type: 'DO'
                 } 
             },
             'columns': [     
@@ -1325,7 +1324,8 @@ else{
                         product: productI,
                         rawMaterial: rawMatI,
                         plant: plantI,
-                        purchaseOrder: soI
+                        purchaseOrder: soI,
+                        type: 'DO'
                     } 
                 },
                 'columns': [
