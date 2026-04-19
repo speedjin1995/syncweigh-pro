@@ -6,6 +6,12 @@
 // Include config file
 require_once "layouts/config.php";
 
+if (!hasModulePermission('Setting', 'Company Profile', ['view', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
+
 // Check if the user is already logged in, if yes then redirect him to index page
 $id = '1';
 $stmt2 = $link->prepare("SELECT company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links from Company where id = ?");
@@ -28,6 +34,14 @@ if (mysqli_stmt_fetch($stmt2)) {
     $usersop_link = $linksArray['sop_link'] ?? '';
     $userhardware_setup_link = $linksArray['hardware_setup_link'] ?? '';
     $userhelp_link = $linksArray['help_link'] ?? '';
+}
+
+if(hasModulePermission('Setting', 'Company Profile', ['edit'])){
+    $readonly = '';
+    $displayNone = '';
+}else{
+    $readonly = 'readonly';
+    $displayNone = 'style="display:none;"';
 }
 ?>
 
@@ -66,7 +80,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="companyRegNo" class="col-sm-4 col-form-label">Company Reg No. *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" placeholder="Company Reg No" value="<?=$usercompany_reg_no ?>" required>
+                                                        <input type="text" class="form-control" id="companyRegNo" name="companyRegNo" placeholder="Company Reg No" value="<?=$usercompany_reg_no ?>" required <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -74,7 +88,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="companyName" class="col-sm-4 col-form-label">Company Name *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Company Name" value="<?=$username ?>" required>
+                                                        <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Company Name" value="<?=$username ?>" required <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -82,7 +96,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="companyAddress" class="col-sm-4 col-form-label">Company Address 1 *</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyAddress" name="companyAddress" placeholder="Company Address 1" value="<?=$useraddress_line_1 ?>" required>
+                                                        <input type="text" class="form-control" id="companyAddress" name="companyAddress" placeholder="Company Address 1" value="<?=$useraddress_line_1 ?>" required <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -90,7 +104,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="companyAddress2" class="col-sm-4 col-form-label">Company Address 2</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyAddress2" name="companyAddress2" placeholder="Company Address 2" value="<?=$useraddress_line_2 ?>">
+                                                        <input type="text" class="form-control" id="companyAddress2" name="companyAddress2" placeholder="Company Address 2" value="<?=$useraddress_line_2 ?>" <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -98,7 +112,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="companyAddress3" class="col-sm-4 col-form-label">Company Address 3</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyAddress3" name="companyAddress3" placeholder="Company Address 3" value="<?=$useraddress_line_3 ?>">
+                                                        <input type="text" class="form-control" id="companyAddress3" name="companyAddress3" placeholder="Company Address 3" value="<?=$useraddress_line_3 ?>" <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -106,7 +120,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="companyPhone" class="col-sm-4 col-form-label">Company Phone</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyPhone" name="companyPhone" placeholder="Company Phone" value="<?=$userphone_no ?>" required>
+                                                        <input type="text" class="form-control" id="companyPhone" name="companyPhone" placeholder="Company Phone" value="<?=$userphone_no ?>" required <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -114,7 +128,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="companyFax" class="col-sm-4 col-form-label">Fax No.</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control" id="companyFax" name="companyFax" placeholder="Company Fax" value="<?=$userfax_no ?>">
+                                                        <input type="text" class="form-control" id="companyFax" name="companyFax" placeholder="Company Fax" value="<?=$userfax_no ?>" <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,7 +136,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="sopLink" class="col-sm-4 col-form-label">SOP Link</label>
                                                     <div class="col-sm-8">
-                                                        <input type="url" class="form-control" id="sopLink" name="sopLink" placeholder="SOP Link" value="<?=$usersop_link ?>">
+                                                        <input type="url" class="form-control" id="sopLink" name="sopLink" placeholder="SOP Link" value="<?=$usersop_link ?>" <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -130,7 +144,7 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="hardwareSetupLink" class="col-sm-4 col-form-label">Hardware Setup Link</label>
                                                     <div class="col-sm-8">
-                                                        <input type="url" class="form-control" id="hardwareSetupLink" name="hardwareSetupLink" placeholder="Hardware Setup Link" value="<?=$userhardware_setup_link ?>">
+                                                        <input type="url" class="form-control" id="hardwareSetupLink" name="hardwareSetupLink" placeholder="Hardware Setup Link" value="<?=$userhardware_setup_link ?>" <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -138,11 +152,11 @@ if (mysqli_stmt_fetch($stmt2)) {
                                                 <div class="row">
                                                     <label for="helpLink" class="col-sm-4 col-form-label">Help Link</label>
                                                     <div class="col-sm-8">
-                                                        <input type="url" class="form-control" id="helpLink" name="helpLink" placeholder="Help Link" value="<?=$userhelp_link ?>">
+                                                        <input type="url" class="form-control" id="helpLink" name="helpLink" placeholder="Help Link" value="<?=$userhelp_link ?>" <?=$readonly ?>>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="mt-4">
+                                            <div class="mt-4" <?=$displayNone ?>>
                                                 <button class="btn btn-success w-100" type="submit">Update</button>
                                             </div>
                                         </div>

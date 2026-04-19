@@ -4,6 +4,11 @@
 <?php
 require_once "php/db_connect.php";
 
+if (!hasModulePermission('Setting', 'Cronjob Setup', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
     $username = implode("', '", $_SESSION["plant"]);
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
@@ -102,10 +107,12 @@ else{
                                                                 <h5 class="card-title mb-0">Cronjob Setup</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if(hasModulePermission('Setting', 'Cronjob Setup', ['create'])): ?>
                                                                 <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add Cronjob
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -244,6 +251,8 @@ else{
     <script type="text/javascript">
     
     var table;
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
     $(function () {
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -266,18 +275,60 @@ else{
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        if(row.status == 'Inactive'){
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item remove-item-btn" id="reactivate'+data+'" onclick="reactivate('+data+')">Reactivate </a></li></ul></div>';
-                        }
-                        else{
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                            '<li><a class="dropdown-item remove-item-btn" id="deactivate'+data+'" onclick="deactivate('+data+')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete </a></li></ul></div>';
-                        }
-                        
+                        var buttons = '';
+                        // if (row.status == 'Inactive') {
+                        //     if (isSADMIN || (permissions['Setting'] && permissions['Setting']['Cronjob Setup'] && permissions['Setting']['Cronjob Setup'].includes('reactivate'))){
+                        //         buttons += `
+                        //             <div class="dropdown d-inline-block">
+                        //                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        //                     <i class="ri-more-fill align-middle"></i>
+                        //                 </button>
+                        //                 <ul class="dropdown-menu dropdown-menu-end">
+                        //                     <li>
+                        //                         <a class="dropdown-item remove-item-btn" id="reactivate${data}" onclick="reactivate(${data})">
+                        //                             Reactivate
+                        //                         </a>
+                        //                     </li>
+                        //                 </ul>
+                        //             </div>
+                        //         `;
+                        //     }
+                        // } else {
+                            if (isSADMIN || (permissions['Setting'] && permissions['Setting']['Cronjob Setup'] && ['edit', 'delete'].some(p => permissions['Setting']['Cronjob Setup'].includes(p)))) {
+                                buttons += `
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ri-more-fill align-middle"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">`;
+
+                                        if (isSADMIN || (permissions['Setting'] && permissions['Setting']['Cronjob Setup'] && permissions['Setting']['Cronjob Setup'].includes('edit'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                        <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+
+                                        if (isSADMIN || (permissions['Setting'] && permissions['Setting']['Cronjob Setup'] && permissions['Setting']['Cronjob Setup'].includes('delete'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">
+                                                        <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+                                buttons += `
+                                        </ul>
+                                    </div>
+                                `;
+                            }
+                        // }
+
+                        return buttons;
                     }
                 }
             ] 
