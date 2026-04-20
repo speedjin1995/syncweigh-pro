@@ -3,6 +3,12 @@
 
 <?php
 require_once "php/db_connect.php";
+
+if (!hasModulePermission('Report', 'Purchase', ['view'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $plantId = $_SESSION['plant'];
 
 $vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
@@ -33,12 +39,12 @@ if($plantId != null && count($plantId) > 0){
     }
 }
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+if (hasModulePermission('Report', 'Purchase', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
 }
 else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
 }
 ?>
 
@@ -372,18 +378,26 @@ else{
                                                                 <h5 class="card-title mb-0">Purchase Weighing Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if (hasModulePermission('Report', 'Purchase', ['export_summary_report'])){ ?>
                                                                 <button type="button" id="exportSummaryPdf" class="btn btn-info waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Summary Report
                                                                 </button>
+                                                                <?php } ?>
+
+                                                                <?php if (hasModulePermission('Report', 'Purchase', ['export_purchase_report'])){ ?>
                                                                 <button type="button" id="exportPurchasePdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Purchase Report
                                                                 </button>
+                                                                <?php } ?>
+
+                                                                <?php if (hasModulePermission('Report', 'Purchase', ['export_excel'])){ ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php } ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -632,6 +646,9 @@ else{
     <script src="assets/js/additional.js"></script>
 
     <script type="text/javascript">
+
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
     $(function () {
         const today = new Date();
         const tomorrow = new Date(today);
@@ -755,9 +772,13 @@ else{
                     class: 'action-button',
                     render: function ( data, type, row ) {
                         // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                        if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
+                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                        }
+
+                        return '';
                     }
                 }
             ],
@@ -842,9 +863,13 @@ else{
                         class: 'action-button',
                         render: function ( data, type, row ) {
                             // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                            if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
+                                return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                                '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                            }
+
+                            return '';
                         }
                     }
                 ],

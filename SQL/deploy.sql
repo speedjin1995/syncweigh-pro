@@ -3207,3 +3207,110 @@ INSERT INTO `role_permissions` (`role_id`, `module_id`, `permission_id`) VALUES
 (13, 4, 8),
 (13, 4, 9),
 (13, 4, 10);
+
+-- 16/04/2026 --
+ALTER TABLE `Company` ADD `links` TEXT NULL AFTER `fax_no`;
+ALTER TABLE `Company_Log` ADD `links` TEXT NULL AFTER `fax_no`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_COMPANY` AFTER INSERT ON `Company`
+ FOR EACH ROW INSERT INTO Company_Log (
+    company_id, company_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.company_code, NEW.company_reg_no, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.links, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_COMPANY` BEFORE UPDATE ON `Company`
+ FOR EACH ROW BEGIN
+
+    -- Insert into Company_Log table
+    INSERT INTO Company_Log (
+        company_id, company_code, company_reg_no, name, address_line_1, address_line_2, address_line_3, phone_no, fax_no, links, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.company_code, NEW.company_reg_no, NEW.name, NEW.address_line_1, NEW.address_line_2, NEW.address_line_3, NEW.phone_no, NEW.fax_no, NEW.links, 2, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+UPDATE Company SET links = '{"sop_link":"https:\/\/www.youtube.com\/playlist?list=PLW1NFIMVHrg4FwGXpEZZDF706enhx5Qlw","hardware_setup_link":"https:\/\/www.youtube.com\/playlist?list=PLW1NFIMVHrg5Fd1WeN0SBE3m8gnifZENH","help_link":"https:\/\/drive.google.com\/drive\/folders\/1mOGhsY3RAM7GQcchDogPKx8E31Np1-4M?usp=sharing"}' WHERE id = 1;
+
+TRUNCATE TABLE `modules`;
+INSERT INTO `modules` (`id`, `name`, `category`) VALUES
+(1, 'Sales', 'Weighing'),
+(2, 'Purchase', 'Weighing'),
+(3, 'Public', 'Weighing'),
+(4, 'WIP', 'Weighing'),
+(5, 'Return', 'Weighing'),
+(6, 'Sales Order (SO)', 'Accounting'),
+(7, 'Delivery Order (DO)', 'Accounting'),
+(8, 'Purchase Order (PO)', 'Accounting'),
+(9, 'Goods Received (GR)', 'Accounting'),
+(10, 'Stock Take', 'Accounting'),
+(11, 'Stock Take', 'Stock Management'),
+(12, 'Stock Take Log', 'Stock Management'),
+(13, 'Inventory', 'Stock Management'),
+(14, 'Asset Management', 'Stock Management'),
+(15, 'Calculation Setup', 'Stock Management'),
+(16, 'Customer', 'Master Data'),
+(17, 'Destination', 'Master Data'),
+(18, 'Product', 'Master Data'),
+(19, 'Raw Material', 'Master Data'),
+(20, 'Supplier', 'Master Data'),
+(21, 'Vehicle', 'Master Data'),
+(22, 'Sales Representative', 'Master Data'),
+(23, 'Transporter', 'Master Data'),
+(24, 'Plant', 'Master Data'),
+(25, 'Reason', 'Master Data'),
+(26, 'Sales', 'Report'),
+(27, 'Purchase', 'Report'),
+(28, 'Public', 'Report'),
+(29, 'Audit Log', 'Report'),
+(30, 'Api Log', 'Report'),
+(31, 'Cronjob Setup', 'Setting'),
+(32, 'Company Profile', 'Setting'),
+(33, 'Port Setup', 'Setting'),
+(34, 'User Setup', 'User Management'),
+(35, 'Role', 'User Management'),
+(36, 'Module', 'User Management'),
+(37, 'Permission', 'User Management'),
+(38, 'Dashboard', 'Dashboard');
+
+TRUNCATE TABLE `permissions`;
+INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
+(4, 'view', '[\"All\"]'),
+(5, 'create', '[\"8\",\"6\",\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"31\",\"14\",\"15\",\"11\",\"36\",\"37\",\"35\",\"34\",\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(6, 'edit', '[\"8\",\"6\",\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"32\",\"31\",\"33\",\"14\",\"15\",\"13\",\"11\",\"36\",\"37\",\"35\",\"34\",\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(7, 'delete', '[\"8\",\"6\",\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"31\",\"14\",\"15\",\"36\",\"37\",\"35\",\"34\",\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(8, 'weight_out', '[\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(9, 'display_do', '[\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(10, 'manual_weighing', '[\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(11, 'manual_date_change', '[\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(12, 'print', '[\"28\",\"27\",\"26\",\"11\",\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(13, 'view_all_plants', '[\"7\",\"9\",\"8\",\"6\",\"10\",\"38\",\"28\",\"27\",\"26\",\"14\",\"15\",\"13\",\"11\",\"12\",\"34\",\"3\",\"2\",\"5\",\"1\",\"4\"]'),
+(14, 'download_template', '[\"8\",\"6\",\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"15\",\"34\"]'),
+(15, 'import_sales_orders', '[\"6\"]'),
+(16, 'import_purchase_orders', '[\"8\"]'),
+(17, 'upload_bom_list', '[\"11\"]'),
+(18, 'upload_excel', '[\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"15\",\"34\"]'),
+(19, 'export_excel', '[\"7\",\"9\",\"8\",\"6\",\"10\",\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"29\",\"28\",\"27\",\"26\",\"12\",\"34\"]'),
+(20, 'export_supply_excel', '[\"6\"]'),
+(21, 'export_received_excel', '[\"8\"]'),
+(22, 'generate_stock_take', '[\"12\"]'),
+(23, 'export_summary_report', '[\"28\",\"27\",\"26\"]'),
+(24, 'pull_from_sql', '[\"8\",\"6\",\"16\",\"18\",\"19\",\"22\",\"20\",\"23\"]'),
+(25, 'post_to_sql', '[\"7\",\"9\"]'),
+(26, 'complete', '[\"8\",\"6\"]'),
+(27, 'revert', '[\"8\",\"6\"]'),
+(28, 'export_sales_report', '[\"26\"]'),
+(30, 'export_purchase_report', '[\"27\"]'),
+(31, 'export_public_report', '[\"28\"]'),
+(32, 'reactivate', '[\"16\",\"17\",\"24\",\"18\",\"19\",\"25\",\"22\",\"20\",\"23\",\"21\",\"34\"]'),
+(33, 'include_price', '[\"8\",\"6\"]'),
+(34, 'assign_permissions', '[\"35\"]');
+

@@ -2,6 +2,7 @@
 ## Database configuration
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/permissions.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -64,12 +65,12 @@ if($_POST['status'] == 'Purchase'){
 	$allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' group by purchase_order, raw_mat_code, supplier_code";
 }
 
-
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (($_POST['type'] == 'DO' && !hasModulePermission('Accounting', 'Delivery Order (DO)', ['view_all_plants'])) || ($_POST['type'] == 'GR' && !hasModulePermission('Accounting', 'Goods Received (GR)', ['view_all_plants']))){
+// if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
   $username = implode("', '", $_SESSION["plant"]);
   $allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' and plant_code IN ('$username') group by purchase_order, product_code, customer_code";
   if($_POST['status'] == 'Purchase'){
-	$allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' and plant_code IN ('$username') group by purchase_order, raw_mat_code, supplier_code";
+    $allQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' AND transaction_status = '".$_POST['status']."' and plant_code IN ('$username') group by purchase_order, raw_mat_code, supplier_code";
   }
 }
 
@@ -86,7 +87,7 @@ if($_POST['status'] == 'Purchase'){
 	$filteredQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order, raw_mat_code, supplier_code";
 }
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (($_POST['type'] == 'DO' && !hasModulePermission('Accounting', 'Delivery Order (DO)', ['view_all_plants'])) || ($_POST['type'] == 'GR' && !hasModulePermission('Accounting', 'Goods Received (GR)', ['view_all_plants']))){
     $username = implode("', '", $_SESSION["plant"]);
     $filteredQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order, product_code, customer_code";
     if($_POST['status'] == 'Purchase'){
@@ -105,7 +106,7 @@ if($_POST['status'] == 'Purchase'){
 }
 
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (($_POST['type'] == 'DO' && !hasModulePermission('Accounting', 'Delivery Order (DO)', ['view_all_plants'])) || ($_POST['type'] == 'GR' && !hasModulePermission('Accounting', 'Goods Received (GR)', ['view_all_plants']))){
   $username = implode("', '", $_SESSION["plant"]);
   $empQuery = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order, product_code, customer_code order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
   if($_POST['status'] == 'Purchase'){

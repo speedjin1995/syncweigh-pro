@@ -849,7 +849,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-xxl-4 col-lg-4 mb-3"  <?php 
-                                                                                if(!hasPermission('Stock Management', ['manual_weighing'])){
+                                                                                if(!hasPermission('Weighing', ['manual_weighing'])){
                                                                                     echo 'style="display:none;"';
                                                                                 }?>>
                                                                                 <div class="row">
@@ -1852,7 +1852,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                         }
 
                         if (row.is_approved == 'Y') {
-                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
@@ -1871,7 +1871,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             </div>`;
                         }
 
-                        if (isSADMIN || (ermissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
+                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -2716,7 +2716,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             }
 
                             if (row.is_approved == 'Y') {
-                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print_slip'))) {
+                                if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('print'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Print" type="button" id="print${data}" onclick="print('${data}', '${row.transaction_status}')" class="btn btn-info btn-sm">
@@ -3501,7 +3501,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
         $('#nettWeight').on('change', function(){
             var nett1 = $(this).val() ? parseFloat($(this).val()) : 0;
             var nett2 = $('#nettWeight2').val() ? parseFloat($('#nettWeight2').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
+            var current = Math.abs(nett1 + nett2);
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));
             $('#currentWeight').trigger('change');
@@ -3636,15 +3636,15 @@ if (hasPermission('Weighing', ['view_all_plants'])){
         $('#nettWeight2').on('change', function(){
             var nett2 = $(this).val() ? parseFloat($(this).val()) : 0;
             var nett1 = $('#nettWeight').val() ? parseFloat($('#nettWeight').val()) : 0;
-            var current = Math.abs(nett1 - nett2);
+            var current = Math.abs(nett1 + nett2);
 
-            if ($('#weightType').val() == "Container"){
-                var gross1 = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
-                var tare1 = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
-                var gross2 = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
-                var tare2 = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
-                current = Math.abs((gross1 + gross2) - (tare1 + tare2));
-            }
+            // if ($('#weightType').val() == "Container"){
+            //     var gross1 = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
+            //     var tare1 = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
+            //     var gross2 = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
+            //     var tare2 = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
+            //     current = Math.abs((gross1 + gross2) - (tare1 + tare2));
+            // }
 
             $('#currentWeight').text(current.toFixed(0));
             $('#finalWeight').val(current.toFixed(0));

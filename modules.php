@@ -228,36 +228,39 @@ $(function () {
             {
                 data: 'id',
                 render: function (data, type, row) {
-                    var buttons = `
-                        <div class="dropdown d-inline-block">
-                            <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ri-more-fill align-middle"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                            `;
-                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('edit'))){
-                                buttons += `
+                    var perms = (permissions['User Management'] && permissions['User Management']['Module']) || [];
+                    if (isSADMIN || ['edit', 'delete'].some(p => perms.includes(p))) {
+                        var buttons = `
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ri-more-fill align-middle"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">`;
+
+                        if (isSADMIN || perms.includes('edit')) {
+                            buttons += `
                                 <li>
                                     <a class="dropdown-item edit-item-btn" onclick="edit(${data})">
                                         <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
                                     </a>
                                 </li>`;
-                            }
+                        }
 
-                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['Module'] && permissions['User Management']['Module'].includes('delete'))){
-                                buttons += `
+                        if (isSADMIN || perms.includes('delete')) {
+                            buttons += `
                                 <li>
                                     <a class="dropdown-item remove-item-btn" onclick="deactivate(${data})">
                                         <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
                                     </a>
                                 </li>`;
-                            }
+                        }
 
-                        buttons += `                                                
-                            </ul>
-                        </div>`;
-
-                    return buttons;
+                        buttons += `
+                                </ul>
+                            </div>`;
+                        return buttons;
+                    }
+                    return '';
                 }
             }
         ]

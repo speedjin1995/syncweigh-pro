@@ -4,14 +4,18 @@
 <?php
 require_once "php/db_connect.php";
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
+if (!hasModulePermission('Stock Management', 'Stock Take', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
 }
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+
+if (hasModulePermission('Stock Management', 'Stock Take', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
 }
 
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
@@ -154,10 +158,18 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                                 <h5 class="card-title mb-0">Stock Take</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                <i class="ri-add-circle-line align-middle me-1"></i>
-                                                                Add Stock Take
+                                                                <?php if (hasModulePermission('Stock Management', 'Stock Take', ['upload_bom_list'])){ ?>
+                                                                <button type="button" id="uploadBom" class="btn btn-success waves-effect waves-light">
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Upload Bom List
                                                                 </button>
+                                                                <?php } ?>
+                                                                <?php if (hasModulePermission('Stock Management', 'Stock Take', ['create'])){ ?>
+                                                                <button type="button" id="addWeight" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
+                                                                    <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                    Add Stock Take
+                                                                </button>
+                                                                <?php } ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -187,7 +199,6 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                     </div> <!-- end .h-100-->
                                 </div> <!-- end col -->
                             </div><!-- container-fluid -->
-                    
 
                         </div> <!-- end .h-100-->
 
@@ -676,6 +687,49 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+        <div class="modal fade" id="uploadModal">
+            <div class="modal-dialog modal-xl" style="max-width: 90%;">
+                <div class="modal-content">
+                    <form role="form" id="uploadForm">
+                        <div class="modal-header bg-gray-dark color-palette">
+                            <h4 class="modal-title">Upload Excel File</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="file" id="fileInput" accept=".xlsx,.xls">
+                            <button type="button" class="btn btn-info btn-sm" id="previewButton">Preview Data</button>
+                            <div id="sheetTabs" class="mt-3" style="display:none;">
+                                <ul class="nav nav-tabs" id="sheetTabList" role="tablist"></ul>
+                            </div>
+                            <div id="previewTable" class="mt-2" style="overflow: auto; max-height: 500px;"></div>
+                            <input type="hidden" id="excelSheetData" name="excelSheetData">
+                            <input type="hidden" id="excelActiveSheet" name="excelActiveSheet">
+                        </div>
+                        <div class="modal-footer justify-content-between bg-gray-dark color-palette">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" id="submitBom">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="errorModal" style="display:none">
+            <div class="modal-dialog modal-xl" style="max-width: 50%;">
+                <div class="modal-content">
+                    <div class="modal-header bg-gray-dark color-palette">
+                        <h4 class="modal-title">Error Log</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <ol id="errorList" class="text-danger mt-2" style="padding-left: 20px;"></ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
     </div>
     <!-- END layout-wrapper -->
 
@@ -955,6 +1009,12 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
     <script type="text/javascript">
 
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
+    var uploadWorkbook = null;
+    var allSheetsData = {};
+    var activeSheetName = '';
+
     var bitumenCount = $("#bitumenTable").find(".details").length;
     var lfoCount = $("#lfoTable").find(".details").length;
     var dieselCount = $("#dieselTable").find(".details").length;
@@ -1048,10 +1108,42 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                        '<li><a class="dropdown-item" onclick="printDeclaration('+data+')"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                        var buttons = '';
+
+                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
+                            buttons += `
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">`;
+
+                                    if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('edit'))){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                    <i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+
+                                    if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('print'))){
+                                        buttons += `
+                                            <li>
+                                                <a class="dropdown-item" onclick="printDeclaration(${data})">
+                                                    <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                </a>
+                                            </li>
+                                        `;
+                                    }
+                            buttons += `
+                                    </ul>
+                                </div>
+                            `;
+                        }
+
+                        return buttons;
                     }
                 }
             ] 
@@ -1102,10 +1194,42 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     { 
                         data: 'id',
                         render: function ( data, type, row ) {
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit</a></li>' +
-                            '<li><a class="dropdown-item" onclick="printDeclaration('+data+')"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                            var buttons = '';
+
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Stock Take'].includes(p)))) {
+                                buttons += `
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ri-more-fill align-middle"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">`;
+
+                                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('edit'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                        <i class="ri-edit-line align-bottom me-2 text-muted"></i> Edit
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+
+                                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Stock Take'] && permissions['Stock Management']['Stock Take'].includes('print'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item" onclick="printDeclaration(${data})">
+                                                        <i class="ri-printer-line align-bottom me-2 text-muted"></i> Print
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+                                buttons += `
+                                        </ul>
+                                    </div>
+                                `;
+                            }
+
+                            return buttons;
                         }
                     }
                 ] 
@@ -2184,7 +2308,139 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             var qty = type * bags;
             $(this).val(qty.toFixed(2));
         });
+
+        $('#uploadBom').on('click', function(){
+            $('#uploadModal').modal('show');
+
+            $('#uploadForm').validate({
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+
+        $('#uploadModal').find('#previewButton').on('click', function() {
+            var file = $('#fileInput')[0].files[0];
+            if (!file) { alert('Please select a file first.'); return; }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                uploadWorkbook = XLSX.read(e.target.result, { type: 'array' });
+                var sheets = uploadWorkbook.SheetNames;
+                allSheetsData = {};
+                sheets.forEach(function(name) {
+                    allSheetsData[name] = XLSX.utils.sheet_to_json(uploadWorkbook.Sheets[name], { defval: '', range: 1 });
+                });
+                var tabHtml = '';
+                sheets.forEach(function(name, i) {
+                    tabHtml += '<li class="nav-item" role="presentation">' +
+                        '<button class="nav-link' + (i === 0 ? ' active' : '') + '" type="button" data-sheet="' + name + '">' + name + '</button></li>';
+                });
+                $('#sheetTabList').html(tabHtml);
+                $('#sheetTabs').show();
+                renderSheet(sheets[0]);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        $(document).on('click', '#sheetTabList .nav-link', function() {
+            $('#sheetTabList .nav-link').removeClass('active');
+            $(this).addClass('active');
+            renderSheet($(this).data('sheet'));
+        });
+
+        $('#submitBom').on('click', function() {
+            if (!uploadWorkbook || Object.keys(allSheetsData).length === 0) {
+                alert('Please upload and preview an Excel file first.');
+                return;
+            }
+            $('#spinnerLoading').show();
+            $.ajax({
+                url: 'php/uploadBomList.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(Object.fromEntries(Object.entries(allSheetsData).map(function(entry) {
+                    var rows = entry[1];
+                    if (rows.length < 2) return [entry[0], []];
+                    var keyRow = rows[0];
+                    var origKeys = Object.keys(keyRow);
+                    var newKeys = origKeys.map(function(k) { return String(keyRow[k]); });
+                    var dataRows = rows.slice(1).map(function(row) {
+                        var obj = {};
+                        origKeys.forEach(function(k, i) { obj[newKeys[i]] = row[k]; });
+                        if (row['Item Code'] !== undefined) obj['Item Code'] = row['Item Code'];
+                        return obj;
+                    });
+                    return [entry[0], dataRows];
+                }))),
+                success: function(response) {
+                    var obj = JSON.parse(response);
+                    $('#spinnerLoading').hide();
+                    if (obj.status === 'success') {
+                        $('#uploadModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if (obj.status === 'error') {
+                        var errors = Array.isArray(obj.message) ? obj.message : [obj.message];
+                        var html = '';
+                        errors.forEach(function(err) { html += '<li>' + err + '</li>'; });
+                        $('#errorList').html(html);
+                        $('#uploadModal').modal('hide');
+                        $('#errorModal').modal('show');
+                    } 
+                    else {
+                        $('#uploadModal').modal('hide');
+                        $("#failBtn").attr('data-toast-text', obj.message);
+                        $("#failBtn").click();
+                    }
+                },
+                error: function() {
+                    $('#spinnerLoading').hide();
+                    alert('An error occurred while uploading.');
+                }
+            });
+        });
     });
+
+    function renderSheet(sheetName) {
+        if (!uploadWorkbook) return;
+        activeSheetName = sheetName;
+        $('#excelActiveSheet').val(sheetName);
+        $('#excelSheetData').val(JSON.stringify(allSheetsData));
+        var rows = allSheetsData[sheetName];
+        if (!rows || rows.length === 0) {
+            $('#previewTable').html('<p class="text-muted">No data in this sheet.</p>');
+            return;
+        }
+        var headers = Object.keys(rows[0]);
+        var html = '<div class="table-responsive"><table class="table table-bordered table-striped table-sm"><thead><tr>';
+        headers.forEach(function(h) { html += '<th>' + h + '</th>'; });
+        html += '</tr></thead><tbody>';
+        rows.forEach(function(row, rIdx) {
+            html += '<tr>';
+            headers.forEach(function(h) {
+                var isEditable = rIdx !== 0;
+                html += '<td' + (isEditable ? ' contenteditable="true"' : '') + ' data-row="' + rIdx + '" data-col="' + h + '"' + (!isEditable ? ' style="background-color:#e9ecef;"' : '') + '>' + (row[h] !== undefined ? row[h] : '') + '</td>';
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+        $('#previewTable').html(html);
+
+        $('#previewTable').off('blur', 'td[contenteditable]').on('blur', 'td[contenteditable]', function() {
+            var rIdx = $(this).data('row');
+            var col = $(this).data('col');
+            allSheetsData[activeSheetName][rIdx][col] = $(this).text().trim();
+        });
+    }
 
     function calculateActualLevel(status, level, height) {
         var actualLevel = 0;

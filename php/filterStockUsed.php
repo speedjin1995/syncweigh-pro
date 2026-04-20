@@ -21,6 +21,12 @@ $plantId = !empty($_POST['plant']) ? $_POST['plant'] : null;
 if($plantId){
     $plantCode = searchPlantCodeById($plantId, $db);
     $searchQuery .= " AND plant_code = '".$plantCode."'";
+} else {
+  // Restrict to own plant only if no permission
+  if (!hasModulePermission('Accounting', 'Stock Take', ['view_all_plants'])){
+    $username = implode("', '", $_SESSION["plant"]);
+    $searchQuery .= " and plant_code IN ('$username')";
+  }
 }
 
 // Products to track (columns in table)

@@ -3,17 +3,21 @@
 
 <?php
 require_once "php/db_connect.php";
+if (!hasModulePermission('Stock Management', 'Calculation Setup', ['view', 'create', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $user = $_SESSION['id'];
 $plantId = $_SESSION['plant'];
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant_id"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and id IN ('$username')");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and id IN ('$username')");
-}
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
-    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
+if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
 }
 ?>
 
@@ -390,22 +394,31 @@ else{
                                                                 <h5 class="card-title mb-0">Calculation Setup</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
+                                                                <?php if (hasModulePermission('Stock Management', 'Calculation Setup', ['download_template'])){ ?>
                                                                 <button type="button" id="downloadTemplateBtn" class="btn btn-info waves-effect waves-light">
                                                                     <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                     Download Template 
                                                                 </button>
+                                                                <?php } ?>
+
+                                                                <?php if (hasModulePermission('Stock Management', 'Calculation Setup', ['upload_excel'])){ ?>
                                                                 <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
-                                                                    Import
+                                                                    Upload Excel
                                                                 </button>
+                                                                <?php } ?>
+
                                                                 <!-- <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button> -->
+
+                                                                <?php if (hasModulePermission('Stock Management', 'Calculation Setup', ['create'])){ ?>
                                                                 <button type="button" id="addCalculation" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
                                                                     <i class="ri-add-circle-line align-middle me-1"></i>
                                                                     Add New
                                                                 </button>
+                                                                <?php } ?>
                                                             </div> 
                                                         </div> 
                                                     </div>
@@ -514,6 +527,8 @@ else{
     var wasErrorModalShown = false;
     var levelCount = 0;
     var sgCount = 0;
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
     $(function () {
         $('#selectAllCheckbox').on('change', function() {
@@ -582,20 +597,31 @@ else{
                     data: 'id',
                     class: 'action-button',
                     render: function (data, type, row) {
-                        let buttons = `
-                            <div class="row g-1 d-flex">
-                                <div class="col-auto">
-                                    <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-pen"></i>
-                                    </button>
-                                </div>
-                                <div class="col-auto">
-                                    <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>`;
+                        var buttons = '<div class="row g-1 d-flex">';
 
+                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Calculation Setup'].includes(p)))) {
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('edit'))){
+                                buttons += `
+                                    <div class="col-auto">
+                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>
+                                `;
+                            }
+
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('delete'))){
+                                buttons += `
+                                    <div class="col-auto">
+                                        <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                `;
+                            }
+                        }
+
+                        buttons += '</div>';
                         return buttons;
                     }
                 }
@@ -643,20 +669,31 @@ else{
                         data: 'id',
                         class: 'action-button',
                         render: function (data, type, row) {
-                            let buttons = `
-                                <div class="row g-1 d-flex">
-                                    <div class="col-auto">
-                                        <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-auto">
-                                        <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>`;
+                            var buttons = '<div class="row g-1 d-flex">';
 
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Calculation Setup'].includes(p)))) {
+                                if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('edit'))){
+                                    buttons += `
+                                        <div class="col-auto">
+                                            <button title="Edit" type="button" id="edit${data}" onclick="edit(${data})" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                        </div>
+                                    `;
+                                }
+
+                                if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('delete'))){
+                                    buttons += `
+                                        <div class="col-auto">
+                                            <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    `;
+                                }
+                            }
+
+                            buttons += '</div>';
                             return buttons;
                         }
                     }

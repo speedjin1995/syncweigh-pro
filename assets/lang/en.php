@@ -27,6 +27,7 @@
     $lang["t-userSetup"]="User Setup";
     $lang["t-roles"]="Roles";
     $lang["t-modules"]="Modules";
+    $lang["t-permissions"]="Permissions";
     $lang["t-rolePermission"]="Role & Permissions";
 
     $lang["t-masterdata"]="Master Data";

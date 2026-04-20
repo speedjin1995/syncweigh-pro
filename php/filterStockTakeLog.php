@@ -3,6 +3,7 @@
 session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
+require_once 'requires/permissions.php';
 
 ## Read value
 // $draw = $_POST['draw'];
@@ -28,9 +29,14 @@ if($_POST['toDateSearch'] != null && $_POST['toDateSearch'] != ''){
     $searchQuery .= " and declaration_datetime <= '".$toDateTime."'";
 }
 
-if($_POST['plant'] != null && $_POST['plant'] != '')
-{
+if($_POST['plant'] != null && $_POST['plant'] != ''){
     $searchQuery .= " and plant_id = '".$_POST['plant']."'";
+} else {
+  // Restrict to own plant only if no permission
+  if (!hasModulePermission('Stock Management', 'Stock Take Log', ['view_all_plants'])){
+    $username = implode("', '", $_SESSION["plant_id"]);
+    $searchQuery .= " and plant_id IN ('$username')";
+  }
 }
 
 

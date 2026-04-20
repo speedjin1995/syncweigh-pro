@@ -20,13 +20,20 @@ $agent = $db->query("SELECT * FROM Agents WHERE status = '0' ORDER BY name ASC")
 $destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name ASC");
 $product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
 $product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name ASC");
-$plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
-$plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
 $transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name ASC");
 $vehicle = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number ASC");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $unit2 = $db->query("SELECT * FROM Unit WHERE status = '0' ORDER BY unit ASC");
 $salesOrder = $db->query("SELECT DISTINCT order_no FROM Sales_Order WHERE deleted = '0' ORDER BY order_no ASC");
+
+if (hasModulePermission('Accounting', 'Sales Order (SO)', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+    $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+}
 
 $role = 'NORMAL';
 $user = $_SESSION['id'];
@@ -603,24 +610,30 @@ if ($user != null && $user != ''){
                                                                 <h5 class="card-title mb-0">Sales Orders</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['upload_excel'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['download_template'])): ?>
                                                                 <a href="template/So_Template.xlsx" download>
                                                                     <button type="button" class="btn btn-info waves-effect waves-light">
                                                                         <i class="mdi mdi-file-import-outline align-middle me-1"></i>
                                                                         Download Template 
                                                                     </button>
                                                                 </a>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['import_sales_orders'])): ?>
                                                                 <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Import Sales Orders
                                                                 </button>
                                                                 <?php endif; ?>
 
-                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
                                                                 </button>
+                                                                <?php endif; ?>
+
+                                                                <?php if(hasModulePermission('Accounting', 'Sales Order (SO)', ['export_supply_excel'])): ?>
                                                                 <button type="button" id="exportSupplyExcel" class="btn btn-info waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Supply Excel
@@ -873,7 +886,7 @@ if ($user != null && $user != ''){
                                 </div>`;
                             }
                         } else {
-                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate'))) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('revert'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -987,7 +1000,7 @@ if ($user != null && $user != ''){
                                     </div>`;
                                 }
                             } else {
-                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('reactivate'))) {
+                                if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('revert'))) {
                                     buttons += `
                                     <div class="col-auto">
                                         <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
@@ -1584,7 +1597,7 @@ if ($user != null && $user != ''){
                             <td>${weights[i].created_by}</td>
                             <td>`;
 
-                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('print_slip'))){
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing']['Sales'] && permissions['Weighing']['Sales'].includes('print'))){
                                 returnString += `
                                 <div class="col-auto">
                                     <button title="Print" type="button" id="print${weights[i].id}" onclick="print('${weights[i].id}')" class="btn btn-info btn-sm">

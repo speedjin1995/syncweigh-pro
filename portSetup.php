@@ -3,6 +3,11 @@
 <?php
 require_once 'php/db_connect.php';
 
+if (!hasModulePermission('Setting', 'Port Setup', ['view', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
+}
+
 $id = $_SESSION['id'];
 $stmt = $db->prepare("SELECT * from Port WHERE weighind_id = ?");
 $stmt->bind_param('s', $id);
@@ -22,6 +27,14 @@ if($row = $result->fetch_assoc()){
     $parity = $row['parity'];
     $stopbits = $row['stop_bits'];
     $indicator = $row['indicator'];
+}
+
+if(hasModulePermission('Setting', 'Port Setup', ['edit'])){
+    $disabled = '';
+    $displayNone = '';
+}else{
+    $disabled = 'disabled';
+    $displayNone = 'style="display:none;"';
 }
 ?>
 
@@ -58,7 +71,7 @@ if($row = $result->fetch_assoc()){
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Indicator</label>
-                                                    <select class="form-control" style="width: 100%;" id="indicator" name="indicator" required>
+                                                    <select class="form-control" style="width: 100%;" id="indicator" name="indicator" required <?=$disabled ?>>
                                                         <option value="BX23" <?=$indicator == 'BX23' ? 'selected="selected"' : '';?>>BAYKON BX23</option>
                                                         <option value="X2S" <?=$indicator == 'X2S' ? ' selected="selected"' : '';?>>SYNCTRONIX X2S</option>
                                                         <option value="X722" <?=$indicator == 'X722' ? ' selected="selected"' : '';?>>SYNCTRONIX X722</option>
@@ -70,13 +83,13 @@ if($row = $result->fetch_assoc()){
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Serial Port</label>
-                                                    <select class="form-control" style="width: 100%;" id="serialPort" name="serialPort" required></select>
+                                                    <select class="form-control" style="width: 100%;" id="serialPort" name="serialPort" required <?=$disabled ?>></select>
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Baud Rate</label>
-                                                    <select class="form-control" style="width: 100%;" id="serialPortBaudRate" name="serialPortBaudRate" required>
+                                                    <select class="form-control" style="width: 100%;" id="serialPortBaudRate" name="serialPortBaudRate" required <?=$disabled ?>>
                                                         <option value="110" <?=$baudrate == '110' ? 'selected="selected"' : '';?>>110</option>
                                                         <option value="300" <?=$baudrate == '300' ? ' selected="selected"' : '';?>>300</option>
                                                         <option value="600" <?=$baudrate == '600' ? ' selected="selected"' : '';?>>600</option>
@@ -99,7 +112,7 @@ if($row = $result->fetch_assoc()){
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Data Bits</label>
-                                                    <select class="form-control" style="width: 100%;" id="serialPortDataBits" name="serialPortDataBits" required>
+                                                    <select class="form-control" style="width: 100%;" id="serialPortDataBits" name="serialPortDataBits" required <?=$disabled ?>>
                                                         <option value="8" <?=$databits == '8' ? 'selected="selected"' : '';?>>8</option>
                                                         <option value="7" <?=$databits == '7' ? 'selected="selected"' : '';?>>7</option>
                                                         <option value="6" <?=$databits == '6' ? 'selected="selected"' : '';?>>6</option>
@@ -110,7 +123,7 @@ if($row = $result->fetch_assoc()){
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Parity</label>
-                                                    <select class="form-control" style="width: 100%;" id="serialPortParity" name="serialPortParity" required>
+                                                    <select class="form-control" style="width: 100%;" id="serialPortParity" name="serialPortParity" required <?=$disabled ?>>
                                                         <option value="N" <?=$parity == 'N' ? 'selected="selected"' : '';?>>None</option>
                                                         <option value="O" <?=$parity == 'O' ? 'selected="selected"' : '';?>>Odd</option>
                                                         <option value="E" <?=$parity == 'E' ? 'selected="selected"' : '';?>>Even</option>
@@ -122,7 +135,7 @@ if($row = $result->fetch_assoc()){
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label>Stop bits</label>
-                                                    <select class="form-control" style="width: 100%;" id="serialPortStopBits" name="serialPortStopBits" required>
+                                                    <select class="form-control" style="width: 100%;" id="serialPortStopBits" name="serialPortStopBits" required <?=$disabled ?>>
                                                         <option value="1" <?=$stopbits == '1' ? 'selected="selected"' : '';?>>1</option>
                                                         <option value="1.5" <?=$stopbits == '1.5' ? 'selected="selected"' : '';?>>1.5</option>
                                                         <option value="2" <?=$stopbits == '2' ? 'selected="selected"' : '';?>>2</option>
@@ -131,7 +144,7 @@ if($row = $result->fetch_assoc()){
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="mt-4">
+                                            <div class="mt-4" <?=$displayNone ?>>
                                                 <button class="btn btn-success w-100" type="submit">Update</button>
                                             </div>
                                         </div>

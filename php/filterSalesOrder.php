@@ -2,6 +2,7 @@
 ## Database configuration
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/permissions.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -41,6 +42,12 @@ if($_POST['site'] != null && $_POST['site'] != '' && $_POST['site'] != '-'){
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 	$searchQuery .= " and plant_code = '".$_POST['plant']."'";
+} else {
+  // Restrict to own plant only if no permission
+  if (!hasModulePermission('Accounting', 'Sales Order (SO)', ['view_all_plants'])){
+    $username = implode("', '", $_SESSION["plant"]);
+    $searchQuery .= " and plant_code IN ('$username')";
+  }
 }
 
 if($_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){

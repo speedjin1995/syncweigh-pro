@@ -4,14 +4,17 @@
 <?php
 require_once "php/db_connect.php";
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-}
-else{
-    $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+if (!hasModulePermission('Stock Management', 'Inventory', ['view', 'edit'])){
+    header('Location: no-permission.php');
+    exit;
 }
 
+if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $username = implode("', '", $_SESSION["plant"]);
+    $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+}
 ?>
 
 <head>
@@ -293,6 +296,9 @@ else{
     <script src="assets/js/additional.js"></script>
 
     <script type="text/javascript">
+
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
     $(function () {
         const today = new Date();
         const tomorrow = new Date(today);
@@ -326,9 +332,23 @@ else{
                 { 
                     data: 'id',
                     render: function ( data, type, row ) {
-                        return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                        '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pen align-bottom me-2 text-muted"></i> Edit</a></li></ul></div>';
+                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
+                            return `
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                <i class="ri-pen align-bottom me-2 text-muted"></i> Edit
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>`;
+                        }
+
+                        return '';
                     }
                 }
             ] 
@@ -364,9 +384,23 @@ else{
                     { 
                         data: 'id',
                         render: function ( data, type, row ) {
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item edit-item-btn" id="edit'+data+'" onclick="edit('+data+')"><i class="ri-pen align-bottom me-2 text-muted"></i> Edit</a></li></ul></div>';
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
+                                return `
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="ri-more-fill align-middle"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                    <i class="ri-pen align-bottom me-2 text-muted"></i> Edit
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>`;
+                            }
+
+                            return '';
                         }
                     }
                 ] 

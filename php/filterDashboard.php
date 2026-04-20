@@ -2,6 +2,7 @@
 ## Database configuration
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/permissions.php';
 
 ## DataTable parameters
 $draw = $_POST['draw'];
@@ -27,6 +28,12 @@ if ($_POST['transactionStatus'] != null && $_POST['transactionStatus'] != '' && 
 
 if ($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
     $searchQuery .= " and plant_code = '".$_POST['plant']."'";
+} else {
+    // Restrict to own plant only if no permission
+    if (!hasModulePermission('Dashboard', 'Dashboard', ['view_all_plants'])){
+        $username = implode("', '", $_SESSION["plant"]);
+        $searchQuery .= " and plant_code IN ('$username')";
+    }
 }
 
 

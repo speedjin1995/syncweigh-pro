@@ -228,7 +228,7 @@ else{
                                                                     Export Pdf
                                                                 </button>-->
 
-                                                                <?php if(hasModulePermission('Accounting', 'Delivery Order (DO)', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Delivery Order (DO)', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
@@ -1239,7 +1239,8 @@ else{
                     product: productI,
                     rawMaterial: rawMatI,
                     plant: plantI,
-                    purchaseOrder: soI
+                    purchaseOrder: soI,
+                    type: 'DO'
                 } 
             },
             'columns': [     
@@ -1323,7 +1324,8 @@ else{
                         product: productI,
                         rawMaterial: rawMatI,
                         plant: plantI,
-                        purchaseOrder: soI
+                        purchaseOrder: soI,
+                        type: 'DO'
                     } 
                 },
                 'columns': [

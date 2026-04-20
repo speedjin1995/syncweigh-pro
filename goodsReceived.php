@@ -191,7 +191,7 @@ else{
                                                             <label for="poSearch" class="form-label">PO No</label>
                                                             <select id="poSearch" class="form-select select2" >
                                                                 <option selected>-</option>
-                                                                <option value="Pending PO verification">Pending PO verification</option>
+                                                                <option value="Pending PO verification">Pending PO verification</option>
                                                                 <?php while($rowPo = mysqli_fetch_assoc($purchaseOrder)){ ?>
                                                                     <option value="<?=$rowPo['po_no'] ?>"><?=$rowPo['po_no'] ?></option>
                                                                 <?php } ?>
@@ -227,7 +227,7 @@ else{
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Export Pdf
                                                                 </button> -->
-                                                                <?php if(hasModulePermission('Accounting', 'Goods Received (GR)', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Accounting', 'Goods Received (GR)', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel
@@ -1220,7 +1220,8 @@ else{
                     product: productI,
                     rawMaterial: rawMatI,
                     plant: plantI,
-                    purchaseOrder: poI
+                    purchaseOrder: poI,
+                    type: 'GR'
                 } 
             },
             'columns': [    
@@ -1290,7 +1291,8 @@ else{
                         product: productI,
                         rawMaterial: rawMatI,
                         plant: plantI,
-                        purchaseOrder: poI
+                        purchaseOrder: poI,
+                        type: 'GR'
                     } 
                 },
                 'columns': [

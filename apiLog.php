@@ -1,6 +1,13 @@
 <?php include 'layouts/session.php'; ?>
 <?php include 'layouts/head-main.php'; ?>
 
+<?php
+    if (!hasModulePermission('Report', 'Api Log', ['view'])){
+        header('Location: no-permission.php');
+        exit;
+    }
+?>
+
 <head>
     <title>API Log | PWS - Weighing System</title>
     <?php include 'layouts/title-meta.php'; ?>

@@ -4,12 +4,16 @@
 <?php
     require_once "php/db_connect.php";
 
-    if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+    if (!hasModulePermission('Dashboard', 'Dashboard', ['view'])){
+        header('Location: no-permission.php');
+        exit;
+    }
+
+    if (hasPermission('Dashboard', ['view_all_plants'])){
+        $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
+    }else{
         $username = implode("', '", $_SESSION["plant"]);
         $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username')");
-    }
-    else{
-        $plant = $db->query("SELECT * FROM Plant WHERE status = '0'");
     }
 ?>
 <head>

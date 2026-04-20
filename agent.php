@@ -205,20 +205,23 @@
                                                                 <h5 class="card-title mb-0">Previous Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <?php if(hasModulePermission('Master Data', 'Sales Representative', ['upload_excel'])): ?>
+                                                                <?php if(hasModulePermission('Master Data', 'Sales Representative', ['download_template'])): ?>
                                                                 <a href="template/Sale_Rep_Template.xlsx" download>
                                                                     <button type="button" id="downloadTemplate" class="btn btn-info waves-effect waves-light">
                                                                         <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                         Download Template
                                                                     </button>
                                                                 </a>
+                                                                <?php endif; ?>
+                                                                
+                                                                <?php if(hasModulePermission('Master Data', 'Sales Representative', ['upload_excel'])): ?>
                                                                 <button type="button" id="uploadExcel" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="ri-file-pdf-line align-middle me-1"></i>
                                                                     Upload Excel
                                                                 </button>
                                                                 <?php endif; ?>
 
-                                                                <?php if(hasModulePermission('Master Data', 'Sales Representative', ['export'])): ?>
+                                                                <?php if(hasModulePermission('Master Data', 'Sales Representative', ['export_excel'])): ?>
                                                                 <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light">
                                                                     <i class="ri-file-excel-line align-middle me-1"></i>
                                                                     Export Excel

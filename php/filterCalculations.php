@@ -2,6 +2,7 @@
 ## Database configuration
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/permissions.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -17,6 +18,12 @@ $searchQuery = "";
 
 if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
 	$searchQuery .= " and plant_id = '".$_POST['plant']."'";
+} else {
+  // Restrict to own plant only if no permission
+  if (!hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plants'])){
+    $username = implode("', '", $_SESSION["plant_id"]);
+    $searchQuery .= " and plant_id IN ('$username')";
+  }
 }
 
 if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
