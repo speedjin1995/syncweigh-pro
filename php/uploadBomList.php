@@ -43,6 +43,14 @@ if (!empty($data)) {
                 continue;
             }
 
+            // Delete from Stock_Take_List records for plant_id, batch_drum first
+            if($deleteStockTakeList = $db->prepare("DELETE FROM Stock_Take_List WHERE plant_id = ? AND batch_drum = ?"))
+            {
+                $deleteStockTakeList->bind_param('ss', $plantId, $batchDrum);
+                $deleteStockTakeList->execute();
+                $deleteStockTakeList->close();
+            }
+
             $sortCount = 1;
             foreach ($data[$sheetName] as $row) {
                 $productName = $row['Description'] ?? null;
