@@ -43,6 +43,7 @@ if (!empty($data)) {
                 continue;
             }
 
+            $sortCount = 1;
             foreach ($data[$sheetName] as $row) {
                 $productName = $row['Description'] ?? null;
                 if (empty($productName) || $productName === 'false') {
@@ -58,11 +59,19 @@ if (!empty($data)) {
                 if (empty($product)) {
                     $errorArray[] = "Product not found for Description: {$productName} in {$errorLabel}";
                     continue;
-                }
+                } 
 
                 $productId = $product['id'];
                 $productBasicUom = $product['unit'];
                 $productKgRate = 0.001; // Default to MT -> KG conversion
+
+                // Insert Into Stock_Take_List
+                if($insertStockTakeList = $db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) VALUES (?, ?, ?, ?)")){
+                    $insertStockTakeList->bind_param('ssss', $plantId, $productId, $batchDrum, $sortCount);
+                    $insertStockTakeList->execute();
+                    $insertStockTakeList->close();
+                    $sortCount++;
+                }
 
                 // Search Product KG conversion rate
                 if ($productUomStmt = $db->prepare("SELECT * FROM Product_Uom WHERE product_id = ? AND unit_id = ? AND status = 0")) {
