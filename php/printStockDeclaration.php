@@ -20,7 +20,24 @@ if(isset($_GET['id'])){
             $stmt->execute();
             $result = $stmt->get_result();
             if($row = $result->fetch_assoc()){
-                $rawMats = $db->query("SELECT * FROM Product_RawMat JOIN Raw_Mat ON Product_RawMat.raw_mat_id = Raw_Mat.id WHERE product_id = 27 AND Product_RawMat.plant_id = " . $row['plant_id'] . " AND Product_RawMat.batch_drum = '" . $row['batch_drum'] . "' AND Product_RawMat.status = 0 ORDER BY Product_RawMat.id ASC");
+                $plantId = $row['plant_id'];
+                $batchDrum = $row['batch_drum'];
+
+                // Get Bitumen Raw Mat Id
+                $result = $db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code = 'BTBI001' AND status = 0 LIMIT 1");
+                $bitumenRawMatId = $result ? $result->fetch_assoc()['id'] ?? null : null;
+
+                $products = $db->query("
+                    SELECT STL.*, P.name AS product_name, PRW.raw_mat_basic_uom AS percentage FROM Stock_Take_List STL 
+                    JOIN Product P ON STL.product_id = P.id 
+                    JOIN Product_RawMat PRW ON PRW.product_id = P.id
+                    WHERE STL.plant_id = " . $plantId . " AND STL.batch_drum = '" . $batchDrum ."' 
+                    AND PRW.raw_mat_id = ". $bitumenRawMatId ." AND PRW.plant_id = " . $plantId . " AND PRW.batch_drum = '" . $batchDrum ."' AND PRW.status = 0
+                    
+                    ORDER BY STL.sort ASC"
+                );
+
+                // $rawMats = $db->query("SELECT * FROM Product_RawMat JOIN Raw_Mat ON Product_RawMat.raw_mat_id = Raw_Mat.id WHERE product_id = 27 AND Product_RawMat.plant_id = " . $row['plant_id'] . " AND Product_RawMat.batch_drum = '" . $row['batch_drum'] . "' AND Product_RawMat.status = 0 ORDER BY Product_RawMat.id ASC");
 
                 $html = '
                     <html>
@@ -95,12 +112,15 @@ if(isset($_GET['id'])){
                                 </tr>';
 
                                 $rowNum = 10;
-                                foreach ($rawMats as $rawMat){
+                                foreach ($products as $product){
+                                    $productName = $product['product_name'];
+                                    $bitumenRawMatPercentage = $product['percentage'];
+
                                     $html .= '
                                         <tr>
-                                            <td>'.htmlspecialchars($rawMat['name']).'</td>
+                                            <td>'.htmlspecialchars($productName).'</td>
                                             <td></td>
-                                            <td>'.number_format($rawMat['raw_mat_basic_uom']*100, 2).'%</td>
+                                            <td>'.number_format($bitumenRawMatPercentage*100, 2).'%</td>
                                             <td>=B'.$rowNum.'*C'.$rowNum.'</td>
                                             <td></td>
                                             <td></td>
@@ -154,12 +174,15 @@ if(isset($_GET['id'])){
 
                                 $rowNum = $rowNum+10;
                                 $subtotalRowStart = $rowNum;
-                                foreach ($rawMats as $rawMat){
+                                foreach ($products as $product){
+                                    $productName = $product['product_name'];
+                                    $bitumenRawMatPercentage = $product['percentage'];
+
                                     $html .= '
                                         <tr>
-                                            <td>'.htmlspecialchars($rawMat['name']).'</td>
+                                            <td>'.htmlspecialchars($productName).'</td>
                                             <td></td>
-                                            <td>'.number_format($rawMat['raw_mat_basic_uom']*100, 2).'%</td>
+                                            <td>'.number_format($bitumenRawMatPercentage*100, 2).'%</td>
                                             <td>=B'.$rowNum.'*C'.$rowNum.'</td>
                                             <td></td>
                                             <td></td>
