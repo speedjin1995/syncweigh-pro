@@ -37,8 +37,6 @@ if(isset($_GET['id'])){
                     ORDER BY STL.sort ASC"
                 );
 
-                // $rawMats = $db->query("SELECT * FROM Product_RawMat JOIN Raw_Mat ON Product_RawMat.raw_mat_id = Raw_Mat.id WHERE product_id = 27 AND Product_RawMat.plant_id = " . $row['plant_id'] . " AND Product_RawMat.batch_drum = '" . $row['batch_drum'] . "' AND Product_RawMat.status = 0 ORDER BY Product_RawMat.id ASC");
-
                 $html = '
                     <html>
                         <head>
