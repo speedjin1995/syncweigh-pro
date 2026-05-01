@@ -21,19 +21,29 @@ if(isset($_GET['id'])){
             $result = $stmt->get_result();
             if($row = $result->fetch_assoc()){
                 $plantId = $row['plant_id'];
+                $plantCode = $row['plant_code'];
                 $batchDrum = $row['batch_drum'];
+                $declarationDate = !empty($row['declaration_datetime']) ? date('Y-m-d', strtotime($row['declaration_datetime'])) : null;
+
+                if (empty($declarationDate)){
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Declaration Date not found"
+                        ));
+                    exit;
+                }
 
                 // Get Bitumen Raw Mat Id
                 $result = $db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code = 'BTBI001' AND status = 0 LIMIT 1");
                 $bitumenRawMatId = $result ? $result->fetch_assoc()['id'] ?? null : null;
 
                 $products = $db->query("
-                    SELECT STL.*, P.name AS product_name, PRW.raw_mat_basic_uom AS percentage FROM Stock_Take_List STL 
+                    SELECT STL.*, P.product_code AS product_code, P.name AS product_name, PRW.raw_mat_basic_uom AS percentage FROM Stock_Take_List STL 
                     JOIN Product P ON STL.product_id = P.id 
                     JOIN Product_RawMat PRW ON PRW.product_id = P.id
                     WHERE STL.plant_id = " . $plantId . " AND STL.batch_drum = '" . $batchDrum ."' 
                     AND PRW.raw_mat_id = ". $bitumenRawMatId ." AND PRW.plant_id = " . $plantId . " AND PRW.batch_drum = '" . $batchDrum ."' AND PRW.status = 0
-                    
                     ORDER BY STL.sort ASC"
                 );
 
@@ -111,6 +121,7 @@ if(isset($_GET['id'])){
 
                                 $rowNum = 10;
                                 foreach ($products as $product){
+                                    $productCode = $product['product_code'];
                                     $productName = $product['product_name'];
                                     $bitumenRawMatPercentage = $product['percentage'];
 
@@ -173,15 +184,31 @@ if(isset($_GET['id'])){
                                 $rowNum = $rowNum+10;
                                 $subtotalRowStart = $rowNum;
                                 foreach ($products as $product){
+                                    $productCode = $product['product_code'];
                                     $productName = $product['product_name'];
                                     $bitumenRawMatPercentage = $product['percentage'];
+                                    $productNettWeight = 0;
+
+                                    // Query Sales for each Product
+                                    if ($product_stmt = $db->prepare("SELECT * FROM Weight WHERE product_code = ? AND plant_code = ? and batch_drum = ? AND DATE(tare_weight1_date) = ? AND transaction_status = 'SALES' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'")){
+                                        $product_stmt->bind_param("ssss", $productCode, $plantCode, $batchDrum, $declarationDate);
+                                        $product_stmt->execute();
+                                        $productResult = $product_stmt->get_result();
+                            
+                                        while ($productRow = $productResult->fetch_assoc()) {
+                                            $productNettWeight += floatval($productRow['nett_weight1']);
+                                        }
+                                    }
+
+                                    // Convert KG to MT
+                                    $productNettWeight = $productNettWeight / 1000;
 
                                     $html .= '
                                         <tr>
                                             <td>'.htmlspecialchars($productName).'</td>
-                                            <td></td>
+                                            <td>=TEXT('.$productNettWeight.',"0.00")</td>
                                             <td>'.number_format($bitumenRawMatPercentage*100, 2).'%</td>
-                                            <td>=B'.$rowNum.'*C'.$rowNum.'</td>
+                                            <td>=ROUND(B'.$rowNum.'*C'.$rowNum.',2)</td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
