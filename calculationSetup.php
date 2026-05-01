@@ -599,7 +599,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                     render: function (data, type, row) {
                         var buttons = '<div class="row g-1 d-flex">';
 
-                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Calculation Setup'].includes(p)))) {
+                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && ['edit', 'cancelled'].some(p => permissions['Stock Management']['Calculation Setup'].includes(p)))) {
                             if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('edit'))){
                                 buttons += `
                                     <div class="col-auto">
@@ -610,7 +610,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                 `;
                             }
 
-                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('delete'))){
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('cancelled'))){
                                 buttons += `
                                     <div class="col-auto">
                                         <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -671,7 +671,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                         render: function (data, type, row) {
                             var buttons = '<div class="row g-1 d-flex">';
 
-                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && ['edit', 'delete'].some(p => permissions['Stock Management']['Calculation Setup'].includes(p)))) {
+                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && ['edit', 'cancelled'].some(p => permissions['Stock Management']['Calculation Setup'].includes(p)))) {
                                 if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('edit'))){
                                     buttons += `
                                         <div class="col-auto">
@@ -682,7 +682,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                     `;
                                 }
 
-                                if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('delete'))){
+                                if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Calculation Setup'] && permissions['Stock Management']['Calculation Setup'].includes('cancelled'))){
                                     buttons += `
                                         <div class="col-auto">
                                             <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">

@@ -3321,3 +3321,7 @@ CREATE TABLE `Stock_Take_List` (
   `batch_drum` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `sort` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+UPDATE permissions SET name='include_price', modules='[\"7\",\"9\",\"8\",\"6\",\"29\",\"28\",\"27\",\"26\"]' WHERE id=33;
+
+UPDATE permissions SET name='cancelled' WHERE id=7;

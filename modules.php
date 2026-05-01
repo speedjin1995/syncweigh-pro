@@ -123,7 +123,7 @@ $categories = $db->query("SELECT DISTINCT category FROM modules ORDER BY categor
                                                                 <h5 class="card-title mb-0">Module Records</h5>
                                                             </div>
                                                             <div class="flex-shrink-0">
-                                                                <?php if(hasModulePermission('User Management', 'Module', ['delete'])): ?>
+                                                                <?php if(hasModulePermission('User Management', 'Module', ['cancelled'])): ?>
                                                                 <button type="button" id="multiDelete" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Module
@@ -229,7 +229,7 @@ $(function () {
                 data: 'id',
                 render: function (data, type, row) {
                     var perms = (permissions['User Management'] && permissions['User Management']['Module']) || [];
-                    if (isSADMIN || ['edit', 'delete'].some(p => perms.includes(p))) {
+                    if (isSADMIN || ['edit', 'cancelled'].some(p => perms.includes(p))) {
                         var buttons = `
                             <div class="dropdown d-inline-block">
                                 <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -246,7 +246,7 @@ $(function () {
                                 </li>`;
                         }
 
-                        if (isSADMIN || perms.includes('delete')) {
+                        if (isSADMIN || perms.includes('cancelled')) {
                             buttons += `
                                 <li>
                                     <a class="dropdown-item remove-item-btn" onclick="deactivate(${data})">

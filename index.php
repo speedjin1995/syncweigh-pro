@@ -1871,7 +1871,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                             </div>`;
                         }
 
-                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
+                        if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('cancelled'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -2735,7 +2735,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                                 </div>`;
                             }
 
-                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('delete'))) {
+                            if (isSADMIN || (permissions['Weighing'] && permissions['Weighing'][transactionKey] && permissions['Weighing'][transactionKey].includes('cancelled'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
