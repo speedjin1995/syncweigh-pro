@@ -4,7 +4,6 @@ require_once 'db_connect.php';
 require_once 'requires/permissions.php';
 
 // Load the database configuration file 
- 
 // Filter the excel data 
 function filterData(&$str){ 
     $str = preg_replace("/\t/", "\\t", $str); 
@@ -122,9 +121,9 @@ if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_
         $searchQuery .= " and count.plant_code = '".$_GET['plant']."'";
     }
 }else{
-    if (!hasModulePermission('Report', $_GET['status'], ['view_all_plants'])){
+    if (!hasModulePermission('Report', $reportStatus, ['view_all_plants'])){
         $username = implode("', '", $_SESSION["plant"]);
-        $searchQuery .= "and plant_code IN ('$username')";
+        $searchQuery .= "and Weight.plant_code IN ('$username')";
     }
 }
 
@@ -144,7 +143,7 @@ if(isset($_GET['isMulti']) && $_GET['isMulti'] != null && $_GET['isMulti'] != ''
 
 // Column names 
 if (!hasModulePermission('Report', $reportStatus, ['include_price'])){
-    if ($reportStatus == 'Sales'){
+    if ($reportStatus == 'Sales' || $reportStatus == 'Public'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
@@ -160,7 +159,7 @@ if (!hasModulePermission('Report', $reportStatus, ['include_price'])){
     }
 }
 else{
-    if ($reportStatus == 'Sales'){
+    if ($reportStatus == 'Sales' || $reportStatus == 'Public'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE','CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
