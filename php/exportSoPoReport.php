@@ -26,6 +26,15 @@ if(isset($_POST['toDate']) && $_POST['toDate'] != null && $_POST['toDate'] != ''
 
 if(isset($_POST['status']) && $_POST['status'] != null && $_POST['status'] != '' && $_POST['status'] != '-'){
     $searchQuery .= " and Weight.transaction_status = '".$_POST['status']."'";	
+
+    if ($_POST['status'] == 'Local') {
+        $reportType = "Public";
+        $reportStatus = "Public";
+    }
+    else {
+        $reportType = $_POST['status'];
+        $reportStatus = $_POST['status'];
+    }
 }
 
 if(isset($_POST['customer']) && $_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
@@ -63,7 +72,7 @@ if(isset($_POST['destination']) && $_POST['destination'] != null && $_POST['dest
 if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
     $searchQuery .= " and Weight.plant_code = '".$_POST['plant']."'";
 }else{
-    if (!hasModulePermission('Report', $_POST['status'], ['view_all_plants'])){
+    if (!hasModulePermission('Report', $reportStatus, ['view_all_plants'])){
         $username = implode("', '", $_SESSION["plant"]);
         $searchQuery .= "and Weight.plant_code IN ('$username')";
     }
@@ -199,15 +208,6 @@ if(isset($_POST["type"])){
     $sql = '';
 
     if($_POST["type"] == 'Sales'){
-        if ($_POST['status'] == 'Local') {
-            $reportType = "Public";
-            $reportStatus = "Public";
-        }
-        else {
-            $reportType = "Sales";
-            $reportStatus = "Sales";
-        }
-
         if ($isMulti == 'Y'){
             $id = $_POST['id'];
             $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date";
@@ -432,7 +432,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -442,7 +442,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                         <tr style="height: 18.5px;"></tr>         
                     ';
@@ -587,7 +587,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -597,7 +597,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }elseif ($groupCount == 3) {
@@ -788,7 +788,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -798,7 +798,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }elseif($groupCount == 4){
@@ -1032,7 +1032,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -1042,7 +1042,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }elseif($groupCount == 5){
@@ -1319,7 +1319,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -1329,7 +1329,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }
@@ -1509,7 +1509,6 @@ if(isset($_POST["type"])){
 
         $db->close();
     }elseif($_POST["type"] == 'Purchase'){
-        $reportStatus = "Purchase";
         if ($isMulti == 'Y'){
             $id = $_POST['id'];
             $sql = "select * from Weight WHERE id IN ($id) ORDER BY tare_weight1_date";
@@ -1747,7 +1746,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1755,7 +1754,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                         <tr style="height: 18.5px;"></tr>         
                     ';
@@ -1923,7 +1922,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -1931,7 +1930,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }elseif ($groupCount == 3) {
@@ -2142,7 +2141,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2150,7 +2149,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }elseif($groupCount == 4){
@@ -2409,7 +2408,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2417,7 +2416,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }elseif($groupCount == 5){
@@ -2723,7 +2722,7 @@ if(isset($_POST["type"])){
                             ';
 
                             if (hasModulePermission('Report', $reportStatus, ['include_price'])){
-                                $rowData .= '
+                                $compiledRowData .= '
                                     <td></td>
                                     <td colspan="2" class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
                                     <td class="text-end" style="border-top: 1px dashed black; border-bottom: 1px dashed black;">0.00</td>
@@ -2731,7 +2730,7 @@ if(isset($_POST["type"])){
                                 ';
                             }
 
-                            $rowData .= '
+                            $compiledRowData .= '
                         </tr>
                     ';
                 }
