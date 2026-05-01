@@ -143,7 +143,7 @@ if(isset($_GET['isMulti']) && $_GET['isMulti'] != null && $_GET['isMulti'] != ''
 
 // Column names 
 if (!hasModulePermission('Report', $reportStatus, ['include_price'])){
-    if ($reportStatus == 'Sales' || $reportStatus == 'Public'){
+    if ($reportStatus == 'Sales'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
@@ -159,7 +159,7 @@ if (!hasModulePermission('Report', $reportStatus, ['include_price'])){
     }
 }
 else{
-    if ($reportStatus == 'Sales' || $reportStatus == 'Public'){
+    if ($reportStatus == 'Sales'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE','CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
