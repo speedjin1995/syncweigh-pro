@@ -5,11 +5,6 @@ require_once 'requires/permissions.php';
 $plantId = $_SESSION['plant'];
 
 $searchQuery = "";
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $searchQuery = " and plant_code IN ('$username')";
-}
-
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
     $formatted_date = $dateTime->format('Y-m-d H:i:00');
@@ -133,11 +128,12 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
         $searchQuery .= " and count.plant_code = '".$_POST['plant']."'";
     }
 }else{
-    if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-        $username = implode("/", $_SESSION["plant"]);
-        $plantSelected = $username;
-    }
-    else{
+    if (!hasModulePermission('Report', $_POST['status'], ['view_all_plants'])){
+        $username = implode("', '", $_SESSION["plant"]);
+        $searchQuery .= "and Weight.plant_code IN ('$username')";
+        $plantSelectedName = implode("/", $_SESSION["plant"]);
+        $plantSelected = $plantSelectedName;
+    }else{
         $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         $plant2 = $plant2->fetch_all(MYSQLI_ASSOC);
         foreach($plant2 as $key => $value){
