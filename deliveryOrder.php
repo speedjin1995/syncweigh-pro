@@ -2333,13 +2333,20 @@ else{
             <p><span><strong style="font-size:120%; text-decoration: underline;">Delivery Order Information</strong></span><br>
             <div class="col-4">
                 <p><strong>TOTAL DELIVERY AMOUNT:</strong> ${parseFloat(row.totalDeliverAmt)/1000} MT</p>
-            </div>
+            </div>`;
+        
+        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Delivery Order (DO)'] && permissions['Accounting']['Delivery Order (DO)'].includes('include_price'))) {
+            returnString += `
             <div class="col-4">
                 <p><strong>UNIT PRICE:</strong> RM ${row.weights[0].unit_price}</p>
             </div>
             <div class="col-4">
                 <p><strong>TOTAL PRICE:</strong> RM ${parseFloat(parseFloat(row.weights[0].unit_price) * (parseFloat(row.totalDeliverAmt)/1000)).toFixed(2)}</p>
             </div>
+            `;
+        }
+
+        returnString += `
         </div>
         <hr>
         <div class="row">

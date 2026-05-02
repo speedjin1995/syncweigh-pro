@@ -2285,16 +2285,23 @@ else{
         var returnString = `
         <!-- Weighing Section -->
         <div class="row">
-            <p><span><strong style="font-size:120%; text-decoration: underline;">Delivery Order Information</strong></span><br>
+            <p><span><strong style="font-size:120%; text-decoration: underline;">Goods Received Information</strong></span><br>
             <div class="col-4">
                 <p><strong>TOTAL RECEIVED AMOUNT:</strong> ${parseFloat(row.po_supply_weight)/1000} MT</p>
-            </div>
-            <div class="col-4">
-                <p><strong>UNIT PRICE:</strong> RM ${row.weights[0].unit_price}</p>
-            </div>
-            <div class="col-4">
-                <p><strong>TOTAL PRICE:</strong> RM ${parseFloat(parseFloat(row.weights[0].unit_price) * (parseFloat(row.po_supply_weight)/1000)).toFixed(2)}</p>
-            </div>
+            </div>`;
+
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Goods Received (GR)'] && permissions['Accounting']['Goods Received (GR)'].includes('include_price'))) {
+                returnString += `
+                    <div class="col-4">
+                        <p><strong>UNIT PRICE:</strong> RM ${row.weights[0].unit_price}</p>
+                    </div>
+                    <div class="col-4">
+                        <p><strong>TOTAL PRICE:</strong> RM ${parseFloat(parseFloat(row.weights[0].unit_price) * (parseFloat(row.po_supply_weight)/1000)).toFixed(2)}</p>
+                    </div>
+                `;
+            }
+
+            returnString += `
         </div>
         <hr>
         <div class="row">
