@@ -56,6 +56,14 @@ if($_POST['purchaseOrder'] != null && $_POST['purchaseOrder'] != '' && $_POST['p
   $searchQuery .= " and purchase_order = '".mysqli_real_escape_string($db, $_POST['purchaseOrder'])."'";
 }
 
+if($_POST['deliveryNo'] != null && $_POST['deliveryNo'] != ''){
+  $searchQuery .= " and delivery_no = '".mysqli_real_escape_string($db, $_POST['deliveryNo'])."'";
+}
+
+if($_POST['transactionId'] != null && $_POST['transactionId'] != ''){
+  $searchQuery .= " and transaction_id = '".mysqli_real_escape_string($db, $_POST['transactionId'])."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }
