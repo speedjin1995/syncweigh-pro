@@ -2,6 +2,7 @@
 ## Database configuration
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/permissions.php';
 
 ## Read value
 $draw = $_POST['draw'];
@@ -97,7 +98,7 @@ $miscCancelCount = 0;
 
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N'";
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (!hasPermission('Weighing', ['view_all_plants'])){
   $username = implode("', '", $_SESSION["plant"]);
   $allQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')";
 }
@@ -108,7 +109,7 @@ $totalRecords = $records['allcount'];
 ## Total number of record with filtering
 $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N'".$searchQuery;
 $filteredQuery2 = "select * from Weight where status = '0' and is_cancel = 'N'".$searchQuery2;
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+if (!hasPermission('Weighing', ['view_all_plants'])){
   $username = implode("', '", $_SESSION["plant"]);
   $filteredQuery = "select count(*) as allcount from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')".$searchQuery;
   $filteredQuery2 = "select * from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')".$searchQuery2;
@@ -158,9 +159,14 @@ while($countRow = mysqli_fetch_assoc($countQuery)) {
 }
 
 ## Fetch records
-$empQuery = "select * from Weight where status = '0' and is_cancel = 'N'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+if ($columnName == 'product') {
+  $columnName = "CASE WHEN transaction_status IN ('Sales', 'Local', 'WIP') THEN CONCAT(product_code, ' - ', product_name) ELSE CONCAT(raw_mat_code, ' - ', raw_mat_name) END";
+} elseif ($columnName == 'customer') {
+  $columnName = "CASE WHEN transaction_status IN ('Sales', 'Local', 'WIP') THEN customer_name ELSE supplier_name END";
+}
 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+$empQuery = "select * from Weight where status = '0' and is_cancel = 'N'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+if (!hasPermission('Weighing', ['view_all_plants'])){
   $username = implode("', '", $_SESSION["plant"]);
   $empQuery = "select * from Weight where status = '0' and is_cancel = 'N' and plant_code IN ('$username')".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 }
