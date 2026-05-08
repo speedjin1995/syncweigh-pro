@@ -389,7 +389,7 @@
                                                                 </button>
                                                                 <?php endif; ?>
 
-                                                                <?php if(hasModulePermission('Master Data', 'Product', ['delete'])): ?>
+                                                                <?php if(hasModulePermission('Master Data', 'Product', ['cancelled'])): ?>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Product
@@ -625,7 +625,7 @@ $(function () {
                             `;
                         }
                     } else {
-                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && ['edit', 'delete'].some(p => permissions['Master Data']['Product'].includes(p)))) {
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && ['edit', 'cancelled'].some(p => permissions['Master Data']['Product'].includes(p)))) {
                             buttons += `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -643,7 +643,7 @@ $(function () {
                                         `;
                                     }
 
-                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('delete'))){
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Product'] && permissions['Master Data']['Product'].includes('cancelled'))){
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">

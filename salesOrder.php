@@ -896,7 +896,7 @@ if ($user != null && $user != ''){
                             }
                         }
                         
-                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete'))) {
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('cancelled'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -1010,7 +1010,7 @@ if ($user != null && $user != ''){
                                 }
                             }
                             
-                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('delete'))) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('cancelled'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">

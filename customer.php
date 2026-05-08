@@ -280,7 +280,7 @@
                                                                 </button>
                                                                 <?php endif; ?>
 
-                                                                <?php if(hasModulePermission('Master Data', 'Customer', ['delete'])): ?>
+                                                                <?php if(hasModulePermission('Master Data', 'Customer', ['cancelled'])): ?>
                                                                 <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                                     <i class="fa-solid fa-ban align-middle me-1"></i>
                                                                     Delete Customer
@@ -444,7 +444,7 @@ $(function () {
                             `;
                         }
                     } else {
-                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && ['edit', 'delete'].some(p => permissions['Master Data']['Customer'].includes(p)))) {
+                        if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && ['edit', 'cancelled'].some(p => permissions['Master Data']['Customer'].includes(p)))) {
                             buttons += `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -462,7 +462,7 @@ $(function () {
                                         `;
                                     }
 
-                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('delete'))){
+                                    if (isSADMIN || (permissions['Master Data'] && permissions['Master Data']['Customer'] && permissions['Master Data']['Customer'].includes('cancelled'))){
                                         buttons += `
                                             <li>
                                                 <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">

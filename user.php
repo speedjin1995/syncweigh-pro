@@ -116,7 +116,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                     </button>
                                                     <?php endif; ?>
 
-                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['delete'])): ?>
+                                                    <?php if(hasModulePermission('User Management', 'User Setup', ['cancelled'])): ?>
                                                     <button type="button" id="multiDeactivate" class="btn btn-warning waves-effect waves-light">
                                                         <i class="fa-solid fa-ban align-middle me-1"></i>
                                                         Delete User
@@ -419,7 +419,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                 `;
                             }
                         } else {
-                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && ['edit', 'delete'].some(p => permissions['User Management']['User Setup'].includes(p)))) {
+                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && ['edit', 'cancelled'].some(p => permissions['User Management']['User Setup'].includes(p)))) {
                                 buttons += `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -437,7 +437,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                             `;
                                         }
 
-                                        if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('delete'))){
+                                        if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('cancelled'))){
                                             buttons += `
                                                 <li>
                                                     <a class="dropdown-item remove-item-btn" id="deactivate${data}" onclick="deactivate(${data})">

@@ -1,8 +1,9 @@
 <?php
 session_start();
 require_once 'db_connect.php';
-// // Load the database configuration file 
- 
+require_once 'requires/permissions.php';
+
+// Load the database configuration file 
 // Filter the excel data 
 function filterData(&$str){ 
     $str = preg_replace("/\t/", "\\t", $str); 
@@ -19,11 +20,6 @@ if($_GET["file"] == 'weight'){
 
 ## Search 
 $searchQuery = "";
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $searchQuery = "and plant_code IN ('$username')";
-}
-
 if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
     $formatted_date = $dateTime->format('Y-m-d H:i');
@@ -54,7 +50,13 @@ if($_GET['status'] != null && $_GET['status'] != '' && $_GET['status'] != '-'){
     }
     else{
         $searchQuery .= " and count.transaction_status = '".$_GET['status']."'";
-    }	
+    }
+
+    if ($_GET['status'] == 'Local'){
+        $reportStatus = 'Public';
+    }else{
+        $reportStatus = $_GET['status'];
+    }
 }
 
 if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != '-'){
@@ -118,6 +120,11 @@ if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_
     else{
         $searchQuery .= " and count.plant_code = '".$_GET['plant']."'";
     }
+}else{
+    if (!hasModulePermission('Report', $reportStatus, ['view_all_plants'])){
+        $username = implode("', '", $_SESSION["plant"]);
+        $searchQuery .= "and Weight.plant_code IN ('$username')";
+    }
 }
 
 if(isset($_GET['batchDrum']) && $_GET['batchDrum'] != null && $_GET['batchDrum'] != '' && $_GET['batchDrum'] != '-'){
@@ -135,35 +142,34 @@ if(isset($_GET['isMulti']) && $_GET['isMulti'] != null && $_GET['isMulti'] != ''
 }
 
 // Column names 
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-
-    if ($_GET['status'] == 'Sales'){
+if (!hasModulePermission('Report', $reportStatus, ['include_price'])){
+    if ($reportStatus == 'Sales'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 
             'PLANT CODE', 'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
     else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
             'PLANT NAME', 'WEIGHTED BY', 'REMARKS'); 
     }
 }
 else{
-    if ($_GET['status'] == 'Sales'){
+    if ($reportStatus == 'Sales'){
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'TIN NO.', 'ID NO.', 'ID TYPE','CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
             'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }else{
         $fields = array('TRANSACTION ID', 'WEIGHT TYPE', 'TRANSACTION DATE', 'LORRY NO.', 'CUSTOMER TYPE', 'CUSTOMER CODE', 'CUSTOMER NAME', 
             'SUPPLIER CODE', 'SUPPLIER NAME', 'PRODUCT CODE', 'PRODUCT NAME', 'PRODUCT DESCRIPTION', 'DESTINATION CODE', 'TO DESTINATION', 'TRANSPORTER CODE', 
             'DELIVERED BY', 'EX-QUARRY / DELIVERED', 'BATCH/DRUM', 'PO NO.', 'DO NO.', 'GROSS WEIGHT (MT)', 'TARE WEIGHT (MT)', 'NET WEIGHT (MT)', 
-            ($_GET['status'] == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
+            ($reportStatus == 'Sales' ? 'ORDER WEIGHT (MT)' : 'SUPPLIER WEIGHT (MT)'), 'VARIANCE (MT)', 'IN TIME', 'OUT TIME', 'MANUAL', 'CANCELLED', 'PLANT CODE', 
             'PLANT NAME', 'UNIT PRICE (RM)', 'TOTAL PRICE (RM)', 'WEIGHTED BY', 'REMARKS'); 
     }
 }
@@ -206,7 +212,7 @@ if($query->num_rows > 0){
                 $exDel = 'D';
             }
             
-            if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+            if (!hasModulePermission('Report', $reportStatus, ['include_price'])){
                 $lineData = array_merge(
                     array($row['transaction_id'], $row['weight_type'], $row['transaction_date'], $row['lorry_plate_no1']),
                     ($row['transaction_status'] == 'Sales' ? array($row['tin_no'], $row['id_no'], $row['id_type']) : array()),

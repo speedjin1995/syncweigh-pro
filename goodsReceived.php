@@ -198,6 +198,18 @@ else{
                                                             </select>
                                                         </div>
                                                     </div><!--end col--> 
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="deliveryNoSearch" class="form-label">Delivery No</label>
+                                                            <input id="deliveryNoSearch" name="deliveryNoSearch" class="form-control">
+                                                        </div>
+                                                    </div><!--end col--> 
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="transactionIdSearch" class="form-label">Transaction ID</label>
+                                                            <input id="transactionIdSearch" name="transactionIdSearch" class="form-control">
+                                                        </div>
+                                                    </div><!--end col--> 
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -1201,13 +1213,15 @@ else{
         var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
         var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
         var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+        var deliveryNoI = $('#deliveryNoSearch').val() ? $('#deliveryNoSearch').val() : '';
+        var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
             'serverSide': true,
-            'searching': true,
+            'searching': false,
             'serverMethod': 'post',
             'ajax': {
                 'url':'php/filterDoGr.php',
@@ -1221,6 +1235,8 @@ else{
                     rawMaterial: rawMatI,
                     plant: plantI,
                     purchaseOrder: poI,
+                    deliveryNo: deliveryNoI,
+                    transactionId: transactionIdI,
                     type: 'GR'
                 } 
             },
@@ -1268,6 +1284,8 @@ else{
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
             var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+            var deliveryNoI = $('#deliveryNoSearch').val() ? $('#deliveryNoSearch').val() : '';
+            var transactionIdI = $('#transactionIdSearch').val() ? $('#transactionIdSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -1278,7 +1296,7 @@ else{
                 "autoWidth": false,
                 'processing': true,
                 'serverSide': true,
-                'searching': true,
+                'searching': false,
                 'serverMethod': 'post',
                 'ajax': {
                     'url':'php/filterDoGr.php',
@@ -1292,6 +1310,8 @@ else{
                         rawMaterial: rawMatI,
                         plant: plantI,
                         purchaseOrder: poI,
+                        deliveryNo: deliveryNoI,
+                        transactionId: transactionIdI,
                         type: 'GR'
                     } 
                 },
@@ -2285,16 +2305,23 @@ else{
         var returnString = `
         <!-- Weighing Section -->
         <div class="row">
-            <p><span><strong style="font-size:120%; text-decoration: underline;">Delivery Order Information</strong></span><br>
+            <p><span><strong style="font-size:120%; text-decoration: underline;">Goods Received Information</strong></span><br>
             <div class="col-4">
                 <p><strong>TOTAL RECEIVED AMOUNT:</strong> ${parseFloat(row.po_supply_weight)/1000} MT</p>
-            </div>
-            <div class="col-4">
-                <p><strong>UNIT PRICE:</strong> RM ${row.weights[0].unit_price}</p>
-            </div>
-            <div class="col-4">
-                <p><strong>TOTAL PRICE:</strong> RM ${parseFloat(parseFloat(row.weights[0].unit_price) * (parseFloat(row.po_supply_weight)/1000)).toFixed(2)}</p>
-            </div>
+            </div>`;
+
+            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Goods Received (GR)'] && permissions['Accounting']['Goods Received (GR)'].includes('include_price'))) {
+                returnString += `
+                    <div class="col-4">
+                        <p><strong>UNIT PRICE:</strong> RM ${row.weights[0].unit_price}</p>
+                    </div>
+                    <div class="col-4">
+                        <p><strong>TOTAL PRICE:</strong> RM ${parseFloat(parseFloat(row.weights[0].unit_price) * (parseFloat(row.po_supply_weight)/1000)).toFixed(2)}</p>
+                    </div>
+                `;
+            }
+
+            returnString += `
         </div>
         <hr>
         <div class="row">

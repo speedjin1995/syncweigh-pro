@@ -20,7 +20,32 @@ if(isset($_GET['id'])){
             $stmt->execute();
             $result = $stmt->get_result();
             if($row = $result->fetch_assoc()){
-                $rawMats = $db->query("SELECT * FROM Product_RawMat JOIN Raw_Mat ON Product_RawMat.raw_mat_id = Raw_Mat.id WHERE product_id = 27 AND Product_RawMat.plant_id = " . $row['plant_id'] . " AND Product_RawMat.batch_drum = '" . $row['batch_drum'] . "' AND Product_RawMat.status = 0 ORDER BY Product_RawMat.id ASC");
+                $plantId = $row['plant_id'];
+                $plantCode = $row['plant_code'];
+                $batchDrum = $row['batch_drum'];
+                $declarationDate = !empty($row['declaration_datetime']) ? date('Y-m-d', strtotime($row['declaration_datetime'])) : null;
+
+                if (empty($declarationDate)){
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Declaration Date not found"
+                        ));
+                    exit;
+                }
+
+                // Get Bitumen Raw Mat Id
+                $result = $db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code = 'BTBI001' AND status = 0 LIMIT 1");
+                $bitumenRawMatId = $result ? $result->fetch_assoc()['id'] ?? null : null;
+
+                $products = $db->query("
+                    SELECT STL.*, P.product_code AS product_code, P.name AS product_name, PRW.raw_mat_basic_uom AS percentage FROM Stock_Take_List STL 
+                    JOIN Product P ON STL.product_id = P.id 
+                    JOIN Product_RawMat PRW ON PRW.product_id = P.id
+                    WHERE STL.plant_id = " . $plantId . " AND STL.batch_drum = '" . $batchDrum ."' 
+                    AND PRW.raw_mat_id = ". $bitumenRawMatId ." AND PRW.plant_id = " . $plantId . " AND PRW.batch_drum = '" . $batchDrum ."' AND PRW.status = 0
+                    ORDER BY STL.sort ASC"
+                );
 
                 $html = '
                     <html>
@@ -95,12 +120,16 @@ if(isset($_GET['id'])){
                                 </tr>';
 
                                 $rowNum = 10;
-                                foreach ($rawMats as $rawMat){
+                                foreach ($products as $product){
+                                    $productCode = $product['product_code'];
+                                    $productName = $product['product_name'];
+                                    $bitumenRawMatPercentage = $product['percentage'];
+
                                     $html .= '
                                         <tr>
-                                            <td>'.htmlspecialchars($rawMat['name']).'</td>
+                                            <td>'.htmlspecialchars($productName).'</td>
                                             <td></td>
-                                            <td>'.number_format($rawMat['raw_mat_basic_uom']*100, 2).'%</td>
+                                            <td>'.number_format($bitumenRawMatPercentage*100, 2).'%</td>
                                             <td>=B'.$rowNum.'*C'.$rowNum.'</td>
                                             <td></td>
                                             <td></td>
@@ -154,13 +183,32 @@ if(isset($_GET['id'])){
 
                                 $rowNum = $rowNum+10;
                                 $subtotalRowStart = $rowNum;
-                                foreach ($rawMats as $rawMat){
+                                foreach ($products as $product){
+                                    $productCode = $product['product_code'];
+                                    $productName = $product['product_name'];
+                                    $bitumenRawMatPercentage = $product['percentage'];
+                                    $productNettWeight = 0;
+
+                                    // Query Sales for each Product
+                                    if ($product_stmt = $db->prepare("SELECT * FROM Weight WHERE product_code = ? AND plant_code = ? and batch_drum = ? AND DATE(tare_weight1_date) = ? AND transaction_status = 'SALES' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'")){
+                                        $product_stmt->bind_param("ssss", $productCode, $plantCode, $batchDrum, $declarationDate);
+                                        $product_stmt->execute();
+                                        $productResult = $product_stmt->get_result();
+                            
+                                        while ($productRow = $productResult->fetch_assoc()) {
+                                            $productNettWeight += floatval($productRow['nett_weight1']);
+                                        }
+                                    }
+
+                                    // Convert KG to MT
+                                    $productNettWeight = $productNettWeight / 1000;
+
                                     $html .= '
                                         <tr>
-                                            <td>'.htmlspecialchars($rawMat['name']).'</td>
-                                            <td></td>
-                                            <td>'.number_format($rawMat['raw_mat_basic_uom']*100, 2).'%</td>
-                                            <td>=B'.$rowNum.'*C'.$rowNum.'</td>
+                                            <td>'.htmlspecialchars($productName).'</td>
+                                            <td style="mso-number-format:\'0\.00\'">'.round($productNettWeight, 2).'</td>
+                                            <td>'.number_format($bitumenRawMatPercentage*100, 2).'%</td>
+                                            <td>=ROUND(B'.$rowNum.'*C'.$rowNum.',2)</td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -174,15 +222,152 @@ if(isset($_GET['id'])){
                                     $rowNum++;
                                 }
 
+                                // Get Bitumen Stock Take
+                                $bitumenActualStock = 0;
+                                $bitumenIncomingWeight = 0;
+                                if (!empty($row['60/70'])){
+                                    $bitumen = json_decode($row['60/70'], true);
+                                    $bitumenActualStock = floatval($bitumen['totalSixtySeventy']);
+                                    $bitumenIncomingWeight = floatval($bitumen['bitumenIncoming']);
+                                }
+
+                                // Get LFO Stock Take
+                                $lfoStockTake = 0;
+                                if (!empty($row['lfo'])){
+                                    $lfo = json_decode($row['lfo'], true);
+                                    $lfoStockTake = floatval($lfo['totalLfo']);
+                                }
+
+                                // Get Diesel Stock Take
+                                $dieselStockTake = 0;
+                                if (!empty($row['diesel'])){
+                                    $diesel = json_decode($row['diesel'], true);
+                                    $dieselStockTake = floatval($diesel['totalDiesel']);
+                                }
+
+                                // Get Previous Declaration Date Stock Take
+                                $bitumenOpeningStock = 0;
+                                if($prevStmt = $db->prepare("SELECT * FROM Bitumen WHERE plant_id = ? AND batch_drum = ? AND DATE(declaration_datetime) < ? AND status = 0 ORDER BY declaration_datetime DESC LIMIT 1")){
+                                    $prevStmt->bind_param("sss", $plantId, $batchDrum, $declarationDate);
+                                    $prevStmt->execute();
+                                    $prevResult = $prevStmt->get_result();
+                                    $prevStockTakeRow = $prevResult->fetch_assoc();
+                                    $bitumenOpeningStock = json_decode($prevStockTakeRow['60/70'], true)['totalSixtySeventy'];
+                                }
+
                                 $html .= '
-                                <tr><td><b>Subtotal</b></td><td>=SUM(B'.$subtotalRowStart.':B'.($rowNum-1).')</td><td></td><td>=SUM(D'.$subtotalRowStart.':D'.($rowNum-1).')</td><td>=SUM(E'.$subtotalRowStart.':E'.($rowNum-1).')</td><td>=SUM(F'.$subtotalRowStart.':F'.($rowNum-1).')</td><td>=SUM(G'.$subtotalRowStart.':G'.($rowNum-1).')</td><td>=SUM(H'.$subtotalRowStart.':H'.($rowNum-1).')</td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td><b>Incoming</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Opening Stock</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Supplied Bitumen</b></td><td></td><td></td><td>=D'.($rowNum+1).'</td><td>=E'.($rowNum+1).'</td><td>=F'.($rowNum+1).'</td><td>=G'.($rowNum+1).'</td><td>=H'.($rowNum+1).'</td><td class="left"><b>LFO Usage</b></td><td>=B'.$rowNum.'/I'.$rowNum.'</td><td>Litre / ton</td><td></td></tr>
-                                <tr><td class="left"><b>Targeted Bitumen Usage</b></td><td></td><td></td><td>=D'.($rowNum).'</td><td>=E'.($rowNum).'</td><td>=F'.($rowNum).'</td><td>=G'.($rowNum).'</td><td>=H'.($rowNum).'</td><td class="left"><b>Diesel Usage</b></td><td>=J'.$rowNum.'</td><td>Litre /day</td><td></td></tr>
-                                <tr><td class="left"><b>Targeted Closing Stock</b></td><td></td><td></td><td>=SUM(D'.($rowNum+2).'+D'.($rowNum+3).'-D'.($rowNum+4).')</td><td>=SUM(E'.($rowNum+2).'+E'.($rowNum+3).'-E'.($rowNum+4).')</td><td>=SUM(F'.($rowNum+2).'+F'.($rowNum+3).'-F'.($rowNum+4).')</td><td>=SUM(G'.($rowNum+2).'+G'.($rowNum+3).'-G'.($rowNum+4).')</td><td>=SUM(H'.($rowNum+2).'+H'.($rowNum+3).'-H'.($rowNum+4).')</td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Actual Stock (after production)</b></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td class="left"><b>Variant :</b></td><td></td><td></td><td>=D'.($rowNum+6).'-D'.($rowNum+5).'</td><td>=E'.($rowNum+6).'-E'.($rowNum+5).'</td><td>=F'.($rowNum+6).'-F'.($rowNum+5).'</td><td>=G'.($rowNum+6).'-G'.($rowNum+5).'</td><td>=H'.($rowNum+6).'-H'.($rowNum+5).'</td><td></td><td></td><td></td><td></td></tr>
+                                <tr>
+                                    <td><b>Subtotal</b></td>
+                                    <td>=SUM(B'.$subtotalRowStart.':B'.($rowNum-1).')</td>
+                                    <td></td>
+                                    <td>=SUM(D'.$subtotalRowStart.':D'.($rowNum-1).')</td>
+                                    <td>=SUM(E'.$subtotalRowStart.':E'.($rowNum-1).')</td>
+                                    <td>=SUM(F'.$subtotalRowStart.':F'.($rowNum-1).')</td>
+                                    <td>=SUM(G'.$subtotalRowStart.':G'.($rowNum-1).')</td>
+                                    <td>=SUM(H'.$subtotalRowStart.':H'.($rowNum-1).')</td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($lfoStockTake, 2).'</td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($dieselStockTake, 2).'</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Incoming</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($bitumenIncomingWeight, 2).'</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><b>Opening Stock</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($bitumenOpeningStock, 2).'</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><b>Supplied Bitumen</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>=D'.($rowNum+1).'</td>
+                                    <td>=E'.($rowNum+1).'</td>
+                                    <td>=F'.($rowNum+1).'</td>
+                                    <td>=G'.($rowNum+1).'</td>
+                                    <td>=H'.($rowNum+1).'</td>
+                                    <td class="left"><b>LFO Usage</b></td>
+                                    <td style="mso-number-format:\'0\.00\'">=ROUND(B'.$rowNum.'/I'.$rowNum.',2)</td>
+                                    <td>Litre / ton</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><b>Targeted Bitumen Usage</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>=D'.($rowNum).'</td>
+                                    <td>=E'.($rowNum).'</td>
+                                    <td>=F'.($rowNum).'</td>
+                                    <td>=G'.($rowNum).'</td>
+                                    <td>=H'.($rowNum).'</td>
+                                    <td class="left"><b>Diesel Usage</b></td>
+                                    <td style="mso-number-format:\'0\.00\'">=ROUND(J'.$rowNum.',2)</td>
+                                    <td>Litre /day</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><b>Targeted Closing Stock</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>=SUM(D'.($rowNum+2).'+D'.($rowNum+3).'-D'.($rowNum+4).')</td>
+                                    <td>=SUM(E'.($rowNum+2).'+E'.($rowNum+3).'-E'.($rowNum+4).')</td>
+                                    <td>=SUM(F'.($rowNum+2).'+F'.($rowNum+3).'-F'.($rowNum+4).')</td>
+                                    <td>=SUM(G'.($rowNum+2).'+G'.($rowNum+3).'-G'.($rowNum+4).')</td>
+                                    <td>=SUM(H'.($rowNum+2).'+H'.($rowNum+3).'-H'.($rowNum+4).')</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><b>Actual Stock (after production)</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($bitumenActualStock, 2).'</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="left"><b>Variant :</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>=D'.($rowNum+6).'-D'.($rowNum+5).'</td>
+                                    <td>=E'.($rowNum+6).'-E'.($rowNum+5).'</td>
+                                    <td>=F'.($rowNum+6).'-F'.($rowNum+5).'</td>
+                                    <td>=G'.($rowNum+6).'-G'.($rowNum+5).'</td>
+                                    <td>=H'.($rowNum+6).'-H'.($rowNum+5).'</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
                             </table>
 
                             <br>

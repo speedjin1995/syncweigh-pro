@@ -1,14 +1,10 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/permissions.php';
 $plantId = $_SESSION['plant'];
 
 $searchQuery = "";
-if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-    $username = implode("', '", $_SESSION["plant"]);
-    $searchQuery = " and plant_code IN ('$username')";
-}
-
 if(isset($_POST['fromDate']) && $_POST['fromDate'] != null && $_POST['fromDate'] != ''){
     $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_POST['fromDate']);
     $formatted_date = $dateTime->format('Y-m-d H:i:00');
@@ -49,6 +45,12 @@ if(isset($_POST['status']) && $_POST['status'] != null && $_POST['status'] != ''
     else{
         $searchQuery .= " and count.transaction_status = '".$_POST['status']."'";
     }	
+
+    if ($_POST['status'] == 'Local'){
+        $reportStatus = 'Public';
+    }else{
+        $reportStatus = $_POST['status'];
+    }
 }
 
 if(isset($_POST['customer']) && $_POST['customer'] != null && $_POST['customer'] != '' && $_POST['customer'] != '-'){
@@ -132,11 +134,12 @@ if(isset($_POST['plant']) && $_POST['plant'] != null && $_POST['plant'] != '' &&
         $searchQuery .= " and count.plant_code = '".$_POST['plant']."'";
     }
 }else{
-    if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
-        $username = implode("/", $_SESSION["plant"]);
-        $plantSelected = $username;
-    }
-    else{
+    if (!hasModulePermission('Report', $reportStatus, ['view_all_plants'])){
+        $username = implode("', '", $_SESSION["plant"]);
+        $searchQuery .= "and Weight.plant_code IN ('$username')";
+        $plantSelectedName = implode("/", $_SESSION["plant"]);
+        $plantSelected = $plantSelectedName;
+    }else{
         $plant2 = $db->query("SELECT * FROM Plant WHERE status = '0'");
         $plant2 = $plant2->fetch_all(MYSQLI_ASSOC);
         foreach($plant2 as $key => $value){
@@ -316,21 +319,31 @@ if(isset($_POST["file"])){
                                                         <th rowspan="2" width="15%" class="text-start">Date</th>
                                                         <th rowspan="2">Total Loads</th>
                                                         <th rowspan="2">Product Weight (MT)</th>
-                                                        <th rowspan="2">Transport Weight (MT)</th>
-                                                        <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
-                                                        <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
-                                                        <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
-                                                        <th rowspan="2">Total Amount (RM)</th>
-                                                    </tr>
-                                                    <tr class="text-center">
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                        <th>Total</th>
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                    </tr>
+                                                        <th rowspan="2">Transport Weight (MT)</th>';
+
+                                                        if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                            $message .= '
+                                                                <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
+                                                                <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
+                                                                <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
+                                                                <th rowspan="2">Total Amount (RM)</th>
+                                                            </tr>
+                                                            <tr class="text-center">
+                                                                <th>Product</th>
+                                                                <th>Transport</th>
+                                                                <th>Product</th>
+                                                                <th>Transport</th>
+                                                                <th>Total</th>
+                                                                <th>Product</th>
+                                                                <th>Transport</th>
+                                                            </tr>';
+                                                        }else{
+                                                            $message.='
+                                                                </tr>
+                                                            ';
+                                                        }
+
+                                                        $message .= '
                                                 </thead>
                                                 <tbody>';
 
@@ -347,17 +360,23 @@ if(isset($_POST["file"])){
 
                                                     $message .= '<tr>
                                                             <td>'.$transactionDate.'</td>
-                                                            <td>'.$row['total_records'].'</td>
-                                                            <td>'.$productWeight.'</td>
-                                                            <td>'.$transportWeight.'</td>
-                                                            <td>'.$totalPrice.'</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
-                                                            <td>0.00</td>
+                                                            <td style="text-align:center">'.$row['total_records'].'</td>
+                                                            <td style="text-align:center">'.$productWeight.'</td>
+                                                            <td style="text-align:center">'.$transportWeight.'</td>
+                                                            ';
+                                                        if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                            $message .= '
+                                                                <td>'.$totalPrice.'</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                            ';
+                                                        }
+                                                        $message .= '
                                                         </tr>';
                                                 }
                                                 
@@ -365,17 +384,25 @@ if(isset($_POST["file"])){
                                                 <tfoot>
                                                     <tr>
                                                         <td class="fw-bold">Company Total:</td>
-                                                        <td>'.$totalRecords.'</td>
-                                                        <td>'.number_format($totalProductWeight, 2).'</td>
-                                                        <td>'.number_format($totalTransportWeight, 2).'</td>
-                                                        <td>'.number_format($grandTotalPrice, 2).'</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
+                                                        <td style="text-align:center">'.$totalRecords.'</td>
+                                                        <td style="text-align:center">'.number_format($totalProductWeight, 2).'</td>
+                                                        <td style="text-align:center">'.number_format($totalTransportWeight, 2).'</td>
+                                                        ';
+                                                        
+                                                        if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                            $message .='
+                                                            <td>'.number_format($grandTotalPrice, 2).'</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            <td>0.00</td>
+                                                            ';
+                                                        }
+
+                                                        $message .= '
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -571,12 +598,16 @@ if(isset($_POST["file"])){
                                                 $premixGrandTotalPrice += (float) $row['total_price'];
                                             }
 
-                                            $premixProductData[] = '
+                                            $data = '
                                                 <tr>
                                                     <td>'.$productName.'</td>
                                                     <td>'.$row['total_records'].'</td>
                                                     <td>'.$productWeight.'</td>
                                                     <td>'.$transportWeight.'</td>
+                                            ';
+
+                                            if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                $data .= '
                                                     <td>'.$totalPrice.'</td>
                                                     <td>0.00</td>
                                                     <td>0.00</td>
@@ -585,8 +616,14 @@ if(isset($_POST["file"])){
                                                     <td>0.00</td>
                                                     <td>0.00</td>
                                                     <td>0.00</td>
+                                                ';
+                                            }
+
+                                            $data .= '
                                                 </tr>
                                             ';
+
+                                            $premixProductData[] = $data;
                                         }else{
                                             $productWeight = number_format($row['product_weight']/1000, 2);
                                             $transportWeight = number_format($row['transport_weight']/1000, 2);
@@ -608,12 +645,16 @@ if(isset($_POST["file"])){
 
                                             $othersGrandTotalPrice += (float) $row['total_price'];
 
-                                            $othersProductData[] = '
+                                            $data = '
                                                 <tr>
                                                     <td>'.$productName.'</td>
                                                     <td>'.$row['total_records'].'</td>
                                                     <td>'.$productWeight.'</td>
                                                     <td>'.$transportWeight.'</td>
+                                            ';
+
+                                            if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                $data .= '
                                                     <td>'.$totalPrice.'</td>
                                                     <td>0.00</td>
                                                     <td>0.00</td>
@@ -622,8 +663,14 @@ if(isset($_POST["file"])){
                                                     <td>0.00</td>
                                                     <td>0.00</td>
                                                     <td>0.00</td>
+                                                ';
+                                            }
+
+                                            $data .= '
                                                 </tr>
                                             ';
+
+                                            $othersProductData[] = $data;
                                         }
                                     }
 
@@ -632,26 +679,35 @@ if(isset($_POST["file"])){
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead style="border-bottom: 1px solid black;">
-                                                    <tr><th colspan="12" class="text-center" style="border-top: 1px solid black;">Premix Product</th></tr>
+                                                    <tr><th colspan="'.(hasModulePermission('Report', $reportStatus, ['include_price']) ? 12 : 4).'" class="text-center" style="border-top: 1px solid black;">Premix Product</th></tr>
                                                     <tr class="text-center" style="border-top: 1px solid black;">
                                                         <th rowspan="2" class="text-start">Product Description</th>
                                                         <th rowspan="2">Total Loads</th>
                                                         <th rowspan="2">Product Weight (MT)</th>
-                                                        <th rowspan="2">Transport Weight (MT)</th>
-                                                        <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
-                                                        <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
-                                                        <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
-                                                        <th rowspan="2">Average Selling Price</th>
-                                                    </tr>
-                                                    <tr class="text-center">
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                        <th>Total</th>
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                    </tr>
+                                                        <th rowspan="2">Transport Weight (MT)</th>';
+
+                                                    if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                        $message .= '
+                                                            <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
+                                                            <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
+                                                            <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
+                                                            <th rowspan="2">Average Selling Price</th>
+                                                        </tr>
+                                                        <tr class="text-center">
+                                                            <th>Product</th>
+                                                            <th>Transport</th>
+                                                            <th>Product</th>
+                                                            <th>Transport</th>
+                                                            <th>Total</th>
+                                                            <th>Product</th>
+                                                            <th>Transport</th>
+                                                        </tr>';
+                                                    }else{
+                                                        $message .= '
+                                                        </tr>';
+                                                    }
+
+                                                    $message .= '
                                                 </thead>
                                                 <tbody>';
 
@@ -665,15 +721,22 @@ if(isset($_POST["file"])){
                                                         <td class="fw-bold">Company Total:</td>
                                                         <td>'.$premixTotalRecords.'</td>
                                                         <td>'.number_format($premixTotalProductWeight, 2).'</td>
-                                                        <td>'.number_format($premixTotalTransportWeight, 2).'</td>
-                                                        <td>'.number_format($premixGrandTotalPrice, 2).'</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
+                                                        <td>'.number_format($premixTotalTransportWeight, 2).'</td>';
+
+                                                        if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                            $message .= '
+                                                                <td>'.number_format($premixGrandTotalPrice, 2).'</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                            ';
+                                                        }
+
+                                                        $message .= '
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -685,26 +748,34 @@ if(isset($_POST["file"])){
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead style="border-bottom: 1px solid black;">
-                                                    <tr><th colspan="12" class="text-center" style="border-top: 1px solid black;">Other Product</th></tr>
+                                                    <tr><th colspan="'.(hasModulePermission('Report', $reportStatus, ['include_price']) ? 12 : 4).'" class="text-center" style="border-top: 1px solid black;">Other Product</th></tr>q
                                                     <tr class="text-center" style="border-top: 1px solid black;">
                                                         <th rowspan="2" class="text-start">Product Description</th>
                                                         <th rowspan="2">Total Loads</th>
                                                         <th rowspan="2">Product Weight (MT)</th>
-                                                        <th rowspan="2">Transport Weight (MT)</th>
-                                                        <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
-                                                        <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
-                                                        <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
-                                                        <th rowspan="2">Average Selling Price</th>
-                                                    </tr>
-                                                    <tr class="text-center">
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                        <th>Total</th>
-                                                        <th>Product</th>
-                                                        <th>Transport</th>
-                                                    </tr>
+                                                        <th rowspan="2">Transport Weight (MT)</th>';
+                                                        if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                        $message .= '
+                                                            <th colspan="2" style="border-bottom: none;">Total Amount (RM)</th>
+                                                            <th colspan="3" style="border-bottom: none;">Total Ex-GST (RM)</th>
+                                                            <th colspan="2" style="border-bottom: none;">Total GST 0% (RM)</th>
+                                                            <th rowspan="2">Average Selling Price</th>
+                                                        </tr>
+                                                        <tr class="text-center">
+                                                            <th>Product</th>
+                                                            <th>Transport</th>
+                                                            <th>Product</th>
+                                                            <th>Transport</th>
+                                                            <th>Total</th>
+                                                            <th>Product</th>
+                                                            <th>Transport</th>
+                                                        </tr>';
+                                                    }else{
+                                                        $message .= '
+                                                        </tr>';
+                                                    }
+
+                                                $message .= '
                                                 </thead>
                                                 <tbody>';
 
@@ -720,15 +791,22 @@ if(isset($_POST["file"])){
                                                         <td class="fw-bold">Company Total:</td>
                                                         <td>'.$othersTotalRecords.'</td>
                                                         <td>'.number_format($othersTotalProductWeight, 2).'</td>
-                                                        <td>'.number_format($othersTotalTransportWeight, 2).'</td>
-                                                        <td>'.number_format($othersGrandTotalPrice, 2).'</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
-                                                        <td>0.00</td>
+                                                        <td>'.number_format($othersTotalTransportWeight, 2).'</td>';
+
+                                                        if (hasModulePermission('Report', $reportStatus, ['include_price'])){
+                                                            $message .= '
+                                                                <td>'.number_format($othersGrandTotalPrice, 2).'</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                                <td>0.00</td>
+                                                            ';
+                                                        }
+
+                                                        $message .= '
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -912,7 +990,7 @@ if(isset($_POST["file"])){
                                                 <th>NETT <br>(MT)</th>
                                                 <th>BALANCE <br>(MT)</th>';
 
-                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                     $message .= '
                                                         <th>UNIT PRICE <br>(RM)</th>
                                                         <th>TOTAL PRICE <br>(RM)</th>
@@ -1008,7 +1086,7 @@ if(isset($_POST["file"])){
                                                     <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['balance']/1000, 2) . '</td>';
 
-                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                         $message .= '
                                                             <td>' . number_format($row['unit_price'], 2) . '</td>
                                                             <td>' . number_format($row['total_price'], 2) . '</td>
@@ -1036,7 +1114,7 @@ if(isset($_POST["file"])){
                                                 <th style="border:1px solid black;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;">' . number_format($totalNet/1000, 2) . '</th>';
 
-                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                     $message .= '
                                                         <th></th>
                                                         <th style="border:1px solid black;">' . number_format($totalUnitPrice, 2) . '</th>
@@ -1063,7 +1141,7 @@ if(isset($_POST["file"])){
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>';
 
-                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                         $message .= '
                                                             <th></th>
                                                             <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
@@ -1233,7 +1311,7 @@ if(isset($_POST["file"])){
                                                 <th>NETT <br>(MT)</th>
                                                 <th>BALANCE <br>(MT)</th>';
 
-                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                     $message .= '
                                                         <th>UNIT PRICE <br>(RM)</th>
                                                         <th>TOTAL PRICE <br>(RM)</th>
@@ -1293,7 +1371,7 @@ if(isset($_POST["file"])){
                                                 <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
                                                 <td>' . number_format($row['balance']/1000, 2) . '</td>';
 
-                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                     $message .= '
                                                         <td>' . number_format($row['unit_price'], 2) . '</td>
                                                         <td>' . number_format($row['total_price'], 2) . '</td>
@@ -1314,7 +1392,7 @@ if(isset($_POST["file"])){
                                                 <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                 <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>';
 
-                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                     $message .= '
                                                         <th></th>
                                                         <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>
@@ -1703,7 +1781,7 @@ if(isset($_POST["file"])){
                                                 <th>NETT <br>(MT)</th>
                                                 <th>BALANCE <br>(MT)</th>';
 
-                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                     $message .= '
                                                         <th>UNIT PRICE <br>(RM)</th>
                                                         <th>TOTAL PRICE <br>(RM)</th>
@@ -1799,7 +1877,7 @@ if(isset($_POST["file"])){
                                                     <td>' . number_format($row['nett_weight1']/1000, 2) . '</td>
                                                     <td>' . number_format($row['balance']/1000, 2) . '</td>';
 
-                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                         $message .= '
                                                         <td>' . number_format($row['unit_price'], 2) . '</td>
                                                         <td>' . number_format($row['total_price'], 2) . '</td>
@@ -1825,7 +1903,7 @@ if(isset($_POST["file"])){
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalGross /1000, 2). '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalTare/1000, 2) . '</th>
                                                 <th style="border:1px solid black;font-size: 11px;">' . number_format($totalNet/1000, 2) . '</th>';
-                                                if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                     $message .= '
                                                         <th></th>
                                                         <th style="border:1px solid black;font-size: 11px;">' . number_format($totalUnitPrice, 2) . '</th>
@@ -1850,7 +1928,7 @@ if(isset($_POST["file"])){
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalGross/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalTare/1000, 2).'</th>
                                                     <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalNet/1000, 2).'</th>';
-                                                    if ($_SESSION["roles"] == 'ADMIN' || $_SESSION["roles"] == 'SADMIN' || $_SESSION["roles"] == 'MANAGER'){
+                                                    if (hasModulePermission('Report', $reportStatus, ['include_price'])){
                                                         $message .= '
                                                             <th></th>
                                                             <th style="border:1px solid black;font-size: 11px;border:1px solid black;">'.number_format($grandTotalUnitPrice, 2).'</th>

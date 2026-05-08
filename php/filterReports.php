@@ -119,6 +119,15 @@ $sel = mysqli_query($db, $filteredQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
+## Map computed columns to SQL expressions
+if ($columnName == 'customer') {
+  $columnName = "CASE WHEN transaction_status IN ('Sales', 'Local') THEN customer_name ELSE supplier_name END";
+} elseif ($columnName == 'product_code') {
+  $columnName = "CASE WHEN transaction_status IN ('Sales', 'Local') THEN product_code ELSE raw_mat_code END";
+} elseif ($columnName == 'product_name') {
+  $columnName = "CASE WHEN transaction_status IN ('Sales', 'Local') THEN product_name ELSE raw_mat_name END";
+}
+
 ## Fetch records
 $empQuery = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y'".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 // if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){

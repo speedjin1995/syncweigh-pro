@@ -2,7 +2,9 @@
 session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
-// // Load the database configuration file 
+require_once 'requires/permissions.php';
+
+// Load the database configuration file 
  
 // Filter the excel data 
 function filterData(&$str){ 
@@ -60,10 +62,18 @@ if($_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'
 
 // Column names 
 if($_GET["type"] == 'do'){
-    $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
+    if (hasModulePermission('Accounting', 'Delivery Order (DO)', ['include_price'])){
+        $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
+    }else{
+        $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'QTY', 'UOM', 'PROJECT', 'LOCATION', 'Remarks'); 
+    }
 }
 else{
-    $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'NETT', 'QTY', 'VAR', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
+    if (hasModulePermission('Accounting', 'Goods Received (GR)', ['include_price'])){
+        $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'NETT', 'QTY', 'VAR', 'UOM', 'PROJECT', 'LOCATION', 'UNITPRICE', 'Amount', 'Remarks'); 
+    }else{
+        $fields = array('DocNo', 'DOCREF2', 'DOCDATE', 'DESCRIPTION2', 'CODE', 'COMPANYNAME', 'ITEMCODE', 'DESCRIPTION', 'REMARK2', 'SHIPPER', 'DOCREF1', 'DOCNOEX', 'REMARK1', 'NETT', 'QTY', 'VAR', 'UOM', 'PROJECT', 'LOCATION', 'Remarks'); 
+    }
 }
 
 // Display column names as first row 
@@ -77,7 +87,7 @@ if ($isMulti == 'N'){
         ## Fetch records
         $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." order by plant_code asc, purchase_order asc";
 
-        if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+        if (!hasModulePermission('Accounting', 'Delivery Order (DO)', ['view_all_plant'])){
             $username = implode("', '", $_SESSION["plant"]);
             $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." order by plant_code asc, purchase_order asc";
         }
@@ -149,8 +159,12 @@ if ($isMulti == 'N'){
                         }
                     }
                 }
-                
-                $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row['remarks']);
+
+                if (hasModulePermission('Accounting', 'Delivery Order (DO)', ['include_price'])){
+                    $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row['remarks']);
+                }else{
+                    $lineData = array($soNo, $row['transaction_id'], $tareDateTime, $row['lorry_plate_no1'], $row['customer_code'], $row['customer_name'], $row['product_code'], $row['product_name'], $row['destination'], $row['transporter_code'], $exDel, $orderNo, $row['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $row['remarks']);
+                }
 
                 # Added checking to fix duplicated issue
                 if (!empty($lineData)) {
@@ -189,7 +203,8 @@ if ($isMulti == 'N'){
 
         // Fetch records from database
         $query = "select * from Weight where is_complete = 'Y' AND is_cancel <> 'Y'".$searchQuery." group by purchase_order, raw_mat_code, supplier_code  order by id asc";
-        if($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN'){
+        
+        if (!hasModulePermission('Accounting', 'Goods Received (GR)', ['view_all_plant'])){
             $username = implode("', '", $_SESSION["plant"]);
             $query = "select * from Weight where is_complete = 'Y' AND  is_cancel <> 'Y' and plant_code IN ('$username')".$searchQuery." group by purchase_order, raw_mat_code, supplier_code  order by id asc";
         }
@@ -285,7 +300,11 @@ if ($isMulti == 'N'){
                         }
                     }
 
-                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row2['remarks']);
+                    if (hasModulePermission('Accounting', 'Goods Received (GR)', ['include_price'])){
+                        $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt, $row2['remarks']);
+                    }else{
+                        $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $nett, $qty, $var, $uom, $finalPlantCode, $finalPlantCode, $row2['remarks']);
+                    }
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -395,7 +414,11 @@ if ($isMulti == 'N'){
                         }
                     }
                     
-                    $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
+                    if (hasModulePermission('Accounting', 'Delivery Order (DO)', ['include_price'])){
+                        $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
+                    }else{
+                        $lineData = array($soNo, $row2['transaction_id'], $tareDateTime, $row2['lorry_plate_no1'], $row2['customer_code'], $row2['customer_name'], $row2['product_code'], $row2['product_name'], $row2['destination'], $row2['transporter_code'], $exDel, $orderNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode);
+                    }
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {
@@ -496,7 +519,11 @@ if ($isMulti == 'N'){
                         }
                     }
 
-                    $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
+                    if (hasModulePermission('Accounting', 'Goods Received (GR)', ['include_price'])){
+                        $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode, $unitPrice, $amt);
+                    }else{
+                        $lineData = array('', $row2['destination'], $tareDateTime, $row2['lorry_plate_no1'], $row2['supplier_code'], $row2['supplier_name'], $row2['raw_mat_code'], $row2['raw_mat_name'], $row2['transaction_id'], $row2['transporter_code'], $exDel, $poNo, $row2['delivery_no'], $qty, $uom, $finalPlantCode, $finalPlantCode);
+                    }
 
                     # Added checking to fix duplicated issue
                     if (!empty($lineData)) {

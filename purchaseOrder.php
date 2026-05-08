@@ -882,7 +882,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                             }
                         }
                         
-                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('delete'))) {
+                        if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('cancelled'))) {
                             buttons += `
                             <div class="col-auto">
                                 <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
@@ -995,7 +995,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                                 }
                             }
                             
-                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('delete'))) {
+                            if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Purchase Order (PO)'] && permissions['Accounting']['Purchase Order (PO)'].includes('cancelled'))) {
                                 buttons += `
                                 <div class="col-auto">
                                     <button title="Delete" type="button" id="delete${data}" onclick="deactivate(${data})" class="btn btn-danger btn-sm">
