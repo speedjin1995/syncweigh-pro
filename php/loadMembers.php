@@ -44,9 +44,22 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select Users.id, Users.employee_code, Users.username, Users.useremail, Users.name, roles.role_name, Users.plant_id, Users.status from Users, roles WHERE 
-Users.role = roles.role_code AND Users.status IN (0,1) AND Users.role <> 'SADMIN'".$searchQuery." 
-order by status ASC, ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "SELECT 
+    Users.id, 
+    Users.employee_code, 
+    Users.username, 
+    Users.useremail, 
+    Users.name, 
+    roles.role_name, 
+    Users.plant_id, 
+    Users.status 
+FROM Users
+INNER JOIN roles ON Users.role = roles.role_code
+WHERE Users.status IN (0,1) 
+AND Users.role <> 'SADMIN'
+".$searchQuery."
+ORDER BY status ASC, ".$columnName." ".$columnSortOrder."
+LIMIT ".$row.",".$rowperpage;
 
 if ($_SESSION["roles"] != 'ADMIN' && $_SESSION["roles"] != 'SADMIN') {
   $plantIds = $_SESSION["plant_id"]; // Should be an array like ["26", "27"]

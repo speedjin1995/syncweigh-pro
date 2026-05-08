@@ -359,7 +359,7 @@ if (!empty($data['data'])) {
                 $errorSoProductArray[] = $errMsg;
                 continue;
             }else{                
-                $OrderQuantity = $ConvertedOrderQuantity / $productUomRow['rate'];
+                $OrderQuantity = $ConvertedOrderQuantity / $productUomRow['rate']; // conver to kg
                 $conversionRate = (float)$productUomRow['rate'];
             }
         }
@@ -450,7 +450,7 @@ if (!empty($data['data'])) {
                 }
 
                 $convertedBalance  = $currentBalance * $conversionRate;
-                $poSoStatus = ($convertedBalance <= 26) ? 'Close' : 'Open';
+                $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
 
                 if($updatePoSoStmt = $db->prepare("
                     UPDATE Sales_Order 
