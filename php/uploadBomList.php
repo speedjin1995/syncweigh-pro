@@ -82,7 +82,7 @@ if (!empty($data)) {
                 }
 
                 // Search Product KG conversion rate
-                if ($productUomStmt = $db->prepare("SELECT * FROM Product_Uom WHERE product_id = ? AND unit_id = ? AND status = 0")) {
+                if ($productUomStmt = $db->prepare("SELECT * FROM Product_UOM WHERE product_id = ? AND unit_id = ? AND status = 0")) {
                     $productUomStmt->bind_param('ss', $productId, $kgUnitId);
                     $productUomStmt->execute();
                     $uomResult = $productUomStmt->get_result();
