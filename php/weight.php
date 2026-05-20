@@ -31,16 +31,27 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $plantId = trim($_POST["plantId"]);
     }
 
-    if (empty($_POST["plantCode"])) {
-        $plantCode = null;
-    } else {
-        $plantCode = trim($_POST["plantCode"]);
-    }
-
     if (empty($_POST["plant"])) {
         $plant = null;
     } else {
         $plant = trim($_POST["plant"]);
+    }
+
+    if (empty($_POST["plantCode"])) {
+        // Query to get plant detail from $plant
+        if ($plantSelect = $db->prepare("SELECT * FROM Plant WHERE name = ? AND status = 0")){
+            $plantSelect->bind_param('s', $plant);
+            $plantSelect->execute();
+            $plantResult = $plantSelect->get_result();
+            if ($plantRow = $plantResult->fetch_assoc()) {
+                $plantCode = $plantRow['plant_code'];
+            }
+            $plantSelect->close();
+        }else{
+            $plantCode = null;
+        }
+    } else {
+        $plantCode = trim($_POST["plantCode"]);
     }
 
     if (empty($_POST["exDel"])) {
