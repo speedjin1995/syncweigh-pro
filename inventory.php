@@ -331,6 +331,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 { data: 'raw_mat_count' },
                 { 
                     data: 'id',
+                    orderable: false,
                     render: function ( data, type, row ) {
                         if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
                             return `
@@ -383,6 +384,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                     { data: 'raw_mat_count' },
                     { 
                         data: 'id',
+                        orderable: false,
                         render: function ( data, type, row ) {
                             if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
                                 return `

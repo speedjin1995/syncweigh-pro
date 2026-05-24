@@ -227,6 +227,7 @@ $(function () {
             { data: 'category' },
             {
                 data: 'id',
+                orderable: false,
                 render: function (data, type, row) {
                     var perms = (permissions['User Management'] && permissions['User Management']['Module']) || [];
                     if (isSADMIN || ['edit', 'cancelled'].some(p => perms.includes(p))) {

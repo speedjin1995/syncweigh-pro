@@ -419,8 +419,9 @@
 
 <script type="text/javascript">
 
-let table;
-
+var table;
+var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 $(function () {
     $('#reportType').on('change', function(){
         if($(this).val() == "Customer")
@@ -769,16 +770,6 @@ function format (row) {
             <p><strong>PLANT:</strong> ${row.plant_code} - ${row.plant_name}</p>
         </div>
         <div class="col-3">
-            <p><strong>EX-QUARRY/DELIVERED:</strong> ${exDel}</p>
-            <p><strong>BY-LOAD/BY-DRUM:</strong> ${loadDrum}</p>
-            <p><strong>ORDER/SUPPLIER WEIGHT:</strong> ${orderSuppWeight}</p>
-            <p><strong>WEIGHT DIFFERENCE:</strong> ${row.reduce_weight}</p>
-            <p><strong>UNIT PRICE:</strong> ${row.unit_price}</p>
-            <p><strong>SUB-TOTAL PRICE:</strong> ${row.sub_total}</p>
-            <p><strong>SST (6%):</strong> ${row.sst}</p>
-            <p><strong>TOTAL PRICE:</strong> ${row.total_price}</p>
-        </div>
-        <div class="col-3">
             <p><strong>VEHICLE PLATE:</strong> ${row.lorry_plate_no1}</p>
             <p><strong>NO OF DRUM:</strong> ${row.no_of_drum}</p>
             <p><strong>IN WEIGHT:</strong> ${row.gross_weight1} KG</p>
@@ -787,6 +778,23 @@ function format (row) {
             <p><strong>OUT DATE/TIME:</strong> ${row.tare_weight1_date}</p>
             <p><strong>NETT WEIGHT:</strong> ${row.nett_weight1} KG</p>
             <p><strong>REMARK:</strong> ${row.remarks}</p>
+        </div>
+        <div class="col-3">
+            <p><strong>EX-QUARRY/DELIVERED:</strong> ${exDel}</p>
+            <p><strong>BY-LOAD/BY-DRUM:</strong> ${loadDrum}</p>
+            <p><strong>ORDER/SUPPLIER WEIGHT:</strong> ${orderSuppWeight}</p>
+            <p><strong>WEIGHT DIFFERENCE:</strong> ${row.reduce_weight}</p>`;
+
+        if (isSADMIN || (permissions['Report'] && permissions['Report']['Audit Log'] && permissions['Report']['Audit Log'].includes('include_price'))) {
+            returnString += `
+                <p><strong>UNIT PRICE:</strong> ${row.unit_price}</p>
+                <p><strong>SUB-TOTAL PRICE:</strong> ${row.sub_total}</p>
+                <p><strong>SST (6%):</strong> ${row.sst}</p>
+                <p><strong>TOTAL PRICE:</strong> ${row.total_price}</p>
+            `;
+        }
+
+        returnString += `
         </div>
     </div>`;
     

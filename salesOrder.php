@@ -863,6 +863,7 @@ if ($user != null && $user != ''){
                 {
                     data: 'id',
                     class: 'action-button',
+                    orderable: false,
                     render: function (data, type, row) {
                         var buttons = `<div class="row g-1 d-flex">`;
 
@@ -977,6 +978,7 @@ if ($user != null && $user != ''){
                     {
                         data: 'id',
                         class: 'action-button',
+                        orderable: false,
                         render: function (data, type, row) {
                             var buttons = `<div class="row g-1 d-flex">`;
 

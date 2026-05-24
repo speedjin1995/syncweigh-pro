@@ -849,6 +849,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                 {
                     data: 'id',
                     class: 'action-button',
+                    orderable: false,
                     render: function (data, type, row) {
                         var buttons = `<div class="row g-1 d-flex">`;
 
@@ -963,6 +964,7 @@ if (hasModulePermission('Accounting', 'Purchase Order (PO)', ['view_all_plants']
                     {
                         data: 'id',
                         class: 'action-button',
+                        orderable: false,
                         render: function (data, type, row) {
                             var buttons = `<div class="row g-1 d-flex">`;
 

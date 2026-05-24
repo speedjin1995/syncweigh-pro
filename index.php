@@ -1825,6 +1825,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                 { 
                     data: 'id',
                     class: 'action-button',
+                    orderable: false,
                     render: function (data, type, row) {
                         var transactionKey = (row.transaction_status == 'Local') ? 'Public' : row.transaction_status;
                         var buttons = `<div class="row g-1 d-flex">`;
@@ -2689,6 +2690,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                     { 
                         data: 'id',
                         class: 'action-button',
+                        orderable: false,
                         render: function (data, type, row) {
                             var transactionKey = (row.transaction_status == 'Local') ? 'Public' : row.transaction_status;
                             var buttons = `<div class="row g-1 d-flex">`;

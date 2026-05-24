@@ -403,6 +403,7 @@ $(function () {
             { data: 'status' },
             { 
                 data: 'id',
+                orderable: false,
                 render: function ( data, type, row ) {
                     var buttons = '';
                     if (row.status == 'Inactive') {

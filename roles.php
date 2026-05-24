@@ -274,9 +274,10 @@ $(function () {
             },
             { data: 'role_code' },
             { data: 'role_name' },
-            { data: 'status' },
+            { data: 'deleted' },
             {
                 data: 'id',
+                orderable: false,
                 render: function (data, type, row) {
                     // if (row.status == 'Inactive') {
                     //     if (permissions['User Management'] && permissions['User Management']['Role'] && permissions['User Management']['Role'].includes('reactivate')) {

@@ -1107,6 +1107,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 // { data: 'totalPgSevenNine' },
                 { 
                     data: 'id',
+                    orderable: false,
                     render: function ( data, type, row ) {
                         var buttons = '';
 
@@ -1193,6 +1194,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                     // { data: 'totalPgSevenNine' },
                     { 
                         data: 'id',
+                        orderable: false,
                         render: function ( data, type, row ) {
                             var buttons = '';
 
