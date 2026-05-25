@@ -218,6 +218,15 @@ if (isset($_POST['poNo'])) {
 
     if(!empty($poId))
     {
+        $oldCode = null;
+        if ($stmt = $db->prepare("SELECT po_no FROM Purchase_Order WHERE id = ?")) {
+            $stmt->bind_param("s", $poId);
+            $stmt->execute();
+            $stmt->bind_result($oldCode);
+            $stmt->fetch();
+            $stmt->close();
+        }
+
         if ($update_stmt = $db->prepare("UPDATE Purchase_Order SET company_code=?, company_name=?, supplier_code=?, supplier_name=?, site_code=?, site_name=?, order_date=?, order_no=?, po_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, deliver_to_name=?, raw_mat_code=?, raw_mat_name=?, plant_code=?, plant_name=?, transporter_code=?, transporter_name=?, veh_number=?, batch_drum=?, exquarry_or_delivered=?, order_load=?, converted_order_qty=?, converted_balance=?, converted_unit=?, order_quantity=?, balance=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
             $update_stmt->bind_param('ssssssssssssssssssssssssssssssssssss', $companyCode, $companyName, $supplierCode, $supplierName, $siteCode, $siteName, $orderDate, $orderNo, $poNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $rawMatCode, $rawMatName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $batchDrum, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
@@ -232,6 +241,10 @@ if (isset($_POST['poNo'])) {
                 );
             }
             else{
+                if ($oldCode !== null && $oldCode !== $poNo) {
+                    updateWeighingValue($db, $oldCode, $poNo, $supplierCode, $rawMatCode, "PurchaseOrder");
+                }
+
                 $update_stmt->close();
                 $db->close();
 

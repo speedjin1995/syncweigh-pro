@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/functions.php';
 
 if(!isset($_SESSION['id'])){
 	echo '<script type="text/javascript">location.href = "../login.php";</script>'; 
@@ -109,13 +110,10 @@ if (isset($_POST['customerCode'])) {
                 );
             }
             
+            
             // 2. Update Weight table if code changed
             if ($oldCode !== null && $oldCode !== $customerCode) {
-                if ($weight_stmt = $db->prepare("UPDATE Weight SET customer_code=? WHERE customer_code=?")) {
-                    $weight_stmt->bind_param("ss", $customerCode, $oldCode);
-                    $weight_stmt->execute();
-                    $weight_stmt->close();
-                }
+                updateWeighingValue($db, $oldCode, $customerCode, "Customer");
             }
 
             $update_stmt->close();

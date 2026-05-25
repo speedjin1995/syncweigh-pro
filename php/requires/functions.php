@@ -132,3 +132,36 @@ function calculateLFOVolumeLitres(
     // ⚠️ IMPORTANT: multiply by 1100, not 1000
     return round($volume_m3 * $constant, 0);
 }
+
+// Update weighing with modules
+function updateWeighingValue($db, $oldValue, $newValue, $modules, $custSupCode = "", $prodRawCode = "")
+{
+    $sql = "";
+
+    if($modules == 'Customer'){
+        $sql = "UPDATE Weight SET customer_code = ? WHERE customer_code = ?";
+    }
+    else if($modules == 'Supplier'){
+        $sql = "UPDATE Weight SET supplier_code = ? WHERE supplier_code = ?";
+    }
+    else if($modules == 'Destination'){
+        $sql = "UPDATE Weight SET destination_code = ? WHERE destination_code = ?";
+    }
+    else if($modules == 'SalesOrder'){
+        $sql = "UPDATE Weight SET purchase_order = ? WHERE purchase_order = ? AND customer_code = ? AND product_code = ?";
+    }
+    else if($modules == 'PurchaseOrder'){
+        $sql = "UPDATE Weight SET purchase_order = ? WHERE purchase_order = ? AND supplier_code = ? AND raw_mat_code = ?";
+    }
+
+    if($sql != ""){
+        $weight_stmt = $db->prepare($sql);
+        if($modules == 'Customer' || $modules == 'Supplier' || $modules == 'Destination'){
+            $weight_stmt->bind_param("ss", $newValue, $oldValue);
+        } else {
+            $weight_stmt->bind_param("ssss", $newValue, $oldValue, $custSupCode, $prodRawCode);
+        }
+        $weight_stmt->execute();
+        $weight_stmt->close();
+    }
+}

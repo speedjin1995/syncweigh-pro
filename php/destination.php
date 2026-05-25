@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+require_once 'requires/functions.php';
 
 if(!isset($_SESSION['id'])){
 	echo '<script type="text/javascript">location.href = "../login.php";</script>'; 
@@ -110,13 +111,7 @@ if (isset($_POST['destinationName'])) {
             
             // 2. If code changed → update related table (example: Weight)
             if ($oldCode !== null && $oldCode !== $destinationCode) {
-                if ($weight_stmt = $db->prepare("UPDATE Weight SET destination_code=? WHERE destination_code=?")) {
-                    $weight_stmt->bind_param("ss", $destinationCode, $oldCode);
-                    if (!$weight_stmt->execute()) {
-                        throw new Exception($weight_stmt->error);
-                    }
-                    $weight_stmt->close();
-                }
+                updateWeighingValue($db, $oldCode, $destinationCode, "Destination");
             }
 
             $update_stmt->close();

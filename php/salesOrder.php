@@ -218,6 +218,15 @@ if (isset($_POST['orderNo'])) {
 
     if(!empty($poId))
     {
+        $oldCode = null;
+        if ($stmt = $db->prepare("SELECT order_no FROM Sales_Order WHERE id = ?")) {
+            $stmt->bind_param("s", $poId);
+            $stmt->execute();
+            $stmt->bind_result($oldCode);
+            $stmt->fetch();
+            $stmt->close();
+        }
+
         if ($update_stmt = $db->prepare("UPDATE Sales_Order SET company_code=?, company_name=?, customer_code=?, customer_name=?, site_code=?, site_name=?, order_date=?, order_no=?, so_no=?, delivery_date=?, agent_code=?, agent_name=?, destination_code=?, destination_name=?, deliver_to_name=?, product_code=?, product_name=?, plant_code=?, plant_name=?, transporter_code=?, transporter_name=?, veh_number=?, batch_drum=?, exquarry_or_delivered=?, order_load=?, converted_order_qty=?, converted_balance=?, converted_unit=?, order_quantity=?, balance=?, unit_price=?, total_price=?, remarks=?, created_by=?, modified_by=? WHERE id=?")) 
         {
             $update_stmt->bind_param('ssssssssssssssssssssssssssssssssssss', $companyCode, $companyName, $customerCode, $customerName, $siteCode, $siteName, $orderDate, $orderNo, $soNo, $deliveryDate, $agentCode, $agentName, $destinationCode, $destinationName, $deliverToName, $productCode, $productName, $plantCode, $plantName, $transporterCode, $transporterName, $vehicle, $batchDrum, $exDel, $orderLoad, $convertedOrderQty, $balance, $convertedQtyUnit, $orderQty, $convertedBal, $unitPrice, $totalPrice, $remarks, $username, $username, $poId);
@@ -233,6 +242,12 @@ if (isset($_POST['orderNo'])) {
             }
             else{
                 $update_stmt->close();
+
+                if ($oldCode !== null && $oldCode !== $orderNo) {
+                    updateWeighingValue($db, $oldCode, $orderNo, $customerCode, $productCode, "SalesOrder");
+                }
+
+
                 if ($update_unit_price_stmt = $db->prepare("UPDATE Weight SET unit_price=?, sub_total=?*final_weight, sst = final_weight*?*0.08, total_price=(?*final_weight) + (final_weight*?*0.08) WHERE purchase_order=? AND plant_code=? AND product_code=?")) {
                     $update_unit_price_stmt->bind_param('ssssssss', $unitPrice, $unitPrice, $unitPrice, $unitPrice, $unitPrice, $orderNo, $plantCode, $productCode);
 
