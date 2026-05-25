@@ -65,13 +65,13 @@
                 <li class="menu-title"><span><?=$lang['t-menu']?></span></li>
                 <?php if(hasModulePermission('Dashboard', 'Dashboard', ['view'])): ?>
                 <li class="nav-item">
-                    <a href="dashboard.php" class="nav-link"><b><i class="mdi mdi-view-dashboard"></i><?=$lang['t-dashboard']?></b></a>
+                    <a href="dashboard.php" class="nav-link"><b><i class="mdi mdi-view-dashboard"></i><span><?=$lang['t-dashboard']?></span></b></a>
                 </li>
                 <?php endif; ?>
 
                 <?php if($hasWeighingView): ?>
                 <li class="nav-item">
-                    <a href="index.php" class="nav-link"><b><i class="mdi mdi-weight"></i><?=$lang['t-weighing']?></b></a>
+                    <a href="index.php" class="nav-link"><b><i class="mdi mdi-weight"></i><span><?=$lang['t-weighing']?></span></b></a>
                 </li>
                 <?php endif; ?>
 

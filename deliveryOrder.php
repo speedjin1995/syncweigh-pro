@@ -1278,6 +1278,7 @@ else{
                 { 
                     data: 'id',
                     class: 'action-button',
+                    orderable: false,
                     render: function ( data, type, row ) {
                         if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Delivery Order (DO)'] && permissions['Accounting']['Delivery Order (DO)'].includes('post_to_sql'))) {
                             return `
@@ -1367,6 +1368,7 @@ else{
                     { 
                         data: 'id',
                         class: 'action-button',
+                        orderable: false,
                         render: function (data, type, row) {
                             if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Delivery Order (DO)'] && permissions['Accounting']['Delivery Order (DO)'].includes('post_to_sql'))) {
                                 return `

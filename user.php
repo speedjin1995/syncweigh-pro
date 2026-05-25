@@ -395,10 +395,14 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 { data: 'name' },
                 { data: 'useremail' },
                 { data: 'role' },
-                { data: 'plant' },
+                { 
+                    data: 'plant',
+                    orderable: false,
+                },
                 { data: 'status' },
                 { 
                     data: 'id',
+                    orderable: false,
                     render: function ( data, type, row ) {
                         var buttons = '';
                         if (row.status == 'Inactive') {

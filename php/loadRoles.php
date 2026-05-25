@@ -36,7 +36,7 @@ while($r = mysqli_fetch_assoc($empRecords)) {
         "id" => $r['id'],
         "role_code" => $r['role_code'],
         "role_name" => $r['role_name'],
-        "status" => ($r['deleted'] == '0') ? 'Active' : 'Inactive'
+        "deleted" => ($r['deleted'] == '0') ? 'Active' : 'Inactive'
     );
 }
 
