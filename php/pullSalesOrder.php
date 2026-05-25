@@ -427,6 +427,11 @@ if (!empty($data['data'])) {
                 //$errMsg = "Sales order for Customer P/O No: ".$OrderNumber." + Product: ".$ProductName." already exist.";
                 //$errorSoProductArray[] = $errMsg;
                 $currentBalance = $OrderQuantity;
+                $TotalPrice = 0;
+                if (isset($UnitPrice) && !empty($UnitPrice) && isset($OrderQuantity) && !empty($OrderQuantity)){
+                    $orderQtyMt = $OrderQuantity/1000;
+                    $TotalPrice = $UnitPrice * $orderQtyMt;
+                }
 
                 if($weighing_stmt = $db->prepare("SELECT * FROM Weight WHERE purchase_order=? AND customer_code=? AND product_code=? AND status='0' AND is_complete='Y' AND is_cancel='N'")){
                     $weighing_stmt->bind_param('sss', $OrderNumber, $CustomerCode, $ProductCode);
@@ -455,6 +460,7 @@ if (!empty($data['data'])) {
                 if($updatePoSoStmt = $db->prepare("
                     UPDATE Sales_Order 
                     SET 
+                        so_no =?, 
                         converted_order_qty=?, 
                         order_quantity=?, 
                         converted_balance=?, 
@@ -463,12 +469,15 @@ if (!empty($data['data'])) {
                         destination_name=?, 
                         transporter_code=?, 
                         transporter_name=?, 
+                        unit_price=?, 
+                        total_price=?, 
                         status=?, 
                         modified_by='SYSTEM' 
                     WHERE order_no=? AND product_code=? AND customer_code=?
                 ")){
-                    $updatePoSoStmt->bind_param("ssssssssssss", $ConvertedOrderQuantity, $OrderQuantity, $convertedBalance, $currentBalance, 
-                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $poSoStatus, $OrderNumber, $ProductCode, $CustomerCode);
+                    $updatePoSoStmt->bind_param("sssssssssssssss", $SONumber, $ConvertedOrderQuantity, $OrderQuantity, $convertedBalance, $currentBalance, 
+                    $DestinationCode, $DestinationName, $TransporterCode, $TransporterName, $UnitPrice, $TotalPrice, $poSoStatus, $OrderNumber, $ProductCode, 
+                    $CustomerCode);
                     $updatePoSoStmt->execute();
                 }
             }
