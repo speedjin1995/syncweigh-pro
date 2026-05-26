@@ -242,7 +242,7 @@ if (isset($_POST['poNo'])) {
             }
             else{
                 if ($oldCode !== null && $oldCode !== $poNo) {
-                    updateWeighingValue($db, $oldCode, $poNo, $supplierCode, $rawMatCode, "PurchaseOrder");
+                    updateWeighingValue($db, $oldCode, $poNo, "PurchaseOrder", $supplierCode, $rawMatCode);
                 }
 
                 $update_stmt->close();
