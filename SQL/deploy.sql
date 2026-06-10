@@ -3325,3 +3325,7 @@ CREATE TABLE `Stock_Take_List` (
 UPDATE permissions SET name='include_price', modules='[\"7\",\"9\",\"8\",\"6\",\"29\",\"28\",\"27\",\"26\"]' WHERE id=33;
 
 UPDATE permissions SET name='cancelled' WHERE id=7;
+
+-- 10/06/2026 --
+INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
+(35, 'reset_password', '[\"34\"]');

@@ -88,7 +88,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 $grossWeight2 = $row['gross_weight2'] ?? '0';
                 $tareWeight2 = $row['tare_weight2'] ?? '0';
                 $nettWeight2 = $row['nett_weight2'] ?? '0';
-                $supplierWeight =  number_format($row['supplier_weight']);
+                $supplierWeight =  $row['supplier_weight_uom'];
                 $weightDifference = number_format($row['weight_different']);
                 $sysdate = date("d-m-Y");
                 $weightBy = searchNamebyId($row['created_by'], $db);

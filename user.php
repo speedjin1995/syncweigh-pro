@@ -288,6 +288,27 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
         </div>
     </div>
 
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="resetPasswordForm">
+                        <input type="hidden" id="resetUserId" name="userId">
+                        <p>Are you sure you want to reset the password for this user?</p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmResetPassword">Reset Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <?php include 'layouts/customizer.php'; ?>
     <?php include 'layouts/vendor-scripts.php'; ?>
@@ -423,7 +444,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                 `;
                             }
                         } else {
-                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && ['edit', 'cancelled'].some(p => permissions['User Management']['User Setup'].includes(p)))) {
+                            if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && ['edit', 'cancelled', 'reset_password'].some(p => permissions['User Management']['User Setup'].includes(p)))) {
                                 buttons += `
                                     <div class="dropdown d-inline-block">
                                         <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -436,6 +457,16 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                                                 <li>
                                                     <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
                                                         <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                    </a>
+                                                </li>
+                                            `;
+                                        }
+
+                                        if (isSADMIN || (permissions['User Management'] && permissions['User Management']['User Setup'] && permissions['User Management']['User Setup'].includes('reset_password'))){
+                                            buttons += `
+                                                <li>
+                                                    <a class="dropdown-item" id="reset${data}" onclick="resetPassword(${data})">
+                                                        <i class="ri-lock-unlock-fill align-bottom me-2 text-muted"></i> Reset Password
                                                     </a>
                                                 </li>
                                             `;
@@ -827,6 +858,37 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
 
         $('#spinnerLoading').hide();
     }
+
+    function resetPassword(id) {
+        $('#resetUserId').val(id);
+        $('#resetPasswordModal').modal('show');
+    }
+
+    $('#confirmResetPassword').on('click', function(){
+        $('#spinnerLoading').show();
+        var userId = $('#resetUserId').val();
+        
+        $.post('php/resetPassword.php', {userID: userId}, function(data){
+            var obj = JSON.parse(data);
+            
+            if(obj.status === 'success'){
+                $('#resetPasswordModal').modal('hide');
+                $('#spinnerLoading').hide();
+                $("#successBtn").attr('data-toast-text', obj.message);
+                $("#successBtn").click();
+            }
+            else if(obj.status === 'failed'){
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', obj.message);
+                $("#failBtn").click();
+            }
+            else{
+                $('#spinnerLoading').hide();
+                $("#failBtn").attr('data-toast-text', 'Something went wrong');
+                $("#failBtn").click();
+            }
+        });
+    });
     </script>
 
     </body>
