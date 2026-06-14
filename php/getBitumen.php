@@ -85,9 +85,12 @@ if(isset($_POST['userID'])){
                     }
                 }
                 $message['lfo'] = $lfoRows;
+                $message['previousLfoReading'] = $lfoTemp["previousLfoReading"] ?? 0;
                 $message['lfoIncoming'] = $lfoTemp["lfoIncoming"] ?? 0;
-                $message['totalLfo'] = $lfoTemp["totalLfo"] ?? 0;
                 $message['lfoLastMeterReading'] = $lfoTemp["lfoLastMeterReading"] ?? 0;
+                $message['totalLfoLitre'] = $lfoTemp["totalLfoLitre"] ?? 0;
+                $message['totalLfo'] = $lfoTemp["totalLfo"] ?? 0;
+                $message['totalLfoUsage'] = $lfoTemp["totalLfoUsage"] ?? 0;
                 ########################################################################################
 
                 ## diesel Processing ##

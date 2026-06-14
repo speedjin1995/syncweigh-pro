@@ -94,6 +94,12 @@ if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
 }
 
 # Processing for lfo data
+if (empty($_POST["previousLfoReading"])) {
+    $previousLfoReading = null;
+} else {
+    $previousLfoReading = trim($_POST["previousLfoReading"]);
+}
+
 if (empty($_POST["lfoIncoming"])) {
     $lfoIncoming = null;
 } else {
@@ -106,10 +112,22 @@ if (empty($_POST["lfoLastMeterReading"])) {
     $lfoLastMeterReading = trim($_POST["lfoLastMeterReading"]);
 }
 
+if (empty($_POST["totalLfoLitre"])) {
+    $totalLfoLitre = null;
+} else {
+    $totalLfoLitre = trim($_POST["totalLfoLitre"]);
+}
+
 if (empty($_POST["totalLfo"])) {
     $totalLfo = null;
 } else {
     $totalLfo = trim($_POST["totalLfo"]);
+}
+
+if (empty($_POST["totalLfoUsage"])) {
+    $totalLfoUsage = null;
+} else {
+    $totalLfoUsage = trim($_POST["totalLfoUsage"]);
 }
 
 if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
@@ -136,16 +154,22 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
         );
     }
 
+    $lfoData['previousLfoReading'] = $previousLfoReading;
     $lfoData['lfoIncoming'] = $lfoIncoming;
     $lfoData['lfoLastMeterReading'] = $lfoLastMeterReading;
+    $lfoData['totalLfoLitre'] = $totalLfoLitre;
     $lfoData['totalLfo'] = $totalLfo;
+    $lfoData['totalLfoUsage'] = $totalLfoUsage;
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 } else {
     $lfoData = [];
 
+    $lfoData['previousLfoReading'] = $previousLfoReading;
     $lfoData['lfoIncoming'] = $lfoIncoming;
     $lfoData['lfoLastMeterReading'] = $lfoLastMeterReading;
+    $lfoData['totalLfoLitre'] = $totalLfoLitre;
     $lfoData['totalLfo'] = $totalLfo;
+    $lfoData['totalLfoUsage'] = $totalLfoUsage;
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 }
 

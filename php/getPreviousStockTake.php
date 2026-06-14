@@ -28,6 +28,10 @@ if(isset($_POST['declarationDate'], $_POST['plantId'], $_POST['batchDrum'])){
                 $message['id'] = $row['id'];
                 $message['declaration_datetime'] = $row['declaration_datetime'];
 
+                ## lfo Processing ##
+                $lfo = json_decode($row['lfo'], true);
+                $message['previous_lfo'] = $diesel['totalLfoLitre'];
+
                 ## diesel Processing ##
                 $diesel = json_decode($row['diesel'], true);
                 $message['previous_diesel'] = $diesel['totalDiesel'];
