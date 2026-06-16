@@ -451,13 +451,21 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </tr> -->
                                                     <tbody id="dieselTable"></tbody>
                                                     <tfoot>
-                                                        <th>Incoming (&#76;)</th>
-                                                        <th><input type="number" class="form-control" id="dieselIncoming" name="dieselIncoming" style="background-color:white;text-align: center;" value="0"></th>
-                                                        <th>Last Meter Reading</th>
-                                                        <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th>
-                                                        <th>Total</th>
-                                                        <th><input type="number" class="form-control" id="totalDiesel" name="totalDiesel" style="background-color:white;text-align: center;" value="0" readonly></th>
-                                                        <th></th>
+                                                        <tr>
+                                                            <th colspan="2">Incoming (&#76;)</th>
+                                                            <th colspan="2"><input type="number" class="form-control" id="dieselIncoming" name="dieselIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                            <!-- <th>Last Meter Reading</th>
+                                                            <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th> -->
+                                                            <th>Total</th>
+                                                            <th><input type="number" class="form-control" id="totalDiesel" name="totalDiesel" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                            <th></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th colspan="2"></th>
+                                                            <th colspan="2"></th>
+                                                            <th>Total Usage</th>                                                            <th><input type="number" class="form-control" id="totalDieselUsage" name="totalDieselUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                            <th></th>
+                                                        </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -482,10 +490,18 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                     </thead>
                                                     <tbody id="otherDieselTable"></tbody>
                                                     <tfoot>
-                                                        <th colspan="4"></th>
-                                                        <th>Total Transport Usage</th>
-                                                        <th><input type="number" class="form-control" id="otherDieselTotalTransportUsage" name="otherDieselTotalTransportUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
-                                                        <th></th>
+                                                        <tr>
+                                                            <th colspan="4"></th>
+                                                            <th>Total Transport Usage</th>
+                                                            <th><input type="number" class="form-control" id="otherDieselTotalTransportUsage" name="otherDieselTotalTransportUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                            <th></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th colspan="4"></th>
+                                                            <th>Total Production</th>
+                                                            <th><input type="number" class="form-control" id="totalDieselProduction" name="totalDieselProduction" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                            <th></th>
+                                                        </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
@@ -1766,6 +1782,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
         // Calculate Total MT on totalLfo change
         $("#addModal").find('#totalLfo').on('change', function(){
+            var previousReading = parseFloat($('#addModal').find('#previousLfoReading').val()) || 0;
             var incomingVolume = parseFloat($('#addModal').find('#lfoIncoming').val()) || 0;
             var totalVolume = 0.00;
             var totalWeight = 0.00;
@@ -1785,7 +1802,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
             // Calculate Usage
             if (incomingVolume > 0){
-                var usage = incomingVolume - totalVolume;
+                var usage = previousReading + incomingVolume - totalVolume;
                 $('#addModal').find('#totalLfoUsage').val(usage.toFixed(2));
             }
         });
@@ -1899,14 +1916,30 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#addModal').find("#totalDiesel").trigger('change');
         });
 
+        // Trigger Change for dieselIncoming
+        $('#addModal').find('#dieselIncoming').on('change', function(){
+            $('#addModal').find('#totalDiesel').trigger('change');
+        });
+
         // Calculate Total MT on totalDiesel change
         $("#addModal").find('#totalDiesel').on('change', function(){
+            var previousReading = parseFloat($('#addModal').find('#previousDieselReading').val()) || 0;
+            var incoming = parseFloat($('#addModal').find('#dieselIncoming').val()) || 0;
             var totalWeight = 0.00;
+            var usage = 0.00;
             $('#dieselTable').find('input[id^="dieselVolume"]').each(function(){
                 var weight = parseFloat($(this).val()) || 0;
                 totalWeight += weight;
             });
 
+            console.log(previousReading, incoming, totalWeight);
+
+            // Calculate Usage
+            if (incoming > 0){
+                usage = previousReading + incoming - totalWeight;
+            }
+
+            $('#addModal').find('#totalDieselUsage').val(usage.toFixed(2));
             $(this).val(totalWeight.toFixed(2));
         });
 
@@ -1967,14 +2000,6 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
             // dieselCount++;
         });
-
-        $('#addModal').find('#previousDieselReading').on('change', function(){
-            $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
-        });
-
-        $('#addModal').find('#totalDiesel').on('change', function(){
-            $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
-        });
         /* Diesel Table End */
 
 
@@ -2026,6 +2051,25 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
         });
 
+        $('#addModal').find('#otherDieselTotalTransportUsage').on('change', function(){
+            var totalDieselUsage = parseFloat($('#addModal').find('#totalDieselUsage').val()) || 0;
+            var totalUsage = 0.00;
+
+            // Sum up all transport usage from otherDieselTable
+            $('#otherDieselTable').find('input[id^="otherDieselUsage"]').each(function(){
+                var usage = parseFloat($(this).val()) || 0;
+                totalUsage += usage;
+            });
+
+            $(this).val(totalUsage.toFixed(2));
+            
+            // Total Production Calculation
+            var totalProduction = totalDieselUsage - totalUsage;
+            $('#addModal').find('#totalDieselProduction').val(totalProduction)
+        });
+
+
+
         $('#addOtherDiesel').click(function(){
             var $addContents = $("#otherDieselDetail").clone();
             $("#otherDieselTable").append($addContents.html());
@@ -2042,22 +2086,6 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#otherDieselTable").find('#otherDieselUsage:last').attr('name', 'otherDieselUsage['+otherDieselCount+']').attr("id", "otherDieselUsage" + otherDieselCount).css("text-align", "center");
 
             otherDieselCount++;
-        });
-
-        $('#addModal').find('#otherDieselTotalTransportUsage').on('change', function(){
-            var previousReading = parseFloat($('#addModal').find('#previousDieselReading').val()) || 0;
-            var totalDiesel = parseFloat($('#addModal').find('#totalDiesel').val()) || 0;
-            var totalUsage = 0.00;
-            var totalTransportUsage = 0.00;
-
-            // Sum up all transport usage from otherDieselTable
-            $('#otherDieselTable').find('input[id^="otherDieselUsage"]').each(function(){
-                var usage = parseFloat($(this).val()) || 0;
-                totalUsage += usage;
-            });
-
-            var totalTransportUsage = totalDiesel - previousReading - totalUsage;
-            $(this).val(totalTransportUsage.toFixed(2));
         });
 
         /* Other Diesel Table End */
