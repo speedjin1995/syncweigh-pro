@@ -252,6 +252,12 @@ if (empty($_POST["totalDiesel"])) {
     $totalDiesel = trim($_POST["totalDiesel"]);
 }
 
+if (empty($_POST["totalDieselUsage"])) {
+    $totalDieselUsage = null;
+} else {
+    $totalDieselUsage = trim($_POST["totalDieselUsage"]);
+}
+
 if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData = [];
     // $dieselData[] = array(
@@ -300,6 +306,7 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData['previousDieselReading'] = $previousDieselReading;
     $dieselData['dieselLastMeterReading'] = $dieselLastMeterReading;
     $dieselData['totalDiesel'] = $totalDiesel;
+    $dieselData['totalDieselUsage'] = $totalDieselUsage;
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 } else {
     $dieselData = [];
@@ -323,6 +330,7 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData['previousDieselReading'] = $previousDieselReading;
     $dieselData['dieselLastMeterReading'] = $dieselLastMeterReading;
     $dieselData['totalDiesel'] = $totalDiesel;
+    $dieselData['totalDieselUsage'] = $totalDieselUsage;
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 }
 
@@ -331,6 +339,12 @@ if (empty($_POST["otherDieselTotalTransportUsage"])) {
     $otherDieselTotalTransportUsage = null;
 } else {
     $otherDieselTotalTransportUsage = trim($_POST["otherDieselTotalTransportUsage"]);
+}
+
+if (empty($_POST["totalDieselProduction"])) {
+    $totalDieselProduction = null;
+} else {
+    $totalDieselProduction = trim($_POST["totalDieselProduction"]);
 }
 
 if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
@@ -354,6 +368,7 @@ if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
     }
 
     $otherDieselData['otherDieselTotalTransportUsage'] = $otherDieselTotalTransportUsage;
+    $otherDieselData['totalDieselProduction'] = $totalDieselProduction;
     $otherDieselData = json_encode($otherDieselData, JSON_PRETTY_PRINT);
 } else {
     $otherDieselData = NULL;

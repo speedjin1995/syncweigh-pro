@@ -1916,6 +1916,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $('#addModal').find("#totalDiesel").trigger('change');
         });
 
+        // Trigger Change for previousDieselReading
+        $('#addModal').find('#previousDieselReading').on('change', function(){
+            $('#addModal').find('#totalDiesel').trigger('change');
+        });
+
         // Trigger Change for dieselIncoming
         $('#addModal').find('#dieselIncoming').on('change', function(){
             $('#addModal').find('#totalDiesel').trigger('change');
@@ -1941,6 +1946,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
             $('#addModal').find('#totalDieselUsage').val(usage.toFixed(2));
             $(this).val(totalWeight.toFixed(2));
+            $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
         });
 
         $(".add-diesel").click(function(event, asset){
@@ -2065,10 +2071,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             
             // Total Production Calculation
             var totalProduction = totalDieselUsage - totalUsage;
-            $('#addModal').find('#totalDieselProduction').val(totalProduction)
+            $('#addModal').find('#totalDieselProduction').val(totalProduction.toFixed(2));
         });
-
-
 
         $('#addOtherDiesel').click(function(){
             var $addContents = $("#otherDieselDetail").clone();
@@ -2854,6 +2858,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 $('#addModal').find('#previousDieselReading').val(obj.message.previousDieselReading);
                 $('#addModal').find('#dieselLastMeterReading').val(obj.message.dieselLastMeterReading);
                 $('#addModal').find('#totalDiesel').val(obj.message.totalDiesel);
+                $('#addModal').find('#totalDieselUsage').val(obj.message.totalDieselUsage);
 
                 // Other Diesel Table Processing
                 $('#otherDieselTable').html('');
@@ -2880,6 +2885,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 }
 
                 $('#addModal').find('#otherDieselTotalTransportUsage').val(obj.message.otherDieselTotalTransportUsage);
+                $('#addModal').find('#totalDieselProduction').val(obj.message.totalDieselProduction);
 
                 // Hotoil Table Processing
                 $('#hotoilTable').html('');

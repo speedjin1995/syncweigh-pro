@@ -134,6 +134,7 @@ if(isset($_POST['userID'])){
                 $message['previousDieselReading'] = $dieselTemp["previousDieselReading"] ?? 0;
                 $message['totalDiesel'] = $dieselTemp["totalDiesel"] ?? 0;
                 $message['dieselLastMeterReading'] = $dieselTemp["dieselLastMeterReading"] ?? 0;
+                $message['totalDieselUsage'] = $dieselTemp["totalDieselUsage"] ?? 0;
                 ########################################################################################
 
                 ## other diesel Processing ##
@@ -148,6 +149,7 @@ if(isset($_POST['userID'])){
                 }
                 $message['other_diesel'] = $otherDieselRows;
                 $message['otherDieselTotalTransportUsage'] = $otherDieselTemp["otherDieselTotalTransportUsage"] ?? 0;
+                $message['totalDieselProduction'] = $otherDieselTemp["totalDieselProduction"] ?? 0;
                 ########################################################################################
 
                 ## hotoil Processing ##
