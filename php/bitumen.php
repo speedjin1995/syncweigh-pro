@@ -94,6 +94,12 @@ if (!empty($_POST["no"]) && count($_POST["no"]) > 0) {
 }
 
 # Processing for lfo data
+if (empty($_POST["previousLfoReading"])) {
+    $previousLfoReading = null;
+} else {
+    $previousLfoReading = trim($_POST["previousLfoReading"]);
+}
+
 if (empty($_POST["lfoIncoming"])) {
     $lfoIncoming = null;
 } else {
@@ -106,10 +112,22 @@ if (empty($_POST["lfoLastMeterReading"])) {
     $lfoLastMeterReading = trim($_POST["lfoLastMeterReading"]);
 }
 
+if (empty($_POST["totalLfoLitre"])) {
+    $totalLfoLitre = null;
+} else {
+    $totalLfoLitre = trim($_POST["totalLfoLitre"]);
+}
+
 if (empty($_POST["totalLfo"])) {
     $totalLfo = null;
 } else {
     $totalLfo = trim($_POST["totalLfo"]);
+}
+
+if (empty($_POST["totalLfoUsage"])) {
+    $totalLfoUsage = null;
+} else {
+    $totalLfoUsage = trim($_POST["totalLfoUsage"]);
 }
 
 if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
@@ -136,16 +154,22 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
         );
     }
 
+    $lfoData['previousLfoReading'] = $previousLfoReading;
     $lfoData['lfoIncoming'] = $lfoIncoming;
     $lfoData['lfoLastMeterReading'] = $lfoLastMeterReading;
+    $lfoData['totalLfoLitre'] = $totalLfoLitre;
     $lfoData['totalLfo'] = $totalLfo;
+    $lfoData['totalLfoUsage'] = $totalLfoUsage;
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 } else {
     $lfoData = [];
 
+    $lfoData['previousLfoReading'] = $previousLfoReading;
     $lfoData['lfoIncoming'] = $lfoIncoming;
     $lfoData['lfoLastMeterReading'] = $lfoLastMeterReading;
+    $lfoData['totalLfoLitre'] = $totalLfoLitre;
     $lfoData['totalLfo'] = $totalLfo;
+    $lfoData['totalLfoUsage'] = $totalLfoUsage;
     $lfoData = json_encode($lfoData, JSON_PRETTY_PRINT);
 }
 
@@ -228,6 +252,12 @@ if (empty($_POST["totalDiesel"])) {
     $totalDiesel = trim($_POST["totalDiesel"]);
 }
 
+if (empty($_POST["totalDieselUsage"])) {
+    $totalDieselUsage = null;
+} else {
+    $totalDieselUsage = trim($_POST["totalDieselUsage"]);
+}
+
 if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData = [];
     // $dieselData[] = array(
@@ -276,6 +306,7 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData['previousDieselReading'] = $previousDieselReading;
     $dieselData['dieselLastMeterReading'] = $dieselLastMeterReading;
     $dieselData['totalDiesel'] = $totalDiesel;
+    $dieselData['totalDieselUsage'] = $totalDieselUsage;
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 } else {
     $dieselData = [];
@@ -299,6 +330,7 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselData['previousDieselReading'] = $previousDieselReading;
     $dieselData['dieselLastMeterReading'] = $dieselLastMeterReading;
     $dieselData['totalDiesel'] = $totalDiesel;
+    $dieselData['totalDieselUsage'] = $totalDieselUsage;
     $dieselData = json_encode($dieselData, JSON_PRETTY_PRINT);
 }
 
@@ -307,6 +339,12 @@ if (empty($_POST["otherDieselTotalTransportUsage"])) {
     $otherDieselTotalTransportUsage = null;
 } else {
     $otherDieselTotalTransportUsage = trim($_POST["otherDieselTotalTransportUsage"]);
+}
+
+if (empty($_POST["totalDieselProduction"])) {
+    $totalDieselProduction = null;
+} else {
+    $totalDieselProduction = trim($_POST["totalDieselProduction"]);
 }
 
 if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
@@ -330,6 +368,7 @@ if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
     }
 
     $otherDieselData['otherDieselTotalTransportUsage'] = $otherDieselTotalTransportUsage;
+    $otherDieselData['totalDieselProduction'] = $totalDieselProduction;
     $otherDieselData = json_encode($otherDieselData, JSON_PRETTY_PRINT);
 } else {
     $otherDieselData = NULL;

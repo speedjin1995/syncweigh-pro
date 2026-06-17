@@ -1,4 +1,8 @@
 <?php
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
@@ -22,6 +26,7 @@ if(isset($_GET['id'])){
             if($row = $result->fetch_assoc()){
                 $plantId = $row['plant_id'];
                 $plantCode = $row['plant_code'];
+                $plant = searchPlantById($row['plant_id'], $db);
                 $batchDrum = $row['batch_drum'];
                 $declarationDate = !empty($row['declaration_datetime']) ? date('Y-m-d', strtotime($row['declaration_datetime'])) : null;
 
@@ -33,6 +38,12 @@ if(isset($_GET['id'])){
                         ));
                     exit;
                 }
+
+                // Get Company Detail
+                $companyStmt = $db->prepare("SELECT * FROM Company WHERE id = 1");
+                $companyStmt->execute();
+                $companyResult = $companyStmt->get_result();
+                $companyRow = $companyResult->fetch_assoc();
 
                 // Get Bitumen Raw Mat Id
                 $result = $db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code = 'BTBI001' AND status = 0 LIMIT 1");
@@ -76,10 +87,10 @@ if(isset($_GET['id'])){
                                 <tr>
                                     <td rowspan="2" style="width: 15%; text-align: center; font-weight: bold;"><img src="path/to/logo.png" alt="Logo" style="max-width: 100%; height: auto;"></td>
                                     <td colspan="6" style="width: 45%; text-align: center; font-weight: bold;">
-                                        <div class="title">EAST ROCK MARKETING SDN BHD</div>
-                                        <div style="font-weight: normal;">(130037-H)</div>
+                                        <div class="title">'.$companyRow['name'].'</div>
+                                        <div style="font-weight: normal;">('.$companyRow['company_reg_no'].')</div>
                                     </td>
-                                    <td colspan="5" style="width: 20%; text-align: center; font-weight: bold;">LOCATION:<br><span style="font-weight: normal;">' . htmlspecialchars($row['plant_code']) . '</span></td>
+                                    <td colspan="5" style="width: 20%; text-align: center; font-weight: bold;">LOCATION:<br><span style="font-weight: normal;">' . htmlspecialchars($plant['plant_code']) . ' - ' . $plant['name'] . '</span></td>
                                 </tr>
                                 <tr>
                                     <td colspan="6" style="width: 45%; text-align: center; font-weight: bold;">DAILY STOCK ANALYSIS</td>
@@ -155,7 +166,7 @@ if(isset($_GET['id'])){
                                 </tr>
                                 <tr class="no-border">
                                     <td colspan="9"></td>
-                                    <td class="right"><b>Date :</b></td>
+                                    <td class="right"><b>Date : </b>'.date('d/m/Y', strtotime($row['declaration_datetime'])).'</td>
                                     <td colspan="2"></td>
                                 </tr>
                                 <tr>
@@ -181,8 +192,46 @@ if(isset($_GET['id'])){
                                     <th></th>
                                 </tr>';
 
+                                // Get LFO Stock Take
+                                $lfoPrevReading = 0;
+                                $lfoIncoming = 0;
+                                $totalLfoLitre = 0;
+                                $totalLfo = 0;
+                                $totalLfoUsage = 0;
+                                if (!empty($row['lfo'])){
+                                    $lfo = json_decode($row['lfo'], true);
+                                    $lfoPrevReading = floatval($lfo['previousLfoReading']);
+                                    $lfoIncoming = floatval($lfo['lfoIncoming']);
+                                    $totalLfoLitre = floatval($lfo['totalLfoLitre']);
+                                    $totalLfo = floatval($lfo['totalLfo']);
+                                    $totalLfoUsage = floatval($lfo['totalLfoUsage']);
+                                }
+
+                                // Get Diesel Stock Take
+                                $dieselIncoming = 0;
+                                $previousDieselReading = 0;
+                                $totalDiesel = 0;
+                                $totalDieselUsage = 0;
+                                if (!empty($row['diesel'])){
+                                    $diesel = json_decode($row['diesel'], true);
+                                    $dieselIncoming = floatval($diesel['dieselIncoming']);
+                                    $previousDieselReading = floatval($diesel['previousDieselReading']);
+                                    $totalDiesel = floatval($diesel['totalDiesel']);
+                                    $totalDieselUsage = floatval($diesel['totalDieselUsage']);
+                                }
+
+                                // Get Other Diesel Stock Take
+                                $otherDieselTotalTransportUsage = 0;
+                                $totalDieselProduction = 0;
+                                if (!empty($row['other_diesel'])){
+                                    $otherDiesel = json_decode($row['other_diesel'], true);
+                                    $otherDieselTotalTransportUsage = floatval($otherDiesel['otherDieselTotalTransportUsage']);
+                                    $totalDieselProduction = floatval($otherDiesel['totalDieselProduction']);
+                                }
+
                                 $rowNum = $rowNum+10;
                                 $subtotalRowStart = $rowNum;
+                                $productLoopCount = 0;
                                 foreach ($products as $product){
                                     $productCode = $product['product_code'];
                                     $productName = $product['product_name'];
@@ -213,13 +262,14 @@ if(isset($_GET['id'])){
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <td style="mso-number-format:\'0\.00\'">'.($productLoopCount == 0 ? round($lfoPrevReading, 2) : ($productLoopCount == 1 ? round($lfoIncoming, 2) : ($productLoopCount == 2 ? round($totalLfoLitre, 2) : ($productLoopCount == 3 ? '=I'.($rowNum-3).'+I'.($rowNum-2).'-I'.($rowNum-1) : '')))).'</td>
+                                            <td style="mso-number-format:\'0\.00\'">'.($productLoopCount == 0 ? round($previousDieselReading, 2) : ($productLoopCount == 1 ? round($dieselIncoming, 2) : ($productLoopCount == 2 ? round($totalDiesel, 2) : ($productLoopCount == 3 ? '=J'.($rowNum-3).'+J'.($rowNum-2).'-J'.($rowNum-1) : ($productLoopCount == 4 ? round($otherDieselTotalTransportUsage, 2) : ($productLoopCount == 5 ? '=J'.($rowNum-2).'-J'.($rowNum-1) : '')))))).'</td>
                                             <td></td>
                                             <td></td>
                                         </tr>
                                     ';
                                     $rowNum++;
+                                    $productLoopCount++;
                                 }
 
                                 // Get Bitumen Stock Take
@@ -229,20 +279,6 @@ if(isset($_GET['id'])){
                                     $bitumen = json_decode($row['60/70'], true);
                                     $bitumenActualStock = floatval($bitumen['totalSixtySeventy']);
                                     $bitumenIncomingWeight = floatval($bitumen['bitumenIncoming']);
-                                }
-
-                                // Get LFO Stock Take
-                                $lfoStockTake = 0;
-                                if (!empty($row['lfo'])){
-                                    $lfo = json_decode($row['lfo'], true);
-                                    $lfoStockTake = floatval($lfo['totalLfo']);
-                                }
-
-                                // Get Diesel Stock Take
-                                $dieselStockTake = 0;
-                                if (!empty($row['diesel'])){
-                                    $diesel = json_decode($row['diesel'], true);
-                                    $dieselStockTake = floatval($diesel['totalDiesel']);
                                 }
 
                                 // Get Previous Declaration Date Stock Take
@@ -265,8 +301,8 @@ if(isset($_GET['id'])){
                                     <td>=SUM(F'.$subtotalRowStart.':F'.($rowNum-1).')</td>
                                     <td>=SUM(G'.$subtotalRowStart.':G'.($rowNum-1).')</td>
                                     <td>=SUM(H'.$subtotalRowStart.':H'.($rowNum-1).')</td>
-                                    <td style="mso-number-format:\'0\.00\'">'.round($lfoStockTake, 2).'</td>
-                                    <td style="mso-number-format:\'0\.00\'">'.round($dieselStockTake, 2).'</td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($totalLfoLitre, 2).'</td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($totalDieselUsage, 2).'</td>
                                     <td></td>
                                     <td></td>
                                 </tr>
