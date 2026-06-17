@@ -1324,7 +1324,7 @@ if ($user != null && $user != ''){
                         $('#convertedQtyUnit').text(basicUom);
                         $('#balanceUnit').text(basicUom);
                         $('#convertedOrderQtyUnit').val(obj.message.basic_uom_id);
-                        $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+                        $('#convertedOrderQty').trigger('keyup'); // Trigger for order quantity to reflect conversion
                     }
                     else if(obj.status === 'failed'){
                         alert(obj.message);
@@ -1338,7 +1338,7 @@ if ($user != null && $user != ''){
                     }
                 });
             }else{
-                $('#convertedOrderQty').trigger('change'); // Trigger for order quantity to reflect conversion
+                $('#convertedOrderQty').trigger('keyup'); // Trigger for order quantity to reflect conversion
             }
         });
         
@@ -1372,10 +1372,10 @@ if ($user != null && $user != ''){
             var convertedUnitName = $('#convertedQtyUnit :selected').data('unit');
 
             $('#balanceUnit').text(convertedUnitName);
-            $('#convertedOrderQty').trigger('change');
+            $('#convertedOrderQty').trigger('keyup');
         });
 
-        $('#convertedOrderQty').on('change', function(){
+        $('#convertedOrderQty').on('keyup', function(){
             var convertedOrderWeight = parseFloat($(this).val());
             var plant = $('#plant').val();
             var productId = $('#product :selected').data('id'); 
