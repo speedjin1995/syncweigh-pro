@@ -1770,7 +1770,12 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             }
         });
 
-        // Event delegation for level
+        // Event delegation for volume
+        $("#lfoTable").on('change', 'input[id^="lfoVolume"]', function(){
+            $('#addModal').find("#totalLfo").trigger('change');
+        });
+
+        // Event delegation for weight
         $("#lfoTable").on('change', 'input[id^="lfoWeight"]', function(){
             $('#addModal').find("#totalLfo").trigger('change');
         });
