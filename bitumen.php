@@ -23,6 +23,7 @@ $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name 
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier3 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 
 ?>
 
@@ -330,7 +331,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
+                                                            <th width="20%">Supplier</th>
                                                             <th>Name</th>
                                                             <th>Status</th>
                                                             <th>Level (m)</th>
@@ -463,7 +464,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         <tr>
                                                             <th colspan="2"></th>
                                                             <th colspan="2"></th>
-                                                            <th>Total Usage</th>                                                            <th><input type="number" class="form-control" id="totalDieselUsage" name="totalDieselUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                            <th>Total Usage</th>                                                            
+                                                            <th><input type="number" class="form-control" id="totalDieselUsage" name="totalDieselUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
                                                         </tr>
                                                     </tfoot>
@@ -812,11 +814,16 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
     <script type="text/html" id="lfoDetail">
         <tr class="details">
             <td>
-                <input type="text" class="form-control" id="lfoNo" name="lfoNo" readonly>
+                <input type="hidden" class="form-control" id="lfoNo" name="lfoNo" readonly>
                 <input type="hidden" id="lfoLength" name="lfoLength">
                 <input type="hidden" id="lfoHeight" name="lfoHeight">
                 <input type="hidden" id="lfoDiameter" name="lfoDiameter">
                 <input type="hidden" id="lfoAssetId" name="lfoAssetId">
+                <select class="form-select select2" id="lfoSupplier" name="lfoSupplier">
+                    <?php while($rowSupplier=mysqli_fetch_assoc($supplier5)){ ?>
+                        <option value="<?=$rowSupplier['id'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
+                    <?php } ?>
+                </select>
             </td>
             <td>
                 <input type="text" class="form-control" id="lfoName" name="lfoName">
@@ -1821,6 +1828,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#lfoTable").find('#remove:last').attr("id", "remove" + lfoCount);
 
             $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
+            $("#lfoTable").find('#lfoSupplier:last').attr('name', 'lfoSupplier['+lfoCount+']').attr("id", "lfoSupplier" + lfoCount).css("text-align", "center").select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                dropdownParent: $('#lfoTable') // Prevents dropdown cutoff inside modals/tables
+            });
             $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount);
             $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount);
@@ -1835,6 +1847,18 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#lfoTable").find('#lfoAssetId:last').attr('name', 'lfoAssetId['+lfoCount+']').attr("id", "lfoAssetId" + lfoCount).val(asset ? asset.id || '' : '');
 
             lfoCount++;
+
+            // Apply custom styling to Select2 elements in addModal
+            $('#addModal .select2-container .select2-selection--single').css({
+                'padding-top': '4px',
+                'padding-bottom': '4px',
+                'height': 'auto'
+            });
+
+            $('#addModal .select2-container .select2-selection__arrow').css({
+                'padding-top': '33px',
+                'height': 'auto'
+            });
         });
 
         /* LFO Table End */
@@ -2776,6 +2800,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         $("#lfoTable").find('#remove:last').attr("id", "remove" + lfoCount);
 
                         $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
+                        $("#lfoTable").find('#lfoSupplier:last').attr('name', 'lfoSupplier['+lfoCount+']').attr("id", "lfoSupplier" + lfoCount).css("text-align", "center").val(item.lfoSupplier);
                         $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(item.lfoName);
                         $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount).val(item.lfoStatus);
                         $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount).css("text-align", "center").val(item.lfoLevel);
