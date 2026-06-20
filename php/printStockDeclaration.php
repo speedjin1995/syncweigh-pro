@@ -70,6 +70,7 @@ if(isset($_GET['id'])){
 
                         $otherRawMatList[$otherRawMat['pg76Name']] = [
                             "no" => $otherRawMat['no'],
+                            "pg76Incoming" => $otherRawMat['pg76Incoming'],
                             "pg76Status" => $otherRawMat['pg76Status'],
                             "pg76Temp" => $otherRawMat['pg76Temp'],
                             "pg76Level" => $otherRawMat['pg76Level'],
@@ -305,6 +306,7 @@ if(isset($_GET['id'])){
                                     foreach ($otherRawMatList as $rawMatId => $otherRawMat) {
                                         $otherRawMatCols .= '<td></td>';
                                     }
+                                    
                                     $html .= '
                                         <tr>
                                             <td>'.htmlspecialchars($productName).'</td>
@@ -333,21 +335,41 @@ if(isset($_GET['id'])){
 
                                 // Get Previous Declaration Date Stock Take
                                 $bitumenOpeningStock = 0;
+                                $otherBitumenOpeningMap = [];
                                 if($prevStmt = $db->prepare("SELECT * FROM Bitumen WHERE plant_id = ? AND batch_drum = ? AND DATE(declaration_datetime) < ? AND status = 0 ORDER BY declaration_datetime DESC LIMIT 1")){
                                     $prevStmt->bind_param("sss", $plantId, $batchDrum, $declarationDate);
                                     $prevStmt->execute();
                                     $prevResult = $prevStmt->get_result();
                                     $prevStockTakeRow = $prevResult->fetch_assoc();
                                     $bitumenOpeningStock = json_decode($prevStockTakeRow['60/70'], true)['totalSixtySeventy'];
+                                    if (!empty($prevStockTakeRow['pg76'])) {
+                                        $prevPg76 = json_decode($prevStockTakeRow['pg76'], true);
+                                        foreach ($prevPg76 as $key => $prevOtherRawMat) {
+                                            if (!is_numeric($key)) continue;
+                                            $otherBitumenOpeningMap[$prevOtherRawMat['pg76Name']] = floatval($prevOtherRawMat['pgSeventySix']);
+                                        }
+                                    }
                                 }
 
                                 $otherBitumenEmptyCols = str_repeat('<td></td>', $otherCount);
                                 $otherBitumenSumCols = '';
                                 $otherBitumenRefCols = '';
+                                $otherBitumenIncomingCols = '';
+                                $otherBitumenClosingCols = '';
+                                $otherBitumenVariantCols = '';
+                                $otherBitumenActualCols = '';
+                                $otherBitumenOpeningCols = '';
                                 $colLetter = 'E';
                                 foreach ($otherRawMatList as $rawMatId => $otherRawMat) {
                                     $otherBitumenSumCols .= '<td>=SUM('.$colLetter.$subtotalRowStart.':'.$colLetter.($rowNum-1).')</td>';
                                     $otherBitumenRefCols .= '<td>='.$colLetter.($rowNum+1).'</td>';
+                                    $otherBitumenIncomingCols .= '<td style="mso-number-format:\'0\.00\'">'.round(floatval($otherRawMat['pg76Incoming']), 2).'</td>';
+                                    $otherBitumenClosingCols .= '<td>=SUM('.$colLetter.($rowNum+2).'+'.$colLetter.($rowNum+3).'-'.$colLetter.($rowNum+4).')</td>';
+                                    $otherBitumenVariantCols .= '<td>='.$colLetter.($rowNum+6).'-'.$colLetter.($rowNum+5).'</td>';
+                                    $otherBitumenActualCols .= '<td style="mso-number-format:\'0\.00\'">'.round(floatval($otherRawMat['pgSeventySix']), 2).'</td>';
+                                    $otherBitumenOpeningCols .= '<td style="mso-number-format:\'0\.00\'">'.round($otherBitumenOpeningMap[$rawMatId] ?? 0, 2).'</td>';
+                                    $otherBitumenTargetedUsageCols .= '<td>='.$colLetter.($rowNum+2).'</td>';
+
                                     $colLetter++;
                                 }
 
@@ -368,7 +390,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td style="mso-number-format:\'0\.00\'">'.round($bitumenIncomingWeight, 2).'</td>
-                                    '.$otherBitumenEmptyCols.'
+                                    '.$otherBitumenIncomingCols.'
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -379,7 +401,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td style="mso-number-format:\'0\.00\'">'.round($bitumenOpeningStock, 2).'</td>
-                                    '.$otherBitumenEmptyCols.'
+                                    '.$otherBitumenOpeningCols.'
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -401,7 +423,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td>=D'.$rowNum.'</td>
-                                    '.$otherBitumenEmptyCols.'
+                                    '.$otherBitumenTargetedUsageCols.'
                                     <td class="left"><b>Diesel Usage</b></td>
                                     <td style="mso-number-format:\'0\.00\'">=ROUND('.$dieselColLetter.$rowNum.',2)</td>
                                     <td>Litre /day</td>
@@ -412,7 +434,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td>=SUM(D'.($rowNum+2).'+D'.($rowNum+3).'-D'.($rowNum+4).')</td>
-                                    '.$otherBitumenEmptyCols.'
+                                    '.$otherBitumenClosingCols.'
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -423,7 +445,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td style="mso-number-format:\'0\.00\'">'.round($bitumenActualStock, 2).'</td>
-                                    '.$otherBitumenEmptyCols.'
+                                    '.$otherBitumenActualCols.'
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -434,7 +456,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td>=D'.($rowNum+6).'-D'.($rowNum+5).'</td>
-                                    '.$otherBitumenEmptyCols.'
+                                    '.$otherBitumenVariantCols.'
                                     <td></td>
                                     <td></td>
                                     <td></td>
