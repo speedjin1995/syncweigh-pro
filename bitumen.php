@@ -24,6 +24,7 @@ $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 $supplier3 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_mat_code <> 'BTBI001'");
 
 ?>
 
@@ -550,8 +551,8 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Bitumen PG 76</h5>
-                                                    <button type="button" class="btn btn-danger add-pg-76" id="addpg76">Add PG 76</button>
+                                                    <h5 class="card-title mb-0">Other Bitumen</h5>
+                                                    <button type="button" class="btn btn-danger add-pg-76" id="addpg76">Add</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -974,7 +975,11 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 <input type="hidden" id="pg76AssetId" name="pg76AssetId">
             </td>
             <td>
-                <input type="text" class="form-control" id="pg76Name" name="pg76Name">
+                <select class="form-control select2" id="pg76Name" name="pg76Name">
+                    <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                        <option value="<?=$rowRawMat['id']?>"><?=$rowRawMat['name'] ?></option>
+                    <?php } ?>
+                </select>
             </td>
             <td>
                 <select class="form-select" id="pg76Status" name="pg76Status">
@@ -1966,8 +1971,6 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 totalWeight += weight;
             });
 
-            console.log(previousReading, incoming, totalWeight);
-
             // Calculate Usage
             if (incoming > 0){
                 usage = previousReading + incoming - totalWeight;
@@ -2293,7 +2296,11 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#pg76Table").find('#remove:last').attr("id", "remove" + pg76Count);
 
             $("#pg76Table").find('#pg76No:last').attr('name', 'pg76No['+pg76Count+']').attr("id", "pg76No" + pg76Count).css("text-align", "center").val(pg76Count + 1);
-            $("#pg76Table").find('#pg76Name:last').attr('name', 'pg76Name['+pg76Count+']').attr("id", "pg76Name" + pg76Count).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
+            $("#pg76Table").find('#pg76Name:last').attr('name', 'pg76Name['+pg76Count+']').attr("id", "pg76Name" + pg76Count).css("text-align", "center").select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                dropdownParent: $('#pg76Table') // Prevents dropdown cutoff inside modals/tables
+            });;
             $("#pg76Table").find('#pg76Status:last').attr('name', 'pg76Status['+pg76Count+']').attr("id", "pg76Status" + pg76Count);
             $("#pg76Table").find('#pg76Temp:last').attr('name', 'pg76Temp['+pg76Count+']').attr("id", "pg76Temp" + pg76Count).css("text-align", "center");
             $("#pg76Table").find('#pg76Level:last').attr('name', 'pg76Level['+pg76Count+']').attr("id", "pg76Level" + pg76Count).css("text-align", "center");
@@ -2307,6 +2314,18 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#pg76Table").find('#pg76AssetId:last').attr('name', 'pg76AssetId['+pg76Count+']').attr("id", "pg76AssetId" + pg76Count).val(asset ? asset.id || '' : '');
 
             pg76Count++;
+
+            // Apply custom styling to Select2 elements in addModal
+            $('#addModal .select2-container .select2-selection--single').css({
+                'padding-top': '4px',
+                'padding-bottom': '4px',
+                'height': 'auto'
+            });
+
+            $('#addModal .select2-container .select2-selection__arrow').css({
+                'padding-top': '33px',
+                'height': 'auto'
+            });
         });
 
         /* PG 76 Table End */
