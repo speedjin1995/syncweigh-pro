@@ -561,8 +561,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
                                                             <th>Name</th>
+                                                            <th>Incoming</th>
                                                             <th>Status</th>
                                                             <!-- <th>Temperature (&deg;C)</th> -->
                                                             <th>Level (mm)</th>
@@ -967,19 +967,20 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
     <script type="text/html" id="pg76Detail">
         <tr class="details">
-            <td>
-                <input type="text" class="form-control" id="pg76No" name="pg76No" readonly>
-                <input type="hidden" id="pg76Length" name="pg76Length">
-                <input type="hidden" id="pg76Height" name="pg76Height">
-                <input type="hidden" id="pg76Diameter" name="pg76Diameter">
-                <input type="hidden" id="pg76AssetId" name="pg76AssetId">
-            </td>
+            <input type="hidden" class="form-control" id="pg76No" name="pg76No" readonly>
+            <input type="hidden" id="pg76Length" name="pg76Length">
+            <input type="hidden" id="pg76Height" name="pg76Height">
+            <input type="hidden" id="pg76Diameter" name="pg76Diameter">
+            <input type="hidden" id="pg76AssetId" name="pg76AssetId">
             <td>
                 <select class="form-control select2" id="pg76Name" name="pg76Name">
                     <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
                         <option value="<?=$rowRawMat['id']?>"><?=$rowRawMat['name'] ?></option>
                     <?php } ?>
                 </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="pg76Incoming" name="pg76Incoming" style="background-color:white;" value="0.00">
             </td>
             <td>
                 <select class="form-select" id="pg76Status" name="pg76Status">
@@ -2172,9 +2173,9 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         $("#pg76Table").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
 
-            $("#pg76Table tr").each(function (index) {
-                $(this).find('input[name^="pg76No"]').val(index + 1);
-            });
+            // $("#pg76Table tr").each(function (index) {
+            //     $(this).find('input[name^="pg76No"]').val(index + 1);
+            // });
 
             $('input[id^="pgSeventySix"]').trigger('change');
 
@@ -2301,6 +2302,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 placeholder: "Please Select",
                 dropdownParent: $('#pg76Table') // Prevents dropdown cutoff inside modals/tables
             });;
+            $("#pg76Table").find('#pg76Incoming:last').attr('name', 'pg76Incoming['+pg76Count+']').attr("id", "pg76Incoming" + pg76Count).css("text-align", "center");
             $("#pg76Table").find('#pg76Status:last').attr('name', 'pg76Status['+pg76Count+']').attr("id", "pg76Status" + pg76Count);
             $("#pg76Table").find('#pg76Temp:last').attr('name', 'pg76Temp['+pg76Count+']').attr("id", "pg76Temp" + pg76Count).css("text-align", "center");
             $("#pg76Table").find('#pg76Level:last').attr('name', 'pg76Level['+pg76Count+']').attr("id", "pg76Level" + pg76Count).css("text-align", "center");
@@ -2972,6 +2974,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
                         $("#pg76Table").find('#pg76No:last').attr('name', 'pg76No['+pg76Count+']').attr("id", "pg76No" + pg76Count).css("text-align", "center").val(pg76Count + 1);
                         $("#pg76Table").find('#pg76Name:last').attr('name', 'pg76Name['+pg76Count+']').attr("id", "pg76Name" + pg76Count).css("text-align", "center").val(item.pg76Name || '');
+                        $("#pg76Table").find('#pg76Incoming:last').attr('name', 'pg76Incoming['+pg76Count+']').attr("id", "pg76Incoming" + pg76Count).css("text-align", "center").val(item.pg76Incoming || '0.00');
                         $("#pg76Table").find('#pg76Status:last').attr('name', 'pg76Status['+pg76Count+']').attr("id", "pg76Status" + pg76Count).val(item.pg76Status || '');
                         $("#pg76Table").find('#pg76Temp:last').attr('name', 'pg76Temp['+pg76Count+']').attr("id", "pg76Temp" + pg76Count).css("text-align", "center").val(item.pg76Temp);
                         $("#pg76Table").find('#pg76Level:last').attr('name', 'pg76Level['+pg76Count+']').attr("id", "pg76Level" + pg76Count).css("text-align", "center").val(item.pg76Level);

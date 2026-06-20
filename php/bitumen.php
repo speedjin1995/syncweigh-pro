@@ -405,6 +405,7 @@ if (empty($_POST["totalPg76"])) {
 if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
     $pg76Data = [];
     $pg76No = $_POST["pg76No"];
+    $pg76Incoming = $_POST["pg76Incoming"];
     $pg76AssetId = $_POST["pg76AssetId"];
     $pg76Name = $_POST["pg76Name"];
     $pg76Status = $_POST["pg76Status"];
@@ -416,6 +417,7 @@ if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
     foreach ($pg76No as $key => $no) {
         $pg76Data[] = array(
             "no" => $no,
+            "pg76Incoming" => $pg76Incoming[$key],
             "pg76AssetId" => $pg76AssetId[$key],
             "pg76Name" => $pg76Name[$key],
             "pg76Status" => $pg76Status[$key],
