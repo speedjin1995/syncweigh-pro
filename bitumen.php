@@ -473,7 +473,7 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Transport</h5>
+                                                    <h5 class="card-title mb-0">Transport / Burner</h5>
                                                     <button type="button" class="btn btn-danger add-other-diesel" id="addOtherDiesel">Add</button>
                                                 </div>
                                             </div>
@@ -483,7 +483,7 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         <tr>
                                                             <th width="10%">No</th>
                                                             <th>Type</th>
-                                                            <th>Vehicle No</th>
+                                                            <th>Vehicle No / Others</th>
                                                             <th>1st Reading</th>
                                                             <th>2nd Reading</th>
                                                             <th>Usage</th>
@@ -900,8 +900,8 @@ $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             <td>
                 <select class="form-select" id="otherDieselType" name="otherDieselType">
                     <option value="Transport">Transport</option>
-                    <!-- <option value="Hotoil">Hotoil</option>
-                    <option value="Burner">Burner</option> -->
+                    <!-- <option value="Hotoil">Hotoil</option> -->
+                    <option value="Burner">Burner</option>
                 </select>
             </td>
             <td>

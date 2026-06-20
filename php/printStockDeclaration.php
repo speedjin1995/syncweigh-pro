@@ -301,7 +301,7 @@ if(isset($_GET['id'])){
                                     <td>=SUM(F'.$subtotalRowStart.':F'.($rowNum-1).')</td>
                                     <td>=SUM(G'.$subtotalRowStart.':G'.($rowNum-1).')</td>
                                     <td>=SUM(H'.$subtotalRowStart.':H'.($rowNum-1).')</td>
-                                    <td style="mso-number-format:\'0\.00\'">'.round($totalLfoLitre, 2).'</td>
+                                    <td style="mso-number-format:\'0\.00\'">'.round($totalLfoUsage, 2).'</td>
                                     <td style="mso-number-format:\'0\.00\'">'.round($totalDieselUsage, 2).'</td>
                                     <td></td>
                                     <td></td>
