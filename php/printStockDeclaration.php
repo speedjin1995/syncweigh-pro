@@ -49,20 +49,10 @@ if(isset($_GET['id'])){
                 $result = $db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code = 'BTBI001' AND status = 0 LIMIT 1");
                 $bitumenRawMatId = $result ? $result->fetch_assoc()['id'] ?? null : null;
 
-                $products = $db->query("
-                    SELECT STL.*, P.product_code AS product_code, P.name AS product_name, PRW.raw_mat_basic_uom AS percentage FROM Stock_Take_List STL 
-                    JOIN Product P ON STL.product_id = P.id 
-                    JOIN Product_RawMat PRW ON PRW.product_id = P.id
-                    WHERE STL.plant_id = " . $plantId . " AND STL.batch_drum = '" . $batchDrum ."' 
-                    AND PRW.raw_mat_id = ". $bitumenRawMatId ." AND PRW.plant_id = " . $plantId . " AND PRW.batch_drum = '" . $batchDrum ."' AND PRW.status = 0
-                    ORDER BY STL.sort ASC"
-                ); 
-
                 // Get Other Bitumen
                 $otherRawMatList = [];
                 if (!empty($row['pg76'])){
                     $otherRawMats = json_decode($row['pg76'], true);
-
                     foreach ($otherRawMats as $key => $otherRawMat){
                         if (!is_numeric($key)) {
                             continue;
@@ -80,24 +70,62 @@ if(isset($_GET['id'])){
                     }
                 }
 
-                // Append other bitumen products into $products
-                $products = $products ? $products->fetch_all(MYSQLI_ASSOC) : [];
-                foreach ($otherRawMatList as $rawMatId => $otherRawMat) {
-                    $otherProducts = $db->query("
-                        SELECT STL.*, P.product_code AS product_code, P.name AS product_name, PRW.raw_mat_basic_uom AS percentage FROM Stock_Take_List STL 
-                        JOIN Product P ON STL.product_id = P.id 
-                        JOIN Product_RawMat PRW ON PRW.product_id = P.id
-                        JOIN Raw_Mat RM ON RM.id = PRW.raw_mat_id AND RM.type = 'Bitumen'
-                        WHERE STL.plant_id = " . $plantId . " AND STL.batch_drum = '" . $batchDrum ."' 
-                        AND PRW.raw_mat_id = ". $rawMatId ." AND PRW.plant_id = " . $plantId . " AND PRW.batch_drum = '" . $batchDrum ."' AND PRW.status = 0
-                        ORDER BY STL.sort ASC"
-                    );
-                    if ($otherProducts) {
-                        while ($otherProductRow = $otherProducts->fetch_assoc()) {
-                            array_push($products, $otherProductRow);
+                // Build all raw mat IDs to fetch products and sales in one query each
+                $allRawMatIds = array_merge([$bitumenRawMatId], array_keys($otherRawMatList));
+                $idPlaceholders = implode(',', array_map('intval', $allRawMatIds));
+
+                // Single query: all products across all bitumen raw mats
+                $allProductsResult = $db->query("
+                    SELECT STL.sort, STL.plant_id, STL.product_id, STL.batch_drum,
+                           P.product_code, P.name AS product_name,
+                           PRW.raw_mat_basic_uom AS percentage, PRW.raw_mat_id
+                    FROM Stock_Take_List STL
+                    JOIN Product P ON STL.product_id = P.id
+                    JOIN Product_RawMat PRW ON PRW.product_id = P.id
+                    JOIN Raw_Mat RM ON RM.id = PRW.raw_mat_id AND RM.type = 'Bitumen'
+                    WHERE STL.plant_id = $plantId AND STL.batch_drum = '$batchDrum'
+                    AND PRW.raw_mat_id IN ($idPlaceholders)
+                    AND PRW.plant_id = $plantId AND PRW.batch_drum = '$batchDrum' AND PRW.status = 0
+                    ORDER BY PRW.raw_mat_id = $bitumenRawMatId DESC, STL.sort ASC"
+                );
+                $products = [];
+                $otherRawMatsWithProducts = [];
+                if ($allProductsResult) {
+                    while ($p = $allProductsResult->fetch_assoc()) {
+                        $products[] = $p;
+                        if ($p['raw_mat_id'] != $bitumenRawMatId) {
+                            $otherRawMatsWithProducts[$p['raw_mat_id']] = true;
                         }
                     }
                 }
+
+                // Single query: aggregate nett weight per product code for the declaration date
+                $salesResult = $db->query("
+                    SELECT W.product_code, PRW.raw_mat_id,
+                           SUM(W.nett_weight1) / 1000 AS nett_weight_mt
+                    FROM Weight W
+                    JOIN Product P ON P.product_code = W.product_code
+                    JOIN Product_RawMat PRW ON PRW.product_id = P.id
+                    WHERE W.plant_code = '$plantCode' AND W.batch_drum = '$batchDrum'
+                    AND DATE(W.tare_weight1_date) = '$declarationDate'
+                    AND W.transaction_status = 'SALES' AND W.is_complete = 'Y'
+                    AND W.is_cancel <> 'Y' AND W.status = '0'
+                    AND PRW.raw_mat_id IN ($idPlaceholders) AND PRW.status = 0
+                    GROUP BY W.product_code, PRW.raw_mat_id"
+                );
+                $salesMap = [];
+                $otherRawMatsWithSales = [];
+                if ($salesResult) {
+                    while ($s = $salesResult->fetch_assoc()) {
+                        $salesMap[$s['product_code']] = floatval($s['nett_weight_mt']);
+                        if ($s['raw_mat_id'] != $bitumenRawMatId) {
+                            $otherRawMatsWithSales[$s['raw_mat_id']] = true;
+                        }
+                    }
+                }
+
+                // Filter otherRawMatList to only raw mats with sales
+                $otherRawMatList = array_filter($otherRawMatList, fn($k) => isset($otherRawMatsWithSales[$k]), ARRAY_FILTER_USE_KEY);
 
                 $otherCount = count($otherRawMatList);
                 $totalCols   = 10 + $otherCount; // Mix + Qty + % + 60/70 + CMB + CRMB + LMB + others + LFO + Diesel + 2 trailing
@@ -303,19 +331,7 @@ if(isset($_GET['id'])){
                                     $bitumenRawMatPercentage = $product['percentage'];
                                     $productNettWeight = 0;
 
-                                    // Query Sales for each Product
-                                    if ($product_stmt = $db->prepare("SELECT * FROM Weight WHERE product_code = ? AND plant_code = ? and batch_drum = ? AND DATE(tare_weight1_date) = ? AND transaction_status = 'SALES' AND is_complete = 'Y' AND is_cancel <> 'Y' AND status = '0'")){
-                                        $product_stmt->bind_param("ssss", $productCode, $plantCode, $batchDrum, $declarationDate);
-                                        $product_stmt->execute();
-                                        $productResult = $product_stmt->get_result();
-                            
-                                        while ($productRow = $productResult->fetch_assoc()) {
-                                            $productNettWeight += floatval($productRow['nett_weight1']);
-                                        }
-                                    }
-
-                                    // Convert KG to MT
-                                    $productNettWeight = $productNettWeight / 1000;
+                                    $productNettWeight = $salesMap[$productCode] ?? 0;
 
                                     $lfoVal    = $productLoopCount == 0 ? round($lfoPrevReading, 2)
                                                : ($productLoopCount == 1 ? round($lfoIncoming, 2)
@@ -330,19 +346,21 @@ if(isset($_GET['id'])){
                                                : ($productLoopCount == 5 ? '='.$dieselColLetter.($rowNum-2).'-'.$dieselColLetter.($rowNum-1)
                                                : '')))));
 
+                                    $is60_70 = ($product['raw_mat_id'] == $bitumenRawMatId);
+                                    $bitumenCol = $is60_70 ? '=ROUND(B'.$rowNum.'*C'.$rowNum.',2)' : '';
                                     $otherRawMatCols = '';
-                                    $otherPctColLetter = 'H';
                                     foreach ($otherRawMatList as $rawMatId => $otherRawMat) {
-                                        $otherRawMatCols .= '<td>=ROUND(B'.$rowNum.'*'.$otherPctColLetter.$rowNum.',2)</td>';
-                                        $otherPctColLetter++;
+                                        $otherRawMatCols .= (!$is60_70 && $product['raw_mat_id'] == $rawMatId)
+                                            ? '<td>=ROUND(B'.$rowNum.'*C'.$rowNum.',2)</td>'
+                                            : '<td></td>';
                                     }
-                                    
+
                                     $html .= '
                                         <tr>
                                             <td>'.htmlspecialchars($productName).'</td>
                                             <td style="mso-number-format:\'0\.00\'">'.round($productNettWeight, 2).'</td>
                                             <td>'.number_format($bitumenRawMatPercentage*100, 2).'%</td>
-                                            <td>=ROUND(B'.$rowNum.'*C'.$rowNum.',2)</td>
+                                            <td>'.$bitumenCol.'</td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
