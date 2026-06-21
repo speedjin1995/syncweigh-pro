@@ -1120,6 +1120,7 @@ function edit(id){
                         dropdownParent: $('#rawMaterialTable') // Prevents dropdown cutoff inside modals/tables
                     });
                     $("#rawMaterialTable").find('#rawMatBasicUom:last').attr('name', 'rawMatBasicUom['+rowCount+']').attr("id", "rawMatBasicUom" + rowCount).val(item.raw_mat_basic_uom);
+                    $("#rawMaterialTable").find('#rawMatBasicUnit:last').attr('name', 'rawMatBasicUnit['+rowCount+']').attr("id", "rawMatBasicUnit" + rowCount).text(item.basic_uom_unit);
                     $("#rawMaterialTable").find('#rawMatWeight:last').attr('name', 'rawMatWeight['+rowCount+']').attr("id", "rawMatWeight" + rowCount).val(item.raw_mat_weight);
                     $("#rawMaterialTable").find('#plant:last').attr('name', 'plant['+rowCount+']').attr("id", "plant" + rowCount).val(item.plant_id).select2({
                         allowClear: true,
