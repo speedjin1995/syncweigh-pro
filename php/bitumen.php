@@ -133,6 +133,7 @@ if (empty($_POST["totalLfoUsage"])) {
 if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     $lfoData = [];
     $lfoNo = $_POST["lfoNo"];
+    $lfoSupplier = $_POST["lfoSupplier"];
     $lfoAssetId = $_POST["lfoAssetId"];
     $lfoName = $_POST["lfoName"];
     $lfoStatus = $_POST["lfoStatus"];
@@ -144,6 +145,7 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     foreach ($lfoNo as $key => $no) {
         $lfoData[] = array(
             "no" => $no,
+            "lfoSupplier" => $lfoSupplier[$key],
             "lfoAssetId" => $lfoAssetId[$key],
             "lfoName" => $lfoName[$key],
             "lfoStatus" => $lfoStatus[$key],
@@ -403,6 +405,7 @@ if (empty($_POST["totalPg76"])) {
 if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
     $pg76Data = [];
     $pg76No = $_POST["pg76No"];
+    $pg76Incoming = $_POST["pg76Incoming"];
     $pg76AssetId = $_POST["pg76AssetId"];
     $pg76Name = $_POST["pg76Name"];
     $pg76Status = $_POST["pg76Status"];
@@ -414,6 +417,7 @@ if (!empty($_POST["pg76No"]) && count($_POST["pg76No"]) > 0) {
     foreach ($pg76No as $key => $no) {
         $pg76Data[] = array(
             "no" => $no,
+            "pg76Incoming" => $pg76Incoming[$key],
             "pg76AssetId" => $pg76AssetId[$key],
             "pg76Name" => $pg76Name[$key],
             "pg76Status" => $pg76Status[$key],

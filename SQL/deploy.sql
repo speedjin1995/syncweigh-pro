@@ -3329,3 +3329,6 @@ UPDATE permissions SET name='cancelled' WHERE id=7;
 -- 10/06/2026 --
 INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
 (35, 'reset_password', '[\"34\"]');
+
+-- 20/06/2026 --
+UPDATE Raw_Mat SET type = 'Bitumen' WHERE raw_mat_code IN ('BTBI001', 'BTBI002');

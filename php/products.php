@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require_once 'db_connect.php';
 
@@ -103,6 +107,23 @@ if (isset($_POST['productCode'])) {
                     $batchDrum = $_POST['batchDrum'];
                     $deleteStatus = 1;
                     if(isset($no) && $no != null && count($no) > 0){
+                        // Fetch all Bitumen raw mat IDs once
+                        $bitumenRawMatIds = [];
+                        $placeholders = implode(',', array_fill(0, count($rawMats), '?'));
+                        $types = str_repeat('s', count($rawMats));
+                        if ($bm_stmt = $db->prepare("SELECT id FROM Raw_Mat WHERE id IN ($placeholders) AND type = 'Bitumen'")) {
+                            $bm_stmt->bind_param($types, ...array_values($rawMats));
+                            $bm_stmt->execute();
+                            $bm_result = $bm_stmt->get_result();
+                            while ($bm_row = $bm_result->fetch_assoc()) {
+                                $bitumenRawMatIds[$bm_row['id']] = true;
+                            }
+                            $bm_stmt->close();
+                        }
+
+                        $stl_stmt = $db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) SELECT ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM Stock_Take_List WHERE plant_id = ? AND product_id = ? AND batch_drum = ?)");
+                        $sort = 1;
+
                         # Delete all existing product rawmat records tied to the product id then reinsert
                         if ($delete_stmt = $db->prepare("UPDATE Product_RawMat SET status=? WHERE product_id=?")){
                             $delete_stmt->bind_param('ss', $deleteStatus, $productId);
@@ -122,32 +143,17 @@ if (isset($_POST['productCode'])) {
                                         $product_stmt->bind_param('ssssssss', $productId, $rawMats[$key], $productRawMatCode[$key], $rawMatBasicUom[$key], $rawMatBasicUomUnitId[$key], $rawMatWeight[$key], $plant[$key], $batchDrum[$key]);
                                         $product_stmt->execute();
                                     }
+
+                                    if (isset($bitumenRawMatIds[$rawMats[$key]]) && $stl_stmt) {
+                                        $stl_stmt->bind_param('sssssss', $plant[$key], $productId, $batchDrum[$key], $sort, $plant[$key], $productId, $batchDrum[$key]);
+                                        $stl_stmt->execute();
+                                        $sort++;
+                                    }
                                 }
 
-                                /*for ($i=1; $i <= count($no); $i++) {
-                                    if(isset($no) && $no != null && count($no) > 0){
-                                        for ($i=1; $i <= count($no); $i++) { 
-                                            if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
-                                                $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
-                                                $product_stmt->execute();
-                                            }
-                                        }
-                    
-                                        $product_stmt->close();
-                                    }
-                    
-                                    // if(isset($productRawMatId[$i]) && $productRawMatId[$i] > 0){
-                                    //     if ($product_stmt = $db->prepare("UPDATE Product_RawMat SET product_id=?, raw_mat_code=?, raw_mat_weight=? WHERE id=?")){
-                                    //         $product_stmt->bind_param('ssss', $productId, $rawMats[$i], $rawMatWeight[$i], $productRawMatId[$i]);
-                                    //         $product_stmt->execute();
-                                    //     }
-                                    // }else{
-                                    //     if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
-                                    //         $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
-                                    //         $product_stmt->execute();
-                                    //     }
-                                    // }
-                                }*/
+                                if ($stl_stmt){
+                                    $stl_stmt->close();
+                                }
                             }
                         } 
                     }
@@ -226,27 +232,45 @@ if (isset($_POST['productCode'])) {
                     $rawMatBasicUomUnitId = $_POST['rawMatBasicUomUnitId'];
                     $rawMatWeight = $_POST['rawMatWeight'];
                     $plant = $_POST['plant'];
-                    $plantCode = $_POST['plantCode'];
-                    $plantName = $_POST['plantName'];
+                    // $plantCode = $_POST['plantCode'];
+                    // $plantName = $_POST['plantName'];
                     $batchDrum = $_POST['batchDrum'];
 
                     if(isset($no) && $no != null && count($no) > 0){
+                        // Fetch all Bitumen raw mat IDs once
+                        $bitumenRawMatIds = [];
+                        $placeholders = implode(',', array_fill(0, count($rawMats), '?'));
+                        $types = str_repeat('s', count($rawMats));
+                        if ($bm_stmt = $db->prepare("SELECT id FROM Raw_Mat WHERE id IN ($placeholders) AND type = 'Bitumen'")) {
+                            $bm_stmt->bind_param($types, ...array_values($rawMats));
+                            $bm_stmt->execute();
+                            $bm_result = $bm_stmt->get_result();
+                            while ($bm_row = $bm_result->fetch_assoc()) {
+                                $bitumenRawMatIds[$bm_row['id']] = true;
+                            }
+                            $bm_stmt->close();
+                        }
+
+                        $stl_stmt = $db->prepare("INSERT INTO Stock_Take_List (plant_id, product_id, batch_drum, sort) SELECT ?, ?, ?, ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM Stock_Take_List WHERE plant_id = ? AND product_id = ? AND batch_drum = ?)");
+                        $sort = 1;
+
                         foreach ($no as $key => $rawMatNo) {
                             if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_id, raw_mat_code, raw_mat_basic_uom, basic_uom_unit_id, raw_mat_weight, plant_id, batch_drum) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")){
                                 $product_stmt->bind_param('ssssssss', $productId, $rawMats[$key], $productRawMatCode[$key], $rawMatBasicUom[$key], $rawMatBasicUomUnitId[$key], $rawMatWeight[$key], $plant[$key], $batchDrum[$key]);
                                 $product_stmt->execute();
+                                $product_stmt->close();
+                            }
+
+                            if (isset($bitumenRawMatIds[$rawMats[$key]]) && $stl_stmt) {
+                                $stl_stmt->bind_param('sssssss', $plant[$key], $productId, $batchDrum[$key], $sort, $plant[$key], $productId, $batchDrum[$key]);
+                                $stl_stmt->execute();
+                                $sort++;
                             }
                         }
 
-
-                        /*for ($i=1; $i <= count($no); $i++) { 
-                            if ($product_stmt = $db->prepare("INSERT INTO Product_RawMat (product_id, raw_mat_code, raw_mat_weight) VALUES (?, ?, ?)")){
-                                $product_stmt->bind_param('sss', $productId, $rawMats[$i], $rawMatWeight[$i]);
-                                $product_stmt->execute();
-                            }
-                        }*/
-    
-                        $product_stmt->close();
+                        if ($stl_stmt){
+                            $stl_stmt->close();
+                        }
                     }
                 }
 

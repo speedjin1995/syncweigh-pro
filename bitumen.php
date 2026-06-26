@@ -23,6 +23,8 @@ $supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name 
 $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier3 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_mat_code <> 'BTBI001'");
 
 ?>
 
@@ -330,7 +332,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
+                                                            <th width="20%">Supplier</th>
                                                             <th>Name</th>
                                                             <th>Status</th>
                                                             <th>Level (m)</th>
@@ -463,7 +465,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         <tr>
                                                             <th colspan="2"></th>
                                                             <th colspan="2"></th>
-                                                            <th>Total Usage</th>                                                            <th><input type="number" class="form-control" id="totalDieselUsage" name="totalDieselUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
+                                                            <th>Total Usage</th>                                                            
+                                                            <th><input type="number" class="form-control" id="totalDieselUsage" name="totalDieselUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
                                                         </tr>
                                                     </tfoot>
@@ -471,7 +474,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Transport</h5>
+                                                    <h5 class="card-title mb-0">Transport / Burner</h5>
                                                     <button type="button" class="btn btn-danger add-other-diesel" id="addOtherDiesel">Add</button>
                                                 </div>
                                             </div>
@@ -481,7 +484,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                         <tr>
                                                             <th width="10%">No</th>
                                                             <th>Type</th>
-                                                            <th>Vehicle No</th>
+                                                            <th>Vehicle No / Others</th>
                                                             <th>1st Reading</th>
                                                             <th>2nd Reading</th>
                                                             <th>Usage</th>
@@ -548,8 +551,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">Bitumen PG 76</h5>
-                                                    <button type="button" class="btn btn-danger add-pg-76" id="addpg76">Add PG 76</button>
+                                                    <h5 class="card-title mb-0">Other Bitumen</h5>
+                                                    <button type="button" class="btn btn-danger add-pg-76" id="addpg76">Add</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -558,8 +561,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                                                 <table class="table table-primary" style="text-align: center;">
                                                     <thead>
                                                         <tr>
-                                                            <th width="10%">No</th>
                                                             <th>Name</th>
+                                                            <th>Incoming</th>
                                                             <th>Status</th>
                                                             <!-- <th>Temperature (&deg;C)</th> -->
                                                             <th>Level (mm)</th>
@@ -812,11 +815,16 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
     <script type="text/html" id="lfoDetail">
         <tr class="details">
             <td>
-                <input type="text" class="form-control" id="lfoNo" name="lfoNo" readonly>
+                <input type="hidden" class="form-control" id="lfoNo" name="lfoNo" readonly>
                 <input type="hidden" id="lfoLength" name="lfoLength">
                 <input type="hidden" id="lfoHeight" name="lfoHeight">
                 <input type="hidden" id="lfoDiameter" name="lfoDiameter">
                 <input type="hidden" id="lfoAssetId" name="lfoAssetId">
+                <select class="form-select select2" id="lfoSupplier" name="lfoSupplier">
+                    <?php while($rowSupplier=mysqli_fetch_assoc($supplier5)){ ?>
+                        <option value="<?=$rowSupplier['id'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
+                    <?php } ?>
+                </select>
             </td>
             <td>
                 <input type="text" class="form-control" id="lfoName" name="lfoName">
@@ -893,8 +901,8 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             <td>
                 <select class="form-select" id="otherDieselType" name="otherDieselType">
                     <option value="Transport">Transport</option>
-                    <!-- <option value="Hotoil">Hotoil</option>
-                    <option value="Burner">Burner</option> -->
+                    <!-- <option value="Hotoil">Hotoil</option> -->
+                    <option value="Burner">Burner</option>
                 </select>
             </td>
             <td>
@@ -959,15 +967,20 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
     <script type="text/html" id="pg76Detail">
         <tr class="details">
+            <input type="hidden" class="form-control" id="pg76No" name="pg76No" readonly>
+            <input type="hidden" id="pg76Length" name="pg76Length">
+            <input type="hidden" id="pg76Height" name="pg76Height">
+            <input type="hidden" id="pg76Diameter" name="pg76Diameter">
+            <input type="hidden" id="pg76AssetId" name="pg76AssetId">
             <td>
-                <input type="text" class="form-control" id="pg76No" name="pg76No" readonly>
-                <input type="hidden" id="pg76Length" name="pg76Length">
-                <input type="hidden" id="pg76Height" name="pg76Height">
-                <input type="hidden" id="pg76Diameter" name="pg76Diameter">
-                <input type="hidden" id="pg76AssetId" name="pg76AssetId">
+                <select class="form-control select2" id="pg76Name" name="pg76Name">
+                    <?php while($rowRawMat=mysqli_fetch_assoc($rawMaterial)){ ?>
+                        <option value="<?=$rowRawMat['id']?>"><?=$rowRawMat['name'] ?></option>
+                    <?php } ?>
+                </select>
             </td>
             <td>
-                <input type="text" class="form-control" id="pg76Name" name="pg76Name">
+                <input type="number" class="form-control" id="pg76Incoming" name="pg76Incoming" style="background-color:white;" value="0.00">
             </td>
             <td>
                 <select class="form-select" id="pg76Status" name="pg76Status">
@@ -1821,6 +1834,11 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#lfoTable").find('#remove:last').attr("id", "remove" + lfoCount);
 
             $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
+            $("#lfoTable").find('#lfoSupplier:last').attr('name', 'lfoSupplier['+lfoCount+']').attr("id", "lfoSupplier" + lfoCount).css("text-align", "center").select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                dropdownParent: $('#lfoTable') // Prevents dropdown cutoff inside modals/tables
+            });
             $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount);
             $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount);
@@ -1835,6 +1853,18 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#lfoTable").find('#lfoAssetId:last').attr('name', 'lfoAssetId['+lfoCount+']').attr("id", "lfoAssetId" + lfoCount).val(asset ? asset.id || '' : '');
 
             lfoCount++;
+
+            // Apply custom styling to Select2 elements in addModal
+            $('#addModal .select2-container .select2-selection--single').css({
+                'padding-top': '4px',
+                'padding-bottom': '4px',
+                'height': 'auto'
+            });
+
+            $('#addModal .select2-container .select2-selection__arrow').css({
+                'padding-top': '33px',
+                'height': 'auto'
+            });
         });
 
         /* LFO Table End */
@@ -1941,8 +1971,6 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                 var weight = parseFloat($(this).val()) || 0;
                 totalWeight += weight;
             });
-
-            console.log(previousReading, incoming, totalWeight);
 
             // Calculate Usage
             if (incoming > 0){
@@ -2145,9 +2173,9 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
         $("#pg76Table").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
 
-            $("#pg76Table tr").each(function (index) {
-                $(this).find('input[name^="pg76No"]').val(index + 1);
-            });
+            // $("#pg76Table tr").each(function (index) {
+            //     $(this).find('input[name^="pg76No"]').val(index + 1);
+            // });
 
             $('input[id^="pgSeventySix"]').trigger('change');
 
@@ -2269,7 +2297,12 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#pg76Table").find('#remove:last').attr("id", "remove" + pg76Count);
 
             $("#pg76Table").find('#pg76No:last').attr('name', 'pg76No['+pg76Count+']').attr("id", "pg76No" + pg76Count).css("text-align", "center").val(pg76Count + 1);
-            $("#pg76Table").find('#pg76Name:last').attr('name', 'pg76Name['+pg76Count+']').attr("id", "pg76Name" + pg76Count).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
+            $("#pg76Table").find('#pg76Name:last').attr('name', 'pg76Name['+pg76Count+']').attr("id", "pg76Name" + pg76Count).css("text-align", "center").select2({
+                allowClear: true,
+                placeholder: "Please Select",
+                dropdownParent: $('#pg76Table') // Prevents dropdown cutoff inside modals/tables
+            });;
+            $("#pg76Table").find('#pg76Incoming:last').attr('name', 'pg76Incoming['+pg76Count+']').attr("id", "pg76Incoming" + pg76Count).css("text-align", "center");
             $("#pg76Table").find('#pg76Status:last').attr('name', 'pg76Status['+pg76Count+']').attr("id", "pg76Status" + pg76Count);
             $("#pg76Table").find('#pg76Temp:last').attr('name', 'pg76Temp['+pg76Count+']').attr("id", "pg76Temp" + pg76Count).css("text-align", "center");
             $("#pg76Table").find('#pg76Level:last').attr('name', 'pg76Level['+pg76Count+']').attr("id", "pg76Level" + pg76Count).css("text-align", "center");
@@ -2283,6 +2316,18 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
             $("#pg76Table").find('#pg76AssetId:last').attr('name', 'pg76AssetId['+pg76Count+']').attr("id", "pg76AssetId" + pg76Count).val(asset ? asset.id || '' : '');
 
             pg76Count++;
+
+            // Apply custom styling to Select2 elements in addModal
+            $('#addModal .select2-container .select2-selection--single').css({
+                'padding-top': '4px',
+                'padding-bottom': '4px',
+                'height': 'auto'
+            });
+
+            $('#addModal .select2-container .select2-selection__arrow').css({
+                'padding-top': '33px',
+                'height': 'auto'
+            });
         });
 
         /* PG 76 Table End */
@@ -2776,6 +2821,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
                         $("#lfoTable").find('#remove:last').attr("id", "remove" + lfoCount);
 
                         $("#lfoTable").find('#lfoNo:last').attr('name', 'lfoNo['+lfoCount+']').attr("id", "lfoNo" + lfoCount).css("text-align", "center").val(lfoCount + 1);
+                        $("#lfoTable").find('#lfoSupplier:last').attr('name', 'lfoSupplier['+lfoCount+']').attr("id", "lfoSupplier" + lfoCount).css("text-align", "center").val(item.lfoSupplier);
                         $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(item.lfoName);
                         $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount).val(item.lfoStatus);
                         $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount).css("text-align", "center").val(item.lfoLevel);
@@ -2928,6 +2974,7 @@ $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 
                         $("#pg76Table").find('#pg76No:last').attr('name', 'pg76No['+pg76Count+']').attr("id", "pg76No" + pg76Count).css("text-align", "center").val(pg76Count + 1);
                         $("#pg76Table").find('#pg76Name:last').attr('name', 'pg76Name['+pg76Count+']').attr("id", "pg76Name" + pg76Count).css("text-align", "center").val(item.pg76Name || '');
+                        $("#pg76Table").find('#pg76Incoming:last').attr('name', 'pg76Incoming['+pg76Count+']').attr("id", "pg76Incoming" + pg76Count).css("text-align", "center").val(item.pg76Incoming || '0.00');
                         $("#pg76Table").find('#pg76Status:last').attr('name', 'pg76Status['+pg76Count+']').attr("id", "pg76Status" + pg76Count).val(item.pg76Status || '');
                         $("#pg76Table").find('#pg76Temp:last').attr('name', 'pg76Temp['+pg76Count+']').attr("id", "pg76Temp" + pg76Count).css("text-align", "center").val(item.pg76Temp);
                         $("#pg76Table").find('#pg76Level:last').attr('name', 'pg76Level['+pg76Count+']').attr("id", "pg76Level" + pg76Count).css("text-align", "center").val(item.pg76Level);

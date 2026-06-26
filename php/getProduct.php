@@ -50,6 +50,7 @@ if(isset($_POST['userID'])){
                     "raw_mat_code" => $row2['raw_mat_code'],
                     "raw_mat_basic_uom" => $row2['raw_mat_basic_uom'],
                     "basic_uom_unit_id" => $row2['basic_uom_unit_id'],
+                    "basic_uom_unit" => searchUnitById($row2['basic_uom_unit_id'], $db),
                     "raw_mat_weight" => $row2['raw_mat_weight'],
                     "plant_id" => $row2['plant_id'],
                     "batch_drum" => $row2['batch_drum'],
