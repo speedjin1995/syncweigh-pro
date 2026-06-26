@@ -219,6 +219,14 @@ if(isset($_POST['userID'], $_POST["file"])){
                                         margin: 16px 0; /* Adjust the spacing as needed */
                                         height: 19.5px;   /* Set a height to create space */
                                     }
+                                    
+                                    @media print {
+                                        * {
+                                            page-break-before: avoid !important;
+                                            page-break-after: avoid !important;
+                                            page-break-inside: avoid !important;
+                                        }
+                                    }
                                 </style>
 
                             </head>
@@ -471,10 +479,8 @@ if(isset($_POST['userID'], $_POST["file"])){
                             $message = '<html>
                                             <head>
                                                 <!-- Bootstrap CSS -->
-                                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+                                                <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
                                                 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" type="text/css" />
-                                                <link href="https://your-cdn-link-to-app.min.css" rel="stylesheet" type="text/css" />
-                                                <link href="https://your-cdn-link-to-custom.min.css" rel="stylesheet" type="text/css" />
                         
                                                 <style>
                                                     @page {

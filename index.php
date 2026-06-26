@@ -2578,10 +2578,36 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                         $('#indicatorInactive').addClass('d-none');
                     }
                     else if(ind == 'BX23'){
-                        var text = data.split(" ");
+                        /*var text = data.split(" ");
                         var newArray = text.slice(1, -1);
                         var newtext = newArray.join();
                         $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
+                        $('#indicatorConnected').addClass('bg-primary');
+                        $('#checkingConnection').removeClass('bg-danger');
+                        $('#indicatorActive').removeClass('d-none').addClass('d-flex');
+                        $('#indicatorInactive').addClass('d-none');*/
+                        var text = data.trim().split(/\s+/);
+                        //var text = data.trim().split(" ");
+                        //console.log(text);
+
+                        if(text.length > 2){
+                            /*/var newArray = text.slice(1, -1);
+                            //var weight = newArray.join('').trim();
+                    
+                            if(weight !== ''){
+                                $('#indicatorWeight').html(weight);
+                            }
+                            var newArray = text.slice(1, -1);
+                            var newtext = newArray.join();
+                            $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());/*/
+                            var weight = text[1];
+                            console.log("Weight: " + weight);
+
+                            if(weight !== ''){
+                                $('#indicatorWeight').html(weight);
+                            }
+                        }
+                    
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                         $('#indicatorActive').removeClass('d-none').addClass('d-flex');
@@ -2625,7 +2651,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                     $('#indicatorActive').addClass('d-none');
                 }
             });
-        }, 500);
+        }, 250);
 
         $('#filterSearch').on('click', function(){
             var fromDateI = $('#fromDateSearch').val();
@@ -5592,6 +5618,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             if(obj2.status === 'success'){
                 var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
                 printWindow.document.write(obj2.message);
+                console.log(obj2.message);
                 printWindow.document.close();
                 setTimeout(function(){
                     printWindow.print();

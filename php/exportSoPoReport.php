@@ -332,7 +332,6 @@ if(isset($_POST["type"])){
                 $groupCount = count($filteredGroupKeys)+1; // Add 1 for date group
                 $compiledRowData = '';
                 if($groupCount == 1){ 
-                    $grpNettWeight = 0;
                     $totalNettWeight = 0;
                     $grpTotalCount = 0;
 
@@ -349,8 +348,9 @@ if(isset($_POST["type"])){
                             </tr>
                         ';
 
+                        $grpNettWeight = 0;
                         foreach ($grpData as $data){ 
-                            $grpNettWeight += $data['nett_weight1']/1000; 
+                            $grpNettWeight += round($data['nett_weight1']/1000, 2); 
                             if ($data['ex_del'] == 'EX'){
                                 $exDel = 'E';
                             }else{
@@ -448,7 +448,6 @@ if(isset($_POST["type"])){
                     ';
                 }elseif ($groupCount == 2) { 
                     $grpTotalCount = 0;
-                    $dateNettWeight = 0;
                     $totalNettWeight = 0;
                     foreach ($processedData as $grp1 => $grp1Data) {
                         $rowData = '
@@ -477,8 +476,9 @@ if(isset($_POST["type"])){
                                 </tr>
                             '; 
 
+                            $dateNettWeight = 0;
                             foreach ($dateData as $data){
-                                $dateNettWeight += $data['nett_weight1']/1000;
+                                $dateNettWeight += round($data['nett_weight1']/1000, 2);
                                 if ($data['ex_del'] == 'EX'){
                                     $exDel = 'E';
                                 }else{
@@ -655,7 +655,7 @@ if(isset($_POST["type"])){
                                 $dateNettWeight = 0;
                                 foreach ($grp3Data as $data){ 
                                     $grp1Count++;
-                                    $dateNettWeight += $data['nett_weight1']/1000; 
+                                    $dateNettWeight += round($data['nett_weight1']/1000, 2); 
                                     if ($data['ex_del'] == 'EX'){
                                         $exDel = 'E';
                                     }else{
@@ -870,7 +870,7 @@ if(isset($_POST["type"])){
                                     $grp4Count = 0;
                     
                                     foreach ($grp4Data as $data) {
-                                        $dateNettWeight += $data['nett_weight1'] / 1000;
+                                        $dateNettWeight += round($data['nett_weight1'] / 1000, 2);
                                         $grp4Count++;
                                         if ($data['ex_del'] == 'EX') {
                                             $exDel = 'E';
@@ -1130,7 +1130,7 @@ if(isset($_POST["type"])){
                                         $grp5Count = 0;
                     
                                         foreach ($grp5Data as $data) {
-                                            $dateNettWeight += $data['nett_weight1'] / 1000;
+                                            $dateNettWeight += round($data['nett_weight1'] / 1000, 2);
                                             $grp5Count++;
                                             if ($data['ex_del'] == 'EX') {
                                                 $exDel = 'E';
@@ -1654,10 +1654,13 @@ if(isset($_POST["type"])){
                             </tr>
                         ';
 
+                        $grpNettWeight = 0;
+                        $grpSupplierWeight = 0;
+                        $grpVariance = 0;
                         foreach ($grpData as $data){ 
-                            $grpNettWeight += $data['nett_weight1']/1000; 
-                            $grpSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2);
-                            $grpVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2);
+                            $grpNettWeight += round($data['nett_weight1']/1000, 2); 
+                            $grpSupplierWeight += round((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2);
+                            $grpVariance += round((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)), 2);
                             
                             if ($data['ex_del'] == 'EX'){
                                 $exDel = 'E';
@@ -1802,9 +1805,9 @@ if(isset($_POST["type"])){
                             $dateVariance = 0; 
 
                             foreach ($dateData as $data){
-                                $dateNettWeight += $data['nett_weight1']/1000;
-                                $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
-                                $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
+                                $dateNettWeight += round($data['nett_weight1']/1000, 2);
+                                $dateSupplierWeight += round((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                $dateVariance += round((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)), 2); 
                                 
                                 if ($data['ex_del'] == 'EX'){
                                     $exDel = 'E';
@@ -1997,9 +2000,9 @@ if(isset($_POST["type"])){
                                 
                                 foreach ($grp3Data as $data){ 
                                     $grp1Count++;
-                                    $dateNettWeight += $data['nett_weight1']/1000; 
-                                    $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
-                                    $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
+                                    $dateNettWeight += round($data['nett_weight1']/1000, 2); 
+                                    $dateSupplierWeight += round((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                    $dateVariance += round((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)), 2); 
                                     
                                     if ($data['ex_del'] == 'EX'){
                                         $exDel = 'E';
@@ -2231,9 +2234,9 @@ if(isset($_POST["type"])){
                                     $grp4Count = 0;
                     
                                     foreach ($grp4Data as $data) {
-                                        $dateNettWeight += $data['nett_weight1'] / 1000;
-                                        $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
-                                        $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
+                                        $dateNettWeight += round($data['nett_weight1'] / 1000, 2);
+                                        $dateSupplierWeight += round((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                        $dateVariance += round((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)), 2); 
                                         $grp4Count++;
                                         
                                         if ($data['ex_del'] == 'EX') {
@@ -2516,9 +2519,9 @@ if(isset($_POST["type"])){
                                         $grp5Count = 0;
                     
                                         foreach ($grp5Data as $data) {
-                                            $dateNettWeight += $data['nett_weight1'] / 1000;
-                                            $dateSupplierWeight += number_format((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
-                                            $dateVariance += number_format((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)),2); 
+                                            $dateNettWeight += round($data['nett_weight1'] / 1000, 2);
+                                            $dateSupplierWeight += round((empty($data['supplier_weight']) ? 0 : ($data['supplier_weight'] / 1000)), 2); 
+                                            $dateVariance += round((empty($data['weight_different']) ? 0 : ($data['weight_different'] / 1000)), 2); 
                                             
                                             $grp5Count++;
                                             if ($data['ex_del'] == 'EX') {
