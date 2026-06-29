@@ -9,7 +9,7 @@ if(isset($_POST['declarationDate'], $_POST['plantId'], $_POST['batchDrum'])){
     $plantId = filter_input(INPUT_POST, 'plantId', FILTER_SANITIZE_STRING);
     $batchDrum = filter_input(INPUT_POST, 'batchDrum', FILTER_SANITIZE_STRING);
 
-    if ($stmt = $db->prepare("SELECT * FROM Bitumen WHERE plant_id=? AND batch_drum=? AND declaration_datetime<? AND JSON_EXTRACT(diesel, '$.totalDiesel') IS NOT NULL AND JSON_EXTRACT(diesel, '$.totalDiesel') > 0 ORDER BY declaration_datetime DESC LIMIT 1")) {
+    if ($stmt = $db->prepare("SELECT * FROM Bitumen WHERE plant_id=? AND batch_drum=? AND declaration_datetime<? AND ((JSON_EXTRACT(diesel, '$.totalDiesel') IS NOT NULL AND JSON_EXTRACT(diesel, '$.totalDiesel') > 0) OR (JSON_EXTRACT(lfo, '$.totalLfo') IS NOT NULL AND JSON_EXTRACT(lfo, '$.totalLfo') > 0)) ORDER BY declaration_datetime DESC LIMIT 1")) {
         $stmt->bind_param('sss', $plantId, $batchDrum, $formattedDate);
         
         // Execute the prepared query.
@@ -30,7 +30,7 @@ if(isset($_POST['declarationDate'], $_POST['plantId'], $_POST['batchDrum'])){
 
                 ## lfo Processing ##
                 $lfo = json_decode($row['lfo'], true);
-                $message['previous_lfo'] = $diesel['totalLfoLitre'];
+                $message['previous_lfo'] = $lfo['totalLfoLitre'];
 
                 ## diesel Processing ##
                 $diesel = json_decode($row['diesel'], true);
