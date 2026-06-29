@@ -821,6 +821,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 <input type="hidden" id="lfoDiameter" name="lfoDiameter">
                 <input type="hidden" id="lfoAssetId" name="lfoAssetId">
                 <select class="form-select select2" id="lfoSupplier" name="lfoSupplier">
+                    <option selected="-">-</option>
                     <?php while($rowSupplier=mysqli_fetch_assoc($supplier5)){ ?>
                         <option value="<?=$rowSupplier['id'] ?>" data-code="<?=$rowSupplier['supplier_code'] ?>"><?=$rowSupplier['name'] ?></option>
                     <?php } ?>
