@@ -159,6 +159,15 @@ if(isset($_POST['batchDrum']) && $_POST['batchDrum'] != null && $_POST['batchDru
     }
 }
 
+if(isset($_POST['soNo']) && $_POST['soNo'] != null && $_POST['soNo'] != '' && $_POST['soNo'] != '-'){
+    if($_POST["file"] == 'weight'){
+        $searchQuery .= " and Weight.purchase_order = '".$_POST['soNo']."'";
+    }
+    else{
+        $searchQuery .= " and count.purchase_order = '".$_POST['soNo']."'";
+    }
+}
+
 $isMulti = '';
 if(isset($_POST['isMulti']) && $_POST['isMulti'] != null && $_POST['isMulti'] != '' && $_POST['isMulti'] != '-'){
     $isMulti = $_POST['isMulti'];

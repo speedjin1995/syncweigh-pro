@@ -494,7 +494,8 @@ else{
                                             <input type="hidden" class="form-control" id="plant" name="plant">     
                                             <input type="hidden" class="form-control" id="batchDrum" name="batchDrum">     
                                             <input type="hidden" class="form-control" id="file" name="file">     
-                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">     
+                                            <input type="hidden" class="form-control" id="isMulti" name="isMulti">   
+                                            <input type="hidden" class="form-control" id="soNo" name="soNo">
                                         </div>
                                     </div>
                                 </div>
@@ -924,6 +925,7 @@ else{
                     var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
                     var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
                     var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+                    var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
 
                     var selectedIds = []; // An array to store the selected 'id' values
                     $("#weightTable tbody input[type='checkbox']").each(function () {
@@ -951,6 +953,7 @@ else{
                     $('#exportPdfForm').find('#destination').val(destinationI);
                     $('#exportPdfForm').find('#plant').val(plantI);
                     $('#exportPdfForm').find('#batchDrum').val(batchDrumSearchI);
+                    $('#exportPdfForm').find('#soNo').val(soSearchI);
                     $('#exportPdfForm').find('#file').val('weight');
                     $('#exportPdfModal').modal('hide');
 
