@@ -101,17 +101,22 @@ if(isset($_GET['id'])){
 
                 // Single query: aggregate nett weight per product code for the declaration date
                 $salesResult = $db->query("
-                    SELECT W.product_code, PRW.raw_mat_id,
-                           SUM(W.nett_weight1) / 1000 AS nett_weight_mt
-                    FROM Weight W
-                    JOIN Product P ON P.product_code = W.product_code
+                    SELECT agg.product_code, PRW.raw_mat_id,
+                           agg.nett_weight_mt
+                    FROM (
+                        SELECT W.product_code,
+                               SUM(W.nett_weight1) / 1000 AS nett_weight_mt
+                        FROM Weight W
+                        WHERE W.plant_code = '$plantCode' AND W.batch_drum = '$batchDrum'
+                        AND DATE(W.tare_weight1_date) = '$declarationDate'
+                        AND W.transaction_status = 'SALES' AND W.is_complete = 'Y'
+                        AND W.is_cancel <> 'Y' AND W.status = '0'
+                        GROUP BY W.product_code
+                    ) agg
+                    JOIN Product P ON P.product_code = agg.product_code
                     JOIN Product_RawMat PRW ON PRW.product_id = P.id
-                    WHERE W.plant_code = '$plantCode' AND W.batch_drum = '$batchDrum'
-                    AND DATE(W.tare_weight1_date) = '$declarationDate'
-                    AND W.transaction_status = 'SALES' AND W.is_complete = 'Y'
-                    AND W.is_cancel <> 'Y' AND W.status = '0'
-                    AND PRW.raw_mat_id IN ($idPlaceholders) AND PRW.status = 0
-                    GROUP BY W.product_code, PRW.raw_mat_id"
+                        AND PRW.plant_id = $plantId AND PRW.batch_drum = '$batchDrum'
+                        AND PRW.raw_mat_id IN ($idPlaceholders) AND PRW.status = 0"
                 );
                 $salesMap = [];
                 $otherRawMatsWithSales = [];
