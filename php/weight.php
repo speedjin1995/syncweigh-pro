@@ -259,6 +259,10 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $vehiclePlateNo2 = trim($_POST["vehiclePlateNo2"]);
     }
 
+    if(filter_has_var(INPUT_POST,'manualVehicle2')) {
+        $vehiclePlateNo2 = trim($_POST["vehicleNoTxt2"]);
+    }
+
     if (empty($_POST["grossIncoming2"])) {
         $grossIncoming2 = null;
     } else {
