@@ -50,7 +50,81 @@ if(isset($_POST['userID'])){
                     ));  
             }
         }
-    }else{
+    } elseif ($format == 'STOCKTAKE') {
+        $plantCode = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
+        $declarationDate = filter_input(INPUT_POST, 'declarationDate', FILTER_SANITIZE_STRING);
+        $formattedDate = DateTime::createFromFormat('d-m-Y H:i', $declarationDate)->format('Y-m-d');
+        $batchDrum = filter_input(INPUT_POST, 'batchDrum', FILTER_SANITIZE_STRING);
+
+        // Handle the case for stock take to get total diesel and total lfo
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM `weight` WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND raw_mat_code IN ('DIE001', 'LFFO001') AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+            $update_stmt->bind_param('sss', $plantCode, $formattedDate, $batchDrum);
+            
+            // Execute the prepared query.
+            if (! $update_stmt->execute()) {
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Something went wrong"
+                    )); 
+            }
+            else{
+                $result = $update_stmt->get_result();
+                $message = array();
+
+                while ($row = $result->fetch_assoc()) {
+                    if ($row['raw_mat_code'] == 'DIE001') {
+                        // Convert kg to litre for diesel
+                        if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_Uom rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
+                            $conversion_stmt->bind_param('s', $row['raw_mat_code']);
+                            $conversion_stmt->execute();
+                            $conversion_result = $conversion_stmt->get_result();
+                            
+                            if ($conversion_row = $conversion_result->fetch_assoc()) {
+                                $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
+                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $message['dieselIncoming'] = $litre;
+                            } else {
+                                $message['dieselIncoming'] = 0; // Default to 0 if no conversion found
+                            }
+                        } else {
+                            $message['dieselIncoming'] = 0; // Default to 0 if query fails
+                        }
+
+                        $conversion_stmt->close();
+                    } elseif ($row['raw_mat_code'] == 'LFFO001') {
+                        // Convert kg to litre for lfo
+                        if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_Uom rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
+                            $conversion_stmt->bind_param('s', $row['raw_mat_code']);
+                            $conversion_stmt->execute();
+                            $conversion_result = $conversion_stmt->get_result();
+                            
+                            if ($conversion_row = $conversion_result->fetch_assoc()) {
+                                $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
+                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $message['lfoIncoming'] = $litre;
+                            } else {
+                                $message['lfoIncoming'] = 0; // Default to 0 if no conversion found
+                            }
+                        } else {
+                            $message['lfoIncoming'] = 0; // Default to 0 if query fails
+                        }
+
+                        $conversion_stmt->close();
+                    }
+                }
+
+                $update_stmt->close();
+                $db->close();
+
+                echo json_encode(
+                    array(
+                        "status" => "success",
+                        "message" => $message
+                    ));  
+            }
+        }
+    } else{
         if ($update_stmt = $db->prepare("SELECT * FROM Weight WHERE id=?")) {
             $update_stmt->bind_param('s', $id);
             

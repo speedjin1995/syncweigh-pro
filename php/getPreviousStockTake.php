@@ -30,11 +30,12 @@ if(isset($_POST['declarationDate'], $_POST['plantId'], $_POST['batchDrum'])){
 
                 ## lfo Processing ##
                 $lfo = json_decode($row['lfo'], true);
-                $message['previous_lfo'] = $lfo['totalLfoLitre'];
+                
+                $message['previous_lfo'] = $lfo['totalLfoLitre'] ?? 0;
 
                 ## diesel Processing ##
                 $diesel = json_decode($row['diesel'], true);
-                $message['previous_diesel'] = $diesel['totalDiesel'];
+                $message['previous_diesel'] = $diesel['totalDiesel'] ?? 0;
             }
             
             echo json_encode(
