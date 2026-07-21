@@ -38,6 +38,10 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
   }
 }
 
+if($_POST['batchDrum'] != null && $_POST['batchDrum'] != '' && $_POST['batchDrum'] != '-'){
+	$searchQuery .= " and batch_drum = '".$_POST['batchDrum']."'";
+}
+
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Bitumen where status = '0'".$searchQuery;
 $sel = mysqli_query($db, $allQuery);
