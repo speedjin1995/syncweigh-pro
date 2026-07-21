@@ -516,7 +516,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td class="left"><b>LFO Usage</b></td>
-                                    <td style="mso-number-format:\'0\.00\'">=ROUND('.$lfoColLetter.$rowNum.'/B'.$rowNum.',2)</td>
+                                    <td style="mso-number-format:\'0\.00\'">=IFERROR(ROUND('.$lfoColLetter.$rowNum.'/B'.$rowNum.',2),0)</td>                                    
                                     <td>Litre / ton</td>
                                     <td></td>
                                     <td></td>
@@ -532,7 +532,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td class="left"><b>Diesel Usage</b></td>
-                                    <td style="mso-number-format:\'0\.00\'">=ROUND('.$dieselColLetter.$rowNum.',2)</td>
+                                    <td style="mso-number-format:\'0\.00\'">=IFERROR(ROUND('.$dieselColLetter.$rowNum.'/B'.$rowNum.',2),0)</td>
                                     <td>Litre /day</td>
                                     <td></td>
                                     <td></td>
