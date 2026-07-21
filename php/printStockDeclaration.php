@@ -135,7 +135,7 @@ if(isset($_GET['id'])){
                 $otherCount = count($otherRawMatList);
                 $totalCols   = 10 + $otherCount; // Mix + Qty + % + 60/70 + CMB + CRMB + LMB + others + LFO + Diesel + 2 trailing
                 $midColspan  = 6 + $otherCount; // company name / DAILY STOCK ANALYSIS span
-                $rightColspan = $totalCols - $midColspan; // LOCATION / WORKSHEET span
+                $rightColspan = $totalCols - $midColspan + 2; // LOCATION / WORKSHEET span
 
                 $html = '
                     <html>
@@ -191,6 +191,8 @@ if(isset($_GET['id'])){
                                     <th>Targeted Diesel</th>
                                     <th></th>
                                     <th></th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                                 <tr>
                                     <th>Mix</th>
@@ -209,11 +211,10 @@ if(isset($_GET['id'])){
                                     <th></th>
                                     <th></th>
                                     <th></th>
-                                ';
-
-                                $html .= '
                                     <th>(litre)</th>
                                     <th>(litre)</th>
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                 </tr>';
@@ -240,6 +241,8 @@ if(isset($_GET['id'])){
                                             <td></td>
                                             <td></td>
                                             <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                     ';
                                     $rowNum++;
@@ -247,8 +250,8 @@ if(isset($_GET['id'])){
 
                                 $planningEmptyCols = str_repeat('<td></td>', count($otherRawMatList));
                                 $html .= '
-                                <tr><td><b>Subtotal</b></td><td>=SUM(B10:B'.($rowNum-1).')</td><td></td><td>=SUM(D10:D'.($rowNum-1).')</td>'.$planningEmptyCols.'<td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td><b>Incoming</b></td><td></td><td></td><td></td>'.$planningEmptyCols.'<td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td><b>Subtotal</b></td><td>=SUM(B10:B'.($rowNum-1).')</td><td></td><td>=SUM(D10:D'.($rowNum-1).')</td>'.$planningEmptyCols.'<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td><b>Incoming</b></td><td></td><td></td><td></td>'.$planningEmptyCols.'<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr class="no-border"><td class="left"><b>Ordered Bitumen</b></td><td></td><td></td><td>=D'.($rowNum+1).'</td>'.$planningEmptyCols.'<td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr class="no-border"><td class="left"><b>Opening Stock</b></td><td></td><td></td><td></td>'.$planningEmptyCols.'<td></td><td></td><td></td><td></td><td></td><td></td></tr>
                                 <tr class="no-border"><td class="left"><b>Targeted Usage</b></td><td></td><td></td><td></td>'.$planningEmptyCols.'<td></td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -262,7 +265,9 @@ if(isset($_GET['id'])){
                                 <tr>
                                     <th>Actual</th>
                                     <th colspan="' . (6 + count($otherRawMatList)) . '">Actual Bitumen (ton)</th>
+                                    <th></th>
                                     <th>Actual LFO</th>
+                                    <th></th>
                                     <th>Actual Diesel</th>
                                     <th></th>
                                     <th></th>
@@ -285,7 +290,9 @@ if(isset($_GET['id'])){
                                 ';
 
                                 $html .= '
+                                    <th></th>
                                     <th>(litre)</th>
+                                    <th></th>
                                     <th>(litre)</th>
                                     <th></th>
                                     <th></th>
@@ -330,8 +337,8 @@ if(isset($_GET['id'])){
 
                                 // Compute dynamic column letters based on otherRawMatList count
                                 // A=Mix, B=Qty, C=%, D=60/70, E=CMB, F=CRMB, G=LMB, H..=otherRawMat cols, then LFO, Diesel
-                                $lfoColLetter    = chr(ord('H') + $otherCount);      // LFO column
-                                $dieselColLetter = chr(ord('I') + $otherCount);      // Diesel column
+                                $lfoColLetter    = chr(ord('H') + $otherCount + 1);      // LFO column
+                                $dieselColLetter = chr(ord('I') + $otherCount + 2);      // Diesel column
 
                                 $rowNum = $rowNum+10;
                                 $subtotalRowStart = $rowNum;
@@ -344,11 +351,24 @@ if(isset($_GET['id'])){
 
                                     $productNettWeight = $salesMap[$productCode] ?? 0;
 
+                                    $lfoDesc   = $productLoopCount == 0 ? "Previous Reading"
+                                               : ($productLoopCount == 1 ? "Incoming"
+                                               : ($productLoopCount == 2 ? "Total"
+                                               : ($productLoopCount == 3 ? "Total Usage"
+                                               : '')));
                                     $lfoVal    = $productLoopCount == 0 ? round($lfoPrevReading, 2)
                                                : ($productLoopCount == 1 ? round($lfoIncoming, 2)
                                                : ($productLoopCount == 2 ? round($totalLfoLitre, 2)
                                                : ($productLoopCount == 3 ? '='.$lfoColLetter.($rowNum-3).'+'.$lfoColLetter.($rowNum-2).'-'.$lfoColLetter.($rowNum-1)
                                                : '')));
+
+                                    $dieselDesc = $productLoopCount == 0 ? "Previous Reading"
+                                               : ($productLoopCount == 1 ? "Incoming"
+                                               : ($productLoopCount == 2 ? "Total"
+                                               : ($productLoopCount == 3 ? "Total Usage"
+                                               : ($productLoopCount == 4 ? "Total Transport Usage"
+                                               : ($productLoopCount == 5 ? "Total Production"
+                                               : '')))));
                                     $dieselVal = $productLoopCount == 0 ? round($previousDieselReading, 2)
                                                : ($productLoopCount == 1 ? round($dieselIncoming, 2)
                                                : ($productLoopCount == 2 ? round($totalDiesel, 2)
@@ -376,7 +396,9 @@ if(isset($_GET['id'])){
                                             <td></td>
                                             <td></td>
                                             <td></td>
+                                            <td>'.$lfoDesc.'</td>
                                             <td style="mso-number-format:\'0\.00\'">'.$lfoVal.'</td>
+                                            <td>'.$dieselDesc.'</td>
                                             <td style="mso-number-format:\'0\.00\'">'.$dieselVal.'</td>
                                             <td></td>
                                             <td></td>
@@ -445,7 +467,9 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                     <td style="mso-number-format:\'0\.00\'">'.round($totalLfoUsage, 2).'</td>
+                                    <td></td>
                                     <td style="mso-number-format:\'0\.00\'">'.round($totalDieselUsage, 2).'</td>
                                     <td></td>
                                     <td></td>
@@ -456,6 +480,8 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td style="mso-number-format:\'0\.00\'">'.round($bitumenIncomingWeight, 2).'</td>
                                     '.$otherBitumenIncomingCols.'
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -477,6 +503,8 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td class="left"><b>Supplied Bitumen</b></td>
@@ -488,8 +516,10 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td class="left"><b>LFO Usage</b></td>
-                                    <td style="mso-number-format:\'0\.00\'">=ROUND(B'.$rowNum.'/'.$lfoColLetter.$rowNum.',2)</td>
+                                    <td style="mso-number-format:\'0\.00\'">=ROUND('.$lfoColLetter.$rowNum.'/B'.$rowNum.',2)</td>
                                     <td>Litre / ton</td>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                 </tr>
                                 <tr>
@@ -505,6 +535,8 @@ if(isset($_GET['id'])){
                                     <td style="mso-number-format:\'0\.00\'">=ROUND('.$dieselColLetter.$rowNum.',2)</td>
                                     <td>Litre /day</td>
                                     <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td class="left"><b>Targeted Closing Stock</b></td>
@@ -512,6 +544,8 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td>=SUM(D'.($rowNum+2).'+D'.($rowNum+3).'-D'.($rowNum+4).')</td>
                                     '.$otherBitumenClosingCols.'
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -533,6 +567,8 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td class="left"><b>Variant :</b></td>
@@ -540,6 +576,8 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td>=D'.($rowNum+6).'-D'.($rowNum+5).'</td>
                                     '.$otherBitumenVariantCols.'
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>

@@ -1538,7 +1538,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 getPrevStockTake(plantId, batchDrum, declarationDate);
 
                 if (plantCode){
-                    getPo(plantCode, batchDrum, declarationDate);
+                    // getPo(plantCode, batchDrum, declarationDate);
+                    getIncoming(plantCode, batchDrum, declarationDate);
                 }
             }
         });
@@ -1557,7 +1558,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 getPrevStockTake(plantId, batchDrum, declarationDate);
 
                 if (plantCode){
-                    getPo(plantCode, batchDrum, declarationDate);
+                    // getPo(plantCode, batchDrum, declarationDate);
+                    getIncoming(plantCode, batchDrum, declarationDate);
                 }
             }
         });
@@ -2759,6 +2761,33 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 $("#failBtn").click();
             }
         });
+    }
+
+    function getIncoming(plantCode, batchDrum, declarationDate){
+        if (declarationDate && plantCode && batchDrum){
+            // load previous diesel reading
+            $('#spinnerLoading').show();
+            $.post('php/getWeight.php', {format: 'STOCKTAKE', declarationDate: declarationDate, userID: plantCode, batchDrum: batchDrum}, function(data)
+            {
+                var obj = JSON.parse(data);
+                if(obj.status === 'success'){
+                    // $('#addModal').find('#bitumenIncoming').val(obj.message.bitumenIncoming || 0);
+                    $('#addModal').find('#dieselIncoming').val(parseFloat(obj.message.dieselIncoming || 0).toFixed(2));
+                    $('#addModal').find('#lfoIncoming').val(parseFloat(obj.message.lfoIncoming || 0).toFixed(2));
+                }
+                else if(obj.status === 'failed'){
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    $("#failBtn").attr('data-toast-text', obj.message );
+                    $("#failBtn").click();
+                }
+                $('#spinnerLoading').hide();
+            });
+        }
     }
 
     function edit(id){
