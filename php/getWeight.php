@@ -75,7 +75,7 @@ if(isset($_POST['userID'])){
                 while ($row = $result->fetch_assoc()) {
                     if ($row['raw_mat_code'] == 'DIE001') {
                         // Convert kg to litre for diesel
-                        if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_Uom rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
+                        if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_UOM rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
                             $conversion_stmt->bind_param('s', $row['raw_mat_code']);
                             $conversion_stmt->execute();
                             $conversion_result = $conversion_stmt->get_result();
@@ -94,7 +94,7 @@ if(isset($_POST['userID'])){
                         $conversion_stmt->close();
                     } elseif ($row['raw_mat_code'] == 'LFFO001') {
                         // Convert kg to litre for lfo
-                        if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_Uom rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
+                        if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_UOM rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
                             $conversion_stmt->bind_param('s', $row['raw_mat_code']);
                             $conversion_stmt->execute();
                             $conversion_result = $conversion_stmt->get_result();
