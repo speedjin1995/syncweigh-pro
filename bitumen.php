@@ -135,6 +135,16 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="ForminputState" class="form-label">Batch/Drum</label>
+                                                            <select id="batchDrumSearch" class="form-select" >
+                                                                <option value="">-</option>
+                                                                <option value="Batch">Batch</option>
+                                                                <option value="Drum">Drum</option>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -1121,6 +1131,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var batchDrumNoI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
         var table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1142,7 +1153,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 'data': {
                     fromDate: fromDateI,
                     toDate: toDateI,
-                    plant: plantNoI
+                    plant: plantNoI,
+                    batchDrum: batchDrumNoI
                 } 
             },
             'columns': [
@@ -1206,6 +1218,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var batchDrumNoI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
             $("#weightTable").DataTable().clear().destroy();
 
@@ -1229,7 +1242,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                     'data': {
                         fromDate: fromDateI,
                         toDate: toDateI,
-                        plant: plantNoI
+                        plant: plantNoI,
+                        batchDrum: batchDrumNoI
                     } 
                 },
                 'columns': [
