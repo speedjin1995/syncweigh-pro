@@ -57,7 +57,7 @@ if(isset($_POST['userID'])){
         $batchDrum = filter_input(INPUT_POST, 'batchDrum', FILTER_SANITIZE_STRING);
 
         // Handle the case for stock take to get total diesel and total lfo
-        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM `weight` WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND raw_mat_code IN ('DIE001', 'LFFO001') AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND raw_mat_code IN ('DIE001', 'LFFO001') AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
             $update_stmt->bind_param('sss', $plantCode, $formattedDate, $batchDrum);
             
             // Execute the prepared query.
