@@ -4284,9 +4284,20 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             isSyncing = true;
 
             if (exDel == 'true'){
-                $('#addModal').find('#transporter').val('OWN TRANSPORTATION').trigger('change.select2');
+                /*$('#addModal').find('#transporter').val('OWN TRANSPORTATION').trigger('change.select2');
                 $('#addModal').find('#transporterCode').val('T01');
-                $('#addModal').find('#transporterName').val('OWN TRANSPORTATION');
+                $('#addModal').find('#transporterName').val('OWN TRANSPORTATION');*/
+                var $transporter = $('#addModal #transporter');
+
+                if ($transporter.find("option[value='OWN COLLECTION']").length > 0) {
+                    $transporter.val('OWN COLLECTION').trigger('change');
+                    $('#addModal #transporterCode').val('OWN');
+                    $('#addModal #transporterName').val('OWN COLLECTION');
+                } else {
+                    $transporter.val('OWN TRANSPORTATION').trigger('change');
+                    $('#addModal #transporterCode').val('T01');
+                    $('#addModal #transporterName').val('OWN TRANSPORTATION');
+                }
 
                 // $('#addModal').find('#transporter').val('Own Transportation').trigger('change');
                 // $('#addModal').find('#transporterCode').val('T01');

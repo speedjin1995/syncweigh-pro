@@ -299,6 +299,30 @@ if (!empty($data['data'])) {
                         $insert_destination_log->execute();
                         $insert_destination_log->close();
                     }    
+                    
+                    if (!empty($misValue)){
+                        if ($update_miscellaneous = $db->prepare("UPDATE miscellaneous SET value=? WHERE code=? AND name=?")) {
+                            $update_miscellaneous->bind_param('sss', $misValue, $code, $firstChar);
+        
+                            if (! $update_miscellaneous->execute()) {
+                                echo json_encode(
+                                    array(
+                                        "status"=> "failed", 
+                                        "message"=> $update_miscellaneous->error
+                                    )
+                                );
+                            }else{
+                                echo json_encode(
+                                    array(
+                                        "status"=> "success", 
+                                        "message"=> "Added Successfully!!" 
+                                    )
+                                );
+                            }     
+                            
+                            $update_miscellaneous->close();
+                        }
+                    }
                 }
 
                 // $errMsg = "Destination: ".$DestinationCode." doesn't exist in master data.";
