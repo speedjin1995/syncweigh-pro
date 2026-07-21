@@ -516,7 +516,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td class="left"><b>LFO Usage</b></td>
-                                    <td style="mso-number-format:\'0\.00\'">=ROUND(B'.$rowNum.'/'.$lfoColLetter.$rowNum.',2)</td>
+                                    <td style="mso-number-format:\'0\.00\'">=ROUND('.$lfoColLetter.$rowNum.'/B'.$rowNum.',2)</td>
                                     <td>Litre / ton</td>
                                     <td></td>
                                     <td></td>
