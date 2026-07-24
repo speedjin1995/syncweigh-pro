@@ -359,7 +359,7 @@ if(isset($_GET['id'])){
                                     $lfoVal    = $productLoopCount == 0 ? round($lfoPrevReading, 2)
                                                : ($productLoopCount == 1 ? round($lfoIncoming, 2)
                                                : ($productLoopCount == 2 ? round($totalLfoLitre, 2)
-                                               : ($productLoopCount == 3 ? '=IF('.$lfoColLetter.($rowNum-2).'>0,'.$lfoColLetter.($rowNum-3).'+'.$lfoColLetter.($rowNum-2).'-'.$lfoColLetter.($rowNum-1).',0)'
+                                               : ($productLoopCount == 3 ? '='.$lfoColLetter.($rowNum-3).'+'.$lfoColLetter.($rowNum-2).'-'.$lfoColLetter.($rowNum-1)
                                                : '')));
 
                                     $dieselDesc = $productLoopCount == 0 ? "Previous Reading"
@@ -372,9 +372,9 @@ if(isset($_GET['id'])){
                                     $dieselVal = $productLoopCount == 0 ? round($previousDieselReading, 2)
                                                : ($productLoopCount == 1 ? round($dieselIncoming, 2)
                                                : ($productLoopCount == 2 ? round($totalDiesel, 2)
-                                               : ($productLoopCount == 3 ? '=IF('.$dieselColLetter.($rowNum-2).'>0,'.$dieselColLetter.($rowNum-3).'+'.$dieselColLetter.($rowNum-2).'-'.$dieselColLetter.($rowNum-1).',0)'
+                                               : ($productLoopCount == 3 ? '='.$dieselColLetter.($rowNum-3).'+'.$dieselColLetter.($rowNum-2).'-'.$dieselColLetter.($rowNum-1)
                                                : ($productLoopCount == 4 ? round($otherDieselTotalTransportUsage, 2)
-                                               : ($productLoopCount == 5 ? '=IF('.$dieselColLetter.($rowNum-2).'>0,'.$dieselColLetter.($rowNum-2).'-'.$dieselColLetter.($rowNum-1).',0)'
+                                               : ($productLoopCount == 5 ? '='.$dieselColLetter.($rowNum-2).'-'.$dieselColLetter.($rowNum-1)
                                                : '')))));
 
                                     $is60_70 = ($product['raw_mat_id'] == $bitumenRawMatId);

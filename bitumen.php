@@ -1836,10 +1836,10 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             $('#addModal').find('#totalLfoMTDisplay').text(totalWeight.toFixed(2));
 
             // Calculate Usage
-            if (incomingVolume > 0){
+            // if (incomingVolume > 0){
                 var usage = previousReading + incomingVolume - totalVolume;
                 $('#addModal').find('#totalLfoUsage').val(usage.toFixed(2));
-            }
+            // }
         });
 
         $(".add-lfo").click(function(event, asset){
@@ -1990,9 +1990,9 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             });
 
             // Calculate Usage
-            if (incoming > 0){
+            //if (incoming > 0){
                 usage = previousReading + incoming - totalWeight;
-            }
+            //}
 
             $('#addModal').find('#totalDieselUsage').val(usage.toFixed(2));
             $(this).val(totalWeight.toFixed(2));
