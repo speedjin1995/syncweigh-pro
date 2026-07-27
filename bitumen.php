@@ -2785,7 +2785,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             {
                 var obj = JSON.parse(data);
                 if(obj.status === 'success'){
-                    // $('#addModal').find('#bitumenIncoming').val(obj.message.bitumenIncoming || 0);
+                    $('#addModal').find('#bitumenIncoming').val(obj.message.bitumenIncoming || 0).toFixed(2);
                     $('#addModal').find('#dieselIncoming').val(parseFloat(obj.message.dieselIncoming || 0).toFixed(2));
                     $('#addModal').find('#lfoIncoming').val(parseFloat(obj.message.lfoIncoming || 0).toFixed(2));
                 }
