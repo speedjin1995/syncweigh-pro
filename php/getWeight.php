@@ -57,7 +57,7 @@ if(isset($_POST['userID'])){
         $batchDrum = filter_input(INPUT_POST, 'batchDrum', FILTER_SANITIZE_STRING);
 
         // Handle the case for stock take to get total diesel and total lfo
-        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND raw_mat_code IN ('DIE001', 'LFFO001') AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ('DIE001', 'LFFO001', 'BTBI001') AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
             $update_stmt->bind_param('sss', $plantCode, $formattedDate, $batchDrum);
             
             // Execute the prepared query.
@@ -108,6 +108,25 @@ if(isset($_POST['userID'])){
                             }
                         } else {
                             $message['lfoIncoming'] = 0; // Default to 0 if query fails
+                        }
+
+                        $conversion_stmt->close();
+                    } elseif ($row['raw_mat_code'] == 'BTBI001') {
+                        // Convert kg to mt for bitumen incoming
+                        if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_UOM rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
+                            $conversion_stmt->bind_param('s', $row['raw_mat_code']);
+                            $conversion_stmt->execute();
+                            $conversion_result = $conversion_stmt->get_result();
+                            
+                            if ($conversion_row = $conversion_result->fetch_assoc()) {
+                                $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
+                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $message['bitumenIncoming'] = $litre;
+                            } else {
+                                $message['bitumenIncoming'] = 0; // Default to 0 if no conversion found
+                            }
+                        } else {
+                            $message['bitumenIncoming'] = 0; // Default to 0 if query fails
                         }
 
                         $conversion_stmt->close();
