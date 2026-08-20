@@ -230,8 +230,12 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalScrollableTitle">Add Stock Take</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        </button>
+                        <div class="d-flex gap-2 align-items-center">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshBtn" title="Refresh Previous Stock Take & Incoming">
+                                <i class="ri-refresh-line"></i> Refresh
+                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <form role="form" id="siteForm" class="needs-validation" novalidate autocomplete="off">
@@ -2459,6 +2463,27 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             $(this).val(qty.toFixed(2));
         });
 
+        $('#refreshBtn').on('click', function(){
+            if (!confirm('This will reset previous reading and incoming data. Continue?')){
+                return;
+            } 
+            var declarationDate = $('#addModal').find('#datetime').val();
+            var plantId = $('#addModal').find('#plant').val();
+            var plantCode = $('#addModal').find('#plantCode').val();
+            var batchDrum = $('#addModal').find('#batchDrum').val();
+
+            if (plantId && batchDrum && declarationDate) {
+                getPrevStockTake(plantId, batchDrum, declarationDate);
+                if (plantCode) {
+                    getIncoming(plantCode, batchDrum, declarationDate, function(){
+                        $('#addModal').find('#bitumenIncoming').trigger('change');
+                        $('#addModal').find('#dieselIncoming').trigger('change');
+                        $('#addModal').find('#lfoIncoming').trigger('change');
+                    });
+                }
+            }
+        });
+
         $('#uploadBom').on('click', function(){
             $('#uploadModal').modal('show');
 
@@ -2778,7 +2803,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         });
     }
 
-    function getIncoming(plantCode, batchDrum, declarationDate){
+    function getIncoming(plantCode, batchDrum, declarationDate, callback){
         if (declarationDate && plantCode && batchDrum){
             // load previous diesel reading
             $('#spinnerLoading').show();
@@ -2789,6 +2814,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                     $('#addModal').find('#bitumenIncoming').val(parseFloat(obj.message.bitumenIncoming || 0).toFixed(2));
                     $('#addModal').find('#dieselIncoming').val(parseFloat(obj.message.dieselIncoming || 0).toFixed(2));
                     $('#addModal').find('#lfoIncoming').val(parseFloat(obj.message.lfoIncoming || 0).toFixed(2));
+                    if (typeof callback === 'function') callback();
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
