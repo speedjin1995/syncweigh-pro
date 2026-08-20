@@ -532,7 +532,7 @@ if(isset($_GET['id'])){
                                     <td></td>
                                     <td></td>
                                     <td class="left"><b>Diesel Usage</b></td>
-                                    <td style="mso-number-format:\'0\.00\'">=IFERROR(ROUND('.$dieselColLetter.($subtotalRowStart+3).'/B'.$rowNum.',2),0)</td>
+                                    <td style="mso-number-format:\'0\.00\'">=IFERROR(ROUND('.$dieselColLetter.($subtotalRowStart+5).', 2),0)</td>
                                     <td>Litre /day</td>
                                     <td></td>
                                     <td></td>

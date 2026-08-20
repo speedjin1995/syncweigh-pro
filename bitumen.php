@@ -303,7 +303,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                                                             <th width="10%">No</th>
                                                             <th>Name</th>
                                                             <th>Status</th>
-                                                            <!-- <th>Temperature (&deg;C)</th> -->
+                                                            <th>Temperature (&deg;C)</th>
                                                             <th>Level (mm)</th>
                                                             <th>Actual Level (mm)</th>
                                                             <th>MT</th>
@@ -313,7 +313,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                                                     <tbody id="bitumenTable"></tbody>
                                                     <tfoot>
                                                         <th colspan="2">Incoming (MT)</th>
-                                                        <th colspan="2"><input type="number" class="form-control" id="bitumenIncoming" name="bitumenIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                        <th colspan="3"><input type="number" class="form-control" id="bitumenIncoming" name="bitumenIncoming" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                         <!-- <th><input type="number" class="form-control" id="totalTemp" name="totalTemp" style="background-color:white;text-align: center; visibility:hidden;" value="0" readonly></th>
@@ -806,8 +806,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                     <option value="Empty">Empty</option>
                 </select>
             </td>
-            <td style="display: none;">
-                <input type="number" class="form-control" id="temp" name="temp" style="background-color:white;" value="0.00" required>
+            <td>
+                <input type="number" class="form-control" id="temp" name="temp" style="background-color:white;" value="100.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="level" name="level" style="background-color:white;" value="0.00" required>
@@ -2105,7 +2105,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             var row = $(this).closest('tr');
             var firstReading = parseFloat(row.find('input[id^="otherDieselFirstReading"]').val()) || 0;
             var secondReading = parseFloat(row.find('input[id^="otherDieselSecondReading"]').val()) || 0;
-            var usage = firstReading - secondReading;
+            //var usage = firstReading - secondReading;
+            var usage = secondReading - firstReading;
 
             $(this).val(usage.toFixed(2));
             $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');

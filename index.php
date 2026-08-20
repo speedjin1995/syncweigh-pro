@@ -2578,36 +2578,32 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                         $('#indicatorInactive').addClass('d-none');
                     }
                     else if(ind == 'BX23'){
-                        /*var text = data.split(" ");
-                        var newArray = text.slice(1, -1);
-                        var newtext = newArray.join();
-                        $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());
-                        $('#indicatorConnected').addClass('bg-primary');
-                        $('#checkingConnection').removeClass('bg-danger');
-                        $('#indicatorActive').removeClass('d-none').addClass('d-flex');
-                        $('#indicatorInactive').addClass('d-none');*/
-                        var text = data.trim().split(/\s+/);
-                        //var text = data.trim().split(" ");
-                        //console.log(text);
-
-                        if(text.length > 2){
-                            /*/var newArray = text.slice(1, -1);
-                            //var weight = newArray.join('').trim();
-                    
-                            if(weight !== ''){
-                                $('#indicatorWeight').html(weight);
-                            }
-                            var newArray = text.slice(1, -1);
-                            var newtext = newArray.join();
-                            $('#indicatorWeight').html(newtext.replaceAll(",", "").trim());/*/
-                            var weight = text[1];
-                            console.log("Weight: " + weight);
-
-                            if(weight !== ''){
-                                $('#indicatorWeight').html(weight);
+                        // Remove control characters
+                        data = data.replace(/[^\x20-\x7E]/g, '').trim();
+                        var text = data.split(/\s+/);
+                        var weight = "";
+                        
+                        if (text.length == 2 && /^[iqy]/i.test(text[0])) { // Format 1: i00103250 0
+                            var match = text[0].match(/\d+/);
+                        
+                            if (match) {
+                                weight = parseInt(match[0]).toString();
                             }
                         }
-                    
+                        else if (text.length >= 3 && /^[iqy]/i.test(text[0])) { // Format 2: i0 093250 0
+                            var part1 = text[0].replace(/[^\d]/g, "");
+                            var part2 = text[1];
+                        
+                            if (part2.length > 0) {
+                                weight = parseInt(part2).toString();
+                            }
+                        }
+                        
+                        // Only update if we have a valid weight
+                        if (weight !== "" && !isNaN(weight)) {
+                            $('#indicatorWeight').html(weight);
+                        }
+                        
                         $('#indicatorConnected').addClass('bg-primary');
                         $('#checkingConnection').removeClass('bg-danger');
                         $('#indicatorActive').removeClass('d-none').addClass('d-flex');

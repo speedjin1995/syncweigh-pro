@@ -1379,7 +1379,8 @@ if ($user != null && $user != ''){
             var convertedOrderWeight = parseFloat($(this).val());
             var plant = $('#plant').val();
             var productId = $('#product :selected').data('id'); 
-            var productCode = $('#product').val(); console.log(productCode);
+            var productCode = $('#product').val();
+            var convertedOrderQty = $('#convertedOrderQty').val();
             var unitId = $('#convertedOrderQtyUnit').val(); 
             var orderNo = $('#orderNo').val();
 
@@ -1387,7 +1388,7 @@ if ($user != null && $user != ''){
             var convertedBalance = 0;
             // Query to SO log to see previous record order weight
             if (orderNo){
-                $.post('php/getSoPoLog.php', {userID: orderNo, plant: plant, prodRawMatCode: productCode, type: 'SO'}, function(data)
+                $.post('php/getSoPoLog.php', {userID: orderNo, plant: plant, prodRawMatCode: productCode, convertedOrderQty: convertedOrderQty, unitId: unitId, productId: productId, type: 'SO'}, function(data)
                 {
                     var obj = JSON.parse(data);
                     if(obj.status === 'success'){
