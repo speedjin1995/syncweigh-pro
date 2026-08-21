@@ -2103,10 +2103,16 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         // Event delegation for otherDieselUsage
         $("#otherDieselTable").on('change', 'input[id^="otherDieselUsage"]', function(){
             var row = $(this).closest('tr');
+            var otherDieselType = row.find('select[id^="otherDieselType"]').val();
             var firstReading = parseFloat(row.find('input[id^="otherDieselFirstReading"]').val()) || 0;
             var secondReading = parseFloat(row.find('input[id^="otherDieselSecondReading"]').val()) || 0;
-            //var usage = firstReading - secondReading;
-            var usage = secondReading - firstReading;
+
+            var usage = 0;
+            if (otherDieselType == 'Burner'){
+                usage = firstReading - secondReading;
+            }else{
+                usage = secondReading - firstReading;
+            }
 
             $(this).val(usage.toFixed(2));
             $('#addModal').find('#otherDieselTotalTransportUsage').trigger('change');
