@@ -113,6 +113,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                 <option selected>-</option>
                                                                 <option value="BITULEVEL">Bitumen Level</option>
                                                                 <option value="BITUSG">Bitumen SG</option>
+                                                                <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -197,6 +200,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                         <select id="type" name="type" class="form-select select2" required>
                                                                                             <option value="BITULEVEL">Bitumen Level</option>
                                                                                             <option value="BITUSG">Bitumen SG</option>
+                                                                                            <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                                            <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                                            <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
@@ -257,6 +263,37 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                                         </tr>
                                                                                                     </thead>
                                                                                                     <tbody id="sgTable"></tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="lfoLookupDiv" style="display: none;">
+                                                                                <div class="card bg-light">
+                                                                                    <div class="card-header">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div>
+                                                                                                <h5 class="card-title mb-0">LFO Lookup</h5>
+                                                                                            </div>
+                                                                                            <div class="flex-shrink-0">
+                                                                                                <button type="button" class="btn btn-danger add-lfo-lookup"><i class="ri-add-circle-line align-middle me-1"></i>Add New</button>
+                                                                                            </div> 
+                                                                                        </div> 
+                                                                                    </div>
+
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                                <table class="table table-primary">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th>Depth (m)</th>
+                                                                                                            <th>Litre (ℓ)</th>
+                                                                                                            <th>Action</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody id="lfoLookupTable"></tbody>
                                                                                                 </table>
                                                                                             </div>
                                                                                         </div>
@@ -521,12 +558,31 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
         </tr>
     </script>
 
+    <script type="text/html" id="lfoLookupDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="lfoLookupNo" name="lfoLookupNo" hidden>
+                <input type="text" class="form-control" id="lfoLookupId" name="lfoLookupId" hidden>
+                <input type="number" class="form-control" id="lfoLookupDepth" name="lfoLookupDepth" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="lfoLookupLitre" name="lfoLookupLitre" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
     <script type="text/javascript">
 
     var table = null;
     var wasErrorModalShown = false;
     var levelCount = 0;
     var sgCount = 0;
+    var lfoLookupCount = 0;
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
@@ -712,8 +768,10 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             // Empty level and sg tables
             $('#levelTable').empty();
             $('#sgTable').empty();
+            $('#lfoLookupTable').empty();
             levelCount = 0;
             sgCount = 0;
+            lfoLookupCount = 0;
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -965,12 +1023,19 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             if(selectedType == 'BITULEVEL'){
                 $('#bitumenLevelDiv').show();
                 $('#bitumenSgDiv').hide();
+                $('#lfoLookupDiv').hide();
             }else if (selectedType == 'BITUSG'){
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').show();
+                $('#lfoLookupDiv').hide();
+            }else if (selectedType == 'LFOLOOKUP') {
+                $('#bitumenLevelDiv').hide();
+                $('#bitumenSgDiv').hide();
+                $('#lfoLookupDiv').show();    
             }else{
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').hide();
+                $('#lfoLookupDiv').hide();
             }
         });
 
@@ -1012,6 +1077,25 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             $("#sgTable").find('#sg:last').attr('name', 'sg['+sgCount+']').attr("id", "sg" + sgCount);
 
             sgCount++;
+        });
+
+        $("#lfoLookupTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
+
+        $(".add-lfo-lookup").click(function(){
+            var $addContents = $("#lfoLookupDetail").clone();
+            $("#lfoLookupTable").append($addContents.html());
+
+            $("#lfoLookupTable").find('.details:last').attr("id", "detail" + lfoLookupCount);
+            $("#lfoLookupTable").find('.details:last').attr("data-index", lfoLookupCount);
+            $("#lfoLookupTable").find('#remove:last').attr("id", "remove" + lfoLookupCount);
+
+            $("#lfoLookupTable").find('#lfoLookupNo:last').attr('name', 'lfoLookupNo['+lfoLookupCount+']').attr("id", "lfoLookupNo" + lfoLookupCount).val(lfoLookupCount);
+            $("#lfoLookupTable").find('#lfoLookupDepth:last').attr('name', 'lfoLookupDepth['+lfoLookupCount+']').attr("id", "lfoLookupDepth" + lfoLookupCount);
+            $("#lfoLookupTable").find('#lfoLookupLitre:last').attr('name', 'lfoLookupLitre['+lfoLookupCount+']').attr("id", "lfoLookupLitre" + lfoLookupCount);
+
+            lfoLookupCount++;
         });
     });
 
@@ -1058,8 +1142,10 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
 
                 $('#levelTable').html('');
                 $('#sgTable').html('');
+                $('#lfoLookupTable').html('');
                 levelCount = 0;
                 sgCount = 0;
+                lfoLookupCount = 0;
 
                 if (obj.message.values.length > 0){
                     for(var i = 0; i < obj.message.values.length; i++){
@@ -1095,9 +1181,23 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
 
                             sgCount++;
                         }
+                        else if (obj.message.type == 'LFOLOOKUP'){
+                            var $addContents = $("#lfoLookupDetail").clone();
+                            $("#lfoLookupTable").append($addContents.html());
+
+                            $("#lfoLookupTable").find('.details:last').attr("id", "detail" + lfoLookupCount);
+                            $("#lfoLookupTable").find('.details:last').attr("data-index", lfoLookupCount);
+                            $("#lfoLookupTable").find('#remove:last').attr("id", "remove" + lfoLookupCount);
+
+                            $("#lfoLookupTable").find('#lfoLookupNo:last').attr('name', 'lfoLookupNo['+lfoLookupCount+']').attr("id", "lfoLookupNo" + lfoLookupCount).val(item.no);
+                            $("#lfoLookupTable").find('#lfoLookupId:last').attr('name', 'lfoLookupId['+lfoLookupCount+']').attr("id", "lfoLookupId" + lfoLookupCount).val(item.id);
+                            $("#lfoLookupTable").find('#lfoLookupDepth:last').attr('name', 'lfoLookupDepth['+lfoLookupCount+']').attr("id", "lfoLookupDepth" + lfoLookupCount).val(item.level);
+                            $("#lfoLookupTable").find('#lfoLookupLitre:last').attr('name', 'lfoLookupLitre['+lfoLookupCount+']').attr("id", "lfoLookupLitre" + lfoLookupCount).val(item.volume);
+
+                            lfoLookupCount++;
+                        }
                     }
                 }
-
 
                 $('#addModal').modal('show');
             

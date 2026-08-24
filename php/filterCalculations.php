@@ -60,9 +60,19 @@ $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
+  if ($row['type'] == 'BITULEVEL'){
+    $type = 'Bitumen Level';
+  }else if ($row['type'] == 'BITUSG'){
+    $type = 'Bitumen SG';
+  }else if ($row['type'] == 'LFOLOOKUP'){
+    $type = 'LFO Lookup';
+  }else{
+    $type = $row['type'];
+  }
+
   $data[] = array(
     "id"=>$row['id'],
-    "type"=>($row['type'] == 'BITULEVEL') ? 'Bitumen Level' : (($row['type'] == 'BITUSG') ? 'Bitumen SG' : $row['type']),
+    "type"=>$type,
     "plant"=>$row['plant'],
     "batch_drum"=>$row['batch_drum']
   );
