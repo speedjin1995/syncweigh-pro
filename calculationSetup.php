@@ -269,6 +269,37 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="bitumenLookupDiv" style="display: none;">
+                                                                                <div class="card bg-light">
+                                                                                    <div class="card-header">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div>
+                                                                                                <h5 class="card-title mb-0">Bitumen Lookup</h5>
+                                                                                            </div>
+                                                                                            <div class="flex-shrink-0">
+                                                                                                <button type="button" class="btn btn-danger add-bitumen-lookup"><i class="ri-add-circle-line align-middle me-1"></i>Add New</button>
+                                                                                            </div> 
+                                                                                        </div> 
+                                                                                    </div>
+
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                                <table class="table table-primary">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th>Height (CM)</th>
+                                                                                                            <th>Weight (MT)</th>
+                                                                                                            <th>Action</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody id="bitumenLookupTable"></tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                             <div class="col-xxl-12 col-lg-12 mb-3" id="lfoLookupDiv" style="display: none;">
                                                                                 <div class="card bg-light">
                                                                                     <div class="card-header">
@@ -589,6 +620,24 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
         </tr>
     </script>
 
+    <script type="text/html" id="bitumenLookupDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="bitumenLookupNo" name="bitumenLookupNo" hidden>
+                <input type="text" class="form-control" id="bitumenLookupId" name="bitumenLookupId" hidden>
+                <input type="number" class="form-control" id="bitumenLookupHeight" name="bitumenLookupHeight" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="bitumenLookupWeight" name="bitumenLookupWeight" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
     <script type="text/html" id="lfoLookupDetail">
         <tr class="details">
             <td>
@@ -631,6 +680,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
     var wasErrorModalShown = false;
     var levelCount = 0;
     var sgCount = 0;
+    var bitumenLookupCount = 0;
     var lfoLookupCount = 0;
     var dieselLookupCount = 0;
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
@@ -818,10 +868,12 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             // Empty level and sg tables
             $('#levelTable').empty();
             $('#sgTable').empty();
+            $('#bitumenLookupTable').empty();
             $('#lfoLookupTable').empty();
             $('#dieselLookupTable').empty();
             levelCount = 0;
             sgCount = 0;
+            bitumenLookupCount = 0;
             lfoLookupCount = 0;
             dieselLookupCount = 0;
 
@@ -1075,26 +1127,37 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             if(selectedType == 'BITULEVEL'){
                 $('#bitumenLevelDiv').show();
                 $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
                 $('#lfoLookupDiv').hide();
                 $('#dieselLookupDiv').hide();
             }else if (selectedType == 'BITUSG'){
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').show();
+                $('#bitumenLookupDiv').hide();
+                $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
+            }else if (selectedType == 'BITULOOKUP'){
+                $('#bitumenLevelDiv').hide();
+                $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').show();
                 $('#lfoLookupDiv').hide();
                 $('#dieselLookupDiv').hide();
             }else if (selectedType == 'LFOLOOKUP') {
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
                 $('#lfoLookupDiv').show();   
                 $('#dieselLookupDiv').hide(); 
             }else if (selectedType == 'DIESELLOOKUP') {
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
                 $('#lfoLookupDiv').hide();   
                 $('#dieselLookupDiv').show(); 
             }else{
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
                 $('#lfoLookupDiv').hide();
                 $('#dieselLookupDiv').hide();
             }
@@ -1140,6 +1203,25 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             sgCount++;
         });
 
+        $("#bitumenLookupTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
+
+        $(".add-bitumen-lookup").click(function(){
+            var $addContents = $("#bitumenLookupDetail").clone();
+            $("#bitumenLookupTable").append($addContents.html());
+
+            $("#bitumenLookupTable").find('.details:last').attr("id", "detail" + bitumenLookupCount);
+            $("#bitumenLookupTable").find('.details:last').attr("data-index", bitumenLookupCount);
+            $("#bitumenLookupTable").find('#remove:last').attr("id", "remove" + bitumenLookupCount);
+
+            $("#bitumenLookupTable").find('#bitumenLookupNo:last').attr('name', 'bitumenLookupNo['+bitumenLookupCount+']').attr("id", "bitumenLookupNo" + bitumenLookupCount).val(bitumenLookupCount);
+            $("#bitumenLookupTable").find('#bitumenLookupHeight:last').attr('name', 'bitumenLookupHeight['+bitumenLookupCount+']').attr("id", "bitumenLookupHeight" + bitumenLookupCount);
+            $("#bitumenLookupTable").find('#bitumenLookupWeight:last').attr('name', 'bitumenLookupWeight['+bitumenLookupCount+']').attr("id", "bitumenLookupWeight" + bitumenLookupCount);
+
+            bitumenLookupCount++;
+        });
+        
         $("#lfoLookupTable").on('click', 'button[id^="remove"]', function () {
             $(this).parents("tr").remove();
         });
@@ -1222,10 +1304,12 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
 
                 $('#levelTable').html('');
                 $('#sgTable').html('');
+                $('#bitumenLookupTable').html('');
                 $('#lfoLookupTable').html('');
                 $('#dieselLookupTable').html('');
                 levelCount = 0;
                 sgCount = 0;
+                bitumenLookupCount = 0;
                 lfoLookupCount = 0;
                 dieselLookupCount = 0;
 
@@ -1262,6 +1346,21 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                             $("#sgTable").find('#sg:last').attr('name', 'sg['+sgCount+']').attr("id", "sg" + sgCount).val(item.sg);
 
                             sgCount++;
+                        }
+                        else if (obj.message.type == 'BITULOOKUP'){
+                            var $addContents = $("#bitumenLookupDetail").clone();
+                            $("#bitumenLookupTable").append($addContents.html());
+
+                            $("#bitumenLookupTable").find('.details:last').attr("id", "detail" + bitumenLookupCount);
+                            $("#bitumenLookupTable").find('.details:last').attr("data-index", bitumenLookupCount);
+                            $("#bitumenLookupTable").find('#remove:last').attr("id", "remove" + bitumenLookupCount);
+
+                            $("#bitumenLookupTable").find('#bitumenLookupNo:last').attr('name', 'bitumenLookupNo['+bitumenLookupCount+']').attr("id", "bitumenLookupNo" + bitumenLookupCount).val(item.no);
+                            $("#bitumenLookupTable").find('#bitumenLookupId:last').attr('name', 'bitumenLookupId['+bitumenLookupCount+']').attr("id", "bitumenLookupId" + bitumenLookupCount).val(item.id);
+                            $("#bitumenLookupTable").find('#bitumenLookupHeight:last').attr('name', 'bitumenLookupHeight['+bitumenLookupCount+']').attr("id", "bitumenLookupHeight" + bitumenLookupCount).val(item.level);
+                            $("#bitumenLookupTable").find('#bitumenLookupWeight:last').attr('name', 'bitumenLookupWeight['+bitumenLookupCount+']').attr("id", "bitumenLookupWeight" + bitumenLookupCount).val(item.volume);
+
+                            bitumenLookupCount++;
                         }
                         else if (obj.message.type == 'LFOLOOKUP'){
                             var $addContents = $("#lfoLookupDetail").clone();

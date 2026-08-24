@@ -64,6 +64,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $type = 'Bitumen Level';
   }else if ($row['type'] == 'BITUSG'){
     $type = 'Bitumen SG';
+  }else if ($row['type'] == 'BITULOOKUP'){
+    $type = 'Bitumen Lookup';
   }else if ($row['type'] == 'LFOLOOKUP'){
     $type = 'LFO Lookup';
   }else if ($row['type'] == 'DIESELLOOKUP'){
