@@ -1748,6 +1748,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
         // Event delegation for lfoStatus
         $("#lfoTable").on('change', 'select[id^="lfoStatus"]', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
             var row = $(this).closest('tr');
             var status = $(this).val();
             var level = row.find('input[id^="lfoLevel"]').val();
@@ -1765,7 +1767,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('LFFO001', diameter, length, actualLevel, function(calculationData){
+                calculateLiquid('LFFO001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalLfo').trigger('change');
@@ -1779,6 +1781,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
         // Event delegation for lfoLevel
         $("#lfoTable").on('change', 'input[id^="lfoLevel"]', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
             var row = $(this).closest('tr');
             var status = row.find('select[id^="lfoStatus"]').val();
             var level = $(this).val();
@@ -1796,7 +1800,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('LFFO001', diameter, length, actualLevel, function(calculationData){
+                calculateLiquid('LFFO001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalLfo').trigger('change');
@@ -1911,6 +1915,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         
         // Event delegation for dieselStatus
         $("#dieselTable").on('change', 'select[id^="dieselStatus"]', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
             var row = $(this).closest('tr');
             var status = $(this).val();
             var level = row.find('input[id^="dieselLevel"]').val();
@@ -1928,7 +1934,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('DIE001', diameter, length, actualLevel, function(calculationData){
+                calculateLiquid('DIE001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="dieselVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="dieselWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalDiesel').trigger('change');
@@ -1942,6 +1948,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
         // Event delegation for level
         $("#dieselTable").on('change', 'input[id^="dieselLevel"]', function(){
+            var plantId = $('#plant').val();
+            var batchDrum = $('#batchDrum').val();
             var row = $(this).closest('tr');
             var status = row.find('select[id^="dieselStatus"]').val();
             var level = $(this).val();
@@ -1959,7 +1967,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('DIE001', diameter, length, actualLevel, function(calculationData){
+                calculateLiquid('DIE001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="dieselVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="dieselWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalDiesel').trigger('change');
@@ -2663,12 +2671,14 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         });
     }
 
-    function calculateLiquid(rawMatCode, diameter, length, height, callback){
+    function calculateLiquid(rawMatCode, diameter, length, height, plantId, batchDrum, callback){
         $.post('php/calculateLiquid.php', {
             rawMatCode: rawMatCode,
             diameter: diameter,
             length: length,
-            height: height
+            height: height,
+            plantId: plantId,
+            batchDrum: batchDrum
         }, function(data)
         {
             var obj = JSON.parse(data);
