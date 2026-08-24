@@ -514,7 +514,9 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                                                             <th></th>
                                                         </tr>
                                                         <tr>
-                                                            <th colspan="4"></th>
+                                                            <th colspan="2">Burner Usage</th>
+                                                            <th><input type="number" class="form-control" id="otherDieselBurnerUsage" name="otherDieselBurnerUsage" style="background-color:white;text-align: center;" value="0"></th>
+                                                            <th></th>
                                                             <th>Total Production</th>
                                                             <th><input type="number" class="form-control" id="totalDieselProduction" name="totalDieselProduction" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
@@ -917,7 +919,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 <select class="form-select" id="otherDieselType" name="otherDieselType">
                     <option value="Transport">Transport</option>
                     <!-- <option value="Hotoil">Hotoil</option> -->
-                    <option value="Burner">Burner</option>
+                    <!-- <option value="Burner">Burner</option> -->
                 </select>
             </td>
             <td>
@@ -1349,7 +1351,9 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             $('#addModal').find('#dieselIncoming').val(0);
             $('#addModal').find('#dieselLastMeterReading').val(0);
             $('#addModal').find('#otherDieselTable').html('');
+            $('#addModal').find('#otherDieselBurnerUsage').val(0);
             $('#addModal').find('#otherDieselTotalTransportUsage').val(0);
+            $('#addModal').find('#totalDieselProduction').val(0);
             $('#hotoilTable').html('');
             $('#addModal').find('#totalHotoil').val(0);
             $('#pg76Table').html('');
@@ -3012,6 +3016,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                     }
                 }
 
+                $('#addModal').find('#otherDieselBurnerUsage').val(obj.message.otherDieselBurnerUsage);
                 $('#addModal').find('#otherDieselTotalTransportUsage').val(obj.message.otherDieselTotalTransportUsage);
                 $('#addModal').find('#totalDieselProduction').val(obj.message.totalDieselProduction);
 
