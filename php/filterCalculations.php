@@ -66,6 +66,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $type = 'Bitumen SG';
   }else if ($row['type'] == 'LFOLOOKUP'){
     $type = 'LFO Lookup';
+  }else if ($row['type'] == 'DIESELLOOKUP'){
+    $type = 'Diesel Lookup';
   }else{
     $type = $row['type'];
   }

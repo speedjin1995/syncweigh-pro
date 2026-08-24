@@ -93,6 +93,15 @@ if (isset($_POST['type'], $_POST['plant'], $_POST['batchDrum'])) {
                                 $stmt->execute();
                             }
                             $stmt->close();
+                        } elseif ($type == 'DIESELLOOKUP' && isset($_POST['dieselLookupNo'])) {
+                            $dieselLookupDepth = $_POST['dieselLookupDepth'];
+                            $dieselLookupLitre = $_POST['dieselLookupLitre'];
+                            $stmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)");
+                            foreach ($_POST['dieselLookupNo'] as $key => $dieselLookupNo) {
+                                $stmt->bind_param('sss', $calculationId, $dieselLookupDepth[$key], $dieselLookupLitre[$key]);
+                                $stmt->execute();
+                            }
+                            $stmt->close();
                         }
                     }
                     $delete_stmt->close();
@@ -170,6 +179,22 @@ if (isset($_POST['type'], $_POST['plant'], $_POST['batchDrum'])) {
                             foreach ($no as $key => $lookupNo) {
                                 if ($calculation_value_stmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, level, volume) VALUES (?, ?, ?)")){
                                     $calculation_value_stmt->bind_param('sss', $calculationId, $lfoLookupDepth[$key], $lfoLookupLitre[$key]);
+                                    $calculation_value_stmt->execute();
+                                    $calculation_value_stmt->close();
+                                }
+                            }
+                        }
+                    }
+                }elseif($type == 'DIESELLOOKUP'){
+                    if (isset($_POST['dieselLookupNo'])) {
+                        $no = $_POST['dieselLookupNo'];
+                        $dieselLookupDepth = $_POST['dieselLookupDepth'];
+                        $dieselLookupLitre = $_POST['dieselLookupLitre'];
+
+                        if(isset($no) && $no != null && count($no) > 0){
+                            foreach ($no as $key => $lookupNo) {
+                                if ($calculation_value_stmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, level, volume) VALUES (?, ?, ?)")){
+                                    $calculation_value_stmt->bind_param('sss', $calculationId, $dieselLookupDepth[$key], $dieselLookupLitre[$key]);
                                     $calculation_value_stmt->execute();
                                     $calculation_value_stmt->close();
                                 }

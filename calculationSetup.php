@@ -300,6 +300,37 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="dieselLookupDiv" style="display: none;">
+                                                                                <div class="card bg-light">
+                                                                                    <div class="card-header">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div>
+                                                                                                <h5 class="card-title mb-0">Diesel Lookup</h5>
+                                                                                            </div>
+                                                                                            <div class="flex-shrink-0">
+                                                                                                <button type="button" class="btn btn-danger add-diesel-lookup"><i class="ri-add-circle-line align-middle me-1"></i>Add New</button>
+                                                                                            </div> 
+                                                                                        </div> 
+                                                                                    </div>
+
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                                <table class="table table-primary">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th>Depth (m)</th>
+                                                                                                            <th>Litre (ℓ)</th>
+                                                                                                            <th>Action</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody id="dieselLookupTable"></tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
 
                                                                             <input type="hidden" class="form-control" id="id" name="id">
                                                                         </div>
@@ -576,6 +607,24 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
         </tr>
     </script>
 
+    <script type="text/html" id="dieselLookupDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="dieselLookupNo" name="dieselLookupNo" hidden>
+                <input type="text" class="form-control" id="dieselLookupId" name="dieselLookupId" hidden>
+                <input type="number" class="form-control" id="dieselLookupDepth" name="dieselLookupDepth" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="dieselLookupLitre" name="dieselLookupLitre" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
     <script type="text/javascript">
 
     var table = null;
@@ -583,6 +632,7 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
     var levelCount = 0;
     var sgCount = 0;
     var lfoLookupCount = 0;
+    var dieselLookupCount = 0;
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
@@ -769,9 +819,11 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             $('#levelTable').empty();
             $('#sgTable').empty();
             $('#lfoLookupTable').empty();
+            $('#dieselLookupTable').empty();
             levelCount = 0;
             sgCount = 0;
             lfoLookupCount = 0;
+            dieselLookupCount = 0;
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -1024,18 +1076,27 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                 $('#bitumenLevelDiv').show();
                 $('#bitumenSgDiv').hide();
                 $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
             }else if (selectedType == 'BITUSG'){
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').show();
                 $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
             }else if (selectedType == 'LFOLOOKUP') {
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').hide();
-                $('#lfoLookupDiv').show();    
+                $('#lfoLookupDiv').show();   
+                $('#dieselLookupDiv').hide(); 
+            }else if (selectedType == 'DIESELLOOKUP') {
+                $('#bitumenLevelDiv').hide();
+                $('#bitumenSgDiv').hide();
+                $('#lfoLookupDiv').hide();   
+                $('#dieselLookupDiv').show(); 
             }else{
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').hide();
                 $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
             }
         });
 
@@ -1097,6 +1158,25 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
 
             lfoLookupCount++;
         });
+        
+        $("#dieselLookupTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
+
+        $(".add-diesel-lookup").click(function(){
+            var $addContents = $("#dieselLookupDetail").clone();
+            $("#dieselLookupTable").append($addContents.html());
+
+            $("#dieselLookupTable").find('.details:last').attr("id", "detail" + dieselLookupCount);
+            $("#dieselLookupTable").find('.details:last').attr("data-index", dieselLookupCount);
+            $("#dieselLookupTable").find('#remove:last').attr("id", "remove" + dieselLookupCount);
+
+            $("#dieselLookupTable").find('#dieselLookupNo:last').attr('name', 'dieselLookupNo['+dieselLookupCount+']').attr("id", "dieselLookupNo" + dieselLookupCount).val(dieselLookupCount);
+            $("#dieselLookupTable").find('#dieselLookupDepth:last').attr('name', 'dieselLookupDepth['+dieselLookupCount+']').attr("id", "dieselLookupDepth" + dieselLookupCount);
+            $("#dieselLookupTable").find('#dieselLookupLitre:last').attr('name', 'dieselLookupLitre['+dieselLookupCount+']').attr("id", "dieselLookupLitre" + dieselLookupCount);
+
+            dieselLookupCount++;
+        });
     });
 
     function edit(id){
@@ -1143,9 +1223,11 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                 $('#levelTable').html('');
                 $('#sgTable').html('');
                 $('#lfoLookupTable').html('');
+                $('#dieselLookupTable').html('');
                 levelCount = 0;
                 sgCount = 0;
                 lfoLookupCount = 0;
+                dieselLookupCount = 0;
 
                 if (obj.message.values.length > 0){
                     for(var i = 0; i < obj.message.values.length; i++){
@@ -1195,6 +1277,21 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                             $("#lfoLookupTable").find('#lfoLookupLitre:last').attr('name', 'lfoLookupLitre['+lfoLookupCount+']').attr("id", "lfoLookupLitre" + lfoLookupCount).val(item.volume);
 
                             lfoLookupCount++;
+                        }
+                        else if (obj.message.type == 'DIESELLOOKUP'){
+                            var $addContents = $("#dieselLookupDetail").clone();
+                            $("#dieselLookupTable").append($addContents.html());
+
+                            $("#dieselLookupTable").find('.details:last').attr("id", "detail" + dieselLookupCount);
+                            $("#dieselLookupTable").find('.details:last').attr("data-index", dieselLookupCount);
+                            $("#dieselLookupTable").find('#remove:last').attr("id", "remove" + dieselLookupCount);
+
+                            $("#dieselLookupTable").find('#dieselLookupNo:last').attr('name', 'dieselLookupNo['+dieselLookupCount+']').attr("id", "dieselLookupNo" + dieselLookupCount).val(item.no);
+                            $("#dieselLookupTable").find('#dieselLookupId:last').attr('name', 'dieselLookupId['+dieselLookupCount+']').attr("id", "dieselLookupId" + dieselLookupCount).val(item.id);
+                            $("#dieselLookupTable").find('#dieselLookupDepth:last').attr('name', 'dieselLookupDepth['+dieselLookupCount+']').attr("id", "dieselLookupDepth" + dieselLookupCount).val(item.level);
+                            $("#dieselLookupTable").find('#dieselLookupLitre:last').attr('name', 'dieselLookupLitre['+dieselLookupCount+']').attr("id", "dieselLookupLitre" + dieselLookupCount).val(item.volume);
+
+                            dieselLookupCount++;
                         }
                     }
                 }
