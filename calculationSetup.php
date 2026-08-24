@@ -395,6 +395,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                 <select id="uploadType" name="uploadType" class="form-select mb-3">
                                                                     <option value="LEVEL">Bitumen Level</option>
                                                                     <option value="SG">Bitumen SG</option>
+                                                                    <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                    <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                    <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-6">
@@ -456,6 +459,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                         <select id="templateType" name="templateType" class="form-select" required>
                                                                                             <option value="LEVEL">Bitumen Level</option>
                                                                                             <option value="SG">Bitumen SG</option>
+                                                                                            <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                                            <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                                            <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -990,6 +996,15 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                     } else if(templateType == 'SG') {
                         $link.attr('href', 'template/Bitumen_SG_Template.xlsx');
                         $link.attr('download', 'Bitumen_SG_Template.xlsx');
+                    } else if(templateType == 'BITULOOKUP') {
+                        $link.attr('href', 'template/Bitumen_Lookup_Template.xlsx');
+                        $link.attr('download', 'Bitumen_Lookup_Template.xlsx');
+                    } else if(templateType == 'LFOLOOKUP') {
+                        $link.attr('href', 'template/LFO_Lookup_Template.xlsx');
+                        $link.attr('download', 'LFO_Lookup_Template.xlsx');
+                    } else if(templateType == 'DIESELLOOKUP') {
+                        $link.attr('href', 'template/Diesel_Lookup_Template.xlsx');
+                        $link.attr('download', 'Diesel_Lookup_Template.xlsx');
                     }
                     
                     $('body').append($link);
