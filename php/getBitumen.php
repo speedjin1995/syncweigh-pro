@@ -148,6 +148,7 @@ if(isset($_POST['userID'])){
                     }
                 }
                 $message['other_diesel'] = $otherDieselRows;
+                $message['otherDieselBurnerUsage'] = $otherDieselTemp["otherDieselBurnerUsage"] ?? 0;
                 $message['otherDieselTotalTransportUsage'] = $otherDieselTemp["otherDieselTotalTransportUsage"] ?? 0;
                 $message['totalDieselProduction'] = $otherDieselTemp["totalDieselProduction"] ?? 0;
                 ########################################################################################

@@ -343,6 +343,12 @@ if (empty($_POST["otherDieselTotalTransportUsage"])) {
     $otherDieselTotalTransportUsage = trim($_POST["otherDieselTotalTransportUsage"]);
 }
 
+if (empty($_POST["otherDieselBurnerUsage"])) {
+    $otherDieselBurnerUsage = null;
+} else {
+    $otherDieselBurnerUsage = trim($_POST["otherDieselBurnerUsage"]);
+}
+
 if (empty($_POST["totalDieselProduction"])) {
     $totalDieselProduction = null;
 } else {
@@ -370,10 +376,15 @@ if (!empty($_POST["otherDieselNo"]) && count($_POST["otherDieselNo"]) > 0) {
     }
 
     $otherDieselData['otherDieselTotalTransportUsage'] = $otherDieselTotalTransportUsage;
+    $otherDieselData['otherDieselBurnerUsage'] = $otherDieselBurnerUsage;
     $otherDieselData['totalDieselProduction'] = $totalDieselProduction;
     $otherDieselData = json_encode($otherDieselData, JSON_PRETTY_PRINT);
 } else {
-    $otherDieselData = NULL;
+    $otherDieselData = [];
+    $otherDieselData['otherDieselTotalTransportUsage'] = $otherDieselTotalTransportUsage;
+    $otherDieselData['otherDieselBurnerUsage'] = $otherDieselBurnerUsage;
+    $otherDieselData['totalDieselProduction'] = $totalDieselProduction;
+    $otherDieselData = json_encode($otherDieselData, JSON_PRETTY_PRINT);
 }
 
 # Processing for hotoil data

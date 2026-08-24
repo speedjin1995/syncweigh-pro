@@ -113,6 +113,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                 <option selected>-</option>
                                                                 <option value="BITULEVEL">Bitumen Level</option>
                                                                 <option value="BITUSG">Bitumen SG</option>
+                                                                <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
@@ -197,6 +200,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                         <select id="type" name="type" class="form-select select2" required>
                                                                                             <option value="BITULEVEL">Bitumen Level</option>
                                                                                             <option value="BITUSG">Bitumen SG</option>
+                                                                                            <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                                            <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                                            <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                                                         </select>
                                                                                     </div>
                                                                                 </div>
@@ -263,6 +269,99 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="bitumenLookupDiv" style="display: none;">
+                                                                                <div class="card bg-light">
+                                                                                    <div class="card-header">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div>
+                                                                                                <h5 class="card-title mb-0">Bitumen Lookup</h5>
+                                                                                            </div>
+                                                                                            <div class="flex-shrink-0">
+                                                                                                <button type="button" class="btn btn-danger add-bitumen-lookup"><i class="ri-add-circle-line align-middle me-1"></i>Add New</button>
+                                                                                            </div> 
+                                                                                        </div> 
+                                                                                    </div>
+
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                                <table class="table table-primary">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th>Height (CM)</th>
+                                                                                                            <th>Weight (MT)</th>
+                                                                                                            <th>Action</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody id="bitumenLookupTable"></tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="lfoLookupDiv" style="display: none;">
+                                                                                <div class="card bg-light">
+                                                                                    <div class="card-header">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div>
+                                                                                                <h5 class="card-title mb-0">LFO Lookup</h5>
+                                                                                            </div>
+                                                                                            <div class="flex-shrink-0">
+                                                                                                <button type="button" class="btn btn-danger add-lfo-lookup"><i class="ri-add-circle-line align-middle me-1"></i>Add New</button>
+                                                                                            </div> 
+                                                                                        </div> 
+                                                                                    </div>
+
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                                <table class="table table-primary">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th>Depth (m)</th>
+                                                                                                            <th>Litre (ℓ)</th>
+                                                                                                            <th>Action</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody id="lfoLookupTable"></tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-xxl-12 col-lg-12 mb-3" id="dieselLookupDiv" style="display: none;">
+                                                                                <div class="card bg-light">
+                                                                                    <div class="card-header">
+                                                                                        <div class="d-flex justify-content-between">
+                                                                                            <div>
+                                                                                                <h5 class="card-title mb-0">Diesel Lookup</h5>
+                                                                                            </div>
+                                                                                            <div class="flex-shrink-0">
+                                                                                                <button type="button" class="btn btn-danger add-diesel-lookup"><i class="ri-add-circle-line align-middle me-1"></i>Add New</button>
+                                                                                            </div> 
+                                                                                        </div> 
+                                                                                    </div>
+
+                                                                                    <div class="card-body">
+                                                                                        <div class="row">
+                                                                                            <div class="col-xxl-12 col-lg-12 mb-3">
+                                                                                                <table class="table table-primary">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th>Depth (m)</th>
+                                                                                                            <th>Litre (ℓ)</th>
+                                                                                                            <th>Action</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody id="dieselLookupTable"></tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
 
                                                                             <input type="hidden" class="form-control" id="id" name="id">
                                                                         </div>
@@ -296,6 +395,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                 <select id="uploadType" name="uploadType" class="form-select mb-3">
                                                                     <option value="LEVEL">Bitumen Level</option>
                                                                     <option value="SG">Bitumen SG</option>
+                                                                    <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                    <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                    <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-6">
@@ -357,6 +459,9 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                                                                                         <select id="templateType" name="templateType" class="form-select" required>
                                                                                             <option value="LEVEL">Bitumen Level</option>
                                                                                             <option value="SG">Bitumen SG</option>
+                                                                                            <option value="BITULOOKUP">Bitumen Lookup</option>
+                                                                                            <option value="LFOLOOKUP">LFO Lookup</option>
+                                                                                            <option value="DIESELLOOKUP">Diesel Lookup</option>
                                                                                         </select>   
                                                                                     </div>
                                                                                 </div>
@@ -521,12 +626,69 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
         </tr>
     </script>
 
+    <script type="text/html" id="bitumenLookupDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="bitumenLookupNo" name="bitumenLookupNo" hidden>
+                <input type="text" class="form-control" id="bitumenLookupId" name="bitumenLookupId" hidden>
+                <input type="number" class="form-control" id="bitumenLookupHeight" name="bitumenLookupHeight" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="bitumenLookupWeight" name="bitumenLookupWeight" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
+    <script type="text/html" id="lfoLookupDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="lfoLookupNo" name="lfoLookupNo" hidden>
+                <input type="text" class="form-control" id="lfoLookupId" name="lfoLookupId" hidden>
+                <input type="number" class="form-control" id="lfoLookupDepth" name="lfoLookupDepth" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="lfoLookupLitre" name="lfoLookupLitre" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
+    <script type="text/html" id="dieselLookupDetail">
+        <tr class="details">
+            <td>
+                <input type="text" class="form-control" id="dieselLookupNo" name="dieselLookupNo" hidden>
+                <input type="text" class="form-control" id="dieselLookupId" name="dieselLookupId" hidden>
+                <input type="number" class="form-control" id="dieselLookupDepth" name="dieselLookupDepth" style="background-color:white;" value="0">
+            </td>
+            <td>
+                <input type="number" class="form-control" id="dieselLookupLitre" name="dieselLookupLitre" style="background-color:white;" value="0">
+            </td>
+            <td class="d-flex" style="text-align:center">
+                <button class="btn btn-danger" id="remove" style="background-color: #f06548;">
+                    <i class="fa fa-times"></i>
+                </button>
+            </td>
+        </tr>
+    </script>
+
     <script type="text/javascript">
 
     var table = null;
     var wasErrorModalShown = false;
     var levelCount = 0;
     var sgCount = 0;
+    var bitumenLookupCount = 0;
+    var lfoLookupCount = 0;
+    var dieselLookupCount = 0;
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
@@ -712,8 +874,14 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             // Empty level and sg tables
             $('#levelTable').empty();
             $('#sgTable').empty();
+            $('#bitumenLookupTable').empty();
+            $('#lfoLookupTable').empty();
+            $('#dieselLookupTable').empty();
             levelCount = 0;
             sgCount = 0;
+            bitumenLookupCount = 0;
+            lfoLookupCount = 0;
+            dieselLookupCount = 0;
 
             // Remove Validation Error Message
             $('#addModal .is-invalid').removeClass('is-invalid');
@@ -828,6 +996,15 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
                     } else if(templateType == 'SG') {
                         $link.attr('href', 'template/Bitumen_SG_Template.xlsx');
                         $link.attr('download', 'Bitumen_SG_Template.xlsx');
+                    } else if(templateType == 'BITULOOKUP') {
+                        $link.attr('href', 'template/Bitumen_Lookup_Template.xlsx');
+                        $link.attr('download', 'Bitumen_Lookup_Template.xlsx');
+                    } else if(templateType == 'LFOLOOKUP') {
+                        $link.attr('href', 'template/LFO_Lookup_Template.xlsx');
+                        $link.attr('download', 'LFO_Lookup_Template.xlsx');
+                    } else if(templateType == 'DIESELLOOKUP') {
+                        $link.attr('href', 'template/Diesel_Lookup_Template.xlsx');
+                        $link.attr('download', 'Diesel_Lookup_Template.xlsx');
                     }
                     
                     $('body').append($link);
@@ -965,12 +1142,39 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             if(selectedType == 'BITULEVEL'){
                 $('#bitumenLevelDiv').show();
                 $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
+                $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
             }else if (selectedType == 'BITUSG'){
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').show();
+                $('#bitumenLookupDiv').hide();
+                $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
+            }else if (selectedType == 'BITULOOKUP'){
+                $('#bitumenLevelDiv').hide();
+                $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').show();
+                $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
+            }else if (selectedType == 'LFOLOOKUP') {
+                $('#bitumenLevelDiv').hide();
+                $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
+                $('#lfoLookupDiv').show();   
+                $('#dieselLookupDiv').hide(); 
+            }else if (selectedType == 'DIESELLOOKUP') {
+                $('#bitumenLevelDiv').hide();
+                $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
+                $('#lfoLookupDiv').hide();   
+                $('#dieselLookupDiv').show(); 
             }else{
                 $('#bitumenLevelDiv').hide();
                 $('#bitumenSgDiv').hide();
+                $('#bitumenLookupDiv').hide();
+                $('#lfoLookupDiv').hide();
+                $('#dieselLookupDiv').hide();
             }
         });
 
@@ -1012,6 +1216,63 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
             $("#sgTable").find('#sg:last').attr('name', 'sg['+sgCount+']').attr("id", "sg" + sgCount);
 
             sgCount++;
+        });
+
+        $("#bitumenLookupTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
+
+        $(".add-bitumen-lookup").click(function(){
+            var $addContents = $("#bitumenLookupDetail").clone();
+            $("#bitumenLookupTable").append($addContents.html());
+
+            $("#bitumenLookupTable").find('.details:last').attr("id", "detail" + bitumenLookupCount);
+            $("#bitumenLookupTable").find('.details:last').attr("data-index", bitumenLookupCount);
+            $("#bitumenLookupTable").find('#remove:last').attr("id", "remove" + bitumenLookupCount);
+
+            $("#bitumenLookupTable").find('#bitumenLookupNo:last').attr('name', 'bitumenLookupNo['+bitumenLookupCount+']').attr("id", "bitumenLookupNo" + bitumenLookupCount).val(bitumenLookupCount);
+            $("#bitumenLookupTable").find('#bitumenLookupHeight:last').attr('name', 'bitumenLookupHeight['+bitumenLookupCount+']').attr("id", "bitumenLookupHeight" + bitumenLookupCount);
+            $("#bitumenLookupTable").find('#bitumenLookupWeight:last').attr('name', 'bitumenLookupWeight['+bitumenLookupCount+']').attr("id", "bitumenLookupWeight" + bitumenLookupCount);
+
+            bitumenLookupCount++;
+        });
+        
+        $("#lfoLookupTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
+
+        $(".add-lfo-lookup").click(function(){
+            var $addContents = $("#lfoLookupDetail").clone();
+            $("#lfoLookupTable").append($addContents.html());
+
+            $("#lfoLookupTable").find('.details:last').attr("id", "detail" + lfoLookupCount);
+            $("#lfoLookupTable").find('.details:last').attr("data-index", lfoLookupCount);
+            $("#lfoLookupTable").find('#remove:last').attr("id", "remove" + lfoLookupCount);
+
+            $("#lfoLookupTable").find('#lfoLookupNo:last').attr('name', 'lfoLookupNo['+lfoLookupCount+']').attr("id", "lfoLookupNo" + lfoLookupCount).val(lfoLookupCount);
+            $("#lfoLookupTable").find('#lfoLookupDepth:last').attr('name', 'lfoLookupDepth['+lfoLookupCount+']').attr("id", "lfoLookupDepth" + lfoLookupCount);
+            $("#lfoLookupTable").find('#lfoLookupLitre:last').attr('name', 'lfoLookupLitre['+lfoLookupCount+']').attr("id", "lfoLookupLitre" + lfoLookupCount);
+
+            lfoLookupCount++;
+        });
+        
+        $("#dieselLookupTable").on('click', 'button[id^="remove"]', function () {
+            $(this).parents("tr").remove();
+        });
+
+        $(".add-diesel-lookup").click(function(){
+            var $addContents = $("#dieselLookupDetail").clone();
+            $("#dieselLookupTable").append($addContents.html());
+
+            $("#dieselLookupTable").find('.details:last').attr("id", "detail" + dieselLookupCount);
+            $("#dieselLookupTable").find('.details:last').attr("data-index", dieselLookupCount);
+            $("#dieselLookupTable").find('#remove:last').attr("id", "remove" + dieselLookupCount);
+
+            $("#dieselLookupTable").find('#dieselLookupNo:last').attr('name', 'dieselLookupNo['+dieselLookupCount+']').attr("id", "dieselLookupNo" + dieselLookupCount).val(dieselLookupCount);
+            $("#dieselLookupTable").find('#dieselLookupDepth:last').attr('name', 'dieselLookupDepth['+dieselLookupCount+']').attr("id", "dieselLookupDepth" + dieselLookupCount);
+            $("#dieselLookupTable").find('#dieselLookupLitre:last').attr('name', 'dieselLookupLitre['+dieselLookupCount+']').attr("id", "dieselLookupLitre" + dieselLookupCount);
+
+            dieselLookupCount++;
         });
     });
 
@@ -1058,8 +1319,14 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
 
                 $('#levelTable').html('');
                 $('#sgTable').html('');
+                $('#bitumenLookupTable').html('');
+                $('#lfoLookupTable').html('');
+                $('#dieselLookupTable').html('');
                 levelCount = 0;
                 sgCount = 0;
+                bitumenLookupCount = 0;
+                lfoLookupCount = 0;
+                dieselLookupCount = 0;
 
                 if (obj.message.values.length > 0){
                     for(var i = 0; i < obj.message.values.length; i++){
@@ -1095,9 +1362,53 @@ if (hasModulePermission('Stock Management', 'Calculation Setup', ['view_all_plan
 
                             sgCount++;
                         }
+                        else if (obj.message.type == 'BITULOOKUP'){
+                            var $addContents = $("#bitumenLookupDetail").clone();
+                            $("#bitumenLookupTable").append($addContents.html());
+
+                            $("#bitumenLookupTable").find('.details:last').attr("id", "detail" + bitumenLookupCount);
+                            $("#bitumenLookupTable").find('.details:last').attr("data-index", bitumenLookupCount);
+                            $("#bitumenLookupTable").find('#remove:last').attr("id", "remove" + bitumenLookupCount);
+
+                            $("#bitumenLookupTable").find('#bitumenLookupNo:last').attr('name', 'bitumenLookupNo['+bitumenLookupCount+']').attr("id", "bitumenLookupNo" + bitumenLookupCount).val(item.no);
+                            $("#bitumenLookupTable").find('#bitumenLookupId:last').attr('name', 'bitumenLookupId['+bitumenLookupCount+']').attr("id", "bitumenLookupId" + bitumenLookupCount).val(item.id);
+                            $("#bitumenLookupTable").find('#bitumenLookupHeight:last').attr('name', 'bitumenLookupHeight['+bitumenLookupCount+']').attr("id", "bitumenLookupHeight" + bitumenLookupCount).val(item.level);
+                            $("#bitumenLookupTable").find('#bitumenLookupWeight:last').attr('name', 'bitumenLookupWeight['+bitumenLookupCount+']').attr("id", "bitumenLookupWeight" + bitumenLookupCount).val(item.volume);
+
+                            bitumenLookupCount++;
+                        }
+                        else if (obj.message.type == 'LFOLOOKUP'){
+                            var $addContents = $("#lfoLookupDetail").clone();
+                            $("#lfoLookupTable").append($addContents.html());
+
+                            $("#lfoLookupTable").find('.details:last').attr("id", "detail" + lfoLookupCount);
+                            $("#lfoLookupTable").find('.details:last').attr("data-index", lfoLookupCount);
+                            $("#lfoLookupTable").find('#remove:last').attr("id", "remove" + lfoLookupCount);
+
+                            $("#lfoLookupTable").find('#lfoLookupNo:last').attr('name', 'lfoLookupNo['+lfoLookupCount+']').attr("id", "lfoLookupNo" + lfoLookupCount).val(item.no);
+                            $("#lfoLookupTable").find('#lfoLookupId:last').attr('name', 'lfoLookupId['+lfoLookupCount+']').attr("id", "lfoLookupId" + lfoLookupCount).val(item.id);
+                            $("#lfoLookupTable").find('#lfoLookupDepth:last').attr('name', 'lfoLookupDepth['+lfoLookupCount+']').attr("id", "lfoLookupDepth" + lfoLookupCount).val(item.level);
+                            $("#lfoLookupTable").find('#lfoLookupLitre:last').attr('name', 'lfoLookupLitre['+lfoLookupCount+']').attr("id", "lfoLookupLitre" + lfoLookupCount).val(item.volume);
+
+                            lfoLookupCount++;
+                        }
+                        else if (obj.message.type == 'DIESELLOOKUP'){
+                            var $addContents = $("#dieselLookupDetail").clone();
+                            $("#dieselLookupTable").append($addContents.html());
+
+                            $("#dieselLookupTable").find('.details:last').attr("id", "detail" + dieselLookupCount);
+                            $("#dieselLookupTable").find('.details:last').attr("data-index", dieselLookupCount);
+                            $("#dieselLookupTable").find('#remove:last').attr("id", "remove" + dieselLookupCount);
+
+                            $("#dieselLookupTable").find('#dieselLookupNo:last').attr('name', 'dieselLookupNo['+dieselLookupCount+']').attr("id", "dieselLookupNo" + dieselLookupCount).val(item.no);
+                            $("#dieselLookupTable").find('#dieselLookupId:last').attr('name', 'dieselLookupId['+dieselLookupCount+']').attr("id", "dieselLookupId" + dieselLookupCount).val(item.id);
+                            $("#dieselLookupTable").find('#dieselLookupDepth:last').attr('name', 'dieselLookupDepth['+dieselLookupCount+']').attr("id", "dieselLookupDepth" + dieselLookupCount).val(item.level);
+                            $("#dieselLookupTable").find('#dieselLookupLitre:last').attr('name', 'dieselLookupLitre['+dieselLookupCount+']').attr("id", "dieselLookupLitre" + dieselLookupCount).val(item.volume);
+
+                            dieselLookupCount++;
+                        }
                     }
                 }
-
 
                 $('#addModal').modal('show');
             

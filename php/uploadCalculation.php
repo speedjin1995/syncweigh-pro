@@ -15,7 +15,7 @@ if (!empty($data)) {
 
     // Validate template fields based on upload type
     $requiredFields = [];
-    $templateName = '';
+    $templateName = '';//var_dump($data);exit;
     
     if ($uploadType == 'LEVEL') {
         $requiredFields = ['Plant', 'BatchDrum', 'Levelmm', 'Volumem'];
@@ -23,8 +23,17 @@ if (!empty($data)) {
     } elseif ($uploadType == 'SG') {
         $requiredFields = ['Plant', 'BatchDrum', 'TemperatureC', 'SG'];
         $templateName = 'Bitumen_SG_Template';
+    } elseif ($uploadType == 'BITULOOKUP') {
+        $requiredFields = ['Plant', 'BatchDrum', 'HeightCM', 'WeightMT'];
+        $templateName = 'Bitumen_Lookup_Template';
+    } elseif ($uploadType == 'LFOLOOKUP') {
+        $requiredFields = ['Plant', 'BatchDrum', 'Depthm', 'Litrel'];
+        $templateName = 'LFO_Lookup_Template';
+    } elseif ($uploadType == 'DIESELLOOKUP') {
+        $requiredFields = ['Plant', 'BatchDrum', 'Depthm', 'Litrel'];
+        $templateName = 'Diesel_Lookup_Template';
     }
-    
+
     // Check if first row has required fields
     if (!empty($rowsData) && !empty($requiredFields)) {
         $firstRow = $rowsData[0];
@@ -42,36 +51,38 @@ if (!empty($data)) {
     $errors = [];
     $calculationId = null;
     foreach ($rowsData as $index => $row) {
-        if ($uploadType == 'LEVEL') {
-            $type = 'BITULEVEL';
+        // Map uploadType to calculation type
+        $typeMap = ['LEVEL' => 'BITULEVEL', 'SG' => 'BITUSG', 'BITULOOKUP' => 'BITULOOKUP', 'LFOLOOKUP' => 'LFOLOOKUP', 'DIESELLOOKUP' => 'DIESELLOOKUP'];
+        $type = $typeMap[$uploadType] ?? null;
+
+        if ($type) {
+            // Shared: Plant validation
             $Plant = isset($row['Plant']) && !empty($row['Plant']) ? searchPlantIdByName($row['Plant'], $db) : '';
             if (empty($Plant)) {
                 $errors[] = "Plant not found in row " . ($index + 1) . ": " . $row['Plant'];
                 continue;
             }
 
+            // Shared: BatchDrum validation
             $BatchDrum = !empty($row['BatchDrum']) ? trim($row['BatchDrum']) : '';
             if (empty($BatchDrum)) {
                 $errors[] = "Batch/Drum cannot be blank in row " . ($index + 1);
                 continue;
             }
-            // Query to find existing calculation
-            if (empty($calculationId)){
-                if ($calculation_stmt = $db->prepare("SELECT * FROM Calculations WHERE plant_id=? AND batch_drum=? AND type = ? AND deleted='0'")) {
+
+            // Shared: find or create calculation
+            if (empty($calculationId)) {
+                if ($calculation_stmt = $db->prepare("SELECT * FROM Calculations WHERE plant_id=? AND batch_drum=? AND type=? AND deleted='0'")) {
                     $calculation_stmt->bind_param('sss', $Plant, $BatchDrum, $type);
-            
-                    // Execute the prepared query.
                     if ($calculation_stmt->execute()) {
                         $result = $calculation_stmt->get_result();
-                        
                         while ($calcRow = $result->fetch_assoc()) {
                             $calculationId = $calcRow['id'];
                         }
                     }
                     $calculation_stmt->close();
                 }
-                
-                // Create new calculation if not found
+
                 if (empty($calculationId)) {
                     if ($insert_stmt = $db->prepare("INSERT INTO Calculations (type, plant_id, batch_drum, created_by) VALUES (?, ?, ?, ?)")) {
                         $insert_stmt->bind_param('ssss', $type, $Plant, $BatchDrum, $uid);
@@ -82,63 +93,59 @@ if (!empty($data)) {
                 }
             }
 
-            $Levelmm = isset($row['Levelmm']) && $row['Levelmm'] !== '' ? ($row['Levelmm'] == '0' ? '0' : trim($row['Levelmm'])) : '';
-            $Volumem = isset($row['Volumem']) && $row['Volumem'] !== '' ? ($row['Volumem'] == '0' ? '0' : $row['Volumem']) : '';
-            
-            if (!empty($calculationId) && $Levelmm !== '' && $Volumem !== '') {
-                if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
-                    $insertValueStmt->bind_param('sss', $calculationId, $Levelmm, $Volumem);
-                    $insertValueStmt->execute();
-                    $insertValueStmt->close();
-                }
-            }
-        }elseif ($uploadType == 'SG') {
-            $type = 'BITUSG';
-            $Plant = isset($row['Plant']) && !empty($row['Plant']) ? searchPlantIdByName($row['Plant'], $db) : '';
-            if (empty($Plant)) {
-                $errors[] = "Plant not found in row " . ($index + 1) . ": " . $row['Plant'];
-                continue;
-            }
-
-            $BatchDrum = !empty($row['BatchDrum']) ? trim($row['BatchDrum']) : '';
-            if (empty($BatchDrum)) {
-                $errors[] = "Batch/Drum cannot be blank in row " . ($index + 1);
-                continue;
-            }
-            // Query to find existing calculation
-            if (empty($calculationId)){
-                if ($calculation_stmt = $db->prepare("SELECT * FROM Calculations WHERE plant_id=? AND batch_drum=? AND type = ? AND deleted='0'")) {
-                    $calculation_stmt->bind_param('sss', $Plant, $BatchDrum, $type);
-            
-                    // Execute the prepared query.
-                    if ($calculation_stmt->execute()) {
-                        $result = $calculation_stmt->get_result();
-                        
-                        while ($calcRow = $result->fetch_assoc()) {
-                            $calculationId = $calcRow['id'];
+            // Type-specific insert
+            if (!empty($calculationId)) {
+                // Set olf calculation deleted to 1
+                if ($uploadType == 'LEVEL') {
+                    $Levelmm = isset($row['Levelmm']) && $row['Levelmm'] !== '' ? ($row['Levelmm'] == '0' ? '0' : trim($row['Levelmm'])) : '';
+                    $Volumem = isset($row['Volumem']) && $row['Volumem'] !== '' ? ($row['Volumem'] == '0' ? '0' : $row['Volumem']) : '';
+                    if ($Levelmm !== '' && $Volumem !== '') {
+                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
+                            $insertValueStmt->bind_param('sss', $calculationId, $Levelmm, $Volumem);
+                            $insertValueStmt->execute();
+                            $insertValueStmt->close();
                         }
                     }
-                    $calculation_stmt->close();
-                }
-                
-                // Create new calculation if not found
-                if (empty($calculationId)) {
-                    if ($insert_stmt = $db->prepare("INSERT INTO Calculations (type, plant_id, batch_drum, created_by) VALUES (?, ?, ?, ?)")) {
-                        $insert_stmt->bind_param('ssss', $type, $Plant, $BatchDrum, $uid);
-                        $insert_stmt->execute();
-                        $calculationId = $insert_stmt->insert_id;
-                        $insert_stmt->close();
+                } elseif ($uploadType == 'SG') {
+                    $TemperatureC = isset($row['TemperatureC']) && $row['TemperatureC'] !== '' ? ($row['TemperatureC'] == '0' ? '0' : trim($row['TemperatureC'])) : '';
+                    $SG = isset($row['SG']) && $row['SG'] !== '' ? ($row['SG'] == '0' ? '0' : trim($row['SG'])) : '';
+                    if ($TemperatureC !== '' && $SG !== '') {
+                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, temperature, sg) VALUES (?, ?, ?)")) {
+                            $insertValueStmt->bind_param('sss', $calculationId, $TemperatureC, $SG);
+                            $insertValueStmt->execute();
+                            $insertValueStmt->close();
+                        }
                     }
-                }
-            }
-            $TemperatureC = isset($row['TemperatureC']) && $row['TemperatureC'] !== '' ? ($row['TemperatureC'] == '0' ? '0' : trim($row['TemperatureC'])) : '';
-            $SG = isset($row['SG']) && $row['SG'] !== '' ? ($row['SG'] == '0' ? '0' : trim($row['SG'])) : '';
-            
-            if (!empty($calculationId) && $TemperatureC !== '' && $SG !== '') {
-                if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, temperature, sg) VALUES (?, ?, ?)")) {
-                    $insertValueStmt->bind_param('sss', $calculationId, $TemperatureC, $SG);
-                    $insertValueStmt->execute();
-                    $insertValueStmt->close();
+                } elseif ($uploadType == 'BITULOOKUP') {
+                    $HeightCM = isset($row['HeightCM']) && $row['HeightCM'] !== '' ? ($row['HeightCM'] == '0' ? '0' : trim($row['HeightCM'])) : '';
+                    $WeightMT = isset($row['WeightMT']) && $row['WeightMT'] !== '' ? ($row['WeightMT'] == '0' ? '0' : trim($row['WeightMT'])) : '';
+                    if ($HeightCM !== '' && $WeightMT !== '') {
+                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
+                            $insertValueStmt->bind_param('sss', $calculationId, $HeightCM, $WeightMT);
+                            $insertValueStmt->execute();
+                            $insertValueStmt->close();
+                        }
+                    }
+                } elseif ($uploadType == 'LFOLOOKUP') {
+                    $Depthm = isset($row['Depthm']) && $row['Depthm'] !== '' ? ($row['Depthm'] == '0' ? '0' : trim($row['Depthm'])) : '';
+                    $Litrel = isset($row['Litrel']) && $row['Litrel'] !== '' ? ($row['Litrel'] == '0' ? '0' : trim($row['Litrel'])) : '';
+                    if ($Depthm !== '' && $Litrel !== '') {
+                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
+                            $insertValueStmt->bind_param('sss', $calculationId, $Depthm, $Litrel);
+                            $insertValueStmt->execute();
+                            $insertValueStmt->close();
+                        }
+                    }
+                } elseif ($uploadType == 'DIESELLOOKUP') {
+                    $Depthm = isset($row['Depthm']) && $row['Depthm'] !== '' ? ($row['Depthm'] == '0' ? '0' : trim($row['Depthm'])) : '';
+                    $Litrel = isset($row['Litrel']) && $row['Litrel'] !== '' ? ($row['Litrel'] == '0' ? '0' : trim($row['Litrel'])) : '';
+                    if ($Depthm !== '' && $Litrel !== '') {
+                        if ($insertValueStmt = $db->prepare("INSERT INTO Calculation_Value (calculation_id, `level`, volume) VALUES (?, ?, ?)")) {
+                            $insertValueStmt->bind_param('sss', $calculationId, $Depthm, $Litrel);
+                            $insertValueStmt->execute();
+                            $insertValueStmt->close();
+                        }
+                    }
                 }
             }
         }
