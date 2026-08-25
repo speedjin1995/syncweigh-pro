@@ -24,8 +24,19 @@ $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 $supplier3 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
-$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_mat_code <> 'BTBI001'");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_mat_code NOT IN ('BTBI001', '3001/001')");
 
+$lfoRawMatCode = null;
+$lfoCheck = $db->query("SELECT raw_mat_code FROM Raw_Mat WHERE raw_mat_code IN ('LFFO001', '3003/002') LIMIT 1");
+if ($row = mysqli_fetch_assoc($lfoCheck)) {
+    $lfoRawMatCode = $row['raw_mat_code'];
+}
+
+$dieselRawMatCode = null;
+$dieselCheck = $db->query("SELECT raw_mat_code FROM Raw_Mat WHERE raw_mat_code IN ('DIE001', '3003/001') LIMIT 1");
+if ($row = mysqli_fetch_assoc($dieselCheck)) {
+    $dieselRawMatCode = $row['raw_mat_code'];
+}
 ?>
 
 <head>
@@ -1079,6 +1090,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
+    var lfoRawMatCode = <?= json_encode($lfoRawMatCode ?? 'LFFO001') ?>;
+    var dieselRawMatCode = <?= json_encode($dieselRawMatCode ?? 'DIE001') ?>;
     var uploadWorkbook = null;
     var allSheetsData = {};
     var activeSheetName = '';
@@ -1767,7 +1780,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('LFFO001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(lfoRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalLfo').trigger('change');
@@ -1800,7 +1813,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('LFFO001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(lfoRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalLfo').trigger('change');
@@ -1934,7 +1947,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('DIE001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(dieselRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="dieselVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="dieselWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalDiesel').trigger('change');
@@ -1967,7 +1980,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('DIE001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(dieselRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="dieselVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="dieselWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalDiesel').trigger('change');
@@ -2482,7 +2495,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         });
 
         $('#refreshBtn').on('click', function(){
-            if (!confirm('This will reset previous reading and incoming data. Continue?')){
+            if (!confirm('This will reset previous reading, incoming data and calculation. Continue?')){
                 return;
             } 
             var declarationDate = $('#addModal').find('#datetime').val();
@@ -2491,12 +2504,17 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             var batchDrum = $('#addModal').find('#batchDrum').val();
 
             if (plantId && batchDrum && declarationDate) {
-                getPrevStockTake(plantId, batchDrum, declarationDate);
+                getPrevStockTake(plantId, batchDrum, declarationDate, function(){
+                    $('#addModal').find('#totalLfo').trigger('change');
+                    $('#addModal').find('#totalDiesel').trigger('change');
+                });
                 if (plantCode) {
                     getIncoming(plantCode, batchDrum, declarationDate, function(){
-                        $('#addModal').find('#bitumenIncoming').trigger('change');
-                        $('#addModal').find('#dieselIncoming').trigger('change');
-                        $('#addModal').find('#lfoIncoming').trigger('change');
+                        $('#bitumenTable').find('input[id^="level"]').trigger('change');
+                        $('#lfoTable').find('input[id^="lfoLevel"]').trigger('change');
+                        $('#dieselTable').find('input[id^="dieselLevel"]').trigger('change');
+                        $('#addModal').find('#totalLfo').trigger('change');
+                        $('#addModal').find('#totalDiesel').trigger('change');
                     });
                 }
             }
@@ -2703,7 +2721,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         });
     }
 
-    function getPrevStockTake(plantId, batchDrum, declarationDate){
+    function getPrevStockTake(plantId, batchDrum, declarationDate, callback){
         if (declarationDate && plantId && batchDrum){
             // load previous diesel reading
             $('#spinnerLoading').show();
@@ -2713,6 +2731,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 if(obj.status === 'success'){
                     $('#addModal').find('#previousLfoReading').val(obj.message.previous_lfo || '0.00');
                     $('#addModal').find('#previousDieselReading').val(obj.message.previous_diesel || '0.00');
+                    if (typeof callback === 'function') callback();
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
