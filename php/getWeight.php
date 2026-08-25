@@ -57,8 +57,19 @@ if(isset($_POST['userID'])){
         $batchDrum = filter_input(INPUT_POST, 'batchDrum', FILTER_SANITIZE_STRING);
 
         // Handle the case for stock take to get total diesel and total lfo
-        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ('DIE001', 'LFFO001', 'BTBI001') AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
-            $update_stmt->bind_param('sss', $plantCode, $formattedDate, $batchDrum);
+        $rawMatCode = [
+            'DIE001', // Diesel BT
+            'LFFO001', // LFO BT
+            'BTBI001', // Bitumen BT
+            '3001/001', // Bitumen AJIL
+            '3003/001', // Diesel AJIL
+            '3003/002' // LFO AJIL
+        ];
+        $placeholders = implode(',', array_fill(0, count($rawMatCode), '?'));
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+            $bindTypes = str_repeat('s', count($rawMatCode)) . 'sss';
+            $bindParams = array_merge($rawMatCode, [$plantCode, $declarationDate, $batchDrum]);
+            $update_stmt->bind_param($bindTypes, ...$bindParams);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -73,7 +84,7 @@ if(isset($_POST['userID'])){
                 $message = array();
 
                 while ($row = $result->fetch_assoc()) {
-                    if ($row['raw_mat_code'] == 'DIE001') {
+                    if ($row['raw_mat_code'] == 'DIE001' || $row['raw_mat_code'] == '3003/001') {
                         // Convert kg to litre for diesel
                         if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_UOM rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
                             $conversion_stmt->bind_param('s', $row['raw_mat_code']);
@@ -92,7 +103,7 @@ if(isset($_POST['userID'])){
                         }
 
                         $conversion_stmt->close();
-                    } elseif ($row['raw_mat_code'] == 'LFFO001') {
+                    } elseif ($row['raw_mat_code'] == 'LFFO001' || $row['raw_mat_code'] == '3003/002') {
                         // Convert kg to litre for lfo
                         if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_UOM rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
                             $conversion_stmt->bind_param('s', $row['raw_mat_code']);
@@ -111,7 +122,7 @@ if(isset($_POST['userID'])){
                         }
 
                         $conversion_stmt->close();
-                    } elseif ($row['raw_mat_code'] == 'BTBI001') {
+                    } elseif ($row['raw_mat_code'] == 'BTBI001' || $row['raw_mat_code'] == '3001/001') {
                         // Convert kg to mt for bitumen incoming
                         if ($conversion_stmt = $db->prepare("SELECT * FROM Raw_Mat rm JOIN Raw_Mat_UOM rmu ON rm.id = rmu.raw_mat_id WHERE rm.raw_mat_code = ? AND rmu.unit_id = 2")) {
                             $conversion_stmt->bind_param('s', $row['raw_mat_code']);

@@ -24,8 +24,19 @@ $supplier2 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name
 $supplier3 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier4 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
 $supplier5 = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name ASC");
-$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_mat_code <> 'BTBI001'");
+$rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_mat_code NOT IN ('BTBI001', '3001/001')");
 
+$lfoRawMatCode = null;
+$lfoCheck = $db->query("SELECT raw_mat_code FROM Raw_Mat WHERE raw_mat_code IN ('LFFO001', '3003/002') LIMIT 1");
+if ($row = mysqli_fetch_assoc($lfoCheck)) {
+    $lfoRawMatCode = $row['raw_mat_code'];
+}
+
+$dieselRawMatCode = null;
+$dieselCheck = $db->query("SELECT raw_mat_code FROM Raw_Mat WHERE raw_mat_code IN ('DIE001', '3003/001') LIMIT 1");
+if ($row = mysqli_fetch_assoc($dieselCheck)) {
+    $dieselRawMatCode = $row['raw_mat_code'];
+}
 ?>
 
 <head>
@@ -1079,6 +1090,8 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
+    var lfoRawMatCode = <?= json_encode($lfoRawMatCode ?? 'LFFO001') ?>;
+    var dieselRawMatCode = <?= json_encode($dieselRawMatCode ?? 'DIE001') ?>;
     var uploadWorkbook = null;
     var allSheetsData = {};
     var activeSheetName = '';
@@ -1767,7 +1780,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('LFFO001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(lfoRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalLfo').trigger('change');
@@ -1800,7 +1813,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('LFFO001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(lfoRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="lfoVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="lfoWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalLfo').trigger('change');
@@ -1934,7 +1947,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('DIE001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(dieselRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="dieselVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="dieselWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalDiesel').trigger('change');
@@ -1967,7 +1980,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
 
             // Calculate Weight MT
             if (actualLevel){
-                calculateLiquid('DIE001', diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
+                calculateLiquid(dieselRawMatCode, diameter, length, actualLevel, plantId, batchDrum, function(calculationData){
                     row.find('input[id^="dieselVolume"]').val(calculationData.volume.toFixed(2));
                     row.find('input[id^="dieselWeight"]').val(calculationData.volumeMt.toFixed(2));
                     $('#addModal').find('#totalDiesel').trigger('change');
