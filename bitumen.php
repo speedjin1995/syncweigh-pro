@@ -2482,7 +2482,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         });
 
         $('#refreshBtn').on('click', function(){
-            if (!confirm('This will reset previous reading and incoming data. Continue?')){
+            if (!confirm('This will reset previous reading, incoming data and calculation. Continue?')){
                 return;
             } 
             var declarationDate = $('#addModal').find('#datetime').val();
@@ -2491,12 +2491,17 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
             var batchDrum = $('#addModal').find('#batchDrum').val();
 
             if (plantId && batchDrum && declarationDate) {
-                getPrevStockTake(plantId, batchDrum, declarationDate);
+                getPrevStockTake(plantId, batchDrum, declarationDate, function(){
+                    $('#addModal').find('#totalLfo').trigger('change');
+                    $('#addModal').find('#totalDiesel').trigger('change');
+                });
                 if (plantCode) {
                     getIncoming(plantCode, batchDrum, declarationDate, function(){
-                        $('#addModal').find('#bitumenIncoming').trigger('change');
-                        $('#addModal').find('#dieselIncoming').trigger('change');
-                        $('#addModal').find('#lfoIncoming').trigger('change');
+                        $('#bitumenTable').find('input[id^="level"]').trigger('change');
+                        $('#lfoTable').find('input[id^="lfoLevel"]').trigger('change');
+                        $('#dieselTable').find('input[id^="dieselLevel"]').trigger('change');
+                        $('#addModal').find('#totalLfo').trigger('change');
+                        $('#addModal').find('#totalDiesel').trigger('change');
                     });
                 }
             }
@@ -2703,7 +2708,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
         });
     }
 
-    function getPrevStockTake(plantId, batchDrum, declarationDate){
+    function getPrevStockTake(plantId, batchDrum, declarationDate, callback){
         if (declarationDate && plantId && batchDrum){
             // load previous diesel reading
             $('#spinnerLoading').show();
@@ -2713,6 +2718,7 @@ $rawMaterial = $db->query("SELECT * FROM Raw_Mat WHERE type = 'Bitumen' AND raw_
                 if(obj.status === 'success'){
                     $('#addModal').find('#previousLfoReading').val(obj.message.previous_lfo || '0.00');
                     $('#addModal').find('#previousDieselReading').val(obj.message.previous_diesel || '0.00');
+                    if (typeof callback === 'function') callback();
                 }
                 else if(obj.status === 'failed'){
                     $('#spinnerLoading').hide();
