@@ -46,7 +46,7 @@ if(isset($_GET['id'])){
                 $companyRow = $companyResult->fetch_assoc();
 
                 // Get Bitumen Raw Mat Id
-                $result = $db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code = 'BTBI001' AND status = 0 LIMIT 1");
+                $result = $db->query("SELECT id FROM Raw_Mat WHERE raw_mat_code IN ('BTBI001', '3001/001') AND status = 0 LIMIT 1");
                 $bitumenRawMatId = $result ? $result->fetch_assoc()['id'] ?? null : null;
 
                 // Get Other Bitumen
