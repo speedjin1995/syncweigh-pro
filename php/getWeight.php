@@ -68,7 +68,7 @@ if(isset($_POST['userID'])){
         $placeholders = implode(',', array_fill(0, count($rawMatCode), '?'));
         if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
             $bindTypes = str_repeat('s', count($rawMatCode)) . 'sss';
-            $bindParams = array_merge($rawMatCode, [$plantCode, $declarationDate, $batchDrum]);
+            $bindParams = array_merge($rawMatCode, [$plantCode, $formattedDate, $batchDrum]);
             $update_stmt->bind_param($bindTypes, ...$bindParams);
             
             // Execute the prepared query.

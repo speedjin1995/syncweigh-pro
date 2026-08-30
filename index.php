@@ -4219,8 +4219,6 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#addModal').find('#customerName').val(data.customer_name).trigger('change');
             $('#addModal').find('#supplierCode').val(data.supplier_code);
             $('#addModal').find('#supplierName').val(data.supplier_name).trigger('change');
-            $('#addModal').find('#productName').val(data.product_name).trigger('change');
-            $('#addModal').find('#productCode').val(data.product_code);
             $('#addModal').find('#siteCode').val(data.site_code);
             $('#addModal').find('#siteName').val(data.site_name).trigger('change');
             $('#addModal').find('#agent').val(data.agent_name).trigger('change');
@@ -4229,8 +4227,21 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#addModal').find('#plantCode').val(data.plant_code);
             $('#addModal').find('#destinationCode').val(data.destination_code);
             $('#addModal').find('#destination').val(data.destination).trigger('change');
+
+            // Find product with correct code and name then only select
+            var $prodOpt = $('#addModal').find('#productName option').filter(function(){ return $(this).data('code') == data.product_code && $(this).val() == data.product_name; });
+            $('#addModal').find('#productName option:selected').prop('selected', false);
+            $prodOpt.prop('selected', true);
+            $('#addModal').find('#productName').trigger('change');
+            $('#addModal').find('#productCode').val(data.product_code);
+
+            // Find raw mat with correct code and name then only select
+            var $opt = $('#addModal').find('#rawMaterialName option').filter(function(){ return $(this).data('code') == data.raw_mat_code && $(this).val() == data.raw_mat_name; });
+            $('#addModal').find('#rawMaterialName option:selected').prop('selected', false);
+            $opt.prop('selected', true);
+            $('#addModal').find('#rawMaterialName').trigger('change');
             $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
-            $('#addModal').find('#rawMaterialName').val(data.raw_mat_name).trigger('change');
+
             setTimeout(() => {
                 $('#addModal').find('#supplierWeightBasicUom').val(data.supplier_weight_uom).trigger('change');
                 $('#addModal').find('#orderWeightBasicUom').val(data.order_weight_uom).trigger('change');
