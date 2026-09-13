@@ -4219,8 +4219,6 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#addModal').find('#customerName').val(data.customer_name).trigger('change');
             $('#addModal').find('#supplierCode').val(data.supplier_code);
             $('#addModal').find('#supplierName').val(data.supplier_name).trigger('change');
-            $('#addModal').find('#productName').val(data.product_name).trigger('change');
-            $('#addModal').find('#productCode').val(data.product_code);
             $('#addModal').find('#siteCode').val(data.site_code);
             $('#addModal').find('#siteName').val(data.site_name).trigger('change');
             $('#addModal').find('#agent').val(data.agent_name).trigger('change');
@@ -4229,7 +4227,12 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#addModal').find('#plantCode').val(data.plant_code);
             $('#addModal').find('#destinationCode').val(data.destination_code);
             $('#addModal').find('#destination').val(data.destination).trigger('change');
-            $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
+
+            // Find product with correct code and name then only select
+            var $prodOpt = $('#addModal').find('#productName option').filter(function(){ return $(this).data('code') == data.product_code && $(this).val() == data.product_name; });
+            $('#addModal').find('#productName option:selected').prop('selected', false);
+            $prodOpt.prop('selected', true);
+            $('#addModal').find('#productName').trigger('change');
             
             // Find raw mat with correct code and name then only select
             var $opt = $('#addModal').find('#rawMaterialName option').filter(function(){ return $(this).data('code') == data.raw_mat_code && $(this).val() == data.raw_mat_name; });
