@@ -4233,15 +4233,13 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#addModal').find('#productName option:selected').prop('selected', false);
             $prodOpt.prop('selected', true);
             $('#addModal').find('#productName').trigger('change');
-            $('#addModal').find('#productCode').val(data.product_code);
-
+            
             // Find raw mat with correct code and name then only select
             var $opt = $('#addModal').find('#rawMaterialName option').filter(function(){ return $(this).data('code') == data.raw_mat_code && $(this).val() == data.raw_mat_name; });
             $('#addModal').find('#rawMaterialName option:selected').prop('selected', false);
             $opt.prop('selected', true);
             $('#addModal').find('#rawMaterialName').trigger('change');
-            $('#addModal').find('#rawMaterialCode').val(data.raw_mat_code);
-
+            
             setTimeout(() => {
                 $('#addModal').find('#supplierWeightBasicUom').val(data.supplier_weight_uom).trigger('change');
                 $('#addModal').find('#orderWeightBasicUom').val(data.order_weight_uom).trigger('change');
