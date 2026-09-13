@@ -137,6 +137,7 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
     $lfoAssetId = $_POST["lfoAssetId"];
     $lfoName = $_POST["lfoName"];
     $lfoStatus = $_POST["lfoStatus"];
+    $lfoIncomingVolume = $_POST["lfoIncomingVolume"];
     $lfoLevel = $_POST["lfoLevel"];
     $lfoActualLevel = $_POST["lfoActualLevel"];
     $lfoVolume = $_POST["lfoVolume"];
@@ -149,6 +150,7 @@ if (!empty($_POST["lfoNo"]) && count($_POST["lfoNo"]) > 0) {
             "lfoAssetId" => $lfoAssetId[$key],
             "lfoName" => $lfoName[$key],
             "lfoStatus" => $lfoStatus[$key],
+            "lfoIncomingVolume" => $lfoIncomingVolume[$key],
             "lfoLevel" => $lfoLevel[$key],
             "lfoActualLevel" => $lfoActualLevel[$key],
             "lfoVolume" => $lfoVolume[$key],
@@ -284,6 +286,7 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
     $dieselAssetId = $_POST["dieselAssetId"];
     $dieselName = $_POST["dieselName"];
     $dieselStatus = $_POST["dieselStatus"];
+    $dieselIncomingVolume = $_POST["dieselIncomingVolume"];
     $dieselLevel = $_POST["dieselLevel"];
     $dieselActualLevel = $_POST["dieselActualLevel"];
     $dieselVolume = $_POST["dieselVolume"];
@@ -295,6 +298,7 @@ if (!empty($_POST["dieselNo"]) && count($_POST["dieselNo"]) > 0) {
             "dieselAssetId" => $dieselAssetId[$key],
             "dieselName" => $dieselName[$key],
             "dieselStatus" => $dieselStatus[$key],
+            "dieselIncomingVolume" => $dieselIncomingVolume[$key],
             "dieselLevel" => $dieselLevel[$key],
             "dieselActualLevel" => $dieselActualLevel[$key],
             "dieselVolume" => $dieselVolume[$key],
