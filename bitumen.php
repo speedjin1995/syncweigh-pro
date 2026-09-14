@@ -323,7 +323,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                     </thead>
                                                     <tbody id="bitumenTable"></tbody>
                                                     <tfoot>
-                                                        <th colspan="2">Incoming (MT)</th>
+                                                        <th colspan="2">Incoming (MT) <i class="ri-information-line text-info" id="bitumenIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
                                                         <th colspan="3"><input type="number" class="form-control" id="bitumenIncoming" name="bitumenIncoming" style="background-color:white;text-align: center;" value="0"></th>
                                                         <th>Total</th>
                                                         <th><input type="number" class="form-control" id="totalSixtySeventy" name="totalSixtySeventy" style="background-color:white;text-align: center;" value="0" readonly></th>
@@ -360,6 +360,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <th width="20%">Supplier</th>
                                                             <th>Name</th>
                                                             <th>Status</th>
+                                                            <th>Incoming (&#76;)</th>
                                                             <th>Level (m)</th>
                                                             <th>Actual Level (m)</th>
                                                             <th>Volume (&#76;)</th>
@@ -370,8 +371,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                     <tbody id="lfoTable"></tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <th colspan="2">Incoming (&#76;)</th>
-                                                            <th colspan="2"><input type="number" class="form-control" id="lfoIncoming" name="lfoIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                            <th colspan="3">Incoming (&#76;) <i class="ri-information-line text-info" id="lfoIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
+                                                            <th><input type="number" class="form-control" id="lfoIncoming" name="lfoIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                            <th></th>
                                                             <!-- <th>Last Meter Reading</th>
                                                             <th><input type="number" class="form-control" id="lfoLastMeterReading" name="lfoLastMeterReading" style="background-color:white;text-align: center;" value="0"></th> -->
                                                             <th>Total (&#76;)</th>
@@ -383,8 +385,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <th></th>
                                                         </tr>
                                                         <tr>
-                                                            <th colspan="2"></th>
-                                                            <th colspan="2"></th>
+                                                            <th colspan="5"></th>
                                                             <th>Total Usage (&#76;)</th>
                                                             <th><input type="number" class="form-control" id="totalLfoUsage" name="totalLfoUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
@@ -424,6 +425,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <th width="10%">No</th>
                                                             <th>Name</th>
                                                             <th>Status</th>
+                                                            <th>Incoming (&#76;)</th>
                                                             <th>Level (m)</th>
                                                             <th>Actual Level (m)</th>
                                                             <th>Volume (&#76;)</th>
@@ -479,8 +481,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                     <tbody id="dieselTable"></tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <th colspan="2">Incoming (&#76;)</th>
-                                                            <th colspan="2"><input type="number" class="form-control" id="dieselIncoming" name="dieselIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                            <th colspan="3">Incoming (&#76;) <i class="ri-information-line text-info" id="dieselIncomingTooltip" data-bs-toggle="tooltip" data-bs-placement="top" title=""></i></th>
+                                                            <th><input type="number" class="form-control" id="dieselIncoming" name="dieselIncoming" style="background-color:white;text-align: center;" value="0"></th>
+                                                            <th></th>
                                                             <!-- <th>Last Meter Reading</th>
                                                             <th><input type="number" class="form-control" id="dieselLastMeterReading" name="dieselLastMeterReading" style="background-color:white;text-align: center;" value="0"></th> -->
                                                             <th>Total</th>
@@ -488,8 +491,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                                                             <th></th>
                                                         </tr>
                                                         <tr>
-                                                            <th colspan="2"></th>
-                                                            <th colspan="2"></th>
+                                                            <th colspan="5"></th>
                                                             <th>Total Usage</th>                                                            
                                                             <th><input type="number" class="form-control" id="totalDieselUsage" name="totalDieselUsage" style="background-color:white;text-align: center;" value="0" readonly></th>
                                                             <th></th>
@@ -864,6 +866,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 </select>
             </td>
             <td>
+                <input type="number" class="form-control" id="lfoIncomingVolume" name="lfoIncomingVolume" style="background-color:white;" value="0.00" required>
+            </td>
+            <td>
                 <input type="number" class="form-control" id="lfoLevel" name="lfoLevel" style="background-color:white;" value="0.00" required>
             </td>
             <td>
@@ -900,6 +905,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                     <option value="Filled">Filled</option>
                     <option value="Empty">Empty</option>
                 </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="dieselIncomingVolume" name="dieselIncomingVolume" style="background-color:white;" value="0.00" required>
             </td>
             <td>
                 <input type="number" class="form-control" id="dieselLevel" name="dieselLevel" style="background-color:white;" value="0.00" required>
@@ -1103,6 +1111,9 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
     var hotoilCount = $("#hotoilTable").find(".details").length;
     var pg76Count = $("#pg76Table").find(".details").length;
     var fibreCount = $("#fibreTable").find(".details").length;
+    var bitumenIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+    var lfoIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+    var dieselIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
 
     $(function () {
         const today = new Date();
@@ -1332,6 +1343,14 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             hotoilCount = 0;
             pg79Count = 0;
             fibreCount = 0;
+
+            bitumenIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+            lfoIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+            dieselIncomingTooltipText = 'Total incoming weight is pulled from supplier weight from purchase';
+
+            $('#bitumenIncomingTooltip').attr('title', bitumenIncomingTooltipText).tooltip();
+            $('#lfoIncomingTooltip').attr('title', lfoIncomingTooltipText).tooltip();
+            $('#dieselIncomingTooltip').attr('title', dieselIncomingTooltipText).tooltip();
 
             $('#addModal').find('#bitumenId').val("");
             $('#addModal').find('#plant').val("").trigger('change');
@@ -1759,6 +1778,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             lfoCount--;
         });
 
+        // Event delegation for lfoIncomingVolume
+        $("#lfoTable").on('change', 'input[id^="lfoIncomingVolume"]', function(){
+            var totalLfoIncomingVolume = 0;
+            $('#lfoTable').find('input[id^="lfoIncomingVolume"]').each(function(){
+                totalLfoIncomingVolume += parseFloat($(this).val()) || 0;
+            });
+            $('#addModal').find('#lfoIncoming').val(totalLfoIncomingVolume.toFixed(2));
+            $('#addModal').find('#totalLfo').trigger('change');
+        });
+        
         // Event delegation for lfoStatus
         $("#lfoTable").on('change', 'select[id^="lfoStatus"]', function(){
             var plantId = $('#plant').val();
@@ -1883,6 +1912,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             });
             $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount);
+            $("#lfoTable").find('#lfoIncomingVolume:last').attr('name', 'lfoIncomingVolume['+lfoCount+']').attr("id", "lfoIncomingVolume" + lfoCount);
             $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount);
             $("#lfoTable").find('#lfoActualLevel:last').attr('name', 'lfoActualLevel['+lfoCount+']').attr("id", "lfoActualLevel" + lfoCount);
             $("#lfoTable").find('#lfoVolume:last').attr('name', 'lfoVolume['+lfoCount+']').attr("id", "lfoVolume" + lfoCount);
@@ -1957,6 +1987,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 row.find('input[id^="dieselWeight"]').val('0.00');
                 $('#addModal').find('#totalDiesel').trigger('change');
             }
+        });
+
+        // Event delegation for dieselIncomingVolume
+        $("#dieselTable").on('change', 'input[id^="dieselIncomingVolume"]', function(){
+            var totalDieselIncomingVolume = 0;
+            $('#dieselTable').find('input[id^="dieselIncomingVolume"]').each(function(){
+                totalDieselIncomingVolume += parseFloat($(this).val()) || 0;
+            });
+            $('#addModal').find('#dieselIncoming').val(totalDieselIncomingVolume.toFixed(2));
+            $('#addModal').find('#totalDiesel').trigger('change');
         });
 
         // Event delegation for level
@@ -2039,6 +2079,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             $("#dieselTable").find('#dieselNo:last').attr('name', 'dieselNo['+dieselCount+']').attr("id", "dieselNo" + dieselCount).css("text-align", "center").val(dieselCount + 1);
             $("#dieselTable").find('#dieselName:last').attr('name', 'dieselName['+dieselCount+']').attr("id", "dieselName" + dieselCount).css("text-align", "center").val(asset ? asset.name : '').prop('readonly', asset ? true : false);
             $("#dieselTable").find('#dieselStatus:last').attr('name', 'dieselStatus['+dieselCount+']').attr("id", "dieselStatus" + dieselCount);
+            $("#dieselTable").find('#dieselIncomingVolume:last').attr('name', 'dieselIncomingVolume['+dieselCount+']').attr("id", "dieselIncomingVolume" + dieselCount);
             $("#dieselTable").find('#dieselLevel:last').attr('name', 'dieselLevel['+dieselCount+']').attr("id", "dieselLevel" + dieselCount);
             $("#dieselTable").find('#dieselActualLevel:last').attr('name', 'dieselActualLevel['+dieselCount+']').attr("id", "dieselActualLevel" + dieselCount);
             $("#dieselTable").find('#dieselVolume:last').attr('name', 'dieselVolume['+dieselCount+']').attr("id", "dieselVolume" + dieselCount);
@@ -2850,9 +2891,17 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
             {
                 var obj = JSON.parse(data);
                 if(obj.status === 'success'){
-                    $('#addModal').find('#bitumenIncoming').val(parseFloat(obj.message.bitumenIncoming || 0).toFixed(2));
-                    $('#addModal').find('#dieselIncoming').val(parseFloat(obj.message.dieselIncoming || 0).toFixed(2));
-                    $('#addModal').find('#lfoIncoming').val(parseFloat(obj.message.lfoIncoming || 0).toFixed(2));
+                    var bitumenIncomingTooltipText = 'Total incoming weight: ' + parseFloat(obj.message.bitumenIncoming || 0).toFixed(2) + ' MT (pulled from supplier weight from purchase)';
+                    var lfoIncomingTooltipText = 'Total incoming weight: ' + parseFloat(obj.message.lfoIncoming || 0).toFixed(2) + ' L (pulled from supplier weight from purchase)';
+                    var dieselIncomingTooltipText = 'Total incoming weight: ' + parseFloat(obj.message.dieselIncoming || 0).toFixed(2) + ' L (pulled from supplier weight from purchase)';
+                    
+                    $('#bitumenIncomingTooltip').tooltip('dispose').attr('title', bitumenIncomingTooltipText).tooltip();
+                    $('#lfoIncomingTooltip').tooltip('dispose').attr('title', lfoIncomingTooltipText).tooltip();
+                    $('#dieselIncomingTooltip').tooltip('dispose').attr('title', dieselIncomingTooltipText).tooltip();
+
+                    // $('#addModal').find('#bitumenIncoming').val(parseFloat(obj.message.bitumenIncoming || 0).toFixed(2));
+                    // $('#addModal').find('#dieselIncoming').val(parseFloat(obj.message.dieselIncoming || 0).toFixed(2));
+                    // $('#addModal').find('#lfoIncoming').val(parseFloat(obj.message.lfoIncoming || 0).toFixed(2));
                     if (typeof callback === 'function') callback();
                 }
                 else if(obj.status === 'failed'){
@@ -2881,6 +2930,16 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                 $('#addModal').find('#plantCode').val(obj.message.plant_code);
                 $('#addModal').find('#batchDrum').val(obj.message.batch_drum).select2('destroy').select2();
                 $('#addModal').find('#datetime').val(formatDate4(new Date(obj.message.declaration_datetime)));
+
+                if (obj.message.plant_code) {
+                    getIncoming(obj.message.plant_code, obj.message.batch_drum, formatDate4(new Date(obj.message.declaration_datetime)), function(){
+                        $('#bitumenTable').find('input[id^="level"]').trigger('change');
+                        $('#lfoTable').find('input[id^="lfoLevel"]').trigger('change');
+                        $('#dieselTable').find('input[id^="dieselLevel"]').trigger('change');
+                        $('#addModal').find('#totalLfo').trigger('change');
+                        $('#addModal').find('#totalDiesel').trigger('change');
+                    });
+                }
 
                 // Bitumen Table Processing
                 $('#bitumenTable').html('');
@@ -2934,6 +2993,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                         $("#lfoTable").find('#lfoSupplier:last').attr('name', 'lfoSupplier['+lfoCount+']').attr("id", "lfoSupplier" + lfoCount).css("text-align", "center").val(item.lfoSupplier);
                         $("#lfoTable").find('#lfoName:last').attr('name', 'lfoName['+lfoCount+']').attr("id", "lfoName" + lfoCount).css("text-align", "center").val(item.lfoName);
                         $("#lfoTable").find('#lfoStatus:last').attr('name', 'lfoStatus['+lfoCount+']').attr("id", "lfoStatus" + lfoCount).val(item.lfoStatus);
+                        $("#lfoTable").find('#lfoIncomingVolume:last').attr('name', 'lfoIncomingVolume['+lfoCount+']').attr("id", "lfoIncomingVolume" + lfoCount).val(item.lfoIncomingVolume);
                         $("#lfoTable").find('#lfoLevel:last').attr('name', 'lfoLevel['+lfoCount+']').attr("id", "lfoLevel" + lfoCount).css("text-align", "center").val(item.lfoLevel);
                         $("#lfoTable").find('#lfoActualLevel:last').attr('name', 'lfoActualLevel['+lfoCount+']').attr("id", "lfoActualLevel" + lfoCount).css("text-align", "center").val(item.lfoActualLevel);
                         $("#lfoTable").find('#lfoVolume:last').attr('name', 'lfoVolume['+lfoCount+']').attr("id", "lfoVolume" + lfoCount).css("text-align", "center").val(item.lfoVolume);
@@ -2979,6 +3039,7 @@ if ($row = mysqli_fetch_assoc($dieselCheck)) {
                         $("#dieselTable").find('#dieselNo:last').attr('name', 'dieselNo['+dieselCount+']').attr("id", "dieselNo" + dieselCount).css("text-align", "center").val(dieselCount + 1);
                         $("#dieselTable").find('#dieselName:last').attr('name', 'dieselName['+dieselCount+']').attr("id", "dieselName" + dieselCount).css("text-align", "center").val(item.dieselName);
                         $("#dieselTable").find('#dieselStatus:last').attr('name', 'dieselStatus['+dieselCount+']').attr("id", "dieselStatus" + dieselCount).val(item.dieselStatus);
+                        $("#dieselTable").find('#dieselIncomingVolume:last').attr('name', 'dieselIncomingVolume['+dieselCount+']').attr("id", "dieselIncomingVolume" + dieselCount).val(item.dieselIncomingVolume);
                         $("#dieselTable").find('#dieselLevel:last').attr('name', 'dieselLevel['+dieselCount+']').attr("id", "dieselLevel" + dieselCount).css("text-align", "center").val(item.dieselLevel);
                         $("#dieselTable").find('#dieselActualLevel:last').attr('name', 'dieselActualLevel['+dieselCount+']').attr("id", "dieselActualLevel" + dieselCount).css("text-align", "center").val(item.dieselActualLevel);
                         $("#dieselTable").find('#dieselVolume:last').attr('name', 'dieselVolume['+dieselCount+']').attr("id", "dieselVolume" + dieselCount).css("text-align", "center").val(item.dieselVolume);

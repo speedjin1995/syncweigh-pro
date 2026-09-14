@@ -66,7 +66,7 @@ if(isset($_POST['userID'])){
             '3003/002' // LFO AJIL
         ];
         $placeholders = implode(',', array_fill(0, count($rawMatCode), '?'));
-        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(supplier_weight) AS supplier_weight FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
             $bindTypes = str_repeat('s', count($rawMatCode)) . 'sss';
             $bindParams = array_merge($rawMatCode, [$plantCode, $formattedDate, $batchDrum]);
             $update_stmt->bind_param($bindTypes, ...$bindParams);
@@ -93,7 +93,7 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
                                 $message['dieselIncoming'] = $litre;
                             } else {
                                 $message['dieselIncoming'] = 0; // Default to 0 if no conversion found
@@ -112,7 +112,7 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
                                 $message['lfoIncoming'] = $litre;
                             } else {
                                 $message['lfoIncoming'] = 0; // Default to 0 if no conversion found
@@ -131,7 +131,7 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
                                 $message['bitumenIncoming'] = $litre;
                             } else {
                                 $message['bitumenIncoming'] = 0; // Default to 0 if no conversion found
