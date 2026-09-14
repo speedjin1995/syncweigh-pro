@@ -47,6 +47,31 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         .modal-header {
             padding: var(1rem, 1rem) !important;
         }
+
+        .inventory-expand-icon {
+            font-size: 16px;
+            vertical-align: middle;
+        }
+
+        .inventory-adjustment-wrap {
+            background: var(--vz-light);
+            border-left: 3px solid var(--vz-primary);
+            padding: 12px;
+        }
+
+        .inventory-adjustment-table {
+            margin-bottom: 0;
+        }
+
+        .inventory-adjustment-table th,
+        .inventory-adjustment-table td {
+            padding: 0.5rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        #weightTable > tbody > tr {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -187,7 +212,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalScrollableTitle">Edit Inventory</h5>
+                        <h5 class="modal-title" id="exampleModalScrollableTitle">Adjust Inventory</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
@@ -216,21 +241,10 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                 </div>
                                                 <div class="col-xxl-12 col-lg-12 mb-3">
                                                     <div class="row">
-                                                        <label for="basicUom" class="col-sm-4 col-form-label">Basic UOM</label>
+                                                        <label for="currentWeight" class="col-sm-4 col-form-label">Current Weight</label>
                                                         <div class="col-sm-8">
                                                             <div class="input-group">
-                                                                <input type="number" class="form-control" id="basicUom" name="basicUom" required>
-                                                                <div class="input-group-text" id="basicUomUnit">KG</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
-                                                    <div class="row">
-                                                        <label for="weight" class="col-sm-4 col-form-label">Weight</label>
-                                                        <div class="col-sm-8">
-                                                            <div class="input-group">
-                                                                <input type="number" class="form-control input-readonly" id="weight" name="weight" readonly>
+                                                                <input type="number" class="form-control input-readonly" id="currentWeight" name="currentWeight" readonly>
                                                                 <div class="input-group-text">KG</div>
                                                             </div>
                                                         </div>
@@ -238,15 +252,60 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                 </div>
                                                 <div class="col-xxl-12 col-lg-12 mb-3">
                                                     <div class="row">
-                                                        <label for="drum" class="col-sm-4 col-form-label">Drum</label>
+                                                        <label for="currentDrum" class="col-sm-4 col-form-label">Current Drum</label>
                                                         <div class="col-sm-8">
-                                                            <input type="number" class="form-control" id="drum" name="drum" placeholder="Raw Material Count">
+                                                            <input type="number" class="form-control input-readonly" id="currentDrum" name="currentDrum" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="weightAdjustment" class="col-sm-4 col-form-label">Weight Adjustment</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="number" step="any" class="form-control" id="weightAdjustment" name="weightAdjustment" placeholder="Weight Adjustment">
+                                                                <div class="input-group-text">KG</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="drumAdjustment" class="col-sm-4 col-form-label">Drum Adjustment</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="number" step="any" class="form-control" id="drumAdjustment" name="drumAdjustment" placeholder="Drum Adjustment">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="newWeightBalance" class="col-sm-4 col-form-label">New Weight Balance</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control input-readonly" id="newWeightBalance" name="newWeightBalance" readonly>
+                                                                <div class="input-group-text">KG</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="newDrumBalance" class="col-sm-4 col-form-label">New Drum Balance</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="number" class="form-control input-readonly" id="newDrumBalance" name="newDrumBalance" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                    <div class="row">
+                                                        <label for="adjustmentRemarks" class="col-sm-4 col-form-label">Remarks</label>
+                                                        <div class="col-sm-8">
+                                                            <textarea class="form-control" id="adjustmentRemarks" name="adjustmentRemarks" rows="3" placeholder="Remarks"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>                                                       
                                                 <input type="hidden" class="form-control" id="id" name="id">
                                                 <input type="hidden" class="form-control" id="rawMatId" name="rawMatId">
-                                                <input type="hidden" class="form-control" id="basicUnitId" name="basicUnitId">
                                             </div>
                                         </div>
                                     </div>
@@ -297,18 +356,92 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
     <script type="text/javascript">
 
-    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+    var permissions = <?= json_encode($_SESSION['permissions'] ?? []) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
+    var table;
+
     $(function () {
-        const today = new Date();
-        const tomorrow = new Date(today);
-        const yesterday = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        yesterday.setDate(yesterday.getDate() - 1);
+        initInventoryTable($('#plantSearch').val() ? $('#plantSearch').val() : '');
 
-        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        $('#filterSearch').on('click', function(){
+            initInventoryTable($('#plantSearch').val() ? $('#plantSearch').val() : '');
+        });
 
-        var table = $("#weightTable").DataTable({
+        $('#weightAdjustment, #drumAdjustment').on('input', function(){
+            updateProjectedBalance();
+        });
+
+        $('#weightTable tbody').on('click', 'tr', function(e) {
+            if ($(e.target).closest('.dropdown, .dropdown-menu, a, button, .inventory-adjustment-wrap').length) {
+                return;
+            }
+
+            var tr = $(this);
+            var row = table.row(tr);
+
+            if (!row.data()) {
+                return;
+            }
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+                tr.find('.inventory-expand-icon').removeClass('mdi-chevron-down').addClass('mdi-chevron-right');
+                return;
+            }
+
+            row.child(formatAdjustmentDetails(null)).show();
+            tr.addClass('shown');
+            tr.find('.inventory-expand-icon').removeClass('mdi-chevron-right').addClass('mdi-chevron-down');
+            loadAdjustmentDetails(row);
+        });
+
+        $('#submitSite').on('click', function(){
+            var weightAdjustment = readAdjustmentValue('#weightAdjustment');
+            var drumAdjustment = readAdjustmentValue('#drumAdjustment');
+
+            if (weightAdjustment === null || drumAdjustment === null) {
+                showFailedToast('Please key in valid adjustment values');
+                return;
+            }
+
+            if (weightAdjustment === 0 && drumAdjustment === 0) {
+                showFailedToast('Please key in Weight Adjustment or Drum Adjustment');
+                return;
+            }
+
+            if (!updateProjectedBalance()) {
+                showFailedToast('Total inventory cannot be negative');
+                return;
+            }
+
+            $('#spinnerLoading').show();
+            $.post('php/inventoryAdjustment.php', $('#siteForm').serialize(), function(data){
+                var obj = parseResponse(data);
+
+                if(obj.status === 'success'){
+                    table.ajax.reload(null, false);
+                    $('#spinnerLoading').hide();
+                    $('#addModal').modal('hide');
+                    showSuccessToast(obj.message);
+                }
+                else{
+                    $('#spinnerLoading').hide();
+                    showFailedToast(obj.message);
+                }
+            }).fail(function(){
+                $('#spinnerLoading').hide();
+                showFailedToast('Something went wrong');
+            });
+        });
+    });
+
+    function initInventoryTable(plantNoI) {
+        if ($.fn.DataTable.isDataTable('#weightTable')) {
+            $("#weightTable").DataTable().clear().destroy();
+        }
+
+        table = $("#weightTable").DataTable({
             "responsive": true,
             "autoWidth": false,
             'processing': true,
@@ -316,24 +449,29 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             'searching': true,
             'serverMethod': 'post',
             'order': [[ 1, 'asc' ]],
-            'columnDefs': [ { orderable: false, targets: [0] }],
+            'columnDefs': [ { orderable: false, targets: [0, 5] }],
             'ajax': {
                 'url':'php/filterInventory.php',
                 'data': {
                     plant: plantNoI,
-                } 
+                }
             },
             'columns': [
-                { data: 'no' },
+                {
+                    data: 'no',
+                    render: function (data) {
+                        return `<span class="d-inline-flex align-items-center"><i class="mdi mdi-chevron-right inventory-expand-icon me-1"></i>${data}</span>`;
+                    }
+                },
                 { data: 'raw_mat_code' },
                 { data: 'name' },
                 { data: 'raw_mat_weight' },
                 { data: 'raw_mat_count' },
-                { 
+                {
                     data: 'id',
                     orderable: false,
-                    render: function ( data, type, row ) {
-                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
+                    render: function ( data ) {
+                        if (canAdjustInventory()){
                             return `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -341,8 +479,8 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
-                                                <i class="ri-pen align-bottom me-2 text-muted"></i> Edit
+                                            <a class="dropdown-item edit-item-btn" id="adjust${data}" onclick="adjust(${data})">
+                                                <i class="ri-pen align-bottom me-2 text-muted"></i> Adjust
                                             </a>
                                         </li>
                                     </ul>
@@ -352,270 +490,165 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                         return '';
                     }
                 }
-            ] 
+            ]
         });
+    }
 
-        $('#filterSearch').on('click', function(){
-            var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+    function canAdjustInventory() {
+        return isSADMIN || (
+            permissions['Stock Management'] &&
+            permissions['Stock Management']['Inventory'] &&
+            permissions['Stock Management']['Inventory'].includes('edit')
+        );
+    }
 
-            //Destroy the old Datatable
-            $("#weightTable").DataTable().clear().destroy();
-            
-            table = $("#weightTable").DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                'processing': true,
-                'serverSide': true,
-                'searching': true,
-                'serverMethod': 'post',
-                'order': [[ 1, 'asc' ]],
-                'columnDefs': [ { orderable: false, targets: [0] }],
-                'ajax': {
-                    'url':'php/filterInventory.php',
-                    'data': {
-                        plant: plantNoI
-                    } 
-                },
-                'columns': [
-                    { data: 'no' },
-                    { data: 'raw_mat_code' },
-                    { data: 'name' },
-                    { data: 'raw_mat_weight' },
-                    { data: 'raw_mat_count' },
-                    { 
-                        data: 'id',
-                        orderable: false,
-                        render: function ( data, type, row ) {
-                            if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
-                                return `
-                                    <div class="dropdown d-inline-block">
-                                        <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="ri-more-fill align-middle"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
-                                                    <i class="ri-pen align-bottom me-2 text-muted"></i> Edit
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>`;
-                            }
-
-                            return '';
-                        }
-                    }
-                ] 
-            });
-        });
-
-        $('#submitSite').on('click', function(){
-            if($('#siteForm').valid()){
-                $('#spinnerLoading').show();
-                $.post('php/inventory.php', $('#siteForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
-                    
-                    if(obj.status === 'success'){
-                        table.ajax.reload();
-                        $('#spinnerLoading').hide();
-                        $('#addModal').modal('hide');
-                        $("#successBtn").attr('data-toast-text', obj.message);
-                        $("#successBtn").click();
-                    }
-                    else if(obj.status === 'failed'){
-                        $('#spinnerLoading').hide();
-                        $("#failBtn").attr('data-toast-text', obj.message );
-                        $("#failBtn").click();
-                    }
-                    else{
-
-                    }
-                });
-            }
-        });
-
-        $('#exportPdf').on('click', function(){
-            var fromDateI = $('#fromDateSearch').val();
-            var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
-
-            $.post('php/exportPdf.php', {
-                file: 'weight',
-                fromDate: fromDateI,
-                toDate: toDateI,
-                status: statusI,
-                customer: customerNoI,
-                vehicle: vehicleNoI,
-                weighingType: invoiceNoI,
-                product: transactionStatusI
-            }, function(response){
-                var obj = JSON.parse(response);
-
-                if(obj.status === 'success'){
-                    var printWindow = window.open('', '', 'height=400,width=800');
-                    printWindow.document.write(obj.message);
-                    printWindow.document.close();
-                    setTimeout(function(){
-                        printWindow.print();
-                        printWindow.close();
-                    }, 500);
-                }
-                else if(obj.status === 'failed'){
-                    toastr["error"](obj.message, "Failed:");
-                }
-                else{
-                    toastr["error"]("Something wrong when activate", "Failed:");
-                }
-            }).fail(function(error){
-                console.error("Error exporting PDF:", error);
-                alert("An error occurred while generating the PDF.");
-            });
-        });
-
-        $('#exportExcel').on('click', function(){
-            var fromDateI = $('#fromDateSearch').val();
-            var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
-            var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
-            
-            window.open("php/export.php?file=weight&fromDate="+fromDateI+"&toDate="+toDateI+
-            "&status="+statusI+"&customer="+customerNoI+"&vehicle="+vehicleNoI+
-            "&weighingType="+invoiceNoI+"&product="+transactionStatusI);
-        });
-
-        $('#basicUom').on('keyup', function(){
-            var basicUom = parseFloat($(this).val());
-            var basicUomUnitId = $('#addModal').find('#basicUnitId').val();
-            var rawMatId = $('#addModal').find('#rawMatId').val();
-
-            if (basicUomUnitId == 2){
-                $('#addModal').find('#weight').val(basicUom);
-            }else{
-                // Call to backend to get conversion rate
-                if (rawMatId && basicUom){
-                    $.post('php/getProdRawMatUOM.php', {userID: rawMatId, type: 'PO'}, function(data)
-                    {
-                        var obj = JSON.parse(data);
-                        if(obj.status === 'success'){
-                            // Processing for order quantity (KG)
-                            var rate = parseFloat(obj.message.rate);
-                            var weight = basicUom/rate;
-                            weight = parseInt(weight);
-
-                            $('#addModal').find('#weight').val(weight);
-                        }
-                        else if(obj.status === 'failed'){
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                        else{
-                            alert(obj.message);
-                            $("#failBtn").attr('data-toast-text', obj.message );
-                            $("#failBtn").click();
-                        }
-                    });
-                }
-            }
-        });
-    });
-
-    function edit(id){
+    function adjust(id){
         $('#spinnerLoading').show();
+        $('#siteForm')[0].reset();
+        $('#siteForm').find('.is-invalid').removeClass('is-invalid');
+
         $.post('php/getInventory.php', {userID: id}, function(data)
         {
-            var obj = JSON.parse(data);
+            var obj = parseResponse(data);
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#rawMatId').val(obj.message.raw_mat_id);
                 $('#addModal').find('#rawMatCode').val(obj.message.raw_mat_code);
                 $('#addModal').find('#rawMatName').val(obj.message.name);
-                $('#addModal').find('#basicUom').val(obj.message.raw_mat_basic_uom);
-                $('#addModal').find('#basicUomUnit').text(obj.message.basic_uom);
-                $('#addModal').find('#basicUnitId').val(obj.message.basic_uom_id);
-                $('#addModal').find('#weight').val(obj.message.raw_mat_weight);
-                $('#addModal').find('#drum').val(obj.message.raw_mat_count);
+                $('#addModal').find('#currentWeight').val(formatNumber(obj.message.raw_mat_weight));
+                $('#addModal').find('#currentDrum').val(formatNumber(obj.message.raw_mat_count));
+                $('#addModal').find('#newWeightBalance').val(formatNumber(obj.message.raw_mat_weight));
+                $('#addModal').find('#newDrumBalance').val(formatNumber(obj.message.raw_mat_count));
                 $('#addModal').modal('show');
-            
-                $('#siteForm').validate({
-                    errorElement: 'span',
-                    errorPlacement: function (error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-group').append(error);
-                    },
-                    highlight: function (element, errorClass, validClass) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function (element, errorClass, validClass) {
-                        $(element).removeClass('is-invalid');
-                    }
-                });
-            }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
             }
             else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
+                showFailedToast(obj.message);
             }
             $('#spinnerLoading').hide();
+        }).fail(function(){
+            $('#spinnerLoading').hide();
+            showFailedToast('Something went wrong');
         });
     }
 
-    function deactivate(id){
-        $('#spinnerLoading').show();
-        $.post('php/deleteWeight.php', {userID: id}, function(data){
-            var obj = JSON.parse(data);
-            
-            if(obj.status === 'success'){
-                table.ajax.reload();
-                $('#spinnerLoading').hide();
-                $("#successBtn").attr('data-toast-text', obj.message);
-                $("#successBtn").click();
+    function readAdjustmentValue(selector) {
+        var value = $(selector).val();
+
+        if (value === null || value.trim() === '') {
+            return 0;
+        }
+
+        var number = parseFloat(value);
+        return isNaN(number) ? null : number;
+    }
+
+    function updateProjectedBalance() {
+        var weightAdjustment = readAdjustmentValue('#weightAdjustment');
+        var drumAdjustment = readAdjustmentValue('#drumAdjustment');
+
+        if (weightAdjustment === null || drumAdjustment === null) {
+            return false;
+        }
+
+        var currentWeight = parseFloat($('#currentWeight').val()) || 0;
+        var currentDrum = parseFloat($('#currentDrum').val()) || 0;
+        var newWeight = currentWeight + weightAdjustment;
+        var newDrum = currentDrum + drumAdjustment;
+        var valid = newWeight >= 0 && newDrum >= 0;
+
+        $('#newWeightBalance').val(formatNumber(newWeight));
+        $('#newDrumBalance').val(formatNumber(newDrum));
+        $('#weightAdjustment').toggleClass('is-invalid', newWeight < 0);
+        $('#drumAdjustment').toggleClass('is-invalid', newDrum < 0);
+
+        return valid;
+    }
+
+    function loadAdjustmentDetails(row) {
+        $.post('php/getInventoryAdjustments.php', {inventoryId: row.data().id}, function(data){
+            var obj = parseResponse(data);
+
+            if (obj.status === 'success') {
+                row.child(formatAdjustmentDetails(obj.message)).show();
+            } else {
+                row.child(formatAdjustmentDetails([], obj.message)).show();
             }
-            else if(obj.status === 'failed'){
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
-            else{
-                $('#spinnerLoading').hide();
-                $("#failBtn").attr('data-toast-text', obj.message );
-                $("#failBtn").click();
-            }
+        }).fail(function(){
+            row.child(formatAdjustmentDetails([], 'Unable to load adjustments')).show();
         });
     }
 
-    function print(id) {
-        $.post('php/print.php', {userID: id, file: 'weight'}, function(data){
-            var obj = JSON.parse(data);
+    function formatAdjustmentDetails(adjustments, message) {
+        if (adjustments === null) {
+            return `<div class="inventory-adjustment-wrap text-muted">Loading adjustments...</div>`;
+        }
 
-            if(obj.status === 'success'){
-                var printWindow = window.open('', '', 'height=400,width=800');
-                printWindow.document.write(obj.message);
-                printWindow.document.close();
-                setTimeout(function(){
-                    printWindow.print();
-                    printWindow.close();
-                }, 500);
-            }
-            else if(obj.status === 'failed'){
-                toastr["error"](obj.message, "Failed:");
-            }
-            else{
-                toastr["error"]("Something wrong when activate", "Failed:");
-            }
-        });
+        if (message) {
+            return `<div class="inventory-adjustment-wrap text-danger">${escapeHtml(message)}</div>`;
+        }
+
+        if (!adjustments.length) {
+            return `<div class="inventory-adjustment-wrap text-muted">No adjustments found</div>`;
+        }
+
+        var rows = adjustments.map(function(adjustment) {
+            return `
+                <tr>
+                    <td>${escapeHtml(adjustment.created_date)}</td>
+                    <td>${escapeHtml(adjustment.weight_adjustment)}</td>
+                    <td>${escapeHtml(adjustment.drum_adjustment)}</td>
+                    <td>${escapeHtml(adjustment.created_by)}</td>
+                    <td>${escapeHtml(adjustment.remarks)}</td>
+                </tr>`;
+        }).join('');
+
+        return `
+            <div class="inventory-adjustment-wrap">
+                <table class="table table-bordered table-striped align-middle inventory-adjustment-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Weight Adjustment (Kg)</th>
+                            <th>Drum Adjustment</th>
+                            <th>Action By</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+    }
+
+    function parseResponse(data) {
+        try {
+            return typeof data === 'object' ? data : JSON.parse(data);
+        } catch (e) {
+            return {status: 'failed', message: 'Invalid server response'};
+        }
+    }
+
+    function formatNumber(value) {
+        var number = parseFloat(value);
+
+        if (isNaN(number)) {
+            number = 0;
+        }
+
+        return parseFloat(number.toFixed(3)).toString();
+    }
+
+    function escapeHtml(value) {
+        return $('<div>').text(value === null || value === undefined ? '' : value).html();
+    }
+
+    function showSuccessToast(message) {
+        $("#successBtn").attr('data-toast-text', message);
+        $("#successBtn").click();
+    }
+
+    function showFailedToast(message) {
+        $("#failBtn").attr('data-toast-text', message || 'Something went wrong');
+        $("#failBtn").click();
     }
     </script>
 </body>

@@ -262,6 +262,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $manualWeight = trim($_POST["manualWeight"]);
     }
 
+    if (empty($_POST["manualWeightReasonInput"])) {
+        $manualWeightReason = null;
+    } else {
+        $manualWeightReason = preg_replace('/\s+/', ' ', trim($_POST["manualWeightReasonInput"]));
+    }
+
     if (empty($_POST["weighbridge"])) {
         $weighbridge = 'Weigh1';
     } else {
@@ -408,6 +414,21 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $nettWeight2 = null;
     } else {
         $nettWeight2 = trim($_POST["nettWeight2"]);
+    }
+
+    $manualReasonRequired = ($manualWeight == 'true' && ((!empty($grossIncoming) && $grossIncoming != '0') || (!empty($tareOutgoing) && $tareOutgoing != '0') || (!empty($grossIncoming2) && $grossIncoming2 != '0') || (!empty($tareOutgoing2) && $tareOutgoing2 != '0')));
+    $dummyManualReasons = array('test', 'testing', 'dummy', 'na', 'n/a', 'nil', 'none', 'no', 'no reason', 'reason', 'manual', 'manual weighing', 'manual weight', '-', '--', '.', '..', 'abc', 'abcd', 'asdf', 'qwerty', '123', '1234');
+    $manualReasonText = strtolower($manualWeightReason ?? '');
+    $manualReasonCompact = preg_replace('/\s+/', '', $manualWeightReason ?? '');
+
+    if ($manualReasonRequired && (strlen($manualWeightReason ?? '') < 8 || in_array($manualReasonText, $dummyManualReasons) || !preg_match('/[a-zA-Z]/', $manualWeightReason ?? '') || preg_match('/^([a-zA-Z0-9])\1+$/', $manualReasonCompact))) {
+        echo json_encode(
+            array(
+                "status"=> "failed",
+                "message"=> "Please enter a meaningful reason for manual weighing."
+            )
+        );
+        exit;
     }
 
     if (empty($_POST["agent"])) {
@@ -621,6 +642,35 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         // $sql = "UPDATE Customer SET company_reg_no=?, name=?, address_line_1=?, address_line_2=?, address_line_3=?, phone_no=?, fax_no=?, created_by=?, modified_by=? WHERE customer_code=?";
         $action = "2";
 
+        if ($existing_weight_stmt = $db->prepare("SELECT transaction_status, purchase_order, customer_code, product_code FROM Weight WHERE id=?")) {
+            $existing_weight_stmt->bind_param('s', $weightId);
+            $existing_weight_stmt->execute();
+            $existing_weight_result = $existing_weight_stmt->get_result();
+            $existing_weight = $existing_weight_result->fetch_assoc();
+            $existing_weight_stmt->close();
+
+            if (!empty($existing_weight) && $existing_weight['transaction_status'] == 'Sales') {
+                if ($closed_so_stmt = $db->prepare("SELECT status FROM Sales_Order WHERE order_no=? AND customer_code=? AND product_code=? AND deleted='0' LIMIT 1")) {
+                    $closed_so_stmt->bind_param('sss', $existing_weight['purchase_order'], $existing_weight['customer_code'], $existing_weight['product_code']);
+                    $closed_so_stmt->execute();
+                    $closed_so_result = $closed_so_stmt->get_result();
+                    $closed_so = $closed_so_result->fetch_assoc();
+                    $closed_so_stmt->close();
+
+                    if (!empty($closed_so) && ($closed_so['status'] == 'Close' || $closed_so['status'] == 'Closed')) {
+                        $db->close();
+                        echo json_encode(
+                            array(
+                                "status"=> "failed",
+                                "message"=> "The Sales Order close, please contact Admin"
+                            )
+                        );
+                        exit;
+                    }
+                }
+            }
+        }
+
         # Update PO or SO table row balance only if status is Purchase or Sales
         if ($transactionStatus == 'Purchase' || $transactionStatus == 'Sales'){
             if ($isComplete == 'Y' && $isCancel == 'N'){
@@ -704,13 +754,13 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         }
 
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight_uom=?, supplier_weight=?, po_supply_weight=?, order_weight_uom=?, order_weight=?, tin_no=?, id_no=?, id_type=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
-        product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
+        product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, manual_weight_reason=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
         gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
         product_description=?, unit_price=?, sub_total=?, sst=?, total_price=?, is_approved=?, approved_reason=?, plant_code=?, plant_name=?, agent_code=?, agent_name=?, load_drum=?, no_of_drum=?, batch_drum=? WHERE id=?"))
         {
-            $update_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $customerType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeightUom, $supplierWeight, $poSupplyWeight, $orderWeightUom, $orderWeight, $tinNo, $idNo, $idType, $customerCode, $customerName,
+            $update_stmt->bind_param('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $customerType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeightUom, $supplierWeight, $poSupplyWeight, $orderWeightUom, $orderWeight, $tinNo, $idNo, $idType, $customerCode, $customerName,
             $supplierCode, $supplierName, $productCode, $productName, $exDel, $rawMaterialCode, $rawMaterialName, $siteCode, $siteName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
-            $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
+            $manualWeightReason, $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
             $isComplete, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $unitPrice, $subTotalPrice, $sstPrice, $totalPrice, $isApproved, $approved_reason, $plantCode, $plant, $agentCode, $agent, $loadDrum, $noOfDrum, $batchDrum, $weightId);
 
             // Execute the prepared query.
@@ -949,12 +999,12 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $action = "1"; 
         
         if ($insert_stmt = $db->prepare("INSERT INTO Weight (transaction_id, transaction_status, weight_type, customer_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight_uom, supplier_weight, po_supply_weight, order_weight_uom, order_weight, tin_no, id_no, id_type, customer_code, customer_name, supplier_code, supplier_name,
-        product_code, product_name, ex_del, raw_mat_code, raw_mat_name, site_code, site_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1,
+        product_code, product_name, ex_del, raw_mat_code, raw_mat_name, site_code, site_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, manual_weight_reason, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1,
         gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, is_complete, is_cancel, manual_weight, indicator_id, weighbridge_id, created_by, modified_by, indicator_id_2, 
-        product_description, unit_price, sub_total, sst, total_price, is_approved, approved_reason, plant_code, plant_name, agent_code, agent_name, load_drum, no_of_drum, batch_drum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $customerType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeightUom, $supplierWeight, $poSupplyWeight, $orderWeightUom, $orderWeight, $tinNo, $idNo, $idType, $customerCode, $customerName,
+        product_description, unit_price, sub_total, sst, total_price, is_approved, approved_reason, plant_code, plant_name, agent_code, agent_name, load_drum, no_of_drum, batch_drum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', $transactionId, $transactionStatus, $weightType, $customerType, $transactionDate, $vehiclePlateNo1, $vehiclePlateNo2, $supplierWeightUom, $supplierWeight, $poSupplyWeight, $orderWeightUom, $orderWeight, $tinNo, $idNo, $idType, $customerCode, $customerName,
             $supplierCode, $supplierName, $productCode, $productName, $exDel, $rawMaterialCode, $rawMaterialName, $siteCode, $siteName, $containerNo, $invoiceNo, $purchaseOrder, $deliveryNo, $transporterCode, $transporter, $destinationCode, $destination, $otherRemarks,
-            $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
+            $manualWeightReason, $grossIncoming, $grossIncomingDate, $tareOutgoing, $tareOutgoingDate, $nettWeight, $grossIncoming2, $grossIncomingDate2, $tareOutgoing2, $tareOutgoingDate2, $nettWeight2, $reduceWeight, $finalWeight, $weightDifference,
             $isComplete, $isCancel, $manualWeight, $indicatorId, $weighbridge, $username, $username, $indicatorId2, $productDescription, $unitPrice, $subTotalPrice, $sstPrice, $totalPrice, $isApproved, $approved_reason, $plantCode, $plant, $agentCode, $agent, $loadDrum, $noOfDrum, $batchDrum);
 
             // Execute the prepared query.

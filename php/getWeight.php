@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "db_connect.php";
+require_once "requires/permissions.php";
 
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
@@ -21,6 +22,8 @@ if(isset($_POST['userID'])){
     }
 
     if ($format == 'EXPANDABLE' && $type == 'Log'){
+        $canViewPrice = hasModulePermissionDb($db, 'Report', 'Audit Log', ['include_price']);
+
         if ($update_stmt = $db->prepare("SELECT * FROM Weight_Log WHERE id=?")) {
             $update_stmt->bind_param('s', $id);
             
@@ -42,6 +45,15 @@ if(isset($_POST['userID'])){
                     }
                     $message[$key] = $row;
                 }
+
+                if (!$canViewPrice) {
+                    unset($message['unit_price']);
+                    unset($message['sub_total']);
+                    unset($message['sst']);
+                    unset($message['total_price']);
+                }
+
+                $message['can_view_price'] = $canViewPrice;
 
                 echo json_encode(
                     array(
@@ -221,6 +233,7 @@ if(isset($_POST['userID'])){
                         $message['gross_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['gross_weight1_date']));
                         $message['tare_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['tare_weight1_date']));
                         $message['created_date'] = date("d/m/Y - h:i:sa", strtotime($row['created_date']));
+                        $message['manual_weight_reason'] = $row['manual_weight_reason'] ?? '';
                         $message['gross_weight1'] = $row['gross_weight1'] ?? '';
                         $message['tare_weight1'] = $row['tare_weight1'] ?? '';
                         $message['nett_weight1'] = $row['nett_weight1'] ?? '';
@@ -382,6 +395,7 @@ if(isset($_POST['userID'])){
                         $message['destination_code'] = $row['destination_code'];
                         $message['destination'] = $row['destination'];
                         $message['remarks'] = $row['remarks'];
+                        $message['manual_weight_reason'] = $row['manual_weight_reason'];
                         $message['gross_weight1'] = $row['gross_weight1'];
                         $message['gross_weight1_date'] = $row['gross_weight1_date'];
                         $message['tare_weight1'] = $row['tare_weight1'];
@@ -414,6 +428,23 @@ if(isset($_POST['userID'])){
                         $message['load_drum'] = $row['load_drum'];
                         $message['no_of_drum'] = $row['no_of_drum'];
                         $message['batch_drum'] = $row['batch_drum'];
+                        $message['sales_order_status'] = '';
+                        $message['sales_order_closed'] = false;
+
+                        if ($row['transaction_status'] == 'Sales') {
+                            if ($so_stmt = $db->prepare("SELECT status FROM Sales_Order WHERE order_no=? AND customer_code=? AND product_code=? AND deleted='0' LIMIT 1")) {
+                                $so_stmt->bind_param('sss', $row['purchase_order'], $row['customer_code'], $row['product_code']);
+                                $so_stmt->execute();
+                                $so_result = $so_stmt->get_result();
+
+                                if ($so_row = $so_result->fetch_assoc()) {
+                                    $message['sales_order_status'] = $so_row['status'];
+                                    $message['sales_order_closed'] = ($so_row['status'] == 'Close' || $so_row['status'] == 'Closed');
+                                }
+
+                                $so_stmt->close();
+                            }
+                        }
 
                         if ($update_stmt2 = $db->prepare("SELECT * FROM Vehicle WHERE veh_number=?")) {
                             $update_stmt2->bind_param('s', $row['lorry_plate_no1']);
