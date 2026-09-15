@@ -18,6 +18,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     $isCancel = 'N';
     $isComplete = 'N';
     $isApproved = 'Y';
+    $sid = '1';
+    $misValue = '0';
 
     if (empty($_POST["id"])) {
         $weightId = null;
@@ -41,7 +43,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
             }
             else{
                 $result2 = $update_stmt2->get_result();
-				$id = '1';
 				$transactionId = "";
 
 				if ($row2 = $result2->fetch_assoc()) {
@@ -50,7 +51,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 				}
 
 				if ($update_stmt = $db->prepare("SELECT * FROM miscellaneous WHERE id=?")) {
-					$update_stmt->bind_param('s', $id);
+					$update_stmt->bind_param('s', $sid);
 					
 					// Execute the prepared query.
 					if (! $update_stmt->execute()) {
@@ -446,7 +447,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 echo json_encode(
                     array(
                         "status"=> "success", 
-                        "message"=> "Updated Successfully!!" 
+                        "message"=> "Updated Successfully!!",
+                        "id"=>$weightId
                     )
                 );
             }
@@ -480,7 +482,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 
                 ///insert miscellaneous
                 if ($update_stmt = $db->prepare("UPDATE miscellaneous SET value=? WHERE id=?")){
-                    $update_stmt->bind_param('ss', $misValue, $id);
+                    $update_stmt->bind_param('ss', $misValue, $sid);
                     
                     // Execute the prepared query.
                     if (! $update_stmt->execute()){

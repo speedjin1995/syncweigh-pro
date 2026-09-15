@@ -103,12 +103,12 @@ while($row3 = mysqli_fetch_assoc($weighing3)) {
                 <thead>
                     <tr>
                         <th colspan="4" class="header">VEHICLE PENDING IN WAREHOUSE</th>
-                        <th rowspan="2" class="counter"><?= count($weighingList2) ?></th>
+                        <th rowspan="2" class="counter" style="font-size:58px"><?= count($weighingList2) ?></th>
                     </tr><!-- Header row with title and count -->
                     <tr>
-                        <th colspan="4" class="sub-header">AT : 05/03/2025 - 10:30:35AM</th>
+                        <th colspan="4" class="sub-header" id="current-datetime"></th>
                     </tr><!-- Sub-header row -->
-                    <tr class="table-header">
+                    <tr class="table-header"  style="font-size:22px">
                         <td>PLATE NO.</td>
                         <td>DATE</td>
                         <td>TIME IN</td>
@@ -123,12 +123,12 @@ while($row3 = mysqli_fetch_assoc($weighing3)) {
                     $rowClass = !$isSales ? 'red-row' : '';
                     $statusClass = $isSales ? 'yellow' : '';
                 ?>
-                <tr class="<?= $rowClass ?>">
-                    <td><?= htmlspecialchars($row['lorry_plate_no1']) ?></td>
-                    <td><?= date("d/m/Y", strtotime($row['transaction_date'])) ?></td>
-                    <td><?= date("h:i:sa", strtotime($row['transaction_date'])) ?></td>
-                    <td class="<?= $statusClass ?>"><?= strtoupper($row['transaction_status']) ?></td>
-                    <td><?= htmlspecialchars($row['gross_weight1']) ?> kg</td>
+                <tr class="<?= $rowClass ?>"  style="font-size:24px">
+                    <td><b><?= htmlspecialchars($row['lorry_plate_no1']) ?></b></td>
+                    <td><b><?= date("d/m/Y", strtotime($row['transaction_date'])) ?></b></td>
+                    <td><b><?= date("h:i:sa", strtotime($row['transaction_date'])) ?></b></td>
+                    <td class="<?= $statusClass ?>"><b><?= strtoupper($row['transaction_status']) ?></b></td>
+                    <td><b><?= htmlspecialchars($row['gross_weight1']) ?> kg</b></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -181,8 +181,37 @@ while($row3 = mysqli_fetch_assoc($weighing3)) {
 
     <script type="text/javascript">
     $(function () {
-
+        updateDateTime();
+        
+        // 每隔 1 秒（1000毫秒）自动刷新一次
+        setInterval(updateDateTime, 1000);
     });
+    
+    function updateDateTime() {
+        const now = new Date();
+        
+        // 提取日期组件
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // 月份从0开始
+        const year = now.getFullYear();
+        
+        // 提取时间组件
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        // 判断 AM / PM 并转换为 12 小时制
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0点应显示为12
+        const strHours = String(hours).padStart(2, '0');
+        
+        // 拼接成您要求的格式：DD/MM/YYYY - HH:MM:SSAM/PM
+        const formattedDateTime = `AT : ${day}/${month}/${year} - ${strHours}:${minutes}:${seconds}${ampm}`;
+        
+        // 更新到页面中
+        document.getElementById('current-datetime').textContent = formattedDateTime;
+    }
     </script>
     </body>
 

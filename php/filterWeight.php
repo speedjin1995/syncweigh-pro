@@ -51,6 +51,14 @@ if($_POST['product'] != null && $_POST['product'] != '' && $_POST['product'] != 
 	$searchQuery .= " and product_code = '".$_POST['product']."'";
 }
 
+if($_POST['destination'] != null && $_POST['destination'] != '' && $_POST['destination'] != '-'){
+	$searchQuery .= " and destination_code = '".$_POST['destination']."'";
+}
+
+if($_POST['transporter'] != null && $_POST['transporter'] != '' && $_POST['transporter'] != '-'){
+	$searchQuery .= " and transporter_code = '".$_POST['transporter']."'";
+}
+
 if($searchValue != ''){
   $searchQuery = " and (transaction_id like '%".$searchValue."%' or lorry_plate_no1 like '%".$searchValue."%')";
 }

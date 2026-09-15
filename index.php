@@ -28,15 +28,17 @@ if(($row = $result->fetch_assoc()) !== null){
 }
 
 //   $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0'");
-$customer = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0'");
-$product = $db->query("SELECT * FROM Product WHERE status = '0'");
-$product2 = $db->query("SELECT * FROM Product WHERE status = '0'");
-$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0'");
-$destination = $db->query("SELECT * FROM Destination WHERE status = '0'");
-$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0'");
+$vehicles = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number");
+$vehicles2 = $db->query("SELECT * FROM Vehicle WHERE status = '0' ORDER BY veh_number");
+$customer = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name");
+$customer2 = $db->query("SELECT * FROM Customer WHERE status = '0' ORDER BY name");
+$product = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name");
+$product2 = $db->query("SELECT * FROM Product WHERE status = '0' ORDER BY name");
+$transporter = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name");
+$transporter2 = $db->query("SELECT * FROM Transporter WHERE status = '0' ORDER BY name");
+$destination = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name");
+$destination2 = $db->query("SELECT * FROM Destination WHERE status = '0' ORDER BY name");
+$supplier = $db->query("SELECT * FROM Supplier WHERE status = '0' ORDER BY name");
 $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 ?>
 
@@ -195,8 +197,30 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                             </select>
                                                         </div>
                                                     </div><!--end col-->
-                                                    <div class="col-lg-12">
-                                                        <div class="text-end">
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="transporterSearch" class="form-label">Transporter</label>
+                                                            <select id="transporterSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowTransporterF=mysqli_fetch_assoc($transporter2)){ ?>
+                                                                    <option value="<?=$rowTransporterF['transporter_code'] ?>"><?=$rowTransporterF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-3">
+                                                        <div class="mb-3">
+                                                            <label for="destinationSearch" class="form-label">Destination</label>
+                                                            <select id="destinationSearch" class="form-select" >
+                                                                <option selected>-</option>
+                                                                <?php while($rowDestinationF=mysqli_fetch_assoc($destination2)){ ?>
+                                                                    <option value="<?=$rowDestinationF['destination_code'] ?>"><?=$rowDestinationF['name'] ?></option>
+                                                                <?php } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div><!--end col-->
+                                                    <div class="col-lg-6">
+                                                        <div class="text-end" style="padding-top: 20px;">
                                                             <button type="submit" class="btn btn-primary" style="background-color: #008001;" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
                                                         </div>
                                                     </div><!--end col-->
@@ -791,7 +815,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                                                         <div class="col-lg-12">
                                                             <div class="hstack gap-2 justify-content-end">
                                                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                                <!--button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button-->
+                                                                <button type="button" class="btn btn-danger" id="submitWeightPrint">Submit & Print</button>
                                                                 <button type="button" class="btn btn-primary" style="background-color: #008001;" id="submitWeight">Submit</button>
                                                             </div>
                                                         </div><!--end col-->   
@@ -1063,6 +1087,50 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             dateFormat: "d-m-Y",
             defaultDate: today
         });
+        
+        /*grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: false,
+            clickOpens: false,
+        });
+
+        tareOutgoingDatePicker = $('#tareOutgoingDate').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: false,
+            clickOpens: false,
+        });
+
+        grossIncomingDatePicker2 = $('#grossIncomingDate2').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: false,
+            clickOpens: false,
+        });
+
+        tareOutgoingDatePicker2 = $('#tareOutgoingDate2').flatpickr({
+            enableTime: true,
+            enableSeconds: true,
+            time_24hr: true,
+            dateFormat: "Y-m-d H:i:S",
+            altInput: true,
+            altFormat: "d/m/Y H:i:S K",
+            allowInput: false,
+            clickOpens: false,
+        });*/
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -1072,6 +1140,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
         var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
         var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
         var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+        var destinationSearchI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+        var transporterSearchI = $('#transporterSearch').val() ? $('#transporterSearch').val() : '';
 
         table = $("#weightTable").DataTable({
             "responsive": true,
@@ -1091,6 +1161,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                     invoice: invoiceNoI,
                     batch: batchNoI,
                     product: transactionStatusI,
+                    destination: destinationSearchI,
+                    transporter: transporterSearchI
                 } 
             },
             'columns': [
@@ -1331,7 +1403,6 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                             var obj = JSON.parse(data);
 
                             if(obj.status === 'success'){
-                                debugger;
                                 var printWindow = window.open('', '', 'height=' + screen.height + ',width=' + screen.width);
                                 printWindow.document.write(obj.message);
                                 printWindow.document.close();
@@ -1541,6 +1612,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var invoiceNoI = $('#invoiceNoSearch').val() ? $('#invoiceNoSearch').val() : '';
             var batchNoI = $('#batchNoSearch').val() ? $('#batchNoSearch').val() : '';
             var transactionStatusI = $('#transactionStatusSearch').val() ? $('#transactionStatusSearch').val() : '';
+            var destinationSearchI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+            var transporterSearchI = $('#transporterSearch').val() ? $('#transporterSearch').val() : '';
 
             //Destroy the old Datatable
             $("#weightTable").DataTable().clear().destroy();
@@ -1564,6 +1637,8 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                         invoice: invoiceNoI,
                         batch: batchNoI,
                         product: transactionStatusI,
+                        destination: destinationSearchI,
+                        transporter: transporterSearchI
                     } 
                 },
                 'columns': [
@@ -1613,7 +1688,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#transactionId').val("");
             $('#addModal').find('#transactionStatus').val("Sales").trigger('change');
             $('#addModal').find('#weightType').val("Normal").trigger('change');
-            $('#addModal').find('#transactionDate').val(formatDate2(today));
+            $('#addModal').find('#transactionDate').val(formatDate2(new Date()));
             $('#addModal').find('#vehiclePlateNo1').val("");
             $('#addModal').find('#vehiclePlateNo2').val("");
             $('#addModal').find('#supplierWeight').val("");
@@ -1769,8 +1844,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#grossIncomingDate').val(formatDate2(today));
+            $('#grossIncomingDate').val(formatDate2(new Date()));
             $('#nettWeight').trigger('change');
+            
+            //grossIncomingDatePicker.setDate(new Date()); // sets it to current date/time
+            //$('#grossIncomingDate').trigger('change');
         });
 
         $('#grossCapture').on('click', function(){
@@ -1784,7 +1862,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var gross = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#tareOutgoingDate').val(formatDate2(today));
+            $('#tareOutgoingDate').val(formatDate2(new Date()));
             $('#nettWeight').trigger('change');
         });
 
@@ -1838,7 +1916,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#grossIncomingDate2').val(formatDate2(today));
+            $('#grossIncomingDate2').val(formatDate2(new Date()));
             $('#nettWeight2').trigger('change');
         });
 
@@ -1853,7 +1931,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#tareOutgoingDate2').val(formatDate2(today));
+            $('#tareOutgoingDate2').val(formatDate2(new Date()));
             $('#nettWeight2').trigger('change');
         });
 
