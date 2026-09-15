@@ -1063,6 +1063,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
 
     <script type="text/javascript">
     var table = null;
+    var grossIncomingDatePicker;
+    var tareOutgoingDatePicker; 
+    var grossIncomingDatePicker2;
+    var tareOutgoingDatePicker2; 
     
     $(function () {
         var ind = '<?=$indicator ?>';
@@ -1088,7 +1092,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             defaultDate: today
         });
         
-        /*grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
+        grossIncomingDatePicker = $('#grossIncomingDate').flatpickr({
             enableTime: true,
             enableSeconds: true,
             time_24hr: true,
@@ -1130,7 +1134,7 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             altFormat: "d/m/Y H:i:S K",
             allowInput: false,
             clickOpens: false,
-        });*/
+        });
 
         var fromDateI = $('#fromDateSearch').val();
         var toDateI = $('#toDateSearch').val();
@@ -1709,15 +1713,15 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             $('#addModal').find('#destination').val("");
             $('#addModal').find('#otherRemarks').val("");
             $('#addModal').find('#grossIncoming').val("");
-            $('#addModal').find('#grossIncomingDate').val("");
+            grossIncomingDatePicker.clear();
             $('#addModal').find('#tareOutgoing').val("");
-            $('#addModal').find('#tareOutgoingDate').val("");
+            tareOutgoingDatePicker.clear();
             $('#addModal').find('#nettWeight').val("");
             $('#addModal').find('#grossIncoming2').val("");
             $('#addModal').find('#status').val("");
-            $('#addModal').find('#grossIncomingDate2').val("");
+            grossIncomingDatePicker2.clear();
             $('#addModal').find('#tareOutgoing2').val("");
-            $('#addModal').find('#tareOutgoingDate2').val("");
+            tareOutgoingDatePicker2.clear();
             $('#addModal').find('#nettWeight2').val("");
             $('#addModal').find('#reduceWeight').val("");
             // $('#addModal').find('#vehicleNo').val(obj.message.final_weight);
@@ -1844,11 +1848,10 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#tareOutgoing').val() ? parseFloat($('#tareOutgoing').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#grossIncomingDate').val(formatDate2(new Date()));
             $('#nettWeight').trigger('change');
             
-            //grossIncomingDatePicker.setDate(new Date()); // sets it to current date/time
-            //$('#grossIncomingDate').trigger('change');
+            grossIncomingDatePicker.setDate(new Date()); // sets it to current date/time
+            $('#grossIncomingDate').trigger('change');
         });
 
         $('#grossCapture').on('click', function(){
@@ -1862,8 +1865,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var gross = $('#grossIncoming').val() ? parseFloat($('#grossIncoming').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight').val(nett.toFixed(0));
-            $('#tareOutgoingDate').val(formatDate2(new Date()));
             $('#nettWeight').trigger('change');
+
+            // Update the Flatpickr instance
+            tareOutgoingDatePicker.setDate(new Date()); // sets it to current date/time
+            $('#tareOutgoingDate').trigger('change');
         });
 
         $('#tareCapture').on('click', function(){
@@ -1916,8 +1922,12 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var tare = $('#tareOutgoing2').val() ? parseFloat($('#tareOutgoing2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#grossIncomingDate2').val(formatDate2(new Date()));
             $('#nettWeight2').trigger('change');
+
+            // Update the Flatpickr instance
+            grossIncomingDatePicker2.setDate(new Date()); // sets it to current date/time
+            $('#grossIncomingDate2').trigger('change');
+
         });
 
         $('#grossCapture2').on('click', function(){
@@ -1931,8 +1941,11 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
             var gross = $('#grossIncoming2').val() ? parseFloat($('#grossIncoming2').val()) : 0;
             var nett = Math.abs(gross - tare);
             $('#nettWeight2').val(nett.toFixed(0));
-            $('#tareOutgoingDate2').val(formatDate2(new Date()));
             $('#nettWeight2').trigger('change');
+
+            // Update the Flatpickr instance
+            tareOutgoingDatePicker2.setDate(new Date()); // sets it to current date/time
+            $('#tareOutgoingDate2').trigger('change');
         });
 
         $('#tareCapture2').on('click', function(){
@@ -2111,14 +2124,18 @@ $unit = $db->query("SELECT * FROM Unit WHERE status = '0'");
                 $('#addModal').find('#destination').val(obj.message.destination);
                 $('#addModal').find('#otherRemarks').val(obj.message.remarks);
                 $('#addModal').find('#grossIncoming').val(obj.message.gross_weight1);
-                $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
+                grossIncomingDatePicker.setDate(new Date(obj.message.gross_weight1_date));
+                // $('#addModal').find('#grossIncomingDate').val(formatDate2(new Date(obj.message.gross_weight1_date)));
                 $('#addModal').find('#tareOutgoing').val(obj.message.tare_weight1);
-                $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
+                tareOutgoingDatePicker.setDate(obj.message.tare_weight1_date != null ? new Date(obj.message.tare_weight1_date) : null);
+                // $('#addModal').find('#tareOutgoingDate').val(obj.message.tare_weight1_date != null ? formatDate2(new Date(obj.message.tare_weight1_date)) : '');
                 $('#addModal').find('#nettWeight').val(obj.message.nett_weight1);
                 $('#addModal').find('#grossIncoming2').val(obj.message.gross_weight2);
-                $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
+                grossIncomingDatePicker2.setDate(obj.message.gross_weight2_date != null ? new Date(obj.message.gross_weight2_date) : null);
+                // $('#addModal').find('#grossIncomingDate2').val(obj.message.gross_weight2_date != null ? formatDate2(new Date(obj.message.gross_weight2_date)) : '');
                 $('#addModal').find('#tareOutgoing2').val(obj.message.tare_weight2);
-                $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate2(new Date(obj.message.tare_weight2_date)) : '');
+                tareOutgoingDatePicker2.setDate(obj.message.tare_weight2_date != null ? new Date(obj.message.tare_weight2_date) : null);
+                // $('#addModal').find('#tareOutgoingDate2').val(obj.message.tare_weight2_date != null ? formatDate2(new Date(obj.message.tare_weight2_date)) : '');
                 $('#addModal').find('#nettWeight2').val(obj.message.nett_weight2);
                 $('#addModal').find('#currentWeight').text(obj.message.final_weight);
                 $('#addModal').find('#reduceWeight').val(obj.message.reduce_weight);
