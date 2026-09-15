@@ -142,7 +142,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
         $grossIncomingDate = null;
     } 
     else {
-        $grossIncomingDate = DateTime::createFromFormat('d-m-Y', $_POST["grossIncomingDate"])->format('Y-m-d H:i:s');
+        $grossIncomingDate = $_POST['grossIncomingDate'];
+        // $grossIncomingDate = DateTime::createFromFormat('d-m-Y', $_POST["grossIncomingDate"])->format('Y-m-d H:i:s');
     }
 
     if (empty($_POST["tareOutgoing"])) {
@@ -154,7 +155,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     if (empty($_POST["tareOutgoingDate"])) {
         $tareOutgoingDate = null;
     } else {
-        $tareOutgoingDate = DateTime::createFromFormat('d-m-Y', $_POST["tareOutgoingDate"])->format('Y-m-d H:i:s');
+        $tareOutgoingDate = $_POST["tareOutgoingDate"];
+        // $tareOutgoingDate = DateTime::createFromFormat('d-m-Y', $_POST["tareOutgoingDate"])->format('Y-m-d H:i:s');
     }
 
     if (empty($_POST["nettWeight"])) {
@@ -273,7 +275,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     if (empty($_POST["grossIncomingDate2"])) {
         $grossIncomingDate2 = null;
     } else {
-        $grossIncomingDate2 = DateTime::createFromFormat('d-m-Y', $_POST["grossIncomingDate2"])->format('Y-m-d H:i:s');
+        $grossIncomingDate2 = $_POST['grossIncomingDate2'];
+        // $grossIncomingDate2 = DateTime::createFromFormat('d-m-Y', $_POST["grossIncomingDate2"])->format('Y-m-d H:i:s');
     }
 
     if (empty($_POST["tareOutgoing2"])) {
@@ -285,7 +288,8 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     if (empty($_POST["tareOutgoingDate2"])) {
         $tareOutgoingDate2 = null;
     } else {
-        $tareOutgoingDate2 = DateTime::createFromFormat('d-m-Y', $_POST["tareOutgoingDate2"])->format('Y-m-d H:i:s');
+        $tareOutgoingDate2 = $_POST["tareOutgoingDate2"];
+        // $tareOutgoingDate2 = DateTime::createFromFormat('d-m-Y', $_POST["tareOutgoingDate2"])->format('Y-m-d H:i:s');
     }
 
     if (empty($_POST["nettWeight2"])) {
