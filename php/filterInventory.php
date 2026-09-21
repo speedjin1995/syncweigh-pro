@@ -26,6 +26,10 @@ if($_POST['plant'] != null && $_POST['plant'] != '' && $_POST['plant'] != '-'){
   }
 }
 
+if(isset($_POST['batch_drum']) && $_POST['batch_drum'] != ''){
+	$searchQuery .= " and Inventory.batch_drum = '".$_POST['batch_drum']."'";
+}
+
 ## Total number of records without filtering
 $allQuery = "select count(*) as allcount from Inventory, Raw_Mat where Inventory.status = '0' and Inventory.raw_mat_id = Raw_Mat.id".$searchQuery;
 $sel = mysqli_query($db, $allQuery);

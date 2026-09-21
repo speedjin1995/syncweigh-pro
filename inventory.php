@@ -146,6 +146,16 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                                     </select>
                                                                 </div>
                                                             </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-3">
+                                                                    <label class="form-label">Batch/Drum</label>
+                                                                    <select id="batchDrumSearch" class="form-select">
+                                                                        <option value="">All</option>
+                                                                        <option value="Batch">Batch</option>
+                                                                        <option value="Drum">Drum</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
                                                             <div class="col-lg-12">
                                                                 <div class="text-end">
                                                                     <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
@@ -784,6 +794,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
     function initInventoryTable() {
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var batchDrumFilter = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
         
         if (table) {
             table.destroy();
@@ -801,7 +812,8 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             'ajax': {
                 'url':'php/filterInventory.php',
                 'data': {
-                    plant: plantNoI
+                    plant: plantNoI,
+                    batch_drum: batchDrumFilter
                 } 
             },
             'columns': [
