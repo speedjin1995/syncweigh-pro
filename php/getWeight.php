@@ -218,9 +218,9 @@ if(isset($_POST['userID'])){
                         $message['invoice_no'] = $row['invoice_no'] ?? '';
                         $message['delivery_no'] = $row['delivery_no'] ?? '';
                         $message['purchase_order'] = $row['purchase_order'] ?? '';
-                        $message['gross_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['gross_weight1_date']));
-                        $message['tare_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['tare_weight1_date']));
-                        $message['created_date'] = date("d/m/Y - h:i:sa", strtotime($row['created_date']));
+                        $message['gross_weight1_date'] = !empty($row['gross_weight1_date']) ? date("d/m/Y H:i:s", strtotime($row['gross_weight1_date'])) : '';
+                        $message['tare_weight1_date'] = !empty($row['tare_weight1_date']) ? date("d/m/Y H:i:s", strtotime($row['tare_weight1_date'])) : '';
+                        $message['created_date'] = !empty($row['created_date']) ? date("d/m/Y H:i:s", strtotime($row['created_date'] . ' +8 hours')) : '';
                         $message['gross_weight1'] = $row['gross_weight1'] ?? '';
                         $message['tare_weight1'] = $row['tare_weight1'] ?? '';
                         $message['nett_weight1'] = $row['nett_weight1'] ?? '';

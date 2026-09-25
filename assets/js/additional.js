@@ -45,3 +45,8 @@ function formatDate4(date) {
 
     return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
+
+// Get current date/time in Malaysia timezone
+function getMalaysiaDate() {
+    return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+}
