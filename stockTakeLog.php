@@ -713,6 +713,7 @@ function format (row) {
             <p><strong>TRANSACTION DATE:</strong> ${row.transaction_date}</p>
             <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
             <p><strong>MANUAL WEIGHT:</strong> ${row.manual_weight}</p>
+            <p><strong>MANUAL WEIGHT REASON:</strong> ${row.manual_weight_reason}</p>
             <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
             <p><strong>SO/PO NO:</strong> ${row.purchase_order}</p>
         </div>

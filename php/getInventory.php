@@ -1,73 +1,123 @@
 <?php
 session_start();
 require_once "db_connect.php";
-require_once "requires/lookup.php";
+require_once "requires/permissions.php";
 
-if(isset($_POST['userID'])){
-	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
-
-    if ($update_stmt = $db->prepare("SELECT Inventory.*, Raw_Mat.raw_mat_code, Raw_Mat.name from Inventory, Raw_Mat WHERE Inventory.raw_mat_id = Raw_Mat.id AND Inventory.id=?")) {
-        $update_stmt->bind_param('s', $id);
-        
-        // Execute the prepared query.
-        if (! $update_stmt->execute()) {
-            echo json_encode(
-                array(
-                    "status" => "failed",
-                    "message" => "Something went wrong"
-                )); 
-        }
-        else{
-            $result = $update_stmt->get_result();
-            $message = array();
-            
-            while ($row = $result->fetch_assoc()) {
-                $message['id'] = $row['id'];
-                $message['raw_mat_code'] = $row['raw_mat_code'];
-                $message['name'] = $row['name'];
-                $message['raw_mat_basic_uom'] = $row['raw_mat_basic_uom'];
-                $message['raw_mat_weight'] = $row['raw_mat_weight'];
-                $message['raw_mat_count'] = $row['raw_mat_count'];
-
-                $rawMatCode = $row['raw_mat_code'];
-                $status = '0';
-
-                if ($update_stmt = $db->prepare("SELECT * FROM Raw_Mat WHERE raw_mat_code=? AND status=?")) {
-                    $update_stmt->bind_param('ss', $rawMatCode, $status);
-                    
-                    // Execute the prepared query.
-                    if (! $update_stmt->execute()) {
-                        echo json_encode(
-                            array(
-                                "status" => "failed",
-                                "message" => "Something went wrong"
-                            )); 
-                    }
-                    else{
-                        $result2 = $update_stmt->get_result();
-                        
-                        while ($row2 = $result2->fetch_assoc()) {
-                            $message['basic_uom'] = searchUnitById($row2['basic_uom'], $db);
-                            $message['basic_uom_id'] = $row2['basic_uom'];
-                            $message['raw_mat_id'] = $row2['id'];
-                        }
-                        
-                        echo json_encode(
-                            array(
-                                "status" => "success",
-                                "message" => $message
-                            ));   
-                    }
-                }
-            }
-        }
-    }
+function formatInventoryNumber($value) {
+    $formatted = number_format((float)$value, 3, '.', '');
+    $formatted = rtrim(rtrim($formatted, '0'), '.');
+    return $formatted === '' ? '0' : $formatted;
 }
-else{
+
+if(!isset($_POST['userID'])){
     echo json_encode(
         array(
             "status" => "failed",
             "message" => "Missing Attribute"
-            )); 
+        )
+    );
+    exit;
+}
+
+$id = trim($_POST['userID']);
+$plantQuery = "";
+
+if (!hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
+    $plantCodes = isset($_SESSION["plant"]) && is_array($_SESSION["plant"]) ? $_SESSION["plant"] : array();
+    $escapedPlants = array_map(function($plantCode) use ($db) {
+        return mysqli_real_escape_string($db, $plantCode);
+    }, $plantCodes);
+
+    if (count($escapedPlants) === 0) {
+        echo json_encode(
+            array(
+                "status" => "failed",
+                "message" => "No plant permission"
+            )
+        );
+        exit;
+    }
+
+    $plantQuery = " AND Inventory.plant_code IN ('".implode("', '", $escapedPlants)."')";
+}
+
+$sql = "
+    SELECT
+        Inventory.*,
+        Raw_Mat.raw_mat_code,
+        Raw_Mat.name,
+        (
+            CAST(Inventory.raw_mat_weight AS DECIMAL(18,3)) +
+            COALESCE(Inventory_Adjustment_Sum.total_weight_adjustment, 0)
+        ) AS adjusted_raw_mat_weight,
+        (
+            CAST(Inventory.raw_mat_count AS DECIMAL(18,3)) +
+            COALESCE(Inventory_Adjustment_Sum.total_drum_adjustment, 0)
+        ) AS adjusted_raw_mat_count
+    FROM Inventory
+    INNER JOIN Raw_Mat ON Inventory.raw_mat_id = Raw_Mat.id
+    LEFT JOIN (
+        SELECT
+            inventory_id,
+            SUM(weight_adjustment) AS total_weight_adjustment,
+            SUM(drum_adjustment) AS total_drum_adjustment
+        FROM inventory_adjustment
+        WHERE status = '0'
+        GROUP BY inventory_id
+    ) Inventory_Adjustment_Sum ON Inventory_Adjustment_Sum.inventory_id = Inventory.id
+    WHERE Inventory.status = '0'
+    AND Inventory.id = ?
+    ".$plantQuery."
+";
+
+if ($update_stmt = $db->prepare($sql)) {
+    $update_stmt->bind_param('s', $id);
+
+    if (!$update_stmt->execute()) {
+        echo json_encode(
+            array(
+                "status" => "failed",
+                "message" => "Something went wrong"
+            )
+        );
+        exit;
+    }
+
+    $result = $update_stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $message = array(
+            "id" => $row['id'],
+            "raw_mat_id" => $row['raw_mat_id'],
+            "raw_mat_code" => $row['raw_mat_code'],
+            "name" => $row['name'],
+            "raw_mat_basic_uom" => $row['raw_mat_basic_uom'],
+            "raw_mat_weight" => formatInventoryNumber($row['adjusted_raw_mat_weight']),
+            "raw_mat_count" => formatInventoryNumber($row['adjusted_raw_mat_count'])
+        );
+
+        echo json_encode(
+            array(
+                "status" => "success",
+                "message" => $message
+            )
+        );
+    } else {
+        echo json_encode(
+            array(
+                "status" => "failed",
+                "message" => "Inventory not found"
+            )
+        );
+    }
+
+    $update_stmt->close();
+} else {
+    echo json_encode(
+        array(
+            "status" => "failed",
+            "message" => "Something went wrong"
+        )
+    );
 }
 ?>

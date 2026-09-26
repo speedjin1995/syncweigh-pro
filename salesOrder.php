@@ -866,6 +866,8 @@ if ($user != null && $user != ''){
                     orderable: false,
                     render: function (data, type, row) {
                         var buttons = `<div class="row g-1 d-flex">`;
+                        var balanceValue = parseFloat(row.converted_balance);
+                        var disableRevert = (row.status == 'Close' || row.status == 'Closed') && !isNaN(balanceValue) && balanceValue < -20.0;
 
                         if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit'))){
                             buttons += `
@@ -888,12 +890,23 @@ if ($user != null && $user != ''){
                             }
                         } else {
                             if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('revert'))) {
-                                buttons += `
-                                <div class="col-auto">
-                                    <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
-                                        <i class="fas fa-undo"></i>
-                                    </button>
-                                </div>`;
+                                if (disableRevert) {
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <span title="Balance exceeded threshold -20MT" style="display: inline-block;">
+                                            <button title="Balance exceeded threshold -20MT" type="button" id="revert${data}" class="btn btn-success btn-sm" disabled>
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </span>
+                                    </div>`;
+                                } else {
+                                    buttons += `
+                                    <div class="col-auto">
+                                        <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                    </div>`;
+                                }
                             }
                         }
                         
@@ -981,6 +994,8 @@ if ($user != null && $user != ''){
                         orderable: false,
                         render: function (data, type, row) {
                             var buttons = `<div class="row g-1 d-flex">`;
+                            var balanceValue = parseFloat(row.converted_balance);
+                            var disableRevert = (row.status == 'Close' || row.status == 'Closed') && !isNaN(balanceValue) && balanceValue < -20.0;
 
                             if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('edit'))){
                                 buttons += `
@@ -1003,12 +1018,23 @@ if ($user != null && $user != ''){
                                 }
                             } else {
                                 if (isSADMIN || (permissions['Accounting'] && permissions['Accounting']['Sales Order (SO)'] && permissions['Accounting']['Sales Order (SO)'].includes('revert'))) {
-                                    buttons += `
-                                    <div class="col-auto">
-                                        <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
-                                            <i class="fas fa-undo"></i>
-                                        </button>
-                                    </div>`;
+                                    if (disableRevert) {
+                                        buttons += `
+                                        <div class="col-auto">
+                                            <span title="Balance exceeded threshold -20MT" style="display: inline-block;">
+                                                <button title="Balance exceeded threshold -20MT" type="button" id="revert${data}" class="btn btn-success btn-sm" disabled>
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                            </span>
+                                        </div>`;
+                                    } else {
+                                        buttons += `
+                                        <div class="col-auto">
+                                            <button title="Revert" type="button" id="revert${data}" onclick="revert(${data})" class="btn btn-success btn-sm">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>`;
+                                    }
                                 }
                             }
                             

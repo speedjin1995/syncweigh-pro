@@ -10,6 +10,45 @@ if(isset($_POST['userID'], $_POST['type'])){
 	$status = "Open";
 
 	if ($type == 'Sales'){
+		if ($check_stmt = $db->prepare("SELECT status, converted_balance FROM Sales_Order WHERE id=? AND deleted='0'")) {
+			$check_stmt->bind_param('s', $id);
+			$check_stmt->execute();
+			$result = $check_stmt->get_result();
+			$order = $result->fetch_assoc();
+			$check_stmt->close();
+
+			if (!$order) {
+				echo json_encode(
+					array(
+						"status"=> "failed",
+						"message"=> "Sales Order not found"
+					)
+				);
+				$db->close();
+				exit;
+			}
+
+			if (($order['status'] == 'Close' || $order['status'] == 'Closed') && (float)$order['converted_balance'] < -20.0) {
+				echo json_encode(
+					array(
+						"status"=> "failed",
+						"message"=> "Balance exceeded threshold -20MT"
+					)
+				);
+				$db->close();
+				exit;
+			}
+		} else {
+			echo json_encode(
+				array(
+					"status"=> "failed",
+					"message"=> "Somethings wrong"
+				)
+			);
+			$db->close();
+			exit;
+		}
+
 		$sql = "UPDATE Sales_Order SET status=?, modified_by=? WHERE id=?";
 	}else{
 		$sql = "UPDATE Purchase_Order SET status=?, modified_by=? WHERE id=?";
