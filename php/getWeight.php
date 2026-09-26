@@ -78,7 +78,7 @@ if(isset($_POST['userID'])){
             '3003/002' // LFO AJIL
         ];
         $placeholders = implode(',', array_fill(0, count($rawMatCode), '?'));
-        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(nett_weight1) AS total_nett_weight1 FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
+        if ($update_stmt = $db->prepare("SELECT raw_mat_code, SUM(supplier_weight) AS supplier_weight FROM Weight WHERE is_complete = 'Y' AND is_cancel <> 'Y' AND status = 0 AND transaction_status = 'Purchase' AND raw_mat_code IN ($placeholders) AND plant_code = ? AND DATE(tare_weight1_date) = ? AND batch_drum = ? GROUP BY raw_mat_code")) {
             $bindTypes = str_repeat('s', count($rawMatCode)) . 'sss';
             $bindParams = array_merge($rawMatCode, [$plantCode, $formattedDate, $batchDrum]);
             $update_stmt->bind_param($bindTypes, ...$bindParams);
@@ -105,7 +105,7 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
                                 $message['dieselIncoming'] = $litre;
                             } else {
                                 $message['dieselIncoming'] = 0; // Default to 0 if no conversion found
@@ -124,7 +124,7 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
                                 $message['lfoIncoming'] = $litre;
                             } else {
                                 $message['lfoIncoming'] = 0; // Default to 0 if no conversion found
@@ -143,7 +143,7 @@ if(isset($_POST['userID'])){
                             
                             if ($conversion_row = $conversion_result->fetch_assoc()) {
                                 $rate = (float) $conversion_row['rate'] ?? 0; // conversion rate from kg to litre
-                                $litre = ($row['total_nett_weight1'] ?? 0) * $rate;
+                                $litre = ($row['supplier_weight'] ?? 0) * $rate;
                                 $message['bitumenIncoming'] = $litre;
                             } else {
                                 $message['bitumenIncoming'] = 0; // Default to 0 if no conversion found
@@ -230,9 +230,9 @@ if(isset($_POST['userID'])){
                         $message['invoice_no'] = $row['invoice_no'] ?? '';
                         $message['delivery_no'] = $row['delivery_no'] ?? '';
                         $message['purchase_order'] = $row['purchase_order'] ?? '';
-                        $message['gross_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['gross_weight1_date']));
-                        $message['tare_weight1_date'] = date("d/m/Y - h:i:sa", strtotime($row['tare_weight1_date']));
-                        $message['created_date'] = date("d/m/Y - h:i:sa", strtotime($row['created_date']));
+                        $message['gross_weight1_date'] = !empty($row['gross_weight1_date']) ? date("d/m/Y H:i:s", strtotime($row['gross_weight1_date'])) : '';
+                        $message['tare_weight1_date'] = !empty($row['tare_weight1_date']) ? date("d/m/Y H:i:s", strtotime($row['tare_weight1_date'])) : '';
+                        $message['created_date'] = !empty($row['created_date']) ? date("d/m/Y H:i:s", strtotime($row['created_date'] . ' +8 hours')) : '';
                         $message['manual_weight_reason'] = $row['manual_weight_reason'] ?? '';
                         $message['gross_weight1'] = $row['gross_weight1'] ?? '';
                         $message['tare_weight1'] = $row['tare_weight1'] ?? '';

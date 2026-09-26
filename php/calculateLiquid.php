@@ -23,9 +23,9 @@ if(isset($_POST['rawMatCode'], $_POST['diameter'], $_POST['length'], $_POST['hei
     $stmt->close();
 
     // Lookup to calculation table first to get preset values before we calculate
-    if($rawMatCode == 'LFFO001'){
+    if($rawMatCode == 'LFFO001' || $rawMatCode == '3003/002'){
         $type = 'LFOLOOKUP';
-    }else if ($rawMatCode == 'DIE001'){
+    }else if ($rawMatCode == 'DIE001' || $rawMatCode == '3003/001'){
         $type = 'DIESELLOOKUP';
     }
 
