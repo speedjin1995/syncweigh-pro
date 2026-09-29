@@ -182,8 +182,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                                     <th>No</th>
                                                                     <th>Raw Material Code</th>
                                                                     <th>Raw Material Name</th>
+                                                                    <th>Plant</th>
+                                                                    <th>Batch/Drum</th>
                                                                     <th>Weight (Kg)</th>
-                                                                    <th>Drum</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -820,11 +821,13 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 { data: 'no' },
                 { data: 'raw_mat_code' },
                 { data: 'name' },
+                { data: 'plant_name' },
+                { data: 'batch_drum' },
                 { data: 'raw_mat_weight' },
-                { data: 'raw_mat_count' },
                 { 
                     data: 'id',
                     orderable: false,
+                    visible: false, // Edit button hidden for now; remove this line to show it again
                     render: function ( data, type, row ) {
                         if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
                             return `

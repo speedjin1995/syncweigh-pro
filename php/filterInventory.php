@@ -43,7 +43,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select Inventory.*, Raw_Mat.raw_mat_code, Raw_Mat.name from Inventory, Raw_Mat where Inventory.status = '0' and Inventory.raw_mat_id = Raw_Mat.id".$searchQuery."order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select Inventory.*, Raw_Mat.raw_mat_code, Raw_Mat.name, Plant.name as plant_name from Inventory JOIN Raw_Mat ON Inventory.raw_mat_id = Raw_Mat.id LEFT JOIN Plant ON Inventory.plant_id = Plant.id where Inventory.status = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $salesCount = 1;
@@ -54,6 +54,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "no"=>$salesCount,
     "raw_mat_code"=>$row['raw_mat_code'],
     "name"=>$row['name'],
+    "plant_name"=>$row['plant_name'],
+    "batch_drum"=>$row['batch_drum'],
     "raw_mat_weight"=>$row['raw_mat_weight'],
     "raw_mat_count"=>$row['raw_mat_count']
   );

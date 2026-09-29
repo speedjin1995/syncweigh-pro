@@ -3466,3 +3466,41 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_STK_ADJ_ITEM` BEFORE UPDATE ON `Stock_Adjustm
 END
 $$
 DELIMITER ;
+
+ALTER TABLE `Inventory` ADD `batch_drum` VARCHAR(10) NULL AFTER `plant_code`;
+ALTER TABLE `Inventory_Log` ADD `batch_drum` VARCHAR(10) NULL AFTER `plant_code`;
+
+DROP TRIGGER TRG_INS_INV;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_INV_LOG` AFTER INSERT ON `Inventory`
+ FOR EACH ROW INSERT INTO Inventory_Log (
+    inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, batch_drum, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, NEW.batch_drum, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Inventory_Log (
+        inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, batch_drum, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, NEW.batch_drum, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
