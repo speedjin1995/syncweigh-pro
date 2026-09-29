@@ -1585,10 +1585,15 @@ if (hasPermission('Weighing', ['view_all_plants'])){
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 
+    // Get current date/time in Malaysia timezone
+    function getMalaysiaDate() {
+        return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur' }));
+    }
+
     $(function () {
         var userRole = '<?=$role ?>';
         var ind = '<?=$indicator ?>';
-        const today = new Date();
+        const today = getMalaysiaDate();
         const tomorrow = new Date(today);
         const yesterday = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -3494,7 +3499,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#nettWeight').trigger('change');
 
             // Update the Flatpickr instance
-            grossIncomingDatePicker.setDate(new Date()); // sets it to current date/time
+            grossIncomingDatePicker.setDate(getMalaysiaDate()); // sets it to current date/time in Malaysia timezone
             $('#grossIncomingDate').trigger('change');
         });
 
@@ -3512,7 +3517,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#nettWeight').trigger('change');
 
             // Update the Flatpickr instance
-            tareOutgoingDatePicker.setDate(new Date()); // sets it to current date/time
+            tareOutgoingDatePicker.setDate(getMalaysiaDate()); // sets it to current date/time in Malaysia timezone
             $('#tareOutgoingDate').trigger('change');
         });
 
@@ -3629,7 +3634,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#nettWeight2').trigger('change');
 
             // Update the Flatpickr instance
-            grossIncomingDatePicker2.setDate(new Date()); // sets it to current date/time
+            grossIncomingDatePicker2.setDate(getMalaysiaDate()); // sets it to current date/time in Malaysia timezone
             $('#grossIncomingDate2').trigger('change');
         });
 
@@ -3647,7 +3652,7 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             $('#nettWeight2').trigger('change');
 
             // Update the Flatpickr instance
-            tareOutgoingDatePicker2.setDate(new Date()); // sets it to current date/time
+            tareOutgoingDatePicker2.setDate(getMalaysiaDate()); // sets it to current date/time in Malaysia timezone
             $('#tareOutgoingDate2').trigger('change');
         });
 
