@@ -1,0 +1,218 @@
+<?php
+require_once __DIR__ . '/../requires/permissions.php';
+require_once __DIR__ . '/../services/InventoryService.php';
+
+/**
+ * InventoryController
+ *
+ * Handles every inventory request coming through php/Inventory/index.php.
+ * The request's "action" field picks the handler:
+ *
+ *   list               Inventory DataTable
+ *   get                One inventory record (Edit modal)
+ *   update             Save the Edit modal
+ *   stock_in           Add stock          (raw_mat_id, plant_id, batch_drum, qty)
+ *   stock_out          Remove stock       (raw_mat_id, plant_id, batch_drum, qty)
+ *   adj_raw_materials  Raw materials with current qty for the adjustment modal
+ *   adj_create         Save a stock adjustment
+ *   adj_list           Stock adjustment DataTable
+ */
+class InventoryController
+{
+    const MODULE = 'Stock Management';
+    const SUB_MODULE = 'Inventory';
+
+    private $db;
+    private $inventory;
+
+    public function __construct($db)
+    {
+        $this->db = $db;
+        $userId = isset($_SESSION['id']) ? $_SESSION['id'] : 0;
+        $this->inventory = new InventoryService($db, $userId);
+    }
+
+    public function handleRequest()
+    {
+        if (!isset($_SESSION['id'])) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Unauthorized']);
+        }
+
+        $action = $_POST['action'] ?? ($_GET['action'] ?? '');
+
+        try {
+            switch ($action) {
+                case 'list':
+                    $this->getList();
+                    break;
+                case 'get':
+                    $this->get();
+                    break;
+                case 'update':
+                    $this->update();
+                    break;
+                case 'stock_in':
+                case 'stock_out':
+                    $this->moveStock($action);
+                    break;
+                case 'adj_raw_materials':
+                    $this->getAdjustmentRawMaterials();
+                    break;
+                case 'adj_create':
+                    $this->createAdjustment();
+                    break;
+                case 'adj_list':
+                    $this->getAdjustmentList();
+                    break;
+                default:
+                    $this->jsonResponse(['status' => 'failed', 'message' => 'Invalid action']);
+            }
+        } catch (Throwable $e) {
+            $this->jsonResponse(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+    }
+
+    /* ---------------- Inventory ---------------- */
+
+    private function getList()
+    {
+        $plantCode = trim($_POST['plant'] ?? '');
+        $batchDrum = trim($_POST['batch_drum'] ?? '');
+
+        $this->jsonResponse($this->inventory->getList(
+            $_POST,
+            $plantCode,
+            $batchDrum,
+            $this->can(['view_all_plants']),
+            $_SESSION['plant'] ?? []
+        ));
+    }
+
+    private function get()
+    {
+        $id = intval($_POST['id'] ?? 0);
+        $record = $id ? $this->inventory->getById($id) : null;
+
+        if (!$record) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Inventory record not found']);
+        }
+        $this->jsonResponse(['status' => 'success', 'message' => $record]);
+    }
+
+    private function update()
+    {
+        $this->requirePermission(['edit']);
+
+        $id = intval($_POST['id'] ?? 0);
+        if (!$id) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Inventory record is required']);
+        }
+
+        $this->inventory->updateRecord(
+            $id,
+            $this->numberOrZero($_POST['basicUom'] ?? ''),
+            $this->numberOrZero($_POST['weight'] ?? ''),
+            $this->numberOrZero($_POST['drum'] ?? '')
+        );
+        $this->jsonResponse(['status' => 'success', 'message' => 'Updated Successfully!!']);
+    }
+
+    private function moveStock($action)
+    {
+        $this->requirePermission(['create', 'edit']);
+
+        $rawMatId = intval($_POST['raw_mat_id'] ?? 0);
+        $plantId = intval($_POST['plant_id'] ?? 0);
+        $batchDrum = trim($_POST['batch_drum'] ?? '');
+        $qty = $_POST['qty'] ?? '';
+
+        if (!$rawMatId || !$plantId) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Raw material and plant are required']);
+        }
+
+        $this->db->begin_transaction();
+        try {
+            $result = $action === 'stock_in'
+                ? $this->inventory->stockIn($rawMatId, $plantId, $batchDrum, $qty)
+                : $this->inventory->stockOut($rawMatId, $plantId, $batchDrum, $qty, !empty($_POST['allow_negative']));
+            $this->db->commit();
+        } catch (Throwable $e) {
+            $this->db->rollback();
+            throw $e;
+        }
+
+        $this->jsonResponse(['status' => 'success', 'message' => 'Stock updated', 'data' => $result]);
+    }
+
+    /* ---------------- Stock adjustment ---------------- */
+
+    private function getAdjustmentRawMaterials()
+    {
+        $plantId = trim($_POST['plant'] ?? '');
+        $batchDrum = trim($_POST['batch_drum'] ?? '');
+
+        if ($plantId === '' || $batchDrum === '') {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Plant and Batch/Drum are required']);
+        }
+
+        $this->jsonResponse(['status' => 'success', 'data' => $this->inventory->getAdjustmentRawMaterials($plantId, $batchDrum)]);
+    }
+
+    private function createAdjustment()
+    {
+        $this->requirePermission(['create', 'edit']);
+
+        $plantId = trim($_POST['plant'] ?? '');
+        $batchDrum = trim($_POST['batch_drum'] ?? '');
+        $remark = trim($_POST['remark'] ?? '');
+        $items = isset($_POST['items']) ? json_decode($_POST['items'], true) : [];
+
+        if ($plantId === '' || $batchDrum === '' || empty($items)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Please fill in all required fields']);
+        }
+
+        $result = $this->inventory->createAdjustment($plantId, $batchDrum, $remark, $items);
+
+        if ($result['success']) {
+            $this->jsonResponse(['status' => 'success', 'message' => "Stock adjustment {$result['adjustment_no']} saved successfully!!"]);
+        }
+        $this->jsonResponse(['status' => 'failed', 'message' => $result['message']]);
+    }
+
+    private function getAdjustmentList()
+    {
+        $this->jsonResponse($this->inventory->getAdjustmentList(
+            $_POST,
+            $_POST['plant'] ?? '',
+            $this->can(['view_all_plants']),
+            $_SESSION['plant'] ?? []
+        ));
+    }
+
+    /* ---------------- Helpers ---------------- */
+
+    private function can(array $permissions)
+    {
+        return hasModulePermission(self::MODULE, self::SUB_MODULE, $permissions);
+    }
+
+    private function requirePermission(array $permissions)
+    {
+        if (!$this->can($permissions)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'You do not have permission to do this']);
+        }
+    }
+
+    private function numberOrZero($value)
+    {
+        $value = trim((string) $value);
+        return $value === '' ? '0' : $value;
+    }
+
+    private function jsonResponse($data)
+    {
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+}

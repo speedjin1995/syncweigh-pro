@@ -109,6 +109,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                             </div>
                             <!--end row-->
 
+                            <button type="button" hidden id="successBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+                            <button type="button" hidden id="failBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+
                             <!-- Tab Navigation -->
                             <ul class="nav nav-tabs mb-3" role="tablist">
                                 <li class="nav-item">
@@ -354,7 +357,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Plant <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="adjPlant" name="adjPlant" required>
+                                            <select class="form-select select2" id="adjPlant" name="adjPlant" required>
                                                 <option value="">Select Plant</option>
                                                 <?php 
                                                 $plant->data_seek(0);
@@ -365,7 +368,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Batch/Drum <span class="text-danger">*</span></label>
-                                            <select class="form-select" id="adjBatchDrum" name="adjBatchDrum" required>
+                                            <select class="form-select select2" id="adjBatchDrum" name="adjBatchDrum" required>
                                                 <option value="">Select</option>
                                                 <option value="Batch">Batch</option>
                                                 <option value="Drum">Drum</option>
@@ -462,6 +465,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
     <script type="text/javascript">
 
+    var INVENTORY_API = 'php/Inventory/index.php'; // all inventory backend calls go through this endpoint
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
     var table = null;
@@ -488,8 +492,8 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         $('#submitSite').on('click', function(){
             if($('#siteForm').valid()){
                 $('#spinnerLoading').show();
-                $.post('php/inventory.php', $('#siteForm').serialize(), function(data){
-                    var obj = JSON.parse(data); 
+                $.post(INVENTORY_API, $('#siteForm').serialize() + '&action=update', function(data){
+                    var obj = typeof data === 'string' ? JSON.parse(data) : data;
                     
                     if(obj.status === 'success'){
                         table.ajax.reload();
@@ -553,26 +557,35 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             }
         });
 
-        // Raw materials cache - load when plant changes
-        $('#adjPlant').on('change', function() {
-            var plantCode = $(this).val();
+        // Select2 for the stock adjustment modal dropdowns
+        $('#adjustmentModal .select2').select2({
+            placeholder: "Please Select",
+            width: '100%',
+            dropdownParent: $('#adjustmentModal') // Ensures dropdown is not cut off by the modal
+        });
+        styleSelect2($('#adjustmentModal'));
+
+        // Raw materials cache - reload when plant or batch/drum changes
+        $('#adjPlant, #adjBatchDrum').on('change', function() {
+            var plantId = $('#adjPlant').val();
+            var batchDrum = $('#adjBatchDrum').val();
             $('#lineItemsBody').empty();
             lineItemCounter = 0;
+            rawMaterialsCache = [];
             updateTotals();
-            
-            if (plantCode) {
-                $.post('php/controllers/StockAdjustmentController.php', { action: 'getRawMaterials', plant: plantCode }, function(data) {
-                    rawMaterialsCache = data.status === 'success' ? data.data : [];
+
+            if (plantId && batchDrum) {
+                $.post(INVENTORY_API, { action: 'adj_raw_materials', plant: plantId, batch_drum: batchDrum }, function(data) {
+                    var obj = typeof data === 'string' ? JSON.parse(data) : data;
+                    rawMaterialsCache = obj.status === 'success' ? obj.data : [];
                 });
-            } else {
-                rawMaterialsCache = [];
             }
         });
 
         // Add line item button
         $('#addLineItem').on('click', function() {
-            if (!$('#adjPlant').val()) {
-                $("#failBtn").attr('data-toast-text', 'Please select a plant first');
+            if (!$('#adjPlant').val() || !$('#adjBatchDrum').val()) {
+                $("#failBtn").attr('data-toast-text', 'Please select plant and Batch/Drum first');
                 $("#failBtn").click();
                 return;
             }
@@ -582,6 +595,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         // Reset modal on open
         $('#addAdjustment').on('click', function() {
             $('#adjustmentForm')[0].reset();
+            $('#adjPlant, #adjBatchDrum').val('').trigger('change.select2'); // refresh Select2 display after reset
             $('#adjDate').val('<?= date("d/m/Y") ?>');
             $('#lineItemsBody').empty();
             lineItemCounter = 0;
@@ -640,14 +654,14 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             }
 
             $('#spinnerLoading').show();
-            $.post('php/controllers/StockAdjustmentController.php', {
-                action: 'create',
+            $.post(INVENTORY_API, {
+                action: 'adj_create',
                 plant: plant,
                 batch_drum: batchDrum,
                 remark: remark,
                 items: JSON.stringify(items)
             }, function(data) {
-                var obj = JSON.parse(data);
+                var obj = typeof data === 'string' ? JSON.parse(data) : data;
                 if (obj.status === 'success') {
                     if (adjustmentTable) adjustmentTable.ajax.reload();
                     if (table) table.ajax.reload();
@@ -681,9 +695,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             'serverMethod': 'post',
             'order': [[ 1, 'desc' ]],
             'ajax': {
-                'url':'php/controllers/StockAdjustmentController.php',
+                'url': INVENTORY_API,
                 'data': {
-                    action: 'list',
+                    action: 'adj_list',
                     plant: plantNoI
                 } 
             },
@@ -712,7 +726,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         var row = `
             <tr data-row="${lineItemCounter}">
                 <td>
-                    <select class="form-select form-select-sm raw-mat-select" name="items[${lineItemCounter}][raw_mat_id]" onchange="onRawMatChange(this)" required>
+                    <select class="form-select form-select-sm raw-mat-select" name="items[${lineItemCounter}][raw_mat_id]" required>
                         ${options}
                     </select>
                 </td>
@@ -741,7 +755,31 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 </td>
             </tr>
         `;
-        $('#lineItemsBody').append(row);
+        var $row = $(row);
+        $('#lineItemsBody').append($row);
+
+        // Searchable Select2 for the raw material picker
+        $row.find('.raw-mat-select').select2({
+            placeholder: "- Select -",
+            width: '100%',
+            dropdownParent: $('#adjustmentModal')
+        }).on('change', function() {
+            onRawMatChange(this);
+        });
+        styleSelect2($row);
+    }
+
+    // Match Select2 height and arrow position to the other form controls
+    function styleSelect2($scope) {
+        $scope.find('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+        $scope.find('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
     }
 
     function onRawMatChange(select) {
@@ -811,8 +849,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             'order': [[ 1, 'asc' ]],
             'columnDefs': [ { orderable: false, targets: [0] }],
             'ajax': {
-                'url':'php/filterInventory.php',
+                'url': INVENTORY_API,
                 'data': {
+                    action: 'list',
                     plant: plantNoI,
                     batch_drum: batchDrumFilter
                 } 
@@ -853,9 +892,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
     function edit(id){
         $('#spinnerLoading').show();
-        $.post('php/getInventory.php', {userID: id}, function(data)
+        $.post(INVENTORY_API, {action: 'get', id: id}, function(data)
         {
-            var obj = JSON.parse(data);
+            var obj = typeof data === 'string' ? JSON.parse(data) : data;
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#rawMatId').val(obj.message.raw_mat_id);
