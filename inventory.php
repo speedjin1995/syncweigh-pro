@@ -63,7 +63,70 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         .nav-tabs .nav-link:hover:not(.active) {
             background-color: #f8d7da;
             border-color: #dc3545;
-        }    
+        }
+
+        /* ---- Stock Adjustment modal ---- */
+        #adjustmentModal .modal-header,
+        #adjustmentModal .modal-footer {
+            background-color: #f8f9fa;
+        }
+
+        #adjustmentModal .form-label {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Items scroll on their own so the modal header, totals and footer stay in view.
+           The subtracted height is the rest of the modal chrome, which keeps the whole
+           dialog inside the viewport down to a 768px-tall screen. */
+        #adjustmentModal .items-scroll {
+            max-height: max(168px, calc(100vh - 490px));
+            overflow-y: auto;
+        }
+
+        #adjustmentModal #lineItemsTable thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background-color: #eff2f7;
+            box-shadow: inset 0 -1px 0 #dee2e6;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            vertical-align: middle;
+        }
+
+        #adjustmentModal #lineItemsTable td {
+            padding: 0.5rem;
+            vertical-align: middle;
+        }
+
+        /* Adjust Qty is the field being keyed in, so it carries the most weight */
+        #adjustmentModal #lineItemsTable .adjust-qty {
+            font-weight: 600;
+        }
+
+        /* Keeps the remove button level with the inputs and the Select2 picker */
+        #adjustmentModal #lineItemsTable tbody .btn {
+            height: 38px;
+        }
+
+        /* Keeps a negative adjustment readable at a glance */
+        #adjustmentModal .is-negative {
+            color: #dc3545;
+        }
+
+        /* Extra side padding lines the totals up with the numbers inside the inputs above,
+           which sit one input padding + border further in than a plain cell */
+        #adjustmentModal #lineItemsTable tfoot td {
+            position: sticky;
+            bottom: 0;
+            z-index: 2;
+            padding: 0.5rem calc(1rem + 1px);
+            background-color: #eff2f7;
+            border-top: 2px solid #adb5bd;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -340,7 +403,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
         <!-- Stock Adjustment Modal -->
         <div class="modal fade" id="adjustmentModal" tabindex="-1" role="dialog" aria-labelledby="adjustmentModalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-xl">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header bg-light">
                         <h5 class="modal-title" id="adjustmentModalTitle"><i class="ri-list-settings-line me-2"></i>Stock Adjustment - New</h5>
@@ -350,15 +413,15 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                         <form role="form" id="adjustmentForm" autocomplete="off">
                             <input type="hidden" id="adjId" name="adjId" value="">
                             <!-- Header Section -->
-                            <div class="card mb-3">
+                            <div class="card border mb-3">
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <label class="form-label">Adjustment Date <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="adjDate" name="adjDate" value="<?= date('d/m/Y') ?>" readonly>
+                                    <div class="row g-3">
+                                        <div class="col-lg-4 col-md-6">
+                                            <label class="form-label" for="adjDate">Adjustment Date <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control input-readonly" id="adjDate" name="adjDate" value="<?= date('d/m/Y') ?>" readonly>
                                         </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label">Plant <span class="text-danger">*</span></label>
+                                        <div class="col-lg-4 col-md-6">
+                                            <label class="form-label" for="adjPlant">Plant <span class="text-danger">*</span></label>
                                             <select class="form-select select2" id="adjPlant" name="adjPlant" required>
                                                 <option value="">Select Plant</option>
                                                 <?php 
@@ -368,16 +431,16 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                 <?php } ?>
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label">Batch/Drum <span class="text-danger">*</span></label>
+                                        <div class="col-lg-4 col-md-6">
+                                            <label class="form-label" for="adjBatchDrum">Batch/Drum <span class="text-danger">*</span></label>
                                             <select class="form-select select2" id="adjBatchDrum" name="adjBatchDrum" required>
                                                 <option value="">Select</option>
                                                 <option value="Batch">Batch</option>
                                                 <option value="Drum">Drum</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-5">
-                                            <label class="form-label">Remark</label>
+                                        <div class="col-lg-12 col-md-12">
+                                            <label class="form-label" for="adjRemark">Remark</label>
                                             <input type="text" class="form-control" id="adjRemark" name="adjRemark" placeholder="Enter Remark">
                                         </div>
                                     </div>
@@ -385,39 +448,39 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                             </div>
 
                             <!-- Line Items Section -->
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="mb-0"><i class="ri-list-check me-2"></i>Items</h6>
-                                        <button type="button" class="btn btn-primary btn-sm" id="addLineItem">
-                                            <i class="ri-add-line"></i> Add Item
-                                        </button>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered mb-0" id="lineItemsTable">
-                                            <thead class="table-light">
+                            <div class="card border mb-0">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="card-title mb-0"><i class="ri-list-check me-2"></i>Items</h6>
+                                    <button type="button" class="btn btn-danger btn-sm" id="addLineItem">
+                                        <i class="ri-add-line align-bottom me-1"></i>Add Item
+                                    </button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive items-scroll">
+                                        <table class="table table-bordered align-middle mb-0" id="lineItemsTable">
+                                            <thead>
                                                 <tr>
-                                                    <th style="width:220px">RAW MATERIAL</th>
-                                                    <th style="width:100px" class="text-center">CURRENT QTY</th>
-                                                    <th style="width:100px" class="text-center">ADJUST QTY</th>
-                                                    <th style="width:100px" class="text-center">NEW QTY</th>
-                                                    <th style="width:100px" class="text-center">UNIT COST</th>
-                                                    <th style="width:100px" class="text-center">TOTAL COST</th>
-                                                    <th>REASON</th>
-                                                    <th style="width:50px"></th>
+                                                    <th style="width:240px">RAW MATERIAL</th>
+                                                    <th style="width:110px" class="text-end">CURRENT QTY</th>
+                                                    <th style="width:110px" class="text-end">ADJUST QTY</th>
+                                                    <th style="width:110px" class="text-end">NEW QTY</th>
+                                                    <th style="width:110px" class="text-end">UNIT COST</th>
+                                                    <th style="width:110px" class="text-end">TOTAL COST</th>
+                                                    <th style="min-width:200px">REASON</th>
+                                                    <th style="width:48px"></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="lineItemsBody">
                                                 <!-- Dynamic rows will be added here -->
                                             </tbody>
                                             <tfoot>
-                                                <tr class="table-light">
-                                                    <td class="text-end fw-bold">Total:</td>
-                                                    <td class="text-center fw-bold" id="totalCurrentQty">0.00</td>
-                                                    <td class="text-center fw-bold" id="totalAdjustQty">0.00</td>
-                                                    <td class="text-center fw-bold" id="totalNewQty">0.00</td>
+                                                <tr>
+                                                    <td class="text-end">Total:</td>
+                                                    <td class="text-end" id="totalCurrentQty">0.00</td>
+                                                    <td class="text-end" id="totalAdjustQty">0.00</td>
+                                                    <td class="text-end" id="totalNewQty">0.00</td>
                                                     <td></td>
-                                                    <td class="text-center fw-bold" id="totalCost">0.00</td>
+                                                    <td class="text-end" id="totalCost">0.00</td>
                                                     <td colspan="2"></td>
                                                 </tr>
                                             </tfoot>
@@ -427,9 +490,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                             </div>
                         </form>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" id="submitAdjustment"><i class="ri-save-line me-1"></i>Save</button>
+                        <button type="button" class="btn btn-danger" id="submitAdjustment"><i class="ri-save-line align-bottom me-1"></i>Save</button>
                     </div>
                 </div>
             </div>
@@ -821,31 +884,31 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         var row = `
             <tr data-row="${lineItemCounter}">
                 <td>
-                    <select class="form-select form-select-sm raw-mat-select" name="items[${lineItemCounter}][raw_mat_id]" required>
+                    <select class="form-select raw-mat-select" name="items[${lineItemCounter}][raw_mat_id]" required>
                         ${options}
                     </select>
                 </td>
                 <td>
-                    <input type="text" class="form-control form-control-sm text-center current-qty" value="0.00" readonly style="background-color:#e9ecef">
+                    <input type="text" class="form-control text-end input-readonly current-qty" value="0.00" readonly>
                 </td>
                 <td>
-                    <input type="number" class="form-control form-control-sm text-center adjust-qty" name="items[${lineItemCounter}][qty]" placeholder="+/-" step="0.01" onchange="calculateNewQty(this)" onkeyup="calculateNewQty(this)" required>
+                    <input type="number" class="form-control text-end adjust-qty" name="items[${lineItemCounter}][qty]" placeholder="+/-" step="0.01" onchange="calculateNewQty(this)" onkeyup="calculateNewQty(this)" required>
                 </td>
                 <td>
-                    <input type="text" class="form-control form-control-sm text-center new-qty" value="0.00" readonly style="background-color:#e9ecef">
+                    <input type="text" class="form-control text-end input-readonly new-qty" value="0.00" readonly>
                 </td>
                 <td>
-                    <input type="number" class="form-control form-control-sm text-center unit-cost" placeholder="0.00" step="0.01" min="0" onchange="calculateTotalCost(this)" onkeyup="calculateTotalCost(this)">
+                    <input type="number" class="form-control text-end unit-cost" placeholder="0.00" step="0.01" min="0" onchange="calculateTotalCost(this)" onkeyup="calculateTotalCost(this)">
                 </td>
                 <td>
-                    <input type="text" class="form-control form-control-sm text-center total-cost" value="0.00" readonly style="background-color:#e9ecef">
+                    <input type="text" class="form-control text-end input-readonly total-cost" value="0.00" readonly>
                 </td>
                 <td>
-                    <input type="text" class="form-control form-control-sm" name="items[${lineItemCounter}][reason]" placeholder="Enter reason">
+                    <input type="text" class="form-control" name="items[${lineItemCounter}][reason]" placeholder="Reason for adjustment">
                 </td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-danger" onclick="removeLineItem(this)">
-                        <i class="ri-close-line"></i>
+                    <button type="button" class="btn btn-sm btn-soft-danger" onclick="removeLineItem(this)" title="Remove item">
+                        <i class="ri-delete-bin-line"></i>
                     </button>
                 </td>
             </tr>
@@ -882,7 +945,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         var selectedOption = $(select).find('option:selected');
         var currentQty = parseFloat(selectedOption.data('qty')) || 0;
         row.find('.current-qty').val(currentQty.toFixed(2));
-        row.find('.adjust-qty').val('');
+        row.find('.adjust-qty').val('').removeClass('is-negative');
         row.find('.new-qty').val(currentQty.toFixed(2));
         updateTotals();
     }
@@ -894,6 +957,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         var newQty = currentQty + adjustQty;
         if (newQty < 0) newQty = 0;
         row.find('.new-qty').val(newQty.toFixed(2));
+        $(input).toggleClass('is-negative', adjustQty < 0); // display only, the value is unchanged
         calculateTotalCost(row.find('.unit-cost')[0]);
         updateTotals();
     }
@@ -916,7 +980,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             totalCost += parseFloat($(this).find('.total-cost').val()) || 0;
         });
         $('#totalCurrentQty').text(totalCurrent.toFixed(2));
-        $('#totalAdjustQty').text(totalAdjust.toFixed(2));
+        $('#totalAdjustQty').text(totalAdjust.toFixed(2)).toggleClass('is-negative', totalAdjust < 0);
         $('#totalNewQty').text(totalNew.toFixed(2));
         $('#totalCost').text(totalCost.toFixed(2));
     }
