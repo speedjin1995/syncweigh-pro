@@ -80,7 +80,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
            The subtracted height is the rest of the modal chrome, which keeps the whole
            dialog inside the viewport down to a 768px-tall screen. */
         #adjustmentModal .items-scroll {
-            max-height: max(168px, calc(100vh - 490px));
+            max-height: max(168px, calc(100vh - 540px));
             overflow-y: auto;
         }
 
@@ -441,7 +441,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                         </div>
                                         <div class="col-lg-12 col-md-12">
                                             <label class="form-label" for="adjRemark">Remark</label>
-                                            <input type="text" class="form-control" id="adjRemark" name="adjRemark" placeholder="Enter Remark">
+                                            <textarea class="form-control" id="adjRemark" name="adjRemark" rows="3" placeholder="Enter Remark"></textarea>
                                         </div>
                                     </div>
                                 </div>
