@@ -229,6 +229,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                                     <th>Total Qty</th>
                                                                     <th>Total Cost</th>
                                                                     <th>Remark</th>
+                                                                    <th>Action</th>
                                                                 </tr>
                                                             </thead>
                                                         </table>
@@ -347,6 +348,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                     </div>
                     <div class="modal-body">
                         <form role="form" id="adjustmentForm" autocomplete="off">
+                            <input type="hidden" id="adjId" name="adjId" value="">
                             <!-- Header Section -->
                             <div class="card mb-3">
                                 <div class="card-body">
@@ -595,6 +597,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         // Reset modal on open
         $('#addAdjustment').on('click', function() {
             $('#adjustmentForm')[0].reset();
+            $('#adjId').val('');
+            $('#adjustmentModalTitle').html('<i class="ri-list-settings-line me-2"></i>Stock Adjustment - New');
+            $('#adjPlant, #adjBatchDrum').prop('disabled', false); // plant and batch/drum are locked only when editing
             $('#adjPlant, #adjBatchDrum').val('').trigger('change.select2'); // refresh Select2 display after reset
             $('#adjDate').val('<?= date("d/m/Y") ?>');
             $('#lineItemsBody').empty();
@@ -653,9 +658,11 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 return;
             }
 
+            var adjId = $('#adjId').val();
             $('#spinnerLoading').show();
             $.post(INVENTORY_API, {
-                action: 'adj_create',
+                action: adjId ? 'adj_update' : 'adj_create',
+                id: adjId,
                 plant: plant,
                 batch_drum: batchDrum,
                 remark: remark,
@@ -710,9 +717,97 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 { data: 'total_items' },
                 { data: 'total_qty' },
                 { data: 'total_cost' },
-                { data: 'remark' }
-            ] 
+                { data: 'remark' },
+                {
+                    data: 'id',
+                    orderable: false,
+                    render: function ( data, type, row ) {
+                        var canEdit = isSADMIN || hasInventoryPermission('edit');
+                        var canDelete = isSADMIN || hasInventoryPermission('delete');
+                        if (!canEdit && !canDelete) {
+                            return '';
+                        }
+                        var items = '';
+                        if (canEdit) {
+                            items += `<li><a class="dropdown-item edit-item-btn" onclick="editAdjustment(${data})"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>`;
+                        }
+                        if (canDelete) {
+                            items += `<li><a class="dropdown-item remove-item-btn" onclick="deleteAdjustment(${data})"><i class="ri-delete-bin-5-line align-bottom me-2 text-muted"></i> Delete</a></li>`;
+                        }
+                        return `
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ri-more-fill align-middle"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">${items}</ul>
+                            </div>`;
+                    }
+                }
+            ]
         });
+    }
+
+    function hasInventoryPermission(permission) {
+        return !!(permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes(permission));
+    }
+
+    // Open the adjustment modal filled with an existing adjustment
+    function editAdjustment(id) {
+        $('#spinnerLoading').show();
+        $.post(INVENTORY_API, {action: 'adj_get', id: id}, function(data) {
+            var obj = typeof data === 'string' ? JSON.parse(data) : data;
+            $('#spinnerLoading').hide();
+            if (obj.status !== 'success') {
+                $("#failBtn").attr('data-toast-text', obj.message);
+                $("#failBtn").click();
+                return;
+            }
+
+            var adj = obj.message;
+            $('#adjustmentForm')[0].reset();
+            $('#adjId').val(adj.id);
+            $('#adjustmentModalTitle').html('<i class="ri-list-settings-line me-2"></i>Stock Adjustment - Edit ' + adj.adjustment_no);
+            $('#adjDate').val(adj.adjustment_date);
+            $('#adjRemark').val(adj.remark);
+            // trigger only the Select2 refresh so the plant/batch change handler does not clear the rows
+            $('#adjPlant').val(adj.plant_id).trigger('change.select2');
+            $('#adjBatchDrum').val(adj.batch_drum).trigger('change.select2');
+            $('#adjPlant, #adjBatchDrum').prop('disabled', true); // plant and batch/drum cannot change on edit
+
+            $('#lineItemsBody').empty();
+            lineItemCounter = 0;
+            rawMaterialsCache = adj.raw_materials; // current qty here already excludes this adjustment
+            adj.items.forEach(function(item) {
+                addLineItem();
+                var $row = $('#lineItemsBody tr').last();
+                $row.find('.raw-mat-select').val(item.raw_mat_id).trigger('change');
+                $row.find('.adjust-qty').val(item.qty);
+                $row.find('.unit-cost').val(item.unit_cost);
+                $row.find('input[name*="reason"]').val(item.reason);
+                calculateNewQty($row.find('.adjust-qty')[0]);
+            });
+            updateTotals();
+            $('#adjustmentModal').modal('show');
+        });
+    }
+
+    function deleteAdjustment(id) {
+        if (confirm('Are you sure you want to delete this stock adjustment? The stock will be reversed.')) {
+            $('#spinnerLoading').show();
+            $.post(INVENTORY_API, {action: 'adj_delete', id: id}, function(data) {
+                var obj = typeof data === 'string' ? JSON.parse(data) : data;
+                $('#spinnerLoading').hide();
+                if (obj.status === 'success') {
+                    if (adjustmentTable) adjustmentTable.ajax.reload();
+                    if (table) table.ajax.reload();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                } else {
+                    $("#failBtn").attr('data-toast-text', obj.message);
+                    $("#failBtn").click();
+                }
+            });
+        }
     }
 
     // Global functions for stock adjustment

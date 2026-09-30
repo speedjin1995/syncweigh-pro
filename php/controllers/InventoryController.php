@@ -15,6 +15,9 @@ require_once __DIR__ . '/../services/InventoryService.php';
  *   stock_out          Remove stock       (raw_mat_id, plant_id, batch_drum, qty)
  *   adj_raw_materials  Raw materials with current qty for the adjustment modal
  *   adj_create         Save a stock adjustment
+ *   adj_get            One stock adjustment with items (Edit modal)
+ *   adj_update         Save an edited stock adjustment (stock is re-applied)
+ *   adj_delete         Delete a stock adjustment (stock is taken back)
  *   adj_list           Stock adjustment DataTable
  */
 class InventoryController
@@ -60,6 +63,15 @@ class InventoryController
                     break;
                 case 'adj_create':
                     $this->createAdjustment();
+                    break;
+                case 'adj_get':
+                    $this->getAdjustment();
+                    break;
+                case 'adj_update':
+                    $this->updateAdjustment();
+                    break;
+                case 'adj_delete':
+                    $this->deleteAdjustment();
                     break;
                 case 'adj_list':
                     $this->getAdjustmentList();
@@ -177,6 +189,62 @@ class InventoryController
             $this->jsonResponse(['status' => 'success', 'message' => "Stock adjustment {$result['adjustment_no']} saved successfully!!"]);
         }
         $this->jsonResponse(['status' => 'failed', 'message' => $result['message']]);
+    }
+
+    private function getAdjustment()
+    {
+        $adjustment = $this->loadOwnAdjustment();
+        $this->jsonResponse(['status' => 'success', 'message' => $adjustment]);
+    }
+
+    private function updateAdjustment()
+    {
+        $this->requirePermission(['edit']);
+        $adjustment = $this->loadOwnAdjustment();
+
+        $remark = trim($_POST['remark'] ?? '');
+        $items = isset($_POST['items']) ? json_decode($_POST['items'], true) : [];
+
+        if (empty($items)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Please fill in all required fields']);
+        }
+
+        $result = $this->inventory->updateAdjustment($adjustment['id'], $remark, $items);
+
+        if ($result['success']) {
+            $this->jsonResponse(['status' => 'success', 'message' => "Stock adjustment {$result['adjustment_no']} updated successfully!!"]);
+        }
+        $this->jsonResponse(['status' => 'failed', 'message' => $result['message']]);
+    }
+
+    private function deleteAdjustment()
+    {
+        $this->requirePermission(['delete']);
+        $adjustment = $this->loadOwnAdjustment();
+
+        $result = $this->inventory->deleteAdjustment($adjustment['id']);
+
+        if ($result['success']) {
+            $this->jsonResponse(['status' => 'success', 'message' => "Stock adjustment {$result['adjustment_no']} deleted successfully!!"]);
+        }
+        $this->jsonResponse(['status' => 'failed', 'message' => $result['message']]);
+    }
+
+    /**
+     * Load the adjustment named by $_POST['id'], making sure the user may see its plant.
+     */
+    private function loadOwnAdjustment()
+    {
+        $id = intval($_POST['id'] ?? 0);
+        $adjustment = $id ? $this->inventory->getAdjustment($id) : null;
+
+        if (!$adjustment) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'Stock adjustment not found']);
+        }
+        if (!$this->can(['view_all_plants']) && !in_array($adjustment['plant_code'], $_SESSION['plant'] ?? [])) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'You do not have permission to do this']);
+        }
+        return $adjustment;
     }
 
     private function getAdjustmentList()
