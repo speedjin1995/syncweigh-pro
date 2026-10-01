@@ -514,7 +514,7 @@ if (hasModulePermission('Stock Management', 'Stock Adjustment', ['view_all_plant
 
     <script type="text/javascript">
 
-    var INVENTORY_API = 'php/Inventory/index.php'; // all inventory backend calls go through this endpoint
+    var INVENTORY_API = 'php/modules/Inventory/index.php'; // all inventory backend calls go through this endpoint
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
     var canViewInventory = <?= json_encode($canViewInventory) ?>;
@@ -792,10 +792,7 @@ if (hasModulePermission('Stock Management', 'Stock Adjustment', ['view_all_plant
                     render: function ( data, type, row ) {
                         var canEdit = isSADMIN || hasAdjustmentPermission('edit');
                         var canDelete = isSADMIN || hasAdjustmentPermission('cancelled');
-                        if (!canEdit && !canDelete) {
-                            return '';
-                        }
-                        var items = '';
+                        var items = `<li><a class="dropdown-item" onclick="printAdjustment(${data})"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li>`;
                         if (canEdit) {
                             items += `<li><a class="dropdown-item edit-item-btn" onclick="editAdjustment(${data})"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>`;
                         }
@@ -817,6 +814,28 @@ if (hasModulePermission('Stock Management', 'Stock Adjustment', ['view_all_plant
 
     function hasAdjustmentPermission(permission) {
         return !!(permissions['Stock Management'] && permissions['Stock Management']['Stock Adjustment'] && permissions['Stock Management']['Stock Adjustment'].includes(permission));
+    }
+
+    // Print the stock adjustment slip
+    function printAdjustment(id) {
+        // Open the tab on the click itself so the browser does not block it as a popup;
+        // the slip is written into it once loaded and the user prints from its Print button
+        var printTab = window.open('', '_blank');
+        $('#spinnerLoading').show();
+        $.post(INVENTORY_API, {action: 'adj_print', id: id}, function(data) {
+            var obj = typeof data === 'string' ? JSON.parse(data) : data;
+            $('#spinnerLoading').hide();
+
+            if (obj.status === 'success') {
+                printTab.document.write(obj.message);
+                printTab.document.close();
+            }
+            else {
+                printTab.close();
+                $("#failBtn").attr('data-toast-text', obj.status === 'failed' ? obj.message : "Something wrong when print");
+                $("#failBtn").click();
+            }
+        });
     }
 
     // Open the adjustment modal filled with an existing adjustment

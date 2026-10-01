@@ -5,7 +5,7 @@ require_once __DIR__ . '/../services/InventoryService.php';
 /**
  * InventoryController
  *
- * Handles every inventory request coming through php/Inventory/index.php.
+ * Handles every inventory request coming through php/modules/Inventory/index.php.
  * The request's "action" field picks the handler:
  *
  *   list               Inventory DataTable
@@ -19,6 +19,7 @@ require_once __DIR__ . '/../services/InventoryService.php';
  *   adj_update         Save an edited stock adjustment (stock is re-applied)
  *   adj_delete         Delete a stock adjustment (stock is taken back)
  *   adj_list           Stock adjustment DataTable
+ *   adj_print          Printable stock adjustment slip (HTML)
  */
 class InventoryController
 {
@@ -76,6 +77,9 @@ class InventoryController
                     break;
                 case 'adj_list':
                     $this->getAdjustmentList();
+                    break;
+                case 'adj_print':
+                    $this->printAdjustment();
                     break;
                 default:
                     $this->jsonResponse(['status' => 'failed', 'message' => 'Invalid action']);
@@ -234,6 +238,16 @@ class InventoryController
             $this->jsonResponse(['status' => 'success', 'message' => "Stock adjustment {$result['adjustment_no']} deleted successfully!!"]);
         }
         $this->jsonResponse(['status' => 'failed', 'message' => $result['message']]);
+    }
+
+    private function printAdjustment()
+    {
+        $this->requireAdjPermission(['view', 'create', 'edit', 'cancelled']);
+        $adjustment = $this->loadOwnAdjustment();
+
+        require_once __DIR__ . '/../modules/Inventory/partial/stockAdjustmentPrint.php';
+        $data = $this->inventory->getAdjustmentPrint($adjustment['id']);
+        $this->jsonResponse(['status' => 'success', 'message' => renderStockAdjustmentPrint($data)]);
     }
 
     /**

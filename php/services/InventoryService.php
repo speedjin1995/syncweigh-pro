@@ -616,6 +616,42 @@ class InventoryService
     }
 
     /**
+     * Everything the printed adjustment slip needs: header, items with raw material
+     * code/name, and the company details. Null if the adjustment does not exist.
+     */
+    public function getAdjustmentPrint($id)
+    {
+        $id = intval($id);
+        $stmt = $this->db->prepare("SELECT sa.*, p.plant_code, p.name AS plant_name, u.name AS created_by_name
+            FROM Stock_Adjustment sa
+            LEFT JOIN Plant p ON sa.plant_id = p.id
+            LEFT JOIN Users u ON sa.created_by = u.id
+            WHERE sa.id = ? AND sa.deleted = 0");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $header = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        if (!$header) {
+            return null;
+        }
+
+        $stmt = $this->db->prepare("SELECT i.*, r.raw_mat_code AS code, r.name AS raw_mat_name
+            FROM Stock_Adjustment_Items i
+            LEFT JOIN Raw_Mat r ON i.raw_mat_id = r.id
+            WHERE i.adjustment_id = ? AND i.deleted = 0 ORDER BY i.id ASC");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $header['items'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        $company = $this->db->query("SELECT * FROM Company WHERE id = 1")->fetch_assoc();
+        $header['company'] = $company ?: [];
+
+        return $header;
+    }
+
+    /**
      * Edit an adjustment. Plant and Batch/Drum stay as saved.
      * The old items' stock movement is taken back first, then the new items are
      * applied, so inventory ends up as if only the new items had ever been made.
