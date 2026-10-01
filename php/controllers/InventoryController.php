@@ -24,6 +24,7 @@ class InventoryController
 {
     const MODULE = 'Stock Management';
     const SUB_MODULE = 'Inventory';
+    const ADJ_MODULE = 'Stock Adjustment';
 
     private $db;
     private $inventory;
@@ -88,6 +89,8 @@ class InventoryController
 
     private function getList()
     {
+        $this->requirePermission(['view', 'create', 'edit', 'cancelled']);
+
         $plantCode = trim($_POST['plant'] ?? '');
         $batchDrum = trim($_POST['batch_drum'] ?? '');
 
@@ -160,6 +163,8 @@ class InventoryController
 
     private function getAdjustmentRawMaterials()
     {
+        $this->requireAdjPermission(['create', 'edit']);
+
         $plantId = trim($_POST['plant'] ?? '');
         $batchDrum = trim($_POST['batch_drum'] ?? '');
 
@@ -172,7 +177,7 @@ class InventoryController
 
     private function createAdjustment()
     {
-        $this->requirePermission(['create', 'edit']);
+        $this->requireAdjPermission(['create']);
 
         $plantId = trim($_POST['plant'] ?? '');
         $batchDrum = trim($_POST['batch_drum'] ?? '');
@@ -193,13 +198,14 @@ class InventoryController
 
     private function getAdjustment()
     {
+        $this->requireAdjPermission(['view', 'edit']);
         $adjustment = $this->loadOwnAdjustment();
         $this->jsonResponse(['status' => 'success', 'message' => $adjustment]);
     }
 
     private function updateAdjustment()
     {
-        $this->requirePermission(['edit']);
+        $this->requireAdjPermission(['edit']);
         $adjustment = $this->loadOwnAdjustment();
 
         $remark = trim($_POST['remark'] ?? '');
@@ -219,7 +225,7 @@ class InventoryController
 
     private function deleteAdjustment()
     {
-        $this->requirePermission(['delete']);
+        $this->requireAdjPermission(['cancelled']);
         $adjustment = $this->loadOwnAdjustment();
 
         $result = $this->inventory->deleteAdjustment($adjustment['id']);
@@ -241,7 +247,7 @@ class InventoryController
         if (!$adjustment) {
             $this->jsonResponse(['status' => 'failed', 'message' => 'Stock adjustment not found']);
         }
-        if (!$this->can(['view_all_plants']) && !in_array($adjustment['plant_code'], $_SESSION['plant'] ?? [])) {
+        if (!$this->canAdj(['view_all_plants']) && !in_array($adjustment['plant_code'], $_SESSION['plant'] ?? [])) {
             $this->jsonResponse(['status' => 'failed', 'message' => 'You do not have permission to do this']);
         }
         return $adjustment;
@@ -249,11 +255,16 @@ class InventoryController
 
     private function getAdjustmentList()
     {
+        $this->requireAdjPermission(['view', 'create', 'edit', 'cancelled']);
+
         $this->jsonResponse($this->inventory->getAdjustmentList(
             $_POST,
-            $_POST['plant'] ?? '',
-            $this->can(['view_all_plants']),
-            $_SESSION['plant'] ?? []
+            trim($_POST['plant'] ?? ''),
+            $this->canAdj(['view_all_plants']),
+            $_SESSION['plant'] ?? [],
+            trim($_POST['batch_drum'] ?? ''),
+            $this->toDbDate($_POST['from_date'] ?? ''),
+            $this->toDbDate($_POST['to_date'] ?? '')
         ));
     }
 
@@ -269,6 +280,26 @@ class InventoryController
         if (!$this->can($permissions)) {
             $this->jsonResponse(['status' => 'failed', 'message' => 'You do not have permission to do this']);
         }
+    }
+
+    // Stock adjustment has its own module; delete is the 'cancelled' permission
+    private function canAdj(array $permissions)
+    {
+        return hasModulePermission(self::MODULE, self::ADJ_MODULE, $permissions);
+    }
+
+    private function requireAdjPermission(array $permissions)
+    {
+        if (!$this->canAdj($permissions)) {
+            $this->jsonResponse(['status' => 'failed', 'message' => 'You do not have permission to do this']);
+        }
+    }
+
+    // d-m-Y from the search bar -> Y-m-d, or '' when empty / invalid
+    private function toDbDate($value)
+    {
+        $date = DateTime::createFromFormat('!d-m-Y', trim((string) $value));
+        return $date ? $date->format('Y-m-d') : '';
     }
 
     private function numberOrZero($value)

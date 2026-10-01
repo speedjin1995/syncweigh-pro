@@ -4,7 +4,11 @@
 <?php
 require_once "php/db_connect.php";
 
-if (!hasModulePermission('Stock Management', 'Inventory', ['view', 'edit'])){
+// Inventory and Stock Adjustment are separate modules; either one opens the page and only its own tab shows
+$canViewInventory = hasModulePermission('Stock Management', 'Inventory', ['view', 'create', 'edit', 'cancelled']);
+$canViewAdjustment = hasModulePermission('Stock Management', 'Stock Adjustment', ['view', 'create', 'edit', 'cancelled']);
+
+if (!$canViewInventory && !$canViewAdjustment){
     header('Location: no-permission.php');
     exit;
 }
@@ -14,6 +18,14 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 }else{
     $username = implode("', '", $_SESSION["plant"]);
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+}
+
+// Stock Adjustment plant list follows its own module's view_all_plants
+if (hasModulePermission('Stock Management', 'Stock Adjustment', ['view_all_plants'])){
+    $adjPlant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $adjPlants = implode("', '", $_SESSION["plant"]);
+    $adjPlant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$adjPlants') ORDER BY name ASC");
 }
 ?>
 
@@ -88,21 +100,25 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
                             <!-- Tab Navigation -->
                             <ul class="nav nav-pills nav-danger mb-2" role="tablist">
+                                <?php if ($canViewInventory){ ?>
                                 <li class="nav-item">
                                     <a class="nav-link active" data-bs-toggle="tab" href="#inventoryTab" role="tab">
                                         <i class="ri-store-2-line me-1"></i> Inventory
                                     </a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($canViewAdjustment){ ?>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-bs-toggle="tab" href="#stockAdjustmentTab" role="tab">
+                                    <a class="nav-link<?= $canViewInventory ? '' : ' active' ?>" data-bs-toggle="tab" href="#stockAdjustmentTab" role="tab">
                                         <i class="ri-exchange-line me-1"></i> Stock Adjustment
                                     </a>
                                 </li>
+                                <?php } ?>
                             </ul>
 
                             <div class="tab-content">
                                 <!-- Inventory Tab -->
-                                <div class="tab-pane active" id="inventoryTab" role="tabpanel">
+                                <div class="tab-pane<?= $canViewInventory ? ' active' : '' ?>" id="inventoryTab" role="tabpanel">
                                     <div class="col-xxl-12 col-lg-12">
                                         <div class="card">
                                             <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
@@ -174,7 +190,62 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                 </div>
 
                                 <!-- Stock Adjustment Tab -->
-                                <div class="tab-pane" id="stockAdjustmentTab" role="tabpanel">
+                                <div class="tab-pane<?= $canViewInventory ? '' : ' active' ?>" id="stockAdjustmentTab" role="tabpanel">
+                                    <div class="col-xxl-12 col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header fs-5" href="#collapseAdjSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseAdjSearch">
+                                                <i class="mdi mdi-chevron-down pull-right"></i>
+                                                Search Records
+                                            </div>
+                                            <div id="collapseAdjSearch" class="collapse" aria-labelledby="collapseAdjSearch">
+                                                <div class="card-body">
+                                                    <form action="javascript:void(0);">
+                                                        <div class="row">
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjFromDateSearch" class="form-label">From Date</label>
+                                                                    <input type="text" class="form-control" data-provider="flatpickr" id="adjFromDateSearch">
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjToDateSearch" class="form-label">To Date</label>
+                                                                    <input type="text" class="form-control" data-provider="flatpickr" id="adjToDateSearch">
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjPlantSearch" class="form-label">Plant</label>
+                                                                    <select id="adjPlantSearch" class="form-select">
+                                                                        <option value="">All</option>
+                                                                        <?php while($rowAdjPlantF=mysqli_fetch_assoc($adjPlant)){ ?>
+                                                                            <option value="<?=$rowAdjPlantF['plant_code'] ?>"><?=$rowAdjPlantF['name'] ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjBatchDrumSearch" class="form-label">Batch/Drum</label>
+                                                                    <select id="adjBatchDrumSearch" class="form-select">
+                                                                        <option value="">All</option>
+                                                                        <option value="Batch">Batch</option>
+                                                                        <option value="Drum">Drum</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-lg-12">
+                                                                <div class="text-end">
+                                                                    <button type="submit" class="btn btn-danger" id="adjFilterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                        </div><!--end row-->
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col">
                                             <div class="h-100">
@@ -182,7 +253,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                     <div class="card-header">
                                                         <div class="d-flex justify-content-between">
                                                             <h5 class="card-title mb-0">Stock Adjustment History</h5>
-                                                            <?php if (hasModulePermission('Stock Management', 'Inventory', ['create', 'edit'])){ ?>
+                                                            <?php if (hasModulePermission('Stock Management', 'Stock Adjustment', ['create'])){ ?>
                                                             <button type="button" id="addAdjustment" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#adjustmentModal">
                                                                 <i class="ri-add-circle-line align-middle me-1"></i>
                                                                 Add Adjustment
@@ -194,7 +265,6 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                         <table id="adjustmentTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>No</th>
                                                                     <th>Adjustment No</th>
                                                                     <th>Date</th>
                                                                     <th>Plant</th>
@@ -336,8 +406,8 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                             <select class="form-select select2" id="adjPlant" name="adjPlant" required>
                                                 <option value="">Select Plant</option>
                                                 <?php 
-                                                $plant->data_seek(0);
-                                                while($rowP = mysqli_fetch_assoc($plant)){ ?>
+                                                $adjPlant->data_seek(0);
+                                                while($rowP = mysqli_fetch_assoc($adjPlant)){ ?>
                                                 <option value="<?=$rowP['id']?>"><?=$rowP['name']?></option>
                                                 <?php } ?>
                                             </select>
@@ -447,6 +517,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
     var INVENTORY_API = 'php/Inventory/index.php'; // all inventory backend calls go through this endpoint
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
+    var canViewInventory = <?= json_encode($canViewInventory) ?>;
     var table = null;
     var adjustmentTable = null;
     var rawMaterialsCache = [];
@@ -461,8 +532,12 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
         var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
 
-        // Initialize inventory table
-        initInventoryTable();
+        // Initialize the table of whichever tab opens first
+        if (canViewInventory) {
+            initInventoryTable();
+        } else {
+            initAdjustmentTable();
+        }
 
         $('#filterSearch').on('click', function(){
             initInventoryTable();
@@ -527,6 +602,22 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                     });
                 }
             }
+        });
+
+        // Stock adjustment search: default to the last 30 days
+        var adjFromDefault = new Date();
+        adjFromDefault.setDate(adjFromDefault.getDate() - 30);
+        $('#adjFromDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: adjFromDefault
+        });
+        $('#adjToDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: new Date()
+        });
+
+        $('#adjFilterSearch').on('click', function(){
+            initAdjustmentTable();
         });
 
         // Initialize adjustment table when tab is shown
@@ -664,8 +755,6 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
     // Stock Adjustment Tab - Initialize DataTable
     function initAdjustmentTable() {
-        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-        
         if (adjustmentTable) {
             adjustmentTable.destroy();
         }
@@ -682,11 +771,13 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 'url': INVENTORY_API,
                 'data': {
                     action: 'adj_list',
-                    plant: plantNoI
+                    plant: $('#adjPlantSearch').val() || '',
+                    batch_drum: $('#adjBatchDrumSearch').val() || '',
+                    from_date: $('#adjFromDateSearch').val() || '',
+                    to_date: $('#adjToDateSearch').val() || ''
                 } 
             },
             'columns': [
-                { data: 'no' },
                 { data: 'adjustment_no' },
                 { data: 'adjustment_date' },
                 { data: 'plant_name' },
@@ -699,8 +790,8 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                     data: 'id',
                     orderable: false,
                     render: function ( data, type, row ) {
-                        var canEdit = isSADMIN || hasInventoryPermission('edit');
-                        var canDelete = isSADMIN || hasInventoryPermission('delete');
+                        var canEdit = isSADMIN || hasAdjustmentPermission('edit');
+                        var canDelete = isSADMIN || hasAdjustmentPermission('cancelled');
                         if (!canEdit && !canDelete) {
                             return '';
                         }
@@ -724,8 +815,8 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
         });
     }
 
-    function hasInventoryPermission(permission) {
-        return !!(permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes(permission));
+    function hasAdjustmentPermission(permission) {
+        return !!(permissions['Stock Management'] && permissions['Stock Management']['Stock Adjustment'] && permissions['Stock Management']['Stock Adjustment'].includes(permission));
     }
 
     // Open the adjustment modal filled with an existing adjustment

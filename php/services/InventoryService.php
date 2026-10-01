@@ -580,7 +580,7 @@ class InventoryService
     /**
      * Get adjustments list for DataTable
      */
-    public function getAdjustmentList($params, $plantFilter = '', $hasViewAllPlants = false, $userPlants = [])
+    public function getAdjustmentList($params, $plantFilter = '', $hasViewAllPlants = false, $userPlants = [], $batchDrum = '', $fromDate = '', $toDate = '')
     {
         $draw = $params['draw'];
         $start = intval($params['start']);
@@ -612,26 +612,40 @@ class InventoryService
             $searchQuery = " AND (sa.adjustment_no LIKE '%$searchValue%' OR sa.remark LIKE '%$searchValue%' OR p.name LIKE '%$searchValue%')";
         }
 
-        $plantQuery = "";
+        $filterQuery = "";
+        if (!$hasViewAllPlants && !empty($userPlants)) {
+            $plants = implode("', '", array_map([$this->db, 'real_escape_string'], $userPlants));
+            $filterQuery = " AND p.plant_code IN ('$plants')";
+        }
+        // A chosen plant narrows the list further; it never widens it past the user's own plants
         if ($plantFilter != '') {
             $plantFilter = $this->db->real_escape_string($plantFilter);
-            $plantQuery = " AND p.plant_code = '$plantFilter'";
-        } else if (!$hasViewAllPlants && !empty($userPlants)) {
-            $plants = implode("', '", array_map([$this->db, 'real_escape_string'], $userPlants));
-            $plantQuery = " AND p.plant_code IN ('$plants')";
+            $filterQuery .= " AND p.plant_code = '$plantFilter'";
+        }
+
+        // Search bar filters; dates arrive as Y-m-d
+        if ($batchDrum != '') {
+            $batchDrum = $this->db->real_escape_string($batchDrum);
+            $filterQuery .= " AND sa.batch_drum = '$batchDrum'";
+        }
+        if ($fromDate != '') {
+            $filterQuery .= " AND sa.adjustment_date >= '" . $this->db->real_escape_string($fromDate) . "'";
+        }
+        if ($toDate != '') {
+            $filterQuery .= " AND sa.adjustment_date <= '" . $this->db->real_escape_string($toDate) . "'";
         }
 
         // Total records
         $totalRecords = $this->db->query("SELECT COUNT(*) as total FROM Stock_Adjustment sa WHERE sa.deleted = 0")->fetch_assoc()['total'];
 
         // Filtered records
-        $totalFiltered = $this->db->query("SELECT COUNT(*) as total FROM Stock_Adjustment sa LEFT JOIN Plant p ON sa.plant_id = p.id WHERE sa.deleted = 0 $plantQuery $searchQuery")->fetch_assoc()['total'];
+        $totalFiltered = $this->db->query("SELECT COUNT(*) as total FROM Stock_Adjustment sa LEFT JOIN Plant p ON sa.plant_id = p.id WHERE sa.deleted = 0 $filterQuery $searchQuery")->fetch_assoc()['total'];
 
         // Fetch records
         $query = "SELECT sa.*, p.name as plant_name 
                   FROM Stock_Adjustment sa 
                   LEFT JOIN Plant p ON sa.plant_id = p.id 
-                  WHERE sa.deleted = 0 $plantQuery $searchQuery 
+                  WHERE sa.deleted = 0 $filterQuery $searchQuery 
                   ORDER BY $sortColumn $sortOrder 
                   LIMIT $start, $length";
 

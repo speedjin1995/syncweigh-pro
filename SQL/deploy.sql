@@ -3504,3 +3504,9 @@ CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
 END
 $$
 DELIMITER ;
+
+-- 01/10/2026 --
+INSERT INTO `modules` (`id`, `name`, `category`) VALUES
+(39, 'Stock Adjustment', 'Stock Management');
+
+UPDATE permissions SET modules = JSON_ARRAY_APPEND(modules, '$', '39') WHERE id IN (5, 6, 7, 13);
