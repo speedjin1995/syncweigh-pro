@@ -2,6 +2,7 @@
 session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
+require_once 'services/InventoryService.php';
 
 if(!isset($_SESSION['id'])){
 	echo '<script type="text/javascript">location.href = "../login.php";</script>'; 
@@ -668,22 +669,6 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                 else{
                     $poSoStatus = ($currentBalance <= 26) ? 'Close' : 'Open';
                 }
-
-                # Inventory Logic
-                $previousNettWeight = 0;
-                // Query previous weight log
-                $weight_log_stmt = $db->prepare("SELECT * FROM Weight_Log WHERE transaction_id=? ORDER BY 1 DESC");
-                $weight_log_stmt->bind_param('s', $transactionId);
-                $weight_log_stmt->execute();
-                $weight_log_result = $weight_log_stmt->get_result();
-                $weight_log_stmt->close();
-                
-                if ($weight_log_result->num_rows > 0){
-                    $weightLogRow = $weight_log_result->fetch_assoc();
-                    $previousNettWeight = $weightLogRow['nett_weight1'];
-                }
-
-                $nettWeightDifference = (float) $nettWeight - (float) $previousNettWeight;
             }
         }elseif($transactionStatus == 'WIP'){
             # Inventory Logic
@@ -703,6 +688,21 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
             $nettWeightDifference = (float) $nettWeight - (float) $previousNettWeight;
         }
 
+        # Purchase / Sales stock: take back what this record moved as it was saved before.
+        # The edited version is applied after the update, all in one transaction.
+        $inventory = new InventoryService($db, $_SESSION['id']);
+        $db->begin_transaction();
+        try {
+            $oldWeight = $inventory->lockWeight($weightId);
+            if ($oldWeight) {
+                $inventory->applyWeighing($oldWeight, -1);
+            }
+        } catch (Throwable $e) {
+            $db->rollback();
+            echo json_encode(array("status"=> "failed", "message"=> $e->getMessage()));
+            exit;
+        }
+
         if ($update_stmt = $db->prepare("UPDATE Weight SET transaction_id=?, transaction_status=?, weight_type=?, customer_type=?, transaction_date=?, lorry_plate_no1=?, lorry_plate_no2=?, supplier_weight_uom=?, supplier_weight=?, po_supply_weight=?, order_weight_uom=?, order_weight=?, tin_no=?, id_no=?, id_type=?, customer_code=?, customer_name=?, supplier_code=?, supplier_name=?,
         product_code=?, product_name=?, ex_del=?, raw_mat_code=?, raw_mat_name=?, site_name=?, site_code=?, container_no=?, invoice_no=?, purchase_order=?, delivery_no=?, transporter_code=?, transporter=?, destination_code=?, destination=?, remarks=?, gross_weight1=?, gross_weight1_date=?, tare_weight1=?, tare_weight1_date=?, nett_weight1=?,
         gross_weight2=?, gross_weight2_date=?, tare_weight2=?, tare_weight2_date=?, nett_weight2=?, reduce_weight=?, final_weight=?, weight_different=?, is_complete=?, is_cancel=?, manual_weight=?, indicator_id=?, weighbridge_id=?, created_by=?, modified_by=?, indicator_id_2=?, 
@@ -715,6 +715,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
+                $db->rollback();
                 echo json_encode(
                     array(
                         "status"=> "failed", 
@@ -769,74 +770,19 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     }
                 }
 
-                # Update Inventory Raw Material
-                if ($transactionStatus == 'Purchase'){
-                    if ($isComplete == 'Y' && $isCancel == 'N'){
-                        $inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_code=? AND status='0'");
-                        $inventory_stmt->bind_param('ss', $rawMaterialId, $plantCode);
-                        $inventory_stmt->execute();
-                        $inventory_result = $inventory_stmt->get_result();
-
-                        while ($inventoryRow = $inventory_result->fetch_assoc()) {
-                            $basicUomWeight = $inventoryRow['raw_mat_basic_uom'];
-                            $weight = $inventoryRow['raw_mat_weight'];
-                            $invId = $inventoryRow['id'];
-
-                            $addedWeight = (float) $weight + (float) $nettWeightDifference;
-                            $addedBasicNettWeight = $addedWeight * $rate;
-
-                            $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
-                            $upd_inv_stmt->bind_param('sss', $addedBasicNettWeight, $addedWeight, $invId);
-                            $upd_inv_stmt->execute();
-                            $upd_inv_stmt->close();
-                        }
-
-                        $inventory_stmt->close();
+                # Purchase / Sales stock: apply the record as saved now
+                try {
+                    $newWeight = $inventory->lockWeight($weightId);
+                    if ($newWeight) {
+                        $inventory->applyWeighing($newWeight, 1);
                     }
-                }elseif ($transactionStatus == 'Sales') {
-                    if ($isComplete == 'Y' && $isCancel == 'N'){
-                        $productRawMat_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND plant_id=? AND status='0'");
-                        $productRawMat_stmt->bind_param('ss', $productId, $plantId);
-                        $productRawMat_stmt->execute();
-                        $productRawMat_result = $productRawMat_stmt->get_result();
+                } catch (Throwable $e) {
+                    $db->rollback();
+                    echo json_encode(array("status"=> "failed", "message"=> $e->getMessage()));
+                    exit;
+                }
 
-                        while ($productRawMatRow = $productRawMat_result->fetch_assoc()) {
-                            $rawMatCode = $productRawMatRow['raw_mat_code'];
-                            $rawMatId = searchRawMatIdByCode($rawMatCode, $db);
-                            $rawMatBasicUom = $productRawMatRow['raw_mat_basic_uom'];
-                            $rawMatWeight = $productRawMatRow['raw_mat_weight'];
-
-                            $deltaRawMatWeight = (float) $rawMatWeight * $nettWeightDifference; // Multiply Weight Difference Only
-                            $deltaBasicUom = $deltaRawMatWeight * $rate;
-
-                            // Query Inventory for Raw Material
-                            $inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_code=? AND status='0'");
-                            $inventory_stmt->bind_param('ss', $rawMatId, $plantCode);
-                            $inventory_stmt->execute();
-                            $inventory_result = $inventory_stmt->get_result();
-                            $invRow = $inventory_result->fetch_assoc();
-                            $inventory_stmt->close();
-
-                            if (!empty($invRow)){
-                                $invId = $invRow['id'];
-                                $currentBasicUom = (float)$invRow['raw_mat_basic_uom'];
-                                $currentWeight  = (float)$invRow['raw_mat_weight'];
-
-                                // Calculation with delta
-                                $newBasicUom = $currentBasicUom - $deltaBasicUom;
-                                $newWeight = $currentWeight - $deltaRawMatWeight;
-
-                                // Update Inventory
-                                $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
-                                $upd_inv_stmt->bind_param('sss', $newBasicUom, $newWeight, $invId);
-                                $upd_inv_stmt->execute();
-                                $upd_inv_stmt->close();
-                            }
-                        }
-
-                        $productRawMat_stmt->close();
-                    }
-                }elseif ($transactionStatus == 'WIP') {
+                if ($transactionStatus == 'WIP') {
                     // Logic to minus materials need for WIP product then add amount for WIP product (EDIT VERSION)
                     if ($isComplete == 'Y' && $isCancel == 'N'){
                         if($product_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND plant_id=? AND status='0'")){
@@ -931,6 +877,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     }
                 }
 
+                $db->commit();
                 $update_stmt->close();
                 $db->close();
 
@@ -947,6 +894,10 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
     }
     else{
         $action = "1"; 
+
+        # Purchase / Sales stock is applied in the same transaction as the insert
+        $inventory = new InventoryService($db, $_SESSION['id']);
+        $db->begin_transaction();
         
         if ($insert_stmt = $db->prepare("INSERT INTO Weight (transaction_id, transaction_status, weight_type, customer_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight_uom, supplier_weight, po_supply_weight, order_weight_uom, order_weight, tin_no, id_no, id_type, customer_code, customer_name, supplier_code, supplier_name,
         product_code, product_name, ex_del, raw_mat_code, raw_mat_name, site_code, site_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1,
@@ -959,6 +910,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
 
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
+                $db->rollback();
                 echo json_encode(
                     array(
                         "status"=> "failed", 
@@ -985,7 +937,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     
                     // Execute the prepared query.
                     if (! $update_stmt->execute()){
-        
+                        $db->rollback();
                         echo json_encode(
                             array(
                                 "status"=> "failed", 
@@ -1086,88 +1038,19 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             }
                         }
 
-                        # Update Inventory Raw Material
-                        if ($transactionStatus == 'Purchase'){
-                            if ($isComplete == 'Y' && $isCancel == 'N'){
-                                $inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_code=? AND status='0'");
-                                $inventory_stmt->bind_param('ss', $rawMaterialId, $plantCode);
-                                $inventory_stmt->execute();
-                                $inventory_result = $inventory_stmt->get_result();
-
-                                while ($inventoryRow = $inventory_result->fetch_assoc()) {
-                                    $basicUomWeight = $inventoryRow['raw_mat_basic_uom'];
-                                    $weight = $inventoryRow['raw_mat_weight'];
-                                    $invId = $inventoryRow['id'];
-
-                                    $addedBasicNettWeight = (float)$basicUomWeight + (float)$basicNettWeight;
-                                    $addedWeight = (float)$weight + (float)$nettWeight;
-
-                                    $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
-                                    $upd_inv_stmt->bind_param('sss', $addedBasicNettWeight, $addedWeight, $invId);
-                                    $upd_inv_stmt->execute();
-                                    $upd_inv_stmt->close();
-                                }
-
-                                $inventory_stmt->close();
+                        # Purchase / Sales stock: apply the new record
+                        try {
+                            $newWeight = $inventory->lockWeight($id);
+                            if ($newWeight) {
+                                $inventory->applyWeighing($newWeight, 1);
                             }
-                        }elseif ($transactionStatus == 'Sales') {
-                            if ($isComplete == 'Y' && $isCancel == 'N'){
-                                $productRawMat_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND status='0'");
-                                $productRawMat_stmt->bind_param('s', $productId);
-                                $productRawMat_stmt->execute();
-                                $productRawMat_result = $productRawMat_stmt->get_result();
+                        } catch (Throwable $e) {
+                            $db->rollback();
+                            echo json_encode(array("status"=> "failed", "message"=> $e->getMessage()));
+                            exit;
+                        }
 
-                                while ($productRawMatRow = $productRawMat_result->fetch_assoc()) {
-                                    $rawMatCode = $productRawMatRow['raw_mat_code'];
-                                    $rawMatId = searchRawMatIdByCode($rawMatCode, $db);
-                                    $rawMatBasicUom = $productRawMatRow['raw_mat_basic_uom'];
-                                    $rawMatWeight = $productRawMatRow['raw_mat_weight'];
-
-                                    //$multipliedBasicUom = (float) $rawMatBasicUom * (float) $basicNettWeight;
-                                    $multipliedRawMatWeight = (float) $rawMatWeight * (float) $nettWeight;
-
-                                    // Query for rate conversion
-                                    $rateStatus = '0';
-                                    $unitId = '2';
-                                    $rate_stmt = $db->prepare("SELECT * FROM Raw_Mat_UOM WHERE raw_mat_id=? AND unit_id=? AND status=?");
-                                    $rate_stmt->bind_param('sss', $rawMatId, $unitId, $rateStatus);
-                                    $rate_stmt->execute();
-                                    $rateResult = $rate_stmt->get_result();
-                                    $rateRow = $rateResult->fetch_assoc();
-
-                                    if (!empty($rateRow)){
-                                        $rate = $rateRow['rate'];    
-                                        $multipliedBasicUom = $multipliedRawMatWeight * (float) $rate;
-
-                                        // Query Inventory for Raw Material
-                                        $inventory_stmt = $db->prepare("SELECT * FROM Inventory WHERE raw_mat_id=? AND plant_code=? AND status='0'");
-                                        $inventory_stmt->bind_param('ss', $rawMatId, $plantCode);
-                                        $inventory_stmt->execute();
-                                        $inventory_result = $inventory_stmt->get_result();
-                                        $invRow = $inventory_result->fetch_assoc();
-                                        $inventory_stmt->close();
-
-                                        if (!empty($invRow)){
-                                            $basicUomWeight = $invRow['raw_mat_basic_uom'];
-                                            $weight = $invRow['raw_mat_weight'];
-                                            $invId = $invRow['id'];
-
-                                            // Calculation to deduct
-                                            $deductedBasicNettWeight = (float)$basicUomWeight - (float)$multipliedBasicUom;
-                                            $deductedWeight = (float)$weight - (float)$multipliedRawMatWeight;
-
-                                            // Update Inventory
-                                            $upd_inv_stmt = $db->prepare("UPDATE Inventory SET raw_mat_basic_uom=?, raw_mat_weight=? WHERE id=?");
-                                            $upd_inv_stmt->bind_param('sss', $deductedBasicNettWeight, $deductedWeight, $invId);
-                                            $upd_inv_stmt->execute();
-                                            $upd_inv_stmt->close();
-                                        }
-                                    }
-                                }
-
-                                $productRawMat_stmt->close();
-                            }
-                        }elseif ($transactionStatus == 'WIP') {
+                        if ($transactionStatus == 'WIP') {
                             // Logic to minus materials need for WIP product then add amount for WIP product
                             if ($isComplete == 'Y' && $isCancel == 'N'){
                                 if($product_stmt = $db->prepare("SELECT * FROM Product_RawMat WHERE product_id=? AND plant_id=? AND status='0'")){
@@ -1261,6 +1144,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                             }
                         }
 
+                        $db->commit();
                         echo json_encode(
                             array(
                                 "status"=> "success", 
@@ -1271,6 +1155,7 @@ if (isset($_POST['transactionId'], $_POST['transactionStatus'], $_POST['weightTy
                     }
                 } 
                 else{
+                    $db->rollback();
                     echo json_encode(
                         array(
                             "status"=> "failed", 

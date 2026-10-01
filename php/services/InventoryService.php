@@ -351,6 +351,124 @@ class InventoryService
         $stmt->close();
     }
 
+    /* ================= Weighing ================= */
+
+    /**
+     * Apply ($direction = 1) or take back ($direction = -1) the stock movement of a Weight row.
+     *
+     * Only complete, not cancelled Purchase / Sales records move stock, on the record's
+     * plant and batch/drum, by nett_weight1:
+     *   Purchase  + to the raw material whose code is raw_mat_code
+     *   Sales     - from the raw material whose code is product_code (if there is one), and
+     *               - from each raw material in the product's BOM (Product_RawMat for that
+     *               plant and batch/drum), nett x BOM weight / 1000 (BOM weight is KG per MT)
+     *
+     * Editing a record = take back the row as it was, then apply the row as saved.
+     * Returns the movements made: [['raw_mat_id' => int, 'qty' => float], ...]
+     */
+    public function applyWeighing(array $weight, $direction = 1)
+    {
+        $status = $weight['transaction_status'] ?? '';
+        $batchDrum = $weight['batch_drum'] ?? '';
+        $nett = floatval($weight['nett_weight1'] ?? 0);
+
+        if (!in_array($status, ['Purchase', 'Sales'], true)
+            || ($weight['is_complete'] ?? '') !== 'Y'
+            || ($weight['is_cancel'] ?? '') === 'Y'
+            || (isset($weight['status']) && (string) $weight['status'] !== '0')
+            || !in_array($batchDrum, self::BATCH_DRUM_VALUES, true)
+            || $nett == 0) {
+            return [];
+        }
+
+        $plantId = $this->getPlantIdByCode($weight['plant_code'] ?? '');
+        if (!$plantId) {
+            return [];
+        }
+
+        $lines = []; // [raw_mat_id, signed KG]
+        if ($status === 'Purchase') {
+            $rawMatId = $this->getRawMatIdByCode($weight['raw_mat_code'] ?? '');
+            if ($rawMatId) {
+                $lines[] = [$rawMatId, $nett];
+            }
+        } else {
+            $rawMatId = $this->getRawMatIdByCode($weight['product_code'] ?? '');
+            if ($rawMatId) {
+                $lines[] = [$rawMatId, -$nett];
+            }
+            // Raw materials used to make the product are taken out as well.
+            // BOM raw_mat_weight is KG per 1000 KG (1 MT) of product, e.g. 40 = 4%
+            foreach ($this->getProductBom($weight['product_code'] ?? '', $plantId, $batchDrum) as $bom) {
+                $lines[] = [(int) $bom['raw_mat_id'], -(floatval($bom['raw_mat_weight']) * $nett / 1000)];
+            }
+        }
+
+        $moved = [];
+        foreach ($lines as $line) {
+            $qty = round($line[1] * $direction, 2);
+            if ($qty == 0) {
+                continue;
+            }
+            $this->adjustBy($line[0], $plantId, $batchDrum, $qty);
+            $moved[] = ['raw_mat_id' => $line[0], 'qty' => $qty];
+        }
+        return $moved;
+    }
+
+    /**
+     * Weight row locked for the rest of the transaction, or null if not found.
+     */
+    public function lockWeight($weightId)
+    {
+        $weightId = intval($weightId);
+        $stmt = $this->db->prepare("SELECT * FROM Weight WHERE id = ? FOR UPDATE");
+        $stmt->bind_param('i', $weightId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        return $row ?: null;
+    }
+
+    private function getPlantIdByCode($plantCode)
+    {
+        $stmt = $this->db->prepare("SELECT id FROM Plant WHERE plant_code = ? ORDER BY status ASC, id ASC LIMIT 1");
+        $stmt->bind_param('s', $plantCode);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        return $row ? (int) $row['id'] : 0;
+    }
+
+    private function getRawMatIdByCode($rawMatCode)
+    {
+        if ($rawMatCode === '' || $rawMatCode === null) {
+            return 0;
+        }
+        $stmt = $this->db->prepare("SELECT id FROM Raw_Mat WHERE raw_mat_code = ? AND status = '0' LIMIT 1");
+        $stmt->bind_param('s', $rawMatCode);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        return $row ? (int) $row['id'] : 0;
+    }
+
+    private function getProductBom($productCode, $plantId, $batchDrum)
+    {
+        $stmt = $this->db->prepare("SELECT pr.raw_mat_id, pr.raw_mat_weight FROM Product_RawMat pr
+            JOIN Product p ON p.id = pr.product_id
+            WHERE p.product_code = ? AND p.status = '0' AND pr.plant_id = ? AND pr.batch_drum = ? AND pr.status = '0'");
+        $stmt->bind_param('sis', $productCode, $plantId, $batchDrum);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        return $rows;
+    }
+
     /* ================= Stock adjustment ================= */
 
     /**
