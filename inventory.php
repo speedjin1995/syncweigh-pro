@@ -4,7 +4,11 @@
 <?php
 require_once "php/db_connect.php";
 
-if (!hasModulePermission('Stock Management', 'Inventory', ['view', 'edit'])){
+// Inventory and Stock Adjustment are separate modules; either one opens the page and only its own tab shows
+$canViewInventory = hasModulePermission('Stock Management', 'Inventory', ['view', 'create', 'edit', 'cancelled']);
+$canViewAdjustment = hasModulePermission('Stock Management', 'Stock Adjustment', ['view', 'create', 'edit', 'cancelled']);
+
+if (!$canViewInventory && !$canViewAdjustment){
     header('Location: no-permission.php');
     exit;
 }
@@ -14,6 +18,14 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 }else{
     $username = implode("', '", $_SESSION["plant"]);
     $plant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$username') ORDER BY name ASC");
+}
+
+// Stock Adjustment plant list follows its own module's view_all_plants
+if (hasModulePermission('Stock Management', 'Stock Adjustment', ['view_all_plants'])){
+    $adjPlant = $db->query("SELECT * FROM Plant WHERE status = '0' ORDER BY name ASC");
+}else{
+    $adjPlants = implode("', '", $_SESSION["plant"]);
+    $adjPlant = $db->query("SELECT * FROM Plant WHERE status = '0' and plant_code IN ('$adjPlants') ORDER BY name ASC");
 }
 ?>
 
@@ -39,40 +51,6 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
     <?php include 'layouts/head-css.php'; ?>
-    <style>
-        .mb-3 {
-            margin-bottom: 0.5rem !important;
-        }
-
-        .modal-header {
-            padding: var(1rem, 1rem) !important;
-        }
-
-        .inventory-expand-icon {
-            font-size: 16px;
-            vertical-align: middle;
-        }
-
-        .inventory-adjustment-wrap {
-            background: var(--vz-light);
-            border-left: 3px solid var(--vz-primary);
-            padding: 12px;
-        }
-
-        .inventory-adjustment-table {
-            margin-bottom: 0;
-        }
-
-        .inventory-adjustment-table th,
-        .inventory-adjustment-table td {
-            padding: 0.5rem 0.75rem;
-            vertical-align: middle;
-        }
-
-        #weightTable > tbody > tr {
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <?php include 'layouts/body.php'; ?>
@@ -97,7 +75,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 <div class="row">
                     <div class="col">
                         <div class="h-100">
-                            <div class="row mb-3 pb-1">
+                            <div class="row mb-2 pb-1">
                                 <div class="col-12">
                                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                                         <div class="flex-grow-1">
@@ -117,61 +95,78 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                             </div>
                             <!--end row-->
 
-                            <div class="col-xxl-12 col-lg-12">
-                                <div class="card">
-                                    <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
-                                        <i class="mdi mdi-chevron-down pull-right"></i>
-                                        Search Records
-                                    </div>
-                                    <div id="collapseSearch" class="collapse" aria-labelledby="collapseSearch">                                    
-                                        <div class="card-body">
-                                            <form action="javascript:void(0);">
-                                                <div class="row">
-                                                    <div class="col-3">
-                                                        <div class="mb-3">
-                                                            <label for="ForminputState" class="form-label">Plant</label>
-                                                            <select id="plantSearch" class="form-select" >
-                                                                <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
-                                                                    <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
-                                                                <?php } ?>
-                                                            </select>
-                                                        </div>
-                                                    </div><!--end col-->
-                                                    <div class="col-lg-12">
-                                                        <div class="text-end">
-                                                            <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
-                                                        </div>
-                                                    </div><!--end col-->
-                                                </div><!--end row-->
-                                            </form>                                                                        
+                            <button type="button" hidden id="successBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+                            <button type="button" hidden id="failBtn" data-toast data-toast-text="Welcome Back ! This is a Toast Notification" data-toast-gravity="top" data-toast-position="center" data-toast-duration="3000" data-toast-close="close" class="btn btn-light w-xs">Top Center</button>
+
+                            <!-- Tab Navigation -->
+                            <ul class="nav nav-pills nav-danger mb-2" role="tablist">
+                                <?php if ($canViewInventory){ ?>
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#inventoryTab" role="tab">
+                                        <i class="ri-store-2-line me-1"></i> Inventory
+                                    </a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($canViewAdjustment){ ?>
+                                <li class="nav-item">
+                                    <a class="nav-link<?= $canViewInventory ? '' : ' active' ?>" data-bs-toggle="tab" href="#stockAdjustmentTab" role="tab">
+                                        <i class="ri-exchange-line me-1"></i> Stock Adjustment
+                                    </a>
+                                </li>
+                                <?php } ?>
+                            </ul>
+
+                            <div class="tab-content">
+                                <!-- Inventory Tab -->
+                                <div class="tab-pane<?= $canViewInventory ? ' active' : '' ?>" id="inventoryTab" role="tabpanel">
+                                    <div class="col-xxl-12 col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header fs-5" href="#collapseSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseSearch">
+                                                <i class="mdi mdi-chevron-down pull-right"></i>
+                                                Search Records
+                                            </div>
+                                            <div id="collapseSearch" class="collapse" aria-labelledby="collapseSearch">                                    
+                                                <div class="card-body">
+                                                    <form action="javascript:void(0);">
+                                                        <div class="row">
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="ForminputState" class="form-label">Plant</label>
+                                                                    <select id="plantSearch" class="form-select" >
+                                                                        <?php while($rowPlantF=mysqli_fetch_assoc($plant)){ ?>
+                                                                            <option value="<?=$rowPlantF['plant_code'] ?>"><?=$rowPlantF['name'] ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label class="form-label">Batch/Drum</label>
+                                                                    <select id="batchDrumSearch" class="form-select">
+                                                                        <option value="">All</option>
+                                                                        <option value="Batch">Batch</option>
+                                                                        <option value="Drum">Drum</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-lg-12">
+                                                                <div class="text-end">
+                                                                    <button type="submit" class="btn btn-danger" id="filterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                        </div><!--end row-->
+                                                    </form>                                                                        
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col">
-                                    <div class="h-100">
-                                        <!--datatable--> 
-                                        <div class="row">
-                                            <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="h-100">
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <div class="d-flex justify-content-between">
-                                                            <div>
-                                                                <h5 class="card-title mb-0">Inventory</h5>
-                                                            </div>
-                                                            <!--div class="flex-shrink-0">
-                                                                <button type="button" id="exportPdf" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                    <i class="ri-file-pdf-line align-middle me-1"></i>
-                                                                    Export PDF
-                                                                </button>
-                                                                <button type="button" id="exportExcel" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#addModal">
-                                                                    <i class="ri-file-excel-line align-middle me-1"></i>
-                                                                    Export Excel
-                                                                </button>
-                                                            </div--> 
-                                                        </div> 
+                                                        <h5 class="card-title mb-0">Inventory</h5>
                                                     </div>
                                                     <div class="card-body">
                                                         <table id="weightTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
@@ -180,8 +175,9 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                                     <th>No</th>
                                                                     <th>Raw Material Code</th>
                                                                     <th>Raw Material Name</th>
+                                                                    <th>Plant</th>
+                                                                    <th>Batch/Drum</th>
                                                                     <th>Weight (Kg)</th>
-                                                                    <th>Drum</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -189,10 +185,105 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><!--end row-->
-                                    </div> <!-- end .h-100-->
-                                </div> <!-- end col -->
-                            </div><!-- container-fluid -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stock Adjustment Tab -->
+                                <div class="tab-pane<?= $canViewInventory ? '' : ' active' ?>" id="stockAdjustmentTab" role="tabpanel">
+                                    <div class="col-xxl-12 col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header fs-5" href="#collapseAdjSearch" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseAdjSearch">
+                                                <i class="mdi mdi-chevron-down pull-right"></i>
+                                                Search Records
+                                            </div>
+                                            <div id="collapseAdjSearch" class="collapse" aria-labelledby="collapseAdjSearch">
+                                                <div class="card-body">
+                                                    <form action="javascript:void(0);">
+                                                        <div class="row">
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjFromDateSearch" class="form-label">From Date</label>
+                                                                    <input type="text" class="form-control" data-provider="flatpickr" id="adjFromDateSearch">
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjToDateSearch" class="form-label">To Date</label>
+                                                                    <input type="text" class="form-control" data-provider="flatpickr" id="adjToDateSearch">
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjPlantSearch" class="form-label">Plant</label>
+                                                                    <select id="adjPlantSearch" class="form-select">
+                                                                        <option value="">All</option>
+                                                                        <?php while($rowAdjPlantF=mysqli_fetch_assoc($adjPlant)){ ?>
+                                                                            <option value="<?=$rowAdjPlantF['plant_code'] ?>"><?=$rowAdjPlantF['name'] ?></option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-3">
+                                                                <div class="mb-2">
+                                                                    <label for="adjBatchDrumSearch" class="form-label">Batch/Drum</label>
+                                                                    <select id="adjBatchDrumSearch" class="form-select">
+                                                                        <option value="">All</option>
+                                                                        <option value="Batch">Batch</option>
+                                                                        <option value="Drum">Drum</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                            <div class="col-lg-12">
+                                                                <div class="text-end">
+                                                                    <button type="submit" class="btn btn-danger" id="adjFilterSearch"><i class="bx bx-search-alt"></i> Search</button>
+                                                                </div>
+                                                            </div><!--end col-->
+                                                        </div><!--end row-->
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="h-100">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="d-flex justify-content-between">
+                                                            <h5 class="card-title mb-0">Stock Adjustment History</h5>
+                                                            <?php if (hasModulePermission('Stock Management', 'Stock Adjustment', ['create'])){ ?>
+                                                            <button type="button" id="addAdjustment" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#adjustmentModal">
+                                                                <i class="ri-add-circle-line align-middle me-1"></i>
+                                                                Add Adjustment
+                                                            </button>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <table id="adjustmentTable" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Adjustment No</th>
+                                                                    <th>Date</th>
+                                                                    <th>Plant</th>
+                                                                    <th>Batch/Drum</th>
+                                                                    <th>Items</th>
+                                                                    <th>Total Qty</th>
+                                                                    <th>Total Cost</th>
+                                                                    <th>Remark</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- end tab-content -->
                     
 
                         </div> <!-- end .h-100-->
@@ -223,7 +314,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                     <div class="card bg-light">
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-xxl-12 col-lg-12 mb-2">
                                                     <div class="row">
                                                         <label for="rawMatCode" class="col-sm-4 col-form-label">Raw Material Code</label>
                                                         <div class="col-sm-8">
@@ -231,7 +322,7 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-xxl-12 col-lg-12 mb-2">
                                                     <div class="row">
                                                         <label for="rawMatName" class="col-sm-4 col-form-label">Raw Material Name</label>
                                                         <div class="col-sm-8">
@@ -239,18 +330,29 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-xxl-12 col-lg-12 mb-2">
                                                     <div class="row">
                                                         <label for="currentWeight" class="col-sm-4 col-form-label">Current Weight</label>
                                                         <div class="col-sm-8">
                                                             <div class="input-group">
-                                                                <input type="number" class="form-control input-readonly" id="currentWeight" name="currentWeight" readonly>
+                                                                <input type="number" class="form-control" id="basicUom" name="basicUom" required>
+                                                                <div class="input-group-text" id="basicUomUnit">KG</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12 col-lg-12 mb-2">
+                                                    <div class="row">
+                                                        <label for="weight" class="col-sm-4 col-form-label">Weight</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="number" class="form-control input-readonly" id="weight" name="weight" readonly>
                                                                 <div class="input-group-text">KG</div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-xxl-12 col-lg-12 mb-3">
+                                                <div class="col-xxl-12 col-lg-12 mb-2">
                                                     <div class="row">
                                                         <label for="currentDrum" class="col-sm-4 col-form-label">Current Drum</label>
                                                         <div class="col-sm-8">
@@ -324,6 +426,107 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+
+        <!-- Stock Adjustment Modal -->
+        <div class="modal fade" id="adjustmentModal" tabindex="-1" role="dialog" aria-labelledby="adjustmentModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title" id="adjustmentModalTitle"><i class="ri-list-settings-line me-2"></i>Stock Adjustment - New</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form" id="adjustmentForm" autocomplete="off">
+                            <input type="hidden" id="adjId" name="adjId" value="">
+                            <!-- Header Section -->
+                            <div class="card border mb-2">
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-lg-4 col-md-6">
+                                            <label class="form-label fw-medium mb-1" for="adjDate">Adjustment Date <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control input-readonly" id="adjDate" name="adjDate" value="<?= date('d/m/Y') ?>" readonly>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <label class="form-label fw-medium mb-1" for="adjPlant">Plant <span class="text-danger">*</span></label>
+                                            <select class="form-select select2" id="adjPlant" name="adjPlant" required>
+                                                <option value="">Select Plant</option>
+                                                <?php 
+                                                $adjPlant->data_seek(0);
+                                                while($rowP = mysqli_fetch_assoc($adjPlant)){ ?>
+                                                <option value="<?=$rowP['id']?>"><?=$rowP['name']?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <label class="form-label fw-medium mb-1" for="adjBatchDrum">Batch/Drum <span class="text-danger">*</span></label>
+                                            <select class="form-select select2" id="adjBatchDrum" name="adjBatchDrum" required>
+                                                <option value="">Select</option>
+                                                <option value="Batch">Batch</option>
+                                                <option value="Drum">Drum</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <label class="form-label fw-medium mb-1" for="adjRemark">Remark</label>
+                                            <textarea class="form-control" id="adjRemark" name="adjRemark" rows="3" placeholder="Enter Remark"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Line Items Section -->
+                            <div class="card border mb-0">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="card-title mb-0"><i class="ri-list-check me-2"></i>Items</h6>
+                                    <button type="button" class="btn btn-danger btn-sm" id="addLineItem">
+                                        <i class="ri-add-line align-bottom me-1"></i>Add Item
+                                    </button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <!-- Items scroll on their own so the modal header, totals and footer stay in view.
+                                         The subtracted height is the rest of the modal chrome, which keeps the whole
+                                         dialog inside the viewport down to a 768px-tall screen. -->
+                                    <div class="table-responsive overflow-auto" style="max-height: max(168px, calc(100vh - 540px));">
+                                        <table class="table table-bordered align-middle mb-0" id="lineItemsTable">
+                                            <thead class="table-light sticky-top fs-12">
+                                                <tr>
+                                                    <th style="width:240px" class="p-2">RAW MATERIAL</th>
+                                                    <th style="width:110px" class="p-2 text-end">CURRENT QTY</th>
+                                                    <th style="width:110px" class="p-2 text-end">ADJUST QTY</th>
+                                                    <th style="width:110px" class="p-2 text-end">NEW QTY</th>
+                                                    <th style="width:110px" class="p-2 text-end">UNIT COST</th>
+                                                    <th style="width:110px" class="p-2 text-end">TOTAL COST</th>
+                                                    <th style="min-width:200px" class="p-2">REASON</th>
+                                                    <th style="width:48px" class="p-2"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="lineItemsBody">
+                                                <!-- Dynamic rows will be added here -->
+                                            </tbody>
+                                            <tfoot class="table-light table-group-divider sticky-bottom fw-semibold">
+                                                <tr>
+                                                    <td class="px-3 py-2 text-end">Total:</td>
+                                                    <td class="px-3 py-2 text-end" id="totalCurrentQty">0.00</td>
+                                                    <td class="px-3 py-2 text-end" id="totalAdjustQty">0.00</td>
+                                                    <td class="px-3 py-2 text-end" id="totalNewQty">0.00</td>
+                                                    <td class="px-3 py-2"></td>
+                                                    <td class="px-3 py-2 text-end" id="totalCost">0.00</td>
+                                                    <td class="px-3 py-2" colspan="2"></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="submitAdjustment"><i class="ri-save-line align-bottom me-1"></i>Save</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.adjustment modal -->
+
     </div>
     <!-- END layout-wrapper -->
 
@@ -356,9 +559,14 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
 
     <script type="text/javascript">
 
-    var permissions = <?= json_encode($_SESSION['permissions'] ?? []) ?>;
+    var INVENTORY_API = 'php/modules/Inventory/index.php'; // all inventory backend calls go through this endpoint
+    var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
-    var table;
+    var canViewInventory = <?= json_encode($canViewInventory) ?>;
+    var table = null;
+    var adjustmentTable = null;
+    var rawMaterialsCache = [];
+    var lineItemCounter = 0;
 
     $(function () {
         initInventoryTable($('#plantSearch').val() ? $('#plantSearch').val() : '');
@@ -367,78 +575,494 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             initInventoryTable($('#plantSearch').val() ? $('#plantSearch').val() : '');
         });
 
-        $('#weightAdjustment, #drumAdjustment').on('input', function(){
-            updateProjectedBalance();
-        });
+        // Initialize the table of whichever tab opens first
+        if (canViewInventory) {
+            initInventoryTable();
+        } else {
+            initAdjustmentTable();
+        }
 
-        $('#weightTable tbody').on('click', 'tr', function(e) {
-            if ($(e.target).closest('.dropdown, .dropdown-menu, a, button, .inventory-adjustment-wrap').length) {
-                return;
-            }
-
-            var tr = $(this);
-            var row = table.row(tr);
-
-            if (!row.data()) {
-                return;
-            }
-
-            if (row.child.isShown()) {
-                row.child.hide();
-                tr.removeClass('shown');
-                tr.find('.inventory-expand-icon').removeClass('mdi-chevron-down').addClass('mdi-chevron-right');
-                return;
-            }
-
-            row.child(formatAdjustmentDetails(null)).show();
-            tr.addClass('shown');
-            tr.find('.inventory-expand-icon').removeClass('mdi-chevron-right').addClass('mdi-chevron-down');
-            loadAdjustmentDetails(row);
+        $('#filterSearch').on('click', function(){
+            initInventoryTable();
         });
 
         $('#submitSite').on('click', function(){
-            var weightAdjustment = readAdjustmentValue('#weightAdjustment');
-            var drumAdjustment = readAdjustmentValue('#drumAdjustment');
+            if($('#siteForm').valid()){
+                $('#spinnerLoading').show();
+                $.post(INVENTORY_API, $('#siteForm').serialize() + '&action=update', function(data){
+                    var obj = typeof data === 'string' ? JSON.parse(data) : data;
+                    
+                    if(obj.status === 'success'){
+                        table.ajax.reload();
+                        $('#spinnerLoading').hide();
+                        $('#addModal').modal('hide');
+                        $("#successBtn").attr('data-toast-text', obj.message);
+                        $("#successBtn").click();
+                    }
+                    else if(obj.status === 'failed'){
+                        $('#spinnerLoading').hide();
+                        $("#failBtn").attr('data-toast-text', obj.message );
+                        $("#failBtn").click();
+                    }
+                    else{
 
-            if (weightAdjustment === null || drumAdjustment === null) {
-                showFailedToast('Please key in valid adjustment values');
+                    }
+                });
+            }
+        });
+
+        $('#basicUom').on('keyup', function(){
+            var basicUom = parseFloat($(this).val());
+            var basicUomUnitId = $('#addModal').find('#basicUnitId').val();
+            var rawMatId = $('#addModal').find('#rawMatId').val();
+
+            if (basicUomUnitId == 2){
+                $('#addModal').find('#weight').val(basicUom);
+            }else{
+                // Call to backend to get conversion rate
+                if (rawMatId && basicUom){
+                    $.post('php/getProdRawMatUOM.php', {userID: rawMatId, type: 'PO'}, function(data)
+                    {
+                        var obj = JSON.parse(data);
+                        if(obj.status === 'success'){
+                            // Processing for order quantity (KG)
+                            var rate = parseFloat(obj.message.rate);
+                            var weight = basicUom/rate;
+                            weight = parseInt(weight);
+
+                            $('#addModal').find('#weight').val(weight);
+                        }
+                        else if(obj.status === 'failed'){
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                        else{
+                            alert(obj.message);
+                            $("#failBtn").attr('data-toast-text', obj.message );
+                            $("#failBtn").click();
+                        }
+                    });
+                }
+            }
+        });
+
+        // Stock adjustment search: default to the last 30 days
+        var adjFromDefault = new Date();
+        adjFromDefault.setDate(adjFromDefault.getDate() - 30);
+        $('#adjFromDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: adjFromDefault
+        });
+        $('#adjToDateSearch').flatpickr({
+            dateFormat: "d-m-Y",
+            defaultDate: new Date()
+        });
+
+        $('#adjFilterSearch').on('click', function(){
+            initAdjustmentTable();
+        });
+
+        // Initialize adjustment table when tab is shown
+        $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if ($(e.target).attr('href') === '#stockAdjustmentTab') {
+                initAdjustmentTable();
+            }
+        });
+
+        // Select2 for the stock adjustment modal dropdowns
+        $('#adjustmentModal .select2').select2({
+            placeholder: "Please Select",
+            width: '100%',
+            dropdownParent: $('#adjustmentModal') // Ensures dropdown is not cut off by the modal
+        });
+        styleSelect2($('#adjustmentModal'));
+
+        // Raw materials cache - reload when plant or batch/drum changes
+        $('#adjPlant, #adjBatchDrum').on('change', function() {
+            var plantId = $('#adjPlant').val();
+            var batchDrum = $('#adjBatchDrum').val();
+            $('#lineItemsBody').empty();
+            lineItemCounter = 0;
+            rawMaterialsCache = [];
+            updateTotals();
+
+            if (plantId && batchDrum) {
+                $.post(INVENTORY_API, { action: 'adj_raw_materials', plant: plantId, batch_drum: batchDrum }, function(data) {
+                    var obj = typeof data === 'string' ? JSON.parse(data) : data;
+                    rawMaterialsCache = obj.status === 'success' ? obj.data : [];
+                });
+            }
+        });
+
+        // Add line item button
+        $('#addLineItem').on('click', function() {
+            if (!$('#adjPlant').val() || !$('#adjBatchDrum').val()) {
+                $("#failBtn").attr('data-toast-text', 'Please select plant and Batch/Drum first');
+                $("#failBtn").click();
+                return;
+            }
+            addLineItem();
+        });
+
+        // Reset modal on open
+        $('#addAdjustment').on('click', function() {
+            $('#adjustmentForm')[0].reset();
+            $('#adjId').val('');
+            $('#adjustmentModalTitle').html('<i class="ri-list-settings-line me-2"></i>Stock Adjustment - New');
+            $('#adjPlant, #adjBatchDrum').prop('disabled', false); // plant and batch/drum are locked only when editing
+            $('#adjPlant, #adjBatchDrum').val('').trigger('change.select2'); // refresh Select2 display after reset
+            $('#adjDate').val('<?= date("d/m/Y") ?>');
+            $('#lineItemsBody').empty();
+            lineItemCounter = 0;
+            rawMaterialsCache = [];
+            updateTotals();
+        });
+
+        // Submit stock adjustment
+        $('#submitAdjustment').on('click', function() {
+            var plant = $('#adjPlant').val();
+            var batchDrum = $('#adjBatchDrum').val();
+            var remark = $('#adjRemark').val();
+            var items = [];
+            var valid = true;
+
+            if (!plant) {
+                $("#failBtn").attr('data-toast-text', 'Please select a plant');
+                $("#failBtn").click();
                 return;
             }
 
-            if (weightAdjustment === 0 && drumAdjustment === 0) {
-                showFailedToast('Please key in Weight Adjustment or Drum Adjustment');
+            if (!batchDrum) {
+                $("#failBtn").attr('data-toast-text', 'Please select Batch/Drum');
+                $("#failBtn").click();
                 return;
             }
 
-            if (!updateProjectedBalance()) {
-                showFailedToast('Total inventory cannot be negative');
+            $('#lineItemsBody tr').each(function() {
+                var rawMatId = $(this).find('select').val();
+                var adjustQty = $(this).find('.adjust-qty').val();
+                var reason = $(this).find('input[name*="reason"]').val();
+                var currentQty = $(this).find('.current-qty').val();
+                var newQty = $(this).find('.new-qty').val();
+                var unitCost = $(this).find('.unit-cost').val() || '0';
+                var totalCost = $(this).find('.total-cost').val() || '0';
+                
+                if (!rawMatId || !adjustQty || parseFloat(adjustQty) == 0) {
+                    valid = false;
+                    return false;
+                }
+                items.push({ 
+                    raw_mat_id: rawMatId, 
+                    qty: adjustQty,
+                    qty_before: currentQty,
+                    qty_after: newQty,
+                    unit_cost: unitCost,
+                    total_cost: totalCost,
+                    reason: reason
+                });
+            });
+
+            if (!valid || items.length === 0) {
+                $("#failBtn").attr('data-toast-text', 'Please add at least one valid item with adjustment quantity');
+                $("#failBtn").click();
                 return;
             }
 
+            var adjId = $('#adjId').val();
             $('#spinnerLoading').show();
-            $.post('php/inventoryAdjustment.php', $('#siteForm').serialize(), function(data){
-                var obj = parseResponse(data);
-
-                if(obj.status === 'success'){
-                    table.ajax.reload(null, false);
+            $.post(INVENTORY_API, {
+                action: adjId ? 'adj_update' : 'adj_create',
+                id: adjId,
+                plant: plant,
+                batch_drum: batchDrum,
+                remark: remark,
+                items: JSON.stringify(items)
+            }, function(data) {
+                var obj = typeof data === 'string' ? JSON.parse(data) : data;
+                if (obj.status === 'success') {
+                    if (adjustmentTable) adjustmentTable.ajax.reload();
+                    if (table) table.ajax.reload();
                     $('#spinnerLoading').hide();
-                    $('#addModal').modal('hide');
-                    showSuccessToast(obj.message);
-                }
-                else{
+                    $('#adjustmentModal').modal('hide');
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                } else {
                     $('#spinnerLoading').hide();
-                    showFailedToast(obj.message);
+                    $("#failBtn").attr('data-toast-text', obj.message);
+                    $("#failBtn").click();
                 }
-            }).fail(function(){
-                $('#spinnerLoading').hide();
-                showFailedToast('Something went wrong');
             });
         });
     });
 
-    function initInventoryTable(plantNoI) {
-        if ($.fn.DataTable.isDataTable('#weightTable')) {
-            $("#weightTable").DataTable().clear().destroy();
+    // Stock Adjustment Tab - Initialize DataTable
+    function initAdjustmentTable() {
+        if (adjustmentTable) {
+            adjustmentTable.destroy();
+        }
+
+        adjustmentTable = $("#adjustmentTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'searching': true,
+            'serverMethod': 'post',
+            'order': [[ 1, 'desc' ]],
+            'ajax': {
+                'url': INVENTORY_API,
+                'data': {
+                    action: 'adj_list',
+                    plant: $('#adjPlantSearch').val() || '',
+                    batch_drum: $('#adjBatchDrumSearch').val() || '',
+                    from_date: $('#adjFromDateSearch').val() || '',
+                    to_date: $('#adjToDateSearch').val() || ''
+                } 
+            },
+            'columns': [
+                { data: 'adjustment_no' },
+                { data: 'adjustment_date' },
+                { data: 'plant_name' },
+                { data: 'batch_drum' },
+                { data: 'total_items' },
+                { data: 'total_qty' },
+                { data: 'total_cost' },
+                { data: 'remark' },
+                {
+                    data: 'id',
+                    orderable: false,
+                    render: function ( data, type, row ) {
+                        var canEdit = isSADMIN || hasAdjustmentPermission('edit');
+                        var canDelete = isSADMIN || hasAdjustmentPermission('cancelled');
+                        var items = `<li><a class="dropdown-item" onclick="printAdjustment(${data})"><i class="ri-printer-line align-bottom me-2 text-muted"></i> Print</a></li>`;
+                        if (canEdit) {
+                            items += `<li><a class="dropdown-item edit-item-btn" onclick="editAdjustment(${data})"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>`;
+                        }
+                        if (canDelete) {
+                            items += `<li><a class="dropdown-item remove-item-btn" onclick="deleteAdjustment(${data})"><i class="ri-delete-bin-5-line align-bottom me-2 text-muted"></i> Delete</a></li>`;
+                        }
+                        return `
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ri-more-fill align-middle"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">${items}</ul>
+                            </div>`;
+                    }
+                }
+            ]
+        });
+    }
+
+    function hasAdjustmentPermission(permission) {
+        return !!(permissions['Stock Management'] && permissions['Stock Management']['Stock Adjustment'] && permissions['Stock Management']['Stock Adjustment'].includes(permission));
+    }
+
+    // Print the stock adjustment slip
+    function printAdjustment(id) {
+        // Open the tab on the click itself so the browser does not block it as a popup;
+        // the slip is written into it once loaded and the user prints from its Print button
+        var printTab = window.open('', '_blank');
+        $('#spinnerLoading').show();
+        $.post(INVENTORY_API, {action: 'adj_print', id: id}, function(data) {
+            var obj = typeof data === 'string' ? JSON.parse(data) : data;
+            $('#spinnerLoading').hide();
+
+            if (obj.status === 'success') {
+                printTab.document.write(obj.message);
+                printTab.document.close();
+            }
+            else {
+                printTab.close();
+                $("#failBtn").attr('data-toast-text', obj.status === 'failed' ? obj.message : "Something wrong when print");
+                $("#failBtn").click();
+            }
+        });
+    }
+
+    // Open the adjustment modal filled with an existing adjustment
+    function editAdjustment(id) {
+        $('#spinnerLoading').show();
+        $.post(INVENTORY_API, {action: 'adj_get', id: id}, function(data) {
+            var obj = typeof data === 'string' ? JSON.parse(data) : data;
+            $('#spinnerLoading').hide();
+            if (obj.status !== 'success') {
+                $("#failBtn").attr('data-toast-text', obj.message);
+                $("#failBtn").click();
+                return;
+            }
+
+            var adj = obj.message;
+            $('#adjustmentForm')[0].reset();
+            $('#adjId').val(adj.id);
+            $('#adjustmentModalTitle').html('<i class="ri-list-settings-line me-2"></i>Stock Adjustment - Edit ' + adj.adjustment_no);
+            $('#adjDate').val(adj.adjustment_date);
+            $('#adjRemark').val(adj.remark);
+            // trigger only the Select2 refresh so the plant/batch change handler does not clear the rows
+            $('#adjPlant').val(adj.plant_id).trigger('change.select2');
+            $('#adjBatchDrum').val(adj.batch_drum).trigger('change.select2');
+            $('#adjPlant, #adjBatchDrum').prop('disabled', true); // plant and batch/drum cannot change on edit
+
+            $('#lineItemsBody').empty();
+            lineItemCounter = 0;
+            rawMaterialsCache = adj.raw_materials; // current qty here already excludes this adjustment
+            adj.items.forEach(function(item) {
+                addLineItem();
+                var $row = $('#lineItemsBody tr').last();
+                $row.find('.raw-mat-select').val(item.raw_mat_id).trigger('change');
+                $row.find('.adjust-qty').val(item.qty);
+                $row.find('.unit-cost').val(item.unit_cost);
+                $row.find('input[name*="reason"]').val(item.reason);
+                calculateNewQty($row.find('.adjust-qty')[0]);
+            });
+            updateTotals();
+            $('#adjustmentModal').modal('show');
+        });
+    }
+
+    function deleteAdjustment(id) {
+        if (confirm('Are you sure you want to delete this stock adjustment? The stock will be reversed.')) {
+            $('#spinnerLoading').show();
+            $.post(INVENTORY_API, {action: 'adj_delete', id: id}, function(data) {
+                var obj = typeof data === 'string' ? JSON.parse(data) : data;
+                $('#spinnerLoading').hide();
+                if (obj.status === 'success') {
+                    if (adjustmentTable) adjustmentTable.ajax.reload();
+                    if (table) table.ajax.reload();
+                    $("#successBtn").attr('data-toast-text', obj.message);
+                    $("#successBtn").click();
+                } else {
+                    $("#failBtn").attr('data-toast-text', obj.message);
+                    $("#failBtn").click();
+                }
+            });
+        }
+    }
+
+    // Global functions for stock adjustment
+    function addLineItem() {
+        lineItemCounter++;
+        var options = '<option value="">- Select -</option>';
+        rawMaterialsCache.forEach(function(item) {
+            options += '<option value="' + item.id + '" data-code="' + item.raw_mat_code + '" data-qty="' + (item.current_qty || 0) + '">' + item.raw_mat_code + ' - ' + item.name + '</option>';
+        });
+
+        var row = `
+            <tr data-row="${lineItemCounter}">
+                <td class="p-2">
+                    <select class="form-select raw-mat-select" name="items[${lineItemCounter}][raw_mat_id]" required>
+                        ${options}
+                    </select>
+                </td>
+                <td class="p-2">
+                    <input type="text" class="form-control text-end input-readonly current-qty" value="0.00" readonly>
+                </td>
+                <td class="p-2">
+                    <input type="number" class="form-control text-end fw-semibold adjust-qty" name="items[${lineItemCounter}][qty]" placeholder="+/-" step="0.01" onchange="calculateNewQty(this)" onkeyup="calculateNewQty(this)" required>
+                </td>
+                <td class="p-2">
+                    <input type="text" class="form-control text-end input-readonly new-qty" value="0.00" readonly>
+                </td>
+                <td class="p-2">
+                    <input type="number" class="form-control text-end unit-cost" placeholder="0.00" step="0.01" min="0" onchange="calculateTotalCost(this)" onkeyup="calculateTotalCost(this)">
+                </td>
+                <td class="p-2">
+                    <input type="text" class="form-control text-end input-readonly total-cost" value="0.00" readonly>
+                </td>
+                <td class="p-2">
+                    <input type="text" class="form-control" name="items[${lineItemCounter}][reason]" placeholder="Reason for adjustment">
+                </td>
+                <td class="p-2 text-center">
+                    <button type="button" class="btn btn-soft-danger" onclick="removeLineItem(this)" title="Remove item">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        var $row = $(row);
+        $('#lineItemsBody').append($row);
+
+        // Searchable Select2 for the raw material picker
+        $row.find('.raw-mat-select').select2({
+            placeholder: "- Select -",
+            width: '100%',
+            dropdownParent: $('#adjustmentModal')
+        }).on('change', function() {
+            onRawMatChange(this);
+        });
+        styleSelect2($row);
+    }
+
+    // Match Select2 height and arrow position to the other form controls
+    function styleSelect2($scope) {
+        $scope.find('.select2-container .select2-selection--single').css({
+            'padding-top': '4px',
+            'padding-bottom': '4px',
+            'height': 'auto'
+        });
+        $scope.find('.select2-container .select2-selection__arrow').css({
+            'padding-top': '33px',
+            'height': 'auto'
+        });
+    }
+
+    function onRawMatChange(select) {
+        var row = $(select).closest('tr');
+        var selectedOption = $(select).find('option:selected');
+        var currentQty = parseFloat(selectedOption.data('qty')) || 0;
+        row.find('.current-qty').val(currentQty.toFixed(2));
+        row.find('.adjust-qty').val('').removeClass('text-danger');
+        row.find('.new-qty').val(currentQty.toFixed(2));
+        updateTotals();
+    }
+
+    function calculateNewQty(input) {
+        var row = $(input).closest('tr');
+        var currentQty = parseFloat(row.find('.current-qty').val()) || 0;
+        var adjustQty = parseFloat($(input).val()) || 0;
+        var newQty = currentQty + adjustQty;
+        if (newQty < 0) newQty = 0;
+        row.find('.new-qty').val(newQty.toFixed(2));
+        $(input).toggleClass('text-danger', adjustQty < 0); // display only, the value is unchanged
+        calculateTotalCost(row.find('.unit-cost')[0]);
+        updateTotals();
+    }
+
+    function calculateTotalCost(input) {
+        var row = $(input).closest('tr');
+        var adjustQty = Math.abs(parseFloat(row.find('.adjust-qty').val()) || 0);
+        var unitCost = parseFloat($(input).val()) || 0;
+        var totalCost = adjustQty * unitCost;
+        row.find('.total-cost').val(totalCost.toFixed(2));
+        updateTotals();
+    }
+
+    function updateTotals() {
+        var totalCurrent = 0, totalAdjust = 0, totalNew = 0, totalCost = 0;
+        $('#lineItemsBody tr').each(function() {
+            totalCurrent += parseFloat($(this).find('.current-qty').val()) || 0;
+            totalAdjust += parseFloat($(this).find('.adjust-qty').val()) || 0;
+            totalNew += parseFloat($(this).find('.new-qty').val()) || 0;
+            totalCost += parseFloat($(this).find('.total-cost').val()) || 0;
+        });
+        $('#totalCurrentQty').text(totalCurrent.toFixed(2));
+        $('#totalAdjustQty').text(totalAdjust.toFixed(2)).toggleClass('text-danger', totalAdjust < 0);
+        $('#totalNewQty').text(totalNew.toFixed(2));
+        $('#totalCost').text(totalCost.toFixed(2));
+    }
+
+    function removeLineItem(btn) {
+        $(btn).closest('tr').remove();
+        updateTotals();
+    }
+
+    function initInventoryTable() {
+        var plantNoI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var batchDrumFilter = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+        
+        if (table) {
+            table.destroy();
         }
 
         table = $("#weightTable").DataTable({
@@ -449,29 +1073,28 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             'searching': true,
             'serverMethod': 'post',
             'order': [[ 1, 'asc' ]],
-            'columnDefs': [ { orderable: false, targets: [0, 5] }],
+            'columnDefs': [ { orderable: false, targets: [0] }],
             'ajax': {
-                'url':'php/filterInventory.php',
+                'url': INVENTORY_API,
                 'data': {
+                    action: 'list',
                     plant: plantNoI,
-                }
+                    batch_drum: batchDrumFilter
+                } 
             },
             'columns': [
-                {
-                    data: 'no',
-                    render: function (data) {
-                        return `<span class="d-inline-flex align-items-center"><i class="mdi mdi-chevron-right inventory-expand-icon me-1"></i>${data}</span>`;
-                    }
-                },
+                { data: 'no' },
                 { data: 'raw_mat_code' },
                 { data: 'name' },
+                { data: 'plant_name' },
+                { data: 'batch_drum' },
                 { data: 'raw_mat_weight' },
-                { data: 'raw_mat_count' },
-                {
+                { 
                     data: 'id',
                     orderable: false,
-                    render: function ( data ) {
-                        if (canAdjustInventory()){
+                    visible: false, // Edit button hidden for now; remove this line to show it again
+                    render: function ( data, type, row ) {
+                        if (isSADMIN || (permissions['Stock Management'] && permissions['Stock Management']['Inventory'] && permissions['Stock Management']['Inventory'].includes('edit'))){
                             return `
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -479,37 +1102,25 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a class="dropdown-item edit-item-btn" id="adjust${data}" onclick="adjust(${data})">
-                                                <i class="ri-pen align-bottom me-2 text-muted"></i> Adjust
+                                            <a class="dropdown-item edit-item-btn" id="edit${data}" onclick="edit(${data})">
+                                                <i class="ri-pen align-bottom me-2 text-muted"></i> Edit
                                             </a>
                                         </li>
                                     </ul>
                                 </div>`;
                         }
-
                         return '';
                     }
                 }
-            ]
+            ] 
         });
     }
 
-    function canAdjustInventory() {
-        return isSADMIN || (
-            permissions['Stock Management'] &&
-            permissions['Stock Management']['Inventory'] &&
-            permissions['Stock Management']['Inventory'].includes('edit')
-        );
-    }
-
-    function adjust(id){
+    function edit(id){
         $('#spinnerLoading').show();
-        $('#siteForm')[0].reset();
-        $('#siteForm').find('.is-invalid').removeClass('is-invalid');
-
-        $.post('php/getInventory.php', {userID: id}, function(data)
+        $.post(INVENTORY_API, {action: 'get', id: id}, function(data)
         {
-            var obj = parseResponse(data);
+            var obj = typeof data === 'string' ? JSON.parse(data) : data;
             if(obj.status === 'success'){
                 $('#addModal').find('#id').val(obj.message.id);
                 $('#addModal').find('#rawMatId').val(obj.message.raw_mat_id);
@@ -529,126 +1140,6 @@ if (hasModulePermission('Stock Management', 'Inventory', ['view_all_plants'])){
             $('#spinnerLoading').hide();
             showFailedToast('Something went wrong');
         });
-    }
-
-    function readAdjustmentValue(selector) {
-        var value = $(selector).val();
-
-        if (value === null || value.trim() === '') {
-            return 0;
-        }
-
-        var number = parseFloat(value);
-        return isNaN(number) ? null : number;
-    }
-
-    function updateProjectedBalance() {
-        var weightAdjustment = readAdjustmentValue('#weightAdjustment');
-        var drumAdjustment = readAdjustmentValue('#drumAdjustment');
-
-        if (weightAdjustment === null || drumAdjustment === null) {
-            return false;
-        }
-
-        var currentWeight = parseFloat($('#currentWeight').val()) || 0;
-        var currentDrum = parseFloat($('#currentDrum').val()) || 0;
-        var newWeight = currentWeight + weightAdjustment;
-        var newDrum = currentDrum + drumAdjustment;
-        var valid = newWeight >= 0 && newDrum >= 0;
-
-        $('#newWeightBalance').val(formatNumber(newWeight));
-        $('#newDrumBalance').val(formatNumber(newDrum));
-        $('#weightAdjustment').toggleClass('is-invalid', newWeight < 0);
-        $('#drumAdjustment').toggleClass('is-invalid', newDrum < 0);
-
-        return valid;
-    }
-
-    function loadAdjustmentDetails(row) {
-        $.post('php/getInventoryAdjustments.php', {inventoryId: row.data().id}, function(data){
-            var obj = parseResponse(data);
-
-            if (obj.status === 'success') {
-                row.child(formatAdjustmentDetails(obj.message)).show();
-            } else {
-                row.child(formatAdjustmentDetails([], obj.message)).show();
-            }
-        }).fail(function(){
-            row.child(formatAdjustmentDetails([], 'Unable to load adjustments')).show();
-        });
-    }
-
-    function formatAdjustmentDetails(adjustments, message) {
-        if (adjustments === null) {
-            return `<div class="inventory-adjustment-wrap text-muted">Loading adjustments...</div>`;
-        }
-
-        if (message) {
-            return `<div class="inventory-adjustment-wrap text-danger">${escapeHtml(message)}</div>`;
-        }
-
-        if (!adjustments.length) {
-            return `<div class="inventory-adjustment-wrap text-muted">No adjustments found</div>`;
-        }
-
-        var rows = adjustments.map(function(adjustment) {
-            return `
-                <tr>
-                    <td>${escapeHtml(adjustment.created_date)}</td>
-                    <td>${escapeHtml(adjustment.weight_adjustment)}</td>
-                    <td>${escapeHtml(adjustment.drum_adjustment)}</td>
-                    <td>${escapeHtml(adjustment.created_by)}</td>
-                    <td>${escapeHtml(adjustment.remarks)}</td>
-                </tr>`;
-        }).join('');
-
-        return `
-            <div class="inventory-adjustment-wrap">
-                <table class="table table-bordered table-striped align-middle inventory-adjustment-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Weight Adjustment (Kg)</th>
-                            <th>Drum Adjustment</th>
-                            <th>Action By</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            </div>`;
-    }
-
-    function parseResponse(data) {
-        try {
-            return typeof data === 'object' ? data : JSON.parse(data);
-        } catch (e) {
-            return {status: 'failed', message: 'Invalid server response'};
-        }
-    }
-
-    function formatNumber(value) {
-        var number = parseFloat(value);
-
-        if (isNaN(number)) {
-            number = 0;
-        }
-
-        return parseFloat(number.toFixed(3)).toString();
-    }
-
-    function escapeHtml(value) {
-        return $('<div>').text(value === null || value === undefined ? '' : value).html();
-    }
-
-    function showSuccessToast(message) {
-        $("#successBtn").attr('data-toast-text', message);
-        $("#successBtn").click();
-    }
-
-    function showFailedToast(message) {
-        $("#failBtn").attr('data-toast-text', message || 'Something went wrong');
-        $("#failBtn").click();
     }
     </script>
 </body>
