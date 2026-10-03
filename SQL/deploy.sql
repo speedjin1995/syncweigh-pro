@@ -3332,3 +3332,235 @@ INSERT INTO `permissions` (`id`, `name`, `modules`) VALUES
 
 -- 20/06/2026 --
 UPDATE Raw_Mat SET type = 'Bitumen' WHERE raw_mat_code IN ('BTBI001', 'BTBI002');
+
+-- 10/09/2026 --
+ALTER TABLE `Weight` ADD `manual_weight_reason` TEXT NULL AFTER `manual_weight`;
+
+ALTER TABLE `Weight_Log` ADD `manual_weight_reason` TEXT NULL AFTER `manual_weight`;
+
+DELIMITER $$
+
+CREATE OR REPLACE TRIGGER `TRG_INS_WEIGHT` AFTER INSERT ON `Weight`
+ FOR EACH ROW INSERT INTO Weight_Log (
+    transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight_uom, supplier_weight, po_supply_weight, order_weight_uom, order_weight, tin_no, id_no, id_type, plant_code, plant_name, site_code, site_name, agent_code, agent_name, customer_code, customer_name, supplier_code, supplier_name, product_code, product_name, product_description, ex_del, raw_mat_code,raw_mat_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1, gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, balance, is_complete, is_cancel, is_approved, manual_weight, manual_weight_reason, indicator_id, weighbridge_id, indicator_id_2, unit_price, sub_total, sst, total_price, load_drum, no_of_drum, batch_drum, status, approved_by, approved_reason, cancel_id, cancelled_reason, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.transaction_id, NEW.transaction_status, NEW.weight_type, NEW.transaction_date, NEW.lorry_plate_no1, NEW.lorry_plate_no2, NEW.supplier_weight_uom, NEW.supplier_weight, NEW.po_supply_weight, NEW.order_weight_uom, NEW.order_weight, NEW.tin_no, NEW.id_no, NEW.id_type, NEW.plant_code, NEW.plant_name, NEW.site_code, NEW.site_name, NEW.agent_code, NEW.agent_name, NEW.customer_code, NEW.customer_name, NEW.supplier_code, NEW.supplier_name, NEW.product_code, NEW.product_name, NEW.product_description, NEW.ex_del, NEW.raw_mat_code, NEW.raw_mat_name, NEW.container_no, NEW.invoice_no, NEW.purchase_order, NEW.delivery_no, NEW.transporter_code, NEW.transporter, NEW.destination_code, NEW.destination, NEW.remarks, NEW.gross_weight1, NEW.gross_weight1_date, NEW.tare_weight1, NEW.tare_weight1_date, NEW.nett_weight1, NEW.gross_weight2, NEW.gross_weight2_date, NEW.tare_weight2, NEW.tare_weight2_date, NEW.nett_weight2, NEW.reduce_weight, NEW.final_weight, NEW.weight_different, NEW.balance, NEW.is_complete, NEW.is_cancel, NEW.is_approved, NEW.manual_weight, NEW.manual_weight_reason, NEW.indicator_id, NEW.weighbridge_id, NEW.indicator_id_2, NEW.unit_price, NEW.sub_total, NEW.sst, NEW.total_price, NEW.load_drum, NEW.no_of_drum, NEW.batch_drum, NEW.status, NEW.approved_by, NEW.approved_reason, NEW.cancel_id, NEW.cancelled_reason, 1, NEW.created_by, NEW.created_date
+)
+
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_WEIGHT` BEFORE UPDATE ON `Weight`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if status = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Weight_Log table
+    INSERT INTO Weight_Log (
+        transaction_id, transaction_status, weight_type, transaction_date, lorry_plate_no1, lorry_plate_no2, supplier_weight_uom, supplier_weight, po_supply_weight, order_weight_uom, order_weight, tin_no, id_no, id_type, plant_code, plant_name, site_code, site_name, agent_code, agent_name, customer_code, customer_name, supplier_code, supplier_name, product_code, product_name, product_description, ex_del, raw_mat_code,raw_mat_name, container_no, invoice_no, purchase_order, delivery_no, transporter_code, transporter, destination_code, destination, remarks, gross_weight1, gross_weight1_date, tare_weight1, tare_weight1_date, nett_weight1, gross_weight2, gross_weight2_date, tare_weight2, tare_weight2_date, nett_weight2, reduce_weight, final_weight, weight_different, balance, is_complete, is_cancel, is_approved, manual_weight, manual_weight_reason, indicator_id, weighbridge_id, indicator_id_2, unit_price, sub_total, sst, total_price, load_drum, no_of_drum, batch_drum, status, approved_by, approved_reason, cancel_id, cancelled_reason, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.transaction_id, NEW.transaction_status, NEW.weight_type, NEW.transaction_date, 
+        NEW.lorry_plate_no1, NEW.lorry_plate_no2, NEW.supplier_weight_uom, NEW.supplier_weight, NEW.po_supply_weight, 
+        NEW.order_weight_uom, NEW.order_weight, NEW.tin_no, NEW.id_no, NEW.id_type, NEW.plant_code, NEW.plant_name, NEW.site_code, NEW.site_name, 
+        NEW.agent_code, NEW.agent_name, NEW.customer_code, NEW.customer_name, 
+        NEW.supplier_code, NEW.supplier_name, NEW.product_code, NEW.product_name, 
+        NEW.product_description, NEW.ex_del, NEW.raw_mat_code, NEW.raw_mat_name, 
+        NEW.container_no, NEW.invoice_no, NEW.purchase_order, NEW.delivery_no, 
+        NEW.transporter_code, NEW.transporter, NEW.destination_code, NEW.destination, 
+        NEW.remarks, NEW.gross_weight1, NEW.gross_weight1_date, NEW.tare_weight1, 
+        NEW.tare_weight1_date, NEW.nett_weight1, NEW.gross_weight2, NEW.gross_weight2_date, 
+        NEW.tare_weight2, NEW.tare_weight2_date, NEW.nett_weight2, NEW.reduce_weight, 
+        NEW.final_weight, NEW.weight_different, NEW.balance, NEW.is_complete, NEW.is_cancel, 
+        NEW.is_approved, NEW.manual_weight, NEW.manual_weight_reason, NEW.indicator_id, NEW.weighbridge_id, 
+        NEW.indicator_id_2, NEW.unit_price, NEW.sub_total, NEW.sst, NEW.total_price, NEW.load_drum, 
+        NEW.no_of_drum, NEW.batch_drum, NEW.status, NEW.approved_by, NEW.approved_reason, NEW.cancel_id, NEW.cancelled_reason, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+-- 21/09/2026 --
+CREATE TABLE `Stock_Adjustment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `adjustment_no` varchar(50) NOT NULL,
+  `adjustment_date` date NOT NULL,
+  `plant_id` INT(11) NOT NULL,
+  `batch_drum` varchar(50) NOT NULL,
+  `remark` text DEFAULT NULL,
+  `total_items` int(11) DEFAULT 0,
+  `total_qty` varchar(20) DEFAULT '0',
+  `total_cost` varchar(20) DEFAULT '0',
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `modified_by` int(11) DEFAULT NULL,
+  `modified_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `Stock_Adjustment_Log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stk_adjustment_id` int(11) NOT NULL,
+  `adjustment_no` varchar(50) NOT NULL,
+  `adjustment_date` date NOT NULL,
+  `plant_id` INT(11) NOT NULL,
+  `batch_drum` varchar(50) NOT NULL,
+  `remark` text DEFAULT NULL,
+  `total_items` int(11) DEFAULT 0,
+  `total_qty` varchar(20) DEFAULT '0',
+  `total_cost` varchar(20) DEFAULT '0',
+  `action_id` varchar(5) NOT NULL,
+  `action_by` varchar(15) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_STK_ADJ` AFTER INSERT ON `Stock_Adjustment` FOR EACH ROW 
+  INSERT INTO Stock_Adjustment_Log (
+    stk_adjustment_id, adjustment_no, adjustment_date, plant_id, batch_drum, remark, total_items, total_qty, total_cost, action_id, action_by, event_date
+  ) 
+  VALUES (
+    NEW.id, NEW.adjustment_no, NEW.adjustment_date, NEW.plant_id, NEW.batch_drum, NEW.remark, NEW.total_items, NEW.total_qty, NEW.total_cost, 1, NEW.created_by, NOW()
+  )
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_STK_ADJ` BEFORE UPDATE ON `Stock_Adjustment` FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    INSERT INTO Stock_Adjustment_Log (
+        stk_adjustment_id, adjustment_no, adjustment_date, plant_id, batch_drum, remark, total_items, total_qty, total_cost, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.adjustment_no, NEW.adjustment_date, NEW.plant_id, NEW.batch_drum, NEW.remark, NEW.total_items, NEW.total_qty, NEW.total_cost, action_value, NEW.modified_by, NOW()
+    );
+END
+$$
+DELIMITER ;
+
+CREATE TABLE `Stock_Adjustment_Items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `adjustment_id` int(11) NOT NULL,
+  `raw_mat_id` int(11) NOT NULL,
+  `raw_mat_code` varchar(50) DEFAULT NULL,
+  `quantity_before` varchar(20) DEFAULT '0',
+  `adjustment_qty` varchar(20) DEFAULT '0',
+  `quantity_after` varchar(20) DEFAULT '0',
+  `unit_cost` varchar(20) DEFAULT '0',
+  `total_cost` varchar(20) DEFAULT '0',
+  `reason` varchar(255) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  `created_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
+  `modified_datetime` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `Stock_Adjustment_Item_Log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `item_id` int(11) NOT NULL,
+  `adjustment_id` int(11) NOT NULL,
+  `raw_mat_id` int(11) NOT NULL,
+  `raw_mat_code` varchar(50) DEFAULT NULL,
+  `quantity_before` varchar(20) DEFAULT '0',
+  `adjustment_qty` varchar(20) DEFAULT '0',
+  `quantity_after` varchar(20) DEFAULT '0',
+  `unit_cost` varchar(20) DEFAULT '0',
+  `total_cost` varchar(20) DEFAULT '0',
+  `reason` varchar(255) DEFAULT NULL,
+  `action_id` varchar(5) NOT NULL,
+  `action_by` varchar(15) NOT NULL,
+  `event_date` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_STK_ADJ_ITEM` AFTER INSERT ON `Stock_Adjustment_Items` FOR EACH ROW 
+  INSERT INTO Stock_Adjustment_Item_Log (
+    item_id, adjustment_id, raw_mat_id, raw_mat_code, quantity_before, adjustment_qty, quantity_after, unit_cost, total_cost, reason, action_id, action_by, event_date
+  ) 
+  VALUES (
+    NEW.id, NEW.adjustment_id, NEW.raw_mat_id, NEW.raw_mat_code, NEW.quantity_before, NEW.adjustment_qty, NEW.quantity_after, NEW.unit_cost, NEW.total_cost, NEW.reason, 1, NEW.created_by, NOW()
+  )
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_STK_ADJ_ITEM` BEFORE UPDATE ON `Stock_Adjustment_Items` FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    IF NEW.deleted = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    INSERT INTO Stock_Adjustment_Item_Log (
+        item_id, adjustment_id, raw_mat_id, raw_mat_code, quantity_before, adjustment_qty, quantity_after, unit_cost, total_cost, reason, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.adjustment_id, NEW.raw_mat_id, NEW.raw_mat_code, NEW.quantity_before, NEW.adjustment_qty, NEW.quantity_after, NEW.unit_cost, NEW.total_cost, NEW.reason, action_value, NEW.modified_by, NOW()
+    );
+END
+$$
+DELIMITER ;
+
+ALTER TABLE `Inventory` ADD `batch_drum` VARCHAR(10) NULL AFTER `plant_code`;
+ALTER TABLE `Inventory_Log` ADD `batch_drum` VARCHAR(10) NULL AFTER `plant_code`;
+
+DROP TRIGGER TRG_INS_INV;
+
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_INS_INV_LOG` AFTER INSERT ON `Inventory`
+ FOR EACH ROW INSERT INTO Inventory_Log (
+    inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, batch_drum, action_id, action_by, event_date
+) 
+VALUES (
+    NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, NEW.batch_drum, 1, NEW.created_by, NEW.created_date
+)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE OR REPLACE TRIGGER `TRG_UPD_INV_LOG` BEFORE UPDATE ON `Inventory`
+ FOR EACH ROW BEGIN
+    DECLARE action_value INT;
+
+    -- Check if deleted = 1, set action_id to 3, otherwise set to 2
+    IF NEW.status = 1 THEN
+        SET action_value = 3;
+    ELSE
+        SET action_value = 2;
+    END IF;
+
+    -- Insert into Sales_Order table
+    INSERT INTO Inventory_Log (
+        inventory_id, raw_mat_id, raw_mat_basic_uom, raw_mat_weight, raw_mat_count, plant_id, plant_code, batch_drum, action_id, action_by, event_date
+    ) 
+    VALUES (
+        NEW.id, NEW.raw_mat_id, NEW.raw_mat_basic_uom, NEW.raw_mat_weight, NEW.raw_mat_count, NEW.plant_id, NEW.plant_code, NEW.batch_drum, action_value, NEW.modified_by, NEW.modified_date
+    );
+END
+$$
+DELIMITER ;
+
+-- 01/10/2026 --
+INSERT INTO `modules` (`id`, `name`, `category`) VALUES
+(39, 'Stock Adjustment', 'Stock Management');
+
+UPDATE permissions SET modules = JSON_ARRAY_APPEND(modules, '$', '39') WHERE id IN (5, 6, 7, 13);

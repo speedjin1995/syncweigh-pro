@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+require_once 'services/InventoryService.php';
 
 $username = $_SESSION["username"];
 
@@ -12,10 +13,26 @@ if(isset($_POST['id'], $_POST['cancelId'], $_POST['cancelReason'])){
 	$cancel = "Y";
 	$action = "3";
 
+	// Purchase / Sales stock moved by this record is taken back in the same transaction as the cancel
+	$inventory = new InventoryService($db, $_SESSION['id']);
+	$db->begin_transaction();
+
 	if ($stmt2 = $db->prepare("UPDATE Weight SET is_complete=?, is_cancel=?, cancel_id=?, cancelled_reason=? WHERE id=?")) {
 		$stmt2->bind_param('sssss', $cancel, $cancel, $cancelId, $cancelReason, $id);
+
+		try {
+			$oldWeight = $inventory->lockWeight($id);
+			if ($oldWeight) {
+				$inventory->applyWeighing($oldWeight, -1);
+			}
+		} catch (Throwable $e) {
+			$db->rollback();
+			echo json_encode(array("status"=> "failed", "message"=> $e->getMessage()));
+			exit;
+		}
 		
 		if($stmt2->execute()){
+			$db->commit();
 			// if ($insert_stmt = $db->prepare("INSERT INTO Supplier_Log (supplier_id, action_id, action_by) VALUES (?, ?, ?)")) {
 			// 	$insert_stmt->bind_param('sss', $id, $action, $username);
 	
@@ -47,6 +64,7 @@ if(isset($_POST['id'], $_POST['cancelId'], $_POST['cancelReason'])){
 			);
 
 		} else{
+			$db->rollback();
 		    echo json_encode(
     	        array(
     	            "status"=> "failed", 

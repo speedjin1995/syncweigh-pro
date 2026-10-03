@@ -15,19 +15,17 @@ if($searchValue != ''){
     $searchQuery .= " AND (role_code LIKE '%".$searchValue."%' OR role_name LIKE '%".$searchValue."%') ";
 }
 
-// if($_SESSION['roles'] != 'SADMIN'){
-//     $searchQuery .= "";
-// }
+$roleFilter = ($_SESSION['roles'] == 'SADMIN') ? "" : " AND role_code <> 'SADMIN'";
 
-$sel = mysqli_query($db, "SELECT COUNT(*) as allcount FROM roles WHERE deleted IN (0,1) AND role_code <> 'SADMIN'");
+$sel = mysqli_query($db, "SELECT COUNT(*) as allcount FROM roles WHERE deleted IN (0,1)".$roleFilter);
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
-$sel = mysqli_query($db, "SELECT COUNT(*) as allcount FROM roles WHERE deleted IN (0) AND role_code <> 'SADMIN'".$searchQuery);
+$sel = mysqli_query($db, "SELECT COUNT(*) as allcount FROM roles WHERE deleted IN (0)".$roleFilter.$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
-$empQuery = "SELECT id, role_code, role_name, deleted FROM roles WHERE deleted IN (0) AND role_code <> 'SADMIN' ".$searchQuery." ORDER BY deleted ASC, ".$columnName." ".$columnSortOrder." LIMIT ".$row.",".$rowperpage;
+$empQuery = "SELECT id, role_code, role_name, deleted FROM roles WHERE deleted IN (0)".$roleFilter." ".$searchQuery." ORDER BY deleted ASC, ".$columnName." ".$columnSortOrder." LIMIT ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 

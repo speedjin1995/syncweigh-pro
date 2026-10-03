@@ -10,9 +10,85 @@ function filterData(&$str){
     $str = preg_replace("/\r?\n/", "\\n", $str); 
     if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"'; 
 } 
+
+function getRequestValue($key, $default = '') {
+    return isset($_GET[$key]) ? $_GET[$key] : $default;
+}
+
+function getRequestList($key) {
+    if (!isset($_GET[$key])) {
+        return array();
+    }
+
+    $value = $_GET[$key];
+
+    if (is_array($value)) {
+        return array_values(array_filter($value, function($item) {
+            return $item !== '' && $item !== '-';
+        }));
+    }
+
+    if ($value === '' || $value === '-') {
+        return array();
+    }
+
+    return array_values(array_filter(explode(',', $value), function($item) {
+        return trim($item) !== '' && trim($item) !== '-';
+    }));
+}
+
+function appendInFilter(&$searchQuery, $db, $column, $values) {
+    if (count($values) === 0) {
+        return;
+    }
+
+    $escapedValues = array_map(function($value) use ($db) {
+        return "'" . mysqli_real_escape_string($db, trim($value)) . "'";
+    }, $values);
+
+    $searchQuery .= " AND ".$column." IN (" . implode(',', $escapedValues) . ")";
+}
+
+function appendEqualFilter(&$searchQuery, $db, $column, $value) {
+    if ($value !== null && $value !== '' && $value !== '-') {
+        $searchQuery .= " and ".$column." = '".mysqli_real_escape_string($db, $value)."'";
+    }
+}
+
+function appendLikeFilter(&$searchQuery, $db, $column, $value) {
+    if ($value !== null && $value !== '' && $value !== '-') {
+        $searchQuery .= " and ".$column." like '%".mysqli_real_escape_string($db, $value)."%'";
+    }
+}
+
+function parseReportDate($value, $isEndDate = false) {
+    if ($value === null || $value === '') {
+        return null;
+    }
+
+    $formats = array('d-m-Y H:i', 'Y-m-d H:i', 'Y-m-d');
+
+    foreach ($formats as $format) {
+        $dateTime = DateTime::createFromFormat($format, $value);
+
+        if ($dateTime instanceof DateTime) {
+            if ($format === 'Y-m-d') {
+                $dateTime->setTime($isEndDate ? 23 : 0, $isEndDate ? 59 : 0, $isEndDate ? 59 : 0);
+            } elseif ($isEndDate) {
+                $dateTime->setTime((int)$dateTime->format('H'), (int)$dateTime->format('i'), 59);
+            } else {
+                $dateTime->setTime((int)$dateTime->format('H'), (int)$dateTime->format('i'), 0);
+            }
+
+            return $dateTime->format('Y-m-d H:i:s');
+        }
+    }
+
+    return null;
+}
  
 // Excel file name for download 
-if($_GET["file"] == 'weight'){
+if(getRequestValue("file") == 'weight'){
     $fileName = "Weight-data_" . date('Y-m-d') . ".xls";
 }else{
     $fileName = "Count-data_" . date('Y-m-d') . ".xls";
@@ -20,125 +96,138 @@ if($_GET["file"] == 'weight'){
 
 ## Search 
 $searchQuery = "";
-if($_GET['fromDate'] != null && $_GET['fromDate'] != ''){
-    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['fromDate']);
-    $formatted_date = $dateTime->format('Y-m-d H:i');
+$reportStatus = getRequestValue('status', 'Sales');
 
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.tare_weight1_date >= '".$formatted_date."'";
+$fromDate = parseReportDate(getRequestValue('fromDate'), false);
+if($fromDate !== null){
+    if(getRequestValue("file") == 'weight'){
+        $searchQuery .= " and Weight.tare_weight1_date >= '".$fromDate."'";
     }
     else{
-        $searchQuery .= " and count.tare_weight1_date >= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date >= '".$fromDate."'";
     }
 }
 
-if($_GET['toDate'] != null && $_GET['toDate'] != ''){
-    $dateTime = DateTime::createFromFormat('d-m-Y H:i', $_GET['toDate']);
-    $formatted_date = $dateTime->format('Y-m-d H:i');
-
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.tare_weight1_date <= '".$formatted_date."'";
+$toDate = parseReportDate(getRequestValue('toDate'), true);
+if($toDate !== null){
+    if(getRequestValue("file") == 'weight'){
+        $searchQuery .= " and Weight.tare_weight1_date <= '".$toDate."'";
     }
     else{
-        $searchQuery .= " and count.tare_weight1_date <= '".$formatted_date."'";
+        $searchQuery .= " and count.tare_weight1_date <= '".$toDate."'";
     }
 }
 
-if($_GET['status'] != null && $_GET['status'] != '' && $_GET['status'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.transaction_status = '".$_GET['status']."'";
+if(getRequestValue('status') != null && getRequestValue('status') != '' && getRequestValue('status') != '-'){
+    if(getRequestValue("file") == 'weight'){
+        appendEqualFilter($searchQuery, $db, 'Weight.transaction_status', getRequestValue('status'));
     }
     else{
-        $searchQuery .= " and count.transaction_status = '".$_GET['status']."'";
+        appendEqualFilter($searchQuery, $db, 'count.transaction_status', getRequestValue('status'));
     }
 
-    if ($_GET['status'] == 'Local'){
+    if (getRequestValue('status') == 'Local'){
         $reportStatus = 'Public';
     }else{
-        $reportStatus = $_GET['status'];
+        $reportStatus = getRequestValue('status');
     }
 }
 
-if($_GET['customer'] != null && $_GET['customer'] != '' && $_GET['customer'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.customer_code = '".$_GET['customer']."'";
+if(getRequestValue("file") == 'weight'){
+    appendInFilter($searchQuery, $db, 'Weight.customer_code', getRequestList('customer'));
+} else {
+    appendInFilter($searchQuery, $db, 'count.customer_code', getRequestList('customer'));
+}
+
+if(getRequestValue("file") == 'weight'){
+    appendInFilter($searchQuery, $db, 'Weight.supplier_code', getRequestList('supplier'));
+} else {
+    appendInFilter($searchQuery, $db, 'count.supplier_code', getRequestList('supplier'));
+}
+
+if(getRequestValue("file") == 'weight'){
+    appendLikeFilter($searchQuery, $db, 'Weight.lorry_plate_no1', getRequestValue('vehicle'));
+} else {
+    appendLikeFilter($searchQuery, $db, 'count.lorry_plate_no1', getRequestValue('vehicle'));
+}
+
+if(getRequestValue("file") == 'weight'){
+    appendLikeFilter($searchQuery, $db, 'Weight.weight_type', getRequestValue('weighingType'));
+} else {
+    appendLikeFilter($searchQuery, $db, 'count.weight_type', getRequestValue('weighingType'));
+}
+
+if(getRequestValue("file") == 'weight'){
+    appendEqualFilter($searchQuery, $db, 'Weight.customer_type', getRequestValue('customerType'));
+} else {
+    appendEqualFilter($searchQuery, $db, 'count.customer_type', getRequestValue('customerType'));
+}
+
+if(getRequestValue("file") == 'weight'){
+    appendInFilter($searchQuery, $db, 'Weight.product_code', getRequestList('product'));
+} else {
+    appendInFilter($searchQuery, $db, 'count.product_code', getRequestList('product'));
+}
+
+$rawMatList = getRequestList('rawMat');
+if (count($rawMatList) === 0) {
+    $rawMatList = getRequestList('rawMaterial');
+}
+
+if(getRequestValue("file") == 'weight'){
+    appendInFilter($searchQuery, $db, 'Weight.raw_mat_code', $rawMatList);
+} else {
+    appendInFilter($searchQuery, $db, 'count.raw_mat_code', $rawMatList);
+}
+
+if(getRequestValue('destination') != null && getRequestValue('destination') != '' && getRequestValue('destination') != '-'){
+    if(getRequestValue("file") == 'weight'){
+        appendEqualFilter($searchQuery, $db, 'Weight.destination', getRequestValue('destination'));
     }
     else{
-        $searchQuery .= " and count.customer_code = '".$_GET['customer']."'";
+        appendEqualFilter($searchQuery, $db, 'count.destination', getRequestValue('destination'));
     }
 }
 
-if(isset($_GET['supplier']) && $_GET['supplier'] != null && $_GET['supplier'] != '' && $_GET['supplier'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.supplier_code = '".$_POST['supplier']."'";
+if(getRequestValue('plant') != null && getRequestValue('plant') != '' && getRequestValue('plant') != '-'){
+    if(getRequestValue("file") == 'weight'){
+        appendEqualFilter($searchQuery, $db, 'Weight.plant_code', getRequestValue('plant'));
     }
     else{
-        $searchQuery .= " and count.supplier_code = '".$_POST['supplier']."'";
-    }
-}
-
-if($_GET['vehicle'] != null && $_GET['vehicle'] != '' && $_GET['vehicle'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.lorry_plate_no1 = '".$_GET['vehicle']."'";
-    }
-    else{
-        $searchQuery .= " and count.lorry_plate_no1 = '".$_GET['vehicle']."'";
-    }
-}
-
-if($_GET['weighingType'] != null && $_GET['weighingType'] != '' && $_GET['weighingType'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.weight_type like '%".$_GET['weighingType']."%'";
-    }
-    else{
-        $searchQuery .= " and count.weight_type like '%".$_GET['weighingType']."%'";
-    }
-}
-
-if($_GET['product'] != null && $_GET['product'] != '' && $_GET['product'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.product_code = '".$_GET['product']."'";
-    }
-    else{
-        $searchQuery .= " and count.product_code = '".$_GET['product']."'";
-    }
-}
-
-if(isset($_GET['rawMat']) && $_GET['rawMat'] != null && $_GET['rawMat'] != '' && $_GET['rawMat'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.raw_mat_code = '".$_GET['rawMat']."'";
-    }
-    else{
-        $searchQuery .= " and count.raw_mat_code = '".$_GET['rawMat']."'";
-    }
-}
-
-if(isset($_GET['plant']) && $_GET['plant'] != null && $_GET['plant'] != '' && $_GET['plant'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.plant_code = '".$_GET['plant']."'";
-    }
-    else{
-        $searchQuery .= " and count.plant_code = '".$_GET['plant']."'";
+        appendEqualFilter($searchQuery, $db, 'count.plant_code', getRequestValue('plant'));
     }
 }else{
     if (!hasModulePermission('Report', $reportStatus, ['view_all_plants'])){
         $username = implode("', '", $_SESSION["plant"]);
-        $searchQuery .= "and Weight.plant_code IN ('$username')";
+        $searchQuery .= " and Weight.plant_code IN ('$username')";
     }
 }
 
-if(isset($_GET['batchDrum']) && $_GET['batchDrum'] != null && $_GET['batchDrum'] != '' && $_GET['batchDrum'] != '-'){
-    if($_GET["file"] == 'weight'){
-        $searchQuery .= " and Weight.batch_drum = '".$_GET['batchDrum']."'";
+if(getRequestValue('purchaseOrder') != null && getRequestValue('purchaseOrder') != '' && getRequestValue('purchaseOrder') != '-'){
+    if(getRequestValue("file") == 'weight'){
+        appendEqualFilter($searchQuery, $db, 'Weight.purchase_order', getRequestValue('purchaseOrder'));
     }
     else{
-        $searchQuery .= " and count.batch_drum = '".$_GET['batchDrum']."'";
+        appendEqualFilter($searchQuery, $db, 'count.purchaseNo', getRequestValue('purchaseOrder'));
+    }
+}
+
+if(getRequestValue('soNo') != null && getRequestValue('soNo') != '' && getRequestValue('soNo') != '-'){
+    appendEqualFilter($searchQuery, $db, 'Weight.purchase_order', getRequestValue('soNo'));
+}
+
+if(getRequestValue('batchDrum') != null && getRequestValue('batchDrum') != '' && getRequestValue('batchDrum') != '-'){
+    if(getRequestValue("file") == 'weight'){
+        appendEqualFilter($searchQuery, $db, 'Weight.batch_drum', getRequestValue('batchDrum'));
+    }
+    else{
+        appendEqualFilter($searchQuery, $db, 'count.batch_drum', getRequestValue('batchDrum'));
     }
 }
 
 $isMulti = '';
-if(isset($_GET['isMulti']) && $_GET['isMulti'] != null && $_GET['isMulti'] != '' && $_GET['isMulti'] != '-'){
-    $isMulti = $_GET['isMulti'];
+if(getRequestValue('isMulti') != null && getRequestValue('isMulti') != '' && getRequestValue('isMulti') != '-'){
+    $isMulti = getRequestValue('isMulti');
 }
 
 // Column names 

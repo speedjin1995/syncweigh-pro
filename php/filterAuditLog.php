@@ -3,6 +3,7 @@
 session_start();
 require_once 'db_connect.php';
 require_once 'requires/lookup.php';
+require_once 'requires/permissions.php';
 
 ## Read value
 // $draw = $_POST['draw'];
@@ -117,12 +118,20 @@ if($_POST['selectedValue'] == "Weight")
     if($_POST['weight'] != null && $_POST['weight'] != ''){
     $searchQuery .= " and transaction_id like '%".$_POST['weight']."%'";
     }
+
+    if($_POST['doNo'] != null && $_POST['doNo'] != ''){
+    $searchQuery .= " and delivery_no like '%".$_POST['doNo']."%'";
+    }
 }
 
 if($_POST['selectedValue'] == "SO")
 {
     if($_POST['custPoNo'] != null && $_POST['custPoNo'] != ''){
     $searchQuery .= " and order_no like '%".$_POST['custPoNo']."%'";
+    }
+
+    if($_POST['soNo'] != null && $_POST['soNo'] != ''){
+    $searchQuery .= " and so_no like '%".$_POST['soNo']."%'";
     }
 }
 
@@ -247,6 +256,7 @@ if($_POST['selectedValue'] == "Product")
     $empQuery = "select * from Product_Log".$searchQuery;
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
+    $canViewPrice = hasModulePermissionDb($db, 'Report', 'Audit Log', ['include_price']);
 
     while($row = mysqli_fetch_assoc($empRecords)) {
         $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
@@ -259,11 +269,10 @@ if($_POST['selectedValue'] == "Product")
             $productData = searchProductAuditById($productId, $db);
            
             if (!empty($productData)){
-                $data[] = array( 
+                $rowData = array(
                 "id"=>$row['id'],
                 "Product Code"=>$productData['product_code'],
                 "Product Name"=>$productData['name'],
-                "Product Price"=>$productData['price'],
                 "Description"=>$productData['description'],
                 "Variance Type"=>($productData['variance'] == 'W') ? "kg" : (($productData['variance'] == 'P') ? "%" : null),
                 "High"=>$productData['high'],
@@ -274,13 +283,22 @@ if($_POST['selectedValue'] == "Product")
                 "Action By"=>$row['action_by'],
                 "Event Date"=>$eventDateKL,
                 );
+
+                if ($canViewPrice) {
+                    $rowData = array_merge(
+                        array_slice($rowData, 0, 3, true),
+                        array("Product Price"=>$productData['price']),
+                        array_slice($rowData, 3, null, true)
+                    );
+                }
+
+                $data[] = $rowData;
             }
         }else{
-            $data[] = array( 
+            $rowData = array(
             "id"=>$row['id'],
             "Product Code"=>$row['product_code'],
             "Product Name"=>$row['name'],
-            "Product Price"=>$row['price'],
             "Description"=>$row['description'],
             "Variance Type"=>($row['variance'] == 'W') ? "kg" : (($row['variance'] == 'P') ? "%" : null),
             "High"=>$row['high'],
@@ -291,11 +309,27 @@ if($_POST['selectedValue'] == "Product")
             "Action By"=>$row['action_by'],
             "Event Date"=>$eventDateKL,
             );
+
+            if ($canViewPrice) {
+                $rowData = array_merge(
+                    array_slice($rowData, 0, 3, true),
+                    array("Product Price"=>$row['price']),
+                    array_slice($rowData, 3, null, true)
+                );
+            }
+
+            $data[] = $rowData;
         }
         
     }
 
-    $columnNames = ["Product Code", "Product Name", "Product Price", "Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"];
+    $columnNames = ["Product Code", "Product Name"];
+
+    if ($canViewPrice) {
+        $columnNames[] = "Product Price";
+    }
+
+    $columnNames = array_merge($columnNames, ["Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"]);
 }
 
 if($_POST['selectedValue'] == "Raw Materials")
@@ -304,6 +338,7 @@ if($_POST['selectedValue'] == "Raw Materials")
     $empQuery = "select * from Raw_Mat_Log".$searchQuery;
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
+    $canViewPrice = hasModulePermissionDb($db, 'Report', 'Audit Log', ['include_price']);
 
     while($row = mysqli_fetch_assoc($empRecords)) {
         $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
@@ -316,11 +351,10 @@ if($_POST['selectedValue'] == "Raw Materials")
             $rawMatData = searchRawMatAuditById($rawMatId, $db);
     
             if (!empty($rawMatData)){
-                $data[] = array( 
+                $rowData = array(
                 "id"=>$row['id'],
                 "Raw Material Code"=>$rawMatData['raw_mat_code'],
                 "Raw Material Name"=>$rawMatData['name'],
-                "Raw Material Price"=>$rawMatData['price'],
                 "Description"=>$rawMatData['description'],
                 "Variance Type"=>$rawMatData['variance'],
                 "High"=>$rawMatData['high'],
@@ -331,13 +365,22 @@ if($_POST['selectedValue'] == "Raw Materials")
                 "Action By"=>$row['action_by'],
                 "Event Date"=>$eventDateKL,
                 );
+
+                if ($canViewPrice) {
+                    $rowData = array_merge(
+                        array_slice($rowData, 0, 3, true),
+                        array("Raw Material Price"=>$rawMatData['price']),
+                        array_slice($rowData, 3, null, true)
+                    );
+                }
+
+                $data[] = $rowData;
             }
         }else{
-            $data[] = array( 
+            $rowData = array(
             "id"=>$row['id'],
             "Raw Material Code"=>$row['raw_mat_code'],
             "Raw Material Name"=>$row['name'],
-            "Raw Material Price"=>$row['price'],
             "Description"=>$row['description'],
             "Variance Type"=>$row['variance'],
             "High"=>$row['high'],
@@ -348,11 +391,27 @@ if($_POST['selectedValue'] == "Raw Materials")
             "Action By"=>$row['action_by'],
             "Event Date"=>$eventDateKL,
             );
+
+            if ($canViewPrice) {
+                $rowData = array_merge(
+                    array_slice($rowData, 0, 3, true),
+                    array("Raw Material Price"=>$row['price']),
+                    array_slice($rowData, 3, null, true)
+                );
+            }
+
+            $data[] = $rowData;
         }
         
     }
 
-    $columnNames = ["Raw Material Code", "Raw Material Name", "Raw Material Price", "Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"];
+    $columnNames = ["Raw Material Code", "Raw Material Name"];
+
+    if ($canViewPrice) {
+        $columnNames[] = "Raw Material Price";
+    }
+
+    $columnNames = array_merge($columnNames, ["Description", "Variance Type", "High", "Low", "Basic UOM", "Type", "Action", "Action By", "Event Date"]);
 }
 
 if($_POST['selectedValue'] == "Supplier")
@@ -808,6 +867,7 @@ if($_POST['selectedValue'] == "SO")
     $empQuery = "select * from Sales_Order_Log".$searchQuery;
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
+    $canViewPrice = hasModulePermissionDb($db, 'Report', 'Audit Log', ['include_price']);
 
     while($row = mysqli_fetch_assoc($empRecords)) {
         $eventDate = $row['event_date']; // "2023-07-16 13:20:27"
@@ -815,7 +875,7 @@ if($_POST['selectedValue'] == "SO")
         $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
         $eventDateKL = $dt->format('Y-m-d H:i:s');
         
-        $data[] = array( 
+        $rowData = array( 
         "id"=>$row['id'],
         "Company Code"=>$row['company_code'],
         "Company Name"=>$row['company_name'],
@@ -844,19 +904,36 @@ if($_POST['selectedValue'] == "SO")
         "Order Quantity (KG)"=>$row['order_quantity'],
         "Basic Balance"=>$row['converted_balance'],
         "Balance (KG)"=>$row['balance'],
-        "Unit Price"=>$row['unit_price'],
-        "Total Price"=>$row['total_price'],
-        "Transport Price"=>$row['transport_price'],
-        "Supplier Cost"=>$row['supplier_cost'],
         "Remarks"=>$row['remarks'],
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$eventDateKL
         );
+
+        if ($canViewPrice) {
+            $rowData = array_merge(
+                array_slice($rowData, 0, 28, true),
+                array(
+                    "Unit Price"=>$row['unit_price'],
+                    "Total Price"=>$row['total_price'],
+                    "Transport Price"=>$row['transport_price'],
+                    "Supplier Cost"=>$row['supplier_cost']
+                ),
+                array_slice($rowData, 28, null, true)
+            );
+        }
+
+        $data[] = $rowData;
     }
 
-    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Order Date", "Customer P/O No", "S/O No", "Product Code", "Product Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name",  "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)", "Unit Price", "Total Price", "Transport Price", "Supplier Cost", "Remarks", "Status", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Customer Code", "Customer Name", "Order Date", "Customer P/O No", "S/O No", "Product Code", "Product Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name",  "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)"];
+
+    if ($canViewPrice) {
+        $columnNames = array_merge($columnNames, ["Unit Price", "Total Price", "Transport Price", "Supplier Cost"]);
+    }
+
+    $columnNames = array_merge($columnNames, ["Remarks", "Status", "Action", "Action By", "Event Date"]);
 }
 
 if($_POST['selectedValue'] == "PO")
@@ -865,6 +942,7 @@ if($_POST['selectedValue'] == "PO")
     $empQuery = "select * from Purchase_Order_Log".$searchQuery;
     $empRecords = mysqli_query($db, $empQuery);
     $data = array();
+    $canViewPrice = hasModulePermissionDb($db, 'Report', 'Audit Log', ['include_price']);
 
     while($row = mysqli_fetch_assoc($empRecords)) {
         $eventDate = $row['event_date'];   // "2023-07-16 13:20:27"
@@ -872,7 +950,7 @@ if($_POST['selectedValue'] == "PO")
         $dt->setTimezone(new DateTimeZone('Asia/Kuala_Lumpur'));
         $eventDateKL = $dt->format('Y-m-d H:i:s');
         
-        $data[] = array( 
+        $rowData = array( 
         "id"=>$row['id'],
         "Company Code"=>$row['company_code'],
         "Company Name"=>$row['company_name'],
@@ -900,23 +978,42 @@ if($_POST['selectedValue'] == "PO")
         "Order Quantity (KG)"=>$row['order_quantity'],
         "Basic Balance"=>$row['converted_balance'],
         "Balance (KG)"=>$row['balance'],
-        "Unit Price"=>$row['unit_price'],
-        "Total Price"=>$row['total_price'],
         "Remarks"=>$row['remarks'],
         "Status"=>$row['status'],
         "Action"=>searchActionNameById($row['action_id'], $db),
         "Action By"=>$row['action_by'],
         "Event Date"=>$eventDateKL
         );
+
+        if ($canViewPrice) {
+            $rowData = array_merge(
+                array_slice($rowData, 0, 27, true),
+                array(
+                    "Unit Price"=>$row['unit_price'],
+                    "Total Price"=>$row['total_price']
+                ),
+                array_slice($rowData, 27, null, true)
+            );
+        }
+
+        $data[] = $rowData;
     }
 
-    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Order Date", "P/O No", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)", "Unit Price", "Total Price", "Remarks", "Status", "Action", "Action By", "Event Date"];
+    $columnNames = ["Company Code", "Company Name", "Supplier Code", "Supplier Name", "Order Date", "P/O No", "Raw Material Code", "Raw Material Name", "Plant Code", "Plant Name", "Destination Code", "Destination Name", "Transporter Code", "Transporter Name", "Vehicle No", "Site Code", "Site Name", "Sales Representative Code", "Sales Representative Name", "EXQ/Del", "Batch/Drum", "Basic Unit", "Basic Order Quantity", "Order Quantity (KG)", "Basic Balance", "Balance (KG)"];
+
+    if ($canViewPrice) {
+        $columnNames = array_merge($columnNames, ["Unit Price", "Total Price"]);
+    }
+
+    $columnNames = array_merge($columnNames, ["Remarks", "Status", "Action", "Action By", "Event Date"]);
 }
 
 ## Response
 $response = [
     "columnNames" => $columnNames,
-    "dataTable" => $data
+    "dataTable" => $data,
+    "canViewPrice" => hasModulePermissionDb($db, 'Report', 'Audit Log', ['include_price']),
+    "currentRole" => $_SESSION['roles'] ?? ''
 ];
 
 header("Content-Type: application/json");

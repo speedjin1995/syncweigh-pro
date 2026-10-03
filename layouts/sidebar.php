@@ -1,7 +1,9 @@
 <?php
     $hasWeighingView = hasPermission('Weighing', ['view', 'create', 'edit']);
     $hasAccountingView = hasPermission('Accounting', ['view', 'create', 'edit']);
-    $hasStockView = hasPermission('Stock Management', ['view', 'create', 'edit']);
+    $hasStockView = hasPermission('Stock Management', ['view', 'create', 'edit'])
+        || hasModulePermission('Stock Management', 'Inventory', ['cancelled'])
+        || hasModulePermission('Stock Management', 'Stock Adjustment', ['cancelled']);
     $hasMasterDataView = hasPermission('Master Data', ['view', 'create', 'edit']);
     $hasReportView = hasPermission('Report', ['view', 'create', 'edit']);
     $hasUserManagementView = hasPermission('User Management', ['view', 'create', 'edit']);
@@ -152,7 +154,7 @@
                             </li>
                             <?php endif; ?>
                             
-                            <?php if(hasModulePermission('Stock Management', 'Inventory', ['view', 'create', 'edit'])): ?>
+                            <?php if(hasModulePermission('Stock Management', 'Inventory', ['view', 'create', 'edit', 'cancelled']) || hasModulePermission('Stock Management', 'Stock Adjustment', ['view', 'create', 'edit', 'cancelled'])): ?>
                             <li class="nav-item">
                                 <a href="inventory.php" class="nav-link"><b><?=$lang['t-inventory']?></b></a>
                             </li>

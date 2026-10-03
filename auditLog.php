@@ -185,10 +185,22 @@
                                                         <input type="text" class="form-control" placeholder="Weighing Transaction ID" name="weight" id="weight">
                                                     </div>
                                                 </div>
+                                                <div class="col-3 inputCode weightInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="doNo" class="form-label">DO No</label>
+                                                        <input type="text" class="form-control" placeholder="DO No" name="doNo" id="doNo">
+                                                    </div>
+                                                </div>
                                                 <div class="col-3 inputCode soInput" style="display:none">
                                                     <div class="mb-3">
                                                         <label for="custPoNo" class="form-label">Customer P/O No</label>
                                                         <input type="text" class="form-control" placeholder="Customer P/O No" name="custPoNo" id="custPoNo">
+                                                    </div>
+                                                </div>
+                                                <div class="col-3 inputCode soInput" style="display:none">
+                                                    <div class="mb-3">
+                                                        <label for="soNo" class="form-label">S/O No</label>
+                                                        <input type="text" class="form-control" placeholder="S/O No" name="soNo" id="soNo">
                                                     </div>
                                                 </div>
                                                 <div class="col-3 inputCode poInput" style="display:none">
@@ -420,7 +432,7 @@
 <script type="text/javascript">
 
 var table;
-var permissions = <?= json_encode($_SESSION['permissions']) ?>;
+var permissions = <?= json_encode($_SESSION['permissions'] ?? []) ?>;
 var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
 $(function () {
     $('#reportType').on('change', function(){
@@ -605,11 +617,20 @@ $(function () {
                 plantCode: $('#plantCode').val(),
                 siteCode: $('#siteCode').val(),
                 weight: $('#weight').val(),
+                doNo: $('#doNo').val(),
                 custPoNo: $('#custPoNo').val(),
+                soNo: $('#soNo').val(),
                 poNo: $('#poNo').val(),
             },
             dataType: "json",
             success: function (response) {
+                console.log('Audit Log search permission', {
+                    selected_status: selectedValue,
+                    current_role: response.currentRole,
+                    server_can_view_price: response.canViewPrice,
+                    returned_columns: response.columnNames
+                });
+
                 // Destroy and clean existing DataTable
                 if ($.fn.DataTable.isDataTable("#dataTable")) {
                     $('#dataTable').DataTable().clear().destroy();
@@ -652,6 +673,18 @@ $(function () {
                             $.post('php/getWeight.php', { userID: row.data().id, format: 'EXPANDABLE', type: 'Log' }, function (data) {
                                 var obj = JSON.parse(data);
                                 if (obj.status === 'success') {
+                                    var auditLogPermissions = (permissions['Report'] && permissions['Report']['Audit Log']) ? permissions['Report']['Audit Log'] : [];
+                                    console.log('Audit Log Include Price permission', {
+                                        server_can_view_price: obj.message.can_view_price,
+                                        session_audit_log_permissions: auditLogPermissions,
+                                        isSADMIN: isSADMIN,
+                                        response_has_price_fields: {
+                                            unit_price: Object.prototype.hasOwnProperty.call(obj.message, 'unit_price'),
+                                            sub_total: Object.prototype.hasOwnProperty.call(obj.message, 'sub_total'),
+                                            sst: Object.prototype.hasOwnProperty.call(obj.message, 'sst'),
+                                            total_price: Object.prototype.hasOwnProperty.call(obj.message, 'total_price')
+                                        }
+                                    });
                                     row.child(format(obj.message)).show();
                                     tr.addClass("shown");
                                 }
@@ -683,13 +716,15 @@ $(function () {
         var plantCode = $('#plantCode').val() || '';
         var siteCode = $('#siteCode').val() || '';
         var weight = $('#weight').val() || '';
+        var doNo = $('#doNo').val() || '';
         var custPoNo = $('#custPoNo').val() || '';
+        var soNo = $('#soNo').val() || '';
         var poNo = $('#poNo').val() || '';
 
         window.open("php/exportAuditExcel.php?selectedValue="+selectedValue+"&fromDateSearch="+fromDateSearch+"&toDateSearch="+toDateSearch+
         "&customerCode="+customerCode+"&destinationCode="+destinationCode+"&productCode="+productCode+"&rawMatCode="+rawMatCode+"&supplierCode="+supplierCode+
         "&vehicleNo="+vehicleNo+"&agentCode="+agentCode+"&transporterCode="+transporterCode+"&unit="+unit+"&userCode="+userCode+"&plantCode="+plantCode+
-        "&siteCode="+siteCode+"&weight="+weight+"&custPoNo="+custPoNo+"&poNo="+poNo);
+        "&siteCode="+siteCode+"&weight="+weight+"&doNo="+doNo+"&custPoNo="+custPoNo+"&soNo="+soNo+"&poNo="+poNo);
     });
 
     // $('#exportExcel').click(function() {
@@ -756,6 +791,7 @@ function format (row) {
             <p><strong>TRANSACTION DATE:</strong> ${row.transaction_date}</p>
             <p><strong>INVOICE NO:</strong> ${row.invoice_no}</p>
             <p><strong>MANUAL WEIGHT:</strong> ${row.manual_weight}</p>
+            <p><strong>MANUAL WEIGHT REASON:</strong> ${row.manual_weight_reason}</p>
             <p><strong>DELIVERY NO:</strong> ${row.delivery_no}</p>
             <p><strong>SO/PO NO:</strong> ${row.purchase_order}</p>
         </div>
@@ -785,7 +821,7 @@ function format (row) {
             <p><strong>ORDER/SUPPLIER WEIGHT:</strong> ${orderSuppWeight}</p>
             <p><strong>WEIGHT DIFFERENCE:</strong> ${row.reduce_weight}</p>`;
 
-        if (isSADMIN || (permissions['Report'] && permissions['Report']['Audit Log'] && permissions['Report']['Audit Log'].includes('include_price'))) {
+        if (row.can_view_price === true || row.can_view_price == '1') {
             returnString += `
                 <p><strong>UNIT PRICE:</strong> ${row.unit_price}</p>
                 <p><strong>SUB-TOTAL PRICE:</strong> ${row.sub_total}</p>

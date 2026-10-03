@@ -1106,14 +1106,15 @@ else{
             var fromDateI = $('#fromDateSearch').val();
             var toDateI = $('#toDateSearch').val();
             var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+            var customerNoI = $('#customerNoSearch').val() || [];
             var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
             var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
             var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+            var productI = $('#productSearch').val() || [];
             var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
             var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
             var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+            var soSearchI = $('#soSearch').val() ? $('#soSearch').val() : '';
             var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
 
             var selectedIds = []; // An array to store the selected 'id' values
@@ -1123,17 +1124,34 @@ else{
                 }
             });
 
+            var params = new URLSearchParams();
+            params.append('file', 'weight');
+            params.append('isMulti', selectedIds.length > 0 ? 'Y' : 'N');
+            params.append('fromDate', fromDateI);
+            params.append('toDate', toDateI);
+            params.append('status', statusI);
+            params.append('supplier', supplierNoI);
+            params.append('vehicle', vehicleNoI);
+            params.append('customerType', customerTypeI);
+            params.append('rawMat', rawMatI);
+            params.append('destination', destinationI);
+            params.append('plant', plantI);
+            params.append('purchaseOrder', soSearchI);
+            params.append('batchDrum', batchDrumSearchI);
+
+            customerNoI.forEach(function(customerNo) {
+                params.append('customer[]', customerNo);
+            });
+
+            productI.forEach(function(product) {
+                params.append('product[]', product);
+            });
+
             if (selectedIds.length > 0) {
-                window.open("php/export.php?file=weight&isMulti=Y&fromDate="+fromDateI+"&toDate="+toDateI+
-                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-                "&weighingType="+customerTypeI+"&product="+productI+"&rawMat="+rawMatI+
-                "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI+"&id="+selectedIds);
-            }else{
-                window.open("php/export.php?file=weight&isMulti=N&fromDate="+fromDateI+"&toDate="+toDateI+
-                "&status="+statusI+"&customer="+customerNoI+"&supplier="+supplierNoI+"&vehicle="+vehicleNoI+
-                "&weighingType="+customerTypeI+"&product="+productI+"&rawMat="+rawMatI+
-                "&destination="+destinationI+"&plant="+plantI+"&batchDrum="+batchDrumSearchI);
+                params.append('id', selectedIds.join(','));
             }
+
+            window.open("php/export.php?" + params.toString());
             
         });
 
