@@ -423,6 +423,7 @@ mysqli_stmt_bind_result($stmt4, $pcode, $pname);
                 { data: 'status' },
                 { 
                     data: 'id',
+                    responsivePriority: 1,
                     orderable: false,
                     render: function ( data, type, row ) {
                         var buttons = '';

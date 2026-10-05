@@ -862,6 +862,7 @@ if ($user != null && $user != ''){
                 { data: 'modified_date' },
                 {
                     data: 'id',
+                    responsivePriority: 1,
                     class: 'action-button',
                     orderable: false,
                     render: function (data, type, row) {
@@ -990,6 +991,7 @@ if ($user != null && $user != ''){
                     { data: 'modified_date' },
                     {
                         data: 'id',
+                        responsivePriority: 1,
                         class: 'action-button',
                         orderable: false,
                         render: function (data, type, row) {

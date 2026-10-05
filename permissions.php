@@ -214,6 +214,7 @@ $(function () {
             { data: 'modules', render: function(data) { return data; } },
             {
                 data: 'id',
+                responsivePriority: 1,
                 orderable: false,
                 render: function (data, type, row) {
                     var perms = (permissions['User Management'] && permissions['User Management']['Permission']) || [];

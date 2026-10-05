@@ -717,6 +717,7 @@ else{
                 { data: 'nett_weight1' },
                 { 
                     data: 'id',
+                    responsivePriority: 1,
                     class: 'action-button',
                     orderable: false,
                     render: function ( data, type, row ) {

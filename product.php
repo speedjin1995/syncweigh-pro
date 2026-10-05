@@ -605,6 +605,7 @@ $(function () {
             { data: 'status' },
             { 
                 data: 'id',
+                responsivePriority: 1,
                 orderable: false,
                 render: function ( data, type, row ) {
                     var buttons = '';

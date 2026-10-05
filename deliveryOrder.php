@@ -755,6 +755,7 @@ else{
                 { data: 'order_weight' },
                 { 
                     data: 'id',
+                    responsivePriority: 1,
                     class: 'action-button',
                     orderable: false,
                     render: function ( data, type, row ) {
