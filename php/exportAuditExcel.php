@@ -1029,6 +1029,60 @@ if($_GET['selectedValue'] == "PO")
     $columnNames = array_merge($columnNames, ["Remarks", "Status", "Action", "Action By", "Event Date"]);
 }
 
+if($_GET['selectedValue'] == "Login")
+{
+    ## Fetch records
+    $loginQuery = "SELECT * FROM Login_Log WHERE 1=1";
+    $loginTypes = "";
+    $loginParams = array();
+
+    if(!empty($fromDateTime)){
+        $loginQuery .= " AND login_datetime >= ?";
+        $loginTypes .= "s";
+        $loginParams[] = $fromDateTime;
+    }
+
+    if(!empty($toDateTime)){
+        $loginQuery .= " AND login_datetime <= ?";
+        $loginTypes .= "s";
+        $loginParams[] = $toDateTime;
+    }
+
+    if(isset($_GET['loginUsername']) && trim($_GET['loginUsername']) != ''){
+        $loginQuery .= " AND username LIKE ?";
+        $loginTypes .= "s";
+        $loginParams[] = "%".trim($_GET['loginUsername'])."%";
+    }
+
+    $loginQuery .= " ORDER BY login_datetime DESC";
+    $data = array();
+
+    if($loginStmt = $db->prepare($loginQuery)){
+        if(!empty($loginParams)){
+            $loginStmt->bind_param($loginTypes, ...$loginParams);
+        }
+
+        if($loginStmt->execute()){
+            $loginResult = $loginStmt->get_result();
+
+            while($row = $loginResult->fetch_assoc()) {
+                // login_datetime is already stored in Asia/Kuala_Lumpur time
+                $data[] = array(
+                "id"=>$row['id'],
+                "Username"=>$row['username'],
+                "IP Address"=>$row['ip_address'],
+                "User Agent"=>$row['user_agent'],
+                "Login Date"=>$row['login_datetime']
+                );
+            }
+        }
+
+        $loginStmt->close();
+    }
+
+    $columnNames = ["Username", "IP Address", "User Agent", "Login Date"];
+}
+
 // Display column names as first row 
 $excelData = implode("\t", array_values($columnNames)) . "\n";
 

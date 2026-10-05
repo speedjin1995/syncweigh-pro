@@ -3564,3 +3564,17 @@ INSERT INTO `modules` (`id`, `name`, `category`) VALUES
 (39, 'Stock Adjustment', 'Stock Management');
 
 UPDATE permissions SET modules = JSON_ARRAY_APPEND(modules, '$', '39') WHERE id IN (5, 6, 7, 13);
+
+-- 05/10/2026 --
+CREATE TABLE `Login_Log` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `login_datetime` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `Login_Log` ADD PRIMARY KEY (`id`), ADD KEY `idx_login_log_user` (`user_id`), ADD KEY `idx_login_log_datetime` (`login_datetime`);
+
+ALTER TABLE `Login_Log` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

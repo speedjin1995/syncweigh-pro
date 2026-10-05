@@ -106,6 +106,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             mysqli_stmt_close($permStmt);
                             $_SESSION['permissions'] = $permissions;
 
+                            // Record login log (failure here must not block the login)
+                            $loginDateTime = (new DateTime('now', new DateTimeZone('Asia/Kuala_Lumpur')))->format('Y-m-d H:i:s');
+                            $loginIp = $_SERVER['REMOTE_ADDR'] ?? null;
+                            $loginAgent = isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 255) : null;
+                            try {
+                                if ($logStmt = mysqli_prepare($link, "INSERT INTO Login_Log (user_id, username, ip_address, user_agent, login_datetime) VALUES (?, ?, ?, ?, ?)")) {
+                                    mysqli_stmt_bind_param($logStmt, "issss", $id, $username, $loginIp, $loginAgent, $loginDateTime);
+                                    mysqli_stmt_execute($logStmt);
+                                    mysqli_stmt_close($logStmt);
+                                }
+                            } catch (Throwable $e) {
+                                error_log('Login_Log insert failed: ' . $e->getMessage());
+                            }
+
                             // Redirect user to welcome page
                             header("location: index.php");
                         } else {
