@@ -1268,27 +1268,6 @@ if (hasPermission('Weighing', ['view_all_plants'])){
                         buttons += `</div>`;
 
                         return buttons;
-
-                        // let dropdownMenu = '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">';
-
-                        // if (row.is_complete != 'Y' || userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER' ) {
-                        //     dropdownMenu += '<li><a class="dropdown-item edit-item-btn" id="edit' + data + '" onclick="edit(' + data + ')"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>'; 
-                        // }
-
-                        // if (row.is_approved == 'Y') {
-                        //     dropdownMenu += '<li><a class="dropdown-item print-item-btn" id="print' + data + '" onclick="print(' + data + ')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li>';
-                        // }
-
-                        // if (row.is_approved == 'N') {
-                        //     dropdownMenu += '<li><a class="dropdown-item approval-item-btn" id="approve' + data + '" onclick="approve(' + data + ')"><i class="ri-check-fill align-bottom me-2 text-muted"></i> Approval</a></li>';
-                        // }
-
-                        // if(userRole == 'SADMIN' || userRole == 'ADMIN' || userRole == 'MANAGER'){
-                        //     dropdownMenu += '<li><a class="dropdown-item remove-item-btn" id="deactivate' + data + '" onclick="deactivate(' + data + ')"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>';
-                        // }
-
-                        // dropdownMenu += '</ul></div>';
-                        // return dropdownMenu;
                     }
                 }
             ],
@@ -1496,31 +1475,6 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             });
         });
     }
-
-    // function deactivate(id){
-        
-    //     $('#spinnerLoading').show();
-    //     $.post('php/deleteWeight.php', {userID: id}, function(data){
-    //         var obj = JSON.parse(data);
-            
-    //         if(obj.status === 'success'){
-    //             table.ajax.reload();
-    //             $('#spinnerLoading').hide();
-    //             $("#successBtn").attr('data-toast-text', obj.message);
-    //             $("#successBtn").click();
-    //         }
-    //         else if(obj.status === 'failed'){
-    //             $('#spinnerLoading').hide();
-    //             $("#failBtn").attr('data-toast-text', obj.message );
-    //             $("#failBtn").click();
-    //         }
-    //         else{
-    //             $('#spinnerLoading').hide();
-    //             $("#failBtn").attr('data-toast-text', obj.message );
-    //             $("#failBtn").click();
-    //         }
-    //     });
-    // }
 
     function print(id, transactionStatus) {
         $.post('php/print.php', {userID: id, file: 'weight', prePrint: 'Y'}, function(data){
