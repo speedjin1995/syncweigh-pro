@@ -53,6 +53,11 @@ if(isset($_POST['userID'])){
             }
 
             $message['rawMatUom'] = $rawMatUom;
+
+            // KG rate with the default applied when none is set (see getKgConversion in lookup.php)
+            $kgConversion = getKgConversion($id, 'PO', $db);
+            $message['kg_rate'] = $kgConversion['rate'];
+            $message['kg_basic_uom'] = $kgConversion['basic_uom'];
             
             echo json_encode(
                 array(

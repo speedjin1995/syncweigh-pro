@@ -688,7 +688,9 @@
             $('#addModal').find('#rawMaterialCode').val("");
             $('#addModal').find('#rawMaterialName').val("").trigger('change');
             $('#addModal').find('#currentWeight').text(0);
-            
+            $('#addModal').find('#supplierWeightBasicUom').val(0).trigger('change');
+            $('#addModal').find('#orderWeightBasicUom').val(0).trigger('change');
+
             // Show select and hide input readonly
             $('#addModal').find('#salesOrderEdit').val("").hide();
             $('#addModal').find('#purchaseOrderEdit').val("").hide();
@@ -2476,18 +2478,9 @@
                 var conversionData;
 
                 if (obj.status === 'success') {
-                    var basicUomLabel = obj.message.basic_uom_unit;
-                    var rate = 1;
-
-                    var targetUom = (
-                        transactionStatus === 'Purchase'
-                            ? obj.message.rawMatUom
-                            : obj.message.prodUom
-                    ).find(uom => uom.unit_id == '2');
-
-                    if (targetUom) {
-                        rate = parseFloat(targetUom.rate);
-                    }
+                    // KG rate (and its default when none is set) comes from the backend: getKgConversion in php/requires/lookup.php
+                    var basicUomLabel = obj.message.kg_basic_uom;
+                    var rate = parseFloat(obj.message.kg_rate);
 
                     conversionData = {
                         basicUomLabel,
