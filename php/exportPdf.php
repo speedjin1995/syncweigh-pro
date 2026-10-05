@@ -777,7 +777,7 @@ if(isset($_POST["file"])){
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead style="border-bottom: 1px solid black;">
-                                                    <tr><th colspan="'.(hasModulePermission('Report', $reportStatus, ['include_price']) ? 12 : 4).'" class="text-center" style="border-top: 1px solid black;">Other Product</th></tr>q
+                                                    <tr><th colspan="'.(hasModulePermission('Report', $reportStatus, ['include_price']) ? 12 : 4).'" class="text-center" style="border-top: 1px solid black;">Other Product</th></tr>
                                                     <tr class="text-center" style="border-top: 1px solid black;">
                                                         <th rowspan="2" class="text-start">Product Description</th>
                                                         <th rowspan="2">Total Loads</th>
@@ -1088,7 +1088,7 @@ if(isset($_POST["file"])){
                                                 
                                                 
                                                 $message .= '<tr style="font-size: 10px; text-align: center;">
-                                                    <td>' . $row['transaction_id'] . '</td>
+                                                    <td>' . $row['transaction_id'] . (($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
                                                     <td>' . $formattedtransactionDate . '</td>
                                                     <td>' . $row['lorry_plate_no1'] . '</td>';
                                                     
@@ -1378,7 +1378,7 @@ if(isset($_POST["file"])){
 
                                             $message .= '<tr style="text-align:center; font-size: 11px;"">
                                                 <td>' . $noCount . '</td>
-                                                <td>' . $row['transaction_id'] . '</td>
+                                                <td>' . $row['transaction_id'] . (($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
                                                 <td>' . $formattedtransactionDate . '</td>
                                                 <td>' . $row['lorry_plate_no1'] . '</td>';
                                                 
@@ -1608,7 +1608,7 @@ if(isset($_POST["file"])){
 
                                             $message .= '<tr style="text-align:center; font-size: 8px;"">
                                                 <td>' . $noCount . '</td>
-                                                <td>' . $row['transaction_id'] . '</td>
+                                                <td>' . $row['transaction_id'] . (($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
                                                 <td>' . $formattedtransactionDate . '</td>
                                                 <td>' . $row['lorry_plate_no1'] . '</td>';
                                                 
@@ -1879,7 +1879,7 @@ if(isset($_POST["file"])){
                                                 
                                                 
                                                 $message .= '<tr style="font-size: 10px; text-align: center;">
-                                                    <td>' . $row['transaction_id'] . '</td>
+                                                    <td>' . $row['transaction_id'] . (($row['is_edit'] ?? '') == 'Y' ? '<br><i style="color:#dc3545;">(Edited)</i>' : '') . '</td>
                                                     <td>' . $formattedtransactionDate . '</td>
                                                     <td>' . $row['lorry_plate_no1'] . '</td>';
                                                     

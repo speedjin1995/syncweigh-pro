@@ -1193,14 +1193,8 @@ if (hasPermission('Weighing', ['view_all_plants'])){
             'columns': [
                 { 
                     data: 'transaction_id',
-                    class: 'transaction-column',
-                    render: function (data, type, row) {
-                        if (type === 'display' && row.is_edit == 'Y') {
-                            return data + ' <span class="badge bg-warning-subtle text-warning">Edited</span>';
-                        }
-                        return data;
-                    }
-                },                
+                    class: 'transaction-column'
+                },
                 { data: 'transaction_status' },
                 { data: 'customer' },
                 { data: 'lorry_plate_no1' },

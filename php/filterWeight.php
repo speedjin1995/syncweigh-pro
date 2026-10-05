@@ -217,7 +217,6 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     "final_weight"=>$row['final_weight'],
     "weight_different"=>$row['weight_different'],
     "is_complete"=>$row['is_complete'],
-    "is_edit"=>$row['is_edit'],
     "is_cancel"=>$row['is_cancel'],
     "is_approved"=>$row['is_approved'],
     "approved_by"=>$row['approved_by'],

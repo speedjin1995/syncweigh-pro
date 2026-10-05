@@ -646,6 +646,7 @@ else{
     <script src="assets/js/additional.js"></script>
 
     <script type="text/javascript">
+    var table = null;
 
     var permissions = <?= json_encode($_SESSION['permissions']) ?>;
     var isSADMIN = <?= json_encode($_SESSION['roles'] == 'SADMIN') ?>;
@@ -703,184 +704,10 @@ else{
             checkboxes.prop('checked', $(this).prop('checked')).trigger('change');
         });
 
-        var fromDateI = $('#fromDateSearch').val();
-        var toDateI = $('#toDateSearch').val();
-        var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-        var supplierNoI = $('#supplierSearch').val() || [];
-        var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-        var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-        var rawMatI = $('#rawMatSearch').val() || [];
-        var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
-        var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-        var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
-        var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
-
-        var table = $("#weightTable").DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            'processing': true,
-            'serverSide': true,
-            'searching': true,
-            'serverMethod': 'post',
-            'ajax': {
-                'url':'php/filterReports.php',
-                'data': {
-                    fromDate: fromDateI,
-                    toDate: toDateI,
-                    status: statusI,
-                    customer: customerNoI,
-                    supplier: supplierNoI,
-                    vehicle: vehicleNoI,
-                    customerType: customerTypeI,
-                    product: productI,
-                    rawMaterial: rawMatI,
-                    destination: destinationI,
-                    plant: plantI,
-                    purchaseOrder: poI,
-                    batchDrum: batchDrumSearchI
-                } 
-            },
-            'columns': [
-                {
-                    // Add a checkbox with a unique ID for each row
-                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-                    className: 'select-checkbox',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
-                    }
-                },
-                { 
-                    data: 'transaction_id',
-                    class: 'transaction-column'
-                },
-                { data: 'transaction_status' },
-                { data: 'customer' },
-                { data: 'lorry_plate_no1' },
-                { data: 'product_name' },
-                { data: 'purchase_order' },
-                { data: 'delivery_no' },
-                { data: 'gross_weight1' },
-                { data: 'gross_weight1_date' },
-                { data: 'tare_weight1' },
-                { data: 'tare_weight1_date' },
-                { data: 'nett_weight1' },
-                { 
-                    data: 'id',
-                    class: 'action-button',
-                    orderable: false,
-                    render: function ( data, type, row ) {
-                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                        if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
-                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
-                        }
-
-                        return '';
-                    }
-                }
-            ],
-            "drawCallback": function(settings) {
-                $('#salesInfo').text(settings.json.salesTotal);
-                $('#purchaseInfo').text(settings.json.purchaseTotal);
-                $('#localInfo').text(settings.json.localTotal);
-            }   
-        });
+        loadWeightTable();
 
         $('#filterSearch').on('click', function(){
-            var fromDateI = $('#fromDateSearch').val();
-            var toDateI = $('#toDateSearch').val();
-            var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
-            var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
-            var supplierNoI = $('#supplierSearch').val() ? $('#supplierSearch').val() : '';
-            var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
-            var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
-            var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
-            var rawMatI = $('#rawMatSearch').val() ? $('#rawMatSearch').val() : '';
-            var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
-            var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
-            var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
-            var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
-
-            //Destroy the old Datatable
-            $("#weightTable").DataTable().clear().destroy();
-
-            //Create new Datatable
-            table = $("#weightTable").DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                'processing': true,
-                'serverSide': true,
-                'searching': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url':'php/filterReports.php',
-                    'data': {
-                        fromDate: fromDateI,
-                        toDate: toDateI,
-                        status: statusI,
-                        customer: customerNoI,
-                        supplier: supplierNoI,
-                        vehicle: vehicleNoI,
-                        customerType: customerTypeI,
-                        product: productI,
-                        rawMaterial: rawMatI,
-                        destination: destinationI,
-                        plant: plantI,
-                        purchaseOrder: poI,
-                        batchDrum: batchDrumSearchI
-                    } 
-                },
-                'columns': [
-                    {
-                        // Add a checkbox with a unique ID for each row
-                        data: 'id', // Assuming 'serialNo' is a unique identifier for each row
-                        className: 'select-checkbox',
-                        orderable: false,
-                        render: function (data, type, row) {
-                            return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
-                        }
-                    },
-                    { 
-                        data: 'transaction_id',
-                        class: 'transaction-column'
-                    }, 
-                    { data: 'transaction_status' },
-                    { data: 'customer' },
-                    { data: 'lorry_plate_no1' },
-                    { data: 'product_name' },
-                    { data: 'purchase_order' },
-                    { data: 'delivery_no' },
-                    { data: 'gross_weight1' },
-                    { data: 'gross_weight1_date' },
-                    { data: 'tare_weight1' },
-                    { data: 'tare_weight1_date' },
-                    { data: 'nett_weight1' },
-                    { 
-                        data: 'id',
-                        class: 'action-button',
-                        orderable: false,
-                        render: function ( data, type, row ) {
-                            // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                            if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
-                                return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
-                                '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
-                            }
-
-                            return '';
-                        }
-                    }
-                ],
-                "drawCallback": function(settings) {
-                    $('#salesInfo').text(settings.json.salesTotal);
-                    $('#purchaseInfo').text(settings.json.purchaseTotal);
-                    $('#localInfo').text(settings.json.localTotal);
-                }   
-            });
+            loadWeightTable();
         });
 
         // Add event listener for opening and closing details on row click
@@ -1161,6 +988,107 @@ else{
             updateSelects();
         });
     });
+
+    // Load (or reload) the report table using the current search filters
+    function loadWeightTable() {
+        var fromDateI = $('#fromDateSearch').val();
+        var toDateI = $('#toDateSearch').val();
+        var statusI = $('#statusSearch').val() ? $('#statusSearch').val() : '';
+        var customerNoI = $('#customerNoSearch').val() ? $('#customerNoSearch').val() : '';
+        var supplierNoI = $('#supplierSearch').val() || [];
+        var vehicleNoI = $('#vehicleNo').val() ? $('#vehicleNo').val() : '';
+        var customerTypeI = $('#customerTypeSearch').val() ? $('#customerTypeSearch').val() : '';
+        var productI = $('#productSearch').val() ? $('#productSearch').val() : '';
+        var rawMatI = $('#rawMatSearch').val() || [];
+        var destinationI = $('#destinationSearch').val() ? $('#destinationSearch').val() : '';
+        var plantI = $('#plantSearch').val() ? $('#plantSearch').val() : '';
+        var poI = $('#poSearch').val() ? $('#poSearch').val() : '';
+        var batchDrumSearchI = $('#batchDrumSearch').val() ? $('#batchDrumSearch').val() : '';
+
+        // Destroy the old Datatable
+        if ($.fn.DataTable.isDataTable('#weightTable')) {
+            $("#weightTable").DataTable().clear().destroy();
+        }
+
+        table = $("#weightTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'searching': true,
+            'serverMethod': 'post',
+            'ajax': {
+                'url':'php/filterReports.php',
+                'data': {
+                    fromDate: fromDateI,
+                    toDate: toDateI,
+                    status: statusI,
+                    customer: customerNoI,
+                    supplier: supplierNoI,
+                    vehicle: vehicleNoI,
+                    customerType: customerTypeI,
+                    product: productI,
+                    rawMaterial: rawMatI,
+                    destination: destinationI,
+                    plant: plantI,
+                    purchaseOrder: poI,
+                    batchDrum: batchDrumSearchI
+                } 
+            },
+            'columns': [
+                {
+                    // Add a checkbox with a unique ID for each row
+                    data: 'id', // Assuming 'serialNo' is a unique identifier for each row
+                    className: 'select-checkbox',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" class="select-checkbox" id="checkbox_' + data + '" value="'+data+'"/>';
+                    }
+                },
+                { 
+                    data: 'transaction_id',
+                    class: 'transaction-column',
+                    render: function (data, type, row) {
+                        if (type === 'display' && row.is_edit == 'Y') {
+                            return data + ' <span class="badge bg-danger-subtle text-danger" title="' + $('<div>').text(row.edit_reason || '').html().replace(/"/g, '&quot;') + '">Edited</span>';
+                        }
+                        return data;
+                    }
+                },
+                { data: 'transaction_status' },
+                { data: 'customer' },
+                { data: 'lorry_plate_no1' },
+                { data: 'product_name' },
+                { data: 'purchase_order' },
+                { data: 'delivery_no' },
+                { data: 'gross_weight1' },
+                { data: 'gross_weight1_date' },
+                { data: 'tare_weight1' },
+                { data: 'tare_weight1_date' },
+                { data: 'nett_weight1' },
+                { 
+                    data: 'id',
+                    class: 'action-button',
+                    orderable: false,
+                    render: function ( data, type, row ) {
+                        // return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                        if (isSADMIN || (permissions['Report'] && permissions['Report']['Purchase'] && permissions['Report']['Purchase'].includes('print'))){
+                            return '<div class="dropdown d-inline-block"><button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                            '<i class="ri-more-fill align-middle"></i></button><ul class="dropdown-menu dropdown-menu-end">' +
+                            '<li><a class="dropdown-item print-item-btn" id="print'+data+'" onclick="print('+data+')"><i class="ri-printer-fill align-bottom me-2 text-muted"></i> Print</a></li></ul></div>';
+                        }
+
+                        return '';
+                    }
+                }
+            ],
+            "drawCallback": function(settings) {
+                $('#salesInfo').text(settings.json.salesTotal);
+                $('#purchaseInfo').text(settings.json.purchaseTotal);
+                $('#localInfo').text(settings.json.localTotal);
+            }   
+        });
+    }
 
     function format (row) {
         var returnString = `
