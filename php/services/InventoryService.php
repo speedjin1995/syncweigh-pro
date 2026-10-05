@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../requires/lookup.php';
+
 /**
  * InventoryService
  *
@@ -7,7 +9,8 @@
  * Stock is tracked per raw material, plant and batch/drum.
  *
  * Quantities are in KG (raw_mat_weight). raw_mat_basic_uom is kept in sync
- * as weight x the raw material's KG rate from Raw_Mat_UOM (rate 1 if none set).
+ * as weight x the raw material's KG rate (getKgConversion in requires/lookup.php,
+ * which applies the default when no KG rate is set).
  *
  * These methods do not open or commit a transaction. Callers that make several
  * stock movements together should wrap them in begin_transaction()/commit()
@@ -289,14 +292,9 @@ class InventoryService
 
     private function getKgRate($rawMatId)
     {
-        $unitId = self::KG_UNIT_ID;
-        $stmt = $this->db->prepare("SELECT rate FROM Raw_Mat_UOM WHERE raw_mat_id = ? AND unit_id = ? AND status = '0' LIMIT 1");
-        $stmt->bind_param('ii', $rawMatId, $unitId);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
+        $kgConversion = getKgConversion($rawMatId, 'PO', $this->db);
 
-        return ($row && is_numeric($row['rate'])) ? floatval($row['rate']) : 1.0;
+        return floatval($kgConversion['rate']);
     }
 
     private function assertRawMatExists($rawMatId)
